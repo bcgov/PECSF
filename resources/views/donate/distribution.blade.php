@@ -3,12 +3,14 @@
 @section ("step-content")
 <h2 class="mt-5">3. Decide on the distribution</h2>
 <p class="mt-3">You can distribute your contributions to each charity here. Start from the top and specify the amount of percentage so that together they are total 100%.</p>
-<form action="{{route('donate.save.distribution')}}" method="POST">
+<form action="{{route('donate.summary')}}" method="GET">
 
 <div class="d-flex align-items-center justify-content-between mb-3">
-    <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="distributeByDollarAmount" name="distributionByAmount" value="true">
-        <label class="form-check-label" for="distributeByDollarAmount">Distribute by dollar amount</label>
+    <div class="form-check form-switch p-0">
+        <label class="form-check-label" for="distributeByDollarAmount">
+            <input class="form-check-input" type="checkbox" id="distributeByDollarAmount" name="distributionByAmount" value="true" checked>
+            <i></i>Distribute by Percentage
+        </label>
     </div>
     <button class="btn btn-link">Distribute evenly</button>
 </div>
@@ -17,10 +19,10 @@
         @foreach ($charities as $charity)
         <tr>
             <td class="p-2">{{ $charity['text'] }}</td>
-            <td style="width:110px" class="by-percent">
+            <td style="width:110px" class="by-percent ">
                 <div class="input-group input-group-sm mb-3">
                     <input type="number" class="form-control form-control-sm percent-input" name="percent[{{ $charity['id'] }}]" placeholder="" value="{{$charity['percentage-distribution']}}">
-                    <span class="input-group-text">%</span>
+                    <span class="ml-2">%</span>
                 </div>
             </td>
             <td style="width:110px" class="by-amount d-none">
@@ -41,10 +43,10 @@
             <td class="by-percent">
                 <div class="input-group input-group-sm mb-3">
                     <input type="text" class="form-control form-control-sm total-percent" placeholder="" disabled>
-                    <span class="input-group-text">%</span>
+                    <span class="ml-2">%</span>
                 </div>
             </td>
-            <td class="by-amount d-none">
+            <td class="by-amount d-none ">
                 <div class="input-group input-group-sm mb-3">
                     <input type="number" class="form-control form-control-sm total-amount" placeholder="" disabled>
                 </div>
@@ -52,22 +54,27 @@
             <td></td>
         </tr>
     </table>
-</form>
+
 <div class="mt-5">
     <a class="btn btn-lg btn-outline-primary" href="{{route('donate.amount')}}">Previous</a>
     <button class="btn btn-lg btn-primary" type="submit">Next</button>
 </div>
+</form>
 @endsection
 
+@push('css')
+<link rel="stylesheet" href="{{ asset('css/custom-switch.css') }}">
+@endpush
 @push('js')
     <script>
         $(document).on('change', '#distributeByDollarAmount', function () {
             if (!$(this).prop("checked")) {
+                $(".by-amount").removeClass("d-none");
+                $(".by-percent").addClass("d-none"); 
+            } else {
                 $(".by-percent").removeClass("d-none");
                 $(".by-amount").addClass("d-none");
-            } else {
-                $(".by-amount").removeClass("d-none");
-                $(".by-percent").addClass("d-none");
+                
             }
         });
         $(document).on('change', '.percent-input', function () {
@@ -89,5 +96,6 @@
 
         $(".percent-input").change();
         $(".amount-input").change();
+
     </script>
 @endpush

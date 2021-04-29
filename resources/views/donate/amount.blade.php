@@ -4,26 +4,27 @@
 <h2 class="mt-5">2. Decide on the frequency and amount</h2>
 <div>
     <div>
-        <div class="btn-group mt-3 frequency" role="group" aria-label="Select frequency">
-            <input type="radio" name="frequency" class="btn-check" id="bi-weekly-btn" autocomplete="off" value="bi-weekly" {{$preselectedData['frequency'] == 'bi-weekly' ? 'checked' : ''}}>
-            <label class="btn btn-outline-primary btn-lg" for="bi-weekly-btn">Bi-weekly</label>
-
-            <input type="radio" name="frequency" class="btn-check" id="one-time-btn" autocomplete="off" value="one-time" {{$preselectedData['frequency'] == 'one-time' ? 'checked' : ''}}>
-            <label class="btn btn-outline-primary btn-lg" for="one-time-btn">One-time</label>
+        <div class="btn-group btn-group-toggle mt-3 frequency" role="group" aria-label="Select frequency" data-toggle="buttons">
+            <label class="btn btn-outline-primary btn-lg" for="bi-weekly-btn">
+                <input type="radio" name="frequency" class="btn-check" id="bi-weekly-btn" autocomplete="off" value="bi-weekly" {{$preselectedData['frequency'] == 'bi-weekly' ? 'checked' : ''}}>
+                Bi-weekly
+            </label>
+            <label class="btn btn-outline-primary btn-lg" for="one-time-btn">
+                <input type="radio" name="frequency" class="btn-check" id="one-time-btn" autocomplete="off" value="one-time" {{$preselectedData['frequency'] == 'one-time' ? 'checked' : ''}}>
+                One-time
+            </label>
         </div>
     </div>
     <div class="bi-weekly-amounts" style="{{$preselectedData['frequency'] == 'one-time' ? 'display:none' : ''}}">
-        <div class="btn-group d-flex mt-3 amounts" role="group" aria-label="Select amount">
+        <div class="btn-group d-flex mt-3 amounts btn-group-toggle" data-toggle="buttons" role="group" aria-label="Select amount">
             @foreach ($amounts["bi-weekly"] as $amount)
-                <div class="me-2">
+                <label class="mr-2 btn btn-outline-primary rounded btn-lg d-flex align-items-center justify-content-center" for="amount-{{$amount['amount']}}">
                     <input type="radio" name="amount" class="btn-check" id="amount-{{$amount['amount']}}" autocomplete="off" {{ ($amount['selected'] ? 'checked' : '') }} value="{{$amount['amount']}}" >
-                    <label class="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center" for="amount-{{$amount['amount']}}">
-                        <div>
-                            <div><b>{{$amount['text']}}</b></div>
-                            <small>Bi-Weekly</small>
-                        </div>
-                    </label>
-                </div>
+                    <div>
+                        <div><b>{{$amount['text']}}</b></div>
+                        <small>Bi-Weekly</small>
+                    </div>
+                </label>
             @endforeach
         </div>
     </div>
