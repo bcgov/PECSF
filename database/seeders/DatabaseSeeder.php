@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call(UserTableSeeder::class);
-        $this->call(CharitySeeder::class);
+        // To switch Charity Seed from XL to Limited 20 Records, toggle below comments
+        //$this->call(CharitySeeder::class);
+        $this->call(CharitySeeder20Records::class);
     }
 }
