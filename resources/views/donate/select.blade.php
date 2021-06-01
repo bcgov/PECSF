@@ -83,14 +83,16 @@
     });
 
     $select.on('select2:select', function (e) {
-        selectedCharity.push({
-            id: $(this).val(),
-            text: $select.find("option:selected").text(),
-            additional: ''
-        });
+        if (selectedCharity.findIndex((c) => c.id === parseInt($(this).val())) === -1) {
+            selectedCharity.push({
+                id: parseInt($(this).val()),
+                text: $select.find("option:selected").text(),
+                additional: ''
+            });
 
-        $select.empty().trigger('change');
-        renderSelectedCharity();
+            $select.empty().trigger('change');
+            renderSelectedCharity();
+        }
     });
 
     function renderSelectedCharity() {

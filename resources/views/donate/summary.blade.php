@@ -81,9 +81,9 @@
 </div>
 <div class="row">
 <p class="py-4">
-Please note that this is note that <b>this is not a tax receipt</b>.  
-Payroll Deductions begin on the first paychequqe of 2021 and will appear on your <b>2021 T4.</b> PECSF issues cheques twice a year. 
-In August for payroll deductions from January - June, and in March for payroll deductions from July - December.
+Please note that <b>this is not a tax receipt</b>.  
+Payroll Deductions begin with the first paycheque in January and will appear on your T4 issued from payroll from that calendar year. PECSF issues cheques twice a year. 
+In August for payroll deductions from January -June, and in March for payroll deductions from July -December.
 </p>
 </div>
 <div class="">
@@ -97,7 +97,7 @@ In August for payroll deductions from January - June, and in March for payroll d
         <div class="col-12 col-sm-5">
             <img src="{{ asset('img/donor.png') }}" alt="Donor" class="py-5 img-fluid">
             <p>
-            Making changes to your pledge outside of Campaign time? Please contact <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> directly or submit a <a href="https://www2.gov.bc.ca/gov/content/careers-myhr" class="text-primary" target="_blank">AskMyHR</a> service request to make any changes on your existing pledge outside the annual campaign/open enrollment period (September-December). 
+            Making changes to your pledge outside of Campaign time? Please contact <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> directly or submit an <a href="https://www2.gov.bc.ca/gov/content/careers-myhr" class="text-primary" target="_blank">AskMyHR</a> service request to make any changes on your existing pledge outside the annual campaign/open enrollment period (September-December). 
             </p>
             <p><b>Questions?</b> <a href="http://www.gov.bc.ca/pecsf" class="text-primary" target="_blank">www.gov.bc.ca/pecsf</a>         <b>Email:</b> <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a></p>
         </div>

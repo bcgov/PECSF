@@ -90,7 +90,7 @@ class CharityController extends Controller
 
         $preselectedData = [
             'frequency' => 'bi-weekly',
-            'amount' => 20,
+            'amount' => 50,
         ];
 
         if (Session::has('amount')) {
@@ -167,6 +167,9 @@ class CharityController extends Controller
         $_charities = Charity::whereIn('id', $selectedCharities['id'])
             ->get(['id', 'charity_name as text']);
         $total = 0;
+        // To remove rounding error calculate total and all remaning amount/percent should be added to last.
+        $totalPercent = 0;
+        $totalAmount = 0;
         foreach ($_charities as $charity) {
             $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
             if (!$charity['additional']) {
@@ -179,16 +182,23 @@ class CharityController extends Controller
             if (isset($selectedCharities['percentage-distribution'])) {
                 $charity['percentage-distribution'] = $selectedCharities['percentage-distribution'][array_search($charity['id'], $selectedCharities['id'])];
             }
-
+            
             if (isset($selectedCharities['amount-distribution'])) {
                 $charity['amount-distribution'] = $selectedCharities['amount-distribution'][array_search($charity['id'], $selectedCharities['id'])];
             }
 
+            $charity['amount-distribution'] = $amount * $charity['percentage-distribution'] / 100;
+
+            $totalPercent += $charity['percentage-distribution'];
+            $totalAmount += $charity['amount-distribution'];
             array_push($charities, $charity);
         }
-
+        $lastIndex = count($charities) - 1;
+        $charities[$lastIndex]['percentage-distribution'] = $charities[$lastIndex]['percentage-distribution'] + (100 - $totalPercent);
+        $charities[$lastIndex]['amount-distribution'] = $charities[$lastIndex]['amount-distribution'] + ($amount - $totalAmount);
         foreach ($charities as $key => $value) {
             $total += $value['amount-distribution'] * 26;
+            $total = round($total);
         }
 
         $view = 'distribution';
