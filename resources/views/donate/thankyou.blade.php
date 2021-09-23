@@ -3,18 +3,17 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-12 col-sm-7 pt-5  text-center">
+        <div class="col-12 text-center">
+            <img src="{{asset('img/thank-you.png')}}" alt="" class="p-3">
             <h1 class=" mt-5">Thank you</h1>
             <p class="text-muted"></p>
-<p class="mt-5 font-weight-bold text-center"><b>A word from the PECSF team on behalf of charity organisations.</b></p>
-<p class="mt-3 font-weight-bold text-center"><b>Maybe we can mention about the volunteering program and how to find out more.</b></p>
-<a class="btn btn-primary mt-5 mb-5" href="mailto:">Email me a copy of the summary</a>
+<p class="mt-5 font-weight-bold text-center"><b>Thank you, Employee A for your generous donation to PECSF. <br>
+Every contribution makes a huge impact in your community</b></p>
+<a class="btn btn-primary mt-5 mb-5" href="mailto:">Email Donation Summary</a>
+<a class="btn btn-outline-primary mt-5 mb-5">View Donation History</a>
 <br>
-<a class="btn btn-primary mt-5" href="/">Done</a>
 </div>
-        <div class="col-12 col-sm-5">
-            <img src="{{ asset('img/donor.png') }}" alt="Donor" class="py-5 img-fluid">
-        </div>
+        
     </div>
 </div>
 @endsection

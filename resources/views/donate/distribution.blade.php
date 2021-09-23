@@ -9,7 +9,7 @@
     <div class="form-check form-switch p-0">
         <label class="form-check-label" for="distributeByDollarAmount">
             <input class="form-check-input" type="checkbox" id="distributeByDollarAmount" name="distributionByAmount" value="true" checked>
-            <i></i>Distribute by Percentage
+            <i></i><span id="percentage-dollar-text">Distribute by Dollar Amount</span>
         </label>
     </div>
     <button class="btn btn-link">Distribute evenly</button>
@@ -71,10 +71,11 @@
             if (!$(this).prop("checked")) {
                 $(".by-amount").removeClass("d-none");
                 $(".by-percent").addClass("d-none"); 
+                $("#percentage-dollar-text").html("Distribute by Percentage");
             } else {
                 $(".by-percent").removeClass("d-none");
                 $(".by-amount").addClass("d-none");
-                
+                $("#percentage-dollar-text").html("Distribute by Dollar Amount");
             }
         });
         $(document).on('change', '.percent-input', function () {

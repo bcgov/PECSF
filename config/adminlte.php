@@ -44,9 +44,9 @@ return [
     |
     */
 
-    'logo' => '<b>PECSF</b>',
+    'logo' => '&nbsp;',
     'logo_img' => 'img/pecsf-logo.png',
-    'logo_img_class' => 'brand-image elevation-3',
+    'logo_img_class' => 'brand-image float-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'PECSF',
@@ -120,7 +120,7 @@ return [
     */
 
     'classes_body' => '',
-    'classes_brand' => '',
+    'classes_brand' => 'text-center',
     'classes_brand_text' => '',
     'classes_content_wrapper' => '',
     'classes_content_header' => '',

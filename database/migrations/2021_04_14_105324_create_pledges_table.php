@@ -15,7 +15,11 @@ class CreatePledgesTable extends Migration
     {
         Schema::create('pledges', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('user_id')->constrained();
+            $table->string('frequency')->comment('one time|bi-weekly');
+            $table->float('amount');
+            $table->float('goal_amount');
+            $table->timestamp('report_generated_at')->nullable();
             $table->timestamps();
         });
     }

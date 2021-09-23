@@ -27,4 +27,9 @@ class Charity extends Model
     protected $casts = [
         'effective_date_of_status' => 'date'
     ];
+
+    public function pledges() {
+        return $this->belongsToMany('App\Models\Pledge', 'pledge_charities', 'charity_id', 'pledge_id')
+        ->using('App\Models\PledgeCharity')->withTimestamps();
+    }
 }

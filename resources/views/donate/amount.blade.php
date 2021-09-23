@@ -15,14 +15,14 @@
             </label>
         </div>
     </div>
-    <div class="bi-weekly-amounts" style="{{$preselectedData['frequency'] == 'one-time' ? 'display:none' : ''}}">
+    <div class="predefined-amounts" >
         <div class="btn-group d-flex mt-3 amounts btn-group-toggle" data-toggle="buttons" role="group" aria-label="Select amount">
             @foreach ($amounts["bi-weekly"] as $amount)
                 <label class="mr-2 btn btn-outline-primary rounded btn-lg d-flex align-items-center justify-content-center" for="amount-{{$amount['amount']}}">
                     <input type="radio" name="amount" class="btn-check" id="amount-{{$amount['amount']}}" autocomplete="off" {{ ($amount['selected'] ? 'checked' : '') }} value="{{$amount['amount']}}" >
                     <div>
                         <div><b>{{$amount['text']}}</b></div>
-                        <small>Bi-Weekly</small>
+                        <small class="frequency-text">{{ $preselectedData['frequency'] == 'one-time' ? 'One-time' : 'Bi-Weekly'}}</small>
                     </div>
                 </label>
             @endforeach
@@ -47,7 +47,7 @@
 
 @push('css')
     <style>
-        .bi-weekly-amounts {
+        .predefined-amounts {
             overflow: auto;
         }
         .amounts > div {
@@ -77,7 +77,7 @@
 
         $(document).on('change', 'input[name=frequency]', function() {
             const frequency = $(this).val();
-            const amount = (frequency == 'bi-weekly') ? $("input[type=radio][name=amount]").val() : '';
+            const amount = $("input[type=radio][name=amount]:checked").val() != '' ? $("input[type=radio][name=amount]:checked").val() : $("input[type=number][name=amount]").val();
             selectAmount(frequency, amount);
         });
 
@@ -85,6 +85,8 @@
             const amount = $(this).val();
             const frequency = $("input[name=frequency]:checked").val();
             selectAmount(frequency, amount);
+            if (!amount) $(".custom-amount").show();
+            else $(".custom-amount").hide();
         });
 
         $(document).on('change', 'input[type=number][name=amount]', function() {
@@ -92,26 +94,28 @@
         });
 
         function selectAmount(frequency, amount) {
-            $(".custom-amount").hide();
             switch(frequency) {
                 case 'bi-weekly': 
-                    $(".bi-weekly-amounts").show();
+                    $(".frequency-text").html("Bi-Weekly");
                     break;
                 case 'one-time':
-                    $(".bi-weekly-amounts").hide();
+                    $(".frequency-text").html("One-time");
                     break;
-            }
-
-            if (!amount) {
-                $(".custom-amount").show();
             }
 
             prepareForm();
         }
 
         function prepareForm() {
+            let amount = null;
+            const frequency = $("input[name=frequency]:checked").val();
+            if (frequency === 'one-time') {
+                amount = $("input[type=number][name=amount]").val();
+            } else {
+                amount = $("input[type=radio][name=amount]:checked").val() != '' ? $("input[type=radio][name=amount]:checked").val() : $("input[type=number][name=amount]").val()
+            }
             $("#amount-values").html(tmplParse(tmplAmount, {
-                amount: $("input[type=radio][name=amount]:checked").val() ? $("input[type=radio][name=amount]:checked").val() : $("input[type=number][name=amount]").val(),
+                amount: amount,
                 frequency: $("input[name=frequency]:checked").val()
             }));
         }

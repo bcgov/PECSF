@@ -15,6 +15,12 @@ class CreatePledgeCharitiesTable extends Migration
     {
         Schema::create('pledge_charities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('charity_id')->constrained();
+            $table->foreignId('pledge_id')->constrained();
+            $table->string('additional')->nullable();
+            /* $table->unsignedTinyInteger('cheque_pending')->default(0); */
+            $table->float('amount');
+            $table->float('goal_amount');
             $table->timestamps();
         });
     }
