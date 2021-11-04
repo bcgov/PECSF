@@ -43092,3 +43092,17 @@ a.text-muted:hover {
 .brand-link .brand-image {
   max-height: 100px;
 }
+
+.check-bullet {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+.check-bullet li {
+  padding-left: 1em;
+  text-indent: -1em;
+  margin: 1.2em;
+}
+.check-bullet li:before {
+  padding-right: 5px;
+}

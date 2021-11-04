@@ -14,5 +14,5 @@ abstract class SocialiteBaseController extends Controller {
     public function login() {
         return Socialite::driver($this->provider)->redirect();
     }
-    abstract public function handleCallback();
+    // abstract public function handleCallback();
 }

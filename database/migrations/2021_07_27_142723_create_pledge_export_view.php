@@ -16,8 +16,10 @@ class CreatePledgeExportView extends Migration
     {
         /* DB::statement("SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"); */
         DB::statement("CREATE OR REPLACE VIEW pledge_export as 
-            SELECT '' AS `GUID`, u.id AS EMPLOYEEID, u.name as EMPLOYEE_NAME, 
-            IF(STRCMP(p.frequency, 'bi-weekly') = 0, 'BiWeekly', 'One Time') as DonationType, p.created_at as Date,
+            SELECT '' AS `GUID`, u.name as EMPLOYEE_NAME, 
+            IF(STRCMP(p.frequency, 'bi-weekly') = 0, 'BiWeekly', 'One Time') as DonationType, 
+            IF(STRCMP(p.frequency, 'bi-weekly') = 0, 'PECSF', 'PECSF1') as DonationTypeCode, 
+            p.created_at as Date,
             pc.goal_amount as GoalAmount,
             YEAR(p.created_at) as year,
             pc.amount as DonationAmount, 

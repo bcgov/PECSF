@@ -230,15 +230,16 @@ return [
         ],
 
         [
-            'text' => 'Donation',
-            'url' => '/donate',
+            'text' => 'Donations',
+            'url' => '/donations',
             'icon' => 'give',
-            'active' => ['/donate/*'],
+            'active' => ['/donations/*', '/donate','/donate/*'],
         ],
         [
             'text' => 'Volunteering',
-            'url' => '#',
-            'icon' => 'volunteer'
+            'url' => '/volunteering',
+            'icon' => 'volunteer',
+            'active' => ['volunteering/*']
         ],
         [
             'text' => 'Connect',

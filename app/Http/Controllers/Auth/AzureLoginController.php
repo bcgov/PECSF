@@ -21,24 +21,20 @@ class AzureLoginController extends SocialiteBaseController {
     public function login()
     {
         return Socialite::driver($this->provider)
-            ->scopes(['openid', 'email'])
+            ->scopes(['openid', 'email', 'profile'])
             ->redirect();
     }
 
-    public function handleCallback() {
+    public function handleCallback(Request $request) {
         try {
 
-            $user = Socialite::driver($this->provider)->user();
-            $userAttributes = array_keys($user->user);
-            forEach($userAttributes as $value) {
-                if (Str::contains($value, 'bcgovGUID')) {
-                    dd("BCGOVGUID:". $user[$value]);
-                    // TODO: Just for the sake of Testing.
-                }
-            }
-            // dd($user->user['extension_f1b981edaa4c4caebbbd1be82ae80a75_bcgovGUID']);
+            // $token = Socialite::with($this->provider)->getAccessTokenResponse($request->code);
+            $user = Socialite::with($this->provider)->user();
+            
+            $idToken = $user->accessTokenResponseBody['id_token'];
+            $parsedToken = $this->parseToken($idToken);
+            
             $isUser = User::where($this->col, $user->id)->first();
-
             if ($isUser) {
                 Auth::login($isUser);
                 return redirect('/');
@@ -47,14 +43,21 @@ class AzureLoginController extends SocialiteBaseController {
                     'name' => $user->name,
                     'email' => $user->email,
                     $this->col => $user->id,
+                    'samaccountname' => $parsedToken->samaccountname,
+                    'guid' => $parsedToken->bcgovGUID,
                     'password' => ''
                 ]);
 
                 Auth::login($createUser);
-                return redirect('/dashboard');
+                return redirect('/');
             }
         } catch (Exception $exception) {
             abort(500);
         }
+    }
+
+    private function parseToken ($token) {
+        $base64Data = explode(".", $token)[1];
+        return json_decode(base64_decode($base64Data));
     }
 }

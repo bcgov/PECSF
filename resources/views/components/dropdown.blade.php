@@ -1,9 +1,9 @@
-@props(['list' => [], 'label'])
+@props(['list' => [], 'label', 'selected' => null])
 <label>
     {{ __($label ?? '') }}
     <select {!! $attributes->merge(['class' => 'form-control']) !!}>
         @foreach ($list as $item)
-            <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+            <option value="{{ $item['id'] }}" {{$selected != null && $item['id'] == $selected ? 'selected': '' }}>{{ $selected }}</option>
         @endforeach
     </select>
 </label>

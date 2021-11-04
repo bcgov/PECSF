@@ -20,7 +20,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'azure_id'
+        'azure_id',
+        'samaccountname',
+        'guid',
     ];
 
     /**

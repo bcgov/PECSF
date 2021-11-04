@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\PledgeController;
+use App\Http\Controllers\VolunteeringController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,9 @@ Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCal
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('donations', function () {
+    return view('donations.index');
+})->middleware(['auth'])->name('donations.list');
 Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function () {
     Route::get('/select', [CharityController::class, 'index'])->name('select');
     Route::post('/remove', [CharityController::class, 'remove'])->name('select');
@@ -44,5 +48,8 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
 });
 
+Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
+    Route::get('/', [VolunteeringController::class, 'index'])->name('index');
+});
 
 Route::get('report', [PledgeCharityController::class, 'index'])->name('report');

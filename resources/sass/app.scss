@@ -7,3 +7,20 @@
 // adminlte
 @import 'node_modules/admin-lte/build/scss/adminlte.scss';
 @import 'adminlte-override';
+
+.check-bullet {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+
+    li {
+        padding-left: 1em;
+        text-indent: -1em;
+        margin: 1.2em;
+    }
+
+    li:before {
+        padding-right: 5px;
+    }
+
+}
