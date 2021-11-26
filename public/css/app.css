@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);
+@import url(https://fonts.googleapis.com/css?family=Nunito:wght@400;600;700&display=swap);
 @charset "UTF-8";
 /*!
  *   AdminLTE v3.1.0
@@ -43105,4 +43105,74 @@ a.text-muted:hover {
 }
 .check-bullet li:before {
   padding-right: 5px;
+}
+
+.formsteps .divider {
+  border-bottom: 1.5px solid;
+  border-color: #adb5bd;
+  height: 27px;
+  margin-left: -60px;
+  margin-right: -60px;
+}
+.formsteps .divider.done {
+  border-bottom: 3px solid;
+  border-color: #1A5A96;
+}
+.formsteps .step {
+  /* &:before {
+      content: '';
+      display: inline-block;
+      width: 100%;
+      border-bottom: 1px solid;
+      border-color: $blue;
+      position: absolute;
+      margin-top: 25px;
+  } */
+}
+.formsteps .step .count {
+  background-color: #f8f9fa;
+  color: #adb5bd;
+  border: 2px solid;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5em;
+  text-align: center;
+  padding-top: 8px;
+  margin: 0 auto;
+}
+.formsteps .step.active .count {
+  border-color: #1A5A96;
+}
+.formsteps .step.active .title {
+  color: #1A5A96;
+  font-weight: bold;
+}
+.formsteps .step.done .count {
+  border-color: #1A5A96;
+  background-color: #1A5A96;
+  color: #fff;
+}
+.formsteps .step.done .title {
+  color: #000;
+  font-weight: bold;
+}
+
+.expander {
+  border: 1px solid #1A5A96;
+  border-radius: 50%;
+  background-color: #1A5A96;
+  color: #fff;
+  width: 1.05em;
+  height: 1.05em;
+  text-align: center;
+  font-size: 1em;
+  line-height: 0.89em;
+}
+.expander::after {
+  content: "+";
+}
+
+[aria-expanded=true] .expander::after {
+  content: "-";
 }

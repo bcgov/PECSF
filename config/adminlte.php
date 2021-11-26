@@ -247,6 +247,11 @@ return [
             'icon' => 'connect'
         ],
         [
+            'text' => 'Contact',
+            'url' => '/contact',
+            'icon' => 'connect'
+        ],
+        [
             'text' => 'PECSF',
             'url' => 'https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf',
             'icon' => 'external-link',
