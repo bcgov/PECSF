@@ -242,11 +242,6 @@ return [
             'active' => ['volunteering/*']
         ],
         [
-            'text' => 'Connect',
-            'url' => '#',
-            'icon' => 'connect'
-        ],
-        [
             'text' => 'Contact',
             'url' => '/contact',
             'icon' => 'connect'

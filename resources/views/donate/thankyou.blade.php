@@ -9,8 +9,9 @@
             <p class="text-muted"></p>
 <p class="mt-5 font-weight-bold text-center"><b>Thank you, Employee A for your generous donation to PECSF. <br>
 Every contribution makes a huge impact in your community</b></p>
-<a class="btn btn-primary mt-5 mb-5" href="mailto:">Email Donation Summary</a>
-<a class="btn btn-outline-primary mt-5 mb-5">View Donation History</a>
+<p class=' mt-5'>Please Note all PECSF payroll deductions will automatically show on your T4 received each spring. <br> Should you require an additional copy, click the button below.</p>
+<a class="btn btn-primary mb-5" href="{{route('donate.save.pdf')}}">Download Donation Summary</a>
+<a class="btn btn-outline-primary mb-5" href="{{ route('donations.list')}}">View Donation History</a>
 <br>
 </div>
         

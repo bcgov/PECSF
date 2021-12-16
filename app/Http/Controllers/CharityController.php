@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-
+use PDF;
 class CharityController extends Controller
 {
     /**
@@ -223,6 +223,81 @@ class CharityController extends Controller
         return view($view, compact('charities', 'individualAmount', 'individualPercent', 'total', 'annual_amount', 'onetime', 'weekly', 'frequency', 'multiplier'));
     }
 
+    public function savePDF() {
+
+        $forPDF = Session::get('forPDF');
+
+        Session::put('charities', $forPDF['charities']);
+        Session::put('amount', $forPDF['amount']);
+
+        $selectedCharities = Session::get('charities');
+
+        $amount = Session::get('amount')['amount'];
+        $freq = Session::get('amount')['frequency'];
+
+        $annual_amount = $amount;
+        $onetime = $amount;
+        $weekly = 0;
+        if ($freq == 'bi-weekly') {
+            $annual_amount = $amount * 26;
+            $weekly = $amount;
+            $onetime = 0;
+        }
+
+        $selectedCharities = Session::get('charities');
+
+        $individualAmount = round($amount / count($selectedCharities['id']), 2);
+        $individualPercent = round(100 / count($selectedCharities['id']), 2);
+
+        $charities = [];
+
+        $_charities = Charity::whereIn('id', $selectedCharities['id'])
+            ->get(['id', 'charity_name as text']);
+        $total = 0;
+        // To remove rounding error calculate total and all remaning amount/percent should be added to last.
+        $totalPercent = 0;
+        $totalAmount = 0;
+
+        foreach ($_charities as $charity) {
+            $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
+            if (!$charity['additional']) {
+                $charity['additional'] = '';
+            }
+
+            $charity['percentage-distribution'] = $individualPercent;
+            $charity['amount-distribution'] = $individualAmount;
+
+            if (isset($selectedCharities['percentage-distribution'])) {
+                $charity['percentage-distribution'] = $selectedCharities['percentage-distribution'][array_search($charity['id'], $selectedCharities['id'])];
+            }
+            
+            if (isset($selectedCharities['amount-distribution'])) {
+                $charity['amount-distribution'] = $selectedCharities['amount-distribution'][array_search($charity['id'], $selectedCharities['id'])];
+            }
+
+            $charity['amount-distribution'] = round($amount * $charity['percentage-distribution'] / 100, 2);
+
+            $totalPercent += $charity['percentage-distribution'];
+            $totalAmount += $charity['amount-distribution'];
+            array_push($charities, $charity);
+        }
+        $lastIndex = count($charities) - 1;
+        $charities[$lastIndex]['percentage-distribution'] = $charities[$lastIndex]['percentage-distribution'] + (100 - $totalPercent);
+        $charities[$lastIndex]['amount-distribution'] = $charities[$lastIndex]['amount-distribution'] + ($amount - $totalAmount);
+        if ($freq == 'bi-weekly') {
+            foreach ($charities as $key => $value) {
+                $total += $value['amount-distribution'] * 26;
+                $total = round($total);
+            }
+        }
+
+        $frequency = $freq == 'bi-weekly' ? "bi-weekly" : 'one time';
+        $multiplier = $freq == 'bi-weekly' ? 26 : 1;
+        
+        $pdf = PDF::loadView('donate.pdf', compact('charities', 'individualAmount', 'individualPercent', 'total', 'annual_amount', 'onetime', 'weekly', 'frequency', 'multiplier'));
+        return $pdf->download('Donation Summary.pdf');        
+    }
+
     public function confirmDonation(CreatePledgeRequest $request)
     {
         $input = $request->validated();
@@ -245,6 +320,15 @@ class CharityController extends Controller
             ]);
         }
         DB::commit();
+
+        $forPDF = [
+            'charities' => $request->session()->get('charities'),
+            'amount' => $request->session()->get('amount'),
+            'request' => $request->validated()
+        ];
+
+        $request->session()->put('forPDF', $forPDF);
+        
         $request->session()->forget(['charities', 'amount']);
         return redirect()->route('donate.save.thank-you');
     }

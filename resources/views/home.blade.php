@@ -1,40 +1,18 @@
 @extends('adminlte::page')
 
 @section('content')
-<div id="carouselExampleControls" class="carousel slide m-n3 mt-n5" data-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img class="d-block w-100" src="{{asset('img/home/1.jpeg')}}" alt="First slide">
-    </div>
-    <div class="carousel-item">
-      <img class="d-block w-100" src="{{asset('img/home/2.jpeg')}}" alt="Second slide">
-    </div>
-    <div class="carousel-item">
-      <img class="d-block w-100" src="{{asset('img/home/3.jpeg')}}" alt="Third slide">
-    </div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div>
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <h2 class="text-center">Welcome, {{ Auth::user()->name }}</h2>
-            <p class="text-center"><b>Choose from the options below:</b></p>
+            <h1 class="text-center">Welcome, {{ Auth::user()->name }}</h1>
+            <p class="text-center h4"><b>Choose from the options below:</b></p>
 
-            <div class="row p-0">
+            <div class="row p-3">
                 <div class=" col-md-4 p-2">
                     <div class="card" style="height:220px" >
                         <div class="card-body text-center">
-                            <img src="/svgs/volunteer.svg" alt="Connect">
-
-                            <p class="text-primary "> Volunteer</p>
+                            <img src="/svgs/volunteer.svg" alt="Volunteer">
+                            <p class="text-primary "> <a style="font-size:22px;" href="/volunteering">Volunteer</a></p>
                             <p class="mt-1"> Make a local impact by helping those in need.</p>
                             <i class="fas fa-arrow-right"></i>
                         </div>
@@ -61,8 +39,8 @@
                     <div class="card" style="height:220px" >
                         <div class="card-body text-center">
                             <img src="/svgs/connect.svg" alt="Connect">
-                            <p class="text-primary "> Connect</p>
-                            <p class="mt-1"> Get involved with fun and engaging community events.</p>
+                            <p class="text-primary ">  <a style="font-size:22px;" href="/contact">Contact </a></p>
+                            <p class="mt-1">Got questions? We are here to help you!</p>
                             <i class="fas fa-arrow-right"></i>
                         </div>
                     </div>
@@ -72,6 +50,45 @@
 
         </div>
     </div>
-    
 </div>
+<div class="mx-n3 mt-5 bg-primary">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-5 offset-md-1 pt-5">
+        <br><br>
+        <br><br>
+        <h1 class="mt-5 p1-5" style="font-size: 4em;">
+          Generosity in Action
+        </h1>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="py-5">
+          <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img class="d-block w-100" src="{{asset('img/home/01.jpeg')}}" alt="First slide">
+              </div>
+              <div class="carousel-item">
+                <img class="d-block w-100" src="{{asset('img/home/02.jpg')}}" alt="Second slide">
+              </div>
+              <div class="carousel-item">
+                <img class="d-block w-100" src="{{asset('img/home/04.jpg')}}" alt="Third slide">
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  
 @endsection

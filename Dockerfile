@@ -4,6 +4,7 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y openssl zip unzip 
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+	libxrender-dev \
     libfreetype6 \
     libc6 \
     libgd3 \

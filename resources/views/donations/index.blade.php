@@ -12,10 +12,13 @@
         <div class="d-flex justify-content-center justify-content-lg-start mb-2" role="tablist">
             <div class="px-4 py-1 mr-2 border-bottom border-primary">
                 <x-button role="tab" href="#" style="">
-                    Donation Summary
+                    Donation History
                 </x-button>
             </div>
         </div>
+        @if(count($pledges) > 0)
+            @include('donations.partials.history')
+        @else
         <div class="text-center text-primary">
             <p>
                 <strong>No Campaign has been started yet.</strong>
@@ -30,6 +33,7 @@
             </p>
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
         </div>
+        @endif
     </div>
 </div>
 

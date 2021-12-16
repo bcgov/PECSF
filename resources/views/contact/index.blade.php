@@ -13,15 +13,15 @@
         <div class="col-12">
             <h2>FAQ</h2>
             <section>
-                @foreach($sections as $section)
+                @foreach($sections as $section => $qnas)
                 <h5>{{$section}}</h5>
                 <div id="accordion{{$section}}">
-                    @for ($i = 0; $i < 2; $i++)
+                    @foreach($qnas as $i => $qna)
                     <div class="card">
-                        <div class="card-header" id="heading{{$i}}">
-                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}" aria-expanded="{{$i==0 ? 'true' : 'false'}}" aria-controls="collapse{{$i}}">
+                        <div class="card-header" id="heading{{$i}}{{$section}}">
+                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'true' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
                                 <button class="btn btn-link">
-                                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis sit itaque facere 
+                                    {{$qna['question']}}
                                 </button>
                                 <div class="flex-fill"></div>
                                 <div class="expander">
@@ -30,13 +30,13 @@
                             </h5>
                         </div>
 
-                        <div id="collapse{{$i}}" class="collapse {{$i==0 ? 'show' : ''}}" aria-labelledby="heading{{$i}}" data-parent="#accordion{{$section}}">
+                        <div id="collapse{{$i}}{{$section}}" class="collapse {{$i==0 ? 'show' : ''}}" aria-labelledby="heading{{$i}}{{$section}}" data-parent="#accordion{{$section}}">
                             <div class="card-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                {!! $qna['answer'] !!}
                             </div>
                         </div>
                     </div>
-                    @endfor
+                    @endforeach
                 </div>
                 @endforeach
             </section>

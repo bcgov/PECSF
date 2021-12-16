@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ContactFaqController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\PledgeController;
 use App\Http\Controllers\VolunteeringController;
@@ -30,9 +31,7 @@ Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCal
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('donations', function () {
-    return view('donations.index');
-})->middleware(['auth'])->name('donations.list');
+Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
 Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function () {
     Route::get('/select', [CharityController::class, 'index'])->name('select');
     Route::post('/remove', [CharityController::class, 'remove'])->name('select');
@@ -44,6 +43,8 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
     Route::post('/select', [CharityController::class, 'saveCharities'])->name('save.select');
     Route::post('/amount', [CharityController::class, 'saveAmount'])->name('save.amount');
     Route::post('/summary', [CharityController::class, 'confirmDonation'])->name('save.summary');
+
+    Route::get('/download-summary', [CharityController::class, 'savePDF'])->name('save.pdf');
 
 
     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
