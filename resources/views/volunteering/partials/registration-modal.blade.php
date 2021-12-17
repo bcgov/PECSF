@@ -123,6 +123,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="carousel-item p-3"  data-step="4">
+                            <div class="row mt-5">
+                                <div class="col-12 col-md-6 offset-md-3">
+                                    <div class="step-1 text-center">
+                                        <p class="text-muted">
+                                            You have successfully registered as a volunteer with PECSF. <br>
+                                            Click the button below to begin volunteer training process.
+                                        </p>
+                                        <div class="m-5">
+                                            <img src="{{asset('img/volunteering-intro/finished-registraion.jpeg')}}" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -133,7 +148,7 @@
                 <div class="flex-fill"></div>
                 <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                 <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
-                <x-button href="#" role="button" class="signup-btn d-none">Sign up for more training</x-button>
+                <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
             </div>
         </div>
     </div>
