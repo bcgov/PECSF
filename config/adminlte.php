@@ -242,6 +242,12 @@ return [
             'active' => ['volunteering/*']
         ],
         [
+            'text' => 'Challenge',
+            'url' => '/challenge',
+            'icon' => 'challenge',
+            'active' => ['challenge/*']
+        ],
+        [
             'text' => 'Contact',
             'url' => '/contact',
             'icon' => 'connect'

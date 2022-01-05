@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\PledgeCharityController;
@@ -52,6 +53,10 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
+});
+
+Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
+    Route::get('/', [ChallengeController::class, 'index'])->name('index');
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
