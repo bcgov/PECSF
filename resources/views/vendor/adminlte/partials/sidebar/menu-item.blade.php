@@ -5,7 +5,10 @@
     {{-- Header --}}
     @include('adminlte::partials.sidebar.menu-item-header')
 
+@elseif ($menuItemHelper->isSubmenu($item))
 
+    {{-- Treeview menu --}}
+    @include('adminlte::partials.sidebar.menu-item-treeview-menu')
 
 @elseif ($menuItemHelper->isLink($item))
 

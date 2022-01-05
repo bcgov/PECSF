@@ -4,14 +4,17 @@
        href="{{ $item['href'] }}" @if(isset($item['target'])) target="{{ $item['target'] }}" @endif
        {!! $item['data-compiled'] ?? '' !!}>
 
-        {{-- <i class="{{ $item['icon'] ?? 'far fa-fw fa-circle' }} {{
-            isset($item['icon_color']) ? 'text-'.$item['icon_color'] : ''
-        }}"></i> --}}
-        <i>
-        <svg class="icon mr-2" style="width:24px; height: 24px">
-          <use xlink:href="{{asset('img/icons/sprite.svg')}}#sprite-{{$item['icon'] ?? 'home'}}"></use>
-        </svg>
-        </i>
+       @if (str_contains($item['icon'], ' far '))
+            <i class="{{ $item['icon'] ?? 'far fa-fw fa-circle' }} {{
+                isset($item['icon_color']) ? 'text-'.$item['icon_color'] : ''
+            }}"></i> 
+        @else
+            <i>
+            <svg class="icon mr-2" style="width:24px; height: 24px">
+                <use xlink:href="{{asset('img/icons/sprite.svg')}}#sprite-{{$item['icon'] ?? 'home'}}"></use>
+            </svg>
+            </i>
+        @endif
         <p style="vertical-align:middle">
             {{ $item['text'] }}
 

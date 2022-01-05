@@ -3,9 +3,17 @@
 // Variables
 @import 'variables';
 
+// fontawesome
+$fa-font-path:"../webfonts";
+@import "@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "@fortawesome/fontawesome-free/scss/solid.scss";
+@import "@fortawesome/fontawesome-free/scss/regular.scss";
+@import "@fortawesome/fontawesome-free/scss/brands.scss";
+
 // adminlte
 @import 'node_modules/admin-lte/build/scss/adminlte.scss';
 @import 'adminlte-override';
+
 
 .check-bullet {
     list-style: none;

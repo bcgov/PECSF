@@ -26,6 +26,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.15.4",
         "admin-lte": "^3.1.0"
     }
 }
