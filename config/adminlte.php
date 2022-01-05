@@ -258,6 +258,23 @@ return [
             'icon' => 'external-link',
             'target' => '_blank'
         ],
+        [
+            'text'    => 'Administration',
+            'icon'    => 'nav-icon far fa-plus-square',
+
+            'submenu' => [
+                [
+                    'text' => 'Campaign Year',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '/campaignyears',
+                ],
+                [
+                    'text' => 'Other setting (TDB)',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '#',
+                ],
+            ],
+        ],
     ],
 
     /*

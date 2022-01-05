@@ -12,6 +12,7 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\PledgeController;
 use App\Http\Controllers\VolunteeringController;
+use App\Http\Controllers\Admin\CampaignYearController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,3 +63,5 @@ Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(funct
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
 
 Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
+
+Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
