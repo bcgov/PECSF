@@ -8,15 +8,6 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-<!--        
-        <div class="d-flex justify-content-center justify-content-lg-start mb-2" role="tablist">
-            <div class="px-4 py-1 mr-2 border-bottom border-primary">
-                <x-button role="tab" href="#" style="">
-                    Donation History
-                </x-button>
-            </div>
-        </div>
-    -->
 
         <form action="{{route('campaignyears.store')}}" method="post">
             @csrf
@@ -102,7 +93,7 @@
 
             <div class="form-row">
                 <a href="{{ route('campaignyears.index') }}"> 
-                   <button type="button" class="btn btn-default float-right ">back</button>
+                   <button type="button" class="btn btn-primary float-right ">back</button>
                    </a>
                 </div>
             </div>

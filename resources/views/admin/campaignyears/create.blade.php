@@ -8,15 +8,6 @@
 @section('content')
 <div class="card">
     <div class="card-body">
-<!--        
-        <div class="d-flex justify-content-center justify-content-lg-start mb-2" role="tablist">
-            <div class="px-4 py-1 mr-2 border-bottom border-primary">
-                <x-button role="tab" href="#" style="">
-                    Donation History
-                </x-button>
-            </div>
-        </div>
-    -->
 
         <form action="{{ isset($campaign_year) ? route('campaignyears.update', $campaign_year->id ) : route('campaignyears.store') }}" 
             method="post">
@@ -49,7 +40,11 @@
                 <label for="number_of_periods">Pay Periods for Year</label>
                 <input type="text" class="form-control @error('number_of_periods') is-invalid @enderror" id="number_of_periods" name="number_of_periods" 
                 @if(isset($campaign_year))    
-                    value="{{ old('number_of_periods') ? old('number_of_periods') : $campaign_year->number_of_periods }}">
+                    @error('number_of_periods') 
+                        value="{{ old('number_of_periods') }}">
+                    @else
+                        value="{{ old('number_of_periods') ? old('number_of_periods') : $campaign_year->number_of_periods }}">
+                    @enderror
                 @else 
                     value="{{ old('number_of_periods') }}">
                 @endif
@@ -63,7 +58,11 @@
                 <label for="status">Status</label>
                 <select id="status" class="form-control @error('status') is-invalid @enderror" name="status">
                     @if(isset($campaign_year))  
-                        {{ $val_status = old('status') ? old('status') : $campaign_year->status }}    
+                        @error('status')
+                            {{ $val_status = old('status')  }}    
+                        @else
+                            {{ $val_status = old('status') ? old('status') : $campaign_year->status }}    
+                        @enderror
                     @else
                         {{ $val_status = old('status') ? old('status') : 'A' }}    
                     @endif
@@ -81,8 +80,12 @@
                 <div class="form-group col-md-4">
                     <label for="start_date">Campaign Start Date</label>
                     <input type="date" class="form-control  @error('start_date') is-invalid @enderror" name="start_date" 
-                    @if(isset($campaign_year))    
-                        value="{{ old('start_date') ? old('start_date') : $campaign_year->start_date->toDateString() }}">
+                    @if(isset($campaign_year)) 
+                        @error('start_date')   
+                            value="{{ old('start_date') }}">
+                        @else
+                            value="{{ old('start_date') ? old('start_date') : $campaign_year->start_date->toDateString() }}">
+                        @enderror
                     @else 
                         value="{{ old('start_date') }}">
                     @endif
@@ -95,8 +98,12 @@
                 <div class="form-group col-md-4">
                     <label for="end_date">Campaign End Date</label>
                     <input type="date" class="form-control  @error('end_date') is-invalid @enderror" name="end_date" 
-                    @if(isset($campaign_year))    
-                        value="{{ old('end_date') ? old('end_date') : $campaign_year->end_date->toDateString() }}">
+                    @if(isset($campaign_year))  
+                        @error('end_date')     
+                            value="{{ old('end_date') }}">
+                        @else
+                            value="{{ old('end_date') ? old('end_date') : $campaign_year->end_date->toDateString() }}">
+                        @enderror
                     @else 
                         value="{{ old('end_date') }}">
                     @endif
@@ -112,10 +119,14 @@
                 <div class="form-group col-md-4">
                     <label for="close_date">Campaign Closed  Date</label>
                         <input type="date" class="form-control  @error('close_date') is-invalid @enderror" name="close_date" 
-                    @if(isset($campaign_year))    
-                        value="{{ old('close_date') ? old('close_date') : $campaign_year->close_date->toDateString() }}">
+                    @if(isset($campaign_year)) 
+                        @error('close_date')        
+                            value="{{ old('close_date') }}">
+                        @else
+                            value="{{ old('close_date') ? old('close_date') : $campaign_year->close_date->toDateString() }}">
+                        @enderror
                     @else 
-                        value="{{ old('close_date') }}">
+                        value="{{ old('close_date') ? old('close_date') : date('Y').'-12-21' }}">
                     @endif
                     @error('close_date')
                     <div class="invalid-feedback">

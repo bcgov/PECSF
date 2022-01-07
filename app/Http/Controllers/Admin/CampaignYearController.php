@@ -61,12 +61,21 @@ class CampaignYearController extends Controller
         // read more on validation at http://laravel.com/docs/validation
         $request->validate([
             'calendar_year'       => 'required|numeric',
-            'number_of_periods'   => 'required|numeric',
+            'number_of_periods'   => 'required|numeric|min:1|max:99',
             'status'              => 'required',
             'start_date'          => 'required|date|before:end_date',
             'end_date'            => 'required|date|after:start_date',
             'close_date'          => 'required|date',
         ]);
+
+        // Addition Validation - Only one calendar year allow to be Active
+        if ($request->status == 'A') {
+            if ($cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->first() ) {
+                throw ValidationException::withMessages(
+                    ['status' => 'The Calendar Year ' . $cy->calendar_year . ' is active.']
+                );
+            }
+        }
 
             // store
             if (!(CampaignYear::where('calendar_year', $request->calendar_year)->exists())) {
@@ -91,7 +100,8 @@ class CampaignYearController extends Controller
 
             // redirect
             //Session::flash('message', 'Successfully created shark!');
-            return redirect()->route('campaignyears.index');
+            return redirect()->route('campaignyears.index')
+                ->with('success','Campaign Year ' . $request->calendar_year . ' created successfully');
         
     }
 
@@ -140,12 +150,21 @@ class CampaignYearController extends Controller
         //
 
         $request->validate([
-            'number_of_periods'   => 'required|numeric',
+            'number_of_periods'   => 'required|numeric|min:1|max:99',
             'status'              => 'required',
             'start_date'          => 'required|date|before:end_date',
             'end_date'            => 'required|date|after:start_date',
             'close_date'          => 'required|date',
         ]);
+
+        // Addition Validation - Only one calendar year allow to be Active
+        if ($request->status == 'A') {
+            if ($cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->first()) {
+                throw ValidationException::withMessages(
+                    ['status' => 'The Calendar Year ' .$cy->calendar_year . ' is active.']
+                );
+            }
+        }
     
         CampaignYear::where('id',$id)->update([
         
@@ -158,7 +177,7 @@ class CampaignYearController extends Controller
         ]);
 
         return redirect()->route('campaignyears.index')
-                        ->with('success','Campaign Year updated successfully');
+                ->with('success','Campaign Year ' . CampaignYear::find($id)->calendar_year . ' updated successfully');
     }
 
     /**
