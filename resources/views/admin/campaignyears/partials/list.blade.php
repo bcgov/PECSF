@@ -27,7 +27,7 @@
 
 
     <div class="card-body">
-                <table class="table table-bordered rounded">
+                <table class="table table-sm table-bordered rounded">
                     <thead>
                     <tr class="text-center bg-light">
                         <th>Calendar Years</th>
@@ -50,9 +50,9 @@
                                 <td>{{$campaign_year->close_date->format('F j, Y') }}</td>
                                 -->
                                 <td>
-                                    <a class="btn btn-info" href="{{ route('campaignyears.show',$campaign_year->id) }}">Show</a>
+                                    <a class="btn btn-info btn-sm"" href="{{ route('campaignyears.show',$campaign_year->id) }}">Show</a>
                     
-                                    <a class="btn btn-primary" href="{{ route('campaignyears.edit',$campaign_year->id) }}">Edit</a>
+                                    <a class="btn btn-primary btn-sm"" href="{{ route('campaignyears.edit',$campaign_year->id) }}">Edit</a>
                                 </td>
                             </tr>
                         
