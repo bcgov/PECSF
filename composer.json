@@ -18,7 +18,8 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "maatwebsite/excel": "^3.1",
-        "socialiteproviders/microsoft-azure": "^4.2"
+        "socialiteproviders/microsoft-azure": "^4.2",
+        "spatie/laravel-permission": "^4.2"
     },
     "require-dev": {
         "bfinlay/laravel-excel-seeder": "^2.1",

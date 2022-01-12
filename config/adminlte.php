@@ -261,7 +261,7 @@ return [
         [
             'text'    => 'Administration',
             'icon'    => 'nav-icon far fa-plus-square',
-
+            'can'     => ['setting'],
             'submenu' => [
                 [
                     'text' => 'Campaign Year',

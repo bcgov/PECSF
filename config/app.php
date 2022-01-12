@@ -177,6 +177,7 @@ return [
         \SocialiteProviders\Manager\ServiceProvider::class, // add
         //Barryvdh\DomPDF\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
     ],
 
     /*

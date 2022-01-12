@@ -64,4 +64,6 @@ Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['aut
 
 Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 
-Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
+});    

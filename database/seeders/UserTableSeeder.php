@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserTableSeeder extends Seeder
 {
@@ -52,6 +54,22 @@ class UserTableSeeder extends Seeder
         'name' => $user['name'],
         'password' => Hash::make($user['password']),
       ]);
+
         }
+
+      // Assign Role to User 
+      $users = User::all();
+
+      foreach ($users as $user) {
+
+        if (str_contains($user->email, 'employee')) {
+            // $user->assignRole('employee');
+        } elseif (str_contains($user->email, 'supervisor')) {
+            //$role = Role::where('name', 'admin')->first();
+            $user->assignRole('admin');
+        }
+
+      }
+
     }
 }
