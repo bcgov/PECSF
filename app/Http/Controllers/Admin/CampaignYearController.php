@@ -11,6 +11,18 @@ use Illuminate\Validation\ValidationException;
 class CampaignYearController extends Controller
 {
     /**
+     * create a new instance of the class
+     *
+     * @return void
+     */
+    function __construct()
+    {
+         $this->middleware('permission:setting');
+         //$this->middleware('permission:post-create', ['only' => ['create', 'store']]);
+         //$this->middleware('permission:post-create', ['except' => ['create', 'store']]);
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -63,19 +75,24 @@ class CampaignYearController extends Controller
             'calendar_year'       => 'required|numeric',
             'number_of_periods'   => 'required|numeric|min:1|max:99',
             'status'              => 'required',
-            'start_date'          => 'required|date|before:end_date',
-            'end_date'            => 'required|date|after:start_date',
+            'start_date'          => 'required|date|before_or_equal:end_date',
+            'end_date'            => 'required|date|after_or_equal:start_date',
             'close_date'          => 'required|date',
         ]);
 
         // Addition Validation - Only one calendar year allow to be Active
         if ($request->status == 'A') {
-            if ($cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->first() ) {
-                throw ValidationException::withMessages(
-                    ['status' => 'The Calendar Year ' . $cy->calendar_year . ' is active.']
-                );
+            $cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->get();
+
+            if (count($cy)) {
+                if (!(count($cy) == 1 && $cy[0]->calendar_year == $request->calendar_year)) {
+                    throw ValidationException::withMessages(
+                        ['status' => 'The Calendar Year ' . $cy[0]->calendar_year . ' is active.']
+                    );
+                }
             }
         }
+
 
             // store
             if (!(CampaignYear::where('calendar_year', $request->calendar_year)->exists())) {
@@ -152,17 +169,21 @@ class CampaignYearController extends Controller
         $request->validate([
             'number_of_periods'   => 'required|numeric|min:1|max:99',
             'status'              => 'required',
-            'start_date'          => 'required|date|before:end_date',
-            'end_date'            => 'required|date|after:start_date',
+            'start_date'          => 'required|date|before_or_equal:end_date',
+            'end_date'            => 'required|date|after_or_equal:start_date',
             'close_date'          => 'required|date',
         ]);
 
         // Addition Validation - Only one calendar year allow to be Active
         if ($request->status == 'A') {
-            if ($cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->first()) {
-                throw ValidationException::withMessages(
-                    ['status' => 'The Calendar Year ' .$cy->calendar_year . ' is active.']
-                );
+            $cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->get();
+
+            if (count($cy)) {
+                if (!(count($cy) == 1 && $cy[0]->id == $id)) {
+                    throw ValidationException::withMessages(
+                        ['status' => 'The Calendar Year ' . $cy[0]->calendar_year . ' is active.']
+                    );
+                }
             }
         }
     

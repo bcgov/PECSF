@@ -24,7 +24,7 @@ class CampaignYearSeeder extends Seeder
           ],[  
             'calendar_year' => $x,
             'number_of_periods' =>  26,
-            'status' => 'A',
+            'status' => 'I',
             'start_date' => Carbon::create($x -1, '09', '01'),
             'end_date' => Carbon::create($x -1, '11', '30'),
             'close_date' => Carbon::create($x , '12', '31'),
