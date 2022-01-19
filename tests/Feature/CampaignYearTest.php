@@ -123,7 +123,7 @@ class CampaignYearTest extends TestCase
     public function test_only_one_active_calendar_year_allow_validation()
     {
 
-        $cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->first();
+        $cy = CampaignYear::where('Status', 'A')->where('calendar_year','!=',2029)->orderByDesc('calendar_year')->first();
 
         $this->actingAs($this->admin);
         $response = $this->post('/campaignyears',
@@ -141,6 +141,16 @@ class CampaignYearTest extends TestCase
                 'status',
             ]);
         }
+    }
+
+    /** @test */
+    public function test_close_date_default_to_last_day_of_the_year()
+    {
+
+        $this->actingAs($this->admin);
+        $response = $this->get('/campaignyears/create');
+        $response->assertSee('-12-31');
+
     }
     
 }

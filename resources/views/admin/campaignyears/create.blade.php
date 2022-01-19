@@ -126,7 +126,7 @@
                             value="{{ old('close_date') ? old('close_date') : $campaign_year->close_date->toDateString() }}">
                         @enderror
                     @else 
-                        value="{{ old('close_date') ? old('close_date') : date('Y').'-12-21' }}">
+                        value="{{ old('close_date') ? old('close_date') : date('Y').'-12-31' }}">
                     @endif
                     @error('close_date')
                     <div class="invalid-feedback">
