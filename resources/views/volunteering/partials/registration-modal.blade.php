@@ -8,7 +8,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height: calc(100vh - 200px);">
                 <h4 class="modal-title text-center text-primary" id="volunteerRegistrationTitle">
                     Volunteer Registration
                 </h4>
