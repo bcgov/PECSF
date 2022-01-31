@@ -260,18 +260,18 @@ return [
         ],
         [
             'text'    => 'Administration',
-            'icon'    => 'nav-icon far fa-plus-square',
+            'icon'    => 'nav-icon far fa-sun',
             'can'     => ['setting'],
             'submenu' => [
                 [
                     'text' => 'Campaign Year',
-                    'icon' => 'nav-icon far fa-circle',
+                    'icon' => 'nav-icon far fa-calendar-alt',
                     'url'  => '/campaignyears',
                 ],
                 [
-                    'text' => 'Other setting (TDB)',
-                    'icon' => 'nav-icon far fa-circle',
-                    'url'  => '#',
+                    'text' => 'Administrator',
+                    'icon' => 'nav-icon far fa-id-card',
+                    'url'  => '/administrators',
                 ],
             ],
         ],
