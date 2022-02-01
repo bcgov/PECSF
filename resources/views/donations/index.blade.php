@@ -16,7 +16,7 @@
                 </x-button>
             </div>
         </div>
-        @if(count($pledges) > 0)
+        @if($pledges->count() > 0)
             @include('donations.partials.history')
         @else
         <div class="text-center text-primary">

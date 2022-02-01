@@ -22,11 +22,16 @@
             <td style="width:110px" class="by-percent ">
                 <div class="input-group input-group-sm mb-3">
                     <input type="number" class="form-control form-control-sm percent-input" name="percent[{{ $charity['id'] }}]" placeholder="" value="{{$charity['percentage-distribution']}}">
-                    <span class="ml-2">%</span>
+                    <div class="input-group-append">
+                        <span class="input-group-text">%</span>
+                    </div>
                 </div>
             </td>
             <td style="width:110px" class="by-amount d-none">
                 <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                    </div>
                     <input type="number" class="form-control form-control-sm amount-input" name="amount[{{ $charity['id'] }}]" placeholder="" value="{{$charity['amount-distribution']}}">
                 </div>
             </td>
@@ -43,11 +48,16 @@
             <td class="by-percent">
                 <div class="input-group input-group-sm mb-3">
                     <input type="text" class="form-control form-control-sm total-percent" placeholder="" disabled>
-                    <span class="ml-2">%</span>
+                    <div class="input-group-append">
+                        <span class="input-group-text">%</span>
+                    </div>
                 </div>
             </td>
             <td class="by-amount d-none ">
                 <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                    </div>
                     <input type="number" class="form-control form-control-sm total-amount" placeholder="" disabled>
                 </div>
             </td>

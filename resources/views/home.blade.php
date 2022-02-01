@@ -10,39 +10,32 @@
             <div class="row p-3">
                 <div class=" col-md-4 p-2">
                     <div class="card" style="height:220px" >
-                        <div class="card-body text-center">
-                            <img src="/svgs/volunteer.svg" alt="Volunteer">
-                            <p class="text-primary "> <a style="font-size:22px;" href="/volunteering">Volunteer</a></p>
-                            <p class="mt-1"> Make a local impact by helping those in need.</p>
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
+                        <a class="card-body text-center"  href="{{route('volunteering.index')}}">
+                          <img src="/svgs/volunteer.svg" alt="Volunteer">
+                          <p class="text-primary "> <span style="font-size:22px;">Volunteer</span></p>
+                          <p class="mt-1"> Make a local impact by helping those in need.</p>
+                          <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
                 <div class=" col-md-4 p-2">
-                  
                     <div class="card" style="height:220px" >
-                        <div class="card-body text-center">
+                        <a href="{{route('donate')}}" class="card-body text-center">
                             <img src="/svgs/give.svg" alt="Connect" height="32">
-
-                            <p class="text-primary "> <a style="font-size:22px;" href="/donate">Give </a></p>
-
-
+                            <p class="text-primary "> <span style="font-size:22px;" >Give </span></p>
                             <p>Support the charities of your choice with payroll deduction in any amount.</p>
                             <i class="fas fa-arrow-right"></i>
-                        </div>
+                        </a>
                     </div>
-
-                   
-
                 </div>
                 <div class=" col-md-4 p-2">
                     <div class="card" style="height:220px" >
-                        <div class="card-body text-center">
+                        <a href="{{route('contact')}}" class="card-body text-center">
                             <img src="/svgs/connect.svg" alt="Connect">
-                            <p class="text-primary ">  <a style="font-size:22px;" href="/contact">Contact </a></p>
+                            <p class="text-primary ">  <span style="font-size:22px;">Contact </span></p>
                             <p class="mt-1">Got questions? We are here to help you!</p>
                             <i class="fas fa-arrow-right"></i>
-                        </div>
+                        </a>
                     </div>
                 </div>
 

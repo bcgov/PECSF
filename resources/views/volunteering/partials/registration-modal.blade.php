@@ -43,10 +43,10 @@
                                         <p class="text-muted">
                                             Please use the dropdown menu below to select your organization. *
                                         </p>
-                                        <select name="" id="" class="form-control form-control-sm">
+                                        <select name="" id="" class="form-control form-control-sm" required>
                                             <option value="">Please select</option>
                                             @foreach(config('global.organizations') as $org) 
-                                                <option value="">{{$org}}</option>
+                                                <option value="{{$org}}">{{$org}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -61,7 +61,7 @@
                                         <p class="text-muted">
                                             Using the field below, please identify the number of years you have been volunteering with PECSF. *
                                         </p>
-                                        <input type="text" class="form-control form-control-sm" placeholder="Enter number of years">
+                                        <input type="text" class="form-control form-control-sm" placeholder="Enter number of years" required>
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                                             Using the dropdown below, please select your preferred volunteer role. * <br>
                                             To learn more about the available volunteer roles with PECSF, please click <a href="#" target="_blank">here</a>
                                         </p>
-                                        <select name="" id="" class="form-control form-control-sm">
+                                        <select name="" id="" class="form-control form-control-sm" required>
                                             <option value="">Please select</option>
                                             <option value="Coordinator">Coordinator</option>
                                             <option value="Canvasser">Canvasser</option>

@@ -3,7 +3,7 @@
         <div class="card-header" id="heading">
             <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse" aria-expanded="true" aria-controls="collapse">
                 <button class="btn btn-link font-weight-bold">
-                    2021
+                    {{$currentYear}}
                 </button>
                 <div class="flex-fill"></div>
                 <div class="expander">
@@ -45,7 +45,7 @@
         <div class="card-header" id="heading2">
             <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse2" aria-expanded="false" aria-controls="collapse">
                 <button class="btn btn-link font-weight-bold">
-                    2020
+                    2021
                 </button>
                 <div class="flex-fill"></div>
                 <div class="expander">
@@ -63,7 +63,7 @@
         <div class="card-header" id="heading3">
             <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse3" aria-expanded="false" aria-controls="collapse">
                 <button class="btn btn-link font-weight-bold">
-                    2019
+                    2020
                 </button>
                 <div class="flex-fill"></div>
                 <div class="expander">

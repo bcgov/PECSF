@@ -22,7 +22,7 @@
                     <input type="radio" name="amount" class="btn-check" id="amount-{{$amount['amount']}}" autocomplete="off" {{ ($amount['selected'] ? 'checked' : '') }} value="{{$amount['amount']}}" >
                     <div>
                         <div><b>{{$amount['text']}}</b></div>
-                        <small class="frequency-text">{{ $preselectedData['frequency'] == 'one-time' ? 'One-time' : 'Bi-Weekly'}}</small>
+                        <small class="frequency-text">{{ $preselectedData['frequency'] == 'one-time' ? 'One-time' : 'Bi-weekly'}}</small>
                     </div>
                 </label>
             @endforeach
