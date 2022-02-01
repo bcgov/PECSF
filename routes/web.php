@@ -28,17 +28,20 @@ use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 */
 
 Auth::routes();
-Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
-Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
-Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
+// Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
+// Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
+// Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
 // MS Graph API Authenication -- composer require league/oauth2-client  microsoft/microsoft-graph
-// Route::get('/login/microsoft', [MicrosoftGraphLoginController::class, 'signin'])
-//                  ->middleware('guest')
-//                  ->name('ms-login');
-// Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
-//                 ->middleware('auth')
-//                 ->name('logout');
-// Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
+Route::get('/login/microsoft', [MicrosoftGraphLoginController::class, 'signin'])
+                 ->middleware('guest')
+                 ->name('ms-login');
+Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
+                ->middleware('auth')
+                ->name('logout');
+Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
+Route::get('/welcome', function() {
+    return view('welcome');
+});
 
 
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');
