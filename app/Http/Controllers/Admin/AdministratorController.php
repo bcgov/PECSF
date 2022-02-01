@@ -46,8 +46,8 @@ class AdministratorController extends Controller
             );
         }
 
-        $user = User::find($request->user_id);
-        //$user = User::where('azure_id',$request->user_id)->first();
+        //$user = User::find($request->user_id);
+        $user = User::where('azure_id',$request->user_id)->first();
 
         if ($user) {
             if ($user->hasRole('admin'))
@@ -57,8 +57,8 @@ class AdministratorController extends Controller
                 );
             }
         } else {
-            // If no user found, then create the new user and assign the role
-/*
+            //  create the new user and assign the role when no user found
+
             $tokenCache = new TokenCache();
             $accessToken = $tokenCache->getAccessToken();
 
@@ -75,12 +75,10 @@ class AdministratorController extends Controller
                     'name' => $azure_user->getDisplayName(),
                     'email' => $azure_user->getMail(),
                     'azure_id' => $azure_user->getId(),
-                    'password' => Hash::make('WatchDog'),
-                //    'samaccountname' => property_exists($parsedToken, 'samaccountname') ? $parsedToken->samaccountname : null,
-                //    'guid' => property_exists($parsedToken, 'bcgovGUID') ? $parsedToken->bcgovGUID : null,
+                    'password' => Hash::make( random_bytes(26) ),
                 ]);
             }
-*/
+
         }
 
         $user->assignRole('admin');
@@ -92,6 +90,7 @@ class AdministratorController extends Controller
 
     public function getUsers(Request $request)
     {
+        /*
         $term = trim($request->q);
 
         if($term == ''){
@@ -106,42 +105,43 @@ class AdministratorController extends Controller
         }
 
         return response()->json($formatted_users);
+        */
 
-    //     $tokenCache = new TokenCache();
-    //     $accessToken = $tokenCache->getAccessToken();
+        $tokenCache = new TokenCache();
+        $accessToken = $tokenCache->getAccessToken();
     
-    //     // Create a Graph client
-    //     $graph = new Graph();
-    //     $graph->setAccessToken($accessToken);
+        // Create a Graph client
+        $graph = new Graph();
+        $graph->setAccessToken($accessToken);
 
-    //     $queryParams = array(
-    //        '$select' => 'id,displayName,mail,userPrincipalName',
-    //        //'$filter'  =>  "startswith(displayName,'". $request->q . "')",
-    //        //'$search'  =>  '"displayName:' . $request->q . '"',
-    //        '$orderby' => 'displayName'
-    //      );
+        $queryParams = array(
+           '$select' => 'id,displayName,mail,userPrincipalName',
+           //'$filter'  =>  "startswith(displayName,'". $request->q . "')",
+           //'$search'  =>  '"displayName:' . $request->q . '"',
+           '$orderby' => 'displayName'
+         );
      
-    //    if ($request->q) {
-    //        $queryParams['$search'] = '"displayName:' . trim($request->q) . '"';
-    //    }
+       if (trim($request->q)) {
+           $queryParams['$search'] = '"displayName:' . trim($request->q) . '"';
+       }
   
-    //     // test User  API https://graph.microsoft.com/v1.0/users
-    //    $getUsersUrl = '/users?'.http_build_query($queryParams);
-    //    $users = $graph->createRequest('GET', $getUsersUrl)
-    //           ->addHeaders(['ConsistencyLevel'=> 'eventual'])
-    //            ->setReturnType(Model\User::class)
-    //            ->execute();
+        // test User  API https://graph.microsoft.com/v1.0/users
+       $getUsersUrl = '/users?'.http_build_query($queryParams);
+       $users = $graph->createRequest('GET', $getUsersUrl)
+              ->addHeaders(['ConsistencyLevel'=> 'eventual'])
+               ->setReturnType(Model\User::class)
+               ->execute();
 
-    //     $formatted_users = [];
-    //     foreach ($users as $user) {
-    //          $formatted_users[] = [
-    //                 'id' => $user->getId(), 
-    //                 'text' => $user->getDisplayName() . ' (' . $user->getMail() . ')'
-    //         ];
-    //     }
+        $formatted_users = [];
+        foreach ($users as $user) {
+             $formatted_users[] = [
+                    'id' => $user->getId(), 
+                    'text' => $user->getDisplayName() . ' (' . $user->getMail() . ')'
+            ];
+        }
 
-    //     // return "[{'id':31,'name':'Abc'}, {'id':32,'name':'Abc12'}, {'id':33,'name':'Abc123'},{'id':34,'name':'Abc'}]";
-    //     return response()->json($formatted_users);
+        // return "[{'id':31,'name':'Abc'}, {'id':32,'name':'Abc12'}, {'id':33,'name':'Abc123'},{'id':34,'name':'Abc'}]";
+        return response()->json($formatted_users);
 
     }
     
@@ -157,7 +157,7 @@ class AdministratorController extends Controller
         if (count($administrators) == 1 and $administrators->contains($user))
         {
             throw ValidationException::withMessages(
-                ['user' => 'At least one administrators must be exists.']
+                ['user' => 'At least one administrator must exist.']
             );
         }
 
@@ -168,7 +168,6 @@ class AdministratorController extends Controller
             );
         }
 
-     
         $user->removeRole('admin');
 
         return redirect()->route('administrators.index')

@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 @section('content_header')
     <div class="d-flex mt-3">
-        <h1>Administrators</h1>
+        <h1>Security - PECSF Administrators</h1>
         <div class="flex-fill"></div>
     </div>
 @endsection
@@ -14,7 +14,7 @@
         @else
         <div class="text-center text-primary">
             <p>
-                <strong>No administrators has been setup yet.</strong>
+                <strong>No PECSF Administrator found.</strong>
             </p>
            
         </div>

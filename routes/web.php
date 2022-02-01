@@ -39,9 +39,6 @@ Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
                 ->middleware('auth')
                 ->name('logout');
 Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
-Route::get('/welcome', function() {
-    return view('welcome');
-});
 
 
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');

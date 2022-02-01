@@ -56,8 +56,9 @@
                 <table class="table table-sm table-bordered rounded">
                     <thead>
                     <tr class="text-center bg-light">
-                        <th>Administrator Name</th>
-                        <th>Email</th>
+                        <th>User Name</th>
+                        <th>User Email</th>
+                        <th>Role Name</th>
                         <th width="280px">Delete</th>
                     </tr>
                     </thead>
@@ -67,7 +68,7 @@
                             <tr class="text-center">
                                 <td class="text-left">{{$administrator->name}} </td>
                                 <td class="text-left">{{$administrator->email }}</td>
-
+                                <td class="">{{ $administrator->getRoleNames()->contains('admin') ? 'admin' : '' }}</td>    
                                 <td>
                                     <a class="btn btn-danger" onclick="return confirm('Are you sure to remove user {{ $administrator->name }} ?')" href="/administrators/{{ $administrator->id }}/delete""><i class="fa fa-trash"></i></a>
                                 </td>

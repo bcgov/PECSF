@@ -269,7 +269,7 @@ return [
                     'url'  => '/campaignyears',
                 ],
                 [
-                    'text' => 'Administrator',
+                    'text' => 'Security - Role',
                     'icon' => 'nav-icon far fa-id-card',
                     'url'  => '/administrators',
                 ],
