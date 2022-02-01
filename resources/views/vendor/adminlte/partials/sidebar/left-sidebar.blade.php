@@ -11,7 +11,16 @@
     <div class="sidebar">
     
         <div class="image text-center">
-          <img src="{{asset('img/profile-pic.png')}}" style="max-width:90px; max-height:90px" class="img-circle elevation-2 mt-4">
+            {{-- added by James Poon on 2022-Jan-28 --}}
+            @if( session('profilePhoto') )
+                <span>
+                    <img style="width: 90px; height: 90px;" class="img-circle elevation-2 mt-4" src="data:image/jpeg;base64,{{ session('profilePhoto') }}" alt="">
+                </span>
+            @else
+                <span>
+                    <img src="{{asset('img/profile-pic.png')}}" style="max-width:90px; max-height:90px" class="img-circle elevation-2 mt-4">
+                </span>
+            @endif
         </div>
         <div class="info text-center mt-4 mb-5">
         <h5 class="text-light">Welcome back,</h5>
