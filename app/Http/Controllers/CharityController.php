@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePledgeRequest;
+use App\Http\Requests\DonateStep3Request;
 use App\Http\Requests\DontateStep1Request;
 use App\Http\Requests\DontateStep2Request;
 use App\Models\Charity;
@@ -178,6 +179,7 @@ class CharityController extends Controller
         $totalPercent = 0;
         $totalAmount = 0;
         foreach ($_charities as $charity) {
+            $charity = $charity->toArray();
             $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
             if (!$charity['additional']) {
                 $charity['additional'] = '';
@@ -185,7 +187,6 @@ class CharityController extends Controller
 
             $charity['percentage-distribution'] = $individualPercent;
             $charity['amount-distribution'] = $individualAmount;
-
             if (isset($selectedCharities['percentage-distribution'])) {
                 $charity['percentage-distribution'] = $selectedCharities['percentage-distribution'][array_search($charity['id'], $selectedCharities['id'])];
             }
@@ -212,7 +213,6 @@ class CharityController extends Controller
         $view = 'distribution';
         if (request()->is('donate/summary')) {
             $view = 'summary';
-            //  dd($total);
         }
 
         $view = 'donate.'.$view;
@@ -221,6 +221,38 @@ class CharityController extends Controller
         $frequency = $freq == 'bi-weekly' ? "bi-weekly" : 'one time';
         $multiplier = $freq == 'bi-weekly' ? 26 : 1;
         return view($view, compact('charities', 'individualAmount', 'individualPercent', 'total', 'annual_amount', 'onetime', 'weekly', 'frequency', 'multiplier'));
+    }
+
+    public function saveDistribution(DonateStep3Request $request) {
+        $input = $request->validated();
+        $selectedCharities = Session::get('charities');
+        $totalAmount = Session::get('amount')['amount'];
+
+        if (array_key_exists('distributionByPercent', $input)) {
+            // Correct $input['amount']
+            foreach($input['percent'] as $index => $a) {
+                $input['amount'][$index] = $totalAmount * $a / 100; 
+            }
+        } else {
+            // Correct $input['percent']
+            foreach($input['amount'] as $index => $a) {
+                $input['percent'][$index] = round(100 * $a / $totalAmount, 2); 
+            }
+        }
+        foreach($input['percent'] as $charityId => $percentageAmount) {
+            $selectedCharities['percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
+        }
+        foreach($input['amount'] as $charityId => $amount) {
+            $selectedCharities['amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
+        }
+        
+        session()->put('charities', $selectedCharities);
+        return redirect()->route('donate.summary');
+    }
+
+    public function summary() {
+        // Logic to show/calculate amount is already done in distribution fn, just view is different
+        return $this->distribution();
     }
 
     public function savePDF() {
@@ -333,7 +365,7 @@ class CharityController extends Controller
         return redirect()->route('donate.save.thank-you');
     }
 
-    public function saveDistribution()
+    public function thankYou()
     {
         return view('donate.thankyou');
     }

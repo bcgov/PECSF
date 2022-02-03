@@ -3,12 +3,11 @@
 @section ("step-content")
 <h2 class="mt-5">3. Decide on the distribution</h2>
 <p class="mt-3">You can distribute your contributions to each charity here. Start from the top and specify the amount of percentage so that together they are total 100%.</p>
-<form action="{{route('donate.summary')}}" method="GET">
-
+<form action="{{route('donate.save.distribution')}}" method="POST">
 <div class="d-flex align-items-center justify-content-between mb-3">
     <div class="form-check form-switch p-0">
         <label class="form-check-label" for="distributeByDollarAmount">
-            <input class="form-check-input" type="checkbox" id="distributeByDollarAmount" name="distributionByAmount" value="true" checked>
+            <input class="form-check-input" type="checkbox" id="distributeByDollarAmount" name="distributionByPercent" value="1" checked>
             <i></i><span id="percentage-dollar-text">Distribute by Dollar Amount</span>
         </label>
     </div>
@@ -21,7 +20,7 @@
             <td class="p-2">{{ $charity['text'] }}</td>
             <td style="width:110px" class="by-percent ">
                 <div class="input-group input-group-sm mb-3">
-                    <input type="number" class="form-control form-control-sm percent-input" name="percent[{{ $charity['id'] }}]" placeholder="" value="{{$charity['percentage-distribution']}}">
+                    <input type="number" step="0.01" class="form-control form-control-sm percent-input" name="percent[{{ $charity['id'] }}]" placeholder="" value="{{$charity['percentage-distribution']}}">
                     <div class="input-group-append">
                         <span class="input-group-text">%</span>
                     </div>
@@ -32,7 +31,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" class="form-control form-control-sm amount-input" name="amount[{{ $charity['id'] }}]" placeholder="" value="{{$charity['amount-distribution']}}">
+                    <input type="number" step="0.01" class="form-control form-control-sm amount-input" name="amount[{{ $charity['id'] }}]" placeholder="" value="{{$charity['amount-distribution']}}">
                 </div>
             </td>
             {{-- <td>

@@ -1,20 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PledgeController;
 use App\Http\Controllers\CharityController;
-use App\Http\Controllers\DonationController;
-use App\Http\Controllers\ChallengeController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\ContactFaqController;
-use App\Http\Controllers\VolunteeringController;
-use App\Http\Controllers\PledgeCharityController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\AzureLoginController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ChallengeController;
+use App\Http\Controllers\ContactFaqController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\PledgeCharityController;
+use App\Http\Controllers\PledgeController;
+use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\Admin\CampaignYearController;
-use App\Http\Controllers\Admin\AdministratorController;
-use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,18 +26,9 @@ use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 */
 
 Auth::routes();
-// Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
-// Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
-// Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
-// MS Graph API Authenication -- composer require league/oauth2-client  microsoft/microsoft-graph
-Route::get('/login/microsoft', [MicrosoftGraphLoginController::class, 'signin'])
-                 ->middleware('guest')
-                 ->name('ms-login');
-Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
-                ->middleware('auth')
-                ->name('logout');
-Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
-
+Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
+Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
 
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -50,11 +39,12 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
     Route::post('/remove', [CharityController::class, 'remove'])->name('select');
     Route::get('/amount', [CharityController::class, 'amount'])->name('amount');
     Route::get('/distribution', [CharityController::class, 'distribution'])->name('distribution');
-    Route::get('/summary', [CharityController::class, 'distribution'])->name('summary');
-    Route::get('/thank-you', [CharityController::class, 'saveDistribution'])->name('save.thank-you');
+    Route::get('/summary', [CharityController::class, 'summary'])->name('summary');
+    Route::get('/thank-you', [CharityController::class, 'thankYou'])->name('save.thank-you');
 
     Route::post('/select', [CharityController::class, 'saveCharities'])->name('save.select');
     Route::post('/amount', [CharityController::class, 'saveAmount'])->name('save.amount');
+    Route::post('/distribution', [CharityController::class, 'saveDistribution'])->name('save.distribution');
     Route::post('/summary', [CharityController::class, 'confirmDonation'])->name('save.summary');
 
     Route::get('/download-summary', [CharityController::class, 'savePDF'])->name('save.pdf');
@@ -76,11 +66,5 @@ Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['aut
 Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 
 Route::group(['middleware' => ['auth']], function() {
-    Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);   
-}); 
-
-Route::group(['middleware' => ['auth']], function() {
-    Route::resource('/administrators', AdministratorController::class)->only(['index','store']);
-    Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
-    Route::get('/administrators/users', [AdministratorController::class,'getUsers']);
-}); 
+    Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
+});    

@@ -33,6 +33,7 @@ return [
         'Ministry of Social Development & Poverty Reduction',
         'Ministry of Tourism, Arts & Culture',
         'Ministry of Transportation & Infrastructure',
+        'Office contact',
         'Office of Information & Privacy Commissioner',
         'Office of the Auditor General of BC',
         'Office of the Merit Commissioner',

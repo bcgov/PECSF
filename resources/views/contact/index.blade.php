@@ -19,7 +19,7 @@
                     @foreach($qnas as $i => $qna)
                     <div class="card">
                         <div class="card-header" id="heading{{$i}}{{$section}}">
-                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'true' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
+                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
                                 <button class="btn btn-link">
                                     {{$qna['question']}}
                                 </button>
@@ -30,7 +30,7 @@
                             </h5>
                         </div>
 
-                        <div id="collapse{{$i}}{{$section}}" class="collapse {{$i==0 ? 'show' : ''}}" aria-labelledby="heading{{$i}}{{$section}}" data-parent="#accordion{{$section}}">
+                        <div id="collapse{{$i}}{{$section}}" class="collapse {{$i==0 ? '' : ''}}" aria-labelledby="heading{{$i}}{{$section}}" data-parent="#accordion{{$section}}">
                             <div class="card-body">
                                 {!! $qna['answer'] !!}
                             </div>
