@@ -106,6 +106,7 @@
                                             <option value="Coordinator">Coordinator</option>
                                             <option value="Canvasser">Canvasser</option>
                                             <option value="Event Coordinator">Event Coordinator</option>
+                                            <option value="Office contact">Office contact</option>
                                         </select>
                                     </div>
                                 </div>
