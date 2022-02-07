@@ -23,8 +23,8 @@ class ChallengeController extends Controller
             ['name'=> "Government Communications & Public Engagement", 'total_donation' => 43000, 'total_donors' => 509],
             ['name'=> "Legislative Assembly", 'total_donation' => 43000, 'total_donors' => 504],
         ];
-        $charities = $this->paginate($data);
-        return view('challenge.index', compact('charities'));
+        // $charities = $this->paginate($data);
+        return view('challenge.index', compact('data'));
     }
 
     /**

@@ -57,7 +57,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" class="form-control form-control-sm total-amount" placeholder="" disabled>
+                    <input type="number" class="form-control form-control-sm total-amount" data-expected-total="{{session('amount')['amount']}}" placeholder="" disabled>
                 </div>
             </td>
             <td></td>
@@ -92,15 +92,28 @@
             $(".percent-input").each( function () {
                 total += Number($(this).val());
             });
+            if (total !== 100) {
+                const lastValue = Number($(".percent-input").last().val());
+                const difference = 100 - total;
+                $(".percent-input").last().val(lastValue + difference);
+                total = 100;
+            }
             $(".total-percent").val(total);
         });
 
 
         $(document).on('change', '.amount-input', function () {
             let total = 0;
+            const expectedTotal = $(".total-amount").data('expected-total');
             $(".amount-input").each( function () {
                 total += Number($(this).val());
             });
+            if (total !== expectedTotal) {
+                const lastValue = Number($(".amount-input").last().val());
+                const difference = expectedTotal - total;
+                $(".amount-input").last().val(lastValue + difference);
+                total = expectedTotal;
+            }
             $(".total-amount").val(total);
         });
 

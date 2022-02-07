@@ -15,7 +15,7 @@
                 <table class="table table-bordered rounded">
                     <tr class="text-center bg-light">
                         <th>Organization Name</th>
-                        <th>Date Effective</th>
+                        <th>Amount</th>
                         <th>Donation Type</th>
                         <th>Frequency</th>
                     </tr>
@@ -24,7 +24,8 @@
 
                         <tr class="text-center">
                             <td class="text-left">{{$charity->charity->charity_name}} </td>
-                            <td>{{$pledge->created_at->format('F j, Y')}}</td>
+                            <td class="text-left">{{$charity->amount}} </td>
+                            <!-- <td>{{$pledge->created_at->format('F j, Y')}}</td> -->
                             <td>{{$pledge->created_at->format('Y')}} Campaign</td>
                             <td>{{$pledge->frequency == 'bi-weekly' ? 'Bi-Weekly' : 'One Time'}}</td>
                         </tr>
