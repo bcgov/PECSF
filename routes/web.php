@@ -78,3 +78,9 @@ Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
 });    
+
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('/administrators', AdministratorController::class)->only(['index','store']);
+    Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
+    Route::get('/administrators/users', [AdministratorController::class,'getUsers']);
+}); 
