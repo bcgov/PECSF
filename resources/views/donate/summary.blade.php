@@ -14,10 +14,10 @@
 <div class="card-body">
 
 
-<span><b>Your bi-weekly payroll deductions:</b></span>
+<span><b>Your Bi-weekly payroll deductions:</b></span>
 <span class="float-right mb-2">${{ $weekly }}</span><br>
 <h6>AND / OR</h6>
-<span><b>Your One-Time payroll deductions:</b></span>
+<span><b>Your One-time payroll deductions:</b></span>
 <span class="float-right">${{ $onetime }}</span>
 <hr>
 <p class="text-right"><b>Total :</b> ${{ $annual_amount }}</p>
