@@ -17,7 +17,12 @@
     <table class="table table-sm">
         @foreach ($charities as $charity)
         <tr>
-            <td class="p-2">{{ $charity['text'] }}</td>
+            <td class="p-2">
+                {{ $charity['text'] }} <br>
+                <small>
+                    {{ $charity['additional']}}
+                </small>
+            </td>
             <td style="width:110px" class="by-percent ">
                 <div class="input-group input-group-sm mb-3">
                     <input type="number" step="0.01" class="form-control form-control-sm percent-input" name="percent[{{ $charity['id'] }}]" placeholder="" value="{{$charity['percentage-distribution']}}">

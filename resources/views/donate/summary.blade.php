@@ -41,7 +41,12 @@
     <table class="table table-sm">
         @foreach ($charities as $charity)
         <tr>
-            <td class="p-2">{{ $charity['text'] }}</td>
+            <td class="p-2">
+                {{ $charity['text'] }} <br>
+                <small>
+                    {{ $charity['additional']}}
+                </small>
+            </td>
             <td style="width:110px" class="by-percent ">
                 <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                     <input type="hidden" class="form-control form-control-sm percent-input float-right text-right" name="percent[{{ $charity['id'] }}]" value="{{$charity['percentage-distribution']}}" disabled>

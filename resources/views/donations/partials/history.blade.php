@@ -24,7 +24,7 @@
 
                         <tr class="text-center">
                             <td class="text-left">{{$charity->charity->charity_name}} </td>
-                            <td class="text-left">{{$charity->amount}} </td>
+                            <td class="text-left">{{$charity->goal_amount}} </td>
                             <!-- <td>{{$pledge->created_at->format('F j, Y')}}</td> -->
                             <td>{{$pledge->created_at->format('Y')}} Campaign</td>
                             <td>{{$pledge->frequency == 'bi-weekly' ? 'Bi-Weekly' : 'One Time'}}</td>
