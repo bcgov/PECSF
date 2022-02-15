@@ -13,6 +13,7 @@ use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Admin\CampaignYearController;
+use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 
 /*
