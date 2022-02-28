@@ -92,16 +92,19 @@ class CharityController extends Controller
 
     public function amount()
     {
-        $preselectedAmount = 20;
+        $preselectedAmountOneTime = 20;
+        $preselectedAmountBiWeekly = 20;
 
         $preselectedData = [
             'frequency' => 'bi-weekly',
-            'amount' => 50,
+            'one-time-amount' => 20,
+            'bi-weekly-amount' => 50,
         ];
 
-        if (Session::has('amount')) {
-            $preselectedData = Session::get('amount');
-            $preselectedAmount = $preselectedData['amount'];
+        if (Session::has('amount-step')) {
+            $preselectedData = Session::get('amount-step');
+            $preselectedAmountOneTime = $preselectedData['one-time-amount'];
+            $preselectedAmountBiWeekly = $preselectedData['bi-weekly-amount'];
         }
 
         $amounts = [
@@ -109,34 +112,62 @@ class CharityController extends Controller
                 [
                     'amount' => 6,
                     'text' => '$6',
-                    'selected' => ($preselectedAmount == 6) ? true : false,
+                    'selected' => ($preselectedAmountBiWeekly == 6) ? true : false,
                 ],
                 [
                     'amount' => 12,
                     'text' => '$12',
-                    'selected' => ($preselectedAmount == 12) ? true : false,
+                    'selected' => ($preselectedAmountBiWeekly == 12) ? true : false,
                 ],
                 [
                     'amount' => 20,
                     'text' => '$20',
-                    'selected' => ($preselectedAmount == 20) ? true : false,
+                    'selected' => ($preselectedAmountBiWeekly == 20) ? true : false,
                 ],
                 [
                     'amount' => 50,
                     'text' => '$50',
-                    'selected' => ($preselectedAmount == 50) ? true : false,
+                    'selected' => ($preselectedAmountBiWeekly == 50) ? true : false,
                 ],
                 [
                     'amount' => '',
                     'text' => 'Custom',
-                    'selected' => (!in_array($preselectedAmount, [6, 12, 20, 50])) ? true : false,
+                    'selected' => (!in_array($preselectedAmountBiWeekly, [6, 12, 20, 50])) ? true : false,
+                ],
+            ],
+            'one-time' => [
+                [
+                    'amount' => 6,
+                    'text' => '$6',
+                    'selected' => ($preselectedAmountOneTime == 6) ? true : false,
+                ],
+                [
+                    'amount' => 12,
+                    'text' => '$12',
+                    'selected' => ($preselectedAmountOneTime == 12) ? true : false,
+                ],
+                [
+                    'amount' => 20,
+                    'text' => '$20',
+                    'selected' => ($preselectedAmountOneTime == 20) ? true : false,
+                ],
+                [
+                    'amount' => 50,
+                    'text' => '$50',
+                    'selected' => ($preselectedAmountOneTime == 50) ? true : false,
+                ],
+                [
+                    'amount' => '',
+                    'text' => 'Custom',
+                    'selected' => (!in_array($preselectedAmountOneTime, [6, 12, 20, 50])) ? true : false,
                 ],
             ],
         ];
 
-        $isCustomAmount = (!in_array($preselectedAmount, [6, 12, 20, 50])) ? true : false;
+        $isCustomAmountOneTime = (!in_array($preselectedAmountOneTime, [6, 12, 20, 50])) ? true : false;
+        $isCustomAmountBiWeekly = (!in_array($preselectedAmountBiWeekly, [6, 12, 20, 50])) ? true : false;
 
-        return view('donate.amount', compact('amounts', 'preselectedData', 'isCustomAmount'));
+        return view('donate.amount', compact('amounts', 'preselectedData', 'isCustomAmountOneTime', 'isCustomAmountBiWeekly'));
     }
 
     public function saveAmount(DontateStep2Request $request)
