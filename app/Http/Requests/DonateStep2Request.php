@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DonateStep3Request extends FormRequest
+class DonateStep2Request extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +24,9 @@ class DonateStep3Request extends FormRequest
     public function rules()
     {
         return [
-            'distributionByPercentOneTime' => 'nullable|boolean',
-            'distributionByPercentBiWeekly' => 'nullable|boolean',
-            // TODO: Manage required as per frequency
-            'oneTimePercent' => 'required|array',
-            'oneTimeAmount' => 'required|array',
-            'biWeeklyPercent' => 'required|array',
-            'biWeeklyAmount' => 'required|array'
+            "one-time-amount" => "required_unless:frequency,bi-weekly|numeric|min:1",
+            "bi-weekly-amount" => "required_unless:frequency,one-time|numeric|min:1",
+            "frequency" => "required|in:bi-weekly,one-time,both"
         ];
     }
 }

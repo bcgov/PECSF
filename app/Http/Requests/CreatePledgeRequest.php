@@ -24,11 +24,14 @@ class CreatePledgeRequest extends FormRequest
     public function rules()
     {
         return [
-            'charityAmount' => 'required|array',
+            'charityOneTimeAmount' => 'required|array',
+            'charityBiWeeklyAmount' => 'required|array',
             'charityAdditional' => 'required|array',
-            'charityAmount.*' => 'required|numeric',
+            'charityOneTimeAmount.*' => 'required|numeric',
+            'charityBiWeeklyAmount.*' => 'required|numeric',
             'charityAdditional.*' => 'nullable',
-            'annualAmount' => 'required|numeric',
+            'annualBiWeeklyAmount' => 'required|numeric',
+            'annualOneTimeAmount' => 'required|numeric',
             'frequency' => 'required'
         ];
     }

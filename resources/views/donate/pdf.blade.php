@@ -75,45 +75,29 @@
 
             <div class="card">
                 <div class="card-body">
-                    <span><b>Your bi-weekly payroll deductions:</b></span>
-                    <span class="float-right mb-2">${{ $weekly }}</span><br>
+                    <span><b>Your Bi-weekly payroll deductions:</b></span>
+                    <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly }}</span><br>
                     <h6>AND / OR</h6>
-                    <span><b>Your One-Time payroll deductions:</b></span>
-                    <span class="float-right">${{ $onetime }}</span>
+                    <span><b>Your One-time payroll deductions:</b></span>
+                    <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span>
                     <hr>
-                    <p class="text-right"><b>Total :</b> ${{ $annual_amount }}</p>
+                    <p class="text-right"><b>Total :</b> ${{ $grandTotal }}</p>
                 </div>
             </div>
-            <p class="card-title mt-4"><b>Your {{$frequency}} charitable donations will be disbursed as follows:</b></p>
+            @foreach(['one-time', 'bi-weekly'] as $key)
+                @php $viewMode = 'pdf'; @endphp
 
-            <div class="card mt-3">
-                <div class="card-body">
-                    <table class="table table-sm">
-                        @foreach ($charities as $charity)
-                        <tr>
-                            <td class="p-2">{{ $charity['text'] }}</td>
-                            <td style="width:110px" class="by-amount">
-                                <div class="input-group input-group-sm mb-3" style="flex-direction:column">
-
-                                    <input type="hidden" class="form-control form-control-sm amount-input float-right text-right" name="amount[{{ $charity['id'] }}]" value="{{$charity['amount-distribution']}}" disabled>
-                                <label class="float-right text-right"> ${{ $charity['amount-distribution'] * $multiplier}}</label>
-
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                        <tr>
-                            <td></td>
-                            <td class="by-amount">
-                                <div class="input-group input-group-sm mb-3 text-right" style="flex-direction:column">
-                                    <input type="hidden" class="form-control form-control-sm total-amount" value="{{ $annual_amount * $multiplier }}" readonly>
-                                    <label class="total-amount-text float-right" style="width:250px;" >Total Amount: ${{ $annual_amount }}</label>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+                @if($key === 'one-time' && (session()->get('amount-step')['frequency'] === 'one-time' || session()->get('amount-step')['frequency'] === 'both'))
+                    @php $key_ = $key; @endphp
+                    @php $keyCase = 'oneTime'; @endphp
+                    @include('donate.partials.summary-distribution')
+                @endif
+                @if($key === 'bi-weekly' && (session()->get('amount-step')['frequency'] === 'bi-weekly' || session()->get('amount-step')['frequency'] === 'both'))
+                    @php $key_ = $key;@endphp
+                    @php $keyCase = 'biWeekly'; @endphp
+                    @include('donate.partials.summary-distribution')
+                @endif
+            @endforeach
         </div>
         <div class="row">
             <p class="py-4">

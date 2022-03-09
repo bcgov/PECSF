@@ -2,6 +2,21 @@
 
 @section ("step-content")
 <h2 class="mt-5">2. Decide on the frequency and amount</h2>
+@if (session('errors'))
+    <div class="row  mt-3">
+        <div class="col-md-12">
+            <div class="alert alert-warning alert-dismissable" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="alert-heading font-size-h4 font-w400">Hata!</h3>
+                @foreach (session('errors') as $error)
+                    <p class="mb-0">{{ $error }}</p>
+                @endforeach
+            </div>
+        </div>
+    </div>
+@endif
 <div>
     <div>
         <div class="btn-group btn-group-toggle mt-3 frequency" role="group" aria-label="Select frequency" data-toggle="buttons">
@@ -41,7 +56,7 @@
             </label>
         </div>
     </div>
-    <div id="one-time-section" style="display: none;" >
+    <div id="one-time-section">
         <div class="predefined-amounts-one-time">
             <div class="btn-group d-flex mt-3 amounts btn-group-toggle" data-toggle="buttons" role="group" aria-label="Select amount">
                 @foreach ($amounts["one-time"] as $amount)
@@ -93,7 +108,8 @@
 
 @push('js')
     <script type="x-tmpl" id="amount-tmpl">
-        <input type="hidden" name="amount" value="${this.amount}">
+        <input type="hidden" name="one-time-amount" value="${this.oneTimeAmount}">
+        <input type="hidden" name="bi-weekly-amount" value="${this.biWeeklyAmount}">
         <input type="hidden" name="frequency" value="${this.frequency}">
     </script>
     <script>
@@ -102,9 +118,7 @@
         const tmplParse = function(templateString, templateVars) {
             return new Function("return `" + templateString + "`;").call(templateVars);
         };
-
-        $(document).on('change', 'input[name=frequency]', function() {
-            const frequency = $(this).val();
+        const decideVisibility = function (frequency) {
             if (frequency === 'one-time') {
                 $('#one-time-section').show();
                 $('#bi-weekly-section').hide();
@@ -115,6 +129,14 @@
                 $('#one-time-section').show();
                 $('#bi-weekly-section').show();
             }
+        }
+        $(document).ready(() => {
+            decideVisibility($('input[name=frequency]:checked').val());
+        });
+
+        $(document).on('change', 'input[name=frequency]', function() {
+            const frequency = $(this).val();
+            decideVisibility(frequency);
             const amount = $("input[type=radio][name=amount]:checked").val() != '' ? $("input[type=radio][name=amount]:checked").val() : $("input[type=number][name=amount]").val();
             selectAmount(frequency, amount);
         });
@@ -154,13 +176,17 @@
         function prepareForm() {
             let amount = null;
             const frequency = $("input[name=frequency]:checked").val();
+            const biWeeklyAmount = $("input[type=radio][name=bi-weekly-amount]:checked").val() || $("input[type=number][name=bi-weekly-amount]").val();
+            const oneTimeAmount = $("input[type=radio][name=one-time-amount]:checked").val() || $("input[type=number][name=one-time-amount]").val();
+
             if (frequency === 'one-time') {
-                amount = $("input[type=number][name=amount]").val();
+                amount = $("input[type=radio][name=bi-weekly-amount]").val();
             } else {
                 amount = $("input[type=radio][name=amount]:checked").val() != '' ? $("input[type=radio][name=amount]:checked").val() : $("input[type=number][name=amount]").val()
             }
             $("#amount-values").html(tmplParse(tmplAmount, {
-                amount: amount,
+                biWeeklyAmount: biWeeklyAmount,
+                oneTimeAmount: oneTimeAmount,
                 frequency: $("input[name=frequency]:checked").val()
             }));
         }
