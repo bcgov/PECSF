@@ -27,10 +27,10 @@ class DonateStep3Request extends FormRequest
             'distributionByPercentOneTime' => 'nullable|boolean',
             'distributionByPercentBiWeekly' => 'nullable|boolean',
             // TODO: Manage required as per frequency
-            'oneTimePercent' => 'required|array',
-            'oneTimeAmount' => 'required|array',
-            'biWeeklyPercent' => 'required|array',
-            'biWeeklyAmount' => 'required|array'
+            'oneTimePercent' => 'required_without:biWeeklyPercent|array',
+            'oneTimeAmount' => 'required_without:biWeeklyAmount|array',
+            'biWeeklyPercent' => 'required_without:oneTimePercent|array',
+            'biWeeklyAmount' => 'required_without:oneTimeAmount|array'
         ];
     }
 }

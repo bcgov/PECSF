@@ -2,8 +2,11 @@
 @section('content_header')
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
-        <div class="flex-fill"></div>
-        <x-button :href="route('donate')">Donate to PECSF Now</x-button>
+        @if($pledges->count() > 0)
+            <div class="flex-fill"></div>
+            <x-button :href="route('donate')">Donate to PECSF Now</x-button>
+            <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
+        @endif
     </div>
 @endsection
 @section('content')
