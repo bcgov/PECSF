@@ -435,7 +435,7 @@ class CharityController extends Controller
             $pledge = Pledge::create([
                 'amount' => $input['annual'.$frequency.'Amount'] / $multiplier,
                 'user_id' => Auth::id(),
-                'frequency' => $frequency,
+                'frequency' => $frequency === 'BiWeekly' ? 'bi-weekly' : 'one time',
                 'goal_amount' => $input['annual'.$frequency.'Amount']
             ]);
 
