@@ -3,6 +3,8 @@
 @section ("step-content")
 <h2 class="mt-5">1. Choose your charities</h2>
 <div>
+    @include('donate.partials.charity-search')
+{{--  
     <form action="{{route('donate.save.select')}}" method="post">
         @csrf
         <label class="w-100">
@@ -21,18 +23,22 @@
             <button class="btn btn-lg btn-primary" type="submit">Next</button>
         </div>
     </form>
+--}}    
 </div>
 @endsection
 @push('css')
+{{-- 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css" />
+--}}
 <style>
     #selected-charity-list {
         min-height: 200px;
     }
 </style>
 @endpush
+{{-- 
 @push('js')
 <script type="x-tmpl" id="charity-tmpl">
         <div class="m-2">
@@ -126,3 +132,4 @@
 
 </script>
 @endpush
+--}}

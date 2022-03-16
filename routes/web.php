@@ -52,6 +52,7 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
     Route::get('/distribution', [CharityController::class, 'distribution'])->name('distribution');
     Route::get('/summary', [CharityController::class, 'summary'])->name('summary');
     Route::get('/thank-you', [CharityController::class, 'thankYou'])->name('save.thank-you');
+    Route::get('/charities/{charity_id}',[CharityController::class, 'show']); 
 
     Route::post('/select', [CharityController::class, 'saveCharities'])->name('save.select');
     Route::post('/amount', [CharityController::class, 'saveAmount'])->name('save.amount');
@@ -63,6 +64,7 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
 
     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
 });
+
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');

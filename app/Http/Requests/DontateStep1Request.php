@@ -35,4 +35,18 @@ class DontateStep1Request extends FormRequest
             "id.required" => "Please select at least one charity from the list"
         ];
     }
+
+    protected function prepareForValidation()
+    {
+
+        if ($this->request->get('id')) {
+            $charities = [];
+            $charities['id'] = $this->request->get('id');
+            $charities['additional'] = $this->request->get('additional');
+            Session()->put('charities', $charities);
+        } else {
+            session()->forget('charities');
+        }
+    }
+
 }

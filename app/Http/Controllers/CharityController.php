@@ -42,8 +42,9 @@ class CharityController extends Controller
         return $this->send($response, 'Charity listed successfully');
     }
 
-    public function select()
+    public function select(Request $request)
     {
+        /*
         $charities = [];
         if (Session::has('charities')) {
             $selectedCharities = Session::get('charities');
@@ -62,6 +63,65 @@ class CharityController extends Controller
         }
 
         return view('donate.select', compact('charities'));
+        */
+
+        $terms = explode(" ", $request->get("title") );
+        $charities=Charity::when($request->has("title"),function($q)use($request){
+        
+            $searchValues = preg_split('/\s+/', $request->get("title"), -1, PREG_SPLIT_NO_EMPTY); 
+
+            if ($request->get("designation_code")) {    
+                $q->where('designation_code', $request->get("designation_code"));    
+            }
+            if ($request->get("category_code")) {    
+                $q->where('category_code', $request->get("category_code"));    
+            }    
+            if ($request->get("province")) {    
+                $q->where('province', $request->get("province"));    
+            }    
+            
+            foreach ($searchValues as $term) {
+                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
+            }
+            return $q->orderby('charity_name','asc');
+                     
+        })->where('charity_status','Registered')->paginate(5);
+
+        $designation_list = Charity::DESIGNATION_LIST;
+        $category_list = Charity::CATEGORY_LIST;
+        $province_list = Charity::PROVINCE_LIST;
+
+        $selected_charities = [];
+        if (Session::has('charities')) {
+            $selectedCharities = Session::get('charities');
+
+            $_charities = Charity::whereIn('id', $selectedCharities['id'])
+                ->get(['id', 'charity_name as text']);
+
+            foreach ($_charities as $charity) {
+                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
+                if (!$charity['additional']) {
+                    $charity['additional'] = '';
+                }
+
+                array_push($selected_charities, $charity);
+            }
+        }
+         
+        if($request->ajax()){
+            return view('donate.partials.charity-pagination', compact('charities','terms','designation_list','category_list','province_list','selected_charities') ); 
+        }
+
+        return view('donate.select', compact('charities','terms','designation_list','category_list','province_list','selected_charities'));
+    }
+
+    public function show(Request $request)
+    {
+        $charity = Charity::where('id', $request->charity_id)->first();
+
+        if($request->ajax()){
+            return view('donate.partials.charity', compact('charity') ); 
+        } 
     }
 
     public function remove()
@@ -85,6 +145,11 @@ class CharityController extends Controller
 
     public function saveCharities(DontateStep1Request $request)
     {
+        if ($request->has('cancel')) {
+            session()->forget('charities');
+            return redirect()->route('donations.list');
+        }
+        
         Session()->put('charities', $request->validated());
 
         return redirect()->route('donate.amount');
