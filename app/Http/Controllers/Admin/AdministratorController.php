@@ -171,7 +171,7 @@ class AdministratorController extends Controller
         $user->removeRole('admin');
 
         return redirect()->route('administrators.index')
-          ->with('success','User ' . $user->name . '  was rovoked from Administrator role');
+          ->with('success','User ' . $user->name . '  was removed from Administrator role.');
 
     }
 
