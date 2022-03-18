@@ -7,6 +7,7 @@
     </div>
 @endsection
 @section('content')
+@include('volunteering.partials.statistics')
 <div class="card">
     <div class="card-body">
         @include('volunteering.partials.tabs')

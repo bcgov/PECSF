@@ -55,11 +55,11 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
     public function transformDate($value, $format = 'Y-m-d')
     {
-        try {
+        /* try {
             return \Carbon\Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value));
-        } catch (\ErrorException $e) {
+        } catch (\ErrorException $e) { */
             return \Carbon\Carbon::createFromFormat($format, $value);
-        }
+        // }
     }
 
     public function chunkSize(): int
