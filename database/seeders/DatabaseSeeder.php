@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CharitySeeder20Records::class);
         // Campaign Year 
         $this->call(CampaignYearSeeder::class);
+        $this->call(OrganizationSeeder::class);
     }
 }

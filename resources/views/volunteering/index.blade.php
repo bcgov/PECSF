@@ -76,12 +76,37 @@
         }  else if (e.to == 5) {
             $(this).find(".finish-btn").addClass("d-none");
             $(this).find(".signup-btn").removeClass("d-none");
+            $(this).find(".prev-btn").addClass("d-none");
         } else {
             $(this).find(".prev-btn").removeClass("d-none");
             $(this).find(".next-btn").removeClass("d-none");
             $(this).find(".signup-btn").addClass("d-none");
             $(this).find(".finish-btn").addClass("d-none");
         }
+    });
+
+    let registrationUnderProcess = false;
+    $('.finish-btn').on('click', function () {
+        if (registrationUnderProcess) {
+            return;
+        }
+        const form = $('#volunteer_registration_form').get(0);
+        registrationUnderProcess = true;
+        $.ajax({
+            type: "POST",
+            url: form.action,
+            data: $(form).serialize(),
+            success: function (response) {
+                // Silent
+            },
+            error: function (res) {
+                alert('something wrong!');
+                console.error(res);
+            },
+            complete: function () {
+                registrationUnderProcess = false;
+            }
+        });
     });
 
 </script>
