@@ -46,7 +46,7 @@
 
     <div id="pagination" class="my-3 d-flex justify-content-center">
         <small>
-            {{ $charities->onEachSide(1)->links() }}
+            {{ $charities->onEachSide(1)->links('pagination::bootstrap-4') }}
         </small>
     </div>
 

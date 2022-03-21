@@ -211,8 +211,8 @@
            
         // ------ Autocomplete Search --------
 
-        $(document).on("click", "#pagination a,#search_btn", function() {
-
+        $(document).on("click", "#pagination a,#search_btn", function(e) {
+          e.preventDefault();
           //get url and make final url for ajax 
           var url = $(this).attr("href");
           var append = url.indexOf("?") == -1 ? "?" : "&";
