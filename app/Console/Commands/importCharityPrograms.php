@@ -8,21 +8,22 @@ use App\Imports\CharityURLsImport;
 use App\Imports\CharityOngoingProgramsImport;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ImportCharities extends Command
+
+class importCharityPrograms extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:ImportCharities';
+    protected $signature = 'command:ImportCharityPrograms';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command is used to import the charity detail files downloaded from CRA website';
+    protected $description = 'Command is used to import the charity ongoing programs file downloaded from CRA website';
 
     /**
      * Create a new command instance.
@@ -41,10 +42,9 @@ class ImportCharities extends Command
      */
     public function handle()
     {
-        echo now() . PHP_EOL;   
-        Excel::import(new CharitiesImport, 'database/seeds/Charities_results_2022-03-05-19-06-03.txt');
         echo now() . PHP_EOL;
-
+        Excel::import(new CharityOngoingProgramsImport, 'database/seeds/new_ongoing_programs_2019.csv');
+        echo now() . PHP_EOL;
         return 0;
     }
 }
