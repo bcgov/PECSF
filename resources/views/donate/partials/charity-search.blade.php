@@ -150,6 +150,12 @@
 </script>
 <script>
 
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
     $(function () {
         let selectedCharity = {!!json_encode($selected_charities)!!};
         const $select = $("select");
@@ -219,7 +225,7 @@
           var finalURL = url + append + $("#charity-searchform").serialize();
 
           //set to current url
-          window.history.pushState({}, null, finalURL);
+          //window.history.pushState({}, null, finalURL);
           $.get(finalURL, function(data) {
             $("#pagination_data").html(data);
           });
