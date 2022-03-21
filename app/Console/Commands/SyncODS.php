@@ -40,11 +40,16 @@ class SyncODS extends Command
      */
     public function handle()
     {
-        $this->info("Sending POST data");
+        // Step 1 : Send data to PeopleSoft access endpoint 
+        $this->sendDonationToPeopleSoft();
+        
+    }
+
+    private function sendDonationToPeopleSoft() {
+        $this->info("Sending POST data to PeopleSoft");
 
         // Testing purpose 
         // $this->cleanUpODS();
-
 
         //$pledgeData = PledgeExport::limit(20)->get();
          // dd($pledgeData);
@@ -76,7 +81,7 @@ class SyncODS extends Command
 
             $pushData = [
                 "@odata.type" => "CDataAPI.[employee_info]",
-                "date_posted" => Carbon::now()->format('c'), 
+                "date_posted" =>  Carbon::now()->format('Y-m-d'), // Carbon::now()->format('c'), 
                 "GUID" => $pledge->user->guid,
                 "Employee_Name" => $pledge->user->name,    
                 "Amount" =>  $amount,
@@ -97,7 +102,13 @@ class SyncODS extends Command
             //     "ORG_CRA_NAME" => $data->charity_name
             ];
             
-            $response = $this->pushToODS($pushData);
+            //$response = $this->pushToODS($pushData);
+            $response = Http::withBasicAuth(
+                env('ODS_USERNAME'),
+                env('ODS_TOKEN')
+                // config('services.ods.username'),
+                // config('services.ods.token')
+            )->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') , $pushData);
 
             if ($response->successful()) {
                 $pledge->ods_export_status = 'C';
@@ -115,21 +126,26 @@ class SyncODS extends Command
             "GUID" => "GUID_1",
             "Amount" => "20.20"
         ];
-        
         dd($response->json()); */
+
         $this->info("Sent data complete");
         $this->info("Success - " . $success);
         $this->info("failure - " . $failure);
         return 0;
+
     }
 
-    private function pushToODS($data) {
-        $response = Http::withBasicAuth(
-            config('services.ods.username'),
-            config('services.ods.token')
-        )->post('https://analytics-testapi.psa.gov.bc.ca/apiserver/api.rsc/Datamart_PECSF_dbo_employee_info/', $data);
-        return $response;
-    }
+    // private function pushToODS($data) {
+    //     $response = Http::withBasicAuth(
+    //         env('ODS_USERNAME'),
+    //         env('ODS_TOKEN')
+    //         // config('services.ods.username'),
+    //         // config('services.ods.token')
+    //     )->post( env('ODS_OUTBOUND_PSFT_ENDPOINT') , $data);
+    //     return $response;
+    // }
+
+
 
 
     private function cleanUpODS() {
@@ -137,9 +153,9 @@ class SyncODS extends Command
         Pledge::where('ods_export_status','C')->update(['ods_export_status' => '', 'ods_export_at' => null]);
         
         $response = Http::withBasicAuth(
-          config('services.ods.username'),
-          config('services.ods.token')
-        )->get('https://analytics-testapi.psa.gov.bc.ca/apiserver/api.rsc/Datamart_PECSF_dbo_employee_info/');
+            env('ODS_USERNAME'),
+            env('ODS_TOKEN')
+        )->get( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
 
         $responseBody = json_decode($response->getBody(), true);
         $pledgeData = $responseBody['value'];
@@ -156,9 +172,9 @@ class SyncODS extends Command
                 if ($date_posted >= date('2022-02-15')) {
                     $parms = "(Donation_Type='$Donation_Type',GUID='$guid',date_posted='$date_posted')";
                     $response = Http::withBasicAuth(
-                        config('services.ods.username'),
-                        config('services.ods.token')
-                    )->delete('https://analytics-testapi.psa.gov.bc.ca/apiserver/api.rsc/Datamart_PECSF_dbo_employee_info/'.$parms);
+                        env('ODS_USERNAME'),
+                        env('ODS_TOKEN')
+                    )->delete( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT').$parms);
 
                     if ($response->failed() ) {
                         $this->info('failure');
