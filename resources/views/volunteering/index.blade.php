@@ -3,14 +3,44 @@
     <div class="d-flex mt-3">
         <h1>PECSF Volunteering</h1>
         <div class="flex-fill"></div>
-        <x-button data-toggle="modal" data-target="#volunteer-registration">Register as a Volunteer</x-button>
     </div>
 @endsection
 @section('content')
-@include('volunteering.partials.statistics')
+@if($user->isVolunteer())
+    @include('volunteering.partials.statistics')
+@else
+    @include('volunteering.partials.no-statistics')
+@endif
+@include('volunteering.partials.overall-graph')
 <div class="card">
     <div class="card-body">
         @include('volunteering.partials.tabs')
+        @if($user->isVolunteer())
+            <div class="card">
+                <div class="card-body">
+                    <strong>
+                        Event Coordinator Training Session 1
+                    </strong>
+                    <div>
+                        📅 Monday, May 2nd 2022 | 
+                        ⏰ 10.00 am 12.30 pm PST | 
+                        📍 <a href="#">https://teams.microsoft.com/dl/lancher/launcherread</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <strong>
+                        Event Coordinator Training Session 2
+                    </strong>
+                    <div>
+                        📅 Monday, June 2nd 2022 | 
+                        ⏰ 10.00 am 12.30 pm PST | 
+                        📍 <a href="#">https://teams.microsoft.com/dl/lancher/launcherread</a>
+                    </div>
+                </div>
+            </div>
+        @else
         <div class="text-center text-primary">
             <p class="mt-5">
                 <strong>No Events to Display</strong>
@@ -25,6 +55,7 @@
             </p>
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about volunteering with PECSF.</x-button>
         </div>
+        @endif
     </div>
 </div>
 
@@ -85,6 +116,9 @@
         }
     });
 
+    $('.signup-btn').on('click', function () {
+        window.location.reload();
+    });
     let registrationUnderProcess = false;
     $('.finish-btn').on('click', function () {
         if (registrationUnderProcess) {
