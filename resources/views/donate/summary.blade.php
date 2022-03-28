@@ -3,11 +3,11 @@
 @section ("content")
 
 <div class="container">
+    <form action="{{route('donate.save.summary')}}" method="POST">
     <div class="row">
         <div class="col-12 col-sm-7">
             <h2 class="mt-5">4. Summary</h2>
             <p class="mt-3">Please review your donation plan and press <b>Pledge</b> when ready!</p>
-            <form action="{{route('donate.save.summary')}}" method="POST">
                 <div class="card bg-light p-3">
                     <p class="card-title"><b>Deductions</b></p>
                     <div class="card">
@@ -51,26 +51,32 @@
                         <input type="hidden" name="annualBiWeeklyAmount" value="{{$annualBiWeeklyAmount}}">
                         <input type="hidden" name="frequency" value="{{$frequency}}">
                     @endforeach
-                    <a class="btn btn-lg btn-outline-primary" href="{{route('donate.distribution')}}">Previous</a>
-                    <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
                 </div>
-            </form>
 
         </div>
         <div class="col-12 col-sm-5 text-center">
             <img src="{{ asset('img/donor.png') }}" alt="Donor" class="py-5 img-fluid">
-            <p>
-            Making changes to your pledge outside of Campaign time? Please contact <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> directly or submit an <a href="https://www2.gov.bc.ca/gov/content/careers-myhr" class="text-primary" target="_blank">AskMyHR</a> service request to make any changes on your existing pledge outside the annual campaign/open enrollment period (September-December). 
+             <p>
+                Making changes to your pledge outside of Campaign time? Please contact <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> directly or submit an <a href="https://www2.gov.bc.ca/gov/content/careers-myhr" class="text-primary" target="_blank">AskMyHR</a> service request to make any changes on your existing pledge outside the annual campaign/open enrollment period (September-December). 
             </p>
-            <p class="text-center"><b>Questions?</b> <a href="https://www.gov.bc.ca/pecsf" class="text-primary" target="_blank">www.gov.bc.ca/pecsf</a>         <b>Email:</b> <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a></p>
-            <div class="text-center">
+            <p><b>Questions?</b> <a href="https://www.gov.bc.ca/pecsf" class="text-primary" target="_blank">www.gov.bc.ca/pecsf</a>         <b>Email:</b> <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+           
+            <div>
                 <strong>Freedom of Information and Protection of Privacy Act</strong>
                 <p class="py-3">Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting on your pledge for charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.</p>
                 <p>By clicking the Submit button, I hereby consent to the disclosure, within Canada only, by the BC Public Service Agency of my name to my Organization's Lead PECSF Coordinator for the purpose of administering the Ministry's participation incentive draws in the current Campaign. This consent is effective until such time as my consent is revoked by me in writing to the Campaign Manager, PECSF.</p>
                 <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736, <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5</p>
             </div>
+            <a class="btn btn-lg btn-outline-primary" href="{{route('donate.distribution')}}">Previous</a>
+            <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
         </div>
     </div>
+    </form>
+
 </div>
 @endsection
 

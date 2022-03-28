@@ -26,11 +26,21 @@ class DonateStep3Request extends FormRequest
         return [
             'distributionByPercentOneTime' => 'nullable|boolean',
             'distributionByPercentBiWeekly' => 'nullable|boolean',
-            // TODO: Manage required as per frequency
             'oneTimePercent' => 'required_without:biWeeklyPercent|array',
             'oneTimeAmount' => 'required_without:biWeeklyAmount|array',
             'biWeeklyPercent' => 'required_without:oneTimePercent|array',
-            'biWeeklyAmount' => 'required_without:oneTimeAmount|array'
+            'biWeeklyAmount' => 'required_without:oneTimeAmount|array',
+            'oneTimePercent.*' => 'required_without:biWeeklyPercent|numeric|gt:0',
+            'oneTimeAmount.*' => 'required_without:biWeeklyAmount|numeric|gt:0',
+            'biWeeklyPercent.*' => 'required_without:oneTimePercent|numeric|gt:0',
+            'biWeeklyAmount.*' => 'required_without:oneTimeAmount|numeric|gt:0',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            "*.*.gt" => 'Please enter amount more than 0'
         ];
     }
 }

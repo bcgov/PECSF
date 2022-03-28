@@ -3,7 +3,13 @@
 @section ("step-content")
 <h2 class="mt-5">3. Decide on the distribution</h2>
 <p class="mt-3">You can distribute your contributions to each charity here. Start from the top and specify the amount of percentage so that together they are total 100%.</p>
-
+@if($errors->any())
+    <div class="alert alert-warning">
+        @foreach ($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif
 <form action="{{route('donate.save.distribution')}}" method="POST">
     @csrf
     @foreach(['one-time', 'bi-weekly'] as $key)
