@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePledgeRequest;
 use App\Http\Requests\DonateStep3Request;
-use App\Http\Requests\DontateStep1Request;
+use App\Http\Requests\DonateStep1Request;
 use App\Http\Requests\DonateStep2Request;
 use App\Models\Charity;
 use App\Models\Pledge;
@@ -143,7 +143,7 @@ class CharityController extends Controller
         return $id;
     }
 
-    public function saveCharities(DontateStep1Request $request)
+    public function saveCharities(DonateStep1Request $request)
     {
         if ($request->has('cancel')) {
             session()->forget('charities');

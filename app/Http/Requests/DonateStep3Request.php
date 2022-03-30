@@ -30,10 +30,10 @@ class DonateStep3Request extends FormRequest
             'oneTimeAmount' => 'required_without:biWeeklyAmount|array',
             'biWeeklyPercent' => 'required_without:oneTimePercent|array',
             'biWeeklyAmount' => 'required_without:oneTimeAmount|array',
-            'oneTimePercent.*' => 'required_without:biWeeklyPercent|numeric|gt:0',
-            'oneTimeAmount.*' => 'required_without:biWeeklyAmount|numeric|gt:0',
-            'biWeeklyPercent.*' => 'required_without:oneTimePercent|numeric|gt:0',
-            'biWeeklyAmount.*' => 'required_without:oneTimeAmount|numeric|gt:0',
+            'oneTimePercent.*' => 'required_without:biWeeklyPercent|numeric|gte:0',
+            'oneTimeAmount.*' => 'required_without:biWeeklyAmount|numeric|gte:0',
+            'biWeeklyPercent.*' => 'required_without:oneTimePercent|numeric|gte:0',
+            'biWeeklyAmount.*' => 'required_without:oneTimeAmount|numeric|gte:0',
         ];
     }
 
