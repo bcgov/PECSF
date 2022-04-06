@@ -505,6 +505,9 @@ class CharityController extends Controller
             ]);
 
             foreach ($input['charity'.$frequency.'Amount'] as $id => $amount) {
+                if ($amount <= 0) {
+                    continue;
+                }
                 PledgeCharity::create([
                     'charity_id' => $id,
                     'pledge_id' => $pledge->id,

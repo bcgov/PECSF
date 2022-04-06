@@ -31,6 +31,13 @@
                         <div class="step text-center">
                             <div>
                                 <div class="count">3</div>
+                                <div class="title">Volunteer Registration Summary</div>
+                            </div>
+                        </div>
+                        <div class="divider flex-fill"></div>
+                        <div class="step text-center">
+                            <div>
+                                <div class="count">4</div>
                                 <div class="title">Begin Volunteer Training</div>
                             </div>
                         </div>
@@ -61,10 +68,19 @@
                                     <div class="col-12 col-md-6 offset-md-3">
                                         <div class="step-1 text-center">
                                             <p class="text-muted">
-                                                Using the field below, please identify the number of years you have been volunteering with PECSF. *
+                                                Using the field below, please identify the number of years you have been volunteering with PECSF.
                                             </p>
                                             <input name="no_of_years" type="text" class="form-control form-control-sm" placeholder="Enter number of years" required>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col text-center">
+                                        <input type="hidden" name="no_of_years_opt_out" value="0">
+                                        <label>
+                                            <input type="checkbox" name="no_of_years_opt_out" value="1">
+                                            I wish to opt-out from identifying the number of years I have been volunteering with PECSF.
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -83,12 +99,22 @@
                                                         Global Address Listing
                                                     </label>
                                                 </div>
+                                            </div>
+                                            <div class="row text-left">
                                                 <div class="col">
                                                     <label>
                                                         <input type="radio" name="address_type" value="new">
                                                         New Address
                                                     </label>
                                                     <input name="new_address" type="text" class="form-control form-control-sm" placeholder="Physical Address, City, Prov, Postal Code">
+                                                </div>
+                                            </div>
+                                            <div class="row text-left">
+                                                <div class="col">
+                                                    <label>
+                                                        <input type="radio" name="address_type" value="opt-out">
+                                                        I wish to opt-out from receiving recognition items.
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -116,6 +142,55 @@
                             </div>
                             <div class="carousel-item p-3"  data-step="3">
                                 <div class="row mt-5">
+                                    <div class="col-12 col-md-6 offset-md-3 text-center">
+                                        <p class="text-muted">
+                                            Please take a moment to review yout Volunteer Preferences below before continuting to Step 4.
+                                        </p>
+                                        <div class="d-flex bg-light p-3 flex-column" id="summary-table">
+                                            <div class="d-flex">
+                                                <div>
+                                                    Organization
+                                                </div>
+                                                <div class="flex-fill"></div>
+                                                <div data-value-for="organization">
+                                                    Value
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div>
+                                                    Number of years volunteering with PECSF
+                                                </div>
+                                                <div class="flex-fill"></div>
+                                                <div data-value-for="no_of_years">
+                                                    Value
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="d-flex">
+                                                <div>
+                                                    Address Preference
+                                                </div>
+                                                <div class="flex-fill"></div>
+                                                <div data-value-for="address_type">
+                                                    Value
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div>
+                                                    Preferred Volunteer Role
+                                                </div>
+                                                <div class="flex-fill"></div>
+                                                <div data-value-for="preferred_role">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="carousel-item p-3"  data-step="4">
+                                <div class="row mt-5">
                                     <div class="col-12 col-md-6 offset-md-3">
                                         <div class="step-1 text-center">
                                             <p class="text-muted">
@@ -126,7 +201,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="carousel-item p-3"  data-step="4">
+                            <div class="carousel-item p-3"  data-step="5">
                                 <div class="row mt-5">
                                     <div class="col-12 col-md-6 offset-md-3">
                                         <div class="step-1 text-center">

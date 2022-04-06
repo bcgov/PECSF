@@ -76,6 +76,9 @@
             $(this).find(".ready-btn").addClass("d-none");
         }
     });
+    $("#volunteer-registration").on('click', '[name=no_of_years_opt_out]', function (e) {
+        $("#volunteer-registration").find("[name=no_of_years]").prop('required', !this.checked);
+    });
     $('#volunteer-registration').on('slide.bs.carousel', function (e) {
         const activeStep = Number.parseInt($(e.relatedTarget).data('step')) - 1;
         const requiredQuestion = $("#volunteer-registration-carousel").find('.carousel-item.active').find("[required]");
@@ -99,12 +102,12 @@
         });
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
-        } else if (e.to == 4) {
+        } else if (e.to == 5) {
             $(this).find(".prev-btn").removeClass("d-none");
             $(this).find(".finish-btn").removeClass("d-none");
             $(this).find(".signup-btn").addClass("d-none");
             $(this).find(".next-btn").addClass("d-none");
-        }  else if (e.to == 5) {
+        }  else if (e.to == 6) {
             $(this).find(".finish-btn").addClass("d-none");
             $(this).find(".signup-btn").removeClass("d-none");
             $(this).find(".prev-btn").addClass("d-none");
@@ -114,6 +117,16 @@
             $(this).find(".signup-btn").addClass("d-none");
             $(this).find(".finish-btn").addClass("d-none");
         }
+        
+        const no_of_years = $("#volunteer-registration").find("[type=checkbox][name=no_of_years_opt_out]").prop('checked') ? 'opt-out' : $("#volunteer-registration").find("[type=input][name=no_of_years]").val();
+        const address_type = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val()
+        
+
+
+        $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=organization_id] option:selected").text());
+        $("#summary-table").find('[data-value-for="no_of_years"]').html(no_of_years);
+        $("#summary-table").find('[data-value-for="address_type"]').html(address_type);
+        $("#summary-table").find('[data-value-for="preferred_role"]').html($("#volunteer-registration").find("[name=preferred_role] option:selected").text());
     });
 
     $('.signup-btn').on('click', function () {
