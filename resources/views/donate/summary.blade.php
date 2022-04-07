@@ -38,7 +38,7 @@
                 <div class="row">
                     <p class="py-4">
                     Please note that <b>this is not a tax receipt</b>.  
-                    Payroll Deductions begin with the first paycheque in January and will appear on your T4 issued from payroll from that calendar year. PECSF issues cheques twice a year. 
+                    Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the fund are collected. PECSF issues cheques twice a year. 
                     In August for payroll deductions from January -June, and in March for payroll deductions from July -December.
                     </p>
                 </div>
@@ -64,15 +64,16 @@
     </div>
     <div class="row">
         <div class="col">
-           
             <div>
                 <strong>Freedom of Information and Protection of Privacy Act</strong>
                 <p class="py-3">Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting on your pledge for charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.</p>
-                <p>By clicking the Submit button, I hereby consent to the disclosure, within Canada only, by the BC Public Service Agency of my name to my Organization's Lead PECSF Coordinator for the purpose of administering the Ministry's participation incentive draws in the current Campaign. This consent is effective until such time as my consent is revoked by me in writing to the Campaign Manager, PECSF.</p>
-                <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736, <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5</p>
+                <p>By clicking the Pledge button, you hereby consent to the disclosure, within Canada only, by the BC Public Service Agency of your name to your organization’s Lead PECSF Coordinator for the purpose of administering the organization's participation incentive draws for the current campaign. This consent is effective until such time as my consent is revoked by you, in writing, to the PECSF Campaign Manager.</p>
+                <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund, at 250 356-1736, PECSF@gov.bc.ca  or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5.</p>
             </div>
-            <a class="btn btn-lg btn-outline-primary" href="{{route('donate.distribution')}}">Previous</a>
-            <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
+            <div class="mt-3">
+                <a class="btn btn-lg btn-outline-primary" href="{{route('donate.distribution')}}">Previous</a>
+                <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
+            </div>
         </div>
     </div>
     </form>

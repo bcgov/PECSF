@@ -27,7 +27,7 @@
                             <td class="text-left">{{$charity->goal_amount}} </td>
                             <!-- <td>{{$pledge->created_at->format('F j, Y')}}</td> -->
                             <td>{{$pledge->created_at->format('Y')}} Campaign</td>
-                            <td>{{$pledge->frequency == 'bi-weekly' ? 'Bi-Weekly' : 'One Time'}}</td>
+                            <td>{{$pledge->frequency == 'bi-weekly' ? 'Bi-weekly' : 'One-time'}}</td>
                         </tr>
                         @endforeach
                     @endforeach

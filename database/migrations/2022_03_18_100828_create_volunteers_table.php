@@ -18,7 +18,7 @@ class CreateVolunteersTable extends Migration
             $table->foreignId('user_id')->unique()->constrained();
             $table->string('address_type')->comment('global or new')->default('global');
             $table->string('new_address')->nullable();
-            $table->smallInteger('no_of_years')->unsigned();
+            $table->smallInteger('no_of_years')->unsigned()->nullable();
             $table->string('preferred_role');
             $table->foreignId('organization_id')->constrained();
             $table->timestamps();
