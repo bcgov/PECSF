@@ -79,6 +79,11 @@
     $("#volunteer-registration").on('click', '[name=no_of_years_opt_out]', function (e) {
         $("#volunteer-registration").find("[name=no_of_years]").prop('required', !this.checked);
     });
+    $("#volunteer-registration").on('click', '[name=address_type]', function (e) {
+        const isRequired = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val() === 'new';
+            $("#volunteer-registration").find("[name=new_address]").prop('required', isRequired);
+        
+    });
     $('#volunteer-registration').on('slide.bs.carousel', function (e) {
         const activeStep = Number.parseInt($(e.relatedTarget).data('step')) - 1;
         const requiredQuestion = $("#volunteer-registration-carousel").find('.carousel-item.active').find("[required]");
@@ -118,8 +123,8 @@
             $(this).find(".finish-btn").addClass("d-none");
         }
         
-        const no_of_years = $("#volunteer-registration").find("[type=checkbox][name=no_of_years_opt_out]").prop('checked') ? 'opt-out' : $("#volunteer-registration").find("[type=input][name=no_of_years]").val();
-        const address_type = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val()
+        const no_of_years = $("#volunteer-registration").find("[type=checkbox][name=no_of_years_opt_out]").prop('checked') ? 'opt-out' : $("#volunteer-registration").find("[type=text][name=no_of_years]").val();
+        const address_type = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val();
         
 
 

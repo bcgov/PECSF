@@ -95,7 +95,7 @@
                                             <div class="row text-left">
                                                 <div class="col">
                                                     <label>
-                                                        <input type="radio" name="address_type" value="global">
+                                                        <input type="radio" name="address_type" value="global" checked>
                                                         Global Address Listing
                                                     </label>
                                                 </div>

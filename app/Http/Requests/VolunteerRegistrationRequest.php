@@ -28,7 +28,7 @@ class VolunteerRegistrationRequest extends FormRequest
             'address_type' => 'nullable|in:global,new,opt-out',
             'new_address' => 'required_if:address_type,new',
             'no_of_years_opt_out' => 'required',
-            'no_of_years' => 'required_if:no_of_years_opt_out,0|integer',
+            'no_of_years' => 'nullable|required_if:no_of_years_opt_out,0|integer',
             'preferred_role' => 'required|in:Coordinator,Canvasser,Event Coordinator,Office contact'
         ];
     }
