@@ -8,6 +8,12 @@
             <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
         @endif
     </div>
+    <div class="d-flex flex-column">
+        <p class="m-0">
+            Since you started giving* through PECSF, you've donated {{$totalPledgedDataTillNow}}, as BC Public Servent.
+        </p>
+        <small>reflects pledge totals from 2005 onwards</small>
+    </div>
 @endsection
 @section('content')
 <div class="card">

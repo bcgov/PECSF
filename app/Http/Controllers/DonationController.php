@@ -17,7 +17,8 @@ class DonationController extends Controller {
             ->where('user_id', Auth::id())
             ->whereYear('created_at', $currentYear)
             ->get();
-        return view('donations.index', compact('pledges', 'currentYear'));
+        $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
+        return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow'));
     }
     
 }

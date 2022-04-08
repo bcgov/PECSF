@@ -19,9 +19,10 @@
                         <th>Donation Type</th>
                         <th>Frequency</th>
                     </tr>
+                    @php $total = 0; @endphp
                     @foreach($pledges as $pledge)
                         @foreach($pledge->charities as $charity)
-
+                        @php $total += $charity->goal_amount; @endphp
                         <tr class="text-center">
                             <td class="text-left">{{$charity->charity->charity_name}} </td>
                             <td class="text-left">{{$charity->goal_amount}} </td>
@@ -31,6 +32,10 @@
                         </tr>
                         @endforeach
                     @endforeach
+
+                    <tr>
+                        <td colspan="4" class="text-center"><strong>  In {{$pledges[0]->created_at->format('Y')}}, you pledged ${{$total}}</strong></td>
+                    </tr>
                 </table>
                 <div class="text-center mt-3">
                     <div class="row">
