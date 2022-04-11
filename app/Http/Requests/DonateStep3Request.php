@@ -40,7 +40,7 @@ class DonateStep3Request extends FormRequest
     public function messages()
     {
         return [
-            "*.*.gt" => 'Check your donation allocation. Ensure your totals are correct and there are no negative numbers entered'
+            "*.*.gte" => 'Check your donation allocation. Ensure your totals are correct and there are no negative numbers entered'
         ];
     }
 }
