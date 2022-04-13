@@ -42,6 +42,7 @@ Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, '
 
 
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');
+Route::get('/donate/edit/{id?}', [CharityController::class, 'edit'])->name('donate.edit');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');

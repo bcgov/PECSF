@@ -115,6 +115,38 @@ class CharityController extends Controller
         return view('donate.select', compact('charities','terms','designation_list','category_list','province_list','selected_charities'));
     }
 
+    public function edit(Request $request, $id = null) {
+        // TODO: (JP) Reload the charity if exists
+         
+        $campaignYear = \App\Models\CampaignYear::where('calendar_year', today()->year + 1 )
+                ->first();
+        $cy_pledges = Pledge::where('user_id', Auth::id())->onlyCampaignYear( $campaignYear->calendar_year )
+                            ->get();
+
+        if ( $campaignYear->isOpen())  {                           
+            if ( count($cy_pledges) ) {
+                
+            $selectedCharities = ['id' => [], 'additional' => [] ];
+            foreach ($cy_pledges as $pledge) {
+                foreach ($pledge->charities as $charity) {
+                    if (!(in_array($charity->charity_id , $selectedCharities['id']))) {
+                        array_push($selectedCharities['id'], $charity->charity_id); 
+                        array_push($selectedCharities['additional'], $charity->additional); 
+                    }
+                }
+            }
+
+            Session()->put('charities', $selectedCharities);
+            //dd( [$cy_pledges, $campaignYear, $request, $selectedCharities]);
+                // load onto the session 
+                return redirect()->route('donate');
+            }
+        }
+
+        return redirect()->route('donations.list');
+ 
+    }
+
     public function show(Request $request)
     {
         $charity = Charity::where('id', $request->charity_id)->first();

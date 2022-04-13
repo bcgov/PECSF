@@ -7,6 +7,7 @@ use App\Models\PledgeCharity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CampaignYear;
 
 class DonationController extends Controller {
 
@@ -18,7 +19,13 @@ class DonationController extends Controller {
             ->whereYear('created_at', $currentYear)
             ->get();
         $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
-        return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow'));
+
+        $campaignYear = CampaignYear::where('calendar_year', today()->year + 1 )->first();
+        $cyPledges = Pledge::where('user_id', Auth::id())
+            ->onlyCampaignYear( $campaignYear->calendar_year )
+            ->get();
+
+        return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear','cyPledges'));
     }
     
 }

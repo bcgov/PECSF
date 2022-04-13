@@ -39,4 +39,15 @@ class CampaignYear extends Model
         return $this->hasOne(User::Class, 'id', 'modified_by_id');
     }
 
+    public function isOpen() {
+        $today = today();
+        return ($this->status == 'A' && ($today >= $this->start_date && $today < $this->end_date));
+    }
+
+    public function isActive() {
+        return ($this->status == 'A');
+    }
+
+
+
 }

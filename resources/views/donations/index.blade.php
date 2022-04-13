@@ -1,10 +1,40 @@
 @extends('adminlte::page')
 @section('content_header')
+
+    {{-- Show when Campaign Year Open --}}
+    <div class="d-flex justify-content-center pt-3">
+        <div class="card border-warning bg-success text-center" style="max-width: 50em; border-radius: 1em;">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                @if ( $campaignYear->isOpen() ) 
+                    <p class="card-text text-left text-white">
+                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
+                        The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January. 
+                    </p>
+                    @if ( count($cyPledges) > 0)
+                        <p class="card-text text-left text-white">
+                            To make changes to your proposed pledge, click into the box below where your 2023 choices are shown. 
+                        </p>
+                        <a href="{{ route('donate.edit') }}" class="btn btn-primary">Make change to your proposed pledge</a>
+                    @else 
+                        <a href="{{ route('donate') }}" class="btn btn-primary">Donate to PECSF Now</a>
+                    @endif
+                @else
+                        <p class="card-text text-left text-white">
+                            The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca
+                        </p>
+                @endif
+            </div>
+        </div>
+    </div>
+    
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
         @if($pledges->count() > 0)
             <div class="flex-fill"></div>
-            <x-button :href="route('donate')">Donate to PECSF Now</x-button>
+            @if (!$campaignYear->isOpen() ) 
+                <x-button :href="route('donate')">Donate to PECSF Now</x-button>
+            @endif
             <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
         @endif
     </div>

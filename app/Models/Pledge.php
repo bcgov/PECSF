@@ -27,6 +27,14 @@ class Pledge extends Model
         return $this;
     }
 
+    public function scopeOnlyCampaignYear($query, $campaign_year) {
+
+        $cy = CampaignYear::where('calendar_year', $campaign_year )->first();
+
+        return $query->whereBetween('created_at', 
+                [$cy->start_date, $cy->end_date->add(1,'day') ]);
+    }
+
     /* public function charities() {
         return $this->belongsToMany('App\Models\Charity', 'pledge_charities', 'pledge_id', 'charity_id')
         ->using('App\Models\PledgeCharity')->withTimestamps();

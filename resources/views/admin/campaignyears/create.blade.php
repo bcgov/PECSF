@@ -118,7 +118,7 @@
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="close_date">Campaign Closed  Date</label>
-                        <input type="date" class="form-control  @error('close_date') is-invalid @enderror" name="close_date" 
+                        <input type="date" class="form-control  @error('close_date') is-invalid @enderror" id="close_date" name="close_date" 
                     @if(isset($campaign_year)) 
                         @error('close_date')        
                             value="{{ old('close_date') }}">
@@ -149,3 +149,16 @@
           </form>
 
 @endsection
+
+@push('js')
+<script>
+    $(function() {
+
+        $('#calendar_year').change(function(e) {
+              $('#close_date').val( e.target.value + '-12-31');
+        });
+
+    });
+</script>
+
+@endpush

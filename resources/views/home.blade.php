@@ -20,7 +20,7 @@
                 </div>
                 <div class=" col-md-4 p-2">
                     <div class="card" style="height:220px" >
-                        <a href="{{route('donate')}}" class="card-body text-center">
+                        <a href="{{route('donations.list')}}" class="card-body text-center">
                             <img src="/svgs/give.svg" alt="Connect" height="32">
                             <p class="text-primary "> <span style="font-size:22px;" >Give </span></p>
                             <p>Support the charities of your choice with payroll deduction in any amount.</p>
