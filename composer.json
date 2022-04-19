@@ -21,7 +21,8 @@
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.52",
         "socialiteproviders/microsoft-azure": "^4.2",
-        "spatie/laravel-permission": "^4.2"
+        "spatie/laravel-permission": "^4.2",
+        "yajra/laravel-datatables": "^1.5"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Yajra\Datatables\Datatables;
 
 class AdministratorController extends Controller
 {
@@ -33,11 +34,23 @@ class AdministratorController extends Controller
     public function index(Request $request)
     {
         //
-        $administrators = User::role('admin')->get();
+        if($request->ajax()) {
+
+            $administrators = User::role('admin')->get();
+        
+            return Datatables::of($administrators)
+                ->addColumn('rolename', function ($administrator) {
+                    return $administrator->getRoleNames()->contains('admin') ? 'admin' : '' ;    
+                })
+                ->addColumn('action', function ($administrator) {
+                    return '<a class="btn btn-danger" onclick="return confirm(\'Are you sure to remove user' . $administrator->name . '? \')" href="/administrators/'. $administrator->id . '/delete"><i class="fa fa-trash"></i></a>';
+            })
+            ->make(true);
+        }
 
         // load the view and pass the sharks
-        return view('admin.administrators.index', compact('administrators'));
-
+        return view('admin.administrators.index');
+        
     }
 
     public function store(Request $request)
@@ -51,8 +64,12 @@ class AdministratorController extends Controller
             );
         }
 
-        //$user = User::find($request->user_id);
-        $user = User::where('azure_id',$request->user_id)->first();
+        $curr_user = User::find( Auth::id() )->first();
+        if ( is_null($curr_user->guid) ) {
+            $user = User::find($request->user_id);
+        } else {
+            $user = User::where('azure_id',$request->user_id)->first();
+        }
 
         if ($user) {
             if ($user->hasRole('admin'))
@@ -88,13 +105,19 @@ class AdministratorController extends Controller
 
         $user->assignRole('admin');
         
-        return redirect()->route('administrators.index')
+        return redirect()->route('admin.index')
             ->with('success','User ' . $user->name . ' was assigned to Administrator role.');
 
     }
 
     public function getUsers(Request $request)
     {
+
+        $user = User::find( Auth::id() )->first();
+        if ( is_null($user->guid) ) {
+            return $this->getUserFromLocalDatabase($request);
+        }
+
         /*
         $term = trim($request->q);
 
@@ -150,6 +173,25 @@ class AdministratorController extends Controller
 
     }
     
+    public function getUserFromLocalDatabase(Request $request) {
+
+        $term = trim($request->q);
+
+        if($term == ''){
+            $users = User::orderby('name','asc')->select('id','name','email')->limit(50)->get();
+         }else{
+            $users = user::orderby('name','asc')->select('id','name','email')->where('name', 'like', '%' .$term . '%')->limit(50)->get();
+         }
+   
+         $formatted_users = [];
+         foreach ($users as $user) {
+            $formatted_users[] = ['id' => $user->id, 'text' => $user->name];
+        }
+
+        return response()->json($formatted_users);
+
+    }
+
     public function destroy($id)
     {
          
@@ -175,7 +217,7 @@ class AdministratorController extends Controller
 
         $user->removeRole('admin');
 
-        return redirect()->route('administrators.index')
+        return redirect()->route('admin.index')
           ->with('success','User ' . $user->name . '  was removed from Administrator role.');
 
     }

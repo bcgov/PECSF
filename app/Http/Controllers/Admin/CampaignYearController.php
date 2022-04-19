@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\CampaignYear;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CampaignYearRequest;
 use Illuminate\Validation\ValidationException;
 
 class CampaignYearController extends Controller
@@ -30,22 +32,26 @@ class CampaignYearController extends Controller
     public function index(Request $request)
     {
         //
-        
-        $search = $request->q;
 
-        if (isset($search)) {
-            //dd($request->search);
-            $campaign_years = CampaignYear::whereRaw('CAST(calendar_year as char(4)) like ?', [ $search .'%'])->orderBy('calendar_year', 'desc')->paginate(10);
+        if($request->ajax()) {
 
-            $campaign_years->appends(['q' => $request->q ]);
+            $campignyears = CampaignYear::select(['id', 'calendar_year', 'status', 'number_of_periods']);
 
-        } else {
-            // get all the record 
-            $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
-        }   
+            return Datatables::of($campignyears)
+                ->addColumn('action', function ($campaign_year) {
+                //return '<a href="#" class="notification-modal btn btn-xs btn-primary" value="'. $notification->id .'"><i class="glyphicon glyphicon-envelope"></i>View</a>';
 
-        // load the view and pass the sharks
-        return view('admin.campaignyears.index', compact('campaign_years','search'));
+                return '<a class="btn btn-info btn-sm" href="' . route('campaignyears.show',$campaign_year->id) . '">Show</a>' .
+                       '<a class="btn btn-primary btn-sm ml-2" href="' . route('campaignyears.edit',$campaign_year->id) . '">Edit</a>';
+            })
+            ->make(true);
+        }
+
+        // get all the record 
+        //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
+
+        // load the view and pass 
+        return view('admin.campaignyears.index');
 
     }
 
@@ -56,7 +62,7 @@ class CampaignYearController extends Controller
      */
     public function create()
     {
-        // load the create form (app/views/sharks/create.blade.php)
+    
         return view('admin.campaignyears.create');
     }
 
@@ -66,59 +72,21 @@ class CampaignYearController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CampaignYearRequest $request)
     {
 
-        // validate
-        // read more on validation at http://laravel.com/docs/validation
-        $request->validate([
-            'calendar_year'       => 'required|numeric',
-            'number_of_periods'   => 'required|numeric|min:1|max:99',
-            'status'              => 'required',
-            'start_date'          => 'required|date|before_or_equal:end_date',
-            'end_date'            => 'required|date|after_or_equal:start_date',
-            'close_date'          => 'required|date',
+        CampaignYear::Create([
+            'calendar_year' => $request->calendar_year,
+            'number_of_periods' =>  $request->number_of_periods,
+            'status' => $request->status,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'close_date' => $request->close_date,
+            'created_by_id' => Auth::id(),
         ]);
 
-        // Addition Validation - Only one calendar year allow to be Active
-        if ($request->status == 'A') {
-            $cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->get();
-
-            if (count($cy)) {
-                if (!(count($cy) == 1 && $cy[0]->calendar_year == $request->calendar_year)) {
-                    throw ValidationException::withMessages(
-                        ['status' => 'The Calendar Year ' . $cy[0]->calendar_year . ' is active.']
-                    );
-                }
-            }
-        }
-
-
-            // store
-            if (!(CampaignYear::where('calendar_year', $request->calendar_year)->exists())) {
-
-                CampaignYear::Create([
-                    'calendar_year' => $request->calendar_year,
-                    'number_of_periods' =>  $request->number_of_periods,
-                    'status' => $request->status,
-                    'start_date' => $request->start_date,
-                    'end_date' => $request->end_date,
-                    'close_date' => $request->close_date,
-                    'created_by_id' => Auth::id(),
-                ]);
-
-            } else {
-                
-                throw ValidationException::withMessages(
-                    ['calendar_year' => 'Calendar Year already exits']
-                );
-                
-            }
-
-            // redirect
-            //Session::flash('message', 'Successfully created shark!');
-            return redirect()->route('campaignyears.index')
-                ->with('success','Campaign Year ' . $request->calendar_year . ' created successfully');
+        return redirect()->route('campaignyears.index')
+            ->with('success','Campaign Year ' . $request->calendar_year . ' created successfully');
         
     }
 
@@ -131,7 +99,6 @@ class CampaignYearController extends Controller
     public function show($id)
     {
 
-        // get the shark
         $campaign_year = CampaignYear::find($id);
 
         // show the view and pass the campaign year to it
@@ -147,7 +114,7 @@ class CampaignYearController extends Controller
      */
     public function edit($id)
     {
-        // get the shark
+
         $campaign_year = CampaignYear::find($id);
 
         // show the view and pass the campaign year to it
@@ -162,30 +129,8 @@ class CampaignYearController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CampaignYearRequest $request, $id)
     {
-        //
-
-        $request->validate([
-            'number_of_periods'   => 'required|numeric|min:1|max:99',
-            'status'              => 'required',
-            'start_date'          => 'required|date|before_or_equal:end_date',
-            'end_date'            => 'required|date|after_or_equal:start_date',
-            'close_date'          => 'required|date',
-        ]);
-
-        // Addition Validation - Only one calendar year allow to be Active
-        if ($request->status == 'A') {
-            $cy = CampaignYear::where('Status', 'A')->orderByDesc('calendar_year')->get();
-
-            if (count($cy)) {
-                if (!(count($cy) == 1 && $cy[0]->id == $id)) {
-                    throw ValidationException::withMessages(
-                        ['status' => 'The Calendar Year ' . $cy[0]->calendar_year . ' is active.']
-                    );
-                }
-            }
-        }
     
         CampaignYear::where('id',$id)->update([
         
@@ -209,6 +154,6 @@ class CampaignYearController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Not implement for Campaign Year
     }
 }

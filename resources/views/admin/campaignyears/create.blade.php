@@ -19,11 +19,11 @@
               <div class="form-group col-md-4">
                 <label for="calendar_year">Calendar Year</label>
                 @if(isset($campaign_year))
-                    <input type="text" class="form-control" id="number_of_periods" name="number_of_periods" value="{{ $campaign_year->calendar_year }}" readonly>
+                    <input type="text" class="form-control" id="number_of_periods" name="calendar_year" value="{{ $campaign_year->calendar_year }}" readonly>
                 @else
                     <select id="calendar_year" class="form-control @error('calendar_year') is-invalid @enderror" name="calendar_year">
-                        @for ($year = 1980; $year <= 2030 ; $year++)
-                            <option value="{{ $year }}" {{ $year == (old('calendar_year') ? old('calendar_year') : date('Y') ) ? 'selected' : '' }}>
+                        @for ($year = 1980; $year <= 2099 ; $year++)
+                            <option value="{{ $year }}" {{ $year == (old('calendar_year') ? old('calendar_year') : date('Y') + 1 ) ? 'selected' : '' }}>
                                 {{ $year }} 
                             </option>
                         @endfor
@@ -126,7 +126,7 @@
                             value="{{ old('close_date') ? old('close_date') : $campaign_year->close_date->toDateString() }}">
                         @enderror
                     @else 
-                        value="{{ old('close_date') ? old('close_date') : date('Y').'-12-31' }}">
+                        value="{{ old('close_date') ? old('close_date') : (date('Y') + 1) .'-12-31' }}">
                     @endif
                     @error('close_date')
                     <div class="invalid-feedback">
