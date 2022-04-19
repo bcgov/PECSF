@@ -261,6 +261,8 @@ return [
         [
             'text'    => 'Administration',
             'icon'    => 'nav-icon far fa-sun',
+            'url'     => '/administrators/dashboard',
+            'id'      => 'admin-menu',
             'can'     => ['setting'],
             'submenu' => [
                 [

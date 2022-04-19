@@ -5,7 +5,7 @@
 <p class="mt-3">You can distribute your contributions to each charity here. Start from the top and specify the amount of percentage so that together they are total 100%.</p>
 @if($errors->any())
     <div class="alert alert-warning">
-        @foreach ($errors->all() as $error)
+        @foreach (array_unique($errors->all()) as $error)
             <div>{{ $error }}</div>
         @endforeach
     </div>

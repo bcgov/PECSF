@@ -20,6 +20,11 @@ class AdministratorController extends Controller
          $this->middleware('permission:setting');
     }
 
+    public function dashboard() 
+    {
+        return view('admin.dashboard.index');
+    }
+
      /**
      * Display a listing of the resource.
      *

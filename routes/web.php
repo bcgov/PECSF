@@ -84,8 +84,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
 });    
 
-Route::group(['middleware' => ['auth']], function() {
-    Route::resource('/administrators', AdministratorController::class)->only(['index','store']);
-    Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
-    Route::get('/administrators/users', [AdministratorController::class,'getUsers']);
+Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(function() {
+    Route::get('dashboard', [AdministratorController::class, 'dashboard'])->name('dashboard');
+    Route::resource('/', AdministratorController::class)->only(['index','store']);
+    Route::get('/{administrator}/delete', [AdministratorController::class,'destroy']);
+    Route::get('/users', [AdministratorController::class,'getUsers']);
 }); 
