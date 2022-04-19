@@ -21,6 +21,10 @@ class DonationController extends Controller {
         $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
 
         $campaignYear = CampaignYear::where('calendar_year', today()->year + 1 )->first();
+        if (!($campaignYear && $campaignYear->isOpen()) ) {
+            $campaignYear = CampaignYear::where('calendar_year', today()->year )->first();
+        }
+
         $cyPledges = Pledge::where('user_id', Auth::id())
             ->onlyCampaignYear( $campaignYear->calendar_year )
             ->get();
