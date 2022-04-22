@@ -1,4 +1,29 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito:wght@400;600;700&display=swap);
+@font-face {
+    src: url(/fonts/vendor/@bcgov/bc-sans/BCSans-Regular.woff?0079ea8e42d4e81a13d2b04d4e3a95a3) format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-family: 'BCSans';
+}
+@font-face {
+    src: url(/fonts/vendor/@bcgov/bc-sans/BCSans-BoldItalic.woff?73ed5137b2c4a42b754f9463bfef3c8c) format('woff');
+    font-weight: 700;
+    font-style: italic;
+    font-family: 'BCSans';
+}
+@font-face {
+    src: url(/fonts/vendor/@bcgov/bc-sans/BCSans-Italic.woff?9c3be03a06d30a6ecff0405eabbc92a1) format('woff');
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'BCSans';
+}
+@font-face {
+    src: url(/fonts/vendor/@bcgov/bc-sans/BCSans-Bold.woff?252ecf87ea37c93b293c23b9e2f052aa) format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-family: 'BCSans';
+}
+
 @charset "UTF-8";
 /*!
  * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
@@ -6164,7 +6189,7 @@ readers do not read off random characters that represent icons */
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --font-family-sans-serif: "Nunito", sans-serif;
+  --font-family-sans-serif: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
@@ -6187,7 +6212,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: "Nunito", sans-serif;
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.6;
@@ -11761,7 +11786,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: "Nunito", sans-serif;
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.6;
@@ -11863,7 +11888,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   z-index: 1060;
   display: block;
   max-width: 276px;
-  font-family: "Nunito", sans-serif;
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.6;
@@ -39201,7 +39226,7 @@ select.form-control-sm ~ .select2-container--default .select2-selection--multipl
   position: relative;
 }
 .mapael .mapTooltip {
-  font-family: "Nunito", sans-serif;
+  font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.6;
@@ -49303,4 +49328,14 @@ a.text-muted:hover {
 
 [aria-expanded=true] .expander::after {
   content: "-";
+}
+
+a:hover {
+  text-decoration: underline !important;
+  opacity: 0.8;
+}
+
+.btn:hover {
+  text-decoration: underline !important;
+  opacity: 0.8;
 }
