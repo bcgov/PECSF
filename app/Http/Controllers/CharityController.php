@@ -545,6 +545,7 @@ class CharityController extends Controller
                     'pledge_id' => $pledge->id,
                     'additional' => $input['charityAdditional'][$id],
                     'amount' => $amount,
+                    'frequency' => $frequency === 'BiWeekly' ? 'bi-weekly' : 'one time',
                     /* 'cheque_pending' => $multiplier, */
                     'goal_amount' => $amount * $multiplier
                 ]);
