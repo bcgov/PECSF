@@ -11,6 +11,7 @@ class PledgeCharity extends Pivot
     protected $fillable = [
         'charity_id',
         'pledge_id',
+        'frequency',
         'additional',
         'amount',
         'goal_amount'/* ,

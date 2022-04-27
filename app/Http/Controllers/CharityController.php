@@ -520,6 +520,15 @@ class CharityController extends Controller
     {
         $input = $request->validated();
         DB::beginTransaction();
+        $frequency = $input['frequency'];
+        $multiplier = $frequency === 'OneTime' ? 1 : 26;
+
+        $pledge = Pledge::create([
+            'amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] / $multiplier + $input['annualOneTimeAmount'] : $input['annual'+$frequency+'Amount'],
+            'user_id' => Auth::id(),
+            'frequency' => $frequency === 'both' ? 'both' : ($frequency === 'BiWeekly' ? 'bi-weekly' : 'one time'),
+            'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount'] : $input['annual'+$frequency+'Amount'],
+        ]);
         foreach(['OneTime', 'BiWeekly'] as $frequency) {
             if ($frequency === 'OneTime' && ($input['frequency'] !== 'one-time' && $input['frequency'] !== 'both')) {
                 continue;
@@ -527,14 +536,6 @@ class CharityController extends Controller
             if ($frequency === 'BiWeekly' && ($input['frequency'] !== 'bi-weekly' && $input['frequency'] !== 'both')) {
                 continue;
             }
-            $multiplier = $frequency === 'OneTime' ? 1 : 26;
-            
-            $pledge = Pledge::create([
-                'amount' => $input['annual'.$frequency.'Amount'] / $multiplier,
-                'user_id' => Auth::id(),
-                'frequency' => $frequency === 'BiWeekly' ? 'bi-weekly' : 'one time',
-                'goal_amount' => $input['annual'.$frequency.'Amount']
-            ]);
 
             foreach ($input['charity'.$frequency.'Amount'] as $id => $amount) {
                 if ($amount <= 0) {
