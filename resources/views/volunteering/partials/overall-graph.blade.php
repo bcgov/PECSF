@@ -2,7 +2,7 @@
     <div class="col-12 col-md-6">
         <div class="card">
             <div class="card-body">
-                <b>Top Charity Choosen Corporately</b>
+                <b>Top Corporately Chosen Charities</b>
                 <x-progress-bar text="BC Cancer Society" percent="90"></x-progress-bar>
                 <x-progress-bar text="BCSPCA" percent="85"></x-progress-bar>
                 <x-progress-bar text="Health & Stroke BC" percent="48"></x-progress-bar>
