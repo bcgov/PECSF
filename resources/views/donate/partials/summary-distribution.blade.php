@@ -33,7 +33,7 @@
                     <td style="width:110px" class="by-amount d-none">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm amount-input float-right text-right"  name="{{$keyCase}}Amount[{{ $charity['id'] }}]" value='{{$charity["$key_-amount-distribution"]}}' disabled>
-                            <label class="float-right text-right"> ${{$charity["$key_-amount-distribution"]}}</label>
+                            <label class="float-right text-right"> ${{$charity["$key_-amount-distribution"] * $multiplier}}</label>
                         </div>
                     </td>
                 </tr>

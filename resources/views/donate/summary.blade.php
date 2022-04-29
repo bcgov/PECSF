@@ -13,7 +13,7 @@
                     <div class="card">
                         <div class="card-body">
                             <span><b>Your Bi-weekly payroll deductions:</b></span>
-                            <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly }}</span><br>
+                            <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly*26 }}</span><br>
                             <h6>AND / OR</h6>
                             <span><b>Your One-time payroll deductions:</b></span>
                             <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span>
@@ -26,11 +26,13 @@
                         @if($key === 'one-time' && (session()->get('amount-step')['frequency'] === 'one-time' || session()->get('amount-step')['frequency'] === 'both'))
                             @php $key_ = $key; @endphp
                             @php $keyCase = 'oneTime'; @endphp
+                            @php $multiplier = 1; @endphp
                             @include('donate.partials.summary-distribution')
                         @endif
                         @if($key === 'bi-weekly' && (session()->get('amount-step')['frequency'] === 'bi-weekly' || session()->get('amount-step')['frequency'] === 'both'))
                             @php $key_ = $key;@endphp
                             @php $keyCase = 'biWeekly'; @endphp
+                            @php $multiplier = 26; @endphp
                             @include('donate.partials.summary-distribution')
                         @endif
                     @endforeach

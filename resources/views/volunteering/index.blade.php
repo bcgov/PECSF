@@ -123,7 +123,7 @@
             $(this).find(".finish-btn").addClass("d-none");
         }
         
-        const no_of_years = $("#volunteer-registration").find("[type=checkbox][name=no_of_years_opt_out]").prop('checked') ? 'opt-out' : $("#volunteer-registration").find("[type=text][name=no_of_years]").val();
+        const no_of_years = $("#volunteer-registration").find("[type=checkbox][name=no_of_years_opt_out]").prop('checked') ? 'Opt-out' : $("#volunteer-registration").find("[type=text][name=no_of_years]").val();
         const address_type = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val();
         
 

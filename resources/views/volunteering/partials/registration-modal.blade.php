@@ -95,7 +95,7 @@
                                             <div class="row text-left">
                                                 <div class="col">
                                                     <label>
-                                                        <input type="radio" name="address_type" value="global" checked>
+                                                        <input type="radio" name="address_type" value="Global" checked>
                                                         Global Address Listing
                                                     </label>
                                                 </div>
@@ -103,16 +103,16 @@
                                             <div class="row text-left">
                                                 <div class="col">
                                                     <label>
-                                                        <input type="radio" name="address_type" value="new">
+                                                        <input type="radio" name="address_type" value="New">
                                                         New Address
                                                     </label>
                                                     <input name="new_address" type="text" class="form-control form-control-sm" placeholder="Physical Address, City, Prov, Postal Code">
                                                 </div>
                                             </div>
-                                            <div class="row text-left">
+                                            <div class="row text-left mt-4">
                                                 <div class="col">
                                                     <label>
-                                                        <input type="radio" name="address_type" value="opt-out">
+                                                        <input type="radio" name="address_type" value="Opt-out">
                                                         I wish to opt-out from receiving recognition items.
                                                     </label>
                                                 </div>
@@ -134,7 +134,7 @@
                                                 <option value="Coordinator">Coordinator</option>
                                                 <option value="Canvasser">Canvasser</option>
                                                 <option value="Event Coordinator">Event Coordinator</option>
-                                                <option value="Office Contact">Office Contact</option>
+                                                <option value="Office contact">Office contact</option>
                                             </select>
                                         </div>
                                     </div>
