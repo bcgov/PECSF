@@ -58,7 +58,9 @@
 
 @push('css')
 
+    
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 	<style>
 	#region-table_filter label {
@@ -72,9 +74,12 @@
 </style>
 @endpush
 
+
 @push('js')
+ 
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -155,6 +160,9 @@
                     {
                         oTable.ajax.reload(null, false);	// reload datatables
                         $('#region-create-modal').modal('hide');
+                        
+                        var code = $("#region-create-model-form [name='code']").val();
+                        Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -175,6 +183,7 @@
 			e.preventDefault();
 
             id = $(this).attr('data-id');
+
             $.ajax({
                 method: "GET",
                 url:  '/settings/regions/' + id  + '/edit',
@@ -191,6 +200,22 @@
                 }
             });
     	});
+
+        function Toast( toast_title, toast_body, toast_class) { 
+            $(document).Toasts('create', {
+                            class: toast_class,
+                            title: toast_title,
+                            autohide: true,
+                            delay: 3000,
+                            body: toast_body
+            });
+        }
+
+        // Toast.fire({
+        //                     icon: 'success',
+                            
+        //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+        //                 });
 
         $(document).on("click", "#save-confirm-btn" , function(e) {
 		
@@ -213,6 +238,10 @@
                     {
                         oTable.ajax.reload(null, false);	// reload datatables
                         $('#region-edit-modal').modal('hide');
+
+                        var code = $("#region-edit-model-form [name='code']").val();
+                        Toast('Success', 'Region code ' + code +  ' was successfully updated.', 'bg-success' );
+                        
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -251,6 +280,44 @@
             });
     	});
 
+        // Model -- Delete
+        $(document).on("click", ".delete-region" , function(e) {
+            e.preventDefault();
+
+            id = $(this).attr('data-id');
+            code = $(this).attr('data-code');
+
+            Swal.fire( {
+                title: 'The Internet?',
+                text: 'Confirm to delete this region code ' + code + ' ?',
+                // icon: 'question'
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // Swal.fire('Saved!', '', '')
+                    $.ajax({
+                        method: "DELETE",
+                        url:  '/settings/regions/' + id, 
+                        success: function(data)
+                        {
+                            oTable.ajax.reload(null, false);	// reload datatables
+
+                            Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
+                            
+                        },
+                        error: function(response) {
+                            console.log('Error');
+                        }
+                    });
+                } else if (result.isCancelledDenied) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
+        });
 
     });
     </script>

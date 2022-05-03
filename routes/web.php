@@ -94,6 +94,6 @@ Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(fun
 }); 
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
-    Route::resource('/regions', RegionController::class)->except(['create', 'destroy']);
+    Route::resource('/regions', RegionController::class)->except(['create']);
 }); 
 

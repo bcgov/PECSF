@@ -36,9 +36,10 @@ class RegionController extends Controller
 
             return Datatables::of($regions)
                 ->addColumn('action', function ($region) {
-                return '<a class="btn btn-primary btn-sm ml-2 show-region" data-id="'. $region->id .'" >Show</a>'.
-                       '<a class="btn btn-primary btn-sm ml-2 edit-region" data-id="'. $region->id .'" >Edit</a>';
-
+                return '<a class="btn btn-info btn-sm  show-region" data-id="'. $region->id .'" >Show</a>' . 
+                       '<a class="btn btn-primary btn-sm ml-2 edit-region" data-id="'. $region->id .'" >Edit</a>' . 
+                       '<a class="btn btn-danger btn-sm ml-2 delete-region" data-id="'. $region->id .
+                       '" data-code="'. $region->code . '">Delete</a>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -105,10 +106,10 @@ class RegionController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        // if ($request->ajax()) {
+        if ($request->ajax()) {
             $region = Region::where('id', $id)->first();
             return response()->json($region);
-        // }
+        }
     }
 
     /**
@@ -120,7 +121,6 @@ class RegionController extends Controller
      */
     public function update(RegionRequest $request, $id)
     {
-
         if ($request->ajax()) {
             $region = Region::where('id', $id)->first();
             $region->fill( $request->all() );
@@ -129,5 +129,19 @@ class RegionController extends Controller
             return response()->json($region);
         }
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $region = Region::where('id', $id);
+        $region->delete();
+
+        return response()->noContent();
+    }
+
 
 }
