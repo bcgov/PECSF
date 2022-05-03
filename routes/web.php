@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PledgeController;
+
 use App\Http\Controllers\CharityController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ContactFaqController;
+use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
@@ -90,3 +92,8 @@ Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(fun
     Route::get('/{administrator}/delete', [AdministratorController::class,'destroy']);
     Route::get('/users', [AdministratorController::class,'getUsers']);
 }); 
+
+Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
+    Route::resource('/regions', RegionController::class)->except(['create', 'destroy']);
+}); 
+

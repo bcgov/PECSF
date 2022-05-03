@@ -275,6 +275,11 @@ return [
                     'icon' => 'nav-icon far fa-id-card',
                     'url'  => '/administrators',
                 ],
+                [
+                    'text' => 'Training, Communications and Engagement',
+                    'icon' => 'nav-icon far fa-id-card',
+                    'url'  => '/settings/regions',
+                ],
             ],
         ],
     ],
