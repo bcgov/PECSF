@@ -15,8 +15,7 @@
             </svg>
             </i>
         @endif
-        <p style="vertical-align:middle">
-            {{ $item['text'] }}
+        {{ $item['text'] }}
 
             @if(isset($item['label']))
                 <span class="badge badge-{{ $item['label_color'] ?? 'primary' }} right">
