@@ -45,7 +45,7 @@ class RegionController extends Controller
             ->make(true);
         }
 
-        return view('admin.regions.index');
+        return view('admin-campaign.regions.index');
 
     }
 

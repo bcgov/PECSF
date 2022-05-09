@@ -123,3 +123,24 @@ a:hover {
     text-decoration: underline !important;
     opacity: 0.80;
 }
+
+
+// styling the active menu items on  Tab bar
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ), 
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):hover,
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):active,
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):visited 
+{
+  color: #003366 !important;
+}
+
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):hover,
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):active,
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):visited 
+{
+  font-weight:bold !important;
+}
+
+div.border-primary a {
+  font-weight:bold !important;
+}

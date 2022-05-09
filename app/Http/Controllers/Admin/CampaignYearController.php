@@ -41,8 +41,8 @@ class CampaignYearController extends Controller
                 ->addColumn('action', function ($campaign_year) {
                 //return '<a href="#" class="notification-modal btn btn-xs btn-primary" value="'. $notification->id .'"><i class="glyphicon glyphicon-envelope"></i>View</a>';
 
-                return '<a class="btn btn-info btn-sm" href="' . route('campaignyears.show',$campaign_year->id) . '">Show</a>' .
-                       '<a class="btn btn-primary btn-sm ml-2" href="' . route('campaignyears.edit',$campaign_year->id) . '">Edit</a>';
+                return '<a class="btn btn-info btn-sm" href="' . route('settings.campaignyears.show',$campaign_year->id) . '">Show</a>' .
+                       '<a class="btn btn-primary btn-sm ml-2" href="' . route('settings.campaignyears.edit',$campaign_year->id) . '">Edit</a>';
             })
             ->make(true);
         }
@@ -51,7 +51,7 @@ class CampaignYearController extends Controller
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
 
         // load the view and pass 
-        return view('admin.campaignyears.index');
+        return view('admin-campaign.campaignyears.index');
 
     }
 
@@ -63,7 +63,7 @@ class CampaignYearController extends Controller
     public function create()
     {
     
-        return view('admin.campaignyears.create');
+        return view('admin-campaign.campaignyears.create');
     }
 
     /**
@@ -85,7 +85,7 @@ class CampaignYearController extends Controller
             'created_by_id' => Auth::id(),
         ]);
 
-        return redirect()->route('campaignyears.index')
+        return redirect()->route('settings.campaignyears.index')
             ->with('success','Campaign Year ' . $request->calendar_year . ' created successfully');
         
     }
@@ -102,7 +102,7 @@ class CampaignYearController extends Controller
         $campaign_year = CampaignYear::find($id);
 
         // show the view and pass the campaign year to it
-        return view('admin.campaignyears.show', compact('campaign_year'));
+        return view('admin-campaign.campaignyears.show', compact('campaign_year'));
         
     }
 
@@ -118,7 +118,7 @@ class CampaignYearController extends Controller
         $campaign_year = CampaignYear::find($id);
 
         // show the view and pass the campaign year to it
-        return view('admin.campaignyears.create', compact('campaign_year'));
+        return view('admin-campaign.campaignyears.create', compact('campaign_year'));
         
     }
 
@@ -142,7 +142,7 @@ class CampaignYearController extends Controller
             'modified_by_id' => Auth::id(),
         ]);
 
-        return redirect()->route('campaignyears.index')
+        return redirect()->route('settings.campaignyears.index')
                 ->with('success','Campaign Year ' . CampaignYear::find($id)->calendar_year . ' updated successfully');
     }
 

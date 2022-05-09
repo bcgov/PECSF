@@ -1,12 +1,16 @@
 @extends('adminlte::page')
+
 @section('content_header')
+
+@include('admin-campaign.partials.tabs')
+
     <div class="d-flex mt-3">
-        <h1>PECSF Campaign Year</h1>
+        <h4>PECSF Campaign Years</h4>
         <div class="flex-fill"></div>
 
         <div class="d-flex">
             <div class="mr-2">
-                <x-button :href="route('campaignyears.create')">Add a New Value</x-button>        
+                <x-button :href="route('settings.campaignyears.create')">Add a New Value</x-button>        
             </div>
         </div>
     </div>
@@ -82,7 +86,7 @@
             select: true,
             'order': [[0, 'desc']],
             ajax: {
-                url: '{!! route('campaignyears.index') !!}',
+                url: '{!! route('settings.campaignyears.index') !!}',
                 data: function (d) {
                 }
             },

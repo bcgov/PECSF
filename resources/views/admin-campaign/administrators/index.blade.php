@@ -1,7 +1,9 @@
 @extends('adminlte::page')
 @section('content_header')
+
+    @include('admin-campaign.partials.tabs')
     <div class="d-flex mt-3">
-        <h1>Security - PECSF Administrators</h1>
+        <h4>Security - PECSF Administrators</h4>
         <div class="flex-fill"></div>
     </div>
 @endsection
@@ -29,7 +31,7 @@
                 <h4></h4>
                 <div class="px-4">
                     
-                    <form action="{{ route('admin.store') }}" class="form-inline" method="post">
+                    <form action="{{ route('settings.administrators.store') }}" class="form-inline" method="post">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <div class="col-auto">
@@ -45,7 +47,7 @@
                                 <button class="btn btn-outline-secondary"  type="submit" >Add</button>
                             </div>
                         </div>
-                      </form>
+                    </form>
         
                 </div>    
                 <div class="flex-fill"></div>
@@ -71,16 +73,22 @@
     </div>
 </div>
 
+
+<form id="delete-administrator-form" action="" class="form-inline" method="post">
+    @csrf
+    @method('delete')
+</form>
+
+
 @endsection
 
 @push('css')
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css">
-{{-- <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css" /> --}}
-
 <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
 <style>
 	#administrator-table_filter label {
 		text-align: right !important;
@@ -90,11 +98,19 @@
         margin-bottom: 10px;
     }
 
-    .select2-container .select2-selection--single 
-    {
-            height: 38px;  !important;
+    .select2-selection--multiple{
+        overflow: hidden !important;
+        height: auto !important;
+        min-height: 38px !important;
     }
-     
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+    }
+
 
 </style>
 @endpush
@@ -103,6 +119,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -122,7 +139,7 @@
             select: true,
             //'order': [[0, 'desc']],
             ajax: {
-                url: '{!! route('admin.index') !!}',
+                url: '{!! route('settings.administrators.store') !!}',
                 data: function (d) {
                 }
             },
@@ -133,16 +150,16 @@
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             columnDefs: [
-                    {
-                        className: "dt-nowrap",
-                        targets: [0,1,2]
-                    },
+                {
+                    className: "dt-nowrap",
+                    targets: [0,1,2]
+                },
             ]
         });
 
         $('#user_id').select2({
             ajax: {
-                url: '/administrators/users'
+                url: '/settings/administrators/users'
                 , dataType: 'json'
                 , delay: 250
                 , data: function(params) {
@@ -159,6 +176,39 @@
                 , cache: false
             }
         });
+
+        // Model -- Delete
+        $(document).on("click", ".delete-administrator" , function(e) {
+            e.preventDefault();
+
+            id = $(this).attr('data-id');
+            name = $(this).attr('data-name');
+
+            Swal.fire( {
+                title: 'Are you sure you want to delete administrator "' + name + '" ?',
+                text: 'This action cannot be undone.',
+                // icon: 'question',
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-danger', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    $('#delete-administrator-form').attr('action', '/settings/administrators/' + id );
+                    $('#delete-administrator-form').submit();
+                } else if (result.isCancelledDenied) {
+                    // Do nothing
+                }
+            })
+        });
+
 
     });
     </script>

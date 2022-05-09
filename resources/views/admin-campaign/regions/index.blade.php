@@ -2,10 +2,10 @@
 
 @section('content_header')
 
-@include('admin.regions.partials.tabs')
+@include('admin-campaign.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h1>Regions</h1>
+        <h4>Regions</h4>
         <div class="flex-fill"></div>
 
 
@@ -50,9 +50,9 @@
 	</div>    
 </div>   
 
-@include('admin.regions.partials.model-create')
-@include('admin.regions.partials.model-edit')
-@include('admin.regions.partials.model-show')
+@include('admin-campaign.regions.partials.model-create')
+@include('admin-campaign.regions.partials.model-edit')
+@include('admin-campaign.regions.partials.model-show')
 
 @endsection
 
@@ -289,12 +289,18 @@
             code = $(this).attr('data-code');
 
             Swal.fire( {
-                title: 'The Internet?',
-                text: 'Confirm to delete this region code ' + code + ' ?',
-                // icon: 'question'
+                title: 'Are you sure you want to delete region code "' + code + '" ?',
+                text: 'This action cannot be undone.',
+                // icon: 'question',
                 //showDenyButton: true,
                 showCancelButton: true,
                 confirmButtonText: 'Delete',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-danger', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
+                }
                 //denyButtonText: `Don't save`,
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
@@ -306,9 +312,7 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-
                             Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
-                            
                         },
                         error: function(response) {
                             console.log('Error');

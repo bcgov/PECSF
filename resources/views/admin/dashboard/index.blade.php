@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col">
                 <div class="card">
-                <a href="/pledge">
+                <a href="{{ route('settings.pledge') }}">
                     <div class="card-body mt-4 text-center">
                         <div>
                             <img src="{{asset('img/admin/2.png')}}" alt="Pledge Administration" style="height:100px">
@@ -25,7 +25,7 @@
 
             <div class="col">                
                 <div class="card">    
-                    <a href="/campaignyears">
+                    <a href="{{ route('settings.campaignyears.index') }}">
                     <div class="card-body mt-4  text-center">
                         <div>
                             <img src="{{asset('img/admin/1.png')}}" alt="Campaign Set-up" style="height:100px">
@@ -41,7 +41,7 @@
         <div class="row">
             <div class="col">                
                 <div class="card">
-                    <a href="/settings/regions">
+                    <a href="{{ route('settings.others') }}">
                     <div class="card-body mt-4  text-center">
                         <div>
                             <img src="{{asset('img/admin/4.png')}}" alt="Training, Communications and Engagement" style="height:100px">
@@ -55,7 +55,7 @@
 
             <div class="col">
                 <div class="card">
-                    <a href="/reporting">
+                    <a href="{{ route('settings.reporting') }}">
                     <div class="card-body mt-4  text-center">
                         <div>
                             <img src="{{asset('img/admin/3.png')}}" alt="Reporting" style="height:100px">

@@ -43,13 +43,15 @@ class AdministratorController extends Controller
                     return $administrator->getRoleNames()->contains('admin') ? 'admin' : '' ;    
                 })
                 ->addColumn('action', function ($administrator) {
-                    return '<a class="btn btn-danger" onclick="return confirm(\'Are you sure to remove user' . $administrator->name . '? \')" href="/administrators/'. $administrator->id . '/delete"><i class="fa fa-trash"></i></a>';
+                    return '<a class="btn btn-danger btn-sm ml-2 delete-administrator" data-id="'. $administrator->id .
+                    '" data-name="'. $administrator->name . '"><i class="fa fa-trash"></a>';
+                    // return '<a class="btn btn-danger" onclick="return confirm(\'Are you sure to remove user' . $administrator->name . '? \')" href="/settings/administrators/'. $administrator->id . '/delete"><i class="fa fa-trash"></i></a>';
             })
             ->make(true);
         }
 
         // load the view and pass the sharks
-        return view('admin.administrators.index');
+        return view('admin-campaign.administrators.index');
         
     }
 
@@ -105,7 +107,7 @@ class AdministratorController extends Controller
 
         $user->assignRole('admin');
         
-        return redirect()->route('admin.index')
+        return redirect()->route('settings.administrators.index')
             ->with('success','User ' . $user->name . ' was assigned to Administrator role.');
 
     }
@@ -194,7 +196,7 @@ class AdministratorController extends Controller
 
     public function destroy($id)
     {
-         
+
         $user = User::find($id);
 
         // checking whether this is the last one.
@@ -217,7 +219,7 @@ class AdministratorController extends Controller
 
         $user->removeRole('admin');
 
-        return redirect()->route('admin.index')
+        return redirect()->route('settings.administrators.index')
           ->with('success','User ' . $user->name . '  was removed from Administrator role.');
 
     }

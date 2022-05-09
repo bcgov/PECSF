@@ -15,7 +15,10 @@ use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Admin\CampaignYearController;
+
 use App\Http\Controllers\Admin\AdministratorController;
+
+use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 
 /*
@@ -82,18 +85,52 @@ Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['aut
 
 Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 
-Route::group(['middleware' => ['auth']], function() {
-    Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
-});    
+// Route::group(['middleware' => ['auth']], function() {
+//     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
+// });    
 
 Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(function() {
     Route::get('dashboard', [AdministratorController::class, 'dashboard'])->name('dashboard');
-    Route::resource('/', AdministratorController::class)->only(['index','store']);
-    Route::get('/{administrator}/delete', [AdministratorController::class,'destroy']);
-    Route::get('/users', [AdministratorController::class,'getUsers']);
+    // Route::resource('/', AdministratorController::class)->only(['index','store']);
+    // Route::get('/{administrator}/delete', [AdministratorController::class,'destroy']);
+    // Route::get('/users', [AdministratorController::class,'getUsers']);
+}); 
+
+
+Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
+
+    // Campaign years
+    Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
+
+    // Regions
+    Route::resource('/regions', RegionController::class)->except(['create']);
+
+    // Fund Supported Pools
+    Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);
+    Route::resource('/fund-supported-pools', FundSupportedPoolController::class);
+
+    // Administrators
+    Route::resource('/administrators', AdministratorController::class)->only(['index','store', 'destroy']);
+    Route::get('/administrators/users', [AdministratorController::class,'getUsers'])->name('administrators.users');
+    // Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
+
 }); 
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
-    Route::resource('/regions', RegionController::class)->except(['create']);
-}); 
+    // Pledge Administration
+    Route::get('/pledge', function() {
+        return "to be developed";
+    })->name('pledge');;
 
+
+    Route::get('/others', function() {
+        return "to be developed";
+    })->name('others');
+
+    Route::get('/reporting', function() {
+        return "to be developed";
+    })->name('reporting');
+
+
+
+});

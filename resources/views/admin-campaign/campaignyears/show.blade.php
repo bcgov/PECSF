@@ -1,7 +1,11 @@
 @extends('adminlte::page')
+
 @section('content_header')
+
+@include('admin-campaign.partials.tabs')
+
     <div class="d-flex mt-3">
-        <h1>PECSF Campaign Year</h1>
+        <h4>PECSF Campaign Year</h4>
         <div class="flex-fill"></div>       
     </div>
 @endsection
@@ -10,7 +14,7 @@
 <div class="card">
     <div class="card-body">
 
-        <form action="{{route('campaignyears.store')}}" method="post">
+        <form action="{{route('settings.campaignyears.store')}}" method="post">
             @csrf
             <div class="form-row">
               <div class="form-group col-md-4">
@@ -93,7 +97,7 @@
               </div>
 
             <div class="form-row">
-                <a href="{{ route('campaignyears.index') }}"> 
+                <a href="{{ route('settings.campaignyears.index') }}"> 
                    <button type="button" class="btn btn-primary float-right ">back</button>
                    </a>
                 </div>

@@ -253,12 +253,6 @@ return [
             'icon' => 'connect'
         ],
         [
-            'text' => 'PECSF',
-            'url' => 'https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf',
-            'icon' => 'external-link',
-            'target' => '_blank'
-        ],
-        [
             'text'    => 'Administration',
             'icon'    => 'nav-icon far fa-sun',
             'url'     => '/administrators/dashboard',
@@ -266,21 +260,32 @@ return [
             'can'     => ['setting'],
             'submenu' => [
                 [
-                    'text' => 'Campaign Year',
+                    'text' => 'Pledge Administration',
                     'icon' => 'nav-icon far fa-calendar-alt',
-                    'url'  => '/campaignyears',
+                    'url'  => '/settings/pledge',
                 ],
                 [
-                    'text' => 'Security - Role',
+                    'text' => 'Campaign Set-up',
                     'icon' => 'nav-icon far fa-id-card',
-                    'url'  => '/administrators',
+                    'url'  => '/settings/campaignyears',
                 ],
                 [
                     'text' => 'Training, Communications and Engagement',
                     'icon' => 'nav-icon far fa-id-card',
-                    'url'  => '/settings/regions',
+                    'url'  => '/settings/others',
+                ],
+                [
+                    'text' => 'Reporting',
+                    'icon' => 'nav-icon far fa-id-card',
+                    'url'  => '/settings/reporting',
                 ],
             ],
+        ],
+        [
+            'text' => 'PECSF',
+            'url' => 'https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf',
+            'icon' => 'external-link',
+            'target' => '_blank'
         ],
     ],
 
