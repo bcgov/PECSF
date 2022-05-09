@@ -115,7 +115,7 @@ class AdministratorController extends Controller
     public function getUsers(Request $request)
     {
 
-        $user = User::find( Auth::id() )->first();
+        $user = User::where('id', Auth::id() )->first();
         if ( is_null($user->guid) ) {
             return $this->getUserFromLocalDatabase($request);
         }
