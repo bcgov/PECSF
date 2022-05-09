@@ -144,3 +144,23 @@ a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning,
 div.border-primary a {
   font-weight:bold !important;
 }
+
+.navbar-nav {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+  font-size:25px;
+  border-radius: 5px;
+}
+
+.navbar-nav:hover {
+  background: #CCC;
+}
+
+.navbar-nav .nav-link {
+  padding-right: 0;
+  padding-left: 0;
+  padding-top: 0;
+}
