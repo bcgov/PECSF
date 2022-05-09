@@ -49357,21 +49357,16 @@ div.border-primary a {
   font-weight: bold !important;
 }
 
-.navbar-nav {
-  display: flex;
-  flex-direction: column;
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
+.nav-bar-cus {
   font-size: 25px;
   border-radius: 5px;
 }
 
-.navbar-nav:hover {
+.nav-bar-cus:hover {
   background: #CCC;
 }
 
-.navbar-nav .nav-link {
+.nav-bar-cus {
   padding-right: 0;
   padding-left: 0;
   padding-top: 0;
