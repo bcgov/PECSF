@@ -107,7 +107,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Fund Supported Pools
     Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);
+    Route::post('/fund-supported-pools/duplicate/{id}', [FundSupportedPoolController::class,'duplicate'])->name('fund-suppported-pools.duplicate');
     Route::resource('/fund-supported-pools', FundSupportedPoolController::class);
+    
 
     // Administrators
     Route::resource('/administrators', AdministratorController::class)->only(['index','store', 'destroy']);

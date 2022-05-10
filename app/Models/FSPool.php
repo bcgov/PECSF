@@ -13,7 +13,7 @@ class FSPool extends Model
     protected $fillable =[
         'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id' 
     ];
-    protected $appends = ['canDelete'];
+    protected $appends = ['canDelete', 'effectiveType'];
 
     // Scope 
     public function scopeCurrent($query)
@@ -36,13 +36,21 @@ class FSPool extends Model
         return $this->hasMany(FSPoolCharity::class);
     }
 
-
     public function getCanDeleteAttribute()
     {
-        
         return ( $this->start_date >= today() );
-        
     }
+
+    public function getEffectiveTypeAttribute()
+    {
+        $current = FSPool::current()->where('region_id', $this->region_id)->first();
+
+        //return($current->start_date);
+        return ( $this->start_date < $current->start_date ? 'H' :
+                     ( $this->start_date > $current->start_date ? 'F' : 'C')
+                );
+    }
+
 
 
 }
