@@ -248,9 +248,9 @@ return [
             'active' => ['challenge/*']
         ],
         [
-            'text' => 'Contact',
+            'text' => 'FAQs',
             'url' => '/contact',
-            'icon' => 'connect'
+            'icon' => 'FAQs'
         ],
         [
             'text'    => 'Administration',

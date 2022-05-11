@@ -9,10 +9,16 @@
                 isset($item['icon_color']) ? 'text-'.$item['icon_color'] : ''
             }}"></i> 
         @else
-            <i>
-            <svg class="icon mr-2" style="width:24px; height: 24px">
-                <use xlink:href="{{asset('img/icons/sprite.svg')}}#sprite-{{$item['icon'] ?? 'home'}}"></use>
-            </svg>
+            <i> 
+                @if (str_contains($item['icon'], 'FAQs'))
+                    <svg class="icon mr-2" style="width:24px; height: 24px; top: 0;">
+                        <use xlink:href="{{asset('img/icons/faqs.svg')}}#sprite-faqs"></use>
+                    </svg>
+                @else
+                    <svg class="icon mr-2" style="width:24px; height: 24px">
+                        <use xlink:href="{{asset('img/icons/sprite.svg')}}#sprite-{{$item['icon'] ?? 'home'}}"></use>
+                    </svg>
+                @endif 
             </i>
         @endif
         {{ $item['text'] }}
