@@ -148,7 +148,7 @@ class FundSupportedPoolController extends Controller
             }
         }
      
-        $regions = Region::all();
+        $regions = Region::where('status', 'A')->get();
 
         return view('admin-campaign.fund-supported-pools.create', compact('regions'));
 
