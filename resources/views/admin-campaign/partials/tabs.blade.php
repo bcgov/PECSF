@@ -4,6 +4,11 @@
             Campaign Years
         </x-button>
     </div>
+    <div class="col-2 px-4 py-1 mr-2 border-bottom {{ str_contains( Route::current()->getName(), 'settings.organizations') ? 'border-primary' : ''}}">
+        <x-button role="tab" :href="route('settings.organizations.index')" style="">
+            Organizations
+        </x-button>
+    </div>
     <div class="col-2 px-4 py-1 mr-2 border-bottom {{ str_contains( Route::current()->getName(), 'settings.regions') ? 'border-primary' : ''}}">
         <x-button role="tab" :href="route('settings.regions.index')" style="">
             Regions

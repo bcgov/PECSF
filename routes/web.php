@@ -16,8 +16,9 @@ use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Admin\CampaignYearController;
 
-use App\Http\Controllers\Admin\AdministratorController;
+use App\Http\Controllers\admin\OrganizationController;
 
+use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 
@@ -101,6 +102,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Campaign years
     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
+
+    // Organizations
+    Route::resource('/organizations', OrganizationController::class)->except(['create']);
 
     // Regions
     Route::resource('/regions', RegionController::class)->except(['create']);
