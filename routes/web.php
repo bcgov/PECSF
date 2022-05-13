@@ -16,7 +16,7 @@ use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Admin\CampaignYearController;
 
-use App\Http\Controllers\admin\OrganizationController;
+use App\Http\Controllers\Admin\OrganizationController;
 
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
