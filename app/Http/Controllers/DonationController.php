@@ -20,16 +20,24 @@ class DonationController extends Controller {
             ->get();
         $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
 
-        $campaignYear = CampaignYear::where('calendar_year', today()->year + 1 )->first();
-        if (!($campaignYear && $campaignYear->isOpen()) ) {
-            $campaignYear = CampaignYear::where('calendar_year', today()->year )->first();
-        }
+        // $campaignYear = CampaignYear::where('calendar_year', today()->year + 1 )->first();
+        // if (!($campaignYear && $campaignYear->isOpen()) ) {
+        //     $campaignYear = CampaignYear::where('calendar_year', today()->year )->first();
+        // }
 
-        $cyPledges = Pledge::where('user_id', Auth::id())
-            ->onlyCampaignYear( $campaignYear->calendar_year )
-            ->get();
+        // $cyPledges = Pledge::where('user_id', Auth::id())
+        //     ->onlyCampaignYear( $campaignYear->calendar_year )
+        //     ->get();
 
-        return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear','cyPledges'));
+        $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                            ->orderBy('calendar_year', 'desc')
+                            ->first();
+        $pledge = Pledge::where('user_id', Auth::id())
+                         ->whereHas('campaign_year', function($q){
+                             $q->where('calendar_year','=', today()->year + 1 );
+                         })->first();
+
+        return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear','pledge'));
     }
     
 }

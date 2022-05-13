@@ -48,11 +48,10 @@ Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, '
 
 
 Route::get('/donate', [CharityController::class, 'select'])->name('donate');
-Route::get('/donate/edit/{id?}', [CharityController::class, 'edit'])->name('donate.edit');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
-Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function () {
+Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
     Route::get('/select', [CharityController::class, 'index'])->name('select');
     Route::post('/remove', [CharityController::class, 'remove'])->name('select');
     Route::get('/amount', [CharityController::class, 'amount'])->name('amount');
@@ -67,7 +66,6 @@ Route::prefix('donate')->middleware(['auth'])->name('donate.')->group(function (
     Route::post('/summary', [CharityController::class, 'confirmDonation'])->name('save.summary');
 
     Route::get('/download-summary', [CharityController::class, 'savePDF'])->name('save.pdf');
-
 
     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
 });

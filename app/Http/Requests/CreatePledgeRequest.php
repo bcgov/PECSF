@@ -26,6 +26,8 @@ class CreatePledgeRequest extends FormRequest
         return [
             'charityOneTimeAmount' => 'required|array',
             'charityBiWeeklyAmount' => 'required|array',
+            'charityOneTimePercentage' => 'required|array',
+            'charityBiWeeklyPercentage' => 'required|array',
             'charityAdditional' => 'required|array',
             'charityOneTimeAmount.*' => 'required|numeric',
             'charityBiWeeklyAmount.*' => 'required|numeric',

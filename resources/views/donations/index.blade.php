@@ -11,11 +11,11 @@
                         From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
                         The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January. 
                     </p>
-                    @if ( count($cyPledges) > 0)
+                    @if ($pledge)
                         <p class="card-text text-left text-white">
                             To make changes to your proposed pledge, click into the box below where your 2023 choices are shown. 
                         </p>
-                        <a href="{{ route('donate.edit') }}" class="btn btn-primary">Make change to your proposed pledge</a>
+                        <a href="{{ route('donate') }}" class="btn btn-primary">Make change to your proposed pledge</a>
                     @else 
                         <a href="{{ route('donate') }}" class="btn btn-primary">Donate to PECSF Now</a>
                     @endif

@@ -24,7 +24,7 @@ class DonateStep1Request extends FormRequest
     public function rules()
     {
         return [
-            "id" => "required|array|min:1",
+            "id" => "required|array|min:1|max:10",
             "additional" => "required|array"
         ];
     }
@@ -32,13 +32,13 @@ class DonateStep1Request extends FormRequest
     public function messages() 
     {
         return [
-            "id.required" => "Please select at least one charity from the list"
+            "id.required" => "Please select at least one charity from the list",
+            "id.max" => "The charities must not have more than 10 items."
         ];
     }
 
     protected function prepareForValidation()
     {
-
         if ($this->request->get('id')) {
             $charities = [];
             $charities['id'] = $this->request->get('id');

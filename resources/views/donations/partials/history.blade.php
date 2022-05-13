@@ -27,7 +27,9 @@
                             <td class="text-left">{{$charity->charity->charity_name}} </td>
                             <td class="text-left">{{$charity->goal_amount}} </td>
                             <!-- <td>{{$pledge->created_at->format('F j, Y')}}</td> -->
-                            <td>{{$pledge->created_at->format('Y')}} Campaign</td>
+                            @if ($pledge->campaign_year)
+                                <td>{{$pledge->campaign_year->calendar_year}} Campaign</td>
+                            @endif
                             <td>{{$charity->frequency == 'bi-weekly' ? 'Bi-weekly' : 'One-time'}}</td>
                         </tr>
                         @endforeach

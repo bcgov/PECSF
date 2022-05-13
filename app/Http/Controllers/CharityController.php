@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreatePledgeRequest;
-use App\Http\Requests\DonateStep3Request;
+use PDF;
+use App\Models\Pledge;
+use App\Models\Charity;
+use App\Models\CampaignYear;
+use App\Models\Organization;
+use Illuminate\Http\Request;
+use App\Models\PledgeCharity;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests\DonateStep1Request;
 use App\Http\Requests\DonateStep2Request;
-use App\Models\Charity;
-use App\Models\Pledge;
-use App\Models\PledgeCharity;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
-use PDF;
+use App\Http\Requests\DonateStep3Request;
+use App\Http\Requests\CreatePledgeRequest;
+
 class CharityController extends Controller
 {
     /**
@@ -23,7 +26,7 @@ class CharityController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth','campaign']);
     }
 
     public function index(Request $request)
@@ -64,6 +67,7 @@ class CharityController extends Controller
 
         return view('donate.select', compact('charities'));
         */
+        
 
         $terms = explode(" ", $request->get("title") );
         $charities=Charity::when($request->has("title"),function($q)use($request){
@@ -85,7 +89,7 @@ class CharityController extends Controller
             }
             return $q->orderby('charity_name','asc');
                      
-        })->where('charity_status','Registered')->paginate(5);
+        })->where('charity_status','Registered')->paginate(10);
 
         $designation_list = Charity::DESIGNATION_LIST;
         $category_list = Charity::CATEGORY_LIST;
@@ -106,8 +110,42 @@ class CharityController extends Controller
 
                 array_push($selected_charities, $charity);
             }
+        } else {
+
+            // reload the existig pledge
+            $errors = session('errors');
+
+            if (!$errors) {
+    
+                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+                ->first();
+                $pledge = Pledge::where('user_id', Auth::id())
+                                ->whereHas('campaign_year', function($q){
+                                    $q->where('calendar_year','=', today()->year + 1 );
+                                })->first();
+
+                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {                           
+
+                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
+
+                    $_charities = Charity::whereIn('id', $_ids )
+                                    ->get(['id', 'charity_name as text']);
+
+                    foreach ($_charities as $charity) {
+                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
+                        
+                        $charity['additional'] = '';
+                        if ($pledge_charity) {
+                            $charity['additional'] = $pledge_charity->additional ?? '';
+                        } 
+        
+                        array_push($selected_charities, $charity);
+                    }
+                }
+            }
         }
-         
+
+
         if($request->ajax()){
             return view('donate.partials.charity-pagination', compact('charities','terms','designation_list','category_list','province_list','selected_charities') ); 
         }
@@ -115,37 +153,35 @@ class CharityController extends Controller
         return view('donate.select', compact('charities','terms','designation_list','category_list','province_list','selected_charities'));
     }
 
-    public function edit(Request $request, $id = null) {
-        // TODO: (JP) Reload the charity if exists
+    // public function edit(Request $request, $id = null) {
+    //     // TODO: (JP) Reload the charity if exists
          
-        $campaignYear = \App\Models\CampaignYear::where('calendar_year', today()->year + 1 )
-                ->first();
-        $cy_pledges = Pledge::where('user_id', Auth::id())->onlyCampaignYear( $campaignYear->calendar_year )
-                            ->get();
+    //     $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+    //             ->first();
+    //     $cy_pledges = Pledge::where('user_id', Auth::id())->onlyCampaignYear( today()->year + 1 )
+    //                         ->get();
 
-        if ( $campaignYear->isOpen())  {                           
-            if ( count($cy_pledges) ) {
-                
-            $selectedCharities = ['id' => [], 'additional' => [] ];
-            foreach ($cy_pledges as $pledge) {
-                foreach ($pledge->charities as $charity) {
-                    if (!(in_array($charity->charity_id , $selectedCharities['id']))) {
-                        array_push($selectedCharities['id'], $charity->charity_id); 
-                        array_push($selectedCharities['additional'], $charity->additional); 
-                    }
-                }
-            }
+    //     if ( $campaignYear->isOpen() && count($cy_pledges) > 0 )  {                           
+    //         $selectedCharities = ['id' => [], 'additional' => [] ];
+    //         foreach ($cy_pledges as $pledge) {
+    //             foreach ($pledge->charities as $charity) {
+    //                 if (!(in_array($charity->charity_id , $selectedCharities['id']))) {
+    //                     array_push($selectedCharities['id'], $charity->charity_id); 
+    //                     array_push($selectedCharities['additional'], $charity->additional); 
+    //                 }
+    //             }
+    //         }
 
-            Session()->put('charities', $selectedCharities);
-            //dd( [$cy_pledges, $campaignYear, $request, $selectedCharities]);
-                // load onto the session 
-                return redirect()->route('donate');
-            }
-        }
+    //         Session()->put('charities', $selectedCharities);
+    //         //dd( [$cy_pledges, $campaignYear, $request, $selectedCharities]);
+    //             // load onto the session 
+    //             return redirect()->route('donate');
 
-        return redirect()->route('donations.list');
+    //     }
+
+    //     return redirect()->route('donations.list');
  
-    }
+    // }
 
     public function show(Request $request)
     {
@@ -523,12 +559,38 @@ class CharityController extends Controller
         $frequency = $input['frequency'];
         $multiplier = $frequency === 'OneTime' ? 1 : 26;
 
-        $pledge = Pledge::create([
-            'amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] / $multiplier + $input['annualOneTimeAmount'] : $input['annual'+$frequency+'Amount'],
+        // REMARK: always assign 'GOV' for the organization
+        $organization = Organization::where('code', 'GOV')->first();
+        $campaignYear = CampaignYear::where('calendar_year', today()->year + 1 )
+                ->first();
+
+        // dd(   [ 
+        //         $input,    
+        //         $frequency,   // on-time
+
+        //         $input['annualBiWeeklyAmount'],
+        //         $input['annualOneTimeAmount'],
+        //         // $input['annual'+$frequency+'Amount'],
+        //         $multiplier ]
+        // );
+
+        $pledge = Pledge::updateOrCreate([
+            'organization_id' => $organization->id,
             'user_id' => Auth::id(),
+            'campaign_year_id' => $campaignYear->id
+        ],[
+            'one_time_amount' => $input['annualOneTimeAmount'],
+            'pay_period_amount' => $input['annualBiWeeklyAmount'] / $multiplier,
+
+            'amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] / $multiplier + $input['annualOneTimeAmount'] 
+                : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ), 
             'frequency' => $frequency === 'both' ? 'both' : ($frequency === 'BiWeekly' ? 'bi-weekly' : 'one time'),
-            'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount'] : $input['annual'+$frequency+'Amount'],
+            'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount'] 
+                : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ),
         ]);
+        
+        $pledge->charities()->delete();
+
         foreach(['OneTime', 'BiWeekly'] as $frequency) {
             if ($frequency === 'OneTime' && ($input['frequency'] !== 'one-time' && $input['frequency'] !== 'both')) {
                 continue;
@@ -545,10 +607,11 @@ class CharityController extends Controller
                     'charity_id' => $id,
                     'pledge_id' => $pledge->id,
                     'additional' => $input['charityAdditional'][$id],
+                    'percentage' => $input['charity'.$frequency.'Percentage'][$id],
                     'amount' => $amount,
                     'frequency' => $frequency === 'BiWeekly' ? 'bi-weekly' : 'one time',
                     /* 'cheque_pending' => $multiplier, */
-                    'goal_amount' => $amount * $multiplier
+                    'goal_amount' => $frequency === 'BiWeekly' ? $amount * $multiplier : $amount, 
                 ]);
             }
     }

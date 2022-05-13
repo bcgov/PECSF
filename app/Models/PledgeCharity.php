@@ -13,6 +13,7 @@ class PledgeCharity extends Pivot
         'pledge_id',
         'frequency',
         'additional',
+        'percentage',
         'amount',
         'goal_amount'/* ,
         'cheque_pending' */

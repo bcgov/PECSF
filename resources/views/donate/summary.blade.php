@@ -13,12 +13,14 @@
                     <div class="card">
                         <div class="card-body">
                             <span><b>Your Bi-weekly payroll deductions:</b></span>
-                            <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly*26 }}</span><br>
+                            {{-- <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly*26 }}</span><br> --}}
+                            <span class="float-right mb-2">${{ number_format($annualBiWeeklyAmount,2) }}</span><br>
                             <h6>AND / OR</h6>
                             <span><b>Your One-time payroll deductions:</b></span>
-                            <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span>
+                            {{-- <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span> --}}
+                            <span class="float-right">${{ number_format($annualOneTimeAmount,2) }}</span>
                             <hr>
-                            <p class="text-right"><b>Total :</b> ${{ $grandTotal }}</p>
+                            <p class="text-right"><b>Total :</b> ${{ number_format($annualBiWeeklyAmount + $annualOneTimeAmount,2) }}</p>
                         </div>
                     </div>
                     @csrf
@@ -48,6 +50,8 @@
                     @foreach ($charities as $charity)
                         <input type="hidden" name="charityOneTimeAmount[{{$charity['id']}}]" value="{{$charity['one-time-amount-distribution']}}">
                         <input type="hidden" name="charityBiWeeklyAmount[{{$charity['id']}}]" value="{{$charity['bi-weekly-amount-distribution']}}">
+                        <input type="hidden" name="charityOneTimePercentage[{{$charity['id']}}]" value="{{$charity['one-time-percentage-distribution']}}">
+                        <input type="hidden" name="charityBiWeeklyPercentage[{{$charity['id']}}]" value="{{$charity['bi-weekly-percentage-distribution']}}">
                         <input type="hidden" name="charityAdditional[{{$charity['id']}}]" value="{{$charity['additional']}}">
                         <input type="hidden" name="annualOneTimeAmount" value="{{$annualOneTimeAmount}}">
                         <input type="hidden" name="annualBiWeeklyAmount" value="{{$annualBiWeeklyAmount}}">

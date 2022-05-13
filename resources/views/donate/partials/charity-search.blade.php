@@ -111,7 +111,9 @@
                   </div>
                 </div>
 
-                <div id="selected-charity-list">
+                <div class="m-2 py-2 pl-2 bg-light"> 
+                  <div id="selected-charity-list">
+                  </div>
                 </div>
 
 
@@ -137,16 +139,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script type="x-tmpl" id="charity-tmpl">
-  <div class="m-2">
-      <div class="charity bg-light p-2 m-1">
+  <div class="m-1 bg-light">
+      <div class="charity pl-2 m-0">
           <b>${this.text}</b>
-          <button type="button" class="btn btn-light btn-sm float-end clear-charity" data-id="${this.id}">&times;</button>
+          <button type="button" class="btn btn-light float-end clear-charity" data-id="${this.id}">&times;</button>
       </div>
       <label class="w-100">
           <input type="hidden" name="id[]" value="${this.id}">
           <input type="text" name="additional[]" class="form-control form-control-sm additional-text" data-id="${this.id}" value="${this.additional}" placeholder="If you have specific community or initiative in mind, enter it here.">
       </label>
   </div>
+  <hr class="m-0 p-0"/>
 </script>
 <script>
 
