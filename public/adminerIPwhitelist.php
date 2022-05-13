@@ -1,7 +1,11 @@
 
 <?php
 /* BLOCK ALL BY IP */
-$whitelist = array('206.108.31.34');
+    $whitelist = array('10.97.84.1');
+
+    $content = file_get_contents('../.env', true);
+    preg_match_all('/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/', $content, $output_array);
+    $whitelist = array_diff(array_unique($output_array[0]), ['127.0.0.1']) ;
 
 if (in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
     //Action for allowed IP Addresses
