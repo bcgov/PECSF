@@ -13,14 +13,16 @@ class ExportDatabaseToBI extends Command
 {
 
     protected $db_tables = [
-        ['name' => 'campaign_years',   'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'charities',        'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'organizations',    'delta' => null,         'hidden' => null ],
-        ['name' => 'pledge_charities', 'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'pledges',          'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'regions',          'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'users',            'delta' => 'updated_at', 'hidden' => ['password', 'remember_token'] ],
-        ['name' => 'volunteers',       'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'campaign_years',     'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'charities',          'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'f_s_pools',          'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'f_s_pool_charities', 'delta' => 'updated_at', 'hidden' => ['image'] ],
+        ['name' => 'organizations',      'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'pledge_charities',   'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'pledges',            'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'regions',            'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'users',              'delta' => 'updated_at', 'hidden' => ['password', 'remember_token'] ],
+        ['name' => 'volunteers',         'delta' => 'updated_at', 'hidden' => null ],
     ];
  
     protected $success;

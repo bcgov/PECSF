@@ -42,7 +42,18 @@ class ImportCharities extends Command
     public function handle()
     {
         echo now() . PHP_EOL;   
-        Excel::import(new CharitiesImport, 'database/seeds/Charities_results_2022-03-05-19-06-03.txt');
+        try {
+            Excel::import(new CharitiesImport, 'database/seeds/Charities_results_2022-04-14-10-30-58.txt');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            
+            foreach ($failures as $failure) {
+                $failure->row(); // row that went wrong
+                $failure->attribute(); // either heading key (if using heading row concern) or column index
+                $failure->errors(); // Actual error messages from Laravel validator
+                $failure->values(); // The values of the row that has failed.
+            }
+        }    
         echo now() . PHP_EOL;
 
         return 0;
