@@ -21,13 +21,26 @@
             <tr class="bg-light">
                 <th onclick="sortTable(0)" style="cursor: pointer;">Rank</th>
                 <th onclick="sortTable(1)" style="cursor: pointer;">Organization Name</th>
-                <th onclick="sortTable(2)" style="cursor: pointer;">Number of Donors</th>
-                <th onclick="sortTable(3)" style="cursor: pointer;">Dollars Donated</th>
+                <th onclick="sortTable(2)" style="cursor: pointer;">Participation Rate</th>
+                <th onclick="sortTable(3)" style="cursor: pointer;">Final Participation Rate In Previous Years</th>
+                <th onclick="sortTable(4)" style="cursor: pointer;">Change</th>
+                <th onclick="sortTable(5)" style="cursor: pointer;">Number of Donors</th>
+                <th onclick="sortTable(6)" style="cursor: pointer;">Dollars Donated</th>
             </tr>
             @foreach($charities as $index => $charity)
             <tr>
                 <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
                 <td>{{$charity['name']}}</td>
+                <td>{{$charity['participation_rate']}}%</td>
+                <td>{{$charity['final_participation_rate']}}%</td>
+                <td>
+                    @if($charity['change'] < 0)
+                        <span style="color:red">
+                    @else
+                        <span style="color:green">
+                    @endif
+                    {{$charity['change']}}%
+                </td>
                 <td>{{$charity['total_donors']}}</td>
                 <td>${{number_format($charity['total_donation'])}}</td>
             </tr>
