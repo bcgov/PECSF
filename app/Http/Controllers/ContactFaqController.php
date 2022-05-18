@@ -29,7 +29,7 @@ class ContactFaqController extends Controller
                 ],
                 [
                     'question' => 'How much time on average do I have to commit to as a volunteer?',
-                    'answer' => 'Average time commitment can vary my role.  Average time commitment for Coordinators is 12 to 16 hours (8 hours’ pre-campaign, 2 hours during, 2 hours after) plus PECSF training online.  The time needed to successfully host an event varies considerably.  Consider the costs and projected benefits of your event before you get started.'
+                    'answer' => 'Average time commitment can vary by role.  Average time commitment for Coordinators is 12 to 16 hours (8 hours’ pre-campaign, 2 hours during, 2 hours after) plus PECSF training online.  The time needed to successfully host an event varies considerably.  Consider the costs and projected benefits of your event before you get started.'
                 ],
                 [
                     'question' => 'Does volunteering with PECSF count towards professional development?',
