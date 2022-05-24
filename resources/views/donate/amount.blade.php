@@ -1,7 +1,7 @@
 @extends('donate.layout.main')
 
 @section ("step-content")
-<h2 class="mt-5">2. Decide on the frequency and amount</h2>
+<h2 class="mt-5">3. Decide on the frequency and amount</h2>
 @if (session('errors'))
     <div class="row  mt-3">
         <div class="col-md-12">
@@ -81,7 +81,7 @@
         <form action="{{route('donate.save.amount')}}" method="post" onsubmit="prepareForm()">
             @csrf
             <div id="amount-values"></div>
-            <a class="btn btn-lg btn-outline-primary" href="{{route('donate')}}">Previous</a>
+            <a class="btn btn-lg btn-outline-primary" href="{{  $pool_option == "C" ? route('donate.select-charities') : route('donate.regional-pool') }}">Previous</a>
             <button class="btn btn-lg btn-primary" type="submit">Next</button>
         </form>
     </div>

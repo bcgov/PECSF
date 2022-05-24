@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content')
-<div class="container mt-5">
+<div class="container mt-1">
     <div class="row">
         <div class="col-12 col-sm-7">
             <h1>Make a Donation</h1>

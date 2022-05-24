@@ -26,14 +26,14 @@
                     <td style="width:110px" class="by-percent ">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm percent-input float-right text-right" name="{{$keyCase}}Percent[{{ $charity['id'] }}]" value='{{$charity["$key_-percentage-distribution"]}}' disabled>
-                            <label class="float-right text-right">{{$charity["$key_-percentage-distribution"]}}%</label>
+                            <label class="float-right text-right">{{ number_format($charity["$key_-percentage-distribution"],2) }}%</label>
                         </div>
                     </td>
                     @endif
                     <td style="width:110px" class="by-amount d-none">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm amount-input float-right text-right"  name="{{$keyCase}}Amount[{{ $charity['id'] }}]" value='{{$charity["$key_-amount-distribution"]}}' disabled>
-                            <label class="float-right text-right"> ${{$charity["$key_-amount-distribution"] * $multiplier}}</label>
+                            <label class="float-right text-right"> ${{ number_format($charity["$key_-amount-distribution"] * $multiplier,2) }}</label>
                         </div>
                     </td>
                 </tr>
@@ -51,7 +51,7 @@
                     <td class="by-amount d-none">
                         <div class="input-group input-group-sm mb-3 text-right" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm total-amount" value="{{ ${'annual'.ucfirst($keyCase).'Amount'} }}" readonly>
-                            <label class="total-amount-text float-right" style="width:250px;" ><b>Total:</b> ${{ ${'annual'.ucfirst($keyCase).'Amount'} }}</label>
+                            <label class="total-amount-text float-right" style="width:250px;" ><b>Total:</b> ${{ number_format(${'annual'.ucfirst($keyCase).'Amount'},2) }}</label>
                         </div>
                     </td>
                 </tr>

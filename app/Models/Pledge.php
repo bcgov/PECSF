@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Models\CampaignYear;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 
 class Pledge extends Model
@@ -12,11 +13,12 @@ class Pledge extends Model
         'organization_id',
         'user_id',
         'campaign_year_id',
-        'p_s_pool_id',
-        'frequency',
+        'type',
+        'f_s_pool_id',
+        // 'frequency',
+        // 'amount',
         'one_time_amount',
         'pay_period_amount',
-        'amount',
         'goal_amount'
     ];
 
@@ -34,8 +36,23 @@ class Pledge extends Model
     }
 
     public function campaign_year() {
-        return $this->belongsTo(CampaignYear::class);
+        return $this->belongsTo(CampaignYear::class)->withDefault([
+            'calendar_year' => '',
+        ]);
     }
+
+    public function fund_supported_pool() {
+        return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id');
+    }
+
+    public function organization() {
+        return $this->belongsTo(Organization::class)->withDefault([
+            'name' => '',
+        ]);
+    }
+
+
+
 
 
     // public function scopeOnlyCampaignYear($query, $campaign_year) {

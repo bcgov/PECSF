@@ -118,7 +118,8 @@
 
 
                 <div class="mt-2">
-                  <button  name="cancel" value='cancel' class="btn btn-lg btn-outline-primary">Cancel</button>
+                  {{-- <button  name="cancel" value='cancel' class="btn btn-lg btn-outline-primary">Cancel</button> --}}
+                  <a class="btn btn-lg btn-outline-primary" href="{{route('donate.start')}}">Previous</a>
                   <button class="btn btn-lg btn-primary" type="submit">Next</button>
                 </div>
             </form>    
@@ -314,7 +315,7 @@
         function ajax_search_charities() {
 
               //get url and make final url for ajax 
-              var url = '{{url("donate")}}';
+              var url = '{{url("donate/select")}}';
               var append = url.indexOf("?") == -1 ? "?" : "&";
               var finalURL = url + append + $("#charity-searchform").serialize();
 

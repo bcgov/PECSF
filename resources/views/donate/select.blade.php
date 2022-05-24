@@ -1,7 +1,7 @@
 @extends('donate.layout.main')
 
 @section ("step-content")
-<h2 class="mt-5">1. Choose your charities</h2>
+<h2 class="mt-5">2. Choose your charities</h2>
 <div>
     @include('donate.partials.charity-search')
 {{--  

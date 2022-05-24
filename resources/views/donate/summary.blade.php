@@ -1,12 +1,11 @@
 @extends('donate.layout.main')
 
 @section ("content")
-
 <div class="container">
     <form action="{{route('donate.save.summary')}}" method="POST">
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h2 class="mt-5">4. Summary</h2>
+            <h2 class="mt-5">{{ $pool_option == 'C' ?  '5. Summary' : '4. Summary' }}</h2>
             <p class="mt-3">Please review your donation plan and press <b>Pledge</b> when ready!</p>
                 <div class="card bg-light p-3">
                     <p class="card-title"><b>Deductions</b></p>
@@ -47,16 +46,26 @@
                     </p>
                 </div>
                 <div class="">
-                    @foreach ($charities as $charity)
-                        <input type="hidden" name="charityOneTimeAmount[{{$charity['id']}}]" value="{{$charity['one-time-amount-distribution']}}">
-                        <input type="hidden" name="charityBiWeeklyAmount[{{$charity['id']}}]" value="{{$charity['bi-weekly-amount-distribution']}}">
-                        <input type="hidden" name="charityOneTimePercentage[{{$charity['id']}}]" value="{{$charity['one-time-percentage-distribution']}}">
-                        <input type="hidden" name="charityBiWeeklyPercentage[{{$charity['id']}}]" value="{{$charity['bi-weekly-percentage-distribution']}}">
-                        <input type="hidden" name="charityAdditional[{{$charity['id']}}]" value="{{$charity['additional']}}">
+                    @if ($pool_option == 'C')                     
+                        @foreach ($charities as $charity)
+                            <input type="hidden" name="charityOneTimeAmount[{{$charity['id']}}]" value="{{$charity['one-time-amount-distribution']}}">
+                            <input type="hidden" name="charityBiWeeklyAmount[{{$charity['id']}}]" value="{{$charity['bi-weekly-amount-distribution']}}">
+                            <input type="hidden" name="charityOneTimePercentage[{{$charity['id']}}]" value="{{$charity['one-time-percentage-distribution']}}">
+                            <input type="hidden" name="charityBiWeeklyPercentage[{{$charity['id']}}]" value="{{$charity['bi-weekly-percentage-distribution']}}">
+                            <input type="hidden" name="charityAdditional[{{$charity['id']}}]" value="{{$charity['additional']}}">
+                            <input type="hidden" name="annualOneTimeAmount" value="{{$annualOneTimeAmount}}">
+                            <input type="hidden" name="annualBiWeeklyAmount" value="{{$annualBiWeeklyAmount}}">
+                            <input type="hidden" name="frequency" value="{{$frequency}}">
+                            <input type="hidden" name="pool_option" value="{{$pool_option}}">
+                            <input type="hidden" name="regional_pool_id" value="{{$regional_pool_id}}">
+                        @endforeach
+                    @else 
                         <input type="hidden" name="annualOneTimeAmount" value="{{$annualOneTimeAmount}}">
                         <input type="hidden" name="annualBiWeeklyAmount" value="{{$annualBiWeeklyAmount}}">
                         <input type="hidden" name="frequency" value="{{$frequency}}">
-                    @endforeach
+                        <input type="hidden" name="pool_option" value="{{$pool_option}}">
+                        <input type="hidden" name="regional_pool_id" value="{{$regional_pool_id}}">
+                    @endif
                 </div>
 
         </div>
@@ -77,7 +86,8 @@
                 <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund, at 250 356-1736, PECSF@gov.bc.ca  or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5.</p>
             </div>
             <div class="mt-3">
-                <a class="btn btn-lg btn-outline-primary" href="{{route('donate.distribution')}}">Previous</a>
+                <a class="btn btn-lg btn-outline-primary" 
+                    href="{{ $pool_option == 'C' ? route('donate.distribution') : route('donate.amount')}}">Previous</a>
                 <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
             </div>
         </div>
