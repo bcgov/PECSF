@@ -84,5 +84,37 @@
         $(".percent-input").change();
         $(".amount-input").change();
 
+
+        $(document).on('click', '.distribute-evenly', function () {
+
+            section = $(this).parents('.amountDistributionSection');
+            distributionBy = section.find("input[name*='distributionByPercent'] ");
+            var expectedTotal,  rows;
+
+            if ($(distributionBy).prop('checked')) {
+                expectedTotal = 100;
+                rows  = section.find(".percent-input");
+            } else {
+                // const section = $(this).parents('.amountDistributionSection');
+                expectedTotal = section.find(".total-amount").data('expected-total');
+                rows  = section.find(".amount-input");
+            }
+
+            // calucated and distributed  
+            sum = 0;
+            $.each(rows, function(i) {
+                if (i == (rows.length -1 ) ) {
+                    newValue = expectedTotal - sum;
+                    $(this).val( newValue );
+                    console.log( 'LAST ' + i + ' - ' +  $( this).val() );    
+                } else {
+                    newValue = Math.round(( expectedTotal / rows.length) * 100) / 100; 
+                    $( this).val( newValue );
+                    sum += newValue
+                    console.log( i + ' - ' +  $( this).val() );
+                }
+            });
+        });
+
     </script>
 @endpush

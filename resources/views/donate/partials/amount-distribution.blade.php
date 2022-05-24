@@ -7,7 +7,7 @@
                 <i></i><span class="percent-amount-text">Distribute by Dollar Amount</span>
             </label>
         </div>
-        <button class="btn btn-link">Distribute evenly</button>
+        <button type="button" class="distribute-evenly btn btn-link">Distribute evenly</button>
     </div>
     <table class="table table-sm">
         @foreach ($charities as $charity)

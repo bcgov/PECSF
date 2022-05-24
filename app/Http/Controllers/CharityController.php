@@ -801,7 +801,7 @@ class CharityController extends Controller
             'campaign_year_id' => $campaignYear->id
         ],[
             'type' => $input['pool_option'],
-            'f_s_pool_id' => $input['regional_pool_id'],
+            'f_s_pool_id' => $input['regional_pool_id'] ?? '',
             'one_time_amount' => $input['annualOneTimeAmount'],
             'pay_period_amount' => $input['annualBiWeeklyAmount'] / $multiplier,
 
