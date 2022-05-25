@@ -3,7 +3,7 @@
     <div class="text-center mt-3">
         <h1>Contact PECSF</h1>
         <p class="px-5 mt-2">
-            <b>Got a question? We're here to help! If you don't see your question answered in the FAQ section below, send us an e-mail at PECSF@gov.bc.ca</b>
+            <b>Got a question? We're here to help! If you don't see your question answered in the FAQ section below, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.</b>
         </p>
     </div>
 @endsection
@@ -14,7 +14,13 @@
             <h2>FAQ</h2>
             <section>
                 @foreach($sections as $section => $qnas)
-                <h5>{{$section}}</h5>
+                <h5>
+                @if($section == 'Canlendar')
+                    PECSF program
+                @else
+                    {{$section}}
+                @endif    
+                </h5>
                 <div id="accordion{{$section}}">
                     @foreach($qnas as $i => $qna)
                     <div class="card">
