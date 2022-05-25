@@ -11,7 +11,7 @@ class ContactFaqController extends Controller
             'Donations' => [
                 [
                     'question' => 'When will my charity receive my donation?',
-                    'answer' => 'Contributions are disbursed twice a year to the various charities chosen by donors. In August for deductions/donations from January to June, and in March for deductions/donations from July to December.'
+                    'answer' => 'Contributions are disbursed twice a year to the various charities chosen by donors. In August, for deductions/donations from January to June, and in March, for deductions/donations from July to December.'
                 ],
                 [
                     'question' => 'How much of my donation will my charity receive?',
@@ -19,7 +19,11 @@ class ContactFaqController extends Controller
                 ],
                 [
                     'question' => 'When will I receive a charitable tax receipt?',
-                    'answer' => 'Payroll deductions automatically show on your T4 issued from payroll.  If you have donated via cash/cheque, your charitable donation receipt will be mailed to you the following Spring.'
+                    'answer' => 'Payroll deductions automatically show on your T4 issued from payroll.  If you have donated via cash/cheque, your charitable donation receipt will be mailed to you the following spring.'
+                ],
+                [
+                    'question' => 'What is the fund supported pool program? ',
+                    'answer' => 'This refers to a community-based, charitable organization, chapter or program that has applied for, and been approved to receive a portion of funding, from a regional pool. These organizations are selected by your local PECSF regional committee and must report annually on the status of their approved program to continue to receive funding during each 3-year funding cycle. '
                 ]
             ],
             'Volunteering' => [
@@ -33,21 +37,21 @@ class ContactFaqController extends Controller
                 ],
                 [
                     'question' => 'Does volunteering with PECSF count towards professional development?',
-                    'answer' => 'Absolutely!  You and your manager have the ability to decide how best to use your PECSF volunteer role to demonstrate skills, knowledge and ability that benefit both yourself, your team, and the BC Public Service overall.'
+                    'answer' => 'Absolutely! You and your manager can decide how best to use your PECSF volunteer role to demonstrate skills, knowledge, and abilities to benefit yourself, your team, and the BC Public Service. '
                 ]
             ],
-            'Calendar' => [
+            'Canlendar' => [
                 [
                     'question' => 'How do charities get supported through PECSF?',
-                    'answer' => 'By employees choosing them!  Any charity registered with the CRA and in good standing is eligible for funding through PECSF.  Additionally, PECSF offers charities the chance to apply for focus local program funding every three years.'
+                    'answer' => 'By employees choosing them! Any charity, registered and in good standing CRA (Canada Revenue Agency), is eligible for funding through PECSF. Additionally, PECSF offers charities the chance to apply for specific local program funding every three years through the Fund Supported Pool initiative. '
                 ],
                 [
-                    'question' => 'Who are PECSF Headquarters?',
-                    'answer' => 'The PECSF program is coordinated through a central team within the BC Public Service Agency.  This team is responsible for recruitment, volunteer training, recognition, and all operational support for the PECSF giving and volunteer program provincially.'
+                    'question' => 'Who are the PECSF Headquarters (team)? ',
+                    'answer' => 'The PECSF program is coordinated by team within the BC Public Service Agency. This team is responsible for volunteer recruitment, training, recognition, and all PECSF program operational support provincially. '
                 ],
                 [
                     'question' => 'Who are the PECSF Board of Directors?',
-                    'answer' => 'PECSF is registered federally as a Charitable Employee Trust.  It is governed by a board of directors made up of current BC Public Servants.'
+                    'answer' => 'PECSF is registered federally, with the CRA (Canada Revenue Agency) as a Charitable Employee Trust. It is governed by a Board of Directors made up of current BC Public Servants. '
                 ]
             ]
         ];
