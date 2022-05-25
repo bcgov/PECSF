@@ -132,8 +132,8 @@
                 {data: 'region.name', name: 'region.name', className: "dt-nowrap" },
                 {data: 'start_date', name: 'start_date', className: "dt-nowrap" },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
-                {data: 'effectiveType', name: 'effectiveType', className: "dt-nowrap", searchable: false, "visible": true },
-                {data: 'charities', searchable: false },
+                {data: 'effectiveType', name: 'effectiveType', className: "dt-nowrap", orderable: false, searchable: false, "visible": true },
+                {data: 'charities', orderable: false, searchable: false },
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
             columnDefs: [

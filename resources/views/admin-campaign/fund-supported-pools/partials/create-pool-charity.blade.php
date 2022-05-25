@@ -61,9 +61,9 @@
         <div class="form-group col-md-1 " >
             {{-- <div type="button" class="form-control  btn  btn-danger delete_this_row" data-id="charity{{ $index }}">Delete</div> --}}
         </div>  
-        <div class="form-group col-md-1  text-right" >
-            <label >&nbsp;</label>
-            <div type="button" class="form-control btn btn-danger delete_this_row" data-id="charity{{ $index }}">Delete</div>
+        <div class="form-group col-md-1 text-right p-2">
+            <div type="button" class="btn btn-danger  delete_this_row" data-id="charity{{ $index }}">
+                <i class="fas fa-trash-alt"></i></div>
         </div>
     </div>
 
@@ -81,8 +81,8 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="descriptions">Supported Program Description</label>
-            <textarea type="text" name="descriptions[]" class="form-control @error('descriptions.'.$index) is-invalid @enderror">
-                {{ old('descriptions.' . $index) ?? '' }}</textarea>
+            <textarea type="text" name="descriptions[]" class="form-control @error('descriptions.'.$index) is-invalid @enderror"
+                >{{ old('descriptions.' . $index) ?? '' }}</textarea>
             @error( 'descriptions.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror

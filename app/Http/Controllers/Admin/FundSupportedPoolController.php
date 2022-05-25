@@ -40,18 +40,10 @@ class FundSupportedPoolController extends Controller
      */
     public function index(Request $request)
     {
-        //
         if($request->ajax()) {
-
-            //return ($request);
             $pools = FSPool::with('region', 'charities', 'charities.charity')
                     ->when( $request->effectiveTypeFilter == 'F', function ($q)  {
-                        return $q->where('start_date', '>', function ($query) {
-                                    $query->selectRaw('max(start_date)')
-                                            ->from('f_s_pools as A')
-                                            ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                                            ->where('A.start_date', '<=', today());
-                                    });
+                        return $q->where('start_date', '>', today() );
                     })
                     ->when( $request->effectiveTypeFilter == 'H', function ($q)  {
                         return $q->where('start_date', '<', function ($query) {
@@ -71,31 +63,9 @@ class FundSupportedPoolController extends Controller
                     })
                     ->select('f_s_pools.*');
 
-            // return ([ $request->effectiveTypeFilter, $pools->toSql() ]);
+            // return ([ $request->effectiveTypeFilter, $pools->toSql(), $pools->getBindings() ]);
 
             return Datatables::of($pools)
-                // ->addColumn('region', function ($pool) {
-                //     return $pool->region->name;
-                // })
-                // ->addColumn('charities', function ($pool) {
-                    // $html = '<ul class="list-group list-group-flush">';     
-                    // $count = count( $pool->charities );
-                    // for($i=0;$i< $count;$i++){
-                    //     $html .= '<li class="list-group-item">' . $pool->charities[$i]->charity->charity_name . 
-                    //         ' (' .  $pool->charities[$i]->charity->registration_number . ')'.
-                    //     '</li>';
-                    // }
-                    // $html .= '</ul>';  
-                    // return $html;   
-                    // return $pool->charities;
-                    // return '<ul>' . $pool->charities->map( function ($item, $key) {
-                    //        return '<li>' . $item->charity->charity_name . '</li>';
-                    // }) . '</ul>';
-                    // return $pool->charities->map( function ($item, $key) {
-                    //     // return $item->charity->charity_name;
-                    //     return 'test';
-                    // });
-                // })
                 ->addColumn('action', function ($pool) {
                     $html = '<a href="'. route('settings.fund-supported-pools.show', $pool->id) .
                             '"class="btn btn-info btn-sm  show-pool" data-id="'. $pool->id .'" >Show</a>' ;
@@ -115,11 +85,6 @@ class FundSupportedPoolController extends Controller
                             '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Delete</a>';
                     }
                     return $html;
-                // return '<a class="btn btn-info btn-sm  show-pool" data-id="'. $pool->id .'" >Show</a>' . 
-                //        '<a href="'. route('settings.fund-supported-pools.edit', $pool->id) . 
-                //             '"class="btn btn-primary btn-sm ml-2 edit-pool" data-id="'. $pool->id .'" >Edit</a>' . 
-                //        '<a class="btn btn-danger btn-sm ml-2 delete-pool" data-id="'. $pool->id .
-                //        '" data- ="'. $pool->region->name . '">Delete</a>';
             })
             ->rawColumns(['action','charities'])
             ->make(true);
@@ -179,9 +144,9 @@ class FundSupportedPoolController extends Controller
             'descriptions.*'    => 'required',
             'percentages.*'     => 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
-            'contact_titles.*'  => 'required',
+            'contact_titles.*'  => 'nullable',
             'contact_emails.*'  => 'required|email',
-            'notes.*'           => 'required',
+            'notes.*'           => 'nullable',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp,gif|max:2048',
         ],[
             'charities.*.required' => 'The charity field is required.',
@@ -314,23 +279,6 @@ class FundSupportedPoolController extends Controller
             }
         }
 
-        /* 
-        $file = new File;
-
-        if($request->file()) {
-            $name = time().'_'.$request->file->getClientOriginalName();
-            $filePath = $request->file('file')->storeAs('uploads', $name, 'public');
-
-            $file->name = time().'_'.$request->file->getClientOriginalName();
-            $file->file = '/storage/' . $filePath;
-            $file->save();
-
-            return back()
-            ->with('success','File has uploaded to the database.')
-            ->with('file', $name);
-        }
-        */
-
         $region = Region::where('id', $request->region_id)->first();
 
         return redirect()->route('settings.fund-supported-pools.index')
@@ -421,9 +369,9 @@ class FundSupportedPoolController extends Controller
             'descriptions.*'    => 'required',
             'percentages.*'     => 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
-            'contact_titles.*'  => 'required',
+            'contact_titles.*'  => 'nullable',
             'contact_emails.*'  => 'required|email',
-            'notes.*'           => 'required',
+            'notes.*'           => 'nullable',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp.gif|max:2048',
         ],[
             'charities.*.required' => 'The charity field is required.',

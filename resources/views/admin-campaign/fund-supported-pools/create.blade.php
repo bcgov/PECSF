@@ -5,7 +5,7 @@
 @include('admin-campaign.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Create a new Fund Supported Pool</h4>
+        <h4>Create a New Fund Supported Pool</h4>
         <div class="flex-fill"></div>
     </div>
 @endsection
@@ -119,6 +119,9 @@
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 <style>
+    .select2 {
+        width:100% !important;
+    }
     .select2-selection--multiple{
         overflow: hidden !important;
         height: auto !important;

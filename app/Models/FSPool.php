@@ -45,12 +45,14 @@ class FSPool extends Model
     {
         $current = FSPool::current()->where('region_id', $this->region_id)->first();
 
-        //return($current->start_date);
-        return ( $this->start_date < $current->start_date ? 'H' :
+        if ($current) {
+            return ( $this->start_date < $current->start_date ? 'H' :
                      ( $this->start_date > $current->start_date ? 'F' : 'C')
-                );
+            );
+        } else {
+            return 'F';
+        }
+
     }
-
-
 
 }
