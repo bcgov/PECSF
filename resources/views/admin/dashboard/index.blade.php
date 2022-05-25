@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col">
                 <div class="card">
-                <a href="{{ route('settings.pledge') }}">
+                <a href="{{ route('admin-pledge.campaign.index') }}">
                     <div class="card-body mt-4 text-center">
                         <div>
                             <img src="{{asset('img/admin/2.png')}}" alt="Pledge Administration" style="height:100px">

@@ -134,6 +134,10 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     
     // Pledge Administration - Campaign Pledge
     // Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
+    Route::get('/campaign', function() {
+        return "to be developed";
+    })->name('campaign.index');
+
 
 });
 
