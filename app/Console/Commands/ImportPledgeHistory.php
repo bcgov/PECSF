@@ -15,7 +15,7 @@ class ImportPledgeHistory extends Command
      *
      * @var string
      */
-    protected $signature = 'command:importPledgeHistory';
+    protected $signature = 'command:ImportPledgeHistory';
 
     /**
      * The console command description.
@@ -81,7 +81,7 @@ class ImportPledgeHistory extends Command
                     // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 
                     $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first(); 
-                    $charity = \App\Models\charity::where('registration_number', $row->charity_bn)->first();
+                    $charity = \App\Models\Charity::where('registration_number', $row->charity_bn)->first();
                     $campaign_year = \App\Models\CampaignYear::where('calendar_year', $row->yearcd)->first();
 
                     PledgeHistory::Create([
