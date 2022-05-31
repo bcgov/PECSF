@@ -100,7 +100,7 @@
                     @foreach($pledges as $pledge)
                         <tr class="text-center">
                             <td>{{$pledge->campaign_type }}</td>
-                            <td class="text-left">{{ $pledge->source == 'Pool' ? $pledge->fund_supported_pool->region->name : $pledge->charity->charity_name }} </td>
+                            <td class="text-left">{{ $pledge->source == 'Pool' ? $pledge->region->name : $pledge->charity->charity_name }} </td>
                             <td class="text-left">{{$pledge->frequency}} </td>
                             <td class="text-right">${{ number_format($pledge->pledge,2) }} </td>
                             <td class="text-right">{{ number_format($pledge->percent,2) }}%</td>
