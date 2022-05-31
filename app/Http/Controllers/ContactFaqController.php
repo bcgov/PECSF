@@ -33,7 +33,7 @@ class ContactFaqController extends Controller
                 ],
                 [
                     'question' => 'How much time on average do I have to commit to as a volunteer?',
-                    'answer' => 'Average time commitment can vary by role.  Average time commitment for Coordinators is 12 to 16 hours (8 hours’ pre-campaign, 2 hours during, 2 hours after) plus PECSF training online.  The time needed to successfully host an event varies considerably.  Consider the costs and projected benefits of your event before you get started.'
+                    'answer' => 'Average time commitment can vary by role. Average time commitment for Coordinators is 12 to 16 hours (8 hours pre-campaign, 2 hours during, 2 hours after), plus PECSF training online. The time needed to successfully host an event varies considerably. Consider the costs and projected benefits of your event before you get started. '
                 ],
                 [
                     'question' => 'Does volunteering with PECSF count towards professional development?',
@@ -43,7 +43,7 @@ class ContactFaqController extends Controller
             'Canlendar' => [
                 [
                     'question' => 'How do charities get supported through PECSF?',
-                    'answer' => 'By employees choosing them! Any charity, registered and in good standing CRA (Canada Revenue Agency), is eligible for funding through PECSF. Additionally, PECSF offers charities the chance to apply for specific local program funding every three years through the Fund Supported Pool initiative. '
+                    'answer' => 'By employees choosing them! Any charity, registered and in good standing CRA (Canada Revenue Agency), is eligible for funding through PECSF. Additionally, PECSF offers charities the opportunity to apply for specific local program funding every three years through the Fund Supported Pool initiative. '
                 ],
                 [
                     'question' => 'Who are the PECSF Headquarters (team)? ',
