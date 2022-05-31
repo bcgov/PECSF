@@ -1,11 +1,17 @@
 @extends('adminlte::page')
 @section('content_header')
-    <div class="text-center mt-3">
-        <h1>Contact PECSF</h1>
-        <p class="px-5 mt-2">
-            <b>Got a question? We're here to help! If you don't see your question answered in the FAQ section below, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.</b>
-        </p>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-left mt-3">
+                <h1>Contact PECSF</h1>
+                <p>
+                    Got a question? We're here to help! If you don't see your question answered in the FAQ section below, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
+                </p>
+            </div>
+         </div>
     </div>
+</div>
 @endsection
 @section('content')
 <div class="container">
