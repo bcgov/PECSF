@@ -124,7 +124,7 @@ class CharityController extends Controller
                     ->where('status', 'A')
                     ->get();
         
-        $regional_pool_id = $pools->first()->id;
+        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
         if (Session::has('regional_pool_id')) {
             $regional_pool_id = Session::get('regional_pool_id');
         
