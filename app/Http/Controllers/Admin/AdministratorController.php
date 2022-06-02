@@ -66,7 +66,7 @@ class AdministratorController extends Controller
             );
         }
 
-        $curr_user = User::find( Auth::id() )->first();
+        $curr_user = User::where('id', Auth::id() )->first();
         if ( is_null($curr_user->guid) ) {
             $user = User::find($request->user_id);
         } else {
