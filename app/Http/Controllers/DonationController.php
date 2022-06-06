@@ -76,8 +76,12 @@ class DonationController extends Controller {
         $old_bi_pledges = PledgeHistory::where('GUID', $user->guid)->orderByDesc('yearcd')
                             ->orderBy('campaign_type')->orderBy('source')->orderBy('tgb_reg_district')
                             ->get();
+
+        // Limit to last 3 years pledge history                            
+        // $last_3_yearcd = PledgeHistory::where('GUID', $user->guid)->orderByDesc('yearcd')->groupBy('yearcd')->pluck('yearcd')->take(3);
+        // $old_bi_pledges_by_yearcd = $old_bi_pledges->whereIn('yearcd', $last_3_yearcd)->sortByDesc('yearcd')->groupBy('yearcd');
         $old_bi_pledges_by_yearcd = $old_bi_pledges->sortByDesc('yearcd')->groupBy('yearcd');
-//dd($old_pledges_by_yearcd);
+
         // Calculate pledge totally amount
         $totalPledgedDataTillNow = 0;
         foreach ($old_pledges as $old_pledge)
@@ -111,53 +115,6 @@ class DonationController extends Controller {
                     'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
     }
 
-
-    protected function fetch($guid)
-    {
-
-        $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') . '?$filter=GUID eq '. $guid);
-
-        $pledges = [];
-
-        if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
-
-            foreach ($data as $row) {
-
-                $pledge = new \App\Models\PledgeHistory;
-                $pledge->campaign_type = $row->campaign_type;
-                $pledge->source = $row->source;
-                $pledge->frequency = $row->frequency;
-                $pledge->yearcd = $row->yearcd;
-                $pledge->tgb_reg_district = $row->tgb_reg_district;
-
-                $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first(); 
-                $pledge->region_id = $region ? $region->id : null;
-
-                $pledge->emplid = $row->emplid;
-                $pledge->charity_bn = $row->charity_bn;
-                $pledge->pledge = $row->pledge;
-                $pledge->percent = $row->percent;
-                $pledge->amount = $row->amount;
-
-                array_push($pledges, $pledge);
-                
-            }
-
-            return collect( $pledges );
-
-        }
-         else {
-            // $this->info( $response->status() );
-            // $this->info( $response->body() );
-
-            return collect([]);
-        }
-
-
-    }
     
 }
 

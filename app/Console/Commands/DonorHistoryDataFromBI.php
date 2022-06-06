@@ -54,8 +54,8 @@ class DonorHistoryDataFromBI extends Command
                 'status','Initiated'
         ]);
 
-        $this->info("Update/Create - Business Unit");
-        $this->UpdateBusinessUnit();
+        // $this->info("Update/Create - Business Unit");
+        // $this->UpdateBusinessUnit();
         $this->info("Update/Create - Region District");
         $this->UpdateRegionalDistrict();
         $this->info("Update/Create - Department");
@@ -150,7 +150,7 @@ class DonorHistoryDataFromBI extends Command
                 $this->info( $key . ' - ' . count($batch) );
                 foreach ($batch as $row) {
 
-                    $business_unit = BusinessUnit::where('business_unit_code', $row->business_unit_code)->first();
+                    $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
 
                     Department::updateOrCreate([
                         'bi_department_id' => $row->department_id,
@@ -185,7 +185,7 @@ class DonorHistoryDataFromBI extends Command
                 $this->info( $key . ' - ' . count($batch) );
                 foreach ($batch as $row) {
 
-                    $business_unit = BusinessUnit::where('business_unit_code', $row->business_unit_code)->first();
+                    $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
 
                     DonorByBusinessUnit::updateOrCreate([
                         'business_unit_id' => $business_unit ? $business_unit->id : null,
