@@ -14,12 +14,13 @@ use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
+use App\Http\Controllers\Admin\BusinessUnitController;
+
 use App\Http\Controllers\Admin\CampaignYearController;
 
 use App\Http\Controllers\Admin\OrganizationController;
-
-use App\Http\Controllers\Admin\AdministratorController;
 // use App\Http\Controllers\Admin\CampaignPledgeController;
+use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 
@@ -115,6 +116,10 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Regions
     Route::resource('/regions', RegionController::class)->except(['create']);
+
+    // Business Units
+    Route::resource('/business-units', BusinessUnitController::class)->except(['create']);
+
 
     // Fund Supported Pools
     Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);

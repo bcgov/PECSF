@@ -11,8 +11,18 @@ class BusinessUnit extends Model
     use HasFactory;
 
     protected $fillable =[ 
-        'business_unit_code', 'name', 'yearcd'
+        'code', 'name', 'status', 'effdt', 'notes', 'created_by_id', 'updated_by_id' 
     ];
+
+    public function created_by() 
+    {
+        return $this->hasOne(User::Class, 'id', 'created_by_id');
+    }
+
+    public function updated_by() 
+    {
+        return $this->hasOne(User::Class, 'id', 'updated_by_id');
+    }
 
     public function donorHistory() {
         return $this->hasMany(DonorByBusinessUnit::class);             
