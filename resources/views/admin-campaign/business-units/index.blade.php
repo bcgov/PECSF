@@ -37,7 +37,7 @@
 		<table class="table table-bordered" id="bu-table" style="width:100%">
 			<thead>
 				<tr>
-                    <th>Region Code</th>
+                    <th>Business Unit</th>
 					<th>Name</th>
                     <th>Status</th>
                     <th>Effective Date</th>
