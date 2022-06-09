@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Department;
 
 
 class ChallengeController extends Controller
@@ -23,7 +24,9 @@ class ChallengeController extends Controller
             ['name'=> "Government Communications & Public Engagement", 'total_donation' => 43000, 'total_donors' => 504, 'participation_rate' => 58, 'final_participation_rate' => 42, 'change' => 16],
             ['name'=> "Legislative Assembly", 'total_donation' => 43000, 'total_donors' => 504, 'participation_rate' => 94.3, 'final_participation_rate' => 87, 'change' => 7.3],
         ];
-        
+
+        $charities = Department::paginate(10);
+
         // $charities = $this->paginate($data);
         return view('challenge.index', compact('charities'));
     }

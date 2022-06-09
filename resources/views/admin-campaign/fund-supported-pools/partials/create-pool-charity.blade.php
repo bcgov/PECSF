@@ -27,7 +27,7 @@
         </div> --}}
         <div class="form-group col-md-8">
             <label for="charities">Charity CRA Organization Name and Business Number</label>
-            <select name="charities[]" class="form-control select2 @error('charities.'.$index) is-invalid @enderror" >
+            <select id="charities" name="charities[]" class="form-control select2 @error('charities.'.$index) is-invalid @enderror" >
 
                 @if ( old('charities.' . $index ) && session()->get('charity'.$index.'_selected') )
                     <option value="{{ session()->get('charity'.$index.'_selected')->id }}">
@@ -43,20 +43,27 @@
                     </option>
                 @endforeach --}}
             </select>
-            @error( 'charities.'.$index )
+            <span id="charities_errors">
+                  @error( 'charities.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
+            </span>
+
+
         </div>
 
         <div class="form-group col-md-2">
             <label for="status[]">Status</label>
-            <select name="status[]" class="form-control @error('status.'.$index) is-invalid @enderror">
+            <select id="status" name="status[]" class="form-control @error('status.'.$index) is-invalid @enderror">
                 <option value="A">Active</option>
                 <option value="I">Inactive</option>
             </select>
-            @error('status.'.$index)
+            <span id="status_errors">
+                @error('status.'.$index)
                 <span class="invalid-feedback">{{  $message  }}</span>
             @enderror
+            </span>
+
         </div>
         <div class="form-group col-md-1 " >
             {{-- <div type="button" class="form-control  btn  btn-danger delete_this_row" data-id="charity{{ $index }}">Delete</div> --}}
@@ -70,64 +77,81 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="names">Supported Program Name</label>
-            <input type="text" name="names[]" class="form-control @error('names.'.$index) is-invalid @enderror"
+            <input type="text" id="names" name="names[]" class="form-control @error('names.'.$index) is-invalid @enderror"
                 value="{{ old('names.' . $index) ?? '' }}" />
-            @error( 'names.'.$index )
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
+
+            <span id="names_errors">
+                 @error( 'names.'.$index )
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
+            </span>
+
+
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="descriptions">Supported Program Description</label>
-            <textarea type="text" name="descriptions[]" class="form-control @error('descriptions.'.$index) is-invalid @enderror"
+            <textarea type="text" id="descriptions" name="descriptions[]" class="form-control @error('descriptions.'.$index) is-invalid @enderror"
                 >{{ old('descriptions.' . $index) ?? '' }}</textarea>
-            @error( 'descriptions.'.$index )
+           <span id="descriptions_errors">
+               @error( 'descriptions.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
+           </span>
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-2">
             <label for="percentages">Allocation (%)</label>
-            <input type="text" name="percentages[]" class="form-control @error('percentages.'.$index) is-invalid @enderror"
+            <input type="text" id="percentages" name="percentages[]" class="form-control @error('percentages.'.$index) is-invalid @enderror"
                 value="{{ old('percentages.' . $index) ?? '' }}" />
-            @error( 'percentages.'.$index )
+
+            <span id="percentages_errors">
+                @error( 'percentages.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
+            </span>
+
         </div>
         <div class="form-group col-md-5">
             <label for="contact_names">Charity Program Contact Name</label>
-            <input type="text" name="contact_names[]" class="form-control @error('contact_names.'.$index) is-invalid @enderror"
+            <input type="text" id="contact_names" name="contact_names[]" class="form-control @error('contact_names.'.$index) is-invalid @enderror"
                 value="{{ old('contact_names.' . $index) ?? '' }}" />
-            @error( 'contact_names.'.$index )
+           <span id="contact_names_errors">
+                 @error( 'contact_names.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
+           </span>
         </div>
         <div class="form-group col-md-5">
             <label for="contact_titles">Charity Program Contact Title (Optional)</label>
-            <input type="text" name="contact_titles[]" class="form-control @error('contact_titles.'.$index) is-invalid @enderror"
+            <input type="text" id="contact_titles" name="contact_titles[]" class="form-control @error('contact_titles.'.$index) is-invalid @enderror"
                 value="{{ old('contact_titles.' . $index) ?? '' }}" />
-            @error( 'contact_titles.'.$index )
+           <span id="contact_titles_errors">
+                 @error( 'contact_titles.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
+           </span>
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="contact_emails">Charity Program Contact Email</label>
-            <input type="text" name="contact_emails[]" class="form-control @error('contact_emails.'.$index) is-invalid @enderror"
+            <input type="text" id="contact_emails" name="contact_emails[]" class="form-control @error('contact_emails.'.$index) is-invalid @enderror"
                 value="{{ old('contact_emails.' . $index) ?? '' }}" />
-            @error( 'contact_emails.'.$index )
+           <span id="contact_emails_errors">
+               @error( 'contact_emails.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
+           </span>
         </div>
         <div class="form-group col-md-8">
             <label for="notes">Notes (Optional)</label>
-            <input type="text" name="notes[]" class="form-control @error('notes.'.$index) is-invalid @enderror"
+            <input id="notes" type="text" name="notes[]" class="form-control @error('notes.'.$index) is-invalid @enderror"
                 value="{{ old('notes.' . $index) ?? '' }}" />
             @error( 'notes.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
@@ -139,12 +163,14 @@
         <div class="form-group col-md-6">
             <div class="image">
                 <label for="images">Add Image</label><br>
-                <input id="files" style="display:none;" type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror"
+                <input id="images" style="display:none;" type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror"
                         name="images[]" value="{{ old('images.'.$index) }}">
                 <label for="files"><span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image, Supported File Types Are: *.png, *.jpg</span></label>
-                @error( 'images.'.$index )
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
+               <span id="images_errors">
+                    @error( 'images.'.$index )
+                        <span class="invalid-feedback">{{ $message }}</span>
+                    @enderror
+               </span>
                 <br>
             </div>
         </div>

@@ -18,7 +18,7 @@
     </div> --}}
 
     <div class="card-body">
-        <form action="{{ route("settings.fund-supported-pools.store") }}" method="POST"
+        <form id="create_pool" action="{{ route("settings.fund-supported-pools.store") }}" method="POST"
             enctype="multipart/form-data">
             @csrf
             <div class="form-row">
@@ -32,27 +32,37 @@
                                 >{{ $region->name }} ({{ $region->code }})</option>
                         @endforeach
                     </select>
-                    @error('region_id')
+                    <span id="region_id_errors">
+                          @error('region_id')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
+                    </span>
+
+
                 </div>
                 <div class="form-group col-md-3">
-                    <label for="startd_date">Start Date</label>
-                    <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
+                    <label for="start_date">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
                             id="start_date" value="{{ old('start_date') }}">
-                    @error('start_date')
+                  <span id="start_date_erros">
+                       @error('start_date')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
+                  </span>
+
                 </div>
                 <div class="form-group col-md-2">
                     <label for="pool_status">Status</label>
-                    <select name="pool_status" class="form-control @error('pool_status') is-invalid @enderror">
+                    <select id="pool_status" name="pool_status" class="form-control @error('pool_status') is-invalid @enderror">
                         <option value="A">Active</option>
                         <option value="I">Inactive</option>
                     </select>
-                    @error('pool_status')
+                   <span id="pool_status_errors">
+                       @error('pool_status')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
+                   </span>
+
                 </div>
             </div>
 
@@ -153,21 +163,61 @@
 
 <script>
 
-$(function() {
-
     $(document).ready(function()
     {
-        $(form).submit(function(e)
+        $("#create_pool").submit(function(e)
         {
             e.preventDefault();
-            if($(this).find('input[type="file"]').length > 0) {
-                if ($(this).find('input[type="file"]').files.length > 0) {
-                    $("#persist_upload").html($(this));
-                }
-            }
-            $(this).find('input[type="file"]').replace($("#persist_upload").find("input"));
+
+            var formData = new FormData();
+            formData.append('images', $('#images')[0].files[0]);
+            formData.append('charities',    $('#charities').val());
+            formData.append('pool_status',   $('#pool_status').val());
+            formData.append('region_id',   $('#region_id').val());
+            formData.append('status',   $('#status').val());
+            formData.append('names', $('#names').val());
+            formData.append('descriptions', $('#descriptions').val());
+            formData.append('percentages', $('#percentages').val());
+            formData.append('contact_names', $('#contact_names').val());
+            formData.append('contact_titles', $('#contact_titles').val());
+            formData.append('notes', $('#notes').val());
+            formData.append('contact_emails', $('#contact_emails').val());
+            formData.append('charities', $('#charities').val());
+            formData.append('start_date', $('#start_date').val());
+
+
+            $.ajax({
+                url: "{{ route("settings.fund-supported-pools.store") }}",
+                type:"POST",
+                data: formData,
+                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                processData: false,
+                success:function(response){
+                    $('#successMsg').show();
+                    console.log(response);
+                },
+                error: function(response) {
+                    $('#region_id_errors').text(response.responseJSON.errors.region_id);
+                    $('#start_date_errors').text(response.responseJSON.errors.start_date);
+                    $('#pool_status_errors').text(response.responseJSON.errors.pool_status);
+                    $('#status_errors').text(response.responseJSON.errors.status);
+                    $('#charities_errors').text(response.responseJSON.errors.charities);
+                    $('#names_errors').text(response.responseJSON.errors.names);
+                    $('#descriptions_errors').text(response.responseJSON.errors.descriptions);
+                    $('#percentages_errors').text(response.responseJSON.errors.percentages);
+                    $('#contact_names_errors').text(response.responseJSON.errors.contact_names);
+                    $('#contact_titles_errors').text(response.responseJSON.errors.contact_titles);
+                    $('#contact_emails_errors').text(response.responseJSON.errors.contact_emails);
+                    $('#images_errors').text(response.responseJSON.errors.images);
+                },
+            });
+
         });
     });
+
+$(function() {
+
+
 
     //function to initialize select2
     function initializeSelect2(selectElementObj) {

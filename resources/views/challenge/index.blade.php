@@ -28,7 +28,7 @@
                 <th onclick="sortTable(6)" style="cursor: pointer;">Dollars Donated</th>
             </tr>
             @foreach($charities as $index => $charity)
-            <tr>
+          <!--  <tr>
                 <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
                 <td>{{$charity['name']}}</td>
                 <td>{{$charity['participation_rate']}}%</td>
@@ -43,9 +43,23 @@
                 </td>
                 <td>{{$charity['total_donors']}}</td>
                 <td>${{number_format($charity['total_donation'])}}</td>
-            </tr>
+            </tr> -->
+                <tr>
+                    <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
+                    <td>{{$charity['department_name']}}</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
             @endforeach
         </table>
+<br>
+        <div>{{ $charities->links() }}</div>
+
+
     </div>
 </div>
 @endsection
