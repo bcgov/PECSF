@@ -53,6 +53,7 @@ Route::get('/donate', [CharityController::class, 'start'])->name('donate');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
+Route::get('donations/old-pledge-detail', [DonationController::class, 'oldPledgeDetail'])->name('donation.old-pledge-detail');
 Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
     Route::get('/start', [CharityController::class, 'start'])->name('start');
     Route::get('/select', [CharityController::class, 'select'])->name('select-charities');

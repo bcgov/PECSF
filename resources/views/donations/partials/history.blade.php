@@ -10,58 +10,48 @@
                 </button>
                 <div class="flex-fill"></div>
                 <div class="expander">
-                    
                 </div>
             </h5>
         </div>
 
         <div id="collapse0{{ $loop->index }}" class="collapse {{ $loop->index == 0 ? 'show' : '' }}" aria-labelledby="heading0{{ $loop->index }}" data-parent="#accordion">
             <div class="card-body">
-                <table class="table table-bordered rounded">
+                <table class="table  rounded">
                     <tr class="text-center bg-light">
                         <th>Donation Type</th>
-                        <th>Charity Name</th>
+                        <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th>Pledge</th>
-                        <th>Percentage</th>
                         <th>Amount</th>
+                        <th></th>
                     </tr>
                     @php $total = 0; @endphp
                     @foreach($pledges as $pledge)
-                      @if ($pledge->type == 'P')
                         <tr class="text-center">
-                            <td>{{ 'Annual' }}</td>
-                            <td class="text-left">{{ $pledge->fund_supported_pool->region->name ?? '' }} </td>
-                           
-                            <td class="text-left">{{ $pledge->frequency }} </td>
-                            <td class="text-right">$ {{ $pledge->frequency == 'Bi-Weekly' ?  
-                                        number_format($pledge->pay_period_amount,2) : 
-                                        number_format($pledge->one_time_amount,2)  }} </td>
-                            <td class="text-right">{{ '' }}</td>
-                            <td class="text-right">$ {{ $pledge->frequency == 'Bi-Weekly' ?  
-                                        number_format($pledge->pay_period_amount,2) : 
+                            <td>{{ $pledge->donation_type }}</td>
+                            @if ($pledge->type == 'P') 
+                                <td class="text-left">{{ $pledge->fund_supported_pool->region->name ?? '' }} 
+                                </td>
+                            @else
+                                <td class="text-left">{{ '' }} </td>
+                            @endif
+                            <td class="text-center">{{ $pledge->frequency }} </td>
+                            <td class="text-center">$ {{ $pledge->frequency == 'Bi-Weekly' ?  
+                                        number_format($pledge->pay_period_amount * $pledge->campaign_year->number_of_periods,2) : 
                                         number_format($pledge->one_time_amount,2) }} </td>
+                            <td>
+                                {{-- @if ($pledge->campaign_type == 'Annual')  --}}
+                                    <a class="more-info" 
+                                            data-source="{{ "local" }}"
+                                            data-type="{{ $pledge->donation_type }}"
+                                            data-id="{{ $pledge->id }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->campaign_year->calendar_year }}">
+                                        <i class="fas fa-external-link-alt fa-lg"></i>
+                                    </a>
+                                {{-- @endif --}}
+                            </td>                                        
                         </tr>
-                      @else 
-                        @foreach($pledge->charities->where('frequency', strtolower($pledge->frequency)) as $pledge_charity)
-                            <tr class="text-center">
-                                <td>{{ 'Annual' }}</td>
-                                <td class="text-left">{{ $pledge_charity->charity->charity_name }} </td>
-                            
-                                <td class="text-left">{{ $pledge->frequency }}</td>
-                                <td class="text-right">$ {{ $pledge->frequency == 'Bi-Weekly' ?  
-                                            number_format( $pledge->pay_period_amount,2) : 
-                                            number_format($pledge->one_time_amount,2)  }} </td>
-                                <td class="text-right">{{ number_format($pledge_charity->percentage,2) }}%</td>
-                                <td class="text-right">$ {{ number_format($pledge_charity->amount,2) }}</td>
-                            </tr>
-                        @endforeach
-                      @endif
                     @endforeach
-
-                    <tr>
-                        {{-- <td colspan="4" class="text-center"><strong>  In {{$pledges[0]->created_at->format('Y')}}, you pledged ${{$total}}</strong></td> --}}
-                    </tr>
                 </table>
             </div>
         </div>
@@ -87,30 +77,42 @@
 
         <div id="collapse1{{ $loop->index }}" class="collapse {{ (count($old_pledges_by_yearcd) == 0 and $loop->index == 0) ? 'show' : '' }}" aria-labelledby="heading1{{ $loop->index }}" data-parent="#accordion">
             <div class="card-body">
-                <table class="table table-bordered rounded">
+                <table class="table  rounded">
                     <tr class="text-center bg-light">
                         <th>Donation Type</th>
-                        <th>Charity Name</th>
+                        <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th>Pledge</th>
-                        <th>Percentage</th>
+                        {{-- <th>Pledge</th> --}}
                         <th>Amount</th>
+                        <th></th>
                     </tr>
                     @php $total = 0; @endphp
                     @foreach($pledges as $pledge)
                         <tr class="text-center">
                             <td>{{$pledge->campaign_type }}</td>
-                            <td class="text-left">{{ $pledge->source == 'Pool' ? $pledge->region->name : $pledge->charity->charity_name }} </td>
-                            <td class="text-left">{{$pledge->frequency}} </td>
-                            <td class="text-right">${{ number_format($pledge->pledge,2) }} </td>
-                            <td class="text-right">{{ number_format($pledge->percent,2) }}%</td>
-                            <td class="text-right">${{ number_format($pledge->amount,2) }} </td>
-                            {{-- <td>$pledge->created_at->format} }}('F j, Y')}}</td>  --}}
-                            {{-- @if ($pledge->campaign_year)
-                                <td>{{$pledge->campaign_year->calendar_year}} Campaign</td>
-                            @endif --}}
-                            {{-- <td>{{$pledge->frequency == 'bi-weekly' ? 'Bi-weekly' : 'One-time'}}</td> --}}
-                            
+                            {{-- <td class="text-left">{{ $pledge->source == 'Pool' ? $pledge->region->name : $pledge->charity->charity_name }} </td> --}}
+                            @if ($pledge->source == 'Pool') 
+                                <td class="text-left">{{ $pledge->name ?? '' }} 
+                                </td>
+                            @else
+                                <td class="text-center">{{ $pledge->name ?? '' }} </td>
+                            @endif
+                            <td class="text-center">{{$pledge->frequency}} </td>
+                            <td class="text-center">${{ 
+                                $pledge->frequency == 'Bi-Weekly' ? 
+                                    number_format($pledge->pledge * $pledge->campaign_year->number_of_periods,2) :                        
+                                    number_format($pledge->pledge,2) }} 
+                            </td>
+                            <td>
+                                @if ($pledge->campaign_type == 'Annual') 
+                                    <a class="more-info" 
+                                            data-source="{{ "history" }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->yearcd }}">
+                                        <i class="fas fa-external-link-alt fa-lg"></i>
+                                    </a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
 
