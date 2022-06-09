@@ -24,6 +24,12 @@ class User extends Authenticatable
         'azure_id',
         'samaccountname',
         'guid',
+        
+        'acctlock',
+        'last_signon_at',
+        'last_sync_at',
+        'organization_id',
+        'employee_job_id',
     ];
 
     /**
@@ -54,5 +60,15 @@ class User extends Authenticatable
 
     public function volunteer() {
         return $this->hasMany(Volunteer::class);
+    }
+
+    public function organization() 
+    {
+        return $this->belongsTo(Organization::Class, 'organization_id', 'id');
+    }
+
+    public function primaryJob() 
+    {
+        return $this->belongsTo(EmployeeJob::Class, 'employee_job_id', 'id');
     }
 }
