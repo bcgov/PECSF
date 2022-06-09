@@ -67,7 +67,7 @@ class DonorHistoryDataFromBI extends Command
         $this->UpdateDonorByRegionalDistrict();
         $this->info("Update/Create - Donor By Department");
         $this->UpdateDonorByDepartment();
-        
+
         $this->ClearODSHistoryData();
 
         // Update the Task Audit log
@@ -78,16 +78,16 @@ class DonorHistoryDataFromBI extends Command
         return 0;
     }
 
-    protected function UpdateBusinessUnit() 
+    protected function UpdateBusinessUnit()
     {
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_BUSINESS_UNITS_BI_ENDPOINT'));
 
         if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
+            $data = json_decode($response->body())->value;
             $batches = array_chunk($data, 1000);
-            
+
             foreach ($batches as $batch) {
                 $this->info( count($batch) );
                 foreach ($batch as $row) {
@@ -106,16 +106,16 @@ class DonorHistoryDataFromBI extends Command
         }
     }
 
-    protected function UpdateRegionalDistrict() 
+    protected function UpdateRegionalDistrict()
     {
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_REGIONAL_DISTRICTS_BI_ENDPOINT'));
 
         if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
+            $data = json_decode($response->body())->value;
             $batches = array_chunk($data, 1000);
-            
+
             foreach ($batches as $batch) {
                 $this->info( count($batch) );
                 foreach ($batch as $row) {
@@ -136,16 +136,16 @@ class DonorHistoryDataFromBI extends Command
         }
     }
 
-    protected function UpdateDepartment() 
+    protected function UpdateDepartment()
     {
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DEPARTMENTS_BI_ENDPOINT'));
 
         if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
+            $data = json_decode($response->body())->value;
             $batches = array_chunk($data, 1000);
-            
+
             foreach ($batches as $key => $batch) {
                 $this->info( $key . ' - ' . count($batch) );
                 foreach ($batch as $row) {
@@ -171,30 +171,29 @@ class DonorHistoryDataFromBI extends Command
     }
 
 
-    protected function UpdateDonorByBusinessUnit() 
+    protected function UpdateDonorByBusinessUnit()
     {
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_ORG_BI_ENDPOINT'));
 
         if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
+            $data = json_decode($response->body())->value;
             $batches = array_chunk($data, 1000);
-            
             foreach ($batches as $key => $batch) {
                 $this->info( $key . ' - ' . count($batch) );
                 foreach ($batch as $row) {
-
-                    $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
-
-                    DonorByBusinessUnit::updateOrCreate([
-                        'business_unit_id' => $business_unit ? $business_unit->id : null,
-                        'yearcd' => $row->yearcd,
-                    ], [
-                        'business_unit_code' => $row->business_unit_code,
-                        'dollars' => $row->dollars,
-                        'donors' => $row->donors,
-                    ]);
+                    if($business_unit = BusinessUnit::where('code', $row->business_unit_code)->first())
+                    {
+                        DonorByBusinessUnit::updateOrCreate([
+                            'business_unit_id' => $business_unit ? $business_unit->id : null,
+                            'yearcd' => $row->yearcd,
+                        ], [
+                            'business_unit_code' => $row->business_unit_code,
+                            'dollars' => $row->dollars,
+                            'donors' => $row->donors,
+                        ]);
+                    }
                 }
             }
         } else {
@@ -204,16 +203,16 @@ class DonorHistoryDataFromBI extends Command
     }
 
 
-    protected function UpdateDonorByRegionalDistrict() 
+    protected function UpdateDonorByRegionalDistrict()
     {
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_REG_DIST_BI_ENDPOINT'));
 
         if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
+            $data = json_decode($response->body())->value;
             $batches = array_chunk($data, 1000);
-            
+
             foreach ($batches as $key => $batch) {
                 $this->info( $key . ' - ' . count($batch) );
                 foreach ($batch as $row) {
@@ -236,16 +235,16 @@ class DonorHistoryDataFromBI extends Command
         }
     }
 
-    protected function UpdateDonorByDepartment() 
+    protected function UpdateDonorByDepartment()
     {
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DONORS_BY_DEPT_BI_ENDPOINT'));
 
         if ($response->successful()) {
-            $data = json_decode($response->body())->value; 
+            $data = json_decode($response->body())->value;
             $batches = array_chunk($data, 1000);
-            
+
             foreach ($batches as $key => $batch) {
                 $this->info( $key . ' - ' . count($batch) );
                 foreach ($batch as $row) {
@@ -273,7 +272,7 @@ class DonorHistoryDataFromBI extends Command
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->post(env('ODS_INBOUND_REPORT_DON_DOL_BY_ORG_TRUNCATE_BI_ENDPOINT') );
-        
+
         if ($response->successful()) {
             $this->info( 'Clear Donor by Business Unit History ' );
         } else {
@@ -291,7 +290,7 @@ class DonorHistoryDataFromBI extends Command
             $this->info( $response->status() );
             $this->info( $response->body() );
         }
-    
+
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->post(env('ODS_INBOUND_REPORT_DONORS_BY_DEPT_TRUNCATE_BI_ENDPOINT'));

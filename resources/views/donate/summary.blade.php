@@ -40,13 +40,13 @@
                 </div>
                 <div class="row">
                     <p class="py-4">
-                    Please note that <b>this is not a tax receipt</b>.  
-                    Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. 
+                    Please note that <b>this is not a tax receipt</b>.
+                    Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year.
                     In August for payroll deductions from January - June, and in March for payroll deductions from July - December.
                     </p>
                 </div>
                 <div class="">
-                    @if ($pool_option == 'C')                     
+                    @if ($pool_option == 'C')
                         @foreach ($charities as $charity)
                             <input type="hidden" name="charityOneTimeAmount[{{$charity['id']}}]" value="{{$charity['one-time-amount-distribution']}}">
                             <input type="hidden" name="charityBiWeeklyAmount[{{$charity['id']}}]" value="{{$charity['bi-weekly-amount-distribution']}}">
@@ -59,7 +59,7 @@
                             <input type="hidden" name="pool_option" value="{{$pool_option}}">
                             <input type="hidden" name="regional_pool_id" value="{{$regional_pool_id}}">
                         @endforeach
-                    @else 
+                    @else
                         <input type="hidden" name="annualOneTimeAmount" value="{{$annualOneTimeAmount}}">
                         <input type="hidden" name="annualBiWeeklyAmount" value="{{$annualBiWeeklyAmount}}">
                         <input type="hidden" name="frequency" value="{{$frequency}}">
@@ -70,9 +70,9 @@
 
         </div>
         <div class="col-12 col-sm-5 text-center">
-            <img src="{{ asset('img/donor.png') }}" alt="Donor" class="py-5 img-fluid">
+            <img src="{{ asset('img/donor.png') }}" alt="Group of volunteers making wreaths at a table" class="py-5 img-fluid">
              <p>
-                Making changes to your pledge outside of Campaign time? Please contact <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> directly or submit an <a href="https://www2.gov.bc.ca/gov/content/careers-myhr" class="text-primary" target="_blank">AskMyHR</a> service request to make any changes on your existing pledge outside the annual campaign/open enrollment period (September-December). 
+                Making changes to your pledge outside of Campaign time? Please contact <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a> directly or submit an <a href="https://www2.gov.bc.ca/gov/content/careers-myhr" class="text-primary" target="_blank">AskMyHR</a> service request to make any changes on your existing pledge outside the annual campaign/open enrollment period (September-December).
             </p>
             <p><b>Questions?</b> <a href="https://www.gov.bc.ca/pecsf" class="text-primary" target="_blank">www.gov.bc.ca/pecsf</a>         <b>Email:</b> <a href="mailto:PECSF@gov.bc.ca" class="text-primary">PECSF@gov.bc.ca</a></p>
         </div>
@@ -86,7 +86,7 @@
                 <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund, at 250 356-1736, PECSF@gov.bc.ca  or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5.</p>
             </div>
             <div class="mt-3">
-                <a class="btn btn-lg btn-outline-primary" 
+                <a class="btn btn-lg btn-outline-primary"
                     href="{{ $pool_option == 'C' ? route('donate.distribution') : route('donate.amount')}}">Previous</a>
                 <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
             </div>
@@ -106,7 +106,7 @@
             const frequency = $(this).attr('id') === 'distributeByDollarAmountOneTime' ? '#oneTimeSection' : '#biWeeklySection';
             if (!$(this).prop("checked")) {
                 $(frequency).find(".by-amount").removeClass("d-none");
-                $(frequency).find(".by-percent").addClass("d-none"); 
+                $(frequency).find(".by-percent").addClass("d-none");
                 $(frequency).find(".percent-amount-text").html("Distribute by Percentage");
             } else {
                 $(frequency).find(".by-percent").removeClass("d-none");

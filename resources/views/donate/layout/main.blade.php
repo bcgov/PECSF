@@ -9,7 +9,7 @@
             @yield("step-content")
         </div>
         <div class="col-12 col-sm-5">
-            <img src="{{ asset('img/donor.png') }}" alt="Donor" class="py-5 img-fluid">
+            <img src="{{ asset('img/donor.png') }}" alt="Group of volunteers making wreaths at a table" class="py-5 img-fluid">
         </div>
     </div>
 </div>

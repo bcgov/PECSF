@@ -10,7 +10,7 @@ class CampaignYear extends Model
     use HasFactory;
 
     /** The attribute that are mass assignable
-     * 
+     *
      */
     protected $fillable =[
         'calendar_year',
@@ -29,17 +29,18 @@ class CampaignYear extends Model
         'close_date' => 'date:Y-m-d',
     ];
 
-    public function created_by() 
+    public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
     }
 
-    public function modified_by() 
+    public function modified_by()
     {
         return $this->hasOne(User::Class, 'id', 'modified_by_id');
     }
 
     public function isOpen() {
+        return true;
         $today = today();
         return ($this->status == 'A' && ($today >= $this->start_date && $today < $this->end_date));
     }

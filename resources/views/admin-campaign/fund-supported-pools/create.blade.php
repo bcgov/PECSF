@@ -18,7 +18,7 @@
     </div> --}}
 
     <div class="card-body">
-        <form action="{{ route("settings.fund-supported-pools.store") }}" method="POST" 
+        <form action="{{ route("settings.fund-supported-pools.store") }}" method="POST"
             enctype="multipart/form-data">
             @csrf
             <div class="form-row">
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label for="startd_date">Start Date</label>
-                    <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" 
+                    <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
                             id="start_date" value="{{ old('start_date') }}">
                     @error('start_date')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -81,10 +81,10 @@
                                             <option value="{{ $product->id }}"{{ $oldProduct == $product->id ? ' selected' : '' }}>
                                                 {{ $product->name }} (${{ number_format($product->price, 2) }})
                                             </option>
-                                        @endforeach 
+                                        @endforeach
                                     </select>
                                 </td>
-                                <td>    
+                                <td>
                                     <input type="number" name="quantities[]" class="form-control" value="{{ old('quantities.' . $index) ?? '1' }}" />
                                 </td>
                             --}}
@@ -107,7 +107,9 @@
                 <a class="btn btn-outline-primary"  href="{{ route('settings.fund-supported-pools.index') }}">Cancel</a>
             </div>
         </form>
+<div id="persist_upload">
 
+</div>
 
     </div>
 </div>
@@ -151,7 +153,21 @@
 
 <script>
 
-$(function() {    
+$(function() {
+
+    $(document).ready(function()
+    {
+        $(form).submit(function(e)
+        {
+            e.preventDefault();
+            if($(this).find('input[type="file"]').length > 0) {
+                if ($(this).find('input[type="file"]').files.length > 0) {
+                    $("#persist_upload").html($(this));
+                }
+            }
+            $(this).find('input[type="file"]').replace($("#persist_upload").find("input"));
+        });
+    });
 
     //function to initialize select2
     function initializeSelect2(selectElementObj) {
@@ -178,12 +194,12 @@ $(function() {
         });
     }
 
-    //onload: call the above function 
+    //onload: call the above function
     $("select[name='charities[]']").each(function() {
         initializeSelect2($(this));
     });
 
-    // variable for keep track lines 
+    // variable for keep track lines
     let row_number = {{ count(old('charities', [''])) }};
 
     $("#add_row").click(function(e){
