@@ -40,7 +40,7 @@ class CampaignYear extends Model
     }
 
     public function isOpen() {
-        return true;
+        
         $today = today();
         return ($this->status == 'A' && ($today >= $this->start_date && $today < $this->end_date));
     }
