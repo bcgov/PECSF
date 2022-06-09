@@ -17,11 +17,16 @@ class DatabaseSeeder extends Seeder
         $this->call(RolePermissionTableSeeder::class);
         // \App\Models\User::factory(10)->create();
         $this->call(UserTableSeeder::class);
+        
+        // Core tables
+        $this->call(BusinessunitSeeder::class);
+        $this->call(RegionSeeder::class);
+        $this->call(OrganizationSeeder::class);
+        $this->call(CampaignYearSeeder::class);
+        
         // To switch Charity Seed from XL to Limited 20 Records, toggle below comments
         //$this->call(CharitySeeder::class);
         $this->call(CharitySeeder20Records::class);
-        // Campaign Year 
-        $this->call(CampaignYearSeeder::class);
-        $this->call(OrganizationSeeder::class);
+        
     }
 }
