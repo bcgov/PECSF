@@ -86,7 +86,6 @@ class SyncUserProfile extends Command
                     ->orWhere('date_deleted', '>=', $last_start_time);
             })
             //->whereNotNull('date_updated')
-            //->where('date_updated', '>=', $last_sync_at )
             //->whereIn('employee_id',['105823', '060061', '107653',
             //'115637','131116','139238','145894','146113','152843','152921','163102'] )
             ->orderBy('emplid')
