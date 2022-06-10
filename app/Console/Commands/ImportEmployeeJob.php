@@ -80,7 +80,7 @@ class ImportEmployeeJob extends Command
                 
         $row_count = json_decode($response->body())->{'@odata.count'};
         
-        $size = 10000;
+        $size = 1000;
         for ($i = 0; $i <= $row_count / $size ; $i++) {
 
             $top  = $size;
