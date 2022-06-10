@@ -55,7 +55,8 @@
                 </x-button>
             </div>
         </div>
-        @if($pledges->count() > 0)
+        {{-- @if($pledges->count() > 0) --}}
+        @if ($old_pledges_by_yearcd->count() > 0 or $old_bi_pledges_by_yearcd->count() > 0 )
             @include('donations.partials.history')
         @else
         <div class="text-center text-primary">
@@ -76,7 +77,28 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="pledgeDetailModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark" id="pledgeDetailModalTitle">Pledge Detail 
+                    <span class="text-dark font-weight-bold"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+
 @include('donations.partials.learn-more-modal')
+
 
 @push('js')
 <script>
@@ -93,6 +115,44 @@
             $(this).find(".ready-btn").addClass("d-none");
         }
     })
+
+    $('.more-info').click( function(event) {
+        event.stopPropagation();
+        // var current_id = event.target.id; 
+        yearcd = $(this).data('yearcd');
+        frequency = $(this).data('frequency');
+        source = $(this).data('source');
+        type = $(this).data('type');
+        id  = $(this).data('id');
+
+        target = '.modal-body';
+        $(target).html(''); 
+
+        console.log( 'more info - ' ); 
+        if ( yearcd  ) {            
+            // Lanuch Modal page for listing the Pool detail
+            $.ajax({
+                url: '/donations/old-pledge-detail',
+                type: 'GET',
+                data: 'yearcd='+ yearcd + '&frequency='+ frequency +'&source='+ source + '&id='+id+ '&type='+type   ,
+                dataType: 'html',
+                success: function (result) {
+                    // $('.modal-title span').html(name);
+                    $(target).html(result);
+                },
+                complete: function() {
+                },
+                error: function () {
+                    alert("error");
+                    $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+                }
+            })
+
+            $('#pledgeDetailModal').modal('show')
+        }
+    });
+
+
 </script>
 @endpush
 @endsection
