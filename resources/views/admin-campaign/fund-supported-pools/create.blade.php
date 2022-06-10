@@ -44,7 +44,7 @@
                     <label for="start_date">Start Date</label>
                     <input type="date" id="start_date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
                             id="start_date" value="{{ old('start_date') }}">
-                  <span id="start_date_erros">
+                  <span id="start_date_errors">
                        @error('start_date')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -168,47 +168,95 @@
         $("#create_pool").submit(function(e)
         {
             e.preventDefault();
-
+            var form = document.getElementById("create_pool");
             var formData = new FormData();
-            formData.append('images', $('#images')[0].files[0]);
-            formData.append('charities',    $('#charities').val());
+            formData.append('charities[]',    $('#charities').val());
             formData.append('pool_status',   $('#pool_status').val());
             formData.append('region_id',   $('#region_id').val());
             formData.append('status',   $('#status').val());
-            formData.append('names', $('#names').val());
-            formData.append('descriptions', $('#descriptions').val());
-            formData.append('percentages', $('#percentages').val());
-            formData.append('contact_names', $('#contact_names').val());
-            formData.append('contact_titles', $('#contact_titles').val());
-            formData.append('notes', $('#notes').val());
-            formData.append('contact_emails', $('#contact_emails').val());
-            formData.append('charities', $('#charities').val());
+            formData.append('names[]', $('#names').val());
+            formData.append('descriptions[]', $('#descriptions').val());
+            formData.append('percentages[]', $('#percentages').val());
+            formData.append('contact_names[]', $('#contact_names').val());
+            formData.append('contact_titles[]', $('#contact_titles').val());
+            formData.append('notes[]', $('#notes').val());
+            formData.append('contact_emails[]', $('#contact_emails').val());
             formData.append('start_date', $('#start_date').val());
-
-
+            formData.append('images[]', $('#images')[0].files[0]);
+            $("#create_pool").fadeTo("slow",0.2);
             $.ajax({
                 url: "{{ route("settings.fund-supported-pools.store") }}",
                 type:"POST",
                 data: formData,
                 headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
                 processData: false,
+                cache: false,
+                contentType: false,
+                dataType: 'json',
                 success:function(response){
+                    $("#create_pool").fadeTo("slow",1);
                     $('#successMsg').show();
+                    $('#region_id_errors').html("");
+                    $('#start_date_errors').html("");
+                    $('#pool_status_errors').html("");
+                    $('#status_errors').html("");
+                    $('#charities_errors').html("");
+                    $('#names_errors').html("");
+                    $('#descriptions_errors').html("");
+                    $('#percentages_errors').html("");
+                    $('#contact_names_errors').html("");
+                    $('#contact_titles_errors').html("");
+                    $('#contact_emails_errors').html("");
+                    $('#images_errors').html("");
+                    window.location = response[0];
                     console.log(response);
                 },
                 error: function(response) {
-                    $('#region_id_errors').text(response.responseJSON.errors.region_id);
-                    $('#start_date_errors').text(response.responseJSON.errors.start_date);
-                    $('#pool_status_errors').text(response.responseJSON.errors.pool_status);
-                    $('#status_errors').text(response.responseJSON.errors.status);
-                    $('#charities_errors').text(response.responseJSON.errors.charities);
-                    $('#names_errors').text(response.responseJSON.errors.names);
-                    $('#descriptions_errors').text(response.responseJSON.errors.descriptions);
-                    $('#percentages_errors').text(response.responseJSON.errors.percentages);
-                    $('#contact_names_errors').text(response.responseJSON.errors.contact_names);
-                    $('#contact_titles_errors').text(response.responseJSON.errors.contact_titles);
-                    $('#contact_emails_errors').text(response.responseJSON.errors.contact_emails);
-                    $('#images_errors').text(response.responseJSON.errors.images);
+                    $("#create_pool").fadeTo("slow",1);
+                    $('#region_id_errors').html("");
+                    $('#start_date_errors').html("");
+                    $('#pool_status_errors').html("");
+                    $('#status_errors').html("");
+                    $('#charities_errors').html("");
+                    $('#names_errors').html("");
+                    $('#descriptions_errors').html("");
+                    $('#percentages_errors').html("");
+                    $('#contact_names_errors').html("");
+                    $('#contact_titles_errors').html("");
+                    $('#contact_emails_errors').html("");
+                    $('#images_errors').html("");
+
+                    if(response.responseJSON.errors){
+                        if(response.responseJSON.errors.region_id){
+                            $('#region_id_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.region_id+'</span>');
+                        }
+                        if(response.responseJSON.errors.start_date){
+                            $('#start_date_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.start_date+'</span>');
+                        }
+                        if(response.responseJSON.errors.charities){
+                            $('#charities_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.charities+'</span>');
+                        }
+                        if(response.responseJSON.errors.names){
+                            $('#names_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.names+'</span>');
+                        }
+                        if(response.responseJSON.errors.descriptions){
+                            $('#descriptions_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.descriptions+'</span>');
+                        }
+                        if(response.responseJSON.errors.percentages){
+                            $('#percentages_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors['percentages.0'] +'</span>');
+                        }
+                        if(response.responseJSON.errors.contact_names){
+                            $('#contact_names_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.contact_names+'</span>');
+                        }
+                        if(response.responseJSON.errors.contact_emails){
+                            $('#contact_emails_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.contact_emails+'</span>');
+                        }
+                        if(response.responseJSON.errors.images){
+                            $('#images_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors['images.0'] +'</span>');
+                        }
+                    }
+
+                    $(".invalid-feedback").css("display","block");
                 },
             });
 

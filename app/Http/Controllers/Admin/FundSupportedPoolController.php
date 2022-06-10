@@ -70,10 +70,10 @@ class FundSupportedPoolController extends Controller
                     $html = '<a href="'. route('settings.fund-supported-pools.show', $pool->id) .
                             '"class="btn btn-info btn-sm  show-pool" data-id="'. $pool->id .'" >Show</a>' ;
                     if ($pool->canDelete) {
-                        $html .= '<a href="'. route('settings.fund-supported-pools.edit', $pool->id) . 
+                        $html .= '<a href="'. route('settings.fund-supported-pools.edit', $pool->id) .
                             '"class="btn btn-primary btn-sm ml-2 edit-pool" data-id="'. $pool->id .'" >Edit</a>';
-                        // $html .= '<button type="button" class="btn btn-danger btn-sm ml-2 delete-pool" data-toggle="modal" ' . 
-                        //     ' "data-target="#pool-delete-modal" data-id="'. $pool->id . 
+                        // $html .= '<button type="button" class="btn btn-danger btn-sm ml-2 delete-pool" data-toggle="modal" ' .
+                        //     ' "data-target="#pool-delete-modal" data-id="'. $pool->id .
                         //     ' "data-region="' . $pool->region->name . '">Delete</button>';
                     }
                     if ($pool->EffectiveType == 'C') {
@@ -112,8 +112,9 @@ class FundSupportedPoolController extends Controller
                 }
             }
         }
-     
+
         $regions = Region::where('status', 'A')->get();
+
 
         return view('admin-campaign.fund-supported-pools.create', compact('regions'));
 
@@ -130,63 +131,62 @@ class FundSupportedPoolController extends Controller
         //
         $validator = Validator::make(request()->all(), [
             'region_id'         => 'required',
-            'start_date'        => ['required', 
+            'start_date'        => ['required',
                 Rule::unique('f_s_pools')->where(function ($query) use($request) {
                     return $query->where('region_id', $request->input('region_id'))
                                  ->where('start_date', $request->input('start_date'));
                 })
             ],
-            'pool_status'       => ['required', Rule::in(['A', 'I']) ],
-
-            'charities.*'       => ['required'],    
+            'charities.*'       => ['required'],
             'status.*'          => ['required', Rule::in(['A', 'I'])],
             'names.*'           => 'required|max:50',
             'descriptions.*'    => 'required',
             'percentages.*'     => 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
-            'contact_titles.*'  => 'nullable',
+            'contact_titles.*'  => 'required',
             'contact_emails.*'  => 'required|email',
-            'notes.*'           => 'nullable',
-            'images.*'          => 'required|mimes:jpg,jpeg,png,bmp,gif|max:2048',
+            'images.*'          => 'required|mimes:jpg,jpeg,png,bmp|max:2048',
         ],[
-            'charities.*.required' => 'The charity field is required.',
-            'status.*.in' => 'The selected status is invalid.',    
-            'names.*.required' => 'The name field is required.',
-            'descriptions.*.required' => 'The description field is required.',
-            'percentages.*.required' => 'The Percentage field is required.',
-            'percentages.*.max' => 'The Percentage must not be greater than 100.',
-            'percentages.*.min' => 'The Percentage must be at least 0.',
-            'percentages.*.numeric' => 'The Percentage must be a number.',
-            'percentages.*.between' => 'The percentages.0 must be between 0 and 100.',
-            'percentages.*.regex' => 'The percentages format is invalid.',
-            'contact_names.*.required' => 'The Contact Name field is required.',
-            'contact_titles.*.required' => 'The Contact Title field is required.',
-            'contact_emails.*.required' => 'The Contact Email field is required.',
-            'contact_emails.*.email' => 'The Email field is invalid.',
-            'notes.*.required' => 'The Notes field is required.',
-            'images.*.required' => 'Please upload an image',
-            'images.*.mimes' => 'Only jpg, jpeg, png and bmp images are allowed',
-            'images.*.max' => 'Sorry! Maximum allowed size for an image is 2MB',
+            'charities.required' => 'The charity field is required.',
+            'status.in' => 'The selected status is invalid.',
+            'names.required' => 'The name field is required.',
+            'descriptions.required' => 'The description field is required.',
+            'percentages.required' => 'The Percentage field is required.',
+            'percentages.max' => 'The Percentage must not be greater than 100.',
+            'percentages.min' => 'The Percentage must be at least 0.',
+            'percentages.numeric' => 'The Percentage must be a number.',
+            'percentages.between' => 'The percentages.0 must be between 0 and 100.',
+            'percentages.regex' => 'The percentages format is invalid.',
+            'contact_names.required' => 'The Contact Name field is required.',
+            'contact_titles.required' => 'The Contact Title field is required.',
+            'contact_emails.required' => 'The Contact Email field is required.',
+            'contact_emails.email' => 'The Email field is invalid.',
+            'notes.required' => 'The Notes field is required.',
+            'images.required' => 'Please upload an image',
+            'images.max' => 'Sorry! Maximum allowed size for an image is 2MB',
         ]);
-        
+
         //hook to add additional rules by calling the ->after method
         $validator->after(function ($validator) use($request) {
-        
+
             $charities = request('charities');
             $status = request('status');
             $percentages = request('percentages');
-    
-        
+
+
             $status = request('status');
             if ($charities) {
 
-                // Check 100 %
+                // Not sure whats happening here you can only put one charity and one percentage why the loop?
                 $sum = 0;
                 for ($i=0; $i < count($charities); $i++) {
                     if ($status[$i] == 'A' && is_numeric($percentages[$i]) ) {
                         $sum += $percentages[$i];
                     }
                 }
+
+             //   $sum = $percentages;
+
                 if ($sum != 100) {
                     for ($i=0; $i < count($charities); $i++) {
                         if ($status[$i] == 'A') {
@@ -195,7 +195,7 @@ class FundSupportedPoolController extends Controller
                     }
                 }
 
-                // Check duplicate charity id 
+                // Check duplicate charity id
                 $dups = array_count_values(
                     array_filter($charities, fn($value) => !is_null($value) && $value !== '')
                 );
@@ -211,15 +211,21 @@ class FundSupportedPoolController extends Controller
                 for ($i=0; $i < count($charities); $i++) {
                     if (array_key_exists($i, $upload_images)) {
                         $filename= $upload_images[$i]->getClientOriginalName();
+                        $extension = $upload_images[$i]->getClientOriginalExtension();
                         if ( strlen($filename) > 50 ) {
-                            $validator->errors()->add('images.' .$i, 'The file name ' .$filename . ' is invalid .');   
+                            $validator->errors()->add('images.' .$i, 'The file name ' .$filename . ' is invalid .');
                         }
-                        
+
+                        if(!in_array(strtolower($extension),["png","jpg","jpeg","bmp"]))
+                        {
+                            $validator->errors()->add('images.' .$i, 'The file type ' .$extension . ' is invalid .');
+                        }
+
                     } else {
-                        $validator->errors()->add('images.' .$i, 'The image file is required.');   
+                        $validator->errors()->add('images.' .$i, 'The image file is required.');
                     }
                 }
-            }   
+            }
 
         });
 
@@ -254,12 +260,12 @@ class FundSupportedPoolController extends Controller
             for ($i=0; $i < count($charities); $i++) {
                 if ($charities[$i] != '') {
 
-                    // file handling 
+                    // file handling
                     if (array_key_exists($i, $upload_images)) {
                         // dd ( $request->file('images') );
                         $file= $upload_images[$i];
                         $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
-                        
+
                         $file->move(public_path( $this->image_folder ), $filename);
                     }
 
@@ -272,18 +278,21 @@ class FundSupportedPoolController extends Controller
                         'contact_title' => array_key_exists($i, $contact_titles) ? $contact_titles[$i] : null,
                         'contact_name'  => array_key_exists($i, $contact_names) ? $contact_names[$i] : null,
                         'contact_email' => array_key_exists($i, $contact_emails) ? $contact_emails[$i] : null,
-                        'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null, 
+                        'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null,
                         'image'         => $filename,
-                    ]);        
+                    ]);
                 }
             }
         }
 
         $region = Region::where('id', $request->region_id)->first();
 
+        echo  json_encode(array(route('settings.fund-supported-pools.index')));
+        exit();
+
         return redirect()->route('settings.fund-supported-pools.index')
-            ->with('success','Fund Supported Pool ' . $region->name  . 
-                ' for start date ' . $request->start_date . 
+            ->with('success','Fund Supported Pool ' . $region->name  .
+                ' for start date ' . $request->start_date .
                 ' created successfully');
 
     }
@@ -319,7 +328,7 @@ class FundSupportedPoolController extends Controller
         if ($errors) {
             $old = session()->getOldInput();
             // dd( $old );
-          
+
             if (isset($old['charities'])) {
                 foreach ($old['charities'] as $key => $charity_id ) {
                     $charity = $charity_id ? Charity::where('id', $charity_id)->select('id', 'charity_name', 'registration_number')->first() : null;
@@ -350,12 +359,12 @@ class FundSupportedPoolController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         // dd($request);
         //
         $validator = Validator::make(request()->all(), [
             'region_id'         => 'required',
-            'start_date'        => ['required', 
+            'start_date'        => ['required',
                 // Rule::unique('f_s_pools')->where(function ($query) use($request) {
                 //     return $query->where('region_id', $request->input('region_id'))
                 //                     ->where('start_date', $request->input('start_date'));
@@ -363,7 +372,7 @@ class FundSupportedPoolController extends Controller
             ],
             'pool_status'       => ['required', Rule::in(['A', 'I']) ],
 
-            'charities.*'       => ['required'],    
+            'charities.*'       => ['required'],
             'status.*'          => ['required', Rule::in(['A', 'I'])],
             'names.*'           => 'required|max:50',
             'descriptions.*'    => 'required',
@@ -375,7 +384,7 @@ class FundSupportedPoolController extends Controller
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp.gif|max:2048',
         ],[
             'charities.*.required' => 'The charity field is required.',
-            'status.*.in' => 'The selected status is invalid.',    
+            'status.*.in' => 'The selected status is invalid.',
             'names.*.required' => 'The name field is required.',
             'descriptions.*.required' => 'The description field is required.',
             'percentages.*.required' => 'The Percentage field is required.',
@@ -393,16 +402,16 @@ class FundSupportedPoolController extends Controller
             'images.*.mimes' => 'Only jpg, jpeg, png and bmp images are allowed',
             'images.*.max' => 'Sorry! Maximum allowed size for an image is 2MB',
         ]);
-        
+
         //hook to add additional rules by calling the ->after method
         $validator->after(function ($validator) use($request) {
-        
+
             $charities = request('charities');
             $status = request('status');
             $percentages = request('percentages');
             $current_images = request('current_images');
-    
-        
+
+
             $status = request('status');
             if ($charities) {
 
@@ -421,7 +430,7 @@ class FundSupportedPoolController extends Controller
                     }
                 }
 
-                // Check duplicate charity id 
+                // Check duplicate charity id
                 $dups = array_count_values(
                     array_filter($charities, fn($value) => !is_null($value) && $value !== '')
                 );
@@ -438,15 +447,15 @@ class FundSupportedPoolController extends Controller
                     if (array_key_exists($i, $upload_images)) {
                         $filename= $upload_images[$i]->getClientOriginalName();
                         if ( strlen($filename) > 50 ) {
-                            $validator->errors()->add('images.' .$i, 'The file name ' . $filename . ' is invalid.');   
+                            $validator->errors()->add('images.' .$i, 'The file name ' . $filename . ' is invalid.');
                         }
                     } else {
-                        if (is_null($current_images[$i])) {    
-                             $validator->errors()->add('images.' .$i, 'The image file is required .');   
+                        if (is_null($current_images[$i])) {
+                             $validator->errors()->add('images.' .$i, 'The image file is required .');
                         }
                     }
                 }
-            }   
+            }
 
         });
 
@@ -482,9 +491,9 @@ class FundSupportedPoolController extends Controller
                         'contact_title' => array_key_exists($i, $contact_titles) ? $contact_titles[$i] : null,
                         'contact_name'  => array_key_exists($i, $contact_names) ? $contact_names[$i] : null,
                         'contact_email' => array_key_exists($i, $contact_emails) ? $contact_emails[$i] : null,
-                        'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null, 
+                        'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null,
                         // 'image'         => $filename,
-                    ]);        
+                    ]);
 
                     // copy and delete the file in folder
                     if (array_key_exists($i, $upload_images)) {
@@ -493,8 +502,8 @@ class FundSupportedPoolController extends Controller
                         $new_filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                         $file->move(public_path( $this->image_folder ), $new_filename);
 
-                        // Clean up old file 
-                        if ($pool_charity->image) { 
+                        // Clean up old file
+                        if ($pool_charity->image) {
                             $old_filename = public_path( $this->image_folder ).$pool_charity->image;
                             if (File::exists( $old_filename )) {
                                 File::delete( $old_filename );
@@ -524,7 +533,7 @@ class FundSupportedPoolController extends Controller
 
         FSPoolCharity::whereIn('id', $dels)->delete();
 
-        // Step 3 -- Update the header 
+        // Step 3 -- Update the header
         $pool->status = $request->pool_status;
         $pool->updated_by_id = Auth::id();
         $pool->save();
@@ -533,8 +542,8 @@ class FundSupportedPoolController extends Controller
         //$region = Region::where('id', $request->region_id)->first();
 
         return redirect()->route('settings.fund-supported-pools.index')
-            ->with('success','Fund Supported Pool ' . $request->region  . 
-                ' for start date ' . $request->start_date . 
+            ->with('success','Fund Supported Pool ' . $request->region  .
+                ' for start date ' . $request->start_date .
                 ' updated successfully');
 
     }
@@ -555,7 +564,7 @@ class FundSupportedPoolController extends Controller
         ]);
 
         $validator->after(function ($validator) use($pool) {
-            
+
             if (!($pool->canDelete)) {
                 $validator->errors()->add('region', 'This is not allowed to delete this Fund Supported Pool since the transcations already exists!');
             }
@@ -566,15 +575,15 @@ class FundSupportedPoolController extends Controller
 
         // Delete Process
         foreach ($pool->charities as $pool_charity) {
-            // Clean up old file 
-            if ($pool_charity->image) { 
+            // Clean up old file
+            if ($pool_charity->image) {
                 $old_filename = public_path( $this->image_folder ).$pool_charity->image;
                 if (File::exists( $old_filename )) {
                     File::delete( $old_filename );
                 }
             }
-        } 
-    
+        }
+
         // TODO: delete file and subrecord
         $pool->charities()->delete();
         $pool->delete();
@@ -612,7 +621,7 @@ class FundSupportedPoolController extends Controller
         ]);
 
         $validator->after(function ($validator) use($pool) {
-            
+
             // if (!($pool->canDelete)) {
             //     $validator->errors()->add('region', 'This is not allowed to delete this Fund Supported Pool since the transcations already exists!');
             // }
@@ -622,13 +631,13 @@ class FundSupportedPoolController extends Controller
         $validator->validate();
 
 
-        // Duplicate 
+        // Duplicate
         $clone = $pool->replicate();
         $clone->start_date = $request->start_date;
         $clone->created_by_id = Auth::id();
         $clone->updated_by_id = Auth::id();
         $clone->push();
-         
+
         foreach($pool->charities as $charity)
         {
            $old_image = $charity->image;
@@ -644,7 +653,7 @@ class FundSupportedPoolController extends Controller
            $clone->charities()->create( $charity->toArray() );
 
         }
-  
+
         $clone->save();
 
         return response()->noContent();
@@ -667,5 +676,5 @@ class FundSupportedPoolController extends Controller
         }
 
         return response()->json($formatted_charities);
-    } 
+    }
 }

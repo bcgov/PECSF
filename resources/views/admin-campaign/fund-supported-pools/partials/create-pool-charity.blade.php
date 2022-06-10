@@ -54,7 +54,7 @@
 
         <div class="form-group col-md-2">
             <label for="status[]">Status</label>
-            <select id="status" name="status[]" class="form-control @error('status.'.$index) is-invalid @enderror">
+            <select id="status" name="status" class="form-control @error('status.'.$index) is-invalid @enderror">
                 <option value="A">Active</option>
                 <option value="I">Inactive</option>
             </select>
@@ -77,7 +77,7 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="names">Supported Program Name</label>
-            <input type="text" id="names" name="names[]" class="form-control @error('names.'.$index) is-invalid @enderror"
+            <input type="text" id="names" name="names" class="form-control @error('names.'.$index) is-invalid @enderror"
                 value="{{ old('names.' . $index) ?? '' }}" />
 
             <span id="names_errors">
@@ -93,7 +93,7 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="descriptions">Supported Program Description</label>
-            <textarea type="text" id="descriptions" name="descriptions[]" class="form-control @error('descriptions.'.$index) is-invalid @enderror"
+            <textarea type="text" id="descriptions" name="descriptions" class="form-control @error('descriptions.'.$index) is-invalid @enderror"
                 >{{ old('descriptions.' . $index) ?? '' }}</textarea>
            <span id="descriptions_errors">
                @error( 'descriptions.'.$index )
@@ -106,7 +106,7 @@
     <div class="form-row">
         <div class="form-group col-md-2">
             <label for="percentages">Allocation (%)</label>
-            <input type="text" id="percentages" name="percentages[]" class="form-control @error('percentages.'.$index) is-invalid @enderror"
+            <input type="text" id="percentages" name="percentages" class="form-control @error('percentages.'.$index) is-invalid @enderror"
                 value="{{ old('percentages.' . $index) ?? '' }}" />
 
             <span id="percentages_errors">
@@ -118,7 +118,7 @@
         </div>
         <div class="form-group col-md-5">
             <label for="contact_names">Charity Program Contact Name</label>
-            <input type="text" id="contact_names" name="contact_names[]" class="form-control @error('contact_names.'.$index) is-invalid @enderror"
+            <input type="text" id="contact_names" name="contact_names" class="form-control @error('contact_names.'.$index) is-invalid @enderror"
                 value="{{ old('contact_names.' . $index) ?? '' }}" />
            <span id="contact_names_errors">
                  @error( 'contact_names.'.$index )
@@ -128,7 +128,7 @@
         </div>
         <div class="form-group col-md-5">
             <label for="contact_titles">Charity Program Contact Title (Optional)</label>
-            <input type="text" id="contact_titles" name="contact_titles[]" class="form-control @error('contact_titles.'.$index) is-invalid @enderror"
+            <input type="text" id="contact_titles" name="contact_titles" class="form-control @error('contact_titles.'.$index) is-invalid @enderror"
                 value="{{ old('contact_titles.' . $index) ?? '' }}" />
            <span id="contact_titles_errors">
                  @error( 'contact_titles.'.$index )
@@ -141,7 +141,7 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="contact_emails">Charity Program Contact Email</label>
-            <input type="text" id="contact_emails" name="contact_emails[]" class="form-control @error('contact_emails.'.$index) is-invalid @enderror"
+            <input type="text" id="contact_emails" name="contact_emails" class="form-control @error('contact_emails.'.$index) is-invalid @enderror"
                 value="{{ old('contact_emails.' . $index) ?? '' }}" />
            <span id="contact_emails_errors">
                @error( 'contact_emails.'.$index )
@@ -151,7 +151,7 @@
         </div>
         <div class="form-group col-md-8">
             <label for="notes">Notes (Optional)</label>
-            <input id="notes" type="text" name="notes[]" class="form-control @error('notes.'.$index) is-invalid @enderror"
+            <input id="notes" type="text" name="notes" class="form-control @error('notes.'.$index) is-invalid @enderror"
                 value="{{ old('notes.' . $index) ?? '' }}" />
             @error( 'notes.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
@@ -163,10 +163,22 @@
         <div class="form-group col-md-6">
             <div class="image">
                 <label for="images">Add Image</label><br>
-                <input id="images" style="display:none;" type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror"
+                <input id="images" style="display:none;" onchange="loadFile(event)" type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror"
                         name="images[]" value="{{ old('images.'.$index) }}">
-                <label for="files"><span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image, Supported File Types Are: *.png, *.jpg</span></label>
-               <span id="images_errors">
+                <label for="images"><span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image, Supported File Types Are: *.png, *.jpg</span></label>
+                    <br>
+                <img style="width:auto;height:300px;border:#ccc 1px solid;padding:1px;display:none;" id="output"/>
+                <script>
+                    var loadFile = function(event) {
+                        var output = document.getElementById('output');
+                        output.src = URL.createObjectURL(event.target.files[0]);
+                        output.onload = function() {
+                            URL.revokeObjectURL(output.src) // free memory
+                        }
+                        $("#output").css("display","block");
+                    };
+                </script>
+                <span id="images_errors">
                     @error( 'images.'.$index )
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
