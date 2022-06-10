@@ -21,7 +21,7 @@ class SyncUserProfile extends Command
      *
      * @var string
      */
-    protected $signature = 'command:SyncUserProfiles';
+    protected $signature = 'command:SyncUserProfile';
 
     /**
      * The console command description.
@@ -92,10 +92,9 @@ class SyncUserProfile extends Command
             ->orderBy('emplid')
             ->orderBy('job_indicator','desc')      // Secondary, then Primary 
             ->orderBy('empl_rcd')
-            ->get();
-            // ->get(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir',
-            //     'first_name', 'last_name', 'appointment_status', 'empl_ctg', 'job_indicator',
-            //     'date_updated', 'date_deleted']);
+            ->get(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir',
+                'first_name', 'last_name', 'name', 'appointment_status', 'empl_ctg', 'job_indicator',
+                'date_updated', 'date_deleted']);
 
 
         // Step 1 : Create and Update User Profile (no update on reporting to)
@@ -108,7 +107,6 @@ class SyncUserProfile extends Command
 
             // Check the user by GUID 
             $user = User::where('guid', $employee->guid)->first();
-
         
             if ($user) {
                 if ($employee->email) {
