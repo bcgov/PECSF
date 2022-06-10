@@ -143,7 +143,6 @@ class FundSupportedPoolController extends Controller
             'descriptions.*'    => 'required',
             'percentages.*'     => 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
-            'contact_titles.*'  => 'required',
             'contact_emails.*'  => 'required|email',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp|max:2048',
         ],[

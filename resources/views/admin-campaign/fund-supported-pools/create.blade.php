@@ -163,26 +163,58 @@
 
 <script>
 
+    function loadFile(event) {
+        $(event.target).parents("label").siblings("img").attr('src', URL.createObjectURL(event.target.files[0]));
+        $(event.target).parents("label").siblings("img").css("display","block");
+    }
+
     $(document).ready(function()
     {
+
+
+
+
         $("#create_pool").submit(function(e)
         {
             e.preventDefault();
             var form = document.getElementById("create_pool");
             var formData = new FormData();
-            formData.append('charities[]',    $('#charities').val());
+            $("select[name='charities[]']").each(function(){
+                formData.append('charities[]',     $(this).val());
+            });
             formData.append('pool_status',   $('#pool_status').val());
             formData.append('region_id',   $('#region_id').val());
-            formData.append('status',   $('#status').val());
-            formData.append('names[]', $('#names').val());
-            formData.append('descriptions[]', $('#descriptions').val());
-            formData.append('percentages[]', $('#percentages').val());
-            formData.append('contact_names[]', $('#contact_names').val());
-            formData.append('contact_titles[]', $('#contact_titles').val());
-            formData.append('notes[]', $('#notes').val());
-            formData.append('contact_emails[]', $('#contact_emails').val());
+            $("select[name='status[]']").each(function(){
+                formData.append('status[]',   $(this).val());
+            });
+            $("input[name='names[]']").each(function(){
+                formData.append('names[]',  $(this).val());
+            });
+            $("textarea[name='descriptions[]']").each(function(){
+                formData.append('descriptions[]',  $(this).val());
+            });
+            $("input[name='percentages[]']").each(function(){
+                formData.append('percentages[]', $(this).val());
+            });
+            $("input[name='contact_names[]']").each(function(){
+                formData.append('contact_names[]', $(this).val());
+            });
+            $("input[name='contact_titles[]']").each(function(){
+                formData.append('contact_titles[]',  $(this).val());
+            });
+            $("input[name='notes[]']").each(function(){
+                formData.append('notes[]', $(this).val());
+            });
+            $("input[name='contact_emails[]']").each(function(){
+                formData.append('contact_emails[]',  $(this).val());
+            });
+
             formData.append('start_date', $('#start_date').val());
-            formData.append('images[]', $('#images')[0].files[0]);
+
+            $("input[name='images[]']").each(function(){
+                formData.append('images[]',  $(this)[0].files[0]);
+            });
+
             $("#create_pool").fadeTo("slow",0.2);
             $.ajax({
                 url: "{{ route("settings.fund-supported-pools.store") }}",
@@ -194,68 +226,47 @@
                 contentType: false,
                 dataType: 'json',
                 success:function(response){
-                    $("#create_pool").fadeTo("slow",1);
-                    $('#successMsg').show();
-                    $('#region_id_errors').html("");
-                    $('#start_date_errors').html("");
-                    $('#pool_status_errors').html("");
-                    $('#status_errors').html("");
-                    $('#charities_errors').html("");
-                    $('#names_errors').html("");
-                    $('#descriptions_errors').html("");
-                    $('#percentages_errors').html("");
-                    $('#contact_names_errors').html("");
-                    $('#contact_titles_errors').html("");
-                    $('#contact_emails_errors').html("");
-                    $('#images_errors').html("");
+                    $(".create_pool").fadeTo("slow",1);
+                    $('.successMsg').show();
+                    $('.region_id_errors').html("");
+                    $('.start_date_errors').html("");
+                    $('.pool_status_errors').html("");
+                    $('.status_errors').html("");
+                    $('.charities_errors').html("");
+                    $('.names_errors').html("");
+                    $('.descriptions_errors').html("");
+                    $('.percentages_errors').html("");
+                    $('.contact_names_errors').html("");
+                    $('.contact_titles_errors').html("");
+                    $('.contact_emails_errors').html("");
+                    $('.images_errors').html("");
                     window.location = response[0];
                     console.log(response);
                 },
                 error: function(response) {
                     $("#create_pool").fadeTo("slow",1);
-                    $('#region_id_errors').html("");
-                    $('#start_date_errors').html("");
-                    $('#pool_status_errors').html("");
-                    $('#status_errors').html("");
-                    $('#charities_errors').html("");
-                    $('#names_errors').html("");
-                    $('#descriptions_errors').html("");
-                    $('#percentages_errors').html("");
-                    $('#contact_names_errors').html("");
-                    $('#contact_titles_errors').html("");
-                    $('#contact_emails_errors').html("");
-                    $('#images_errors').html("");
+                    $('.region_id_errors').html("");
+                    $('.start_date_errors').html("");
+                    $('.pool_status_errors').html("");
+                    $('.status_errors').html("");
+                    $('.charities_errors').html("");
+                    $('.names_errors').html("");
+                    $('.descriptions_errors').html("");
+                    $('.percentages_errors').html("");
+                    $('.contact_names_errors').html("");
+                    $('.contact_titles_errors').html("");
+                    $('.contact_emails_errors').html("");
+                    $('.images_errors').html("");
 
                     if(response.responseJSON.errors){
-                        if(response.responseJSON.errors.region_id){
-                            $('#region_id_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.region_id+'</span>');
-                        }
-                        if(response.responseJSON.errors.start_date){
-                            $('#start_date_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.start_date+'</span>');
-                        }
-                        if(response.responseJSON.errors.charities){
-                            $('#charities_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.charities+'</span>');
-                        }
-                        if(response.responseJSON.errors.names){
-                            $('#names_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.names+'</span>');
-                        }
-                        if(response.responseJSON.errors.descriptions){
-                            $('#descriptions_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.descriptions+'</span>');
-                        }
-                        if(response.responseJSON.errors.percentages){
-                            $('#percentages_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors['percentages.0'] +'</span>');
-                        }
-                        if(response.responseJSON.errors.contact_names){
-                            $('#contact_names_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.contact_names+'</span>');
-                        }
-                        if(response.responseJSON.errors.contact_emails){
-                            $('#contact_emails_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors.contact_emails+'</span>');
-                        }
-                        if(response.responseJSON.errors.images){
-                            $('#images_errors').html('<span class="invalid-feedback">'+response.responseJSON.errors['images.0'] +'</span>');
+                        errors = response.responseJSON.errors;
+                        for(const prop in response.responseJSON.errors){
+                            count = prop.substring(prop.indexOf(".")+1);
+                            tag = prop.substring(0,prop.indexOf("."))
+                            $("#charity"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+errors[prop]+'</span>')
+                            $("#" + prop + "_errors").html('<span class="invalid-feedback">'+errors[prop]+'</span>')
                         }
                     }
-
                     $(".invalid-feedback").css("display","block");
                 },
             });
