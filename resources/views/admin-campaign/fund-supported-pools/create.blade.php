@@ -32,7 +32,7 @@
                                 >{{ $region->name }} ({{ $region->code }})</option>
                         @endforeach
                     </select>
-                    <span id="region_id_errors">
+                    <span class="region_id_errors">
                           @error('region_id')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -44,7 +44,7 @@
                     <label for="start_date">Start Date</label>
                     <input type="date" id="start_date" name="start_date" class="form-control @error('start_date') is-invalid @enderror"
                             id="start_date" value="{{ old('start_date') }}">
-                  <span id="start_date_errors">
+                  <span class="start_date_errors">
                        @error('start_date')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -57,7 +57,7 @@
                         <option value="A">Active</option>
                         <option value="I">Inactive</option>
                     </select>
-                   <span id="pool_status_errors">
+                   <span class="pool_status_errors">
                        @error('pool_status')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -263,8 +263,13 @@
                         for(const prop in response.responseJSON.errors){
                             count = prop.substring(prop.indexOf(".")+1);
                             tag = prop.substring(0,prop.indexOf("."))
-                            $("#charity"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+errors[prop]+'</span>')
-                            $("#" + prop + "_errors").html('<span class="invalid-feedback">'+errors[prop]+'</span>')
+
+                            error = errors[prop][0].split(".");
+                            error = error[0] + error[1].substring(1,error[1].length);
+                            error = error.replace("_"," ");
+
+                            $("#charity"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>')
+                            $("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>')
                         }
                     }
                     $(".invalid-feedback").css("display","block");

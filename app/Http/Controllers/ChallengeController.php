@@ -25,7 +25,7 @@ class ChallengeController extends Controller
 
 
 
-        $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+        $charities = Department::select(DB::raw('departments.id,departments.department_name,donor_by_departments.donors,donor_by_departments.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
             ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
             ->where('donor_by_business_units.yearcd',"=",$year)

@@ -167,7 +167,7 @@
                 <label>
                     <input id="images" accept=".png,.jpg,.jpeg,.bmp" style="display:none;" onchange="loadFile(event)" type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror"
                            name="images[]" value="{{ old('images.'.$index) }}">
-                    <span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image, Supported File Types Are: *.png, *.jpg</span></label>
+                    <span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image (suggested file types: .png, .jpg, .svg)</span></label>
                     <br>
                 <img style="width:auto;height:300px;" id="output" />
 
