@@ -42,6 +42,7 @@ class ImportEmployeeJob extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', '4096M');
 
         $task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
@@ -49,10 +50,10 @@ class ImportEmployeeJob extends Command
             'status','Initiated'
         ]);
 
-        $this->info( now() );     
+        $this->info( now() );
         $this->info("Update/Create - Employee Job Information");
         $this->UpdateEmployeeJob();
-        $this->info( now() );     
+        $this->info( now() );
 
         // Update the Task Audit log
         $task->end_time = Carbon::now();
@@ -63,23 +64,23 @@ class ImportEmployeeJob extends Command
 
     }
 
-    protected function UpdateEmployeeJob() 
+    protected function UpdateEmployeeJob()
     {
 
-        // Get the latest success job's start time 
+        // Get the latest success job's start time
         $last_job = ScheduleJobAudit::where('job_name', $this->signature)
             ->where('status','Completed')
             ->orderBy('end_time', 'desc')->first();
-        $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
+        $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ;
 
         $filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
 
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT').'?$count=true&$top=1'.'&$filter='.$filter);
-                
+
         $row_count = json_decode($response->body())->{'@odata.count'};
-        
+
         $size = 1000;
         for ($i = 0; $i <= $row_count / $size ; $i++) {
 
@@ -98,7 +99,7 @@ class ImportEmployeeJob extends Command
             //     ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT'));
 
             if ($response->successful()) {
-                $data = json_decode($response->body())->value; 
+                $data = json_decode($response->body())->value;
                 $batches = array_chunk($data, 1000);
 
                 $organization = \App\Models\Organization::where('code', 'GOV')->first();
@@ -111,12 +112,12 @@ class ImportEmployeeJob extends Command
 
                         // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
                         // $business_unit = \App\Models\BusinessUnit::where('code', $row->BUSINESS_UNIT)->first();
-                        // $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first(); 
-                        
+                        // $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first();
+
                         EmployeeJob::updateOrCreate([
                             'emplid' => $row->EMPLID,
                             'empl_rcd' => $row->EMPL_RCD,
-                        ],[                            
+                        ],[
                             'organization_id' => $organization ? $organization->id : null,
                             'effdt' => $row->EFFDT,
                             'effseq' => $row->EFFSEQ,
@@ -154,7 +155,7 @@ class ImportEmployeeJob extends Command
                             'supervisor_email' => $row->supervisor_email,
                             'date_updated' => $row->date_updated,
                             'date_deleted' => $row->date_deleted,
-                          
+
                             'created_by_id' => null,
                             'updated_by_id' => null,
 

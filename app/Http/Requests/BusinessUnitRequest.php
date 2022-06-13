@@ -24,15 +24,18 @@ class BusinessUnitRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-            'code'    => ['required','max:5',
-                            Rule::when($this->getMethod() == 'POST', ['unique:App\Models\BusinessUnit,code']) 
+        $rules = [
+           'code'    => ['required','max:5',
+                            Rule::when($this->getMethod() == 'POST', ['unique:App\Models\BusinessUnit,code'])
                          ],
-            'name'    => 'required|max:30',
+            'name'    => 'required|max:60',
             'status'  => ['required', Rule::in(['A', 'I']) ],
-            'effdt'   => 'required|date',
         ];
+        if ($this->request->get('status') == "A") {
+            $rules['effdt'] = 'before:today';
+        }
+
+        return $rules;
     }
 
      /**
@@ -44,7 +47,8 @@ class BusinessUnitRequest extends FormRequest
     {
         return [
             'effdt.required' => 'The effective date field is required',
-        ];
+            'effdt.before' => 'The effective date field must be in the past if the status is Active',
+       ];
     }
-    
+
 }

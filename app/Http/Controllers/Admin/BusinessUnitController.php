@@ -34,12 +34,13 @@ class BusinessUnitController extends Controller
 
         if($request->ajax()) {
 
-            $business_units = BusinessUnit::orderBy('code');
+            $columns = ["code","name","status","created_at"];
+            $business_units = BusinessUnit::orderBy($columns[$request->input("order")[0]['column']],$request->input("order")[0]['dir']);
 
             return Datatables::of($business_units)
                 ->addColumn('action', function ($business_unit) {
-                return '<a class="btn btn-info btn-sm  show-bu" data-id="'. $business_unit->id .'" >Show</a>' . 
-                       '<a class="btn btn-primary btn-sm ml-2 edit-bu" data-id="'. $business_unit->id .'" >Edit</a>' . 
+                return '<a class="btn btn-info btn-sm  show-bu" data-id="'. $business_unit->id .'" >Show</a>' .
+                       '<a class="btn btn-primary btn-sm ml-2 edit-bu" data-id="'. $business_unit->id .'" >Edit</a>' .
                        '<a class="btn btn-danger btn-sm ml-2 delete-bu" data-id="'. $business_unit->id .
                        '" data-code="'. $business_unit->code . '">Delete</a>';
             })
@@ -73,7 +74,7 @@ class BusinessUnitController extends Controller
 
             return response()->json($business_unit);
         }
-        
+
     }
 
     /**
@@ -92,12 +93,12 @@ class BusinessUnitController extends Controller
             $business_unit->updated_by_name = $business_unit->updated_by ? $business_unit->updated_by->name : '';
             $business_unit->formatted_created_at = $business_unit->created_at->format('Y-m-d H:i:s');
             $business_unit->formatted_updated_at = $business_unit->updated_at->format('Y-m-d H:i:s');
-            // $region->updated_at = date_timezone_set($region->updated_at, timezone_open('America/Vancouver')); 
+            // $region->updated_at = date_timezone_set($region->updated_at, timezone_open('America/Vancouver'));
             unset($business_unit->created_by );
             unset($business_unit->updated_by );
             return response()->json($business_unit);
         }
-        
+
     }
 
     /**
@@ -127,7 +128,7 @@ class BusinessUnitController extends Controller
             $business_unit = BusinessUnit::where('id', $id)->first();
             $business_unit->fill( $request->all() );
             $business_unit->save();
-        
+
             return response()->json($business_unit);
         }
     }

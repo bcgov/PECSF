@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\OrganizationController;
 // use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\AdministratorController;
+use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 
@@ -63,7 +64,7 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
     Route::get('/summary', [CharityController::class, 'summary'])->name('summary');
     Route::get('/thank-you', [CharityController::class, 'thankYou'])->name('save.thank-you');
     Route::get('/charities/{charity_id}',[CharityController::class, 'show']);
-    
+
     Route::get('/regional-pool', [CharityController::class, 'regionalPool'])->name('regional-pool');
     Route::get('/regional-pool-detail/{id}', [CharityController::class, 'regionalPoolDetail'])->name('regional-pool-detail');
 
@@ -72,7 +73,7 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
     Route::post('/amount', [CharityController::class, 'saveAmount'])->name('save.amount');
     Route::post('/distribution', [CharityController::class, 'saveDistribution'])->name('save.distribution');
     Route::post('/summary', [CharityController::class, 'confirmDonation'])->name('save.summary');
-    
+
     Route::post('/regional-pool', [CharityController::class, 'saveRegionalPool'])->name('save.regional-pool');
 
 
@@ -97,14 +98,14 @@ Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 
 // Route::group(['middleware' => ['auth']], function() {
 //     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
-// });    
+// });
 
 Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(function() {
     Route::get('dashboard', [AdministratorController::class, 'dashboard'])->name('dashboard');
     // Route::resource('/', AdministratorController::class)->only(['index','store']);
     // Route::get('/{administrator}/delete', [AdministratorController::class,'destroy']);
     // Route::get('/users', [AdministratorController::class,'getUsers']);
-}); 
+});
 
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
@@ -126,18 +127,19 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);
     Route::post('/fund-supported-pools/duplicate/{id}', [FundSupportedPoolController::class,'duplicate'])->name('fund-suppported-pools.duplicate');
     Route::resource('/fund-supported-pools', FundSupportedPoolController::class);
-    
+
 
     // Administrators
     Route::resource('/administrators', AdministratorController::class)->only(['index','store', 'destroy']);
+    Route::resource('/charity-list-maintenance', CharityListMaintenanceController::class)->only(['index','store', 'destroy']);
     Route::get('/administrators/users', [AdministratorController::class,'getUsers'])->name('administrators.users');
     // Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
 
-}); 
+});
 
 Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
-    
-    
+
+
     // Pledge Administration - Campaign Pledge
     // Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
     Route::get('/campaign', function() {

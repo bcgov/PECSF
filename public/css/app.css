@@ -6536,6 +6536,8 @@ h4, .h4 {
 
 h5, .h5 {
   font-size: 1.125rem;
+    color: #1a5a96;
+    font-weight: bold;
 }
 
 h6, .h6 {
@@ -10120,12 +10122,14 @@ input[type=button].btn-block {
 }
 
 .nav-pills .nav-link {
-  border-radius: 0.25rem;
+  /*border-radius: 0.25rem;*/
 }
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1a5a96;
+  color: #6c757d;
+  background-color: #f4f6f9;
+    font-weight:bold;
+    border-bottom: #6cb2eb 2px solid;
 }
 
 .nav-fill > .nav-link,
@@ -20566,7 +20570,7 @@ body.text-sm .control-sidebar {
   color: #1a5a96;
 }
 .nav-pills .nav-item.dropdown.show .nav-link:hover {
-  color: #fff;
+  /*color: #fff;*/
 }
 
 .nav-tabs.flex-column {

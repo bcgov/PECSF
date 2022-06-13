@@ -9,9 +9,9 @@
 <div class="d-flex justify-content-end">
     <label style="min-width: 130px">
         Campaign Year
-        <select class="form-control form-control-sm">
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
+        <select name="year" class="form-control form-control-sm">
+            <option {{$year==2021?"selected":""}} value="2021">2021</option>
+            <option {{$year==2020?"selected":""}} value="2020">2020</option>
         </select>
     </label>
 </div>
@@ -46,13 +46,12 @@
             </tr> -->
                 <tr>
                     <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
-                    <td>{{$charity['department_name']}}</td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                    </td>
-                    <td></td>
-                    <td></td>
+                    <td>{{$charity['name']}}</td>
+                    <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
+                    <td>{{$charity['previous_participation_rate']}}%</td>
+                    <td>{{$charity['change']}}%</td>
+                    <td>{{$charity['donors']}}</td>
+                    <td>${{$charity['dollars']}}</td>
                 </tr>
             @endforeach
         </table>
@@ -65,6 +64,12 @@
 @endsection
 @push('js')
 <script>
+
+
+    $("select[name='year']").change(function(){
+        window.location = "/challenge?year="+$(this).val();
+    });
+
 function sortTable(n) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("myTable2");
