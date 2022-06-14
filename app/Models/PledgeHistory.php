@@ -10,7 +10,8 @@ class PledgeHistory extends Model
     use HasFactory;
 
     protected $fillable =[
-        'campaign_type', 'source', 'frequency', 'yearcd', 'campaign_year_id', 'tgb_reg_district', 'region_id', 'emplid', 'GUID',
+        'campaign_type', 'source', 'frequency', 'yearcd', 'campaign_year_id', 'tgb_reg_district', 'region_id', 
+        'name1', 'name2', 'emplid', 'GUID',
         'charity_bn', 'charity_id', 'pledge', 'percent', 'amount'
     ];
 
