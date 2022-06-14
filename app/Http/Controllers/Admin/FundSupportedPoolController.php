@@ -287,12 +287,7 @@ class FundSupportedPoolController extends Controller
         $region = Region::where('id', $request->region_id)->first();
 
         echo  json_encode(array(route('settings.fund-supported-pools.index')));
-        exit();
 
-        return redirect()->route('settings.fund-supported-pools.index')
-            ->with('success','Fund Supported Pool ' . $region->name  .
-                ' for start date ' . $request->start_date .
-                ' created successfully');
 
     }
 

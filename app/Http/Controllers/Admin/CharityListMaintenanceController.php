@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\MicrosoftGraph\TokenCache;
+use App\Models\CompletedJobs;
 use App\Models\FailedJobs;
 use App\Models\FSPool;
 use App\Models\User;
@@ -13,6 +14,8 @@ use App\Jobs\ProcessCharityList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Microsoft\Graph\Graph;
 use Yajra\DataTables\DataTables;
@@ -65,19 +68,28 @@ class CharityListMaintenanceController extends Controller
         }
 
         $charities = Charity::paginate(10);
-
         $jobs = count(Jobs::all()) > 0 ? Jobs::all() : [];
-
+        $completed_jobs = CompletedJobs::all();
         $failed_jobs = FailedJobs::all();
 
-
         // load the view and pass the sharks
-        return view('admin-campaign.charity-list-maintenance.index',compact('jobs','failed_jobs','charities'));
-
+        return view('admin-campaign.charity-list-maintenance.index',compact('jobs','failed_jobs','charities','completed_jobs'));
     }
 
     public function store(Request $request)
     {
+        $validator = Validator::make(request()->all(), [
+            'charity_list'          => 'required|mimes:txt|max:512000',
+        ],[
+            'images.required' => 'Please upload an xls xlsx Excel File',
+            'images.max' => 'Sorry! Maximum allowed size for an image is 50MB',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('settings.charity-list-maintenance.index')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $upload_file = $request->file('charity_list') ? $request->file('charity_list') : [];
         $filesize = $upload_file->getSize();

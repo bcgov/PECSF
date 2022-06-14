@@ -14,11 +14,15 @@
                   enctype="multipart/form-data">
                 @csrf
                 <label class="btn btn-primary" for="charity_list"><img style="width:16px;height:16px;" src="{{asset('img/icons/upload.png')}}"/>&nbsp;Upload File</label>
-                <input type="file" style="display:none;" accept=".xls, .xlsx, .csv" id="charity_list" name="charity_list" />
-
-
+                <input type="file" style="display:none;" accept=".txt" id="charity_list" name="charity_list" />
             </form>
+            <div id="charity_list_errors">
+                @foreach ($errors->all() as $error)
+                        <span class="invalid-feedback">{{ $error }}</span>
+                    @endforeach
 
+
+            </div>
             <table class="table table-bordered" id="region-table" style="width:100%">
                 <thead>
                 <tr>
@@ -36,6 +40,15 @@
                        <td>{{ $job->getCommand()->file_size }}</td>
                        <td>Pending</td>
                    </tr>
+                @endforeach
+                @foreach ($completed_jobs as $job)
+                    <tr>
+                        <td>{{ $job->getCommand()->file_name }}</td>
+                        <td>{{ $job->getLastModified() }}</td>
+                        <td>{{ $job->getFailedAttempts() }}</td>
+                        <td>{{ $job->getCommand()->file_size }}</td>
+                        <td>Completed</td>
+                    </tr>
                 @endforeach
                 @foreach ($failed_jobs as $job)
                     <tr>
@@ -117,7 +130,7 @@
     <script>
 
         var charitiesTimer;
-
+        $(".invalid-feedback").fadeTo("slow",1);
         function updateCharities(){
             $.ajax({
                 method: "GET",
@@ -133,6 +146,11 @@
                 }
             });
         }
+
+        $("input[name='charity_list']").change(function(){
+            $(this).parents("form").submit();
+
+        });
 
         $(function() {
 
