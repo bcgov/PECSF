@@ -50,11 +50,11 @@
             <tr>
                 <td scope="row">{{ $loop->index +1 }}</td>
                 <td>
-                    <p>{{ $pledge->charity ? $pledge->charity->charity_name : 'N/A' }}</p>
-                    <p>{{ $pledge->charity ? $pledge->charity->registration_number : 'N/A' }}</p>
+                    <p>{{ $pledge->name1 ?? 'N/A' }}</p>
+                    <p>{{ $pledge->name2 ?? 'N/A' }}</p>
                 </td>
                 <td class="text-center">{{ number_format($pledge->percent,2) }}%</td>
-                <td class="text-center">${{ number_format($pledge->amount * $number_of_periods,2) }}</td>
+                <td class="text-center">${{ number_format(($total_amount * $pledge->percent / 100),2) }}</td>
             </tr>
         @endforeach    
     </tbody>

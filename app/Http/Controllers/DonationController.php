@@ -52,14 +52,15 @@ class DonationController extends Controller {
         $old_bi_pool_pledges = PledgeHistory::where('GUID', $user->guid)
                     ->where('campaign_type', '=', 'Annual')
                     ->leftJoin('regions', 'regions.id', '=', 'pledge_histories.region_id')
-                    ->selectRaw("yearcd, campaign_year_id, campaign_type, source, case when source = 'Pool' then regions.name else '' end, frequency, max(pledge) as pledge")
+                    ->selectRaw("yearcd, campaign_year_id, campaign_type, source, case when source = 'Pool' then regions.name else name1 end, 
+                                                            case when source = 'Pool' then '' else name2 end, frequency, max(pledge) as pledge")
                     ->groupBy(['yearcd', 'campaign_year_id', 'campaign_type', 'source', 'frequency']);
 
         $old_bi_pledges = PledgeHistory::where('GUID', $user->guid)
                         ->whereNotIn('campaign_type', ['Annual','Event'])
                         //->where('source','Non-Pool')
                         ->leftJoin('charities', 'charities.id', '=', 'pledge_histories.charity_id')
-                        ->selectRaw('yearcd, campaign_year_id, campaign_type, source, charities.charity_name as name, frequency, pledge')
+                        ->selectRaw('yearcd, campaign_year_id, campaign_type, source, name1, name2, frequency, pledge')
                         ->unionAll($old_bi_pool_pledges)
                         ->get();               
 
@@ -110,6 +111,7 @@ class DonationController extends Controller {
                             ->where('campaign_type', 'Annual')
                             ->where('yearcd', $request->yearcd)
                             ->where('frequency', $request->frequency)
+                            ->orderBy('name1')
                             ->get();
 
             $campaign_year = CampaignYear::where('calendar_year', $request->yearcd)->first();        

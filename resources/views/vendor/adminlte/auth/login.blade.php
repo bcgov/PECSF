@@ -21,6 +21,14 @@
 @section('auth_header', __('adminlte::adminlte.login_message'))
 
 @section('auth_body')
+
+    @if ($message = Session::get('error-psft'))
+    <div class="alert alert-danger alert-dismissible">
+        <a href="#" class="close" style="text-decoration: none;"  data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Login error!</strong> {{ $message }}
+    </div>
+    @endif
+
     <form action="{{ $login_url }}" method="post">
         @csrf
 
