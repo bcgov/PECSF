@@ -119,34 +119,36 @@ class MicrosoftGraphLoginController extends Controller
                 // To Retrieve "samaccountname" and "GUID" from "id_token"
                 $parsedToken = $this->parseToken($accessToken->getValues()['id_token']);
 
-                // find or create a new user
-                $isUser = User::where('azure_id', $user->getId())->first();
+                // Check where the authenicated user has record in PeopleSoft via  ODS's Employee table
+                $guid = property_exists($parsedToken, 'bcgovGUID') ? $parsedToken->bcgovGUID : null;
+
+                // find the Authenicated User by GUID 
+                $isUser = User::where('guid', $guid)->where('acctlock',0)->first();
+
                 if ($isUser) {
-                    if (!($isUser->guid)) {
-                        if (property_exists($parsedToken, 'bcgovGUID')) {
+
+                    if (!($isUser->azure_id)) {
+                            $isUser->azure_id = $user->getId();
                             $isUser->samaccountname = property_exists($parsedToken, 'samaccountname') ? $parsedToken->samaccountname : null;
-                            $isUser->guid = property_exists($parsedToken, 'bcgovGUID') ? $parsedToken->bcgovGUID : null;
+                            if (!(filter_var($isUser->email, FILTER_VALIDATE_EMAIL))) {
+                                $isUser->email = $user->getMail();
+                            }
                             $isUser->save();
-                        }
                     }
 
+                    $isUser->last_signon_at = now();
+                    $isUser->save();
+
+                    //Auth::login($isUser);
                     Auth::loginUsingId($isUser->id);
+                    $request->session()->regenerate();
+
+                    return redirect('/');
 
                 } else {
 
-                    $createUser = User::create([
-                        'name' => $user->getDisplayName(),
-                        'email' => $user->getMail(),
-                        'azure_id' => $user->getId(),
-                        'password' => Hash::make( random_bytes(26) ),
-                        'samaccountname' => property_exists($parsedToken, 'samaccountname') ? $parsedToken->samaccountname : null,
-                        'guid' => property_exists($parsedToken, 'bcgovGUID') ? $parsedToken->bcgovGUID : null,
-                    ]);
-
-                    //Auth::login($createUser);
-                    Auth::loginUsingId($createUser->id);
-
-                    $request->session()->regenerate();
+                    return redirect('/login')
+                        ->with('error-psft', 'You do not have active PeopleSoft HCM account.');
 
                 }
 
@@ -215,29 +217,6 @@ class MicrosoftGraphLoginController extends Controller
     {
         $base64Data = explode(".", $token)[1];
         return json_decode(base64_decode($base64Data));
-    }
-
-    private function assignSupervisorRole(User $user)
-    {
-
-        $role = 'Supervisor';
-
-        // To determine the login user whether is manager or not 
-        $ee = EmployeeDemo::whereRaw("REPLACE(guid,'-','') = ?",[$user->guid])->first();
-
-        if ($ee) {
-            $mgr = EmployeeDemo::where('manager_id', $ee->employee_id)->first();
-
-            if ($mgr) {
-                if (!($user->hasRole($role))) {
-                    $user->assignRole($role);
-                }
-            } else {
-                if ($user->hasRole($role)) {
-                    $user->removeRole($role);
-                }
-            }
-        }
     }
 
 }
