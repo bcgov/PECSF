@@ -15,7 +15,7 @@ class CompletedJobs extends Migration
     {
         Schema::create('completed_jobs', function (Blueprint $table) {
             $table->id();
-            $table->string('payload');
+            $table->text('payload');
             $table->string('attempts');
             $table->timestamps();
         });
