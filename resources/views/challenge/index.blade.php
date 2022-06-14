@@ -61,9 +61,50 @@
 
     </div>
 </div>
+
+<div class="card">
+    <div class="card-body">
+        <h5>Download Report</h5>
+        <form id="download_report" method="POST" enctype="multipart/form-data" action="{{ route("challege.download") }}" >
+            @csrf
+            <label>
+                Start Date
+                <select name="start_date">
+                    <option value="2020">2020</option>
+                    <option selected value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+               <!-- <input id="datepickerfrom" name="start_date" width="250" type="date" required /> -->
+
+                <span id="start_date_errors"></span>
+
+            </label>
+            <label>
+                <!--  End Date
+                  <input id="datepickerfrom" name="end_date" width="250" type="date" required />
+
+                  <select name="end_date">
+                      <option value="2020">2020</option>
+                      <option value="2020">2021</option>
+                      <option value="2020">2022</option>
+                  </select>
+                  <span id="end_date_errors"></span>-->
+            </label>
+
+            <br>
+           <input type="radio" style="position: relative;top: 2px;" name="sort" value="region" /> By Region<br>
+           <input type="radio" style="position: relative;top: 2px;" checked name="sort" value="organization" /> By Organization<br>
+            <input type="radio" style="position: relative;top: 2px;" name="sort" value="department" /> By Department<br>
+            <br>
+            <input type="submit" class="btn btn-primary" value="Download" />
+        </form>
+    </div>
+</div>
+
 @endsection
 @push('js')
 <script>
+
 
 
     $("select[name='year']").change(function(){
