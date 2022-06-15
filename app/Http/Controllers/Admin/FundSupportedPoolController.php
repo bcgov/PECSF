@@ -225,7 +225,9 @@ class FundSupportedPoolController extends Controller
                     }
                 }
             }
-
+        else{
+                $validator->errors()->add('region_id', 'You must include atleast one Charity.');
+            }
         });
 
         //run validation which will redirect on failure
