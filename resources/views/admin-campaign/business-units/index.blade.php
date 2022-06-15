@@ -27,13 +27,13 @@
 
         @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }} 
+                {{ $message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         @endif
-    
+
 		<table class="table table-bordered" id="bu-table" style="width:100%">
 			<thead>
 				<tr>
@@ -47,8 +47,8 @@
 			</thead>
 		</table>
 
-	</div>    
-</div>   
+	</div>
+</div>
 
 @include('admin-campaign.business-units.partials.model-create')
 @include('admin-campaign.business-units.partials.model-edit')
@@ -59,7 +59,7 @@
 
 @push('css')
 
-    
+
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
@@ -67,7 +67,7 @@
 	#bu-table_filter label {
 		text-align: right !important;
         padding-right: 10px;
-	} 
+	}
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
@@ -77,7 +77,7 @@
 
 
 @push('js')
- 
+
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
@@ -85,17 +85,17 @@
     <script>
     window.setTimeout(function() {
         $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove(); 
+            $(this).remove();
         });
     }, 3000);
 
     $(function() {
-        	
+
         $.ajaxSetup({
             headers: {
             'X-CSRF-TOKEN': '{{csrf_token()}}'
             }
-        }); 
+        });
 
         // Datatables
         var oTable = $('#bu-table').DataTable({
@@ -116,7 +116,7 @@
                 {data: 'name', name: 'name', className: "dt-nowrap" },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
                 {data: 'effdt', name: 'effdt'},
-                {data: 'notes', name: 'notes', className: 'editable', width: '30em'},
+                {data: 'notes', name: 'notes', className: 'editable', width: '30em', orderable: false},
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
             columnDefs: [
@@ -140,14 +140,14 @@
         })
 
         $(document).on("click", "#create-confirm-btn" , function(e) {
-		
+
             var form = $('#bu-create-model-form');
             var id = e.target.value;
-            
+
             info = 'Are you sure to create this record?';
             if (confirm(info))
             {
-                    
+
                 var fields = ['code', 'name', 'status', 'effdt', 'notes'];
                 $.each( fields, function( index, field_name ) {
                     $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
@@ -161,13 +161,13 @@
                     {
                         oTable.ajax.reload(null, false);	// reload datatables
                         $('#bu-create-modal').modal('hide');
-                        
+
                         var code = $("#bu-create-model-form [name='code']").val();
                         Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
                     },
                     error: function(response) {
                         if (response.status == 422) {
-                            
+
                             $.each(response.responseJSON.errors, function(field_name,error){
                                 $(document).find('#bu-create-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
                             })
@@ -175,11 +175,11 @@
                         console.log('Error');
                     }
                 });
-            
+
             };
         });
 
-        // Model -- Edit 
+        // Model -- Edit
     	$(document).on("click", ".edit-bu" , function(e) {
 			e.preventDefault();
 
@@ -202,7 +202,7 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) { 
+        function Toast( toast_title, toast_body, toast_class) {
             $(document).Toasts('create', {
                             class: toast_class,
                             title: toast_title,
@@ -214,15 +214,15 @@
 
         // Toast.fire({
         //                     icon: 'success',
-                            
+
         //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
         //                 });
 
         $(document).on("click", "#save-confirm-btn" , function(e) {
-		
+
             var form = $('#bu-edit-model-form');
             var id = $("#bu-edit-model-form [name='id']").val();
-            
+
             info = 'Confirm to update this record?';
             if (confirm(info))
             {
@@ -233,7 +233,7 @@
 
                 $.ajax({
                     method: "PUT",
-                    url:  '/settings/business-units/' + id, 
+                    url:  '/settings/business-units/' + id,
                     data: form.serialize(), // serializes the form's elements.
                     success: function(data)
                     {
@@ -242,11 +242,11 @@
 
                         var code = $("#bu-edit-model-form [name='code']").val();
                         Toast('Success', 'Region code ' + code +  ' was successfully updated.', 'bg-success' );
-                        
+
                     },
                     error: function(response) {
                         if (response.status == 422) {
-                            
+
                             $.each(response.responseJSON.errors, function(field_name,error){
                                 $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
                             })
@@ -254,11 +254,11 @@
                         console.log('Error');
                     }
                 });
-            
+
             };
         });
 
-        // Model -- Show 
+        // Model -- Show
     	$(document).on("click", ".show-bu" , function(e) {
 			e.preventDefault();
 
@@ -308,7 +308,7 @@
                     // Swal.fire('Saved!', '', '')
                     $.ajax({
                         method: "DELETE",
-                        url:  '/settings/business-units/' + id, 
+                        url:  '/settings/business-units/' + id,
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
