@@ -56,8 +56,8 @@ class DonorHistoryDataFromBI extends Command
 
         // $this->info("Update/Create - Business Unit");
         // $this->UpdateBusinessUnit();
-        $this->info("Update/Create - Region District");
-        $this->UpdateRegionalDistrict();
+        // $this->info("Update/Create - Region District");
+        // $this->UpdateRegionalDistrict();
         $this->info("Update/Create - Department");
         $this->UpdateDepartment();
 
@@ -68,7 +68,7 @@ class DonorHistoryDataFromBI extends Command
         $this->info("Update/Create - Donor By Department");
         $this->UpdateDonorByDepartment();
 
-        $this->ClearODSHistoryData();
+        // $this->ClearODSHistoryData();
 
         // Update the Task Audit log
         $task->end_time = Carbon::now();
@@ -173,6 +173,10 @@ class DonorHistoryDataFromBI extends Command
 
     protected function UpdateDonorByBusinessUnit()
     {
+
+        // Truncate Donar By Reggional District table
+        DonorByBusinessUnit::truncate();
+
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_ORG_BI_ENDPOINT'));
@@ -188,7 +192,6 @@ class DonorHistoryDataFromBI extends Command
                         DonorByBusinessUnit::updateOrCreate([
                             'business_unit_id' => $business_unit ? $business_unit->id : null,
                             'yearcd' => $row->yearcd,
-                        ], [
                             'business_unit_code' => $row->business_unit_code,
                             'dollars' => $row->dollars,
                             'donors' => $row->donors,
@@ -205,6 +208,10 @@ class DonorHistoryDataFromBI extends Command
 
     protected function UpdateDonorByRegionalDistrict()
     {
+
+        // Truncate Donar By Reggional District table
+        DonorByRegionalDistrict::truncate();
+
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_REG_DIST_BI_ENDPOINT'));
@@ -222,7 +229,6 @@ class DonorHistoryDataFromBI extends Command
                     DonorByRegionalDistrict::updateOrCreate([
                         'regional_district_id' => $regional_district ? $regional_district->id : null,
                         'yearcd' => $row->yearcd,
-                    ], [
                         'tgb_reg_district' => $row->tgb_reg_district,
                         'dollars' => $row->dollars,
                         'donors' => $row->donors,
@@ -237,6 +243,10 @@ class DonorHistoryDataFromBI extends Command
 
     protected function UpdateDonorByDepartment()
     {
+
+        // Truncate Donar By department table
+        DonorByDepartment::truncate();
+
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_DONORS_BY_DEPT_BI_ENDPOINT'));
@@ -251,11 +261,11 @@ class DonorHistoryDataFromBI extends Command
 
                     $department = Department::where('bi_department_id', $row->department_id)->first();
 
-                    DonorByDepartment::updateOrCreate([
+                    DonorByDepartment::Create([
                         'department_id' => $department ? $department->id : null,
                         'yearcd' => $row->yearcd,
-                    ], [
                         'bi_department_id' => $row->department_id,
+                        'dollars' => $row->dollars,
                         'donors' => $row->donors,
                     ]);
                 }

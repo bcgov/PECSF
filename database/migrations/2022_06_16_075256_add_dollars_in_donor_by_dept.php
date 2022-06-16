@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddDollarsInDonorByDept extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('donor_by_departments', function (Blueprint $table) {
+            //
+            //
+            $table->float('dollars')->after('donors');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('donor_by_departments', function (Blueprint $table) {
+            //
+            $table->dropColumn('dollars');
+        });
+    }
+}
