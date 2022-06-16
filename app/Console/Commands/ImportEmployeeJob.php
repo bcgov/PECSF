@@ -73,13 +73,18 @@ class ImportEmployeeJob extends Command
             ->orderBy('end_time', 'desc')->first();
         $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ;
 
-        $filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
+        //$filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
+        $filter = '';  // Disbaled the filter due to process timimg issue
 
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
             ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT').'?$count=true&$top=1'.'&$filter='.$filter);
 
         $row_count = json_decode($response->body())->{'@odata.count'};
+
+        $organization = \App\Models\Organization::where('code', 'GOV')->first();
+        $business_units = \App\Models\BusinessUnit::pluck('id','code')->toArray();
+        $regions = \App\Models\Region::pluck('id','code')->toArray();
 
         $size = 1000;
         for ($i = 0; $i <= $row_count / $size ; $i++) {
@@ -101,10 +106,6 @@ class ImportEmployeeJob extends Command
             if ($response->successful()) {
                 $data = json_decode($response->body())->value;
                 $batches = array_chunk($data, 1000);
-
-                $organization = \App\Models\Organization::where('code', 'GOV')->first();
-                $business_units = \App\Models\BusinessUnit::pluck('id','code')->toArray();
-                $regions = \App\Models\Region::pluck('id','code')->toArray();
 
                 foreach ($batches as $key => $batch) {
                     $this->info( '    -- each batch (1000) $key - '. $key );
