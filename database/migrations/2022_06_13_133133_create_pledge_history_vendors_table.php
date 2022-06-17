@@ -25,7 +25,7 @@ class CreatePledgeHistoryVendorsTable extends Migration
             $table->string('yearcd')->nullable();
             $table->timestamps();
 
-            $table->index(['tgb_reg_district', 'charity_bn', 'effdt']); 
+        //    $table->index(['tgb_reg_district', 'charity_bn', 'effdt']);
         });
     }
 

@@ -49376,3 +49376,24 @@ div.border-primary a {
   padding-left: 0;
   padding-top: 0;
 }
+
+.blue{
+    color:#1A5A96;
+}
+
+form .raised{
+    padding:15px;
+    background:#eee;
+    border-radius:5px;
+    border:#ddd 1px solid;
+    margin-bottom:30px;
+}
+
+.search_icon{
+    background: #fff url(/img/icons/search.png) no-repeat right 8px center !important;
+    background-size: 16px 16px !important;
+}
+
+.pointer{
+    cursor:pointer;
+}

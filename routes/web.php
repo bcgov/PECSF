@@ -86,6 +86,9 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
+    Route::get('/bank_deposit_form', [VolunteeringController::class, 'bank_deposit_form'])->name('bank_deposit_form');
+    Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('bank_deposit_form');
+
 });
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
