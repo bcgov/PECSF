@@ -10,7 +10,7 @@ class DonorByDepartment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bi_department_id', 'yearcd', 'donors', 'department_id'
+        'bi_department_id', 'yearcd', 'dollars', 'donors', 'department_id'
     ];
 
     public function department() {

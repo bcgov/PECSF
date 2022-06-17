@@ -72,33 +72,33 @@ class SyncUserProfile extends Command
     {
 
          // Get the latest success job's start time 
-        $last_job = ScheduleJobAudit::where('job_name', $this->signature)
-                        ->where('status','Completed')
-                        ->orderBy('end_time', 'desc')->first();
-        $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
+        // $last_job = ScheduleJobAudit::where('job_name', $this->signature)
+        //                 ->where('status','Completed')
+        //                 ->orderBy('end_time', 'desc')->first();
+        // $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
 
         $new_sync_at = Carbon::now();
 
         $employees = EmployeeJob::whereNotIn('guid', ['', ' '])
             ->whereNotIn('email', ['', ' '])
-            ->where(function ($query) use ($last_start_time) {
-                $query->where('date_updated', '>=', $last_start_time)
-                    ->orWhere('date_deleted', '>=', $last_start_time);
-            })
+            // ->where(function ($query) use ($last_start_time) {
+            //     $query->where('date_updated', '>=', $last_start_time)
+            //         ->orWhere('date_deleted', '>=', $last_start_time);
+            // })
             //->whereNotNull('date_updated')
             //->whereIn('employee_id',['105823', '060061', '107653',
             //'115637','131116','139238','145894','146113','152843','152921','163102'] )
             ->orderBy('emplid')
             ->orderBy('job_indicator','desc')      // Secondary, then Primary 
             ->orderBy('empl_rcd')
-            ->get(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir',
+            ->get(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir', 
                 'first_name', 'last_name', 'name', 'appointment_status', 'empl_ctg', 'job_indicator',
                 'date_updated', 'date_deleted']);
 
 
-        // Step 1 : Create and Update User Profile (no update on reporting to)
+        // Step 1 : Create and Update User Profile
         $this->info( now() );
-        $this->info('Step 1 - Create and Update User Profile (but no update on reporting to)' );
+        $this->info('Step 1 - Create and Update User Profile' );
 
         $organization = Organization::where('code', 'GOV')->first();
         $password = Hash::make(env('SYNC_USER_PROFILE_SECRET'));
@@ -109,19 +109,20 @@ class SyncUserProfile extends Command
         
             if ($user) {
                 if ($employee->email) {
-                    if ( strtolower(trim($user->email)) == strtolower(trim($employee->email)) )  {
-                        
-                        $user->acctlock = $employee->date_deleted ? true : false;
-                        $user->last_sync_at = $new_sync_at;
-                        $user->organization_id = $organization->id;
-                        $user->employee_job_id = $employee->id;
-                        $user->save();
-
-                    } else {
-
+                    if (!(strtolower(trim($user->email)) == strtolower(trim($employee->email))) )  {
                         $this->info('Step 1: User ' . $employee->email . ' - ' . 
                                 $employee->guid . ' has difference email address with same GUID.');
+                    }
 
+                    $acctlock = $employee->date_deleted ? true : false;
+
+                    if (!($user->acctlock == $acctlock and 
+                          $user->employee_job_id = $employee->id)) {
+
+                        $user->acctlock = $acctlock;
+                        $user->employee_job_id = $employee->id;
+                        $user->last_sync_at = $new_sync_at;
+                        $user->save();
                     }
                 }
             } else {
