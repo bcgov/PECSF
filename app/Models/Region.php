@@ -28,6 +28,7 @@ class Region extends Model
     public static function report($request){
         return Region::select(DB::raw('regions.id,regions.name, donor_by_regional_districts.donors,donor_by_regional_districts.dollars'))
             ->join("donor_by_regional_districts", "donor_by_regional_districts.regional_district_id", "=", "regions.id")
+            ->orderBy("donor_by_regional_districts.dollars","desc")
             ->where('donor_by_regional_districts.yearcd', "=", $request->start_date);
 
     }

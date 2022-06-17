@@ -109,7 +109,7 @@ class ChallengeController extends Controller
                 foreach ($charities as $charity) {
                     $donorTotal = $donorTotal + $charity->donors;
                     $dollarTotal = $dollarTotal + $charity->dollars;
-                   $rows[]=[$charity->name, $charity->donors, $charity->dollars];
+                   $rows[]=[$charity->name, $charity->donors, "$".number_format($charity->dollars,2)];
                 }
         }
         else if($request->sort == "department"){
@@ -130,7 +130,7 @@ class ChallengeController extends Controller
             foreach ($charities as $charity) {
                 $donorTotal = $donorTotal + $charity->donors;
                 $dollarTotal = $dollarTotal + $charity->dollars;
-               $rows[] = [$charity->name, $charity->donors, $charity->dollars] ;
+               $rows[] = [$charity->name, $charity->donors,"$".number_format($charity->dollars,2)] ;
             }
         }
 
@@ -159,7 +159,7 @@ class ChallengeController extends Controller
                 $file = fopen('php://output', 'w');
                 fputcsv($file, $row);
                 foreach ($charities as $charity) {
-                    fputcsv($file, [$charity->name, $charity->donors, $charity->dollars]);
+                    fputcsv($file, [$charity->name, $charity->donors, "$".number_format($charity->dollars,2)]);
                 }
                 fclose($file);
             };
@@ -180,7 +180,7 @@ class ChallengeController extends Controller
                 $file = fopen('php://output', 'w');
                 fputcsv($file, $row);
                 foreach ($charities as $charity) {
-                    fputcsv($file, [$charity->name, $charity->donors, $charity->dollars]);
+                    fputcsv($file, [$charity->name, $charity->donors, "$".number_format($charity->dollars,2)]);
                 }
                 fclose($file);
             };

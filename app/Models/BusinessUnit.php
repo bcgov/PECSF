@@ -32,6 +32,7 @@ class BusinessUnit extends Model
     public static function report($request){
                 return BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars'))
                     ->join("donor_by_business_units", "donor_by_business_units.business_unit_id", "=", "business_units.id")
+                    ->orderBy("donor_by_business_units.dollars","desc")
                     ->where('donor_by_business_units.yearcd', "=", $request->start_date);
     }
 
