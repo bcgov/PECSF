@@ -411,57 +411,33 @@ class CampaignPledgeController extends Controller
 
         $term = trim($request->q);
 
-    //     return $query->where( function($q) use($term) {
-    //         $q->whereRaw( "lower(users.name) like '%".$term."%'")
-    //            //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
-    //                ->orWhere( "employee_jobs.emplid", 'like', '%'.$term.'%');
-    //    })
-
-        $users = User::leftJoin('employee_jobs','users.employee_job_id','employee_jobs.id')
-                    ->leftJoin('regions', 'employee_jobs.region_id', 'regions.id')                   
-                    ->leftJoin('business_units', 'employee_jobs.business_unit_id', 'business_units.id')                   
-                    ->when($term, function($query) use($term) { 
-                        return $query->where( function($q) use($term) {
-                                  $q->whereRaw( "lower(users.name) like '%".$term."%'")
-                                   //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
-                                    ->orWhere( "employee_jobs.emplid", 'like', '%'.$term.'%');
-                           });
-                    })
-                    ->where('users.organization_id', $request->org_id)
-                    ->orderby('name','asc')
-                    ->limit(100)
-                    ->get(['users.id','users.name','users.email', 
-                        'employee_jobs.first_name', 'employee_jobs.last_name','employee_jobs.organization',
-                        'employee_jobs.emplid', 'employee_jobs.deptid', 'employee_jobs.dept_name',
-                        'business_units.name as bu_name', 'business_units.code as bu_code',
-                        'regions.name as region_name', 'regions.code as region_code', 
-                        ]
-                    );
-
-
-            // $users = user::leftJoin('employee_jobs','users.employee_job_id','employee_jobs.id')
-            //             ->select('users.id','users.name','users.email', 'employee_jobs.emplid')
-            //             ->where(function($query) use($term) {
-            //                 $query->whereRaw( "lower(users.name) like '%".$term."%'")
-            //                     //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
-            //                       ->orWhere( "employee_jobs.emplid", 'like', '%'.$term.'%');
-            //             })
-            //             ->orderby('users.name','asc')
-            //             ->limit(100)->get();
-
-        //  }
+        $users = User::where('users.organization_id', $request->org_id)
+             ->when($term, function($query) use($term) { 
+                return $query->where( function($q) use($term) {
+                      $q->whereRaw( "lower(users.name) like '%".$term."%'")
+                       //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
+                        ->orWhere( "users.emplid", 'like', '%'.$term.'%');
+               });
+            })
+            ->with('primary_job')
+            ->with('primary_job.region') 
+            ->with('primary_job.bus_unit') 
+            ->limit(50)
+            ->orderby('users.name','asc')
+            ->get();
 
          $formatted_users = [];
          foreach ($users as $user) {
-            $formatted_users[] = ['id' => $user->id, 'text' => $user->name,
-                    'email' =>  $user->email, 
+            $formatted_users[] = ['id' => $user->id, 
+                    'text' => $user->name . ' ('. $user->emplid .')',
+                    'email' =>  $user->primary_job->email, 
                     'emplid' => $user->emplid,  
-                    'first_name' =>  $user->first_name, 
-                    'last_name' =>  $user->last_name, 
-                    'department' =>  $user->dept_name ? $user->dept_name . ' ('. $user->deptid . ')' : '',               
-                    'business_unit' => $user->bu_name ? $user->bu_name . ' ('.$user->bu_code . ')' : '',                                        
-                    'region' => $user->region_name ? $user->region_name . ' (' . $user->region_code . ')' : '',                    
-                    'organization' => $user->organization,
+                    'first_name' =>  $user->primary_job->first_name ?? '', 
+                    'last_name' =>  $user->primary_job->last_name ?? '', 
+                    'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
+                    'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
+                    'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',                    
+                    'organization' => $user->primary_job->organization_name ?? '',
             ];
         }
 
