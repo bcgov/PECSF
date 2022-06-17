@@ -49397,3 +49397,9 @@ form .raised{
 .pointer{
     cursor:pointer;
 }
+
+select{
+    padding:8px;
+    font-weight:bold;
+    width:100%;
+}

@@ -93,8 +93,8 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
-    Route::post('/download', [ChallengeController::class, 'download'])->name('download');
-
+    Route::get('/download', [ChallengeController::class, 'download'])->name('download');
+    Route::get('/preview', [ChallengeController::class, 'preview'])->name('preview');
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');

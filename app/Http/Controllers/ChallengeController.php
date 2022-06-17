@@ -33,8 +33,26 @@ class ChallengeController extends Controller
             ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".$year))
             ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
             ->groupBy("employee_jobs.business_unit_id")
-            ->orderBy("participation_rate","desc")
-        ->paginate(10);
+            ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
+        ->limit(5)
+        ->get();
+
+        if($request->sort == "ASC"){
+            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+                ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+                ->where('donor_by_business_units.yearcd',"=",$year)
+                ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".$year))
+                ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
+                ->groupBy("employee_jobs.business_unit_id")
+                ->count();
+        }
+        else{
+            $count = 1 ;
+        }
+
+
+
 
         foreach($charities as $index => $charity){
             $previousYear = BusinessUnit::select(DB::raw('business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
@@ -45,7 +63,7 @@ class ChallengeController extends Controller
                 ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".($year-1)))
                 ->where('business_units.id',"=",$charity->id)
                 ->groupBy("employee_jobs.business_unit_id")
-                ->orderBy("participation_rate","desc")
+                ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
                ->first();
 
             if(!empty($previousYear))
@@ -63,7 +81,7 @@ class ChallengeController extends Controller
 
         }
 
-        return view('challenge.index', compact('charities','year'));
+        return view('challenge.index', compact('charities','year','request','count'));
     }
 
     /**
@@ -78,6 +96,48 @@ class ChallengeController extends Controller
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
+    public function preview(Request $request)
+    {
+        $dollarTotal = 0;
+        $donorTotal = 0;
+        if($request->sort == "region"){
+            $charities = Region::report($request)->get();
+            $row = ["Organization Name", "Donors", "Dollars"];
+            $rows[] = $row;
+
+
+                foreach ($charities as $charity) {
+                    $donorTotal = $donorTotal + $charity->donors;
+                    $dollarTotal = $dollarTotal + $charity->dollars;
+                   $rows[]=[$charity->name, $charity->donors, $charity->dollars];
+                }
+        }
+        else if($request->sort == "department"){
+            $charities = Department::report($request)->get();
+            $row = ["Organization Name", "Dept ID", "Department Name","Donors"];
+            $rows[] = $row;
+                foreach ($charities as $charity) {
+                    $donorTotal = $donorTotal + $charity->donors;
+
+                    $rows[] = [$charity->business_unit_name, $charity->bi_department_id, $charity->department_name,$charity->donors];
+                }
+        }
+        else{
+            $charities = BusinessUnit::report($request)->get();
+            $row = ["Organization Name", "Donors", "Dollars"];
+            $rows[] = $row;
+
+            foreach ($charities as $charity) {
+                $donorTotal = $donorTotal + $charity->donors;
+                $dollarTotal = $dollarTotal + $charity->dollars;
+               $rows[] = [$charity->name, $charity->donors, $charity->dollars] ;
+            }
+        }
+
+        return view('challenge.preview', compact('rows','request','donorTotal','dollarTotal'));
+
+
+    }
     public function download(Request $request)
     {
 
@@ -91,10 +151,7 @@ class ChallengeController extends Controller
                 "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
                 "Expires" => "0"
             );
-            $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars'))
-                ->join("donor_by_business_units", "donor_by_business_units.business_unit_id", "=", "business_units.id")
-                ->where('donor_by_business_units.yearcd', "=", $request->start_date)
-                ->get();
+            $charities = BusinessUnit::report($request)->get();
 
             $row = ["Organization Name", "Donors", "Dollars"];
 
@@ -115,10 +172,7 @@ class ChallengeController extends Controller
                 "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
                 "Expires" => "0"
             );
-            $charities = Region::select(DB::raw('regions.id,regions.name, donor_by_regional_districts.donors,donor_by_regional_districts.dollars'))
-                ->join("donor_by_regional_districts", "donor_by_regional_districts.regional_district_id", "=", "regions.id")
-                ->where('donor_by_regional_districts.yearcd', "=", $request->start_date)
-                ->get();
+            $charities = Region::report($request)->get();
 
             $row = ["Organization Name", "Donors", "Dollars"];
 
@@ -140,10 +194,7 @@ else if($request->sort == "department"){
         "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
         "Expires" => "0"
     );
-    $charities = Department::select(DB::raw('departments.id,departments.bi_department_id,departments.business_unit_name,departments.department_name, donor_by_departments.donors'))
-        ->join("donor_by_departments", "donor_by_departments.department_id", "=", "departments.id")
-        ->where('donor_by_departments.yearcd', "=", $request->start_date)
-        ->get();
+    $charities = Department::report($request)->get();
 
     $row = ["Organization Name", "Dept ID", "Department Name","Donors"];
 

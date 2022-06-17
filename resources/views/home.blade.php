@@ -112,7 +112,7 @@
                         </table>
                         <p></p>
                         <div class="text-center">
-                            <a class="btn btn-primary" href="/challenge" role="button">View Full Leaderboard</a>
+                            <a class="btn btn-primary" href="/challenge" role="button">Go to challenge page</a>
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
     </div>
 </div>
 
-  
+
 @endsection
 
 @push('js')

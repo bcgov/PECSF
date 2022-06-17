@@ -272,7 +272,7 @@
                         <label class="blue" for="charity_selection_2">Donor Choice</label>
                     </div>
                     <div class="form-group  col-md-6">
-                      <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><h5 class="blue float-right">View CRA Charity List</h5></a>
+                      <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
                     </div>
                 </div>
 
@@ -312,7 +312,7 @@
                             </thead>
                             <tbody>
                             <tr class="attachment" id="attachment1">
-                                <td>1</td>
+                                <td></td>
                                 <td><span class="filename"></span></td>
                                 <td><label class="btn btn-primary" for="attachment_input_1"><input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />Add</label></td>
                                 <td></td>
