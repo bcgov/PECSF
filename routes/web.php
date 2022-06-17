@@ -86,12 +86,15 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
+    Route::get('/bank_deposit_form', [VolunteeringController::class, 'bank_deposit_form'])->name('bank_deposit_form');
+    Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('bank_deposit_form');
+
 });
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
-    Route::post('/download', [ChallengeController::class, 'download'])->name('download');
-
+    Route::get('/download', [ChallengeController::class, 'download'])->name('download');
+    Route::get('/preview', [ChallengeController::class, 'preview'])->name('preview');
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');

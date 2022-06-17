@@ -239,7 +239,19 @@ return [
             'text' => 'Volunteering',
             'url' => '/volunteering',
             'icon' => 'volunteer',
-            'active' => ['volunteering/*']
+            'active' => ['volunteering/*'],
+            'submenu' => [
+                [
+                    'text' => 'Dashboard',
+                    'icon' => 'nav-icon far fa-calendar-alt',
+                    'url'  => '/volunteering',
+                ],
+                [
+                    'text' => 'Forms',
+                    'icon' => 'nav-icon far fa-calendar-alt',
+                    'url'  => '/volunteering/bank_deposit_form',
+                ],
+                ]
         ],
         [
             'text' => 'Challenge',
