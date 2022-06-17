@@ -21,5 +21,31 @@ class EmployeeJob extends Model
          'date_updated', 'date_deleted', 'created_by_id', 'updated_by_id'
     ];
 
+    protected $appends = [
+        'organization_name',        // Organization under the Org Chart 
+    ];
+
+    public function region() 
+    {
+        return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();
+    }
+
+    public function bus_unit() 
+    {
+        return $this->belongsTo(BusinessUnit::Class, 'business_unit_id', 'id')->withDefault();
+    }
+
+    public function organization() 
+    {
+        return $this->belongsTo(Organization::Class, 'organization_id', 'id')->withDefault();
+    }
+
+    public function getOrganizationNameAttribute()
+    {
+        return $this->organization;
+    }
+
+
+
 
 }

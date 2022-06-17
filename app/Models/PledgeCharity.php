@@ -24,7 +24,7 @@ class PledgeCharity extends Pivot
     }
 
     public function charity() {
-        return $this->belongsTo('App\Models\Charity');
+        return $this->belongsTo('App\Models\Charity')->withDefault();
     }
 /* 
     public function setChequePendingAttribute($value) {

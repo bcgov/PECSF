@@ -1,0 +1,584 @@
+@extends('adminlte::page')
+
+@section('content_header')
+
+@include('admin-pledge.partials.tabs')
+
+    <div class="d-flex mt-3">
+        <h4>Create a Campaign Pledge</h4>
+        <div class="flex-fill"></div>
+    </div>
+@endsection
+
+@section('content')
+
+
+<div class="card pb-4">
+
+    {{-- Wizard Progress bar (stepper) --}}
+    <div class="card-header border-0 p-0">
+        <div class=" card-timeline px-2 border-0">
+            <ul class="bs4-step-tracking">
+                <li class="active">
+                    <div><i class="fas fa-bars fa-2xl"></i></div>Donor
+                </li>
+                <li class="">
+                    <div><i class="fas fa-random fa-2xl"></i></div>Pool or Non-Pool
+                </li>
+                <li class="">
+                    <div><i class="fas fa-dollar-sign fa-2xl"></i></div>Frequency and Amount
+                </li>
+                <li class="">
+                    <div><i class="fas fa-check fa-2xl"></i></div>Summary and Submit
+                </li>
+            </ul>
+        </div>
+    </div>
+
+  <div class="card-body py-0">
+    <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}" 
+            id="admin-pldege-campaign-form" method="POST">
+        @csrf
+        @isset($pledge)
+            @method('PUT')
+            <input type="hidden" id="pledge_id" name="pledge_id" value="{{ $pledge->id }}">
+        @endisset
+        <input type="hidden" id="step" name="step" value="">
+        
+        {{-- Nav Items --}}
+        <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
+            <li class="nav-item">
+              <a class=" nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" data-id="1" role="tab" aria-controls="nav-profile" aria-selected="false">Donor</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" id="nav-selection-tab" data-toggle="tab" href="#nav-selection" data-id="0" role="tab" aria-controls="nav-selection" aria-selected="true">Selection</a>
+            </li>
+            <li class="nav-item">
+              <a class=" nav-link" id="nav-amount-tab" data-toggle="tab" href="#nav-amount" data-id="1" role="tab" aria-controls="nav-amount" aria-selected="false">Frequency and Amount</a>
+            </li>
+            <li class="nav-item">  
+              <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="2" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
+            </li>
+        </ul>
+    
+        <div class="tab-content pb-3 px-1" id="nav-tabContent">
+            <div class="tab-pane fade step show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                <p>Step 1 -  Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. qui sapiente accusamus tattooed echo park.
+                </p>
+
+                @include('admin-pledge.campaign.partials.profile')
+                
+            </div>
+            <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
+                
+                <p class=" pb-3">Step 2 - Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui 
+                </p>
+
+                @include('admin-pledge.campaign.partials.method-selection')
+
+            </div>
+            <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
+                <p>Step 3 -  Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
+                </p>
+                @include('admin-pledge.campaign.partials.amount')
+            </div>
+            <div class="tab-pane fade step" id="nav-summary" role="tabpanel" aria-labelledby="nav-summary-tab">
+                <div id="summary-page">
+                Step 4 - Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh mi whatever gluten-free, carles pitchfork biodiesel fixie etsy retro mlkshk vice blog. Scenester cred you probably haven't heard of them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu synth chambray yr.
+                </div>
+            </div>
+            {{-- <div class="tab-pane fade step" id="nav-contact-1" role="tabpanel" aria-labelledby="nav-contact-tab">
+                Step 4 - Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh mi whatever gluten-free, carles pitchfork biodiesel fixie etsy retro mlkshk vice blog. Scenester cred you probably haven't heard of them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu synth chambray yr.
+            </div> --}}
+        </div>
+
+
+        <div class="p-2 ">
+            <button type="button" class="action back btn  btn-outline-secondary"
+                style="display: none">Back</button>
+            <button type="button" class="action next btn  btn-outline-primary float-right"
+                >Next</button>
+            <button type="submit" class="action submit btn  btn-outline-success float-right"
+                style="display: none">Submit</button>
+        </div>
+
+        {{-- <div class="container">
+          <div class="col">
+            <div class="card mt-3">
+              <div class="card-header font-weight-bold">My Bootstrap 5 multi-step-form</div>
+                    
+                <div class="card-body p-5 step" style="">Step 1</div>
+
+                    <div class="card-body p-5 step" style="display: none;">Step 2</div>
+                    <div class="card-body p-5 step" style="display: none;">Step 3</div>
+                    <div class="card-body p-5 step" style="display: none;">Step 4</div>
+                    <div class="card-body p-5 step" style="display: none;">Step 5</div>
+                    
+                    <div class="card-footer">
+                        <button type="button" class="action back btn btn-sm btn-outline-secondary"
+                            style="display: none">Back</button>
+                        <button type="button" class="action next btn btn-sm btn-outline-primary float-right"
+                            >Next</button>
+                        <button type="button" class="action submit btn btn-sm btn-outline-success float-right"
+                            style="display: none">Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div> --}}
+
+
+    </form>
+  </div>
+</div>
+@endsection
+
+@push('css')
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
+<style>
+    .select2-selection--multiple{
+        overflow: hidden !important;
+        height: auto !important;
+        min-height: 38px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+    }
+
+    /* tracking */
+.bs4-step-tracking {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: #878788;
+    padding-left: 0px;
+    margin-top: 30px
+}
+
+.bs4-step-tracking li {
+    list-style-type: none;
+    font-size: 13px;
+    width: 25%;   /* change from 25 to 20% */
+    float: left;
+    position: relative;
+    font-weight: 400;
+    color: #878788;
+    text-align: center;
+    z-index: 100; 
+}
+
+.bs4-step-tracking li:first-child:before {
+    margin-left: 15px !important;
+    padding-left: 11px !important;
+    text-align: left !important
+}
+
+.bs4-step-tracking li:last-child:before {
+    margin-right: 5px !important;
+    padding-right: 11px !important;
+    text-align: right !important
+}
+
+.bs4-step-tracking li> div {
+    color: #fff; 
+    width: 38px;
+    text-align: center;
+    line-height: 38px;
+    display: block;
+    font-size: 18px;
+    background: #878788;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.bs4-step-tracking li:after {
+    content: '';
+    width: 150%;
+    height: 2px;
+    background: #878788 ;
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 20px;
+    /* z-index: -1; */
+     z-index: -2; 
+}
+
+.bs4-step-tracking li:first-child:after {
+    left: 50%;
+}
+
+.bs4-step-tracking li:last-child:after {
+    left: 0% !important;
+    width: 50% !important
+}
+
+.bs4-step-tracking li.active {
+    font-weight: bold;
+    color: #007bff; /* #dc3545 */
+}
+
+.bs4-step-tracking li.active>div {
+    background: #007bff;
+}
+
+.bs4-step-tracking li.active:after {
+    background: #007bff;
+}
+
+    #nav-tab li:not(.active)  a{
+        pointer-events: none;
+        color: #555;
+    }
+
+    #nav-tab li a.active {
+        pointer-events: none;
+        color: #000;
+    }
+
+
+    nav.nav a.nav-link.active {
+        text-decoration: underline !important;
+        font-weight: bold;
+    }
+
+
+    .summary-card .form-control[disabled] {
+        border: 0;
+        background-color: rgb(252, 252, 252) ;
+    } 
+
+    .amount-selection input[type=radio] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .amount-selection .form-check {
+        padding-top: 4px ;
+    }
+
+    .amount-selection .form-check-label {
+        padding-left: 8px;
+    }
+
+</style>
+
+@endpush
+
+@push('js')
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+
+
+<script type="x-tmpl" id="charity-tmpl">
+    @include('admin-pledge.campaign.partials.charities', ['index' => 'XXX'] )
+</script>
+
+<script>
+
+$(function () {
+
+    // For keep tracking the current page in wizard
+    var step = 1;
+   
+    $(".next").on("click", function() {
+        var nextstep = false;
+        if (step == 1) {
+            nextstep = checkForm();
+        } else if (step == 2) {
+            nextstep = checkForm();
+        } else if (step == 3) {
+            nextstep = checkForm();
+        } else {
+            nextstep = checkForm();
+            // nextstep = true;
+        }
+
+        if (nextstep == true) {
+            if (step < $(".step").length) {
+                $(".step").show();
+                $(".step")
+                    .not(":eq(" + step++ + ")")
+                    .hide();
+                stepProgress(step);
+                $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+            }
+            hideButtons(step);
+        }
+    });
+
+    // ON CLICK BACK BUTTON
+    $(".back").on("click", function() {
+        if (step > 1) {
+            step = step - 2;
+            $(".next").trigger("click");
+        }
+        hideButtons(step);
+    });
+
+    // CALCULATE PROGRESS BAR
+    stepProgress = function(currstep) {
+
+        console.log(currstep);
+
+        var percent = parseFloat(100 / $(".step").length) * currstep;
+        percent = percent.toFixed();
+        // $(".progress-bar")
+        //     .css("width", percent + "%")
+        //     .html(percent + "%");
+        //
+        $('.bs4-step-tracking li').map( function (index, item) { 
+            if (index < currstep) {
+                $(item).addClass('active');   
+            } else {
+                $(item).removeClass('active');   
+            }
+        });
+    };
+
+    // DISPLAY AND HIDE "NEXT", "BACK" AND "SUMBIT" BUTTONS
+    hideButtons = function(step) {
+        var limit = parseInt($(".step").length);
+        $(".action").hide();
+        if (step < limit) {
+            $(".next").show();
+        }
+        if (step > 1) {
+            $(".back").show();
+        }
+        if (step == limit) {
+            $(".next").hide();
+            $(".submit").show();
+        }
+    };
+
+    // Validation when click on 'next' button
+    function checkForm() {
+        
+        var valid = true;
+            // array for the fields in the form (for clean up previous errors)
+            var fields = [];
+            if (step == 1) {
+                fields = ['campaign_year_id','organization_id', 'user_id'];
+            }
+            if (step == 2) {
+                fields = ['pool_option', 'pool_id'];
+            }
+            if (step == 3) {
+                fields = ['pay_period_amount_other', 'one_time_amount_other'];
+            }
+
+            $.each( fields, function( index, field_name ) {
+                $('#admin-pldege-campaign-form [name='+ field_name +']').nextAll('span.text-danger').remove();
+                $('#admin-pldege-campaign-form [name='+ field_name +']').removeClass('is-invalid');
+            });
+            $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
+
+            var form = $('#admin-pldege-campaign-form');
+            $('#admin-pldege-campaign-form input[name=step]').val( step );
+
+            $.ajax({
+                method: "POST",
+                url:  '/admin-pledge/campaign/' , 
+                //data: form.serialize(), 
+                data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
+                async: false,
+                cache: false,
+                timeout: 30000,
+                success: function(data)
+                {
+                    // console.log(data ); 
+                    if (step == 3)  {
+                            $('#summary-page').html(data); 
+                    }
+                },
+                error: function(response) {
+                    valid = false;
+                    if (response.status == 422) {   
+                        $.each(response.responseJSON.errors, function(field_name,error){
+                            if ( field_name.includes('.') ) {   
+                                items = field_name.split(".");
+                                pos = Number(items[ items.length -1 ]);
+                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
+                            } else {
+                                $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                            }
+                        })
+                    }
+                    console.log('Error');
+                }
+            });
+
+        return valid;
+    }
+
+    // On page 1 - reset Donor/User Profile
+    function reset_user_profile_info() {
+        $('#user_first_name').val('');
+        $('#user_last_name').val('');
+        $('#user_email').val('');
+        $('#user_emplid').val('');
+        $('#user_dept').val('');
+        $('#user_bu').val('');
+        $('#user_org').val('');
+        $('#user_region').val('');  
+    }
+
+    $('#organization_id').change( function() {
+        reset_user_profile_info();
+        $('#user_id').val(null).trigger('change');
+    });
+
+    $('#user_id').select2({
+        allowClear: true,
+        placeholder: "Select an attribute",
+        ajax: {
+            url: '{{ route('admin-pledge.administrators.users') }}'
+            , dataType: 'json'
+            , delay: 250
+            , data: function(params) {
+                var query = {
+                     'org_id' : $('#organization_id').val(),
+                    'q': params.term
+                , }
+                return query;
+            }
+            , processResults: function(data) {
+                return {
+                    results: data
+                    };
+            }
+            , cache: false
+        }
+    });
+
+    $('#user_id').on('select2:select', function (e) {
+        var data = e.params.data;
+            
+        reset_user_profile_info();
+        if (data.emplid) {
+            $('#user_first_name').val( data.first_name );
+            $('#user_last_name').val( data.last_name );
+            $('#user_email').val( data.email);
+            $('#user_emplid').val( data.emplid );
+            $('#user_dept').val( data.department );
+            $('#user_bu').val( data.business_unit );
+            $('#user_org').val( data.organization);
+            $('#user_region').val(data.region);
+        }
+    });
+
+    $('#user_id').on('select2:unselect', function (e) {
+        var data = e.params.data;
+            reset_user_profile_info();            
+    });
+
+    // Page 2
+    // function to initialize select2 dynamic
+    function initializeSelect2(selectElementObj) {
+        selectElementObj.select2({
+            placeholder: 'select charity',
+            allowClear: true,
+            ajax: {
+                url: '/settings/fund-supported-pools/charities'
+                , dataType: 'json'
+                , delay: 250
+                , data: function(params) {
+                    var query = {
+                        'q': params.term
+                    , }
+                    return query;
+                }
+                , processResults: function(data) {
+                    return {
+                        results: data
+                        };
+                }
+                , cache: false
+            }
+        });
+    }
+
+    //onload: call the above function 
+    $("select[name='charities[]']").each(function() {
+        initializeSelect2($(this));
+    });
+
+    // variable for keep track detail lines 
+    let row_number = {{ (isset($pledge)) ? $pledge->distinct_charities->count() + 1 : 1 }};
+
+    $("#add_row").click(function(e){
+        e.preventDefault();
+        let new_row_number = row_number - 1;
+
+        text = $("#charity-tmpl").html();
+        text = text.replace(/XXX/g, row_number);
+        text = text.replace(/YYY/g, row_number + 1);
+        $('#charity' + row_number).html( text );
+
+        // Initialize select2 on new add row
+        $('#charity' + row_number).find("select[name='charities[]']").each(function() {
+            initializeSelect2($(this));
+        });
+
+        $('#charity-table').append('<tr id="charity' + (row_number + 1) + '"></tr>');
+        row_number++;
+
+    });
+
+   
+
+    $(document).on("click", "div.delete_this_row" , function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            text: 'Are you sure to delete this line ?'  ,
+            // icon: 'question'
+            //showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            //denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                // Swal.fire('Saved!', '', '')
+                //$(this).parent().parent().parent().parent().remove();
+                el = '#' + $(this).attr('data-id');
+                $(el).remove();
+
+            }
+        })
+    });
+
+    // Page 3 -- Amount
+    $("input[name=pay_period_amount_other]").focus(function() {
+        $("input[name=pay_period_amount][value='']").prop('checked', true);
+    });
+
+    $("input[name=pay_period_amount]").change(function() {
+        $("input[name=pay_period_amount_other]").val('');
+    });
+
+    $("input[name=one_time_amount_other]").focus(function() {
+        $("input[name=one_time_amount][value='']").prop('checked', true);
+    });
+
+    $("input[name=one_time_amount]").change(function() {
+        $("input[name=one_time_amount_other]").val('');
+    });
+
+});
+
+</script>
+
+@endpush

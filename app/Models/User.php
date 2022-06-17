@@ -67,8 +67,9 @@ class User extends Authenticatable
         return $this->belongsTo(Organization::Class, 'organization_id', 'id');
     }
 
-    public function primaryJob() 
+    public function primary_job() 
     {
-        return $this->belongsTo(EmployeeJob::Class, 'employee_job_id', 'id');
+        return $this->belongsTo(EmployeeJob::Class, 'employee_job_id', 'id')->withDefault();
     }
+    
 }

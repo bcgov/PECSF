@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 
 use App\Http\Controllers\Admin\OrganizationController;
-// use App\Http\Controllers\Admin\CampaignPledgeController;
+use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
@@ -141,13 +141,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
 Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
 
-
     // Pledge Administration - Campaign Pledge
-    // Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
-    Route::get('/campaign', function() {
-        return "to be developed";
-    })->name('campaign.index');
-
+    Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
+    Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
 
 });
 

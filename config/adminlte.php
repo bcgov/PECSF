@@ -262,7 +262,7 @@ return [
                 [
                     'text' => 'Pledge Administration',
                     'icon' => 'nav-icon far fa-calendar-alt',
-                    'url'  => '/settings/pledge',
+                    'url'  => '/admin-pledge/campaign',
                 ],
                 [
                     'text' => 'Campaign Set-up',

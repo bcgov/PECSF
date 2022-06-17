@@ -19,15 +19,37 @@ class Pledge extends Model
         // 'amount',
         'one_time_amount',
         'pay_period_amount',
-        'goal_amount'
+        'goal_amount',
+        'created_by_id',
+        'updated_by_id',
+
     ];
 
     public function charities() {
         return $this->hasMany(PledgeCharity::class);
     }
 
+    public function distinct_charities() {
+
+        if ($this->one_time_amount > 0) {
+            return $this->charities()->where('frequency', 'one-time');
+        } else {
+            return $this->charities()->where('frequency', 'bi-weekly');
+        }
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    public function created_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'created_by_id')->withDefault();
+    }
+
+    public function updated_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'updated_by_id')->withDefault();
     }
 
     public function markAsGenerated() {
@@ -42,7 +64,10 @@ class Pledge extends Model
     }
 
     public function fund_supported_pool() {
-        return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id');
+        
+            return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id')->withDefault();
+        
+        
     }
 
     public function organization() {

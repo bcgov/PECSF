@@ -28,7 +28,7 @@ class FSPool extends Model
 
     public function region() 
     {
-        return $this->belongsTo(Region::Class, 'region_id', 'id');
+        return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();
     }
 
     public function charities() 
