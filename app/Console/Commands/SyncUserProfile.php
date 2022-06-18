@@ -117,10 +117,12 @@ class SyncUserProfile extends Command
                     $acctlock = $employee->date_deleted ? true : false;
 
                     if (!($user->acctlock == $acctlock and 
+                          $user->emplid == $employee->emplid and
                           $user->employee_job_id = $employee->id)) {
 
                         $user->acctlock = $acctlock;
                         $user->employee_job_id = $employee->id;
+                        $user->emplid = $employee->emplid;
                         $user->last_sync_at = $new_sync_at;
                         $user->save();
                     }
@@ -139,6 +141,7 @@ class SyncUserProfile extends Command
                         $user->last_sync_at = $new_sync_at;
                         $user->organization_id = $organization->id;
                         $user->employee_job_id = $employee->id;
+                        $user->emplid = $employee->emplid;
                         $user->save();
                     }
 
@@ -152,6 +155,8 @@ class SyncUserProfile extends Command
                         'last_sync_at' => $new_sync_at,
                         'organization_id' => $organization->id,
                         'employee_job_id' => $employee->id,
+                        'emplid' => $employee->emplid,
+
                     ]);
                 }
 

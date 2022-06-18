@@ -62,10 +62,24 @@
          {{-- id="pills-contact-tab"  --}}
           href="{{ route('settings.administrators.index') }}"  aria-controls="pills-contact" aria-selected="false">Adminstrators</a>
       </li>
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.charity-list-maintenance') ? 'active' : '' }}"
-           {{-- id="pills-contact-tab"  --}}
            href="{{ route('settings.charity-list-maintenance.index') }}"  aria-controls="pills-contact" aria-selected="false">CRA List Maintenance</a>
+    </li> --}}
+
+    <li class="nav-item dropdown">
+        @php $active =  ( str_contains(Route::current()->getName(), 'settings.charities') ||
+                          str_contains(Route::current()->getName(), 'charity-list-maintenance')
+                        ) ? 'active' : ''
+        @endphp
+        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">CRA Charities</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.charities') ? 'active' : ''}}"
+                href="{{ route('settings.charities.index') }}">Update Charity</a>
+          
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.charity-list-maintenance') ? 'active' : ''}}"
+                href="{{ route('settings.charity-list-maintenance.index') }}">CRA List Maintenance</a>
+        </div>
     </li>
 
   </ul>
