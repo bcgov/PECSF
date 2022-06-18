@@ -257,13 +257,45 @@
 <span style="padding:20px;">
     By choosing this option your donation will support the current Fund Supported Pool of regional programs. Click on the tiles to learn about the programs in each regional pool.
 </span>
+                    </div>
+
+                        @foreach( $pools as $pool )
+                            <div class="form-group col-md-2">
+
+                                <div class="card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+                                    {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
+                                             width="50" height="50"> --}}
+                                    <div class="card-body m-1 p-2">
+
+                                        <img class="col-md-10" style="height:80px;float-left;" src="img/uploads/{{$pool->image}}"/>
+
+                                        <div class="form-check float-right">
+                                            <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->id }}"
+                                                   value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
+
+                                        </div>
+                                        <br>
+
+                                        <label style="font-weight:bold;font-size:12px;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
+                                            {{ $pool->region->name }}
+                                        </label>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        @endforeach
+
+
                         <span class="department_errors">
                        @error('department')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
 
 
-                    </div>
+
                 </div>
 
                 <div class="form-row">
