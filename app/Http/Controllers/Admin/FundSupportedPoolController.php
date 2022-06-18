@@ -663,6 +663,7 @@ class FundSupportedPoolController extends Controller
             ->when( $request->q , function ($q) use($request) {
                 return $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($request->q) . "%'");
             })
+            ->where('charity_status','Registered')
             ->limit(100)
             ->get();
 
