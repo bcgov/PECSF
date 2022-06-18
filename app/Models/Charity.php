@@ -24,11 +24,24 @@ class Charity extends Model
         'postal_code',
         'ongoing_program',
         'url',
+
+        'use_alt_address', 'alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_country',
+        'alt_postal_code',
+        'financial_contact_name', 'financial_contact_title', 'financial_contact_email',
+        'created_by_id', 'updated_by_id',
+        
     ];
 
     protected $casts = [
         'effective_date_of_status' => 'date'
     ];
+
+    protected $appends = [
+        'designation_name',  
+        'category_name',
+
+    ];
+
 
     public const DESIGNATION_LIST = 
     [
@@ -100,16 +113,27 @@ class Charity extends Model
         
     }
  
-    public function designation_name() {
- 
+    public function getDesignationNameAttribute()
+    {
+        //return $this->designation_name();
         return array_key_exists($this->designation_code, self::DESIGNATION_LIST) ? self::DESIGNATION_LIST[$this->designation_code] : '';
- 
-    }
- 
-    public function category_name() {
-         
-        return array_key_exists($this->category_code, self::CATEGORY_LIST) ? self::CATEGORY_LIST[$this->category_code] : '';
- 
     }
 
+    public function getCategoryNameAttribute()
+    {
+        // return $this->category_name();
+        return array_key_exists($this->category_code, self::CATEGORY_LIST) ? self::CATEGORY_LIST[$this->category_code] : '';
+    }
+
+
+    public function created_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'created_by_id')->withDefault();
+    }
+
+    public function updated_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'updated_by_id')->withDefault();
+    }
+   
 }

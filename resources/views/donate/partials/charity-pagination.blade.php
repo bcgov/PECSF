@@ -27,7 +27,7 @@
                     </span>
                     <small class="text-secondary">
                         {{-- $charity->designation_name() --}} 
-                        {{ $charity->category_name() }} | 
+                        {{ $charity->category_name }} | 
                         {{ $charity->city }} | 
                         {{ $charity->province }} | 
                         {{ $charity->country }}

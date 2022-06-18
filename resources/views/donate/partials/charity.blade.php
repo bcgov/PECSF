@@ -22,7 +22,7 @@
     </div>
     <div class="row">
         <div class="col col-sm-4">Designation:</div>
-        <div class="col col-sm-8 font-weight-bold">{{ $charity->designation_name() }}</div>
+        <div class="col col-sm-8 font-weight-bold">{{ $charity->designation_name }}</div>
     </div>
     {{--  
     <div class="row">
@@ -32,7 +32,7 @@
     --}}
     <div class="row">
         <div class="col col-sm-4">Category:</div>
-        <div class="col col-sm-8 font-weight-bold">{{ $charity->category_name() }}</div>
+        <div class="col col-sm-8 font-weight-bold">{{ $charity->category_name }}</div>
     </div>
     <div class="row">
         <div class="col col-sm-4">Address:</div>
