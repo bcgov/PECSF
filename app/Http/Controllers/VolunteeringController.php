@@ -3,14 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VolunteerRegistrationRequest;
+use App\Models\BusinessUnit;
+use App\Models\CampaignYear;
 use App\Models\FSPool;
 use App\Models\Organization;
+use App\Models\Region;
+use App\Models\Department;
 use App\Models\User;
 use App\Models\Pledge;
 use App\Models\Volunteer;
 use Illuminate\Support\Facades\Auth;
 
 
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 use Illuminate\Http\Request;
@@ -38,16 +44,33 @@ class VolunteeringController extends Controller
     }
 
     public function bank_deposit_form(Request $request) {
-        $pools = FSPool::where('start_date', '=', function ($query) {
-            $query->selectRaw('max(start_date)')
-                ->from('f_s_pools as A')
-                ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                ->where('A.start_date', '<=', today());
-        })
-            ->where('status', 'A')
-            ->get();
-        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-
-        return view('volunteering.forms',compact('pools','regional_pool_id'));
+        if($request->ajax())
+        {
+            $validator = Validator::make(request()->all(), [
+                'organization_code'         => 'required',
+            ],[
+                'organization_code' => 'The Organization Code is required.',
+            ]);
+            $validator->validate();
+        }
+        else{
+            $pools = FSPool::where('start_date', '=', function ($query) {
+                $query->selectRaw('max(start_date)')
+                    ->from('f_s_pools as A')
+                    ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                    ->where('A.start_date', '<=', today());
+            })
+                ->where('status', 'A')
+                ->get();
+            $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
+            $business_units = BusinessUnit::all();
+            $regions = Region::all();
+            $departments = Department::all();
+            $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+                ->first();
+            $current_user = User::where('id', Auth::id() )->first();
+            return view('volunteering.forms',compact('campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        }
     }
+
 }

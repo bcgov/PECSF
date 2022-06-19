@@ -18,13 +18,13 @@
         <div class="card-body">
         <h3 class="blue">PECSF Bank Deposit Form</h3>
 
-            <form id="create_pool" action="{{ route("settings.fund-supported-pools.store") }}" method="POST"
+            <form id="bank_deposit_form" action="{{ route("volunteering.bank_deposit_form") }}" method="POST"
                   enctype="multipart/form-data">
-                @csrf
+
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="organization_code">Organization Code</label>
-                         <input type="text" class="form-control" id="organization_code" placeholder="">
+                         <input type="text" class="form-control errors" id="organization_code" placeholder="">
 
                         <span class="organization_code_errors">
                           @error('organization_code')
@@ -36,7 +36,9 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="form_submitter">Form Submitter</label>
-                        <div id="form_submitter">Employee A</div>
+                        <div id="form_submitter">{{$current_user->name}}</div>
+                        <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
+
                         <span class="start_date_errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -46,7 +48,8 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="campaign_year">Campaign Year</label>
-                        <div id="campaign_year">Employee A</div>
+                        <div id="campaign_year">{{$campaign_year->calendar_year}}</div>
+                        <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
                         <span class="campaign_year_errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -149,7 +152,11 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="region">*Region:</label>
-                        <input class="form-control search_icon" type="text" id="region" name="region" />
+                        <select class="form-control search_icon" id="region" name="region">
+                            @foreach($regions as $region)
+                            <option value="{{$region->id}}">{{$region->name}}</option>
+                            @endforeach
+                        </select>
                         <span class="region_errors">
                        @error('region')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -160,7 +167,11 @@
 
                     <div class="form-group col-md-3">
                         <label for="sub_type">Business Unit:</label>
-                        <input class="form-control search_icon" type="text" id="business_unit" name="business_unit">
+                        <select class="form-control search_icon" id="business_unit" name="business_unit">
+                            @foreach($business_units as $bu)
+                                <option value="{{$bu->id}}">{{$bu->name}}</option>
+                            @endforeach
+                        </select>
                         <span class="business_unit_errors">
                        @error('business_unit')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -171,7 +182,11 @@
 
                     <div class="form-group col-md-3">
                         <label for="sub_type">Department:</label>
-                        <input class="form-control search_icon" type="text" id="department" name="department" />
+                        <select class="form-control search_icon" id="department" name="business_unit">
+                            @foreach($departments as $d)
+                                <option value="{{$d->id}}">{{$d->department_name}}</option>
+                            @endforeach
+                        </select>
                         <span class="department_errors">
                        @error('department')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -359,12 +374,21 @@
                     </div>
                 </div>
 
-
+                <input type="submit" class="btn btn-primary" value="Submit" />
+                <br>
+                <br>
+                <p>Once information has been submitted to PECSF Administration, no further changes are<br> possible through eForm. Please contact pecsf@gov.bc.ca</p>
+                <h5>Freedom of Information and Protection of Privacy Act</h5>
+                <p>
+                    Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting your charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.
+                    Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or PECSF@gov.bc.ca.
+                </p>
             </form>
 
         </div>
     </div>
     @push('css')
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 
         <style>
@@ -394,6 +418,7 @@
 
 
     @push('js')
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script type="x-tmpl" id="organization-tmpl">
             @include('volunteering.partials.add-organization', ['index' => 'XXX'] )
@@ -408,6 +433,8 @@
             $("body").on("change","[name='attachments[]']",function(){
                 $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
             });
+
+            $("select").select2();
 
             let row_number = 0;
             $("#add_row").click(function(e){
@@ -430,6 +457,69 @@
             $("body").on("click",".remove",function(e){
                 e.preventDefault();
                 $(this).parents("tr").remove();
+            });
+
+            $("#bank_deposit_form").submit(function(e)
+            {
+                e.preventDefault();
+                var form = document.getElementById("create_pool");
+                var formData = new FormData();
+                $("select").each(function(){
+                    if($(this).val().length > 1){
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                });
+                $("input").each(function(){
+                    if($(this).attr('type') != "submit"){
+                        if($(this).val().length > 1) {
+                            formData.append($(this).attr("name"), $(this).val());
+                        }
+                    }
+                });
+                $("textarea").each(function(){
+                    if($(this).val().length > 1) {
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                });
+
+                $(this).fadeTo("slow",0.2);
+                $.ajax({
+                    url: "{{ route("volunteering.bank_deposit_form") }}",
+                    type:"POST",
+                    data: formData,
+                    headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                    processData: false,
+                    cache: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success:function(response){
+                        $(this).fadeTo("slow",1);
+                        $('.errors').html("");
+                        window.location = response[0];
+                        console.log(response);
+                    },
+                    error: function(response) {
+                        $('.errors').html("");
+
+                        if(response.responseJSON.errors){
+                            errors = response.responseJSON.errors;
+                            for(const prop in response.responseJSON.errors){
+                                count = prop.substring(prop.indexOf(".")+1);
+                                tag = prop.substring(0,prop.indexOf("."))
+
+                                error = errors[prop][0].split(".");
+                                error = error[0] + error[1].substring(1,error[1].length);
+                                error = error.replace("_"," ");
+
+                                $("#charity"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>')
+                                $("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>')
+                            }
+                        }
+                        $(".invalid-feedback").css("display","block");
+                        $("#bank_deposit_form").fadeTo("slow",1);
+                    },
+                });
+
             });
 
         </script>
