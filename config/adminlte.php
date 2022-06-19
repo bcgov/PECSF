@@ -249,7 +249,7 @@ return [
                 [
                     'text' => 'Forms',
                     'icon' => 'nav-icon far fa-calendar-alt',
-                    'url'  => '/volunteering/bank_deposit_form',
+                    'url'  => '/bank_deposit_form',
                 ],
                 ]
         ],

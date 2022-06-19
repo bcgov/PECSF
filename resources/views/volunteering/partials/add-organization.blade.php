@@ -25,7 +25,7 @@
             <div class="form-group col-md-4">
                 <label for="sub_type">Donation Percent:</label>
                 <input class="form-control" type="text" id="donation_percent" name="donation_percent[]">
-                <span class="donation_percent">
+                <span class="donation_percent_errors">
                        @error('donation_percent.'.$index)
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -35,7 +35,7 @@
             <div class="form-group col-md-12">
                 <label for="sub_type">Specific Community Or Initiative:</label>
                 <input class="form-control" type="text" id="specific_community_or_initiative" name="specific_community_or_initiative[]" />
-                <span class="specific_community_or_initiative">
+                <span class="specific_community_or_initiative_errors">
                        @error('specific_community_or_initiative.'.$index)
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror

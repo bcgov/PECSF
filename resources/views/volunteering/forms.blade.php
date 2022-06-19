@@ -18,7 +18,7 @@
         <div class="card-body">
         <h3 class="blue">PECSF Bank Deposit Form</h3>
 
-            <form id="bank_deposit_form" action="{{ route("volunteering.bank_deposit_form") }}" method="POST"
+            <form id="bank_deposit_form" action="{{ route("bank_deposit_form") }}" method="POST"
                   enctype="multipart/form-data">
 
                 <div class="form-row">
@@ -39,7 +39,7 @@
                         <div id="form_submitter">{{$current_user->name}}</div>
                         <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
 
-                        <span class="start_date_errors">
+                        <span class="form_submitter_errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -129,6 +129,11 @@
         <input class="form-control" type="text" name="description" id="description" />
     </div>
     <span>*Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
+    <span class="description_errors">
+                       @error('description')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
 </div>
 
                 <div class="form-row">
@@ -266,8 +271,14 @@
 
                 <div class="form-row">
                     <div class="form-group col-md-12">
-                        <input type="radio" id="charity_selection_1" name="charity_selection" />
+                        <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
                         <label class="blue" for="charity_selection_1">Fund Supported Pool</label>
+                        <span class="charity_selection_errors">
+                       @error('charity_selection')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                            @enderror
+                        </span>
+
                         <br>
 <span style="padding:20px;">
     By choosing this option your donation will support the current Fund Supported Pool of regional programs. Click on the tiles to learn about the programs in each regional pool.
@@ -303,19 +314,11 @@
                             </div>
                         @endforeach
 
-
-                        <span class="department_errors">
-                       @error('department')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-
-
-
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <input type="radio" id="charity_selection_2" name="charity_selection" />
+                        <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
                         <label class="blue" for="charity_selection_2">Donor Choice</label>
                     </div>
                     <div class="form-group  col-md-6">
@@ -339,6 +342,11 @@
                 <div class="form-row">
                     <div class="form-group col-md-12">
                      <h3 class="blue">Attachment</h3>
+                        <span class="attachment_errors">
+                       @error('attachments')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                            @enderror
+                        </span>
                     </div>
                 </div>
 
@@ -359,7 +367,13 @@
                             </thead>
                             <tbody>
                             <tr class="attachment" id="attachment1">
-                                <td></td>
+                                <td>
+                                    <span class="attachment_errors">
+                       @error('attachment.0')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+                                </td>
                                 <td><span class="filename"></span></td>
                                 <td><label class="btn btn-primary" for="attachment_input_1"><input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />Add</label></td>
                                 <td></td>
@@ -484,7 +498,7 @@
 
                 $(this).fadeTo("slow",0.2);
                 $.ajax({
-                    url: "{{ route("volunteering.bank_deposit_form") }}",
+                    url: "{{ route("bank_deposit_form") }}",
                     type:"POST",
                     data: formData,
                     headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
@@ -505,14 +519,13 @@
                             errors = response.responseJSON.errors;
                             for(const prop in response.responseJSON.errors){
                                 count = prop.substring(prop.indexOf(".")+1);
-                                tag = prop.substring(0,prop.indexOf("."))
-
+                                tag = prop.substring(0,prop.indexOf("."));
                                 error = errors[prop][0].split(".");
                                 error = error[0] + error[1].substring(1,error[1].length);
                                 error = error.replace("_"," ");
-
-                                $("#charity"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>')
-                                $("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>')
+                                $("#attachment"+(parseInt(count)+1)).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                                $("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                                $("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>');
                             }
                         }
                         $(".invalid-feedback").css("display","block");

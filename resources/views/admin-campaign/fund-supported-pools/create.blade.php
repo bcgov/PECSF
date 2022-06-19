@@ -170,10 +170,6 @@
 
     $(document).ready(function()
     {
-
-
-
-
         $("#create_pool").submit(function(e)
         {
             e.preventDefault();
