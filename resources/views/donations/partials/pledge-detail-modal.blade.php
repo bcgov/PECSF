@@ -10,7 +10,11 @@
 </div>    
 <div class="row">
     <div class="col-4 text-right">
-        <p class="font-weight-bold">Bi-weekly payroll deduction</p> 
+          @if ($frequency == 'One-Time')
+            <p class="font-weight-bold">One Time Payroll Deduction</p> 
+          @else
+            <p class="font-weight-bold">Bi-weekly payroll Deduction</p> 
+          @endif
       </div>
       <div class="col-1">
         <p>${{ number_format($pledge_amt,2) }}</p>

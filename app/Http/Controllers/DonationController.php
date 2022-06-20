@@ -117,13 +117,15 @@ class DonationController extends Controller {
             $campaign_year = CampaignYear::where('calendar_year', $request->yearcd)->first();        
 
             $year = $request->yearcd;
+            $frequency = $request->frequency;
             $pledge_amt = $old_pledges->first()->pledge;
-            $number_of_periods = $campaign_year->number_of_periods;
-            $total_amount = $pledge_amt * $number_of_periods;
+            //  $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
+            $number_of_periods = $request->frequency == 'One-Time' ? 1 : $campaign_year->number_of_periods;
+            $total_amount = $request->frequency == 'One-Time' ? $pledge_amt : $pledge_amt * $number_of_periods;
             $pool_name = $old_pledges->first()->source == "Pool" ? $old_pledges->first()->region->name : '';
 
             return view('donations.partials.bi-pledge-detail-modal', 
-                    compact('year', 'pool_name', 'pledge_amt', 'number_of_periods', 'total_amount', 'old_pledges') )->render();
+                    compact('year', 'frequency', 'pool_name', 'pledge_amt', 'number_of_periods', 'total_amount', 'old_pledges') )->render();
 
             
         } else {
