@@ -123,8 +123,10 @@
             "searching": true,
             processing: true,
             serverSide: true,
+            // "deferRender": true,
+            // "bSortClasses": false,
             select: true,
-            fixedHeader: true,
+                        fixedHeader: true,
             // 'order': [[0, 'asc']],
             ajax: {
                 url: '{!! route('settings.charities.index') !!}',
@@ -136,10 +138,10 @@
                 {data: 'charity_name',  },
                 {data: 'charity_status',  },
                 {data: 'effdt', },
-                {data: 'designation_code' },
-                {data: 'category_code' },
+                {data: 'designation_code',  },
+                {data: 'category_code',  },
                 {data: 'province',   },
-                {data: 'country',  },
+                {data: 'country', },
                 {data: 'action', name: 'action', orderable: false, searchable: false},
 
             ],
@@ -148,6 +150,34 @@
                     },
             ]
         });
+
+        function delay(callback, ms) {
+          var timer = 0;
+          return function() {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+              callback.apply(context, args);
+            }, ms || 0);
+          };
+        }
+
+        // Grab the datatables filter input box and alter how it is bound to events
+        $("#charity-table_filter input")
+            .unbind() // Unbind previous default bindings
+            .bind("keyup", delay(function(e) { // Bind our desired behavior
+                if ($(this).val().length > 0 ) {
+                    oTable.search(this.value).draw();
+                } else {
+                    oTable.search("").draw();
+                }
+                return;
+            },500))
+            .bind("search", delay(function(e) { // Bind our desired behavior
+                    oTable.search(this.value).draw();
+                return;
+            },500));
+            
 
         // Model for creating new charity
         $('#charity-create-modal').on('show.bs.modal', function (e) {
