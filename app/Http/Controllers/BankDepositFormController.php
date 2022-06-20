@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Auth;
 
 class BankDepositFormController extends Controller
 {
-    public function index() {$pools = FSPool::where('start_date', '=', function ($query) {
+    public function index()
+    {
+
+        $pools = FSPool::where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
