@@ -34,8 +34,7 @@ class ChallengeController extends Controller
             ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
             ->groupBy("employee_jobs.business_unit_id")
             ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
-        ->limit(5)
-        ->get();
+        ->paginate(10);
 
         if($request->sort == "ASC"){
             $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
@@ -50,9 +49,6 @@ class ChallengeController extends Controller
         else{
             $count = 1 ;
         }
-
-
-
 
         foreach($charities as $index => $charity){
             $previousYear = BusinessUnit::select(DB::raw('business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
@@ -78,7 +74,6 @@ class ChallengeController extends Controller
                 $charities[$index]->previous_donors = "No Data";
                 $charities[$index]->change = "No Data";
             }
-
         }
 
         return view('challenge.index', compact('charities','year','request','count'));

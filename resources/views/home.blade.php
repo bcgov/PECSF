@@ -103,10 +103,9 @@
                             <tr>
                                 <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
                                 <td>{{$charity['name']}}</td>
-                                <td>{{$charity['participation_rate']}}%</td>
-                                <td>{{$charity['final_participation_rate']}}%</td>
-                                <td>{{$charity['total_donors']}}</td>
-                                <td>${{number_format($charity['total_donation'])}}</td>
+                                <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
+                                <td>{{$charity['donors']}}</td>
+                                <td>${{$charity['dollars']}}</td>
                             </tr>
                             @endforeach
                         </table>

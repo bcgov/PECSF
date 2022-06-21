@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessUnit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,21 +24,67 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $charities = [
-            ['name'=> "BC Pension Corporation", 'total_donation' => 85023, 'total_donors' => 1050, 'participation_rate' => 94.3, 'final_participation_rate' => 87, 'change' => 7.3],
-            ['name'=> "BC Securities Commission", 'total_donation' => 76201, 'total_donors' => 860, 'participation_rate' => 26.5, 'final_participation_rate' => 73.5, 'change' => -47],
-            ['name'=> "Community Living BC", 'total_donation' => 63212, 'total_donors' => 822, 'participation_rate' => 58, 'final_participation_rate' => 42, 'change' => 16],
-            ['name'=> "Destination BC Corporatio", 'total_donation' => 51212, 'total_donors' => 700, 'participation_rate' => 94.3, 'final_participation_rate' => 87, 'change' => 7.3],
-            ['name'=> "Elections BC", 'total_donation' => 50900, 'total_donors' => 650, 'participation_rate' => 26.5, 'final_participation_rate' => 73.5, 'change' => -47],
-            ['name'=> "Emergency Management BC", 'total_donation' => 49021, 'total_donors' => 649, 'participation_rate' => 58, 'final_participation_rate' => 42, 'change' => 16],
-            ['name'=> "Environmental Assessment Office", 'total_donation' => 43000, 'total_donors' => 575, 'participation_rate' => 94.3, 'final_participation_rate' => 87, 'change' => 7.3],
-            ['name'=> "Forest Practices Board", 'total_donation' => 43000, 'total_donors' => 566, 'participation_rate' => 26.5, 'final_participation_rate' => 73.5, 'change' => -47],
-            ['name'=> "Government Communications & Public Engagement", 'total_donation' => 43000, 'total_donors' => 504, 'participation_rate' => 58, 'final_participation_rate' => 42, 'change' => 16],
-            ['name'=> "Legislative Assembly", 'total_donation' => 43000, 'total_donors' => 504, 'participation_rate' => 94.3, 'final_participation_rate' => 87, 'change' => 7.3],
-        ];
-        
+        if(isset($request->year)){
+            $year = $request->year;
+        }
+        else{
+            $date = Carbon::now()->subYear();
+            $year = $date->format("Y");
+        }
+
+        $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+            ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+            ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+            ->where('donor_by_business_units.yearcd',"=",$year)
+            ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".$year))
+            ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
+            ->groupBy("employee_jobs.business_unit_id")
+            ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
+            ->limit(5)
+            ->get();
+
+        if($request->sort == "ASC"){
+            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+                ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+                ->where('donor_by_business_units.yearcd',"=",$year)
+                ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".$year))
+                ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
+                ->groupBy("employee_jobs.business_unit_id")
+                ->count();
+        }
+        else{
+            $count = 1 ;
+        }
+
+        foreach($charities as $index => $charity){
+            $previousYear = BusinessUnit::select(DB::raw('business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+                ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+                ->where('donor_by_business_units.yearcd',"=",($year-1))
+                ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".($year-1)))
+                ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".($year-1)))
+                ->where('business_units.id',"=",$charity->id)
+                ->groupBy("employee_jobs.business_unit_id")
+                ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
+                ->first();
+
+            if(!empty($previousYear))
+            {
+                $charities[$index]->previous_participation_rate = $previousYear->participation_rate;
+                $charities[$index]->previous_donors = $previousYear->donors;
+                $charities[$index]->change = ($charity->participation_rate*100) - $previousYear->participation_rate;
+            }
+            else
+            {
+                $charities[$index]->previous_participation_rate = "No Data";
+                $charities[$index]->previous_donors = "No Data";
+                $charities[$index]->change = "No Data";
+            }
+        }
+
         return view('home' , compact('charities'));
     }
 }
