@@ -238,7 +238,7 @@ return [
         [
             'text' => 'Volunteering',
             'url' => '/volunteering',
-            'icon' => 'volunteer',
+            'icon' => 'nav-icon fas fa-hands-helping',
             'active' => ['volunteering/*'],
             'submenu' => [
                 [

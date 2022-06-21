@@ -1,6 +1,6 @@
 <div class="card m-0">
     <div class="card-header bg-light">
-        <p class="h5">Pay Period Deduction Amount</p>
+        <p class="h5">Bi-weekly (pay period) Deduction Amount</p>
     </diV>
     <div class="card-body ">
 
@@ -60,7 +60,7 @@
 
 <div class="card m-0">
     <div class="card-header bg-light">
-        <p class="h5">One Time Deduction Amount</p>
+        <p class="h5">One-time Deduction Amount</p>
     </diV>
     <div class="card-body">
 

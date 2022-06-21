@@ -91,8 +91,10 @@
                             <td>{{$pledge->campaign_type }}</td>
                             {{-- <td class="text-left">{{ $pledge->source == 'Pool' ? $pledge->region->name : $pledge->charity->charity_name }} </td> --}}
                             <td >
-                                <div>{{ $pledge->name1 ?? '' }}</div> 
-                                <div>{{ $pledge->name2 ?? '' }}</div>
+                                @if ($pledge->source == 'Pool')
+                                     <div>{{ $pledge->name1 ?? '' }}</div> 
+                                    <div>{{ $pledge->name2 ?? '' }}</div> 
+                                @endif
                             </td>
                             <td>{{$pledge->frequency}} </td>
                             <td class="text-right">${{ 

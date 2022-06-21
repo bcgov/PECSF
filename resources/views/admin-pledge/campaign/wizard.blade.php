@@ -63,23 +63,28 @@
     
         <div class="tab-content pb-3 px-1" id="nav-tabContent">
             <div class="tab-pane fade step show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                <p>Step 1 -  Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. qui sapiente accusamus tattooed echo park.
-                </p>
+                <div class="pl-2 font-weight-bold">Step 1 -  Select donor</div>
+                    <ul class="ml-2 pt-1">
+                        <li>Enter the employee’s organization.</li>
+                        <li>Enter the employee’s ID.</li>
+                    </ul>
 
                 @include('admin-pledge.campaign.partials.profile')
                 
             </div>
             <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
                 
-                <p class=" pb-3">Step 2 - Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui 
-                </p>
+                <div class="pl-2 font-weight-bold">Step 2 - Select preferred method for choosing charities</div>
+                <div class="pl-5">Choose a regional Fund Supported Pool or the CRA charity list option </div>
+            
 
                 @include('admin-pledge.campaign.partials.method-selection')
 
             </div>
             <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
-                <p>Step 3 -  Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
-                </p>
+                <div class="pl-2 font-weight-bold">Step 3 -  Choose the frequency and amount for deductions</div>
+                <p class="pl-5"> Choose a bi-weekly or one-time deduction amount. If deduction is a one-time, ensure to select none under bi-weekly.</p>
+
                 @include('admin-pledge.campaign.partials.amount')
             </div>
             <div class="tab-pane fade step" id="nav-summary" role="tabpanel" aria-labelledby="nav-summary-tab">
@@ -441,7 +446,7 @@ $(function () {
 
     $('#user_id').select2({
         allowClear: true,
-        placeholder: "Select an attribute",
+        placeholder: "Type employee ID",
         ajax: {
             url: '{{ route('admin-pledge.administrators.users') }}'
             , dataType: 'json'
