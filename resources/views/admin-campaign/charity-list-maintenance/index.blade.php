@@ -64,34 +64,7 @@
         </div>
 
     </div>
-        <div class="card">
-            <div class="card-body">
-                <h5>Search for CRA Charity Entries</h5>
-                <form id="charity-search">
-                    <label for="organization_name">
-                        Charity CRA Organization Name<br>
-                        <input type="text" style="width:300px" class="form-control " name="organization_name"/>
-                    </label>
-                    <span style="width:25px;display:inline-block;"></span>
-                    <label for="organization_name">
-                        Charity CRA Business Number<br>
-                        <input type="text" style="width:300px" class="form-control " name="business_number"/>
-                    </label>
-                </form>
-        <table class="table table-bordered" id="charity-table" style="width:100%">
-            <thead>
-            <tr>
-                <th>Charity CRA Organization Name</th>
-                <th>Charity CRA Business Number</th>
-                <th>Charity Information</th>
-            </tr>
-            </thead>
-            <tbody id="charity-table-body">
-            @include('admin-campaign.charity-list-maintenance.table')
-            </tbody>
-        </table>
-            </div>
-        </div>
+
 
 @endsection
 

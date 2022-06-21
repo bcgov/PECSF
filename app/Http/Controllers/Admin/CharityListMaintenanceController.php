@@ -45,35 +45,15 @@ class CharityListMaintenanceController extends Controller
     {
 
         if($request->ajax()) {
-
-            $charities = Charity::select('charities.*');
-
-            if(strlen($request->organization_name) > 2){
-                $charities = $charities->where('charity_name', 'LIKE', $request->organization_name . '%');
-            }
-
-            if(strlen($request->organization_name) > 2 && strlen($request->business_number) > 2){
-                $charities = $charities->orWhere('registration_number', 'LIKE', $request->business_number."%");
-            }
-            else if(strlen($request->business_number) > 2){
-                $charities = $charities->where('registration_number', 'LIKE', $request->business_number."%");
-            }
-
-          $charities = $charities->paginate(10);
-
-            if(empty($charities)){
-                $charities = Charity::paginate(10);
-            }
         return response()->view('admin-campaign.charity-list-maintenance.table',compact('charities'));
         }
 
-        $charities = Charity::paginate(10);
         $jobs = count(Jobs::all()) > 0 ? Jobs::all() : [];
         $completed_jobs = CompletedJobs::all();
         $failed_jobs = FailedJobs::all();
 
         // load the view and pass the sharks
-        return view('admin-campaign.charity-list-maintenance.index',compact('jobs','failed_jobs','charities','completed_jobs'));
+        return view('admin-campaign.charity-list-maintenance.index',compact('jobs','failed_jobs','completed_jobs'));
     }
 
     public function store(Request $request)

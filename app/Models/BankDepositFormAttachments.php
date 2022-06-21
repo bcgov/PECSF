@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class BankDepositFormAttachments extends Model
 {
     use HasFactory;
+
+
+    function form(){
+        $this->belongsTo(BankDepositForm::class);
+    }
+
 }
