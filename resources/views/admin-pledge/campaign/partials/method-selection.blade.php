@@ -5,7 +5,7 @@
                 <input data-toggle="collapse" data-target="#method-selection-1" type="radio" 
                   name="pool_option" id="pool-option-1" value="P" class="custom-control-input" 
                       {{ $pool_option == "P" ? 'checked' : '' }}/>
-                <label class="custom-control-label" for="pool-option-1">Select a Regional Charity Pool</label>
+                <label class="custom-control-label" for="pool-option-1">Select a Regional Fund Supported Pool</label>
             </div>
         </div>
 
@@ -16,7 +16,7 @@
                     <div class="form-group col-md-6">
                         <label for="pool_id">Fund Supported Pool</label>
                         <select class="form-control" name="pool_id" id="pool_id">
-                            <option value="" selected>-- choose charity --</option>
+                            <option value="" selected>Choose a pool</option>
                             @foreach ($fspools as $fspool) 
                                 <option value="{{ $fspool->id }}"
                                     @if (isset($pledge) && $pool_option == "P")
