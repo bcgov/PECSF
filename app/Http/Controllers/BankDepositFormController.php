@@ -143,7 +143,7 @@ class BankDepositFormController extends Controller
                 'bank_deposit_form_id' => $form->id
             ]);
         }
-        
+
         echo  json_encode(array(route('bank_deposit_form')));
     }
 

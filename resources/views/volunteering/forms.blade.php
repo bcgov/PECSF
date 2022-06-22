@@ -70,7 +70,10 @@
                     <div class="form-group col-md-3">
                         <label for="event_type">Event Type:</label>
                         <select class="form-control" type="text" id="event_type" name="event_type">
-                        <option value="test">test</option>
+                            <option value="Cash One-Time Donation">Cash One-Time Donation</option>
+                            <option value="Cheque One-Time Donation">Cheque One-Time Donation</option>
+                            <option value="Fundraiser">Fundraiser</option>
+                            <option value="Gaming">Gaming</option>
                         </select>
                         <span class="event_type_errors errors">
                        @error('form_submitter')
@@ -81,7 +84,7 @@
                     </div>
                         <div class="form-group col-md-3">
                             <label for="sub_type">Sub Type:</label>
-                            <select class="form-control" type="text" id="sub_type" name="sub_type">
+                            <select class="form-control" type="text" id="sub_type" name="sub_type" disabled>
                                 <option value="test">test</option>
 
                             </select>
@@ -431,6 +434,22 @@
         </script>
 
         <script>
+
+            $("[name='event_type']").change(function(){
+                $("#sub_type").attr("disabled",false);
+
+                if($(this).val()=="Fundraiser"){
+                    $("#sub_type").html('<option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
+                }
+                else if($(this).val()=="Gaming"){
+                    $("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option>');
+                }
+                else{
+                    $("#sub_type").html('<option value="false">Disabled</option>');
+                    $("#sub_type").attr("disabled",true);;
+                }
+                $("select").select2();
+            });
 
             $("body").on("change","[name='attachments[]']",function(){
                 $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
