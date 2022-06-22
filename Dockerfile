@@ -19,6 +19,7 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y openssl zip unzip 
     wget \
     vim 
 
+RUN apt-get update && apt-get install -y procps
 RUN apt install ca-certificates apt-transport-https wget gnupg -y
 RUN wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
@@ -31,14 +32,19 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring
 WORKDIR /app
 COPY . /app
 
+# JP add 2022-06-22 -- copy the start script and additional php setting file from repo to container
+COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
+COPY ./start.sh /usr/local/bin/start
+
 RUN composer update --ignore-platform-reqs
 RUN php artisan config:clear
 
 EXPOSE 8000
 
 RUN chgrp -R 0 /app && \
+    chmod +x /usr/local/bin/start && \
     chmod -R g=u /app
 USER 1001
 
-
-CMD php artisan serve --host=0.0.0.0 --port=8000
+#CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["/usr/local/bin/start"]
