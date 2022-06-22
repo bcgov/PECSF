@@ -10,11 +10,11 @@
 <p class="mt-5 font-weight-bold text-center"><b>Thank you, {{Auth::user()->name}} for your generous donation to PECSF. <br>
 Every contribution makes a huge impact in your community</b></p>
 <p class=' mt-5'>Please Note all PECSF payroll deductions will automatically show on your T4 received each spring. <br> Should you require an additional copy, click the button below.</p>
-<a class="btn btn-primary mb-5" href="{{route('donate.save.pdf')}}">Download Donation Summary</a>
+<a class="btn btn-primary mb-5" href="{{route('donations.list')}}?download_pdf=true">Download Donation Summary</a>
 <a class="btn btn-outline-primary mb-5" href="{{ route('donations.list')}}">View Donation History</a>
 <br>
 </div>
-        
+
     </div>
 </div>
 @endsection
@@ -22,7 +22,7 @@ Every contribution makes a huge impact in your community</b></p>
 <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css" />
 <style>
- 
+
 </style>
 @endpush
 @push('js')
