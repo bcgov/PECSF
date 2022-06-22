@@ -11,11 +11,13 @@ use App\Models\PledgeCharity;
 use App\Models\PledgeHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 
 class DonationController extends Controller {
 
-    public function index() {
+    public function index(Request $request) {
         $currentYear = Carbon::now()->format('Y');
         $pledges = Pledge::with('charities')
             ->with('charities.charity')
@@ -35,7 +37,7 @@ class DonationController extends Controller {
 
         $user = User::where('id', Auth::id() )->first();
 
-        // Pledge Histoy data (source Greenfield) 
+        // Pledge Histoy data (source Greenfield)
         $sql_1 = Pledge::selectRaw("pledges.*, 'Annual' as donation_type, 'One-Time' as frequency")->where('user_id', $user->id)
                     // ->where('type', 'P')
                     ->where('one_time_amount', '<>', 0)
@@ -46,13 +48,13 @@ class DonationController extends Controller {
                         ->unionAll($sql_1)
                         ->get();
 
-        $old_pledges_by_yearcd = $old_pledges->sortByDesc('yearcd')->groupBy('campaign_year.calendar_year');     
-        
-        // Pledge Histoy data (source BI) 
+        $old_pledges_by_yearcd = $old_pledges->sortByDesc('yearcd')->groupBy('campaign_year.calendar_year');
+
+        // Pledge Histoy data (source BI)
         $old_bi_pool_pledges = PledgeHistory::where('GUID', $user->guid)
                     ->where('campaign_type', '=', 'Annual')
                     ->leftJoin('regions', 'regions.id', '=', 'pledge_histories.region_id')
-                    ->selectRaw("yearcd, campaign_year_id, campaign_type, source, case when source = 'Pool' then regions.name else name1 end, 
+                    ->selectRaw("yearcd, campaign_year_id, campaign_type, source, case when source = 'Pool' then regions.name else name1 end,
                                                             case when source = 'Pool' then '' else name2 end, frequency, max(pledge) as pledge")
                     ->groupBy(['yearcd', 'campaign_year_id', 'campaign_type', 'source', 'frequency']);
 
@@ -62,9 +64,9 @@ class DonationController extends Controller {
                         ->leftJoin('charities', 'charities.id', '=', 'pledge_histories.charity_id')
                         ->selectRaw('yearcd, campaign_year_id, campaign_type, source, name1, name2, frequency, pledge')
                         ->unionAll($old_bi_pool_pledges)
-                        ->get();               
+                        ->get();
 
-        // Limit to last 3 years pledge history                            
+        // Limit to last 3 years pledge history
         // $last_3_yearcd = PledgeHistory::where('GUID', $user->guid)->orderByDesc('yearcd')->groupBy('yearcd')->pluck('yearcd')->take(3);
         // $old_bi_pledges_by_yearcd = $old_bi_pledges->whereIn('yearcd', $last_3_yearcd)->sortByDesc('yearcd')->groupBy('yearcd');
         $old_bi_pledges_by_yearcd = $old_bi_pledges->sortByDesc('yearcd')->groupBy('yearcd');
@@ -75,32 +77,45 @@ class DonationController extends Controller {
         {
             if ($old_pledge->type == 'P') {
                 $amount =  $old_pledge->frequency == 'One-Time' ?  $old_pledge->one_time_amount :
-                                    ($old_pledge->pay_period_amount * $old_pledge->campaign_year->number_of_periods); 
-                $totalPledgedDataTillNow += $amount;                                    
+                                    ($old_pledge->pay_period_amount * $old_pledge->campaign_year->number_of_periods);
+                $totalPledgedDataTillNow += $amount;
             } else {
                 foreach($old_pledge->charities->where('frequency', strtolower($old_pledge->frequency)) as $pledge_charity)
                 {
                     $amount =  $pledge_charity->frequency == 'one-time' ?  $pledge_charity->amount :
-                                    ($pledge_charity->amount * $old_pledge->campaign_year->number_of_periods); 
-                    $totalPledgedDataTillNow += $amount;                                    
+                                    ($pledge_charity->amount * $old_pledge->campaign_year->number_of_periods);
+                    $totalPledgedDataTillNow += $amount;
                 }
-            }                                    
-        }  
+            }
+        }
         foreach ($old_bi_pledges as $old_pledge)
         {
 
             $amount =  $old_pledge->frequency == 'One-Time' ?  $old_pledge->pledge :
-                                    ($old_pledge->pledge * $old_pledge->campaign_year->number_of_periods); 
+                                    ($old_pledge->pledge * $old_pledge->campaign_year->number_of_periods);
             $totalPledgedDataTillNow += $amount;
-        }  
-        
+        }
+
         //dd([ $old_bi_pledges,  $totalPledgedDataTillNow]);
 
-        return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
-                    'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
+
+        // download PDF file with download method
+        if(isset($request->download_pdf)){
+            view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
+                'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
+            $pdf = PDF::loadView('donations.partials.history', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
+                'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
+            return $pdf->download('Donation Summary.pdf');
+
+        }
+        else{
+            return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
+                'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
+        }
+
     }
 
-    public function oldPledgeDetail(Request $request) 
+    public function oldPledgeDetail(Request $request)
     {
 
         if ($request->source == 'history') {
@@ -114,7 +129,7 @@ class DonationController extends Controller {
                             ->orderBy('name1')
                             ->get();
 
-            $campaign_year = CampaignYear::where('calendar_year', $request->yearcd)->first();        
+            $campaign_year = CampaignYear::where('calendar_year', $request->yearcd)->first();
 
             $year = $request->yearcd;
             $frequency = $request->frequency;
@@ -124,10 +139,10 @@ class DonationController extends Controller {
             $total_amount = $request->frequency == 'One-Time' ? $pledge_amt : $pledge_amt * $number_of_periods;
             $pool_name = $old_pledges->first()->source == "Pool" ? $old_pledges->first()->region->name : '';
 
-            return view('donations.partials.bi-pledge-detail-modal', 
+            return view('donations.partials.bi-pledge-detail-modal',
                     compact('year', 'frequency', 'pool_name', 'pledge_amt', 'number_of_periods', 'total_amount', 'old_pledges') )->render();
 
-            
+
         } else {
 
 
@@ -135,22 +150,22 @@ class DonationController extends Controller {
 
                 $pledge = Pledge::where('id', $request->id)->first();
 
-                $year = $pledge->campaign_year->calendar_year; 
+                $year = $pledge->campaign_year->calendar_year;
                 $frequency = $request->frequency;
                 $pledge_amt = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
                 $number_of_periods = $pledge->campaign_year->number_of_periods;
-                $total_amount = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount * $number_of_periods; 
+                $total_amount = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount * $number_of_periods;
 
-                return view('donations.partials.pledge-detail-modal', 
+                return view('donations.partials.pledge-detail-modal',
                         compact('year', 'frequency', 'pledge_amt', 'number_of_periods', 'total_amount', 'pledge') )->render();
 
             }
 
         }
 
-        
+
     }
-    
+
 }
 
 ?>

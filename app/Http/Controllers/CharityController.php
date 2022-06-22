@@ -777,11 +777,10 @@ class CharityController extends Controller
 
     public function savePDF() {
 
-        $forPDF = Session::get('forPDF');
-
-        Session::put('charities', $forPDF['charities']);
-        Session::put('amount-step', $forPDF['amount-step']);
-        $compact = $this->distribution(true);
+        view()->share('employee',$data);
+        $pdf = PDF::loadView('pdf_view', $data);
+        // download PDF file with download method
+        return $pdf->download('pdf_file.pdf');
 
        //  return view ('donate.pdf', $compact);
         $pdf = PDF::loadView('donate.pdf', $compact);

@@ -6,17 +6,17 @@
         <div class="card border-warning bg-success text-center" style="max-width: 50em; border-radius: 1em;">
             <div class="card-body">
                 <h5 class="card-title"></h5>
-                @if ( $campaignYear->isOpen() ) 
+                @if ( $campaignYear->isOpen() )
                     <p class="card-text text-left text-white">
                         From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
-                        The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January. 
+                        The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January.
                     </p>
                     @if ($pledge)
                         <p class="card-text text-left text-white">
-                            To make changes to your proposed pledge, click into the box below where your 2023 choices are shown. 
+                            To make changes to your proposed pledge, click into the box below where your 2023 choices are shown.
                         </p>
                         <a href="{{ route('donate') }}" class="btn btn-primary">Make change to your proposed pledge</a>
-                    @else 
+                    @else
                         <a href="{{ route('donate') }}" class="btn btn-primary">Donate to PECSF Now</a>
                     @endif
                 @else
@@ -27,12 +27,12 @@
             </div>
         </div>
     </div>
-    
+
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
         @if($pledges->count() > 0)
             <div class="flex-fill"></div>
-            @if (!$campaignYear->isOpen() ) 
+            @if (!$campaignYear->isOpen() )
                 <x-button :href="route('donate')">Donate to PECSF Now</x-button>
             @endif
             <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
@@ -74,6 +74,9 @@
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
         </div>
         @endif
+        <div class="justify-content-center">
+            <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a>
+        </div>
     </div>
 </div>
 
@@ -82,7 +85,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header bg-light">
-            <h5 class="modal-title text-dark" id="pledgeDetailModalTitle">Pledge Detail 
+            <h5 class="modal-title text-dark" id="pledgeDetailModalTitle">Pledge Detail
                     <span class="text-dark font-weight-bold"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -118,7 +121,7 @@
 
     $('.more-info').click( function(event) {
         event.stopPropagation();
-        // var current_id = event.target.id; 
+        // var current_id = event.target.id;
         yearcd = $(this).data('yearcd');
         frequency = $(this).data('frequency');
         source = $(this).data('source');
@@ -126,10 +129,10 @@
         id  = $(this).data('id');
 
         target = '.modal-body';
-        $(target).html(''); 
+        $(target).html('');
 
-        console.log( 'more info - ' ); 
-        if ( yearcd  ) {            
+        console.log( 'more info - ' );
+        if ( yearcd  ) {
             // Lanuch Modal page for listing the Pool detail
             $.ajax({
                 url: '/donations/old-pledge-detail',
