@@ -32,13 +32,12 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring
 WORKDIR /app
 COPY . /app
 
-# JP add 2022-06-22 -- copy the start script from repo to container
+# JP add 2022-06-22 -- copy the start script and additional php setting file from repo to container
+COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 COPY ./start.sh /usr/local/bin/start
 
 RUN composer update --ignore-platform-reqs
 RUN php artisan config:clear
-
-RUN printf 'memory_limit=256M\n post_max_size=128M\n upload_max_filesize=128M\n' > /usr/local/etc/php/conf.d/php-memory-limits.ini
 
 EXPOSE 8000
 
