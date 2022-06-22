@@ -24,9 +24,9 @@
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="organization_code">Organization Code</label>
-                         <input type="text" class="form-control errors" id="organization_code" placeholder="">
+                         <input type="text" class="form-control errors" name="organization_code" id="organization_code" placeholder="">
 
-                        <span class="organization_code_errors">
+                        <span class="organization_code_errors errors">
                           @error('organization_code')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -39,7 +39,7 @@
                         <div id="form_submitter">{{$current_user->name}}</div>
                         <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
 
-                        <span class="form_submitter_errors">
+                        <span class="form_submitter_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -50,7 +50,7 @@
                         <label for="campaign_year">Campaign Year</label>
                         <div id="campaign_year">{{$campaign_year->calendar_year}}</div>
                         <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
-                        <span class="campaign_year_errors">
+                        <span class="campaign_year_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -70,9 +70,9 @@
                     <div class="form-group col-md-3">
                         <label for="event_type">Event Type:</label>
                         <select class="form-control" type="text" id="event_type" name="event_type">
-                        <option></option>
+                        <option value="test">test</option>
                         </select>
-                        <span class="event_type_errors">
+                        <span class="event_type_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -82,9 +82,10 @@
                         <div class="form-group col-md-3">
                             <label for="sub_type">Sub Type:</label>
                             <select class="form-control" type="text" id="sub_type" name="sub_type">
-                                <option></option>
+                                <option value="test">test</option>
+
                             </select>
-                            <span class="sub_type_errors">
+                            <span class="sub_type_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -95,7 +96,7 @@
                         <div class="form-group col-md-3">
                             <label for="sub_type">Deposit Date:</label>
                             <input class="form-control" type="date" id="deposit_date" name="deposit_date">
-                            <span class="deposit_date_errors">
+                            <span class="deposit_date_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -107,7 +108,7 @@
                             <label for="sub_type">Deposit Amount:</label>
                             <input class="form-control" type="text" id="deposit_amount" name="deposit_amount" />
 
-                            <span class="deposit_amount_errors">
+                            <span class="deposit_amount_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -129,7 +130,7 @@
         <input class="form-control" type="text" name="description" id="description" />
     </div>
     <span>*Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
-    <span class="description_errors">
+    <span class="description_errors errors">
                        @error('description')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -143,26 +144,26 @@
                 </div>
                 <div class="form-row raised">
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-4">
                         <label for="event_type">*Employment City:</label>
 
                         <input class="form-control search_icon" type="text" id="employment_city" name="employment_city"/>
 
-                        <span class="employment_city_errors">
+                        <span class="employment_city_errors errors">
                        @error('employment_city')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
                   </span>
 
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-4">
                         <label for="region">*Region:</label>
                         <select class="form-control search_icon" id="region" name="region">
                             @foreach($regions as $region)
                             <option value="{{$region->id}}">{{$region->name}}</option>
                             @endforeach
                         </select>
-                        <span class="region_errors">
+                        <span class="region_errors errors">
                        @error('region')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -170,14 +171,14 @@
 
                     </div>
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-4">
                         <label for="sub_type">Business Unit:</label>
                         <select class="form-control search_icon" id="business_unit" name="business_unit">
                             @foreach($business_units as $bu)
                                 <option value="{{$bu->id}}">{{$bu->name}}</option>
                             @endforeach
                         </select>
-                        <span class="business_unit_errors">
+                        <span class="business_unit_errors errors">
                        @error('business_unit')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -185,20 +186,7 @@
 
                     </div>
 
-                    <div class="form-group col-md-3">
-                        <label for="sub_type">Department:</label>
-                        <select class="form-control search_icon" id="department" name="business_unit">
-                            @foreach($departments as $d)
-                                <option value="{{$d->id}}">{{$d->department_name}}</option>
-                            @endforeach
-                        </select>
-                        <span class="department_errors">
-                       @error('department')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
 
-                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-12">
@@ -211,7 +199,7 @@
                         <label for="event_type">Address Line 1:</label>
                         <input class="form-control" type="text" id="address_1" name="address_1"/>
 
-                        <span class="address_1_errors">
+                        <span class="address_1_errors errors">
                        @error('address_1')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -221,7 +209,7 @@
                     <div class="form-group col-md-6">
                         <label for="region">Address Line 2:</label>
                         <input class="form-control" type="text" id="address_2" name="address_2" />
-                        <span class="address_2_errors">
+                        <span class="address_2_errors errors">
                        @error('region')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -232,7 +220,7 @@
                     <div class="form-group col-md-4">
                         <label for="sub_type">City:</label>
                         <input class="form-control" type="text" id="city" name="city">
-                        <span class="city_errors">
+                        <span class="city_errors errors">
                        @error('city')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -243,7 +231,7 @@
                     <div class="form-group col-md-4">
                         <label for="sub_type">Province:</label>
                         <input class="form-control" type="text" id="province" name="province" />
-                        <span class="province_errors">
+                        <span class="province_errors errors">
                        @error('province')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -253,7 +241,7 @@
                     <div class="form-group col-md-4">
                         <label for="sub_type">Postal Code:</label>
                         <input class="form-control" type="text" id="postal_code" name="postal_code" />
-                        <span class="postal_code_errors">
+                        <span class="postal_code_errors errors">
                        @error('postal_code')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -273,7 +261,7 @@
                     <div class="form-group col-md-12">
                         <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
                         <label class="blue" for="charity_selection_1">Fund Supported Pool</label>
-                        <span class="charity_selection_errors">
+                        <span class="charity_selection_errors errors">
                        @error('charity_selection')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
@@ -342,7 +330,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-12">
                      <h3 class="blue">Attachment</h3>
-                        <span class="attachment_errors">
+                        <span class="attachment_errors errors">
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
@@ -368,7 +356,7 @@
                             <tbody>
                             <tr class="attachment" id="attachment1">
                                 <td>
-                                    <span class="attachment_errors">
+                                    <span class="attachment_errors  errors">
                        @error('attachment.0')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
@@ -479,19 +467,27 @@
                 var form = document.getElementById("create_pool");
                 var formData = new FormData();
                 $("select").each(function(){
-                    if($(this).val().length > 1){
+                    if($(this).val().length > 0){
                         formData.append($(this).attr("name"), $(this).val());
                     }
                 });
                 $("input").each(function(){
                     if($(this).attr('type') != "submit"){
-                        if($(this).val().length > 1) {
+                        if($(this).attr('type') == "radio"){
+                            if($(this).is(':checked')){
+                                formData.append($(this).attr("name"), $(this).val());
+                            }
+                        }
+                        else if($(this).attr('type') == "file"){
+                            formData.append('attachments[]',  $(this)[0].files[0]);
+                        }
+                        else if($(this).val().length > 0){
                             formData.append($(this).attr("name"), $(this).val());
                         }
                     }
                 });
                 $("textarea").each(function(){
-                    if($(this).val().length > 1) {
+                    if($(this).val().length > 0) {
                         formData.append($(this).attr("name"), $(this).val());
                     }
                 });
@@ -507,9 +503,10 @@
                     contentType: false,
                     dataType: 'json',
                     success:function(response){
-                        $(this).fadeTo("slow",1);
+                        $("#bank_deposit_form").fadeTo("slow",1);
                         $('.errors').html("");
-                        window.location = response[0];
+                        alert("Success!");
+                       // window.location = response[0];
                         console.log(response);
                     },
                     error: function(response) {

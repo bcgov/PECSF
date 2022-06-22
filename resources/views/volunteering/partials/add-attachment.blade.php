@@ -1,6 +1,6 @@
 <tr class="attachment" id="attachment{{$index}}">
     <td>
-        <span class="attachment_errors">
+        <span class="attachment_errors errors">
             @error('attachment.'.$index)
                 <span class="invalid-feedback">{{  $message  }}</span>
             @enderror

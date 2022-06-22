@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VolunteerRegistrationRequest;
+use App\Models\BankDepositForm;
 use App\Models\BusinessUnit;
 use App\Models\CampaignYear;
 use App\Models\FSPool;
@@ -32,14 +33,55 @@ class VolunteeringController extends Controller
     public function index() {
         $organizations = Organization::all();
         $user = User::find(Auth::id());
+
+
+
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         return view('volunteering.index', compact('organizations', 'user', 'totalPledgedDataTillNow'));
     }
 
     public function store(VolunteerRegistrationRequest $request) {
-        $input = $request->validated();
-        $input['user_id'] = Auth::id();
-        Volunteer::create($input);
+        $validator = Validator::make(request()->all(), [
+            'organization_code'         => 'required',
+        ],[
+            'organization_code' => 'The Organization Code is required.',
+        ]);
+        $validator->validate();
+
+        $form = BankDepositForm::Create(
+            [
+                'organization_code' => $request->organization_code,
+                'form_submitter_id' =>  $request->form_submitter_id,
+                'event_type' =>  $request->event_type,
+                'sub_type' => $request->sub_type,
+                'deposit_date' => $request->deposit_date,
+                'deposit_amount' => $request->deposit_amount,
+                'description' => $request->description,
+                'employment_city' => $request->employment_city,
+                'region_id' => $request->region_id,
+                'department_id' => $request->department_id,
+                'address_line_1' => $request->address_line_1,
+                'address_line_2' => $request->address_line_2,
+                'address_city' => $request->address_city,
+                'address_province' => $request->address_province,
+                'address_postal_code' => $request->address_postal_code
+            ]
+        );
+
+        foreach($request->organizations as $organization){
+            $form->organizations()->create([
+                'organization_name' => $organization->name,
+                'vendor_id' => $organization->vendor_id,
+                'donation_percent' => $organization->donation_percent,
+                'specific_community_or_initiative' => $organization->specific_community_or_initiative
+            ]);
+        }
+
+        $filepath = "/uploads";
+        $form->attachments()->create([
+            'local_path' => $filepath
+        ]);
+
         return redirect()->route('volunteering.index');
     }
 
@@ -69,6 +111,11 @@ class VolunteeringController extends Controller
             $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
                 ->first();
             $current_user = User::where('id', Auth::id() )->first();
+
+            if(empty($current_user)){
+                redirect("login");
+            }
+
             return view('volunteering.forms',compact('campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
         }
     }

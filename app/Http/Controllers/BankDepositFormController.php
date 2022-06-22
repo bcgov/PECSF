@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankDepositForm;
+use App\Models\BankDepositFormOrganizations;
+use App\Models\BankDepositFormAttachments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,6 +19,18 @@ use Illuminate\Support\Facades\Auth;
 
 class BankDepositFormController extends Controller
 {
+
+
+    /**
+     * create a new instance of the class
+     *
+     * @return void
+     */
+    function __construct()
+    {
+        $this->doc_folder = "bank_deposit_form_attachments";
+    }
+
     public function index()
     {
 
@@ -50,7 +65,6 @@ class BankDepositFormController extends Controller
             'employment_city'         => 'required',
             'region'         => 'required',
             'business_unit'         => 'required',
-            'department'         => 'required',
             'address_1'         => 'required',
             'address_2'         => 'required',
             'city'         => 'required',
@@ -62,7 +76,7 @@ class BankDepositFormController extends Controller
             'organization_name.*' => 'required',
             'vendor_id.*' => 'required',
             'donation_percent.*' => 'required',
-            'specific_community_or_initiative_errors.*' => 'required'
+            'specific_community_or_initiative.*' => 'required'
         ],[
             'organization_code' => 'The Organization Code is required.',
             'organization_name.required' => "The Organization Name is Required."
@@ -77,14 +91,60 @@ class BankDepositFormController extends Controller
             if(empty(request('donation_percent'))){
                 $validator->errors()->add('donation_percent.0','The Donation Percent is required.');
             };
-            if(empty(request('specific_community_or_initiative_errors'))){
+            if(empty(request('specific_community_or_initiative'))){
                 $validator->errors()->add('specific_community_or_initiative.0','This Field is required.');
             };
-            if(empty(request('atttachment'))){
+            if(empty(request('attachments'))){
                 $validator->errors()->add('attachment.0','Atleast one attachment is required.');
             };
         });
         $validator->validate();
+        $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
+
+        $form = BankDepositForm::Create(
+            [
+                'organization_code' => $request->organization_code,
+                'form_submitter' =>  $request->form_submitter,
+                'event_type' =>  $request->event_type,
+                'sub_type' => $request->sub_type,
+                'deposit_date' => $request->deposit_date,
+                'deposit_amount' => $request->deposit_amount,
+                'description' => $request->description,
+                'employment_city' => $request->employment_city,
+                'region_id' => $request->region,
+                'regional_pool_id' => $regional_pool_id,
+                'address_line_1' => $request->address_1,
+                'address_line_2' => $request->address_2,
+                'address_city' => $request->city,
+                'address_province' => $request->province,
+                'address_postal_code' => $request->postal_code
+            ]
+        );
+
+        if($request->Charity_selection == "dc"){
+            foreach($request->organization_name as $key => $name){
+                BankDepositFormOrganizations::create([
+                    'organization_name' => $name,
+                    'vendor_id' => $request->vendor_id[$key],
+                    'donation_percent' => $request->donation_percent[$key],
+                    'specific_community_or_initiative' => $request->specific_community_or_initiative[$key],
+                    'bank_deposit_form_id' => $form->id
+                ]);
+            }
+        }
+
+        $upload_images = $request->file('attachments') ? $request->file('attachments') : [];
+
+        foreach($upload_images as $key => $file){
+                $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+                $file->move(public_path( $this->doc_folder ), $filename);
+                BankDepositFormAttachments::create([
+                'local_path' => public_path( $this->doc_folder )."/".$filename,
+                'bank_deposit_form_id' => $form->id
+            ]);
+        }
+        
+        echo  json_encode(array(route('bank_deposit_form')));
     }
 
 

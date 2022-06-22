@@ -14,8 +14,10 @@ class BankDepositFormAttachments extends Migration
     public function up()
     {
         Schema::create('bank_deposit_form_attachments', function (Blueprint $table) {
+            $table->id();
             $table->integer('bank_deposit_form_id');
             $table->string('local_path');
+            $table->timestamps();
         });
     }
 

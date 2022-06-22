@@ -13,7 +13,8 @@ class BankDepositForm extends Migration
      */
     public function up()
     {
-        Schema::create('bank_deposit_form', function (Blueprint $table) {
+        Schema::create('bank_deposit_forms', function (Blueprint $table) {
+            $table->id();
             $table->string('organization_code');
             $table->string('form_submitter_id');
             $table->string('event_type');
@@ -24,11 +25,13 @@ class BankDepositForm extends Migration
             $table->string('employment_city');
             $table->integer('region_id');
             $table->integer('department_id');
+            $table->integer('regional_pool_id');
             $table->string('address_line_1');
             $table->string('address_line_2');
             $table->string('address_city');
             $table->string('address_province');
             $table->string('address_postal_code');
+            $table->timestamps();
         });
     }
 
@@ -40,6 +43,6 @@ class BankDepositForm extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('bank_deposit_form');
+        Schema::dropIfExists('bank_deposit_forms');
     }
 }
