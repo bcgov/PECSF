@@ -103,7 +103,7 @@ class DonationController extends Controller {
         if(isset($request->download_pdf)){
             view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
                 'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
-            $pdf = PDF::loadView('donations.partials.history', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
+            $pdf = PDF::loadView('donations.partials.pdf', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
                 'pledge', 'old_bi_pledges_by_yearcd', 'old_pledges_by_yearcd'));
             return $pdf->download('Donation Summary.pdf');
 
