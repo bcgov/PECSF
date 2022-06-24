@@ -71,11 +71,7 @@ class ExportDatabaseToBI extends Command
 
            $this->sendTableDataToDataWarehouse($table_name, $delta_field, $hidden_fields);
 
-           $data  = DB::table($table_name)->get()->toJson();
-
         }
-
-    
 
         return 0;
     }

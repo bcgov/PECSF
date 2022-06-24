@@ -14,6 +14,11 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        
+        Commands\ImportEmployeeJob::class,
+        Commands\SyncUserProfile::class,
+        Commands\ExportDatabaseToBI::class,
+        
     ];
 
     /**
@@ -24,8 +29,20 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('generate:report')->hourly();
-        $schedule->command('que')->everyMinute();
+        // $schedule->command('generate:report')->hourly();
+        // $schedule->command('que')->everyMinute();
+
+        $schedule->command('command:ExportDatabaseToBI')
+                 ->weekdays()
+                 ->at('5:00');
+
+        $schedule->command('command:ImportEmployeeJob')
+                 ->weekdays()
+                 ->at('6:00');
+
+        $schedule->command('command:SyncUserProfile')
+                 ->weekdays()
+                 ->at('6:30');
 
     }
 
