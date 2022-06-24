@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
+use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\BankDepositFormController;
 /*
 |--------------------------------------------------------------------------
@@ -152,6 +153,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     // Pledge Administration - Campaign Pledge
     Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
+    Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
 
 });
 

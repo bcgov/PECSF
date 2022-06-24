@@ -2,18 +2,21 @@
 
 @section('content_header')
 
-@include('admin-pledge.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Maintain Campaign Pledge</h4>
+        <h4>Pledge Administration</h4>
         <div class="flex-fill"></div>
 
         <div class="d-flex">
             <div class="mr-2">
-                <x-button class="btn-success" :href="route('admin-pledge.campaign.create')">Create New Pledge</x-button>        
+                <x-button class="btn-success" :href="route('admin-pledge.campaign.create')">Create New Pledge</x-button>
             </div>
         </div>
     </div>
+<br>
+    <br>
+    @include('admin-pledge.partials.tabs')
+
 @endsection
 @section('content')
 
@@ -26,13 +29,13 @@
 
         @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }} 
+                {{ $message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         @endif
-            
+
 		<table class="table table-bordered" id="campaign-table" style="width:100%">
 			<thead>
 				<tr>
@@ -48,13 +51,13 @@
                     <th>Action </th>
                     <th>Pool Name</th>
                     <th>Charites Name</th>
-                    
+
 				</tr>
 			</thead>
 		</table>
 
-	</div>    
-</div>   
+	</div>
+</div>
 
 @endsection
 
@@ -66,7 +69,7 @@
 	#campaign-table_filter label {
 		text-align: right !important;
         padding-right: 10px;
-	} 
+	}
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
@@ -80,7 +83,7 @@
     <script>
     // window.setTimeout(function() {
     //     $(".alert").fadeTo(500, 0).slideUp(500, function(){
-    //         $(this).remove(); 
+    //         $(this).remove();
     //     });
     // }, 3000);
 
@@ -115,7 +118,7 @@
             ],
             columnDefs: [
                     {
-                     
+
                     },
             ]
         });

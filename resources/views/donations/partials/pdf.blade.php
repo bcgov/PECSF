@@ -22,7 +22,7 @@
                             <th>Benefitting Charity</th>
                             <th>Frequency</th>
                             <th>Amount</th>
-                         
+
                         </tr>
                         @php $total = 0; @endphp
                         @foreach($pledges as $pledge)
