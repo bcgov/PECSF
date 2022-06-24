@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\BusinessUnit;
+use App\Models\Department;
+use App\Models\Region;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
@@ -59,8 +62,23 @@ class MaintainEventPledgeController extends Controller
         // get all the record
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
 
+        $pools = FSPool::where('start_date', '=', function ($query) {
+            $query->selectRaw('max(start_date)')
+                ->from('f_s_pools as A')
+                ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->where('A.start_date', '<=', today());
+        })
+            ->where('status', 'A')
+            ->get();
+        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
+        $business_units = BusinessUnit::all();
+        $regions = Region::all();
+        $departments = Department::all();
+        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+            ->first();
+        $current_user = User::where('id', Auth::id() )->first();
         // load the view and pass
-        return view('admin-pledge.event.index');
+        return view('admin-pledge.event.index',compact('current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools'));
 
     }
 
