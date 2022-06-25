@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\BankDepositForm;
 use App\Models\BusinessUnit;
 use App\Models\Department;
 use App\Models\Region;
@@ -77,8 +78,24 @@ class MaintainEventPledgeController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
+
+        if(isset($request->search_by)){
+            if($request->search_by == "calendar_year"){
+                $event_pledges = BankDepositForm::where("created_at","<=",$request->begins_with);
+            }
+            else if($request->search_by == "id"){
+                $event_pledges = BankDepositForm::where($request->search_by,"=",$request->begins_with);
+            }
+            else{
+                $event_pledges = BankDepositForm::where($request->search_by,"like",$request->begins_with."%");
+            }
+            $event_pledges = $event_pledges->orderBy("created_at","desc")->limit($request->limit)->get();
+        }
+        else{
+            $event_pledges = BankDepositForm::orderBy("created_at","desc")->limit(30)->get();
+        }
         // load the view and pass
-        return view('admin-pledge.event.index',compact('current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools'));
+        return view('admin-pledge.event.index',compact('current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
 
     }
 

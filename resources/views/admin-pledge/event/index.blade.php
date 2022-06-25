@@ -55,65 +55,97 @@
 <div class="card">
 	<div class="card-body">
         <h3>Search Criteria</h3>
-        <form>
+        <form method="GET" action="{{route('admin-pledge.maintain-event.index')}}">
             <div class="form-row">
-            <div class="form-group col-md-3">
-                <label for="organization_code">
-                    Organization Code
+            <div class="form-group col-md-6">
+                <label for="search_by">
+                    Search By
                 </label>
-                <input name="organization_code" id="organization_code" class="form-control" />
-                <span class="organization_code_errors errors">
-                       @error('organization_code')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-            </div>
-
-            <div class="form-group col-md-3">
-                <label for="employee_id">
-                    Employee ID
-                </label>
-                <input name="employee_id" id="employee_id" class="form-control" />
-                <span class="employee_id_errors errors">
-                       @error('employee_id')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-            </div>
-
-            <div class="form-group col-md-3">
-                <label for="pecsf_id">
-                    PECSF Identifier
-                </label>
-                <input name="pecsf_id" id="pecsf_id" class="form-control" />
-                <span class="pecsf_id_errors errors">
-                       @error('pecsf_id')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-            </div>
-
-            <div class="form-group col-md-3">
-                <label for="calendar_year">
-                    Calendar Year
-                </label>
-                <select name="calendar_year" id="calendar_year" class="form-control">
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
+                <select name="search_by" id="search_by" class="form-control">
+                    <option value="calendar_year" {{$request->search_by == 'calendar_year' ? 'selected' : ''}}>Calendar Year</option>
+                    <option value="organization_code" {{$request->search_by == 'organization_code' ? 'selected' : ''}}>Organization Code</option>
+                    <option value="employee_id" {{$request->search_by == 'employee_id' ? 'selected' : ''}}>Employee ID</option>
+                    <option value="id" {{$request->search_by == 'id' ? 'selected' : ''}}>PECSF Identifier</option>
                 </select>
-                <span class="calendar_year_errors errors">
-                       @error('calendar_year_id')
+                <span class="search_by_errors errors">
+                       @error('search_by')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="begins_with">
+                    Begins With
+                </label>
+                <input name="begins_with" id="begins_with" value="{{$request->begins_with}}" class="form-control" />
+                <span class="begins_with_errors errors">
+                       @error('begins_with')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
                   </span>
             </div>
             </div>
-            <input type="submit" style="background:#1A5A96;color:#fff;" value="Search" class="form-control" />
+
+            <div class="form-row">
+
+            <div class="form-group col-md-12">
+                <label for="limit">
+                    Limit the number of results to (up to 300)
+                </label>
+                <input name="limit" id="limit" value="{{$request->limit ? $request->limit : 30}}" class="form-control" />
+                <span class="limit_errors errors">
+                       @error('limit')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+            </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="submit" style="background:#1A5A96;color:#fff;" value="Search" class="form-control" />
+                </div>
+                <div class="form-group col-md-6">
+                   <span class="blue">Advanced Search</span>
+                </div>
+            </div>
         </form>
+
+
+        <h3 class="blue">Search Results</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Organization Code</th>
+                <th>Employee ID</th>
+                <th>PECSF Identifier</th>
+                <th>Calendar Year</th>
+                <th>Deposit Date</th>
+                <th>Event Type</th>
+                <th>Sub Type</th>
+                <th>Deposit Amount</th>
+                <th>Description</th>
+                <th>Employment City</th>
+            </tr>
+            </thead>
+            <tbody>
+                @foreach($event_pledges as $key => $pledge)
+                    @include('admin-pledge.event.partials.result_row')
+                @endforeach
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+
 @endsection
 @push('css')
-    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+            <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 	<style>
 	#campaign-table_filter label {
 		text-align: right !important;
@@ -122,17 +154,47 @@
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
+
+    .select2 {
+        width:100% !important;
+    }
+    .select2-selection--multiple{
+        overflow: hidden !important;
+        height: auto !important;
+        min-height: 38px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+    }
+
+    table tr{
+        background:#fff;
+    }
 </style>
+
 @endpush
 @push('js')
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+            <script type="x-tmpl" id="organization-tmpl">
+                @include('volunteering.partials.add-organization', ['index' => 'XXX'] )
+            </script>
+
+            <script type="x-tmpl" id="attachment-tmpl">
+                @include('volunteering.partials.add-attachment', ['index' => 'XXX'] )
+            </script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
-
         $(document).on("click", ".add-event-modal" , function(e) {
             e.preventDefault();
             $('#add-event-modal').modal('show');
         });
-
+        $("select").select2();
+        @include('volunteering.partials.add-event-js')
     </script>
 @endpush

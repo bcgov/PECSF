@@ -94,9 +94,14 @@ class BankDepositFormController extends Controller
             if(empty(request('specific_community_or_initiative'))){
                 $validator->errors()->add('specific_community_or_initiative.0','This Field is required.');
             };
-            if(empty(request('attachments'))){
-                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
-            };
+
+            foreach(request('attachments') as $key => $attachment){
+                if(empty($attachment) || $attachment == "undefined" ){
+                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                };
+            }
+
+
         });
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;

@@ -1,6 +1,8 @@
 <form id="bank_deposit_form" action="{{ route("bank_deposit_form") }}" method="POST"
       enctype="multipart/form-data">
 
+    @csrf
+
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="organization_code">Organization Code</label>
