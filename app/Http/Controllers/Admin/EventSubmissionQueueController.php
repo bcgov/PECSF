@@ -9,6 +9,7 @@ use App\Models\Region;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
+use App\Models\City;
 use App\Models\Charity;
 use App\Models\CampaignYear;
 use App\Models\Organization;
@@ -57,9 +58,10 @@ class EventSubmissionQueueController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
+        $cities = City::all();
 
         // load the view and pass
-        return view('admin-pledge.submission-queue.index',compact('pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
+        return view('admin-pledge.submission-queue.index',compact('cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
 
     }
 

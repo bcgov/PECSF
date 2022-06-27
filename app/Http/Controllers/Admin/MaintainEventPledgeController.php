@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
 use App\Models\Charity;
+use App\Models\City;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
@@ -78,7 +79,7 @@ class MaintainEventPledgeController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
-
+        $cities = City::all();
         if(isset($request->search_by)){
             if($request->search_by == "calendar_year"){
                 $event_pledges = BankDepositForm::where("created_at","<=",$request->begins_with);
@@ -95,7 +96,7 @@ class MaintainEventPledgeController extends Controller
             $event_pledges = BankDepositForm::orderBy("created_at","desc")->limit(30)->get();
         }
         // load the view and pass
-        return view('admin-pledge.event.index',compact('current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
+        return view('admin-pledge.event.index',compact('cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
 
     }
 

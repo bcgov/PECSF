@@ -131,8 +131,11 @@
 
         <div class="form-group col-md-4">
             <label for="event_type">*Employment City:</label>
-
-            <input class="form-control search_icon" type="text" id="employment_city" name="employment_city"/>
+            <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
+                @foreach($cities as $city)
+                    <option value="{{$city->city}}">{{$city->city}}</option>
+                    @endforeach
+            </select>
 
             <span class="employment_city_errors errors">
                        @error('employment_city')

@@ -15,6 +15,7 @@ use App\Models\BusinessUnit;
 use App\Models\Department;
 use App\Models\CampaignYear;
 use App\Models\User;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 
 class BankDepositFormController extends Controller
@@ -49,7 +50,8 @@ class BankDepositFormController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
-        return view('volunteering.forms',compact('campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        $cities = City::all();
+        return view('volunteering.forms',compact('cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
     public function store(Request $request) {
