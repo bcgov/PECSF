@@ -30,6 +30,8 @@ class User extends Authenticatable
         'last_sync_at',
         'organization_id',
         'employee_job_id',
+        'emplid',
+
     ];
 
     /**
