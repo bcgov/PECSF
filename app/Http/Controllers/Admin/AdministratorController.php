@@ -66,12 +66,7 @@ class AdministratorController extends Controller
             );
         }
 
-        $curr_user = User::where('id', Auth::id() )->first();
-        if ( is_null($curr_user->guid) ) {
-            $user = User::find($request->user_id);
-        } else {
-            $user = User::where('azure_id',$request->user_id)->first();
-        }
+        $user = User::find($request->user_id);
 
         if ($user) {
             if ($user->hasRole('admin'))
@@ -81,27 +76,10 @@ class AdministratorController extends Controller
                 );
             }
         } else {
-            //  create the new user and assign the role when no user found
 
-            $tokenCache = new TokenCache();
-            $accessToken = $tokenCache->getAccessToken();
-
-            $graph = new Graph();
-            $graph->setAccessToken($accessToken);
-
-            $azure_user = $graph->createRequest('GET', '/users/' . $request->input('user_id') )
-                ->setReturnType(Model\User::class)
-                ->execute();
-            
-                if ($azure_user) {
-                // read more information from Graph API
-                $user = User::create([
-                    'name' => $azure_user->getDisplayName(),
-                    'email' => $azure_user->getMail(),
-                    'azure_id' => $azure_user->getId(),
-                    'password' => Hash::make( random_bytes(26) ),
-                ]);
-            }
+            throw ValidationException::withMessages(
+                ['user' => 'User ' . $user->name . ' not found in the system']
+            );
 
         }
 
@@ -115,79 +93,25 @@ class AdministratorController extends Controller
     public function getUsers(Request $request)
     {
 
-        $user = User::where('id', Auth::id() )->first();
-        if ( is_null($user->guid) ) {
-            return $this->getUserFromLocalDatabase($request);
-        }
-
-        /*
         $term = trim($request->q);
 
         if($term == ''){
-            $users = User::orderby('name','asc')->select('id','name','email')->limit(50)->get();
+            $users = User::orderby('name','asc')->select('id','name','email','emplid')->limit(50)->get();
          }else{
-            $users = user::orderby('name','asc')->select('id','name','email')->where('name', 'like', '%' .$term . '%')->limit(50)->get();
+            $users = user::orderby('name','asc')
+                ->select('id','name','email','emplid')
+                ->where( function($query) use($term) {
+                     return $query->where('name', 'like', '%' .$term . '%')
+                            ->orWhere('emplid', 'like', '%' .$term . '%');
+                })
+                ->limit(50)->get();
          }
    
          $formatted_users = [];
          foreach ($users as $user) {
-            $formatted_users[] = ['id' => $user->id, 'text' => $user->name];
-        }
-
-        return response()->json($formatted_users);
-        */
-
-        $tokenCache = new TokenCache();
-        $accessToken = $tokenCache->getAccessToken();
-    
-        // Create a Graph client
-        $graph = new Graph();
-        $graph->setAccessToken($accessToken);
-
-        $queryParams = array(
-           '$select' => 'id,displayName,mail,userPrincipalName',
-           //'$filter'  =>  "startswith(displayName,'". $request->q . "')",
-           //'$search'  =>  '"displayName:' . $request->q . '"',
-           '$orderby' => 'displayName'
-         );
-     
-       if (trim($request->q)) {
-           $queryParams['$search'] = '"displayName:' . trim($request->q) . '"';
-       }
-  
-        // test User  API https://graph.microsoft.com/v1.0/users
-       $getUsersUrl = '/users?'.http_build_query($queryParams);
-       $users = $graph->createRequest('GET', $getUsersUrl)
-              ->addHeaders(['ConsistencyLevel'=> 'eventual'])
-               ->setReturnType(Model\User::class)
-               ->execute();
-
-        $formatted_users = [];
-        foreach ($users as $user) {
-             $formatted_users[] = [
-                    'id' => $user->getId(), 
-                    'text' => $user->getDisplayName() . ' (' . $user->getMail() . ')'
-            ];
-        }
-
-        // return "[{'id':31,'name':'Abc'}, {'id':32,'name':'Abc12'}, {'id':33,'name':'Abc123'},{'id':34,'name':'Abc'}]";
-        return response()->json($formatted_users);
-
-    }
-    
-    public function getUserFromLocalDatabase(Request $request) {
-
-        $term = trim($request->q);
-
-        if($term == ''){
-            $users = User::orderby('name','asc')->select('id','name','email')->limit(50)->get();
-         }else{
-            $users = user::orderby('name','asc')->select('id','name','email')->where('name', 'like', '%' .$term . '%')->limit(50)->get();
-         }
-   
-         $formatted_users = [];
-         foreach ($users as $user) {
-            $formatted_users[] = ['id' => $user->id, 'text' => $user->name];
+            $text = $user->name;
+            $text .= $user->emplid ? ' (' . $user->emplid . ')' : '';
+            $formatted_users[] = ['id' => $user->id, 'text' => $text];
         }
 
         return response()->json($formatted_users);
