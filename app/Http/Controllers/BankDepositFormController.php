@@ -54,7 +54,6 @@ class BankDepositFormController extends Controller
 
     public function store(Request $request) {
         $validator = Validator::make(request()->all(), [
-            'organization_name.*' => 'required',
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -73,27 +72,46 @@ class BankDepositFormController extends Controller
             'charity_selection' => 'required',
             'description' => 'required',
             'attachments.*' => 'required',
-            'organization_name.*' => 'required',
-            'vendor_id.*' => 'required',
-            'donation_percent.*' => 'required',
-            'specific_community_or_initiative.*' => 'required'
         ],[
             'organization_code' => 'The Organization Code is required.',
-            'organization_name.required' => "The Organization Name is Required."
-        ]);
+         ]);
         $validator->after(function ($validator) use($request) {
-            if(empty(request('organization_name'))){
-                $validator->errors()->add('organization_name.0','The Organization name is required.');
-            };
-            if(empty(request('vendor_id'))){
-                $validator->errors()->add('vendor_id.0','The Vendor Id is required.');
-            };
-            if(empty(request('donation_percent'))){
-                $validator->errors()->add('donation_percent.0','The Donation Percent is required.');
-            };
-            if(empty(request('specific_community_or_initiative'))){
-                $validator->errors()->add('specific_community_or_initiative.0','This Field is required.');
-            };
+
+            if($request->charity_selection == "fsp")
+            {
+                if(empty($request->regional_pool_id)){
+                    $validator->errors()->add('regional_pool_id','Select a Regional Pool.');
+                }
+            }
+            else{
+                $total = 0;
+                for($i=0;$i<$request->org_count;$i++){
+
+                    if(!empty(request("donation_percent")[$i]))
+                        {
+                            $total = request('donation_percent')[$i] + $total;
+                        }
+
+                    if(empty(request("organization_name")[$i]))
+                    {
+                        $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
+                    }
+                    if(empty(request('vendor_id')[$i])){
+                        $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
+                    };
+                    if(empty(request('donation_percent')[$i])){
+                        $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
+                    };
+                    if(empty(request('specific_community_or_initiative')[$i])){
+                        $validator->errors()->add('specific_community_or_initiative.'.$i,'This Field is required.');
+                    };
+                }
+                if($total != 100) {
+                    for ($j = 0; $j < $request->org_count; $j++) {
+                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent is Does not equal 100%.');
+                    }
+                }
+            }
 
             foreach(request('attachments') as $key => $attachment){
                 if(empty($attachment) || $attachment == "undefined" ){
@@ -126,7 +144,7 @@ class BankDepositFormController extends Controller
             ]
         );
 
-        if($request->Charity_selection == "dc"){
+        if($request->charity_selection == "dc"){
             foreach($request->organization_name as $key => $name){
                 BankDepositFormOrganizations::create([
                     'organization_name' => $name,

@@ -15,7 +15,7 @@ use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\Admin\CRACharityController;
-
+use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 
 use App\Http\Controllers\Admin\CampaignYearController;
@@ -25,7 +25,7 @@ use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
-use App\Http\Controllers\Admin\MaintainEventPledgeController;
+use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\BankDepositFormController;
 /*
 |--------------------------------------------------------------------------
@@ -154,6 +154,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
+    Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
 
 });
 

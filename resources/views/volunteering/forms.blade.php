@@ -141,6 +141,8 @@
                     }
                 });
 
+                formData.append("org_count",$(".organization").length);
+
                 $(this).fadeTo("slow",0.2);
                 $.ajax({
                     url: "{{ route("bank_deposit_form") }}",

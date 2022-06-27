@@ -44,11 +44,8 @@
     Enter any information you have and click Search. Leave fields blank for a list of all values.
 </p>
 
-<div class="button-group">
-    <div class="active">Find an Existing Value</div>
-    <div class="add-event-modal">Add a New Value</div>
-    <div>PECSF Event Submission Queue</div>
-</div>
+@include('admin-pledge.partials.menu')
+
 <div style="clear:both;float:none;"></div>
 <br>
 <br>

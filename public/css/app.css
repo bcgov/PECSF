@@ -49429,3 +49429,8 @@ select{
     background:#1A5A96;
     color:#FFF;
 }
+
+.active .activewhite{
+    color:#fff;
+}
+

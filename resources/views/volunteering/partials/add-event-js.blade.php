@@ -73,7 +73,7 @@ if($(this).val().length > 0) {
 formData.append($(this).attr("name"), $(this).val());
 }
 });
-
+formData.append("org_count", $(".organization").length);
 $(this).fadeTo("slow",0.2);
 $.ajax({
 url: "{{ route("bank_deposit_form") }}",
