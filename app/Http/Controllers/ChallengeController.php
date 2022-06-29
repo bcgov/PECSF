@@ -26,24 +26,23 @@ class ChallengeController extends Controller
 
 
 
-        $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+        $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-            ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+            ->join("elligible_employees","business_units.code","=","elligible_employees.business_unit")
             ->where('donor_by_business_units.yearcd',"=",$year)
-            ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".$year))
-            ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
-            ->groupBy("employee_jobs.business_unit_id")
+            ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
+            ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
             ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
         ->paginate(10);
 
         if($request->sort == "ASC"){
-            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
                 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-                ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+                ->join("elligible_employees","business_units.code","=","elligible_employees.business_unit")
                 ->where('donor_by_business_units.yearcd',"=",$year)
-                ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".$year))
-                ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".$year))
-                ->groupBy("employee_jobs.business_unit_id")
+                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
+                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
+                ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
                 ->count();
         }
         else{
@@ -51,16 +50,15 @@ class ChallengeController extends Controller
         }
 
         foreach($charities as $index => $charity){
-            $previousYear = BusinessUnit::select(DB::raw('business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / count(employee_jobs.business_unit_id)) as participation_rate'))
+            $previousYear = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
                 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-                ->join("employee_jobs","employee_jobs.business_unit_id","=","business_units.id")
+                ->join("elligible_employees","business_units.code","=","elligible_employees.business_unit")
                 ->where('donor_by_business_units.yearcd',"=",($year-1))
-                ->where('employee_jobs.effdt',">",Carbon::parse("January 1st ".($year-1)))
-                ->where('employee_jobs.effdt',"<",Carbon::parse("December 31st ".($year-1)))
+                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
+                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
                 ->where('business_units.id',"=",$charity->id)
-                ->groupBy("employee_jobs.business_unit_id")
                 ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
-               ->first();
+                ->first();
 
             if(!empty($previousYear))
             {
