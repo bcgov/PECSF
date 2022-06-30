@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
+use App\Models\RegionalDistrict;
 use App\Models\ScheduleJobAudit;
 use App\Models\PledgeHistoryVendor;
 use Illuminate\Support\Facades\Http;
@@ -49,12 +50,16 @@ class ImportPledgeHistory extends Command
             'status','Initiated'
         ]);
         
-        $this->info( now() );    
-        $this->info("Step - 1 : Create - Pledge History Vendor");
+        $this->info( now() );
+        $this->info("Step 1: Update/Create - Region District");
+        $this->UpdateRegionalDistrict();
+        
+        $this->info( now() );
+        $this->info("Step - 2 : Create - Pledge History Vendor");
         $this->UpdatePledgeHistoryVendor();
 
         $this->info( now() );    
-        $this->info("Step - 2 : Create - Pledge History");
+        $this->info("Step - 3 : Create - Pledge History");
         $this->UpdatePledgeHistory();
 
         // Update the Task Audit log
@@ -64,6 +69,37 @@ class ImportPledgeHistory extends Command
 
         return 0;
 
+    }
+
+
+    protected function UpdateRegionalDistrict()
+    {
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_REPORT_REGIONAL_DISTRICTS_BI_ENDPOINT'));
+
+        if ($response->successful()) {
+            $data = json_decode($response->body())->value;
+            $batches = array_chunk($data, 1000);
+
+            foreach ($batches as $batch) {
+                $this->info( count($batch) );
+                foreach ($batch as $row) {
+
+                    RegionalDistrict::updateOrCreate([
+                        'tgb_reg_district' => $row->tgb_reg_district,
+
+                    ], [
+                        'reg_district_desc' => $row->reg_district_desc,
+                        'development_region' => $row->development_region,
+                        'provincial_quadrant' => $row->provincial_quadrant,
+                    ]);
+                }
+            }
+        } else {
+            $this->info( $response->status() );
+            $this->info( $response->body() );
+        }
     }
 
     protected function UpdatePledgeHistoryVendor() 
@@ -175,9 +211,12 @@ class ImportPledgeHistory extends Command
                                     ->where('effdt', function($query) use($row) {
                                         return $query->selectRaw('max(effdt)')
                                                 ->from('pledge_history_vendors as A')
-                                                ->whereColumn('A.tgb_reg_district', 'pledge_history_vendors.tgb_reg_district')
                                                 ->whereColumn('A.charity_bn', 'pledge_history_vendors.charity_bn')
-                                                ->where('A.effdt', '<=', $row->yearcd . '-12-31');
+                                                ->whereColumn('A.tgb_reg_district', 'pledge_history_vendors.tgb_reg_district')
+                                                ->whereColumn('A.vendor_id', 'pledge_history_vendors.vendor_id')
+                                                ->whereColumn('A.yearcd', 'pledge_history_vendors.yearcd')
+                                                ->where('A.vendor_id', '=', $row->vendor_id)
+                                                ->where('A.yearcd', $row->yearcd);
                                     })->first();
 
                         PledgeHistory::Create([
@@ -194,9 +233,13 @@ class ImportPledgeHistory extends Command
                             'emplid' => $row->emplid,
                             'GUID' =>  $row->GUID, 
                             'frequency' => $row->frequency,
+                            'per_pay_amt' => $row->per_pay_amt,
                             'pledge' => $row->pledge,
                             'percent' => $row->percent,
                             'amount' => $row->amount,
+                            'vendor_id' => $row->vendor_id,
+                            'additional_info' => $row->additional_info,
+
                         ]);
                     }
                 }

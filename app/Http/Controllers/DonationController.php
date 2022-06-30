@@ -54,15 +54,15 @@ class DonationController extends Controller {
         $old_bi_pool_pledges = PledgeHistory::where('GUID', $user->guid)
                     ->where('campaign_type', '=', 'Annual')
                     ->leftJoin('regions', 'regions.id', '=', 'pledge_histories.region_id')
-                    ->selectRaw("yearcd, campaign_year_id, campaign_type, source, case when source = 'Pool' then regions.name else name1 end,
+                    ->selectRaw("min(pledge_histories.id), yearcd, campaign_year_id, campaign_type, source, case when source = 'Pool' then regions.name else name1 end,
                                                             case when source = 'Pool' then '' else name2 end, frequency, max(pledge) as pledge")
                     ->groupBy(['yearcd', 'campaign_year_id', 'campaign_type', 'source', 'frequency']);
 
         $old_bi_pledges = PledgeHistory::where('GUID', $user->guid)
-                        ->whereNotIn('campaign_type', ['Annual','Event'])
+                        ->whereNotIn('campaign_type', ['Annual'])
                         //->where('source','Non-Pool')
                         ->leftJoin('charities', 'charities.id', '=', 'pledge_histories.charity_id')
-                        ->selectRaw('yearcd, campaign_year_id, campaign_type, source, name1, name2, frequency, pledge')
+                        ->selectRaw('pledge_histories.id, yearcd, campaign_year_id, campaign_type, source, name1, name2, frequency, pledge')
                         ->unionAll($old_bi_pool_pledges)
                         ->get();
 
@@ -122,25 +122,31 @@ class DonationController extends Controller {
 
             $user = User::where('id', Auth::id() )->first();
 
+            $donate_today_pledge = PledgeHistory::where('id', $request->id)->first();
             $old_pledges = PledgeHistory::where('GUID', $user->guid)
-                            ->where('campaign_type', 'Annual')
+                            ->where('campaign_type', $request->type)
                             ->where('yearcd', $request->yearcd)
                             ->where('frequency', $request->frequency)
                             ->orderBy('name1')
                             ->get();
 
+            
+
             $campaign_year = CampaignYear::where('calendar_year', $request->yearcd)->first();
 
+            $type = $request->type;
             $year = $request->yearcd;
             $frequency = $request->frequency;
-            $pledge_amt = $old_pledges->first()->pledge;
+            $pledge_amt = $old_pledges->first()->per_pay_amt;
             //  $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
             $number_of_periods = $request->frequency == 'One-Time' ? 1 : $campaign_year->number_of_periods;
-            $total_amount = $request->frequency == 'One-Time' ? $pledge_amt : $pledge_amt * $number_of_periods;
+            // $total_amount = $request->frequency == 'One-Time' ? $pledge_amt : $pledge_amt * $number_of_periods;
+            $total_amount = $old_pledges->first()->pledge;
             $pool_name = $old_pledges->first()->source == "Pool" ? $old_pledges->first()->region->name : '';
 
             return view('donations.partials.bi-pledge-detail-modal',
-                    compact('year', 'frequency', 'pool_name', 'pledge_amt', 'number_of_periods', 'total_amount', 'old_pledges') )->render();
+                    compact('type', 'year', 'frequency', 'pool_name', 'pledge_amt', 'number_of_periods', 
+                                'total_amount', 'old_pledges', 'donate_today_pledge') )->render();
 
 
         } else {
