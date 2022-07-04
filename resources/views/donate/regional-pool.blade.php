@@ -26,7 +26,7 @@
 
         <div class="row row-cols-1 row-cols-md-3">
             @foreach( $pools as $pool )
-            <div class="col mb-4"> 
+            <div class="col mb-4">
 
                 <div class="card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
                     {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
@@ -40,12 +40,12 @@
                             </label>
                         </div>
 
-                        <div class=" text-right m-2 pt-2" data-id="{{ $pool->id }}">      
+                        <div class=" text-right m-2 pt-2" data-id="{{ $pool->id }}">
                             <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}"
                                 data-name="{{ $pool->region->name }}"></i>
                         </div>
                     {{-- <div class="pt-2 text-right">
-                            <i class="fas fa-info-circle fa-2x"></i>    
+                            <i class="fas fa-info-circle fa-2x"></i>
                         </div>  --}}
                         {{-- <h5 class="card-title">{{ $pool->region->name  }}</h5>
                         <p class="card-text">&nbsp;</p> --}}

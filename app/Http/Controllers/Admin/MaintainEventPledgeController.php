@@ -90,13 +90,34 @@ class MaintainEventPledgeController extends Controller
             else{
                 $event_pledges = BankDepositForm::where($request->search_by,"like",$request->begins_with."%");
             }
+
+            if(!empty($request->event_type))
+            {
+                $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
+            }
+
+            if(!empty($request->sub_type))
+            {
+                $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
+            }
+
+
+
             $event_pledges = $event_pledges->orderBy("created_at","desc")->limit($request->limit)->get();
         }
         else{
-            $event_pledges = BankDepositForm::orderBy("created_at","desc")->limit(30)->get();
+            $event_pledges = BankDepositForm::orderBy("created_at","desc");
+            if(!empty($request->event_type))
+            {
+                $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
+            }
+            if(!empty($request->sub_type))
+            {
+                $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
+            }
+               $event_pledges = $event_pledges->limit(30)->get();
         }
 
-        $event_pledges = [];
 
         // load the view and pass
         return view('admin-pledge.event.index',compact('cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));

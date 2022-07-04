@@ -103,7 +103,11 @@
                     Event Type
                 </label>
                 <select name="event_type" id="event_type" value="" class="form-control">
-                    <option value="test">test</option>
+                    <option value="">Select a Event Type</option>
+                    <option value="Cash One-Time Donation">Cash One-Time Donation</option>
+                    <option value="Cheque One-Time Donation">Cash One-Time Donation</option>
+                    <option value="Fundraiser">Fundraiser</option>
+                    <option value="Gaming">Gaming</option>
                 </select>
                 <span class="event_type_errors errors">
                        @error('event_type')
@@ -117,7 +121,13 @@
                         Sub Type
                     </label>
                     <select name="sub_type" id="sub_type" value="" class="form-control">
-                        <option value="test">test</option>
+                        <option value="">Select a Sub Type</option>
+                        <option value="Auction">Auction</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Food">Food</option>
+                        <option value="Other">Other</option>
+                        <option value="Sports">Sports</option>
+                        <option value="50/50 Draw">50/50 Draw</option>\
                     </select>
                     <span class="sub_type_errors errors">
                        @error('event_type')
@@ -146,6 +156,7 @@
                 <th>Calendar Year</th>
                 <th>Event Type</th>
                 <th>Sub Type</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -163,7 +174,37 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="pledgeModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-dark" id="">More Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Deposit Date</th>
+                        <th>Deposit Amount</th>
+                        <th>Description</th>
+                        <th>Employment City</th>
+                    </tr>
+                    </thead>
+                    <tbody id="more_info_pledge">
 
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 @push('css')
@@ -214,6 +255,15 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
+
+
+        $(document).on("click",".more-info", function(e){
+            e.preventDefault();
+            $("#more_info_pledge").html($("#"+$(this).attr("data-id")).clone());
+            $("#more_info_pledge").find("tr").css("display","");
+            $('#pledgeModal').modal('show');
+        });
+
         $(document).on("click", ".add-event-modal" , function(e) {
             e.preventDefault();
             $('#add-event-modal').modal('show');
