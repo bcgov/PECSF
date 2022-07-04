@@ -89,7 +89,7 @@
                                 <td>{{$pledge->frequency}} </td>
                                 <td class="text-right">${{
                                 $pledge->frequency == 'Bi-Weekly' ?
-                                    number_format($pledge->pledge * $pledge->campaign_year->number_of_periods,2) :
+                                    number_format($pledge->pledge,2) :
                                     number_format($pledge->pledge,2) }}
                                 </td>
 

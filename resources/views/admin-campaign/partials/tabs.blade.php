@@ -60,7 +60,7 @@
     <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : '' }}"
          {{-- id="pills-contact-tab"  --}}
-          href="{{ route('settings.administrators.index') }}"  aria-controls="pills-contact" aria-selected="false">Adminstrators</a>
+          href="{{ route('settings.administrators.index') }}"  aria-controls="pills-contact" aria-selected="false">Administrators</a>
       </li>
     {{-- <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.charity-list-maintenance') ? 'active' : '' }}"

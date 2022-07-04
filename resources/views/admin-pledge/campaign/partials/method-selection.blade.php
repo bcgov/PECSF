@@ -42,9 +42,25 @@
         </div>
         <div id="method-selection-2" class="collapse {{ $pool_option == "C" ? 'show' : '' }}" data-parent="#method-selection">
             <div class="card-body">
-                
+                <div class="row justify-content-end">
+                    <div class="col-md-5">
+                        <h6 class='font-weight-bold'>Bi-weekly (pay period) Deduction Amount : </h6>
+                    </div>
+                    <div class="col-md-1">
+                        <span class='font-weight-bold' id="pay_period_figure"></span>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col-md-5">
+                        <h6 class='font-weight-bold'>One-time Deduction Amount</h6> 
+                    </div>
+                    <div class="col-md-1">
+                        <span class='font-weight-bold' id="one_time_figure"></span>
+                    </div>
+                </div>
                 <table class="table" id="charity-table">
                     <tbody>
+                       
                         @php $charities = ($pool_option == "C" and isset($pledge)) ? $pledge->distinct_charities->pluck('id') : [''] @endphp
                         @foreach ( $charities as $index => $oldCharity)
                         <tr id="charity{{ $index }}">

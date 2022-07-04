@@ -13,6 +13,7 @@ class ExportDatabaseToBI extends Command
 {
 
     protected $db_tables = [
+        ['name' => 'business_units',     'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'campaign_years',     'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'charities',          'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'f_s_pools',          'delta' => 'updated_at', 'hidden' => null ],

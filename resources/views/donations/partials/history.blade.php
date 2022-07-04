@@ -99,13 +99,15 @@
                             <td>{{$pledge->frequency}} </td>
                             <td class="text-right">${{ 
                                 $pledge->frequency == 'Bi-Weekly' ? 
-                                    number_format($pledge->pledge * $pledge->campaign_year->number_of_periods,2) :                        
+                                    number_format($pledge->pledge,2) :                        
                                     number_format($pledge->pledge,2) }} 
                             </td>
                             <td class="text-right">
-                                @if ($pledge->campaign_type == 'Annual') 
+                                @if ($pledge->campaign_type == 'Annual' or $pledge->campaign_type == 'Donate Today') 
                                     <button type="button" class="more-info btn btn-sm btn-outline-primary" 
                                             data-source="{{ "history" }}"
+                                            data-type="{{ $pledge->campaign_type }}"
+                                            data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">Details</button>
                                 @endif
