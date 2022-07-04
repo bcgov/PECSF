@@ -48,12 +48,9 @@ class CampaignPledgeRequest extends FormRequest
         if ($this->step >= 2) {
             $my_rules = array_merge($my_rules, 
                 [
-                    //
-                    'pool_option'   => ['required', Rule::in(['C', 'P']) ],
-                    'pool_id'       => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
-                    'charities.*'   => ['required_if:pool_option,C'], 
-                    'percentages.*' => $this->pool_option == 'C' ?
-                                'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/' :  '',
+                    'step'          => ['required'],
+                    'pay_period_amount_other'    => [ Rule::when( $this->pay_period_amount =='', ['required','numeric']) ],
+                    'one_time_amount_other'    => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
                 ]
             );
         }
@@ -61,9 +58,12 @@ class CampaignPledgeRequest extends FormRequest
         if ($this->step >= 3) {
             $my_rules = array_merge($my_rules, 
                 [
-                    'step'          => ['required'],
-                    'pay_period_amount_other'    => [ Rule::when( $this->pay_period_amount =='', ['required','numeric']) ],
-                    'one_time_amount_other'    => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
+                    //
+                    'pool_option'   => ['required', Rule::in(['C', 'P']) ],
+                    'pool_id'       => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
+                    'charities.*'   => ['required_if:pool_option,C'], 
+                    'percentages.*' => $this->pool_option == 'C' ?
+                                'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/' :  '',
                 ]
             );
         }
@@ -80,7 +80,7 @@ class CampaignPledgeRequest extends FormRequest
             $charities = $this->charities;
             $percentages = $this->percentages;
 
-            if ($charities && $this->pool_option == 'C' && $step >= 2) {
+            if ($charities && $this->pool_option == 'C' && $step >= 3) {
 
                 // Check 100%
                 $sum = 0;

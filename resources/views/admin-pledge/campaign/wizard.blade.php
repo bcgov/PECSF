@@ -23,10 +23,10 @@
                     <div><i class="fas fa-bars fa-2xl"></i></div>Donor
                 </li>
                 <li class="">
-                    <div><i class="fas fa-random fa-2xl"></i></div>Pool or Non-Pool
+                    <div><i class="fas fa-dollar-sign fa-2xl"></i></div>Frequency and Amount
                 </li>
                 <li class="">
-                    <div><i class="fas fa-dollar-sign fa-2xl"></i></div>Frequency and Amount
+                    <div><i class="fas fa-random fa-2xl"></i></div>Pool or Non-Pool
                 </li>
                 <li class="">
                     <div><i class="fas fa-check fa-2xl"></i></div>Summary and Submit
@@ -48,16 +48,16 @@
         {{-- Nav Items --}}
         <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
             <li class="nav-item">
-              <a class=" nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" data-id="1" role="tab" aria-controls="nav-profile" aria-selected="false">Donor</a>
+              <a class=" nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" data-id="0" role="tab" aria-controls="nav-profile" aria-selected="false">Donor</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" id="nav-selection-tab" data-toggle="tab" href="#nav-selection" data-id="0" role="tab" aria-controls="nav-selection" aria-selected="true">Selection</a>
+                <a class=" nav-link" id="nav-amount-tab" data-toggle="tab" href="#nav-amount" data-id="2" role="tab" aria-controls="nav-amount" aria-selected="false">Frequency and Amount</a>
             </li>
             <li class="nav-item">
-              <a class=" nav-link" id="nav-amount-tab" data-toggle="tab" href="#nav-amount" data-id="1" role="tab" aria-controls="nav-amount" aria-selected="false">Frequency and Amount</a>
+                <a class="nav-link" id="nav-selection-tab" data-toggle="tab" href="#nav-selection" data-id="1" role="tab" aria-controls="nav-selection" aria-selected="false">Selection</a>
             </li>
             <li class="nav-item">  
-              <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="2" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
+              <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="3" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
             </li>
         </ul>
     
@@ -72,20 +72,19 @@
                 @include('admin-pledge.campaign.partials.profile')
                 
             </div>
-            <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-                
-                <div class="pl-2 font-weight-bold">Step 2 - Select preferred method for choosing charities</div>
-                <div class="pl-5">Choose a regional Fund Supported Pool or the CRA charity list option </div>
-            
-
-                @include('admin-pledge.campaign.partials.method-selection')
-
-            </div>
             <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
-                <div class="pl-2 font-weight-bold">Step 3 -  Choose the frequency and amount for deductions</div>
+                <div class="pl-2 font-weight-bold">Step 2 -  Choose the frequency and amount for deductions</div>
                 <p class="pl-5"> Choose a bi-weekly or one-time deduction amount. If deduction is a one-time, ensure to select none under bi-weekly.</p>
 
                 @include('admin-pledge.campaign.partials.amount')
+            </div>
+            <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
+               
+                <div class="pl-2 font-weight-bold">Step 3 - Select preferred method for choosing charities</div>
+                <div class="pl-5">Choose a regional Fund Supported Pool or the CRA charity list option </div>
+
+                @include('admin-pledge.campaign.partials.method-selection')
+
             </div>
             <div class="tab-pane fade step" id="nav-summary" role="tabpanel" aria-labelledby="nav-summary-tab">
                 <div id="summary-page">
@@ -272,6 +271,17 @@
         padding-left: 8px;
     }
 
+    .form-control:disabled, .form-control[readonly] {
+        border: none;
+        /* text-align: right; */
+        background-color: #f7f7f7;
+    }
+
+    .form-control.amount:disabled, .form-control.amount[readonly] {
+        text-align: right;
+    }
+
+
 </style>
 
 @endpush
@@ -299,6 +309,7 @@ $(function () {
             nextstep = checkForm();
         } else if (step == 2) {
             nextstep = checkForm();
+            recalculate_allocation();
         } else if (step == 3) {
             nextstep = checkForm();
         } else {
@@ -374,10 +385,10 @@ $(function () {
                 fields = ['campaign_year_id','organization_id', 'user_id'];
             }
             if (step == 2) {
-                fields = ['pool_option', 'pool_id'];
+                fields = ['pay_period_amount_other', 'one_time_amount_other'];
             }
             if (step == 3) {
-                fields = ['pay_period_amount_other', 'one_time_amount_other'];
+                fields = ['pool_option', 'pool_id'];                
             }
 
             $.each( fields, function( index, field_name ) {
@@ -488,7 +499,69 @@ $(function () {
             reset_user_profile_info();            
     });
 
-    // Page 2
+
+    // Page 2 -- Amount
+    function reallocate_charity_amount( elem ) {
+
+        // Calculate bi-weekly amount
+        pay_period_amount = $("input[name='pay_period_amount']:checked").val();
+        pay_period_amount_other = $("input[name='pay_period_amount_other']").val();
+        pay_period_amt = Math.max(pay_period_amount, pay_period_amount_other);
+        $('#pay_period_figure').html( parseFloat(pay_period_amt).toFixed(2) );
+
+        if($.isNumeric(pay_period_amt)){
+                pay_period_amt_allocated = parseFloat( pay_period_amt * elem.value / 100).toFixed(2) ;
+                $(elem).closest('div.form-row').find("input[name='pay_period_allocated_amount[]']").val( pay_period_amt_allocated );
+         } else {
+             //Not a number
+         }
+
+        // Calculate one-time amount
+        one_time_amount = $("input[name='one_time_amount']:checked").val();
+        one_time_amount_other = $("input[name='one_time_amount_other']").val();
+        one_time_amt = Math.max(one_time_amount, one_time_amount_other);
+        $('#one_time_figure').html( parseFloat(one_time_amt).toFixed(2) );
+        
+        if($.isNumeric(one_time_amt)){
+                one_time_amt_allocated = parseFloat( one_time_amt * elem.value / 100).toFixed(2) ;
+                $(elem).closest('div.form-row').find("input[name='one_time_allocated_amount[]']").val( one_time_amt_allocated );
+         } else {
+             //Not a number
+         }
+
+    }
+
+    function recalculate_allocation() {
+        $("#method-selection-2 input[name='percentages[]'").each(function() {
+            //$( this ).toggleClass( "example" );
+            console.log( this );
+            reallocate_charity_amount( this );
+        });
+    }
+
+
+    $("input[name=pay_period_amount_other]").focus(function() {
+        $("input[name=pay_period_amount][value='']").prop('checked', true);
+        recalculate_allocation();
+    });
+
+    $("input[name=pay_period_amount]").change(function() {
+        $("input[name=pay_period_amount_other]").val('');
+        recalculate_allocation();
+    });
+
+    $("input[name=one_time_amount_other]").focus(function() {
+        $("input[name=one_time_amount][value='']").prop('checked', true);
+        recalculate_allocation();
+    });
+
+    $("input[name=one_time_amount]").change(function() {
+        $("input[name=one_time_amount_other]").val('');
+        recalculate_allocation();
+    });
+
+
+    // Page 3
     // function to initialize select2 dynamic
     function initializeSelect2(selectElementObj) {
         selectElementObj.select2({
@@ -541,7 +614,6 @@ $(function () {
 
     });
 
-   
 
     $(document).on("click", "div.delete_this_row" , function(e) {
         e.preventDefault();
@@ -565,22 +637,39 @@ $(function () {
         })
     });
 
-    // Page 3 -- Amount
-    $("input[name=pay_period_amount_other]").focus(function() {
-        $("input[name=pay_period_amount][value='']").prop('checked', true);
-    });
+    $(document).on("keyup", "input[name='percentages[]']", function(e) {
 
-    $("input[name=pay_period_amount]").change(function() {
-        $("input[name=pay_period_amount_other]").val('');
-    });
+        reallocate_charity_amount( e.target );
+        // // Calculate bi-weekly amount
+        // pay_period_amount = $("input[name='pay_period_amount']:checked").val();
+        // pay_period_amount_other = $("input[name='pay_period_amount_other']").val();
+        // pay_period_amt = Math.max(pay_period_amount, pay_period_amount_other);
 
-    $("input[name=one_time_amount_other]").focus(function() {
-        $("input[name=one_time_amount][value='']").prop('checked', true);
-    });
+        // if($.isNumeric(pay_period_amt)){
+        //      if(pay_period_amt >= 0 && pay_period_amt <= 100) {
+        //         pay_period_amt_allocated = pay_period_amt * e.target.value / 100;
+        //         $(e.target).closest('div.form-row').find("input[name='pay_period_allocated_amount[]']").val( pay_period_amt_allocated );
+        //      }
+        //  } else {
+        //      //Not a number
+        //  }
 
-    $("input[name=one_time_amount]").change(function() {
-        $("input[name=one_time_amount_other]").val('');
+        // // Calculate one-time amount
+        // one_time_amount = $("input[name='one_time_amount']:checked").val();
+        // one_time_amount_other = $("input[name='one_time_amount_other']").val();
+        // one_time_amt = Math.max(one_time_amount, one_time_amount_other);
+
+        // if($.isNumeric(one_time_amt)){
+        //      if(one_time_amt >= 0 && one_time_amt <= 100) {
+        //         one_time_amt_allocated = one_time_amt * e.target.value / 100;
+        //         $(e.target).closest('div.form-row').find("input[name='one_time_allocated_amount[]']").val( one_time_amt_allocated );
+        //      }
+        //  } else {
+        //      //Not a number
+        //  }
+
     });
+  
 
 });
 
