@@ -49409,10 +49409,7 @@ select{
     text-align:center;
 }
 
-.button-group{
-    background:#fff;
 
-}
 
 .button-group div{
     background: #fff;
@@ -49434,3 +49431,6 @@ select{
     color:#fff;
 }
 
+h2{
+    color:#1a5a96;
+}

@@ -80,7 +80,7 @@ class MaintainEventPledgeController extends Controller
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
         $cities = City::all();
-        if(isset($request->search_by)){
+        if(isset($request->search_by) && !empty($request->begins_with)){
             if($request->search_by == "calendar_year"){
                 $event_pledges = BankDepositForm::where("created_at","<=",$request->begins_with);
             }
@@ -95,6 +95,9 @@ class MaintainEventPledgeController extends Controller
         else{
             $event_pledges = BankDepositForm::orderBy("created_at","desc")->limit(30)->get();
         }
+
+        $event_pledges = [];
+
         // load the view and pass
         return view('admin-pledge.event.index',compact('cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
 

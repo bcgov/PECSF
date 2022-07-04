@@ -28,7 +28,7 @@
                 <tr>
                     <th>File Name</th>
                     <th>Last Modified</th>
-                    <th>Failed Attempts</th>
+                    <th>Attempts</th>
                     <th>Size</th>
                     <th>Status</th>
                 </tr>

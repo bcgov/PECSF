@@ -27,7 +27,7 @@
 
 
     <div class="d-flex mt-3">
-        <h4>Pledge Administration</h4>
+        <h1>Pledge Administration</h1>
         <div class="flex-fill"></div>
     </div>
 <br>
@@ -51,10 +51,10 @@
 <br>
 <div class="card">
 	<div class="card-body">
-        <h3>Search Criteria</h3>
+        <h2>Search Criteria</h2>
         <form method="GET" action="{{route('admin-pledge.maintain-event.index')}}">
             <div class="form-row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
                 <label for="search_by">
                     Search By
                 </label>
@@ -71,7 +71,7 @@
                   </span>
             </div>
 
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
                 <label for="begins_with">
                     Begins With
                 </label>
@@ -82,28 +82,55 @@
                     @enderror
                   </span>
             </div>
-            </div>
 
-            <div class="form-row">
-
-            <div class="form-group col-md-12">
-                <label for="limit">
-                    Limit the number of results to (up to 300)
-                </label>
-                <input name="limit" id="limit" value="{{$request->limit ? $request->limit : 30}}" class="form-control" />
-                <span class="limit_errors errors">
+                <div class="form-group col-md-4">
+                    <label for="limit">
+                        Limit the number of results to (up to 300)
+                    </label>
+                    <input name="limit" id="limit" value="{{$request->limit ? $request->limit : 30}}" class="form-control" />
+                    <span class="limit_errors errors">
                        @error('limit')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
                   </span>
-            </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <input type="submit" style="background:#1A5A96;color:#fff;" value="Search" class="form-control" />
                 </div>
-                <div class="form-group col-md-6">
-                   <span class="blue">Advanced Search</span>
+            </div>
+
+            <div class="form-row">
+
+            <div class="form-group col-md-4">
+                <label for="event_type">
+                    Event Type
+                </label>
+                <select name="event_type" id="event_type" value="" class="form-control">
+                    <option value="test">test</option>
+                </select>
+                <span class="event_type_errors errors">
+                       @error('event_type')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+            </div>
+
+                <div class="form-group col-md-4">
+                    <label for="sub_type">
+                        Sub Type
+                    </label>
+                    <select name="sub_type" id="sub_type" value="" class="form-control">
+                        <option value="test">test</option>
+                    </select>
+                    <span class="sub_type_errors errors">
+                       @error('event_type')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label for="search">
+                        Search
+                    </label>
+                    <input type="submit" value="Search" class="form-control btn btn-primary" />
                 </div>
             </div>
         </form>
@@ -117,18 +144,18 @@
                 <th>Employee ID</th>
                 <th>PECSF Identifier</th>
                 <th>Calendar Year</th>
-                <th>Deposit Date</th>
                 <th>Event Type</th>
                 <th>Sub Type</th>
-                <th>Deposit Amount</th>
-                <th>Description</th>
-                <th>Employment City</th>
             </tr>
             </thead>
             <tbody>
+            @if(!empty($event_pledges))
                 @foreach($event_pledges as $key => $pledge)
                     @include('admin-pledge.event.partials.result_row')
                 @endforeach
+            @else
+                <tr><td style="text-align:center;" colspan="6">No Results to Display</td></tr>
+            @endif
             </tbody>
         </table>
 
