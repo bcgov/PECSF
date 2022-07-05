@@ -29,7 +29,7 @@
                     <div><i class="fas fa-random fa-2xl"></i></div>Pool or Non-Pool
                 </li>
                 <li class="">
-                    <div><i class="fas fa-check fa-2xl"></i></div>Summary and Submit
+                    <div><i class="fas fa-check fa-2xl"></i></div>Review and Submit
                 </li>
             </ul>
         </div>
@@ -65,8 +65,8 @@
             <div class="tab-pane fade step show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                 <div class="pl-2 font-weight-bold">Step 1 -  Select donor</div>
                     <ul class="ml-2 pt-1">
-                        <li>Enter the employee’s organization.</li>
-                        <li>Enter the employee’s ID.</li>
+                        <li>Enter the employee’s organization</li>
+                        <li>Enter the employee’s ID</li>
                     </ul>
 
                 @include('admin-pledge.campaign.partials.profile')
@@ -74,21 +74,28 @@
             </div>
             <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
                 <div class="pl-2 font-weight-bold">Step 2 -  Choose the frequency and amount for deductions</div>
-                <p class="pl-5"> Choose a bi-weekly or one-time deduction amount. If deduction is a one-time, ensure to select none under bi-weekly.</p>
-
+                    <ul class="ml-2 pt-1">
+                        <li>Choose a bi-weekly or one-time deduction amount(s) </li>
+                        <li>If deduction is a one-time only, ensure to select none under bi-weekly </li>
+                        <li>If deduction is bi-weekly only, ensure to select none under one-time</li>
+                    </ul>
                 @include('admin-pledge.campaign.partials.amount')
             </div>
             <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
                
                 <div class="pl-2 font-weight-bold">Step 3 - Select preferred method for choosing charities</div>
-                <div class="pl-5">Choose a regional Fund Supported Pool or the CRA charity list option </div>
+
+                <ul class="ml-2 pt-1">
+                    <li>Choose a regional Fund Supported Pool or the CRA charity list option </li>
+                </ul>
+                
 
                 @include('admin-pledge.campaign.partials.method-selection')
 
             </div>
             <div class="tab-pane fade step" id="nav-summary" role="tabpanel" aria-labelledby="nav-summary-tab">
                 <div id="summary-page">
-                Step 4 - Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh mi whatever gluten-free, carles pitchfork biodiesel fixie etsy retro mlkshk vice blog. Scenester cred you probably haven't heard of them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu synth chambray yr.
+                    Step 4
                 </div>
             </div>
             {{-- <div class="tab-pane fade step" id="nav-contact-1" role="tabpanel" aria-labelledby="nav-contact-tab">

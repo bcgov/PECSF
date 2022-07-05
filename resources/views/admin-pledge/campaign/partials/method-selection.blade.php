@@ -5,7 +5,7 @@
                 <input data-toggle="collapse" data-target="#method-selection-1" type="radio" 
                   name="pool_option" id="pool-option-1" value="P" class="custom-control-input" 
                       {{ $pool_option == "P" ? 'checked' : '' }}/>
-                <label class="custom-control-label" for="pool-option-1">Select a Regional Fund Supported Pool</label>
+                <label class="custom-control-label" for="pool-option-1">Select a regional Fund Supported Pool</label>
             </div>
         </div>
 
