@@ -45,12 +45,12 @@ class DonationsImportJob implements ShouldQueue
         try {
             Excel::import(new DonationsImport( $this->history_id, $this->org_code), $this->uploadFilePath );
 
-            \App\Models\ProcessHistory::UpdateOrCreate([
-                'id' => $this->history_id,
-            ],[                    
-                'status' => 'Completed',
-                'end_at'  => now(),
-            ]);
+            // \App\Models\ProcessHistory::UpdateOrCreate([
+            //     'id' => $this->history_id,
+            // ],[                    
+            //     'status' => 'Completed',
+            //     'end_at'  => now(),
+            // ]);
 
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
