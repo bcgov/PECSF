@@ -15,6 +15,7 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
+use Illuminate\Support\Facades\Session;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -117,10 +118,84 @@ class MaintainEventPledgeController extends Controller
             }
                $event_pledges = $event_pledges->limit(30)->get();
         }
+        $charities=Charity::when($request->has("title"),function($q)use($request){
 
+            $searchValues = preg_split('/\s+/', $request->get("title"), -1, PREG_SPLIT_NO_EMPTY);
 
+            if ($request->get("designation_code")) {
+                $q->where('designation_code', $request->get("designation_code"));
+            }
+            if ($request->get("category_code")) {
+                $q->where('category_code', $request->get("category_code"));
+            }
+            if ($request->get("province")) {
+                $q->where('province', $request->get("province"));
+            }
+
+            foreach ($searchValues as $term) {
+                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
+            }
+            return $q->orderby('charity_name','asc');
+
+        })->where('charity_status','Registered')->paginate(10);
+        $designation_list = Charity::DESIGNATION_LIST;
+        $category_list = Charity::CATEGORY_LIST;
+        $province_list = Charity::PROVINCE_LIST;
+        $terms = explode(" ", $request->get("title") );
+
+        $selected_charities = [];
+        if (Session::has('charities')) {
+            $selectedCharities = Session::get('charities');
+
+            $_charities = Charity::whereIn('id', $selectedCharities['id'])
+                ->get(['id', 'charity_name as text']);
+
+            foreach ($_charities as $charity) {
+                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
+                if (!$charity['additional']) {
+                    $charity['additional'] = '';
+                }
+
+                array_push($selected_charities, $charity);
+            }
+        } else {
+
+            // reload the existig pledge
+            $errors = session('errors');
+
+            if (!$errors) {
+
+                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+                    ->first();
+                $pledge = Pledge::where('user_id', Auth::id())
+                    ->whereHas('campaign_year', function($q){
+                        $q->where('calendar_year','=', today()->year + 1 );
+                    })->first();
+
+                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
+
+                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
+
+                    $_charities = Charity::whereIn('id', $_ids )
+                        ->get(['id', 'charity_name as text']);
+
+                    foreach ($_charities as $charity) {
+                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
+
+                        $charity['additional'] = '';
+                        if ($pledge_charity) {
+                            $charity['additional'] = $pledge_charity->additional ?? '';
+                        }
+
+                        array_push($selected_charities, $charity);
+                    }
+                }
+            }
+        }
+$multiple = 'false';
         // load the view and pass
-        return view('admin-pledge.event.index',compact('cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
+        return view('admin-pledge.event.index',compact('multiple','selected_charities','terms','charities','province_list','category_list','designation_list','cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
+
 
     }
 

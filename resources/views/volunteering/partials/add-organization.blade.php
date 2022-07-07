@@ -1,10 +1,32 @@
 <tr class="organization" id="organization{{$index}}">
     <td>
         <div class="form-row raised">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-8 charity">
                 <label for="event_type">Organization Name:</label>
-                <input class="form-control" type="text" id="organization_name" name="organization_name[]"/>
+               <!--<input class="form-control" type="text" id="organization_name" name="organization_name[]"/>-->
+                <div>
+                    @include('donate.partials.charity-search')
+                    {{--
+                        <form action="{{route('donate.save.select')}}" method="post">
+                            @csrf
+                            <label class="w-100">
+                                <span class="text-muted">Search for your CRA Charity</span>
+                                <select class="form-control" placeholder="type in charity name">
+                                </select>
+                                <small class="text-danger">
+                                    {{ $errors->first('id') }}
+                                </small>
+                            </label>
+                            <div id="selected-charity-list">
 
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-lg btn-outline-primary">Cancel</button>
+                                <button class="btn btn-lg btn-primary" type="submit">Next</button>
+                            </div>
+                        </form>
+                    --}}
+                </div>
                 <span class="organization_name_errors  errors">
                        @error('organization_name.'.$index)
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -12,16 +34,7 @@
                   </span>
 
             </div>
-            <div class="form-group col-md-4">
-                <label for="region">Vendor ID:</label>
-                <input class="form-control" type="text" id="vendor_id" name="vendor_id[]" />
-                <span class="vendor_id_errors  errors">
-                       @error('vendor_id.'.$index)
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
 
-            </div>
             <div class="form-group col-md-4">
                 <label for="sub_type">Donation Percent:</label>
                 <input class="form-control" type="text" id="donation_percent" name="donation_percent[]">
@@ -33,7 +46,7 @@
 
             </div>
             <div class="form-group col-md-12">
-                <label for="sub_type">Specific Community Or Initiative:</label>
+                <label for="sub_type">Specific Community Or Initiative (Optional):</label>
                 <input class="form-control" type="text" id="specific_community_or_initiative" name="specific_community_or_initiative[]" />
                 <span class="specific_community_or_initiative_errors  errors">
                        @error('specific_community_or_initiative.'.$index)

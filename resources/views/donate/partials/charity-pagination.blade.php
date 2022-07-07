@@ -3,7 +3,7 @@
     <small >{{ number_format($charities->total()) }} results</small>
 </div>
 
-@if ( $charities->total() ) 
+@if ( $charities->total() )
 
     @foreach ($charities as $charity)
         <div class="d-flex list border-bottom">
@@ -15,30 +15,29 @@
                     <span>
                         <a href="#" class="charity-modal text-dark font-weight-bold" style="coxxxlor:#353535c4"
                             value="{{ $charity->id }}">
-                            @php  
+                            @php
                                 $text = $charity->capitalized_name();
                                 foreach ($terms as $term) {
-                                    $text = $term ? preg_replace('#' . preg_quote($term) . '#i', '<span class="text-danger">\\0</span>', $text) : $text;  
+                                    $text = $term ? preg_replace('#' . preg_quote($term) . '#i', '<span class="text-danger">\\0</span>', $text) : $text;
                                 }
                             @endphp
                             {!!  $text !!}
                         </a>
-                            
+
                     </span>
                     <small class="text-secondary">
-                        {{-- $charity->designation_name() --}} 
-                        {{ $charity->category_name }} | 
-                        {{ $charity->city }} | 
-                        {{ $charity->province }} | 
+                        {{-- $charity->designation_name() --}}
+                        {{ $charity->category_name }} |
+                        {{ $charity->city }} |
+                        {{ $charity->province }} |
                         {{ $charity->country }}
                     </small>
                 </div>
             </div>
           <div class="ml-auto p-2">
               <a class="charity-select-add" href="#" value="{{ $charity->id }}"
-                  value-text="{{ $charity->charity_name }}">
+                  value-text="{{ $charity->charity_name }}" vendor_id="{{$charity->registration_number}}">
                   <i class="fas fa-plus-circle fa-lg text-danger"></i>
-                  
               </a>
           </div>
       </div>

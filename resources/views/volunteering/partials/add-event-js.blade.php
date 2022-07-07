@@ -1,13 +1,30 @@
+
+
+$("input[name='charity_selection']").click(function(){
+if($(this).val() == "dc"){
+$("#organizations").show();
+$(".form-pool").hide();
+}
+else{
+$(".form-pool").show();
+$("#organizations").hide();
+}
+});
+
 $("[name='event_type']").change(function(){
 $("#sub_type").attr("disabled",false);
 
 if($(this).val()=="Fundraiser"){
-$("#sub_type").html('<option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
+$("#sub_type").html('<option value="">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
+$("#address_line_1").hide();
 }
 else if($(this).val()=="Gaming"){
-$("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option>');
+$("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
+$("#address_line_1").hide();
 }
 else{
+$("#address_line_1").show();
+
 $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);;
 }

@@ -1,8 +1,8 @@
 <div class="modal fade" id="add-event-modal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-charity-name" id="charity-modal-label">Add a New Value</h5>
+            <div class="modal-header blue">
+                <h1 class="modal-charity-name" id="charity-modal-label">Add a New Value</h1>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -10,9 +10,7 @@
             <div class="modal-body">
                 <!-- content will be load here -->
                 <div id="add-event-modal-body">
-
                     @include('volunteering.partials.form')
-
                 </div>
             </div>
             <div class="modal-footer">

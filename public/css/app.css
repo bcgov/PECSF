@@ -49434,3 +49434,33 @@ select{
 h2{
     color:#1a5a96;
 }
+
+.grey{
+    background:#f7f7f7;
+}
+
+.form-header{
+    padding-left:10px;padding-top:10px;background:#f7f7f7;border:#ccc 1px solid;border-top-left-radius:5px;border-top-right-radius:5px;
+}
+
+.form-body{
+    border:#ccc 1px solid;padding:15px;
+}
+
+#add-event-modal h2{
+    font-size:14px;
+    font-weight:bold;
+}
+
+#add-event-modal h1{
+    font-size:18px;
+    font-weight:bold;
+}
+
+#organizations .toggle{
+    display:none;
+}
+
+#search-filter{
+    z-index:1000;
+}
