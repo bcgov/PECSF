@@ -115,8 +115,10 @@ class ExportPledgesToPSFT extends Command
                     "Amount" =>  $pledge->one_time_amount,
 
                     "Deduction_Code" => "PECSF1",   // always "PECSF1" for one-time deduction
-                    "pledge_start_date" => $pledge->updated_at->format('Y-m-d'),
-                    "pledge_end_date" => $pledge->updated_at->format('Y-m-d'),
+                    // "pledge_start_date" => $pledge->updated_at->format('Y-m-d'),
+                    // "pledge_end_date" => $pledge->updated_at->format('Y-m-d'),
+                    'pledge_start_date' => $pledge->campaign_year->calendar_year . '-01-01',
+                    'pledge_end_date' => $pledge->campaign_year->calendar_year . '-12-31',
                 ];
 
                 $one_time_sent = $this->sendData($one_time_data);
@@ -140,8 +142,10 @@ class ExportPledgesToPSFT extends Command
                     "Amount" =>  $pledge->pay_period_amount,
 
                     "Deduction_Code" => "PECSF",   // always "PECSF" for one-time deduction
-                    "pledge_start_date" => $pledge->updated_at->format('Y-m-d'),
-                    "pledge_end_date" => $pledge->updated_at->format('Y-12-31'),    // always last date of the year
+                    // "pledge_start_date" => $pledge->updated_at->format('Y-m-d'),
+                    // "pledge_end_date" => $pledge->updated_at->format('Y-12-31'),    // always last date of the year
+                    'pledge_start_date' => $pledge->campaign_year->calendar_year . '-01-01',
+                    'pledge_end_date' => $pledge->campaign_year->calendar_year . '-12-31',
                 ];
                 $pay_period_sent = $this->sendData($pay_period_data);
             } else {
