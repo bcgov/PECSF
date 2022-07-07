@@ -30,7 +30,7 @@
 
     <div class="form-row">
         <div class="form-group col-md-6">
-            <label for="additional">Program or Branch name</label>
+            <label for="additional">Program or Branch Name</label>
             <input type="text" name="additional[]" class="form-control @error('additional.'.$index) is-invalid @enderror" 
                 value="{{ isset($pledge_charity) ? $pledge_charity->additional : '' }}" />
             @error( 'additional.'.$index )

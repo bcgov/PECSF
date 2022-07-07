@@ -55,7 +55,7 @@
 
             <div class="col">
                 <div class="card">
-                    <a href="{{ route('settings.reporting') }}">
+                    <a href="{{ route('reporting.donation-upload.index') }}">
                     <div class="card-body mt-4  text-center">
                         <div>
                             <img src="{{asset('img/admin/3.png')}}" alt="Reporting" style="height:100px">

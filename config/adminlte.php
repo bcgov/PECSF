@@ -289,7 +289,7 @@ return [
                 [
                     'text' => 'Reporting',
                     'icon' => 'nav-icon far fa-id-card',
-                    'url'  => '/settings/reporting',
+                    'url'  => '/reporting/donation-upload',
                 ],
             ],
         ],

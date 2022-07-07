@@ -1,4 +1,9 @@
-<p class="h4 pl-2 pb-2">Summary </p>
+<p class="h4 pl-2 pb-2">Summary</p>
+
+<ul class="ml-2 pt-1">
+    <li>Review the employee pledge summary</li>
+    <li>Click submit to save the entry</li>
+</ul>
 
 <div class="card m-0 pb-3">
     <div class="card-header bg-light">
