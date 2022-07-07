@@ -191,7 +191,7 @@ class DonorHistoryDataFromBI extends Command
                     {
                         DonorByBusinessUnit::updateOrCreate([
                             'business_unit_id' => $business_unit ? $business_unit->id : null,
-                            'yearcd' => $row->yearcd,
+                            'yearcd' => $row->year,
                             'business_unit_code' => $row->business_unit_code,
                             'dollars' => $row->dollars,
                             'donors' => $row->donors,
@@ -227,8 +227,8 @@ class DonorHistoryDataFromBI extends Command
                     $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 
                     DonorByRegionalDistrict::updateOrCreate([
-                        'regional_district_id' => $regional_district ? $regional_district->id : null,
-                        'yearcd' => $row->yearcd,
+                        'regional_district_id' => $regional_district ? $regional_district->id : '',
+                        'yearcd' => $row->year,
                         'tgb_reg_district' => $row->tgb_reg_district,
                         'dollars' => $row->dollars,
                         'donors' => $row->donors,
@@ -262,8 +262,9 @@ class DonorHistoryDataFromBI extends Command
                     $department = Department::where('bi_department_id', $row->department_id)->first();
 
                     DonorByDepartment::Create([
-                        'department_id' => $department ? $department->id : null,
-                        'yearcd' => $row->yearcd,
+                        'department_id' => $department ? $department->id : '',
+                        'yearcd' => $row->year,
+                        'date' => $row->date,
                         'bi_department_id' => $row->department_id,
                         'dollars' => $row->dollars,
                         'donors' => $row->donors,
