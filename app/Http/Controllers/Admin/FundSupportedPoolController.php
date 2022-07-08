@@ -661,7 +661,9 @@ class FundSupportedPoolController extends Controller
 
         $charities = Charity::orderBy('charity_name','asc')->select('id','charity_name','registration_number')
             ->when( $request->q , function ($q) use($request) {
-                return $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($request->q) . "%'");
+                return $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($request->q) . "%'")
+                         ->orWhereRaw("LOWER(registration_number) LIKE '%" . strtolower($request->q) . "%'");
+
             })
             ->where('charity_status','Registered')
             ->limit(100)

@@ -113,7 +113,8 @@ class CampaignPledgeController extends Controller
                 $pool  = FSPool::current()->where('id', $request->pool_id)->first() ?? null;
                 $charities = Charity::whereIn('id', $request->charities)->get() ?? [];
 
-                $pay_period_amount = $request->pay_period_amount > 0 ? 
+                $pay_period_amount = $request->pay_period_amount;
+                $pay_period_total_amount = $request->pay_period_amount > 0 ? 
                             $request->pay_period_amount * $campaign_year->number_of_periods :
                             $request->pay_period_amount_other * $campaign_year->number_of_periods;
                 $one_time_amount = $request->one_time_amount > 0 ? 
@@ -131,7 +132,7 @@ class CampaignPledgeController extends Controller
                 }
 
                 return view('admin-pledge.campaign.partials.summary', compact('user', 'campaign_year', 'pool_option', 'pool', 
-                            'charities', 'selected_charities', 'pay_period_amount','one_time_amount' ))->render();
+                            'charities', 'selected_charities', 'pay_period_amount', 'pay_period_total_amount', 'one_time_amount' ))->render();
 
             }
             

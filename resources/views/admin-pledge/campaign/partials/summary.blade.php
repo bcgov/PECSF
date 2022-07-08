@@ -68,7 +68,7 @@
         
         <span class="float-right">${{ number_format($one_time_amount,2) }}</span>
         <hr>
-        <p class="text-right"><b>Total :</b> ${{ number_format($pay_period_amount + $one_time_amount,2) }}</p>
+        {{-- <p class="text-right"><b>Total :</b> ${{ number_format($pay_period_amount + $one_time_amount,2) }}</p> --}}
 
         <p class="mt-4"><b>Your charitable donations will be disbursed as follows:</b></p>
 
@@ -82,7 +82,7 @@
                 <th scope="col"></th>
                 <th scope="col">Benefitting Charity</th>
                 <th scope="col">Percent</th>
-                <th scope="col">Pay Period Amount</th>
+                <th scope="col">Bi-weekly Total Amount</th>
                 <th scope="col">One-Time Amount</th>
                 </tr>
             </thead>
@@ -98,13 +98,13 @@
                             </td>
                             <td class="text-center">{{ number_format($pool_charity->percentage,2) }}%</td>
                             @if($loop->last)
-                                <td class="text-center">${{ number_format($pay_period_amount - $pay_period_sum, 2) }}</td>
+                                <td class="text-center">${{ number_format($pay_period_total_amount - $pay_period_sum, 2) }}</td>
                                 <td class="text-center">${{ number_format($one_time_amount - $one_time_sum, 2) }}</td>
                             @else 
-                                <td class="text-center">${{ number_format($pay_period_amount * $pool_charity->percentage / 100, 2) }}</td>
+                                <td class="text-center">${{ number_format($pay_period_total_amount * $pool_charity->percentage / 100, 2) }}</td>
                                 <td class="text-center">${{ number_format($one_time_amount * $pool_charity->percentage / 100, 2) }}</td>
                             @endif
-                            @php $pay_period_sum += round($pay_period_amount * $pool_charity->percentage / 100, 2);
+                            @php $pay_period_sum += round($pay_period_total_amount * $pool_charity->percentage / 100, 2);
                                     $one_time_sum += round($one_time_amount * $pool_charity->percentage / 100, 2); @endphp
                         </tr>
                     @endforeach    
@@ -118,13 +118,13 @@
                             </td>
                             <td class="text-center">{{ number_format($charity->percentage,2) }}%</td>
                             @if($loop->last)
-                                <td class="text-center">${{ number_format($pay_period_amount - $pay_period_sum, 2) }}</td>
+                                <td class="text-center">${{ number_format($pay_period_total_amount - $pay_period_sum, 2) }}</td>
                                 <td class="text-center">${{ number_format($one_time_amount - $one_time_sum, 2) }}</td>
                             @else 
-                                <td class="text-center">${{ number_format($pay_period_amount * $charity->percentage / 100, 2) }}</td>
+                                <td class="text-center">${{ number_format($pay_period_total_amount * $charity->percentage / 100, 2) }}</td>
                                 <td class="text-center">${{ number_format($one_time_amount * $charity->percentage / 100, 2) }}</td>
                             @endif
-                        @php $pay_period_sum += round($pay_period_amount * $charity->percentage / 100, 2);
+                        @php $pay_period_sum += round($pay_period_total_amount * $charity->percentage / 100, 2);
                                 $one_time_sum += round($one_time_amount * $charity->percentage / 100, 2); @endphp
                         </tr>
                     @endforeach   
