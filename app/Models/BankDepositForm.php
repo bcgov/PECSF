@@ -25,7 +25,9 @@ class BankDepositForm extends Model
         'address_city',
         'address_province',
         'address_postal_code',
-        'regional_pool_id'
+        'regional_pool_id',
+        'bc_gov_id',
+        'pecsf_id'
     ];
 
     function attachments(){

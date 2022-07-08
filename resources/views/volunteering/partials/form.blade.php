@@ -56,20 +56,20 @@
                     @enderror
                   </span>
         </div>
-        <div class="form-group col-md-3">
-            <label for="user_id">PECSF ID:</label>
-            <input class="form-control" type="text" name="user_id" id="user_id" />
-            <span class="user_id_errors errors">
-                       @error('user_id')
+        <div id="pecsfid" class="form-group col-md-6">
+            <label for="pecsf_id">PECSF ID:</label>
+            <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
+            <span class="pecsf_id_errors errors">
+                       @error('pecsf_id')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
                   </span>
         </div>
-        <div class="form-group col-md-3">
-            <label for="user_id">BC Gov ID:</label>
-            <input class="form-control" type="text" name="user_id" id="user_id" />
-            <span class="user_id_errors errors">
-                       @error('user_id')
+        <div id="bcgovid" class="form-group col-md-6" style="display:none;">
+            <label for="bc_gov_id">BC Gov ID:</label>
+            <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
+            <span class="bc_gov_id_errors errors">
+                       @error('bc_gov_id')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
                   </span>

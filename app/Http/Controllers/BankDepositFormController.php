@@ -77,8 +77,15 @@ class BankDepositFormController extends Controller
          ]);
         $validator->after(function ($validator) use($request) {
 
+            if(empty($request->pecsf_id) && $request->organization_code != "GOV")
+            {
+                $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+            }
+            if(empty($request->bc_gov_id) && $request->organization_code == "GOV"){
+                $validator->errors()->add('bc_gov_id','A BC GOV ID is required.');
+            }
 
-            if($request->event_type == "Fundraiser" || $request->event_type == "Gaming")
+            if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
             {
                 if(empty($request->address_line_1))
                 {
@@ -97,9 +104,9 @@ class BankDepositFormController extends Controller
                 for($i=0;$i<$request->org_count;$i++){
 
                     if(!empty(request("donation_percent")[$i]))
-                        {
-                            $total = request('donation_percent')[$i] + $total;
-                        }
+                    {
+                        $total = request('donation_percent')[$i] + $total;
+                    }
 
                     if(empty(request("id")[$i]))
                     {
@@ -111,9 +118,7 @@ class BankDepositFormController extends Controller
                     if(empty(request('donation_percent')[$i])){
                         $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
                     };
-                    if(empty(request('specific_community_or_initiative')[$i])){
-                        $validator->errors()->add('specific_community_or_initiative.'.$i,'This Field is required.');
-                    };
+
                 }
                 if($total != 100) {
                     for ($j = 0; $j < $request->org_count; $j++) {
@@ -149,17 +154,22 @@ class BankDepositFormController extends Controller
                 'address_line_2' => $request->address_2,
                 'address_city' => $request->city,
                 'address_province' => $request->province,
-                'address_postal_code' => $request->postal_code
+                'address_postal_code' => $request->postal_code,
+                'bc_gov_id' => $request->bc_gov_id,
+                'pecsf_id' => $request->pecsf_id
             ]
         );
 
         if($request->charity_selection == "dc"){
             foreach($request->id as $key => $name){
+
+               ;
+
                 BankDepositFormOrganizations::create([
                     'organization_name' => $request->id[$key],
                     'vendor_id' => $request->vendor_id[$key],
                     'donation_percent' => $request->donation_percent[$key],
-                    'specific_community_or_initiative' => $request->specific_community_or_initiative[$key],
+                    'specific_community_or_initiative' =>  (isset($request->specific_community_or_initiative[$key])?$request->specific_community_or_initiative[$key]:""),
                     'bank_deposit_form_id' => $form->id
                 ]);
             }
@@ -176,7 +186,15 @@ class BankDepositFormController extends Controller
             ]);
         }
 
-        echo  json_encode(array(route('bank_deposit_form')));
+        if(strpos($_SERVER['HTTP_REFERER'],'admin-pledge') !== FALSE)
+        {
+            echo  json_encode(array(route('admin-pledge.maintain-event.index')));
+
+        }
+        else{
+            echo  json_encode(array(route('bank_deposit_form')));
+        }
+
     }
 
 

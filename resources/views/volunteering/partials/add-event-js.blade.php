@@ -11,6 +11,17 @@ $("#organizations").hide();
 }
 });
 
+$("[name='organization_code']").change(function(){
+if($(this).val() == "GOV"){
+$("#pecsfid").hide();
+$("#bcgovid").show();
+}
+else{
+$("#pecsfid").show();
+$("#bcgovid").hide();
+}
+});
+
 $("[name='event_type']").change(function(){
 $("#sub_type").attr("disabled",false);
 
@@ -104,8 +115,8 @@ dataType: 'json',
 success:function(response){
 $("#bank_deposit_form").fadeTo("slow",1);
 $('.errors').html("");
-alert("Success!");
-// window.location = response[0];
+
+window.location = response[0];
 console.log(response);
 },
 error: function(response) {
