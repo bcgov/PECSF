@@ -15,7 +15,7 @@ class AddTimestampsOnOrganizationsTable extends Migration
     {
         //
         Schema::table('organizations', function (Blueprint $table) {
-            
+
             //
             $table->string('code',3)->after('id');
             $table->string('status',1)->after('name');
@@ -37,7 +37,7 @@ class AddTimestampsOnOrganizationsTable extends Migration
     {
         //
         Schema::table('organizations', function (Blueprint $table) {
-            
+
             //
             $table->dropUnique(['code']);
 

@@ -46,7 +46,7 @@
     </div>
 
     <div class="form-row form-body">
-        <div class="form-group col-md-9">
+        <div class="form-group col-md-6">
             <label for="description">Event Name:</label>
             <input class="form-control" type="text" name="description" id="description" />
             <span>*Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
@@ -57,7 +57,16 @@
                   </span>
         </div>
         <div class="form-group col-md-3">
-            <label for="user_id">PECSF ID or BC Gov ID:</label>
+            <label for="user_id">PECSF ID:</label>
+            <input class="form-control" type="text" name="user_id" id="user_id" />
+            <span class="user_id_errors errors">
+                       @error('user_id')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="user_id">BC Gov ID:</label>
             <input class="form-control" type="text" name="user_id" id="user_id" />
             <span class="user_id_errors errors">
                        @error('user_id')
@@ -180,7 +189,7 @@
     </div>
     <div class="form-row form-body">
 
-        <div class="form-group col-md-12" id="address_line_1" style="display:none;">
+        <div class="form-group col-md-12" id="address_line_1" style="">
             <label for="event_type">Address Line 1:</label>
             <input class="form-control" type="text" id="address_1" name="address_1"/>
 

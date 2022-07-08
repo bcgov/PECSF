@@ -147,6 +147,7 @@
       </div>
       <label class="w-100">
           <input type="hidden" name="id[]" value="${this.id}">
+          <input type="hidden" name="vendor_id[]" value="${this.vendor_id}">
           <input type="text" name="additional[]" class="form-control form-control-sm additional-text" data-id="${this.id}" value="${this.additional}" placeholder="If you have specific community or initiative in mind, enter it here.">
       </label>
   </div>
@@ -198,9 +199,9 @@
             }
         });
 
-        function renderSelectedCharity() {
+        function renderSelectedCharity(index=window.lastIndex) {
 
-          $list = $(".selected-charity-list").eq(window.lastIndex);
+          $list = $(".selected-charity-list").eq(index);
           $list.html("");
           for (charity of selectedCharity.reverse()) {
             $list.append(tmplParse(tmplCharity, charity));
@@ -217,7 +218,7 @@
               function (data, status) {
                   console.log("Data: " + data + "\nStatus: " + status);
               });
-          renderSelectedCharity();
+          renderSelectedCharity($('.clear-charity').index($(this)));
         });
 
         $(document).on('change', '.additional-text', function () {

@@ -14,7 +14,7 @@ class Jobs extends Model
     }
 
     public function getLastModified(){
-        return gmdate("Y-m-d H:i:s", $this->attributesToArray()['updated_at']);
+        return gmdate("Y-m-d H:i:s", strtotime($this->attributesToArray()['created_at']));
     }
 
     public function getFailedAttempts(){

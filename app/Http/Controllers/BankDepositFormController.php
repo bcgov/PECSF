@@ -66,8 +66,6 @@ class BankDepositFormController extends Controller
             'employment_city'         => 'required',
             'region'         => 'required',
             'business_unit'         => 'required',
-            'address_1'         => 'required',
-            'address_2'         => 'required',
             'city'         => 'required',
             'province'         => 'required',
             'postal_code'         => 'required',
@@ -78,6 +76,15 @@ class BankDepositFormController extends Controller
             'organization_code' => 'The Organization Code is required.',
          ]);
         $validator->after(function ($validator) use($request) {
+
+
+            if($request->event_type == "Fundraiser" || $request->event_type == "Gaming")
+            {
+                if(empty($request->address_line_1))
+                {
+                    $validator->errors()->add('address_line_1','An Address is required.');
+                }
+            }
 
             if($request->charity_selection == "fsp")
             {
@@ -94,7 +101,7 @@ class BankDepositFormController extends Controller
                             $total = request('donation_percent')[$i] + $total;
                         }
 
-                    if(empty(request("organization_name")[$i]))
+                    if(empty(request("id")[$i]))
                     {
                         $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
                     }
@@ -147,9 +154,9 @@ class BankDepositFormController extends Controller
         );
 
         if($request->charity_selection == "dc"){
-            foreach($request->organization_name as $key => $name){
+            foreach($request->id as $key => $name){
                 BankDepositFormOrganizations::create([
-                    'organization_name' => $name,
+                    'organization_name' => $request->id[$key],
                     'vendor_id' => $request->vendor_id[$key],
                     'donation_percent' => $request->donation_percent[$key],
                     'specific_community_or_initiative' => $request->specific_community_or_initiative[$key],
