@@ -277,7 +277,8 @@ class CharityController extends Controller
             return view('donate.partials.charity-pagination', compact('charities','terms','designation_list','category_list','province_list','selected_charities') );
         }
 
-        return view('donate.select', compact('charities','terms','designation_list','category_list','province_list','selected_charities'));
+        $multiple = true;
+        return view('donate.select', compact('multiple','charities','terms','designation_list','category_list','province_list','selected_charities'));
     }
 
     // public function edit(Request $request, $id = null) {
