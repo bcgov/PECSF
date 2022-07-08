@@ -163,7 +163,8 @@
                 {data: 'start_at', defaultContent: '', className: "dt-nowrap" },
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},
-                {data: 'message'},
+                {data: 'short_message'},
+                // {data: 'message'},
             ],
             columnDefs: [
                     {

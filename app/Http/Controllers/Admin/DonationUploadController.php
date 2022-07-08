@@ -11,6 +11,7 @@ use App\Models\ProcessHistory;
 use App\Imports\DonationsImport;
 use App\Jobs\DonationsImportJob;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Bus;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -43,9 +44,32 @@ class DonationUploadController extends Controller
 
         if($request->ajax()) {
 
+            // check the unfinished process and update the status
+            $failed_processes = ProcessHistory::where('process_histories.process_name', $this->process_name)
+            ->whereNotIn('process_histories.status', ['Completed', 'Warning', 'Error'])
+            ->get();
+
+            foreach( $failed_processes as $process_history) {
+                $batch = Bus::findBatch( $process_history->batch_id);
+                if ( ($batch->cancelledAt) && ($batch->totalJobs == $batch->failedJobs) && ($batch->failedJobs > 0) ) {
+
+                    $failed_job = DB::table('failed_jobs')->where('uuid', $batch->failedJobIds[0])->first();
+
+                    $process_history->status = 'Error';
+                    $process_history->message = $failed_job ? $failed_job->exception : '';
+                    $process_history->end_at = $batch->finishedAt;
+                    $process_history->save();
+                }
+            }
+
+
+            // Prepare for the datatables
             $processes = ProcessHistory::where('process_name', $this->process_name);
 
             return Datatables::of($processes)
+                ->addColumn('short_message', function ($process) {
+                    return substr($process->message, 0, 255);
+                })
                 ->addColumn('action', function ($process) {
                     return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$process->id) . '">Show</a>' .
                         '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$process->id) . '">Edit</a>';
