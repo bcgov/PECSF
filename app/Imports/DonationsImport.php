@@ -122,7 +122,7 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
             AfterImport::class => function (AfterImport $event) {
 
                 $status = 'Completed';
-                $message = '';
+                $message = 'Success: ' . $this->row_count . ' row(s) were imported.';;
                 if ($this->skip_count > 0) {
                     $status = 'Warning';
                     $message = 'Warning: ' . $this->skip_count . ' out of ' . $this->row_count . ' row(s) were skipped due to duplication.';

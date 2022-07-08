@@ -5,8 +5,8 @@ cd /app
 # Queue 
 nohup php artisan queue:work --tries=3 --timeout=0 > ./storage/logs/queue-work.log &
 
-# Schedule
-nohup php artisan schedule:work --verbose --no-interaction &
+# Schedule (required manual start)
+#nohup php artisan schedule:work --verbose --no-interaction &
 
 # App 
 php artisan serve --host=0.0.0.0 --port=8000

@@ -148,18 +148,42 @@ class CampaignPledgeController extends Controller
                     $request->one_time_amount : $request->one_time_amount_other;
         $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
 
-        $pledge = Pledge::Create([
-            'organization_id' => $request->organization_id,
-            'user_id' => $request->user_id,
-            'campaign_year_id' => $request->campaign_year_id,
-            'type' => $request->pool_option,
-            'f_s_pool_id' => $request->pool_option == 'P' ? $request->pool_id : 0,
-            'one_time_amount' => $one_time_amount ?? 0,
-            'pay_period_amount' => $pay_period_amount ?? 0,
-            'goal_amount' => $pay_period_annual_amt + $one_time_amount,
-            'created_by_id' => Auth::id(),
-            'updated_by_id' => Auth::id(),
-        ]);
+
+        // Make sure that there is no pledge transaction setup yet 
+        $message_text = '';
+        $pledge = Pledge::where('organization_id', $request->organization_id)
+                            ->where('user_id', $request->user_id)
+                            ->where('campaign_year_id', $request->campaign_year_id)
+                            ->first();
+        if ($pledge) {
+            // Update the esiting one 
+            $pledge->type = $request->pool_option;
+            $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
+            $pledge->one_time_amount = $one_time_amount ?? 0;
+            $pledge->pay_period_amount = $pay_period_amount ?? 0;
+            $pledge->goal_amount = $pay_period_annual_amt + $one_time_amount;
+            $pledge->updated_by_id = Auth::id();
+            $pledge->save();
+
+            $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been updated successfully';
+
+        } else {
+            // Create a new Pledge
+            $pledge = Pledge::Create([
+                'organization_id' => $request->organization_id,
+                'user_id' => $request->user_id,
+                'campaign_year_id' => $request->campaign_year_id,
+                'type' => $request->pool_option,
+                'f_s_pool_id' => $request->pool_option == 'P' ? $request->pool_id : 0,
+                'one_time_amount' => $one_time_amount ?? 0,
+                'pay_period_amount' => $pay_period_amount ?? 0,
+                'goal_amount' => $pay_period_annual_amt + $one_time_amount,
+                'created_by_id' => Auth::id(),
+                'updated_by_id' => Auth::id(),
+            ]);
+
+            $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
+        }
 
         $pledge->charities()->delete();
 
@@ -228,8 +252,8 @@ class CampaignPledgeController extends Controller
 
         // return response()->noContent();
         return redirect()->route('admin-pledge.campaign.index')
-                ->with('success','Pledge with Transaction ID ' . $pledge->id . ' have been created successfully');
-     
+                ->with('success', $message_text);
+        
     }
 
     /**
@@ -317,10 +341,9 @@ class CampaignPledgeController extends Controller
 
         $pledge->type = $request->pool_option;
         $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
-        $pledge->one_time_amount = $one_time_amount;
-        $pledge->pay_period_amount = $pay_period_amount;
+        $pledge->one_time_amount = $one_time_amount ?? 0;
+        $pledge->pay_period_amount = $pay_period_amount ?? 0;
         $pledge->goal_amount = $pay_period_annual_amt + $one_time_amount;
-        $pledge->created_by_id = Auth::id();
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 

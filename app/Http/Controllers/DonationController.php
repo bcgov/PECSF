@@ -91,8 +91,7 @@ class DonationController extends Controller {
         foreach ($old_bi_pledges as $old_pledge)
         {
 
-            $amount =  $old_pledge->frequency == 'One-Time' ?  $old_pledge->pledge :
-                                    ($old_pledge->pledge * $old_pledge->campaign_year->number_of_periods);
+            $amount =   $old_pledge->pledge; 
             $totalPledgedDataTillNow += $amount;
         }
 
