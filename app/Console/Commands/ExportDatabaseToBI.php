@@ -16,6 +16,7 @@ class ExportDatabaseToBI extends Command
         ['name' => 'business_units',     'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'campaign_years',     'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'charities',          'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'donation',           'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'f_s_pools',          'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'f_s_pool_charities', 'delta' => 'updated_at', 'hidden' => ['image'] ],
         ['name' => 'organizations',      'delta' => 'updated_at', 'hidden' => null ],

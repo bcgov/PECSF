@@ -599,6 +599,14 @@ $(function () {
         initializeSelect2($(this));
     });
 
+    $(document).on("select2:select", "select[name='charities[]']", function(e) {
+        $(e.target).closest('td').find("input[name='additional[]']").val('');
+    });
+
+    $(document).on("select2:clear", "select[name='charities[]']", function(e) {
+        $(e.target).closest('td').find("input[name='additional[]']").val('');
+    });
+
     // variable for keep track detail lines 
     let row_number = {{ (isset($pledge)) ? $pledge->distinct_charities->count() + 1 : 1 }};
 
