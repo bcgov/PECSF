@@ -78,7 +78,8 @@ class DonationUploadController extends Controller
 
         }
 
-        $organizations = Organization::whereNotIn('code', ['GOV'])->orderBy('code')->get();
+        $organizations = Organization::where('status', 'A')
+                                ->whereNotIn('code', ['GOV'])->orderBy('code')->get();
 
         $jobs = count(Jobs::all()) > 0 ? Jobs::all() : [];
         $completed_jobs = CompletedJobs::all();
