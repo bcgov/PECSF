@@ -79,9 +79,9 @@ class HomeController extends Controller
             }
             else
             {
-                $charities[$index]->previous_participation_rate = "No Data";
-                $charities[$index]->previous_donors = "No Data";
-                $charities[$index]->change = "No Data";
+                $charities[$index]->previous_participation_rate = 0;
+                $charities[$index]->previous_donors = 0;
+                $charities[$index]->change = 0;
             }
         }
 

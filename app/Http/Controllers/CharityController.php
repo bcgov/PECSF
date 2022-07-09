@@ -446,9 +446,16 @@ class CharityController extends Controller
         return redirect()->route('donate.distribution');
     }
 
-    public function distribution($getData = false) {
+    public function distribution($getData = false,$request=[]) {
 
         $pool_option = Session::get('pool_option');
+
+        if(empty($request->download_pdf))
+        {
+            $request = new \stdClass();
+            $request->download_pdf = false;
+        }
+
 
         if ($pool_option == 'C') {
             if (!Session::has('charities')) {
@@ -612,12 +619,25 @@ class CharityController extends Controller
         $multiplier = 1;
         // $total = "Yet To Calculated";
         $weekly = "ToDelete";
+
         $viewData = compact('charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
             'weekly', 'frequency', 'multiplier', 'pool_option', 'regional_pool_id');
         if ($getData) {
             return $viewData;
         }
-        return view($view, $viewData);
+        else if($request->download_pdf){
+            $date = date("Y-m-d");
+            view()->share('donations.index',compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+                'weekly', 'frequency', 'multiplier', 'pool_option', 'regional_pool_id'));
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donations.partials.summary', compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+                'weekly', 'frequency', 'multiplier', 'pool_option', 'regional_pool_id'));
+            return $pdf->download('Donation Summary.pdf');
+        }
+        else{
+            return view($view, $viewData);
+        }
+
+
     }
 
     public function distributionOld()
@@ -771,9 +791,9 @@ class CharityController extends Controller
         return redirect()->route('donate.summary');
     }
 
-    public function summary() {
+    public function summary(Request $request) {
         // Logic to show/calculate amount is already done in distribution fn, just view is different
-        return $this->distribution();
+        return $this->distribution(false,$request);
     }
 
     public function savePDF() {
@@ -871,7 +891,10 @@ class CharityController extends Controller
         $request->session()->put('forPDF', $forPDF);
         $request->session()->forget(['pool_option', 'regional_pool_id', 'charities', 'amount']);
 
-        return redirect()->route('donate.save.thank-you');
+
+            return redirect()->route('donate.save.thank-you');
+
+
     }
 
     public function thankYou()

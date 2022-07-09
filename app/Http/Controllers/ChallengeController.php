@@ -32,7 +32,7 @@ class ChallengeController extends Controller
             ->where('donor_by_business_units.yearcd',"=",$year)
             ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
             ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
-            ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
+            ->orderBy(($request->field ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
         ->paginate(10);
 
         if($request->sort == "ASC"){
@@ -42,7 +42,7 @@ class ChallengeController extends Controller
                 ->where('donor_by_business_units.yearcd',"=",$year)
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
                 ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
-                ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
+                ->orderBy(($request->field ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
                 ->count();
         }
         else{
@@ -57,7 +57,7 @@ class ChallengeController extends Controller
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
                 ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
                 ->where('business_units.id',"=",$charity->id)
-                ->orderBy("participation_rate",($request->sort ? $request->sort : "desc"))
+                ->orderBy(($request->field ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
                 ->first();
 
             if(!empty($previousYear))

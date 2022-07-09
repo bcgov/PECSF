@@ -1,3 +1,54 @@
+<style>
+    #accordion{
+
+    }
+    .header{
+        padding:25px;
+    }
+
+    .header img{
+        left:left;
+        width:350px;
+        height:auto;
+    }
+
+    .header span{
+        float:right;
+        font-weight:bold;
+        display:block;
+        vertical-align: bottom;
+        font-size:20px;
+        position:relative;
+        bottom:-55px;
+    }
+
+    table{
+        width:100%;
+    }
+
+    table th{
+        font-weight:bold;
+        background:#f7f7f7;
+        color:#000;
+        font-size:14px;
+        padding:10px;
+    }
+
+    table td{
+        text-align:center;
+        font-weight:normal;
+        padding:10px;
+    }
+</style>
+
+<div class="header">
+    <img src="img/brand/1.png"/>
+    <span>PECSF Donation Summary</span>
+    <div class="clear"></div>
+</div>
+<hr>
+
+<span><i>Please note that this is not a Tax Receipt</i></span>
 <div id="accordion">
 
     @foreach($old_pledges_by_yearcd as $key => $pledges)
@@ -5,9 +56,9 @@
             <div class="card-header" id="heading0{{ $loop->index }}">
                 <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                     aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
-                    <button class="btn btn-link font-weight-bold">
+                    <h1 class="">
                         {{  $key }}
-                    </button>
+                    </h1>
                     <div class="flex-fill"></div>
                     <div class="expander">
                     </div>

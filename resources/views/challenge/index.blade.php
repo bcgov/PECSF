@@ -13,9 +13,9 @@
 <h1>Challenge</h1>
 <p class="h5 mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!
 
-View and download daily statistics updates below.
+    View and download daily statistics updates below.
 
-If you have questions about PECSF statistics, send us an e-mail at PECSF@gov.bc.ca.  </p>
+    If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</p>
 </div>
 @endsection
 @section('content')
@@ -32,13 +32,12 @@ Campaign Year
 <div class="card-body">
 <table class="table table-bordered rounded" id="myTable2">
 <tr class="bg-light">
-<th onclick="" style="cursor: pointer;">Rank</th>
-<th onclick="" style="cursor: pointer;">Organization Name</th>
-<th onclick="sortTable()" style="cursor: pointer;">Participation Rate <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
-<th onclick="" style="cursor: pointer;">Final Participation Rate In Previous Years</th>
-<th onclick="" style="cursor: pointer;">Change</th>
-<th onclick="" style="cursor: pointer;">Number of Donors</th>
-<th onclick="" style="cursor: pointer;">Dollars Donated</th>
+<th onclick="sortTable('rank')" style="cursor: pointer;">Rank</th>
+<th onclick="sortTable('name')" style="cursor: pointer;">Organization Name <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
+<th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
+<th onclick="sortTable('participation_rate')" style="cursor: pointer;">Previous participation rate </th>
+<th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
+<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollar Donated <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
 </tr>
 
 
@@ -78,7 +77,6 @@ Campaign Year
                     <td>{{$charity['name']}}</td>
                     <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
                     <td>{{$charity['previous_participation_rate']}}%</td>
-                    <td>{{$charity['change']}}%</td>
                     <td>{{$charity['donors']}}</td>
                     <td>${{$charity['dollars']}}</td>
                 </tr>
@@ -92,6 +90,9 @@ Campaign Year
 
     </div>
 </div>
+
+<br>
+<br>
 <form id="download_report" method="GET" enctype="multipart/form-data" action="{{ route("challege.download") }}" >
     @csrf
 <div class="form-row">
@@ -118,7 +119,7 @@ Campaign Year
     </div>
     <div class="form-group col-md-3">
         <label for="sort">
-            Specify Dates (Optional)
+            Specify dates (Optional)
         </label>
         <input class="form-control" type="date" id="start_date" name="start_date" />
     </div>
@@ -159,8 +160,8 @@ Campaign Year
     });
 
     var new_sort = '{{ $request->sort == "ASC" ? "DESC" : "ASC" }}';
-function sortTable() {
-    window.location = "/challenge?sort="+new_sort+"&year="+year;
+function sortTable(field='participation_rate') {
+    window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year;
 }
 </script>
 @endpush

@@ -1,6 +1,8 @@
 @extends('adminlte::page')
 
 @section('content')
+
+
 <div class="container mt-5">
     <div class="row">
         <div class="col-12 col-xl-8 offset-xl-2">
@@ -96,14 +98,17 @@
                                 <th onclick="sortTable(0)" style="cursor: pointer;">Rank</th>
                                 <th onclick="sortTable(1)" style="cursor: pointer;">Organization Name</th>
                                 <th onclick="sortTable(2)" style="cursor: pointer;">Participation Rate (%)</th>
-                                <th onclick="sortTable(5)" style="cursor: pointer;">Number of Donors</th>
-                                <th onclick="sortTable(6)" style="cursor: pointer;">Dollars Donated</th>
+                                <th onclick="sortTable(2)" style="cursor: pointer;">Previous Participation Rate (%)</th>
+                                <th onclick="sortTable(5)" style="cursor: pointer;">Donors</th>
+                                <th onclick="sortTable(6)" style="cursor: pointer;">Dollar Donated</th>
                             </tr>
                             @foreach($charities as $index => $charity)
                             <tr>
                                 <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
                                 <td>{{$charity['name']}}</td>
                                 <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
+                                <td>{{round(($charity['previous_participation_rate'] * 100),2)}}%</td>
+
                                 <td>{{$charity['donors']}}</td>
                                 <td>${{$charity['dollars']}}</td>
                             </tr>
