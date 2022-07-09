@@ -101,9 +101,6 @@ class MaintainEventPledgeController extends Controller
             {
                 $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
             }
-
-
-
             $event_pledges = $event_pledges->orderBy("created_at","desc")->limit($request->limit)->get();
         }
         else{
@@ -192,8 +189,9 @@ class MaintainEventPledgeController extends Controller
                 }
             }
         }
-$multiple = 'false';
+        $multiple = 'false';
         // load the view and pass
+
         return view('admin-pledge.event.index',compact('multiple','selected_charities','terms','charities','province_list','category_list','designation_list','cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
 
 

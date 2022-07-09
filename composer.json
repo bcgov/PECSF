@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "axlon/laravel-postal-code-validation": "^3.3",
         "barryvdh/laravel-dompdf": "^1.0",
         "barryvdh/laravel-snappy": "^0.4.8",
         "doctrine/dbal": "^3.3",

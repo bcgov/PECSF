@@ -121,6 +121,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    'postal_code' => 'The postal code should be in the Format X1X 1X1.',
 
     /*
     |--------------------------------------------------------------------------

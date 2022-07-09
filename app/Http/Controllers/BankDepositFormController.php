@@ -61,14 +61,14 @@ class BankDepositFormController extends Controller
             'campaign_year'         => 'required',
             'event_type'         => 'required',
             'sub_type'         => 'required',
-            'deposit_date'         => 'required',
-            'deposit_amount'         => 'required',
+            'deposit_date'         => 'required|before:today',
+            'deposit_amount'         => 'required|integer',
             'employment_city'         => 'required',
             'region'         => 'required',
             'business_unit'         => 'required',
             'city'         => 'required',
             'province'         => 'required',
-            'postal_code'         => 'required',
+            'postal_code'         => 'required|postal_code:CA',
             'charity_selection' => 'required',
             'description' => 'required',
             'attachments.*' => 'required',
@@ -103,10 +103,7 @@ class BankDepositFormController extends Controller
                 $total = 0;
                 for($i=0;$i<$request->org_count;$i++){
 
-                    if(!empty(request("donation_percent")[$i]))
-                    {
-                        $total = request('donation_percent')[$i] + $total;
-                    }
+
 
                     if(empty(request("id")[$i]))
                     {
@@ -118,6 +115,15 @@ class BankDepositFormController extends Controller
                     if(empty(request('donation_percent')[$i])){
                         $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
                     };
+                    if(!is_numeric(request('donation_percent')[$i])){
+                        $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
+                    }
+                    else{
+                        if(!empty(request("donation_percent")[$i]))
+                        {
+                            $total = request('donation_percent')[$i] + $total;
+                        }
+                    }
 
                 }
                 if($total != 100) {

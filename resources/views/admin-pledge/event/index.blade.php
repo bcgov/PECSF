@@ -134,7 +134,7 @@
                   </span>
                 </div>
 
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-1">
                     <label for="search">
                         Search
                     </label>
@@ -158,12 +158,12 @@
             </tr>
             </thead>
             <tbody>
-            @if(!empty($event_pledges))
+            @if(count($event_pledges)<1)
+                <tr><td style="text-align:center;" colspan="6">No Results to Display</td></tr>
+            @else
                 @foreach($event_pledges as $key => $pledge)
                     @include('admin-pledge.event.partials.result_row')
                 @endforeach
-            @else
-                <tr><td style="text-align:center;" colspan="6">No Results to Display</td></tr>
             @endif
             </tbody>
         </table>
