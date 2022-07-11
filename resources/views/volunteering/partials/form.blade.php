@@ -1,20 +1,16 @@
 <form id="bank_deposit_form" action="{{ route("bank_deposit_form") }}" method="POST"
       enctype="multipart/form-data">
-
     @csrf
-
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="organization_code">Organization Code:</label>
-            <input type="text" class="form-control errors" name="organization_code" id="organization_code" placeholder="">
-
+            <select type="text" class="form-control errors" name="organization_code" id="organization_code" placeholder="">
+            </select>
             <span class="organization_code_errors errors">
                           @error('organization_code')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                    </span>
-
-
+                            <span class="invalid-feedback">{{  $message  }}</span>
+                          @enderror
+            </span>
         </div>
         <div class="form-group col-md-4">
             <label for="form_submitter">Form Submitter:</label>

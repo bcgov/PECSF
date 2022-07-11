@@ -141,3 +141,10 @@ $("#bank_deposit_form").fadeTo("slow",1);
 });
 
 });
+$('#organization_code').select2({
+ajax: {
+url: '/bank_deposit_form/organization_code',
+dataType: 'json'
+}
+});
+

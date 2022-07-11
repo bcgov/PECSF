@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\BankDepositForm;
 use App\Models\BankDepositFormOrganizations;
 use App\Models\BankDepositFormAttachments;
+use App\Models\Charity;
+use App\Models\Organization;
+use App\Models\Pledge;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\FSPool;
@@ -32,9 +36,8 @@ class BankDepositFormController extends Controller
         $this->doc_folder = "bank_deposit_form_attachments";
     }
 
-    public function index()
+    public function index(Request $request)
     {
-
         $pools = FSPool::where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
@@ -50,8 +53,82 @@ class BankDepositFormController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
+        $charities=Charity::when($request->has("title"),function($q)use($request){
+
+            $searchValues = preg_split('/\s+/', $request->get("title"), -1, PREG_SPLIT_NO_EMPTY);
+
+            if ($request->get("designation_code")) {
+                $q->where('designation_code', $request->get("designation_code"));
+            }
+            if ($request->get("category_code")) {
+                $q->where('category_code', $request->get("category_code"));
+            }
+            if ($request->get("province")) {
+                $q->where('province', $request->get("province"));
+            }
+
+            foreach ($searchValues as $term) {
+                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
+            }
+            return $q->orderby('charity_name','asc');
+
+        })->where('charity_status','Registered')->paginate(10);
         $cities = City::all();
-        return view('volunteering.forms',compact('cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        $designation_list = Charity::DESIGNATION_LIST;
+        $category_list = Charity::CATEGORY_LIST;
+        $province_list = Charity::PROVINCE_LIST;
+        $terms = explode(" ", $request->get("title") );
+        $multiple = 'false';
+        $selected_charities = [];
+        if (Session::has('charities')) {
+            $selectedCharities = Session::get('charities');
+
+            $_charities = Charity::whereIn('id', $selectedCharities['id'])
+                ->get(['id', 'charity_name as text']);
+
+            foreach ($_charities as $charity) {
+                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
+                if (!$charity['additional']) {
+                    $charity['additional'] = '';
+                }
+
+                array_push($selected_charities, $charity);
+            }
+        } else {
+
+            // reload the existig pledge
+            $errors = session('errors');
+
+            if (!$errors) {
+
+                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+                    ->first();
+                $pledge = Pledge::where('user_id', Auth::id())
+                    ->whereHas('campaign_year', function($q){
+                        $q->where('calendar_year','=', today()->year + 1 );
+                    })->first();
+
+                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
+
+                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
+
+                    $_charities = Charity::whereIn('id', $_ids )
+                        ->get(['id', 'charity_name as text']);
+
+                    foreach ($_charities as $charity) {
+                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
+
+                        $charity['additional'] = '';
+                        if ($pledge_charity) {
+                            $charity['additional'] = $pledge_charity->additional ?? '';
+                        }
+
+                        array_push($selected_charities, $charity);
+                    }
+                }
+            }
+        }
+        return view('volunteering.forms',compact('selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
     public function store(Request $request) {
@@ -203,6 +280,21 @@ class BankDepositFormController extends Controller
 
     }
 
-
-
+    public function organization_code(Request $request)
+    {
+        if(empty($request->term))
+        {
+            $organizations = Organization::limit(30)->get();
+        }
+        else{
+            $organizations = Organization::where("code", "LIKE", $request->term . "%")->get();
+        }
+        $response = ['results' => []];
+        foreach ($organizations as $organization) {
+            if(!empty($organization->code)){
+                $response['results'][] = ["id" => $organization->id,"text" => $organization->code];
+            }
+        }
+        echo json_encode($response);
+    }
 }
