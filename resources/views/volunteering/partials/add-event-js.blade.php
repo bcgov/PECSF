@@ -154,5 +154,34 @@ dataType: 'json'
 });
 
 $(".sub_type .selection").children(0).children(0).remove();
+$('.more-info').click( function(event) {
+event.stopPropagation();
+// var current_id = event.target.id;
+id = $(this).attr('data-id');
+name = $(this).attr('data-name');
 
+console.log( 'more info - ' + id );
+if ( id  ) {
+// Lanuch Modal page for listing the Pool detail
+$.ajax({
+url: '/donate/regional-pool-detail/' + id,
+type: 'GET',
+// data: $("#notify-form").serialize(),
+dataType: 'html',
+success: function (result) {
+$('.modal-title span').html(name);
+target = '.pledgeDetail';
+$(target).html('');
+$(target).html(result);
+},
+complete: function() {
+},
+error: function () {
+alert("error");
+$(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+}
+})
 
+$('#regionalPoolModal').modal('show')
+}
+});

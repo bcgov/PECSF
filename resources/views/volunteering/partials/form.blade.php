@@ -166,7 +166,9 @@
             <label for="sub_type">Business Unit:</label>
             <select class="form-control search_icon" id="business_unit" name="business_unit">
                 @foreach($business_units as $bu)
+                    @if(!empty($bu->name))
                     <option value="{{$bu->id}}">{{$bu->name}}</option>
+                    @endif
                 @endforeach
             </select>
             <span class="business_unit_errors errors">
@@ -281,7 +283,7 @@
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
 
-                        <img class="col-md-10" style="height:80px;float-left;" src="img/uploads/{{$pool->image}}"/>
+                        <img class="col-md-10" style="height:80px;float-left;" src="img/uploads/{{$pool->charities()->get()[0]->image}}"/>
 
                         <div class="form-check float-right">
                             <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->id }}"
@@ -296,7 +298,11 @@
 
                     </div>
 
+                    <div class=" text-right m-2 pt-2" data-id="{{ $pool->id }}">
+                        <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}"
+                           data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}"></i>
 
+                    </div>
                 </div>
 
             </div>
@@ -378,3 +384,22 @@
         Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or PECSF@gov.bc.ca.
     </p>
 </form>
+<!-- Modal -->
+<div class="modal fade" id="regionalPoolModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-dark" id="pledgeDetailModalTitle">Regional Charity Pool
+                    <span class="text-dark font-weight-bold"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body pledgeDetail">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
