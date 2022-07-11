@@ -200,7 +200,12 @@
 
         <div class="form-group col-md-4">
             <label for="sub_type">City:</label>
-            <input class="form-control" type="text" id="city" name="city">
+
+            <select class="form-control search_icon" type="text" id="city" name="city" >
+            @foreach($cities as $city)
+                <option value="{{$city->city}}">{{$city->city}}</option>
+            @endforeach
+            </select>
             <span class="city_errors errors">
                        @error('city')
                         <span class="invalid-feedback">{{  $message  }}</span>
