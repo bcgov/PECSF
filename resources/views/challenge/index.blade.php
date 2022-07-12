@@ -11,9 +11,9 @@
 @section('content_header')
 <div class="mt-3">
 <h1>Challenge</h1>
-<p class="h5 mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!
+<p class="h5 mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
 
-    View and download daily statistics updates below.
+    View and download daily statistics updates below.<br>
 
     If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</p>
 </div>
@@ -33,11 +33,11 @@ Campaign Year
 <table class="table table-bordered rounded" id="myTable2">
 <tr class="bg-light">
 <th onclick="sortTable('rank')" style="cursor: pointer;">Rank</th>
-<th onclick="sortTable('name')" style="cursor: pointer;">Organization Name <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
-<th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
+<th onclick="sortTable('name')" style="cursor: pointer;">Organization Name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
+<th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
 <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Previous participation rate </th>
-<th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
-<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollar Donated <img style="width:16px;height:16px;" class="float-right" src="{{ asset("img/icons/sort.jpg") }}" /></th>
+<th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
+<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollar Donated <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
 </tr>
 
 
@@ -162,6 +162,7 @@ Campaign Year
     var new_sort = '{{ $request->sort == "ASC" ? "DESC" : "ASC" }}';
 function sortTable(field='participation_rate') {
     window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year;
+    $(".sort-hook").attr("src",);
 }
 </script>
 @endpush
