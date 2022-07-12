@@ -344,8 +344,8 @@
                     <th class="blue"></th>
                     <th class="blue">Attached File</th>
                     <th class="blue">Add Attachment</th>
-                    <th class="blue">Delete Attachment</th>
                     <th class="blue">View Attachment</th>
+                    <th class="blue">Delete Attachment</th>
                     <th class="blue"></th>
 
                 </tr>
@@ -361,8 +361,8 @@
                     </td>
                     <td><span class="filename"></span></td>
                     <td><label class="btn btn-primary" for="attachment_input_1"><input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />Add</label></td>
+                    <td><button class="btn btn-primary view_attachment">View</button></td>
                     <td></td>
-                    <td><button class="btn btn-primary">View</button></td>
                     <td><i class="fas fa-plus add_attachment_row"></i></td>
                 </tr>
 

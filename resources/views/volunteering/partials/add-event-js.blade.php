@@ -185,3 +185,16 @@ $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wro
 $('#regionalPoolModal').modal('show')
 }
 });
+
+$("body").on("click",".view_attachment",function(){
+window.open(URL.createObjectURL($(this).parents("tr").find("input")[0].files[0]));
+});
+
+function readFile(file) {
+const reader = new FileReader();
+reader.addEventListener('load', (event) => {
+const result = event.target.result;
+// Do something with result
+});
+reader.readAsDataURL(file);
+}

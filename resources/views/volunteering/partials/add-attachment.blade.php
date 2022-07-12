@@ -8,7 +8,7 @@
     </td>
     <td><span class="filename"></span></td>
     <td><label class="btn btn-primary" for="attachment_input_{{$index}}"><input style="display:none" id="attachment_input_{{$index}}" name="attachments[]" type="file" />Add</label></td>
-    <td><button class="btn btn-danger remove">Delete</button></td>
-    <td><button class="btn btn-primary">View</button></td>
-    <td><i class="fas fa-plus add_attachment_row"></i></td>
+    <td><button class="btn btn-primary view_attachment">View</button></td>
+    <td><button class="btn btn-danger remove_attachment">Delete</button></td>
+    <td><i class="fas fa-minus remove"></i></td>
 </tr>

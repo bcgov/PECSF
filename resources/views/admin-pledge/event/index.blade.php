@@ -255,7 +255,7 @@
     <script>
 
 
-        $(document).on("click",".more-info", function(e){
+        $(document).on("click",".more-info-pledge", function(e){
             e.preventDefault();
             $("#more_info_pledge").html($("#"+$(this).attr("data-id")).clone());
             $("#more_info_pledge").find("tr").css("display","");

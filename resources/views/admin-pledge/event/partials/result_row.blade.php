@@ -5,7 +5,7 @@
     <td>{{$pledge->created_at}}</td>
     <td>{{$pledge->event_type}}</td>
     <td>{{$pledge->sub_type}}</td>
-    <th><i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{$pledge->id}}_pledge_hook"></i></th>
+    <th><i class="more-info-pledge fas fa-info-circle fa-2x bottom-right" data-id="{{$pledge->id}}_pledge_hook"></i></th>
 </tr>
 
 <tr style="display:none;" id="{{$pledge->id}}_pledge_hook" class="full-row">
