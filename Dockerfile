@@ -38,8 +38,6 @@ WORKDIR /app
 COPY . /app
 
 # JP add 2022-06-22 -- copy the start script and additional php setting file from repo to container
-RUN cp /usr/local/etc/php/php.ini-production  /usr/local/etc/php/php.ini
-RUN sed -i -e 's/;extension=gd/extension=gd/' /usr/local/etc/php/php.ini
 COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 COPY ./start.sh /usr/local/bin/start
 
