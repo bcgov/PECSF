@@ -25,8 +25,13 @@ RUN wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
 
 RUN sudo apt-get update
-RUN apt list|grep php7.3-gd
+#RUN apt list|grep php7.3-gd
 #RUN apt-get install php7.3-gd/stable -y
+RUN docker-php-ext-install gd
+RUN apt-get install -y \
+        libzip-dev \
+        zip \
+    && docker-php-ext-install zip
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN docker-php-ext-install pdo pdo_mysql mbstring 
 WORKDIR /app

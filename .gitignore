@@ -3,6 +3,7 @@
 /public/storage
 /public/img/uploads/*
 /public/charities/*
+/public/bank_deposit_form_attachments/*
 /storage/*.key
 /storage/framework/laravel-excel/*
 /vendor
