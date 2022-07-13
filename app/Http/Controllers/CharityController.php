@@ -889,7 +889,7 @@ class CharityController extends Controller
         ];
 
         $request->session()->put('forPDF', $forPDF);
-        $request->session()->forget(['pool_option', 'regional_pool_id', 'charities', 'amount']);
+        $request->session()->forget(['pool_option', 'charities', 'amount']);
 
 
             return redirect()->route('donate.save.thank-you');
