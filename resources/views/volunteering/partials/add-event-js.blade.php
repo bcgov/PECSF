@@ -3,11 +3,13 @@
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
 $("#organizations").show();
+$("#add_row").show();
 $(".form-pool").hide();
 }
 else{
 $(".form-pool").show();
 $("#organizations").hide();
+$("#add_row").hide();
 }
 });
 
@@ -28,16 +30,16 @@ $("#sub_type").attr("disabled",false);
 
 if($(this).val()=="Fundraiser"){
 $("#sub_type").html('<option value="">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
-$("#address_line_1").hide();
+$(".address_hook").hide();
 $("select").select2();
 }
 else if($(this).val()=="Gaming"){
 $("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
-$("#address_line_1").hide();
+$(".address_hook").hide();
 $("select").select2();
 }
 else{
-$("#address_line_1").show();
+$(".address_hook").show();
 
 $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);
@@ -52,14 +54,21 @@ $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
 });
 
 $("select").select2();
-
 let row_number = 0;
 $("#add_row").click(function(e){
 e.preventDefault();
+if($("#charity_selection_2").is(":checked") == true){
 text = $("#organization-tmpl").html();
 text = text.replace(/XXX/g, row_number + 1);
 $('.organization').last().after( text );
 row_number++;
+$('.organization').last().find(".organization_name").select2({
+ajax: {
+url: '/bank_deposit_form/organization_name',
+dataType: 'json'
+}
+});
+}
 });
 
 let attachment_number = 1;
@@ -73,7 +82,10 @@ attachment_number++;
 
 $("body").on("click",".remove",function(e){
 e.preventDefault();
+if($(this).parents("tr").siblings("tr").length > 0){
 $(this).parents("tr").remove();
+}
+
 });
 
 $("#bank_deposit_form").submit(function(e)
@@ -82,9 +94,12 @@ e.preventDefault();
 var form = document.getElementById("create_pool");
 var formData = new FormData();
 $("select").each(function(){
+if($(this).val()){
 if($(this).val().length > 0){
 formData.append($(this).attr("name"), $(this).val());
 }
+}
+
 });
 $("input").each(function(){
 if($(this).attr('type') != "submit"){
@@ -149,6 +164,12 @@ $("#bank_deposit_form").fadeTo("slow",1);
 $('#organization_code').select2({
 ajax: {
 url: '/bank_deposit_form/organization_code',
+dataType: 'json'
+}
+});
+$('.organization_name').select2({
+ajax: {
+url: '/bank_deposit_form/organization_name',
 dataType: 'json'
 }
 });

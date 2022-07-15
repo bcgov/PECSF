@@ -45,7 +45,7 @@
         <div class="form-group col-md-6">
             <label for="description">Event Name:</label>
             <input class="form-control" type="text" name="description" id="description" />
-            <span>*Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
+            <span>Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
             <span class="description_errors errors">
                        @error('description')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -133,8 +133,9 @@
     <div class="form-row form-body">
 
         <div class="form-group col-md-4">
-            <label for="event_type">*Employment City:</label>
+            <label for="event_type">Employment City:</label>
             <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
+                <option value="false">Select a City</option>
                 @foreach($cities as $city)
                     <option value="{{$city->city}}">{{$city->city}}</option>
                     @endforeach
@@ -148,7 +149,7 @@
 
         </div>
         <div class="form-group col-md-4">
-            <label for="region">*Region:</label>
+            <label for="region">Region:</label>
             <select class="form-control search_icon" id="region" name="region">
                 @foreach($regions as $region)
                     <option value="{{$region->id}}">{{$region->name}}</option>
@@ -182,10 +183,10 @@
 
     </div>
     <br>
-    <div class="form-row form-header">
+    <div class="form-row form-header address_hook">
             <h2 class="blue">Mailing address for charitable receipt</h2>
     </div>
-    <div class="form-row form-body">
+    <div class="form-row form-body address_hook">
 
         <div class="form-group col-md-12" id="address_line_1" style="">
             <label for="event_type">Address Line 1:</label>
@@ -307,6 +308,16 @@
 
             </div>
         @endforeach
+
+        @for($i=0;$i<(4 - count($pools));$i++)
+            <div class="form-group col-md-2 form-pool">
+
+
+
+            </div>
+            @endfor
+
+
         <div class="form-group col-md-6">
             <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
             <label class="blue" for="charity_selection_2">Donor Choice:</label>
@@ -318,7 +329,7 @@
             @include('volunteering.partials.add-organization', ['index' => 0])
         </table>
 
-        <div class="form-group pointer col-md-12" id="add_row">
+        <div class="form-group pointer col-md-12" style="display:none;" id="add_row">
             <h5 class="blue"> <i class="fas fa-plus"></i>&nbsp;Add Another Organization</h5>
         </div>
     </div>

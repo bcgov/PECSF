@@ -13,9 +13,7 @@
                     @include('volunteering.partials.form')
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
+
         </div>
     </div>
 </div>

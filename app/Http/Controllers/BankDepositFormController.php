@@ -164,7 +164,7 @@ class BankDepositFormController extends Controller
 
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
             {
-                if(empty($request->address_line_1))
+                if(empty($request->address_1))
                 {
                     $validator->errors()->add('address_line_1','An Address is required.');
                 }
@@ -178,7 +178,7 @@ class BankDepositFormController extends Controller
             }
             else{
                 $total = 0;
-                for($i=0;$i<$request->org_count;$i++){
+                for($i=0;$i<=$request->org_count;$i++){
 
 
 
@@ -191,8 +191,8 @@ class BankDepositFormController extends Controller
                     };
                     if(empty(request('donation_percent')[$i])){
                         $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
-                    };
-                    if(!is_numeric(request('donation_percent')[$i])){
+                    }
+                    else if(!is_numeric(request('donation_percent')[$i])){
                         $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
                     }
                     else{
@@ -284,15 +284,35 @@ class BankDepositFormController extends Controller
     {
         if(empty($request->term))
         {
-            $organizations = Organization::limit(30)->get();
+            $organizations = Organization::where("status","=","A")->limit(30)->get();
         }
         else{
-            $organizations = Organization::where("code", "LIKE", $request->term . "%")->get();
+            $organizations = Organization::where("code", "LIKE", $request->term . "%")->where("status","=","A")->get();
         }
         $response = ['results' => []];
+        $response['results'][] = ["id" => "false", "text" => "Choose an Org Code"];
         foreach ($organizations as $organization) {
             if(!empty($organization->code)){
                 $response['results'][] = ["id" => $organization->id,"text" => $organization->code];
+            }
+        }
+        echo json_encode($response);
+    }
+
+    public function organization_name(Request $request)
+    {
+        if(empty($request->term))
+        {
+            $organizations = Charity::where("charity_status","=","Registered")->limit(30)->get();
+        }
+        else{
+            $organizations = Charity::where("charity_name", "LIKE", $request->term . "%")->where("charity_status","=","Registered")->get();
+        }
+        $response = ['results' => []];
+        $response['results'][] = ["id" => "false", "text" => "Choose an Organization Name"];
+        foreach ($organizations as $organization) {
+            if(!empty($organization->charity_name)){
+                $response['results'][] = ["id" => $organization->id,"text" => $organization->charity_name." (".$organization->registration_number.")"];
             }
         }
         echo json_encode($response);

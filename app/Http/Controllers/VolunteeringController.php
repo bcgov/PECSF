@@ -32,11 +32,8 @@ use Yajra\Datatables\Datatables;
 class VolunteeringController extends Controller
 {
     public function index() {
-        $organizations = Organization::all();
+        $organizations = Organization::where('status' ,"=", "A")->get();
         $user = User::find(Auth::id());
-
-
-
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         return view('volunteering.index', compact('organizations', 'user', 'totalPledgedDataTillNow'));
     }
