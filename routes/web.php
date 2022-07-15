@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\BusinessUnitController;
 
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
@@ -40,17 +41,23 @@ use App\Http\Controllers\Admin\CharityListMaintenanceController;
 */
 
 Auth::routes();
+
+Route::get('login/{provider}', [KeycloakLoginController::class, 'redirectToProvider'])
+                 ->middleware('guest')->name('keycloak-login');
+Route::get('login/{provider}/callback', [KeycloakLoginController::class, 'handleProviderCallback']);
+Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
+                ->middleware('auth')->name('logout');
 //Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
 //Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
 //Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
 // MS Graph API Authenication -- composer require league/oauth2-client  microsoft/microsoft-graph
-Route::get('/login/microsoft', [MicrosoftGraphLoginController::class, 'signin'])
-                 ->middleware('guest')
-                 ->name('ms-login');
-Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
-                ->middleware('auth')
-                ->name('logout');
-Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
+// Route::get('/login/microsoft', [MicrosoftGraphLoginController::class, 'signin'])
+//                  ->middleware('guest')
+//                  ->name('ms-login');
+// Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
+//                 ->middleware('auth')
+//                 ->name('logout');
+// Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
 
 
 Route::get('/donate', [CharityController::class, 'start'])->name('donate');

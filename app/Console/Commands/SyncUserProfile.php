@@ -118,14 +118,17 @@ class SyncUserProfile extends Command
 
                     if (!($user->acctlock == $acctlock and 
                           $user->emplid == $employee->emplid and
-                          $user->employee_job_id = $employee->id)) {
+                          $user->employee_job_id == $employee->id and 
+                          $user->idir == $employee->idir)) {
 
+                        $user->guid = $employee->guid;
+                        $user->idir = $employee->idir;
                         $user->acctlock = $acctlock;
                         $user->employee_job_id = $employee->id;
                         $user->emplid = $employee->emplid;
                         $user->last_sync_at = $new_sync_at;
                         $user->save();
-                    }
+                    } 
                 }
             } else {
 
@@ -134,8 +137,10 @@ class SyncUserProfile extends Command
                                                       
                 if ($user) {
                     if ( strtolower(trim($user->email)) == strtolower(trim($employee->email)) &&
-                            (!($user->guid)) )  {
+                             (!($user->guid and $user->idir)) ) {
                         $user->guid = $employee->guid;
+                        $user->idir = $employee->idir;
+
                         //$user->reporting_to = $reporting_to;
                         $user->acctlock = $employee->date_deleted ? true : false;
                         $user->last_sync_at = $new_sync_at;
@@ -148,6 +153,7 @@ class SyncUserProfile extends Command
                 } else {
                     $user = User::create([
                         'guid' => $employee->guid,
+                        'idir' => $employee->idir,
                         'name' => $employee->first_name . ' ' . $employee->last_name,
                         'email' => $employee->email,
                         'password' => $password,
