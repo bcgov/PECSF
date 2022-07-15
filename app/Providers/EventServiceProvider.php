@@ -20,7 +20,8 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         SocialiteWasCalled::class => [
-            'SocialiteProviders\\Azure\\AzureExtendSocialite@handle',
+            // 'SocialiteProviders\\Azure\\AzureExtendSocialite@handle',
+            \SocialiteProviders\Keycloak\KeycloakExtendSocialite::class.'@handle',
         ],
     ];
 

@@ -22,9 +22,11 @@ class User extends Authenticatable
         'email',
         'password',
         'azure_id',
+        'identity_provider',
+        'keycloak_id',
         'samaccountname',
         'guid',
-        
+        'idir',
         'acctlock',
         'last_signon_at',
         'last_sync_at',

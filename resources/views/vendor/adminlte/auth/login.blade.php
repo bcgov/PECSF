@@ -40,7 +40,7 @@
         <div class="text-center py-3">
                 <p class="h6 font-weight-bold">Log in to start your session<p>
                     <p class="my-4 ">
-                        <form action="{{ '/login/microsoft' }}" method="get">
+                        <form action="{{ '/login/keycloak' }}" method="get">
                             @csrf
                             <button type="submit" class="btn btn-success">Login with Your BC Govt login ID </button>
                         </form>
