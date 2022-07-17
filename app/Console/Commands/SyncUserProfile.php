@@ -30,6 +30,14 @@ class SyncUserProfile extends Command
      */
     protected $description = 'Update Or Create User Profile';
 
+    /* Source Type is HCM */
+    protected const SOURCE_TYPE = 'HCM';
+    protected $created_count;
+    protected $updated_count;
+    protected $locked_count;
+    protected $message;
+    
+
     /**
      * Create a new command instance.
      *
@@ -38,6 +46,12 @@ class SyncUserProfile extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->created_count = 0;
+        $this->updated_count = 0;
+        $this->locked_count = 0;
+        $this->message = '';
+
     }
 
     /**
@@ -59,9 +73,16 @@ class SyncUserProfile extends Command
         $this->SyncUserProfile();
         $this->info( now() );        
 
+        $this->message .= 'Total new created row(s) : ' . $this->created_count . PHP_EOL;
+        $this->message .= 'Total Updated row(s) : ' . $this->updated_count . PHP_EOL;
+        $this->message .= 'Total locked row(s) : ' . $this->locked_count . PHP_EOL;
+
+        echo  $this->message;        
+        
         // Update the Task Audit log
         $task->end_time = Carbon::now();
         $task->status = 'Completed';
+        $task->message = $this->message;
         $task->save();
 
         return 0;
@@ -79,123 +100,140 @@ class SyncUserProfile extends Command
 
         $new_sync_at = Carbon::now();
 
-        $employees = EmployeeJob::whereNotIn('guid', ['', ' '])
-            ->whereNotIn('email', ['', ' '])
+        $sql = EmployeeJob::where('guid', '!=', '')
+            // ->whereNotIn('email', ['', ' '])
             // ->where(function ($query) use ($last_start_time) {
             //     $query->where('date_updated', '>=', $last_start_time)
             //         ->orWhere('date_deleted', '>=', $last_start_time);
             // })
-            //->whereNotNull('date_updated')
-            //->whereIn('employee_id',['105823', '060061', '107653',
-            //'115637','131116','139238','145894','146113','152843','152921','163102'] )
-            ->orderBy('emplid')
+            //         ->orWhere('date_deleted', '>=', $last_start_time);
+            ->whereNull('date_deleted')
             ->orderBy('job_indicator','desc')      // Secondary, then Primary 
-            ->orderBy('empl_rcd')
-            ->get(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir', 
+            ->select(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir', 
                 'first_name', 'last_name', 'name', 'appointment_status', 'empl_ctg', 'job_indicator',
                 'date_updated', 'date_deleted']);
 
 
         // Step 1 : Create and Update User Profile
         $this->info( now() );
-        $this->info('Step 1 - Create and Update User Profile' );
+        $this->info('Step 1 - Create or Update User Profile' );
 
         $organization = Organization::where('code', 'GOV')->first();
         $password = Hash::make(env('SYNC_USER_PROFILE_SECRET'));
-        foreach ($employees as $employee) {
 
-            // Check the user by GUID 
-            $user = User::where('guid', $employee->guid)->first();
-        
-            if ($user) {
-                if ($employee->email) {
-                    if (!(strtolower(trim($user->email)) == strtolower(trim($employee->email))) )  {
-                        $this->info('Step 1: User ' . $employee->email . ' - ' . 
-                                $employee->guid . ' has difference email address with same GUID.');
-                    }
+        $sql->chunk(1000, function($chuck) use($new_sync_at, $organization, $password, &$n) {
 
-                    $acctlock = $employee->date_deleted ? true : false;
+            $this->info( "batch (1000) - " . ++$n );
 
-                    if (!($user->acctlock == $acctlock and 
-                          $user->emplid == $employee->emplid and
-                          $user->employee_job_id == $employee->id and 
-                          $user->idir == $employee->idir)) {
+            // foreach ($employees as $employee) {
+            foreach($chuck as $employee) {
 
-                        $user->guid = $employee->guid;
-                        $user->idir = $employee->idir;
-                        $user->acctlock = $acctlock;
-                        $user->employee_job_id = $employee->id;
-                        $user->emplid = $employee->emplid;
-                        $user->last_sync_at = $new_sync_at;
-                        $user->save();
-                    } 
-                }
-            } else {
+                $target_email = trim($employee->guid . '@gov');
 
-                $user = User::whereRaw("lower(email) = '". strtolower(addslashes($employee->email))."'") 
+                // Check the user by GUID 
+                $user = User::where(function ($query) {
+                                $query->where('source_type', self::SOURCE_TYPE)
+                                    ->orWhereNull('source_type');
+                            })
+                            ->where('id','>',999)
+                            ->where('guid', $employee->guid)
                             ->first();
-                                                      
+            
                 if ($user) {
-                    if ( strtolower(trim($user->email)) == strtolower(trim($employee->email)) &&
-                             (!($user->guid and $user->idir)) ) {
-                        $user->guid = $employee->guid;
-                        $user->idir = $employee->idir;
 
-                        //$user->reporting_to = $reporting_to;
-                        $user->acctlock = $employee->date_deleted ? true : false;
-                        $user->last_sync_at = $new_sync_at;
-                        $user->organization_id = $organization->id;
-                        $user->employee_job_id = $employee->id;
-                        $user->emplid = $employee->emplid;
-                        $user->save();
+                    if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) and
+                         (trim($user->email) == $target_email ) and 
+                         ($user->source_type == self::SOURCE_TYPE)   
+                        ) {
+                            // reach here mean No Differece found -- no action required
+                    } else {                
+
+                        try {
+                            $user->source_type = self::SOURCE_TYPE;
+                            $user->email  = $target_email;
+                            $user->idir = $employee->idir;
+                            $user->last_sync_at = $new_sync_at;
+                            $user->save();
+
+                            $this->updated_count += 1;
+
+                        } catch(\Illuminate\Database\QueryException $ex){ 
+
+                            $this->message .= 'Exception -- ' . $ex->getMessage() . PHP_EOL;
+                            // Note any method of class PDOException can be called on $ex.
+                        }
+
                     }
 
                 } else {
-                    $user = User::create([
-                        'guid' => $employee->guid,
-                        'idir' => $employee->idir,
-                        'name' => $employee->first_name . ' ' . $employee->last_name,
-                        'email' => $employee->email,
-                        'password' => $password,
-                        'acctlock' => $employee->date_deleted ? true : false,
-                        'last_sync_at' => $new_sync_at,
-                        'organization_id' => $organization->id,
-                        'employee_job_id' => $employee->id,
-                        'emplid' => $employee->emplid,
 
-                    ]);
+                        $user = User::updateOrCreate([
+                            'email' => $target_email,     // key
+                        ],[ 
+                            'name' => $employee->first_name . ' ' . $employee->last_name,
+                            'guid' => $employee->guid,
+                            'idir' => $employee->idir,
+                            'source_type' => self::SOURCE_TYPE,    
+                            'password' => $password,
+                            'acctlock' => $employee->date_deleted ? true : false,
+                            'last_sync_at' => $new_sync_at,
+                            'organization_id' => $organization->id,
+                            'employee_job_id' => $employee->id,
+                            'emplid' => $employee->emplid,
+                        ]);
+
+                        $this->created_count += 1;
+
                 }
-
+            
             }
-        
-        }
+
+        });
+
 
         // Step 2 : Lock Inactivate User account
         $this->info( now() );        
         $this->info('Step 2 - Lock Out Inactivate User account');
 
-        $users = User::where('organization_id', $organization->id)
+        $users = User::where(function ($query) {
+                            $query->where('source_type', self::SOURCE_TYPE)
+                                ->orWhereNull('source_type');
+                        })
+                    ->where('id','>',999)
+                    ->where('organization_id', $organization->id)
                     ->where('acctlock', 0)
-                    ->whereExists(function ($query) {
-                        $query->select(DB::raw(1))
-                            ->from('employee_jobs')
-                            ->whereColumn('employee_jobs.guid', 'users.guid')
-                            ->whereNotNull('date_deleted');
-                            ;
-                    })->whereNotExists(function ($query) {
-                        $query->select(DB::raw(1))
-                            ->from('employee_jobs')
-                            ->whereColumn('employee_jobs.guid', 'users.guid')
-                            ->whereNull('date_deleted');
-                    })->get();
+                    ->where(function ($query) {
+                          $query->whereExists(function ($query) {
+                                    $query->select(DB::raw(1))
+                                        ->from('employee_jobs')
+                                        ->whereColumn('employee_jobs.guid', 'users.guid')
+                                        ->whereNotNull('date_deleted');
+                                })
+                                ->orWhereNotExists(function ($query) {
+                                    $query->select(DB::raw(1))
+                                        ->from('employee_jobs')
+                                        ->whereColumn('employee_jobs.guid', 'users.guid');
+                                });
+                    })
+                    ->get();
 
         //$users->update(['acctlock'=>true, 'last_sync_at' => $new_sync_at]);
         foreach( $users as $user) {
-            $user->acctlock = true;
-            $user->last_sync_at = $new_sync_at;
-            $user->save();
-        }
 
+            // make sure no other job record is not deleted yet
+            $unlocked_user = EmployeeJob::where('guid', $user->guid)
+                                ->whereNull('date_deleted')
+                                ->first();
+
+            if (!($unlocked_user)) {
+                $user->acctlock = true;
+                $user->last_sync_at = $new_sync_at;
+                $user->save();
+
+                $this->locked_count += 1;
+            }
+
+        }
 
     }
 

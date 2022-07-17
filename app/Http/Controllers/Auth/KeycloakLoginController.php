@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
+use Carbon\Carbon;
 
 class KeycloakLoginController extends Controller
 {
@@ -17,7 +18,7 @@ class KeycloakLoginController extends Controller
 
     }
 
-    public function handleProviderCallback($provider) 
+    public function handleProviderCallback(Request $request, $provider) 
     {
 
         try {
@@ -34,7 +35,7 @@ class KeycloakLoginController extends Controller
             // find the Authenicated User by GUID 
             // $isUser = User::where('guid', $guid)->where('acctlock',0)->first();
 
-            $isUser = $this->getUserByGuidOrIDir($keycloak_user, $identity_provider);
+            $isUser = $this->getUserByGuidOrIDir($request, $keycloak_user, $identity_provider);
 
             if ($isUser) {
 
@@ -46,7 +47,7 @@ class KeycloakLoginController extends Controller
                 ]);
 
                 Auth::loginUsingId($isUser->id);
-                //$request->session()->regenerate();
+                $request->session()->regenerate();
 
                 return redirect('/');
 
@@ -73,6 +74,17 @@ class KeycloakLoginController extends Controller
     
     public function destroy(Request $request)
     {
+
+        // Update logout time in Access Log
+        $accessLog = \App\Models\AccessLog::where('user_id', Auth::Id() )
+                                        ->whereNull('logout_at')
+                                        ->where('login_method', 'Keycloak')
+                                        ->orderBy('login_at', 'desc')
+                                        ->first();   
+        if ($accessLog) {
+            $accessLog->logout_at = Carbon::now(); 
+            $accessLog->save();
+        }
 
         // Determine whether signon Azure or local database
         if (empty(session('accessToken'))) {
@@ -102,7 +114,7 @@ class KeycloakLoginController extends Controller
         return json_decode(base64_decode($base64Data));
     }
 
-    protected function getUserByGuidOrIDir($keycloak_user, $identity_provider)
+    protected function getUserByGuidOrIDir($request, $keycloak_user, $identity_provider)
     {
 
         // dd([$keycloak_user, $keycloak_user->user['idir_user_guid'], $keycloak_user->user['idir_username'] ]);
@@ -110,19 +122,26 @@ class KeycloakLoginController extends Controller
         $idir  = $keycloak_user->user['idir_username'];
 
         // Step 1: find the Authenicated User by GUID 
-        $isUser = User::where('guid', $guid)->where('acctlock', 0)->first();
+        $isUser = User::where('source_type', 'HCM')
+                        ->where('guid', $guid)
+                        ->where('acctlock', 0)->first();
 
         // Step 2: if no user find, then find Authenicated User by IDIR 
         if (!$isUser) {
-            $isUser = User::where('idir', $idir)->where('acctlock', 0)->first();
+            $isUser = User::where('source_type', 'HCM')
+                           ->where('idir', $idir)
+                           ->where('acctlock', 0)
+                           ->first();
         }
- //dd([ $keycloak_user, $identity_provider, $idir ]);
+ 
         // User was found, then update the signin information
         if ($isUser  ) {
 
             if ($isUser->keycloak_id != $keycloak_user->getId()) {
+                // Assign values
                 $isUser->identity_provider = $identity_provider;
                 $isUser->keycloak_id = $keycloak_user->getId();
+                $isUser->idir_email_addr = $keycloak_user->getEmail();
             }
 
             // if (!($isUser->email)) {
@@ -131,6 +150,15 @@ class KeycloakLoginController extends Controller
 
             $isUser->last_signon_at = now();
             $isUser->save();
+
+            // Insert record into Access Log 
+            \App\Models\AccessLog::create([
+                'user_id' => $isUser->id,
+                'login_at' => Carbon::now(), 
+                'login_ip' => $request->getClientIp(),
+                'login_method' => 'Keycloak',
+                'identity_provider' => $identity_provider,
+           ]);
 
             return $isUser;
 
