@@ -30,7 +30,7 @@
             </div>
             <div class="col-md-4 mb-3">
                 <label for="user_email">Email</label>
-                <input type="text" class="form-control"  value="{{ $user->email }}" disabled>
+                <input type="text" class="form-control"  value="{{ $user->primary_job->email }}" disabled>
             </div>
         </div>
         <div class="form-row">
