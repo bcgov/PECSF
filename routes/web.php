@@ -13,17 +13,19 @@ use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
+use App\Http\Controllers\Admin\AccessLogController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
 use App\Http\Controllers\Admin\CRACharityController;
-use App\Http\Controllers\Admin\BusinessUnitController;
 
+use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
+use App\Http\Controllers\Admin\ScheduleJobAuditController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
@@ -156,6 +158,14 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::resource('/charity-list-maintenance', CharityListMaintenanceController::class)->only(['index','store', 'destroy']);
     Route::get('/administrators/users', [AdministratorController::class,'getUsers'])->name('administrators.users');
     // Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
+
+    // Access Log 
+    Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access_logs');
+
+    // Schedule Job Audit 
+    Route::get('/schedule-job-audits', [ScheduleJobAuditController::class, 'index'])->name('schedule_job_audits');
+    Route::get('/schedule-job-audits/{id}', [ScheduleJobAuditController::class, 'show']);
+
 
 });
 
