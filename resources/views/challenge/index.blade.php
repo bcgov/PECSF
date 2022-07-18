@@ -33,11 +33,11 @@ Campaign Year
 <table class="table table-bordered rounded" id="myTable2">
 <tr class="bg-light">
 <th onclick="sortTable('rank')" style="cursor: pointer;">Rank</th>
-<th onclick="sortTable('name')" style="cursor: pointer;">Organization Name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
-<th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
+<th onclick="sortTable('name')" style="cursor: pointer;">Organization Name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
+<th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Previous participation rate </th>
-<th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
-<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollar Donated <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? "img/icons/filterDescending.png":"img/icons/filterAscending.png" @endphp" /></th>
+<th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
+<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollar Donated <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
 </tr>
 
 
@@ -139,7 +139,7 @@ Campaign Year
 @endsection
 @push('js')
 <script>
-    var year = '{{ $request->year ? $request->year : "2022" }}';
+    var year = '{{ $request->year ? $request->year : "2021" }}';
 
     $("#sort,#start_date").change(function(){
         $.ajax({

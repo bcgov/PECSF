@@ -14,7 +14,7 @@ $("#add_row").hide();
 });
 
 $("[name='organization_code']").change(function(){
-if($(this).val() == "GOV"){
+if($(this).val() == 13){
 $("#pecsfid").hide();
 $("#bcgovid").show();
 }
