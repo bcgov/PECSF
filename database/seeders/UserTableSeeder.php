@@ -53,6 +53,7 @@ class UserTableSeeder extends Seeder
         'id' => $user['id'],
         'name' => $user['name'],
         'password' => Hash::make($user['password']),
+        'source_type' => 'LCL',
       ]);
 
         }

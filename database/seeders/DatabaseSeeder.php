@@ -20,13 +20,14 @@ class DatabaseSeeder extends Seeder
         
         // Core tables
         $this->call(BusinessunitSeeder::class);
+        $this->call(CampaignYearSeeder::class);
         $this->call(RegionSeeder::class);
         $this->call(OrganizationSeeder::class);
-        $this->call(CampaignYearSeeder::class);
+        
         
         // To switch Charity Seed from XL to Limited 20 Records, toggle below comments
         //$this->call(CharitySeeder::class);
-        $this->call(CharitySeeder20Records::class);
+        // $this->call(CharitySeeder20Records::class);
         
     }
 }
