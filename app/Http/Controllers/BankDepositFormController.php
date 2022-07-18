@@ -141,11 +141,9 @@ class BankDepositFormController extends Controller
             'deposit_date'         => 'required|before:today',
             'deposit_amount'         => 'required|integer',
             'employment_city'         => 'required',
+            'postal_code'         => 'postal_code:CA',
             'region'         => 'required',
             'business_unit'         => 'required',
-            'city'         => 'required',
-            'province'         => 'required',
-            'postal_code'         => 'required|postal_code:CA',
             'charity_selection' => 'required',
             'description' => 'required',
             'attachments.*' => 'required',
@@ -166,8 +164,28 @@ class BankDepositFormController extends Controller
             {
                 if(empty($request->address_1))
                 {
-                    $validator->errors()->add('address_line_1','An Address is required.');
+                    $validator->errors()->add('address_1','An Address is required.');
                 }
+
+                if(empty($request->city))
+                {
+                    $validator->errors()->add('city','An City is required.');
+                }
+
+                if(empty($request->province))
+                {
+                    $validator->errors()->add('province','An Province is required.');
+                }
+
+                if(empty($request->postal_code))
+                {
+                    $validator->errors()->add('postal_code','An Postal Code is required.');
+                }
+
+
+
+
+
             }
 
             if($request->charity_selection == "fsp")
@@ -293,7 +311,7 @@ class BankDepositFormController extends Controller
         $response['results'][] = ["id" => "false", "text" => "Choose an Org Code"];
         foreach ($organizations as $organization) {
             if(!empty($organization->code)){
-                $response['results'][] = ["id" => $organization->id,"text" => $organization->code];
+                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->code];
             }
         }
         echo json_encode($response);

@@ -74,6 +74,7 @@
         <div class="form-group col-md-3">
             <label for="event_type">Event Type:</label>
             <select class="form-control" type="text" id="event_type" name="event_type">
+                <option value="">Select an Event Type</option>
                 <option value="Cash One-Time Donation">Cash One-Time Donation</option>
                 <option value="Cheque One-Time Donation">Cheque One-Time Donation</option>
                 <option value="Fundraiser">Fundraiser</option>
@@ -135,7 +136,7 @@
         <div class="form-group col-md-4">
             <label for="event_type">Employment City:</label>
             <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
-                <option value="false">Select a City</option>
+                <option value="">Select a City</option>
                 @foreach($cities as $city)
                     <option value="{{$city->city}}">{{$city->city}}</option>
                     @endforeach
@@ -151,7 +152,8 @@
         <div class="form-group col-md-4">
             <label for="region">Region:</label>
             <select class="form-control search_icon" id="region" name="region">
-                @foreach($regions as $region)
+                <option value="">Select a Region</option>
+            @foreach($regions as $region)
                     <option value="{{$region->id}}">{{$region->name}}</option>
                 @endforeach
             </select>
@@ -166,7 +168,8 @@
         <div class="form-group col-md-4">
             <label for="sub_type">Business Unit:</label>
             <select class="form-control search_icon" id="business_unit" name="business_unit">
-                @foreach($business_units as $bu)
+                <option value="">Select a Business Unit</option>
+            @foreach($business_units as $bu)
                     @if(!empty($bu->name))
                     <option value="{{$bu->id}}">{{$bu->name}}</option>
                     @endif
@@ -205,6 +208,7 @@
             <label for="sub_type">City:</label>
 
             <select class="form-control search_icon" type="text" id="city" name="city" >
+                <option value="">Select a City</option>
             @foreach($cities as $city)
                 <option value="{{$city->city}}">{{$city->city}}</option>
             @endforeach
@@ -220,6 +224,8 @@
         <div class="form-group col-md-4">
             <label for="sub_type">Province:</label>
             <select class="form-control" type="text" id="province" name="province">
+                <option value="">Select a Province</option>
+
                 <option value="Alberta">Alberta</option>
                 <option value="British Columbia">British Columbia</option>
                 <option value="Manitoba">Manitoba</option>

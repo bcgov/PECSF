@@ -14,7 +14,7 @@ $("#add_row").hide();
 });
 
 $("[name='organization_code']").change(function(){
-if($(this).val() == 13){
+if($(this).val() == "GOV"){
 $("#pecsfid").hide();
 $("#bcgovid").show();
 }
@@ -31,19 +31,19 @@ $("#sub_type").attr("disabled",false);
 if($(this).val()=="Fundraiser"){
 $("#sub_type").html('<option value="">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
 $(".address_hook").hide();
-$("select").select2();
+$("#sub_type").select2();
 }
 else if($(this).val()=="Gaming"){
 $("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
 $(".address_hook").hide();
-$("select").select2();
+$("#sub_type").select2();
 }
 else{
 $(".address_hook").show();
 
 $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);
-$("select").select2();
+$("#sub_type").select2();
 $(".sub_type .selection").children(0).children(0).remove();
 }
 
