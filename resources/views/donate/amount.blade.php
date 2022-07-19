@@ -1,7 +1,7 @@
 @extends('donate.layout.main')
 
 @section ("step-content")
-<h2 class="mt-5">3. Decide on the frequency and amount</h2>
+<h3 class="mt-5">3. Decide on the frequency and amount</h3>
 @if (session('errors'))
     <div class="row  mt-3">
         <div class="col-md-12">
@@ -86,7 +86,7 @@
         </form>
     </div>
 </div>
-@endsection 
+@endsection
 
 @push('css')
     <style>
@@ -162,7 +162,7 @@
 
         function selectAmount(frequency, amount) {
             /* switch(frequency) {
-                case 'bi-weekly': 
+                case 'bi-weekly':
                     $(".frequency-text").html("Bi-Weekly");
                     break;
                 case 'one-time':

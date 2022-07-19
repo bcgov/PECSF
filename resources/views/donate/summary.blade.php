@@ -5,7 +5,7 @@
     <form action="{{route('donate.save.summary')}}" method="POST">
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h2 class="mt-5">{{ $pool_option == 'C' ?  '5. Summary' : '4. Summary' }}</h2>
+            <h3 class="mt-5">{{ $pool_option == 'C' ?  '5. Summary' : '4. Summary' }}</h3>
             <p class="mt-3">Please review your donation plan and press <b>Pledge</b> when ready!</p>
                 <div class="card bg-light p-3">
                     <p class="card-title"><b>Deductions</b></p>
