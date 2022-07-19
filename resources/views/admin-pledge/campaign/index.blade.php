@@ -108,7 +108,7 @@
                 {data: 'user.primary_job.emplid', defaultContent: '' },
                 {data: 'user.name', defaultContent: '', className: "dt-nowrap"},
                 {data: 'campaign_year.calendar_year', "className": "dt-center"},
-                {data: 'description'},
+                {data: 'description', orderable: false, searchable: false},
                 {data: 'one_time_amount', name: 'one_time_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'pay_period_amount', name: 'pay_period_amount',  'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'goal_amount', name: 'goal_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '') },
