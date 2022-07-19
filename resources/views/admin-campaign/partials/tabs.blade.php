@@ -57,11 +57,14 @@
         </div>
     </li>
 
-    <li class="nav-item">
+    {{-- <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : '' }}"
-         {{-- id="pills-contact-tab"  --}}
+
           href="{{ route('settings.administrators.index') }}"  aria-controls="pills-contact" aria-selected="false">Administrators</a>
-      </li>
+      </li> --}}
+
+
+
     {{-- <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.charity-list-maintenance') ? 'active' : '' }}"
            href="{{ route('settings.charity-list-maintenance.index') }}"  aria-controls="pills-contact" aria-selected="false">CRA List Maintenance</a>
@@ -79,6 +82,23 @@
           
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.charity-list-maintenance') ? 'active' : ''}}"
                 href="{{ route('settings.charity-list-maintenance.index') }}">CRA List Maintenance</a>
+        </div>
+    </li>
+
+    <li class="nav-item dropdown">
+        @php $active =  ( str_contains(Route::current()->getName(), 'settings.administrators') ||
+                          str_contains(Route::current()->getName(),  'settings.schedule-job-audits') ||
+                          str_contains(Route::current()->getName(), 'settings.access-logs') 
+                        ) ? 'active' : ''
+        @endphp
+        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">System Security</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : ''}}"
+                href="{{ route('settings.administrators.index') }}">PECSF Administrators</a>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.schedule-job-audits') ? 'active' : ''}}"
+                href="{{ route('settings.schedule_job_audits') }}">Schedule Job Audit Logs</a>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.access-logs') ? 'active' : ''}}"
+                href="{{ route('settings.access_logs') }}">Access Logs</a>      
         </div>
     </li>
 
