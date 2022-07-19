@@ -12,4 +12,13 @@ class ScheduleJobAudit extends Model
     protected $fillable = [
         'job_name', 'start_time', 'end_time', 'status'
     ];
+
+    public const JOB_STATUS = 
+    [
+        'Initiated',
+        "Processing",
+        "Completed",
+        "Warning",
+    ];
+
 }
