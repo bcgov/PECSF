@@ -65,7 +65,7 @@ class SyncUserProfile extends Command
         $task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
-            'status','Initiated'
+            'status' => 'Initiated',
         ]);
 
 
@@ -108,7 +108,8 @@ class SyncUserProfile extends Command
             // })
             //         ->orWhere('date_deleted', '>=', $last_start_time);
             ->whereNull('date_deleted')
-            ->orderBy('job_indicator','desc')      // Secondary, then Primary 
+            ->orderBy('guid','asc')                // 
+            ->orderBy('job_indicator','desc')      // Job indicator -- Secondary, then Primary 
             ->select(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir', 
                 'first_name', 'last_name', 'name', 'appointment_status', 'empl_ctg', 'job_indicator',
                 'date_updated', 'date_deleted']);
@@ -141,9 +142,12 @@ class SyncUserProfile extends Command
             
                 if ($user) {
 
+                    $acctlock = $employee->date_deleted ? true : false;
+
                     if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) and
                          (trim($user->email) == $target_email ) and 
-                         ($user->source_type == self::SOURCE_TYPE)   
+                         ($user->source_type == self::SOURCE_TYPE) and   
+                         ($user->acctlock == $acctlock)  
                         ) {
                             // reach here mean No Differece found -- no action required
                     } else {                
@@ -175,7 +179,7 @@ class SyncUserProfile extends Command
                             'idir' => $employee->idir,
                             'source_type' => self::SOURCE_TYPE,    
                             'password' => $password,
-                            'acctlock' => $employee->date_deleted ? true : false,
+                            'acctlock' => false,
                             'last_sync_at' => $new_sync_at,
                             'organization_id' => $organization->id,
                             'employee_job_id' => $employee->id,
