@@ -102,7 +102,7 @@
     @endif
     {{-- Add Footer here --}}
     @if(!request()->is('login') && !request()->is('register') && !request()->is('password/*'))
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center" style="padding:50px;">
         <img src="{{asset('img/brand/1.png')}}" alt="" class="p-3" style="height:140px;">
         <img src="{{asset('img/brand/2.png')}}" alt="" class="p-3" style="height:140px;">
         <img src="{{asset('img/brand/3.png')}}" alt="" class="p-3" style="height:140px;">

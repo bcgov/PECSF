@@ -2,40 +2,46 @@
 
 @section('content')
 
-
+<style>
+    p{
+        font-size:12px;
+        color:black;
+    }
+</style>
 <div class="container mt-5">
     <div class="row">
-        <div class="col-12 col-xl-8 offset-xl-2">
+        <div class="col-12 col-xl-12 ">
             <h1 class="text-center">Welcome, {{ Auth::user()->name }}</h1>
             <p class="text-center h4"><b>Choose from the options below:</b></p>
 
             <div class="row p-3">
-                <div class=" col-md-4 p-2">
+                <div class="card_hook col-md-3 p-2">
                     <div class="card" style="height:220px" >
                         <a class="card-body text-center"  href="{{route('volunteering.index')}}">
-                          <img src="/svgs/volunteer.svg" alt="Volunteer">
-                          <p class="text-primary "> <span style="font-size:22px;">Volunteer</span></p>
-                          <p class="mt-1"> Make a local impact by helping those in need.</p>
+                            <i class="x nav-icon fas fa-hands-helping fa-2x "></i>
+
+                          <p class="text-primary "> <span style="font-size:20px;">Volunteering</span></p>
+                          <p class="mt-1"> Looking to do more than just donate? Volunteer to help run a campaign or host an event.</p>
                           <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class=" col-md-4 p-2">
+                <div class="card_hook col-md-5 p-2">
                     <div class="card" style="height:220px" >
                         <a href="{{route('donations.list')}}" class="card-body text-center">
-                            <img src="/svgs/give.svg" alt="Connect" height="32">
-                            <p class="text-primary "> <span style="font-size:22px;" >Give </span></p>
+                            <img src="/svgs/give.svg" style="color:white;" alt="Connect" height="62">
+                            <p class="text-primary "> <span style="font-size:22px;" >Donations </span></p>
                             <p>Support the charities of your choice with payroll deduction in any amount.</p>
                             <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
-                <div class=" col-md-4 p-2">
+                <div class="card_hook col-md-3 p-2">
                     <div class="card" style="height:220px" >
                         <a href="{{route('contact')}}" class="card-body text-center">
-                            <img src="/svgs/connect.svg" alt="Connect">
+                            <i class="x nav-icon fas fa-question-circle fa-2x "></i>
                             <p class="text-primary ">  <span style="font-size:22px;">Contact </span></p>
-                            <p class="mt-1">Got questions? We are here to help you!</p>
+                            <p class="mt-1">Got questions? We are here to help!</p>
                             <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
@@ -131,6 +137,44 @@
 
 @push('js')
 <script>
+
+
+    $(".card_hook").hover(function(){
+        $(".card_hook").removeClass("col-md-3");
+        $(".card_hook").removeClass("col-md-5");
+        $(".card_hook").addClass("col-md-3");
+        $(".card_hook .card").css("height","auto");
+        $(".card_hook .card").css("background","white");
+        $(".card_hook .card").find("span").css("color","#000");
+        $(".card_hook .card").find("i").css("color","#1a5a96");
+        $(".card_hook .card").find("p").css("color","#000");
+        $(".card_hook .card").find("img").css("filter","none");
+
+
+        $(this).removeClass("col-md-3");
+        $(this).addClass("col-md-5");
+        $(this).find(".card").css("height","250px");
+        $(this).find(".card").css("background","#1a5a96");
+        $(this).find(".card span").css("color","#fff");
+        $(this).find(".card i").css("color","#fff");
+        $(this).find(".card img").css("filter","invert(100%) sepia(100%) saturate(0%) hue-rotate(248deg) brightness(106%) contrast(106%)");
+        $(this).find(".card p").css("color","#fff");
+
+    });
+
+    $(".card_hook").mouseout(function(){
+      /*  $(".card_hook").removeClass("col-md-3");
+        $(".card_hook").removeClass("col-md-5");
+
+
+
+        $(".card_hook")[1].addClass("col-md-5");
+        $(".card_hook")[0].addClass("col-md-3");
+        $(".card_hook")[2].addClass("col-md-3");
+
+*/
+    });
+
 function sortTable(n) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("myTable2");

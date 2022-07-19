@@ -3,24 +3,24 @@
 
     {{-- Show when Campaign Year Open --}}
     <div class="d-flex justify-content-center pt-3">
-        <div class="card border-warning bg-success text-center" style="max-width: 50em; border-radius: 1em;">
-            <div class="card-body">
+        <div class="card border-warning text-center" style="background:#D9EAF7;max-width: 50em; border-radius: 1em;">
+            <div class="card-body" style="color:#1a5a96;">
                 <h5 class="card-title"></h5>
                 @if ( $campaignYear->isOpen() )
-                    <p class="card-text text-left text-white">
+                    <p class="card-text text-left">
                         From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
                         The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January.
                     </p>
                     @if ($pledge)
-                        <p class="card-text text-left text-white">
+                        <p class="card-text text-left">
                             To make changes to your proposed pledge, click into the box below where your 2023 choices are shown.
                         </p>
-                        <a href="{{ route('donate') }}" class="btn btn-primary">Make change to your proposed pledge</a>
+                        <a href="{{ route('donate') }}" class="btn btn-primary">Make change to your PECSF pledge</a>
                     @else
                         <a href="{{ route('donate') }}" class="btn btn-primary">Donate to PECSF Now</a>
                     @endif
                 @else
-                        <p class="card-text text-left text-white">
+                        <p class="card-text text-left">
                             The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca
                         </p>
                 @endif
