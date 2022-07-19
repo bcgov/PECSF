@@ -151,23 +151,23 @@
                     </div>
 
 
-                    <h6 class="text-primary font-weight-bold">Charity finanical contact information</h6>
+                    <h6 class="text-primary font-weight-bold">Charity Financial Contact Information</h6>
                     <div class="card">
                         <div class="card-body">
 
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="financial_contact_name">Charity finanical contact name</label>
+                                    <label for="financial_contact_name">Charity Financial Contact Name</label>
                                     <input type="text" class="form-control" name="financial_contact_name" disabled>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="financial_contact_title">Charity finanical contact title</label>
+                                    <label for="financial_contact_title">Charity Financial Contact Title</label>
                                     <input type="text" class="form-control" name="financial_contact_title" disabled>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="financial_contact_email">Charity finanical email</label>
+                                    <label for="financial_contact_email">Charity Financial Email</label>
                                     <input type="text" class="form-control" name="financial_contact_email" disabled>
                                 </div>
                             </div>
@@ -179,11 +179,11 @@
                     <hr />
 
                     <div class="form-group row">
-                        <label for="created_by_name" class="col-sm-2 col-form-label">Created By :</label>
+                        <label for="created_by_name" class="col-sm-2 col-form-label">Created by:</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" name="created_by_name" disabled>
                         </div>
-                        <label for="formatted_created_at" class="col-sm-2 col-form-label">Created at :</label>
+                        <label for="formatted_created_at" class="col-sm-2 col-form-label">Created at:</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" name="formatted_created_at" disabled>
                         </div>
@@ -191,11 +191,11 @@
                     </div>
 
                     <div class="form-group row">
-                        <label for="updated_by_name" class="col-sm-2 col-form-label">Updated By :</label>
+                        <label for="updated_by_name" class="col-sm-2 col-form-label">Updated by:</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" name="updated_by_name" disabled>
                         </div>
-                        <label for="formatted_updated_at" class="col-sm-2 col-form-label">Updated at :</label>
+                        <label for="formatted_updated_at" class="col-sm-2 col-form-label">Updated at:</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" name="formatted_updated_at" disabled>
                         </div>

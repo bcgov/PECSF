@@ -153,25 +153,25 @@
                     </div>
 
 
-                    <h6 class="text-primary font-weight-bold">Charity finanical contact information</h6>
+                    <h6 class="text-primary font-weight-bold">Charity Financial Contact Information</h6>
                     <div class="card">
                         <div class="card-body">
 
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="financial_contact_name">Charity finanical contact name</label>
+                                    <label for="financial_contact_name">Charity Financial Contact Name</label>
                                     <input type="text" class="form-control" id="financial_contact_name"
                                         name="financial_contact_name">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="financial_contact_title">Charity finanical contact title</label>
+                                    <label for="financial_contact_title">Charity Financial Contact Title</label>
                                     <input type="text" class="form-control" id="financial_contact_title"
                                         name="financial_contact_title">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="financial_contact_email">Charity finanical email</label>
+                                    <label for="financial_contact_email">Charity Financial Email</label>
                                     <input type="text" class="form-control" id="financial_contact_email"
                                         name="financial_contact_email">
                                 </div>
