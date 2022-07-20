@@ -16,7 +16,7 @@ class ExportDatabaseToBI extends Command
         ['name' => 'business_units',     'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'campaign_years',     'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'charities',          'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'donation',           'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'donations',           'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'f_s_pools',          'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'f_s_pool_charities', 'delta' => 'updated_at', 'hidden' => ['image'] ],
         ['name' => 'organizations',      'delta' => 'updated_at', 'hidden' => null ],
@@ -25,10 +25,16 @@ class ExportDatabaseToBI extends Command
         ['name' => 'regions',            'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'users',              'delta' => 'updated_at', 'hidden' => ['password', 'remember_token'] ],
         ['name' => 'volunteers',         'delta' => 'updated_at', 'hidden' => null ],
+
+        ['name' => 'access_logs',         'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'schedule_job_audits', 'delta' => 'updated_at', 'hidden' => null ],
+
     ];
  
     protected $success;
     protected $failure;
+    protected $message;
+    protected $status;
     
     /**
      * The name and signature of the console command.
@@ -52,6 +58,10 @@ class ExportDatabaseToBI extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->message = '';
+        $this->status = 'Completed';
+
     }
 
     /**
@@ -89,6 +99,8 @@ class ExportDatabaseToBI extends Command
 
         $this->success = 0;
         $this->failure = 0;
+        $this->message = '';
+        $this->status = 'Completed';
         $n = 0;
         
         // Create the Task Audit log
@@ -96,8 +108,11 @@ class ExportDatabaseToBI extends Command
         $task = ScheduleJobAudit::Create([
             'job_name' => $job_name,
             'start_time' => Carbon::now(),
-            'status','Initiated'
+            'status' => 'Initiated',
         ]);
+
+        // Write to Message log
+        $this->message .= "Sending table '{$table_name}' " . PHP_EOL;
 
         // Get the latest success job 
         $last_job = ScheduleJobAudit::where('job_name', $job_name)
@@ -113,7 +128,7 @@ class ExportDatabaseToBI extends Command
                 return $q->where($delta_field, '>=', $last_start_time);
             })
             ->orderBy('id');
-        
+            
         // Chucking
         $sql->chunk(5000, function($chuck) use($table_name, $hidden_fields, $last_job, &$n) {
             $this->info( "Sending table '{$table_name}' batch (5000) - " . ++$n );
@@ -138,15 +153,24 @@ class ExportDatabaseToBI extends Command
             unset($pushdata);
         });
 
+        // $this->info("Table '{$table_name}' data sent completed");
+        // $this->info( now() );
+        // $this->info("Success - " . $this->success);
+        // $this->info("failure - " . $this->failure);
 
-        $this->info("Table '{$table_name}' data sent completed");
-        $this->info( now() );
-        $this->info("Success - " . $this->success);
-        $this->info("failure - " . $this->failure);
+        $text = "Table '{$table_name}' data sent completed" . PHP_EOL;
+        $text .= now() . PHP_EOL;
+        $text .= "Success - " . $this->success . PHP_EOL;
+        $text .= "failure - " . $this->failure . PHP_EOL;
+
+        echo $text;
+
+        $this->message .= $text;
 
         // Update the Task Audit log
         $task->end_time = Carbon::now();
-        $task->status = 'Completed';
+        $task->status = $this->status;
+        $task->message = $this->message;
         $task->save();
 
         return 0;
@@ -156,22 +180,40 @@ class ExportDatabaseToBI extends Command
     
     protected function sendData($pushdata) {
 
-        $response = Http::withBasicAuth(
-            env('ODS_USERNAME'),
-            env('ODS_TOKEN')
-        )->withBody( json_encode($pushdata), 'application/json')
-        ->post( env('ODS_OUTBOUND_BULK_UPLOAD_BI_ENDPOINT') );
+        try {
 
-        if ($response->successful()) {
-            $this->success += 1;
-        } else {
-                                    
-            $this->info( $response->status() );
-            $this->info( $response->body() );
-            // dd( json_encode($data) );
-            //$this->info( "Failed : " . print_r($response) );
-            $this->failure += 1;
+            $response = Http::withBasicAuth(
+                env('ODS_USERNAME'),
+                env('ODS_TOKEN')
+            )->withBody( json_encode($pushdata), 'application/json')
+            ->post( env('ODS_OUTBOUND_BULK_UPLOAD_BI_ENDPOINT') );
+
+            if ($response->successful()) {
+                $this->success += 1;
+
+            } else {
+
+                $this->info( $response->status() );
+                $this->info( $response->body() );
+
+                // Write to log message
+                $this->status = 'Error';
+                $this->message .= 'Status: ' . $response->status() . ' Response Body: ' . $response->body()  . PHP_EOL;
+
+                $this->failure += 1;
+            }
+        
+        } catch (\Exception $ex) {
+
+            $this->info( $ex->getMessage() );
+
+            // write to log message 
+            $this->status = 'Error';
+            $this->message .= $ex->getMessage() . PHP_EOL;
+
+            return 1;
         }
+
 
     }
 

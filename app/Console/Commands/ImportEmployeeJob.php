@@ -25,6 +25,12 @@ class ImportEmployeeJob extends Command
      */
     protected $description = 'Import the Employee Information from BI';
 
+    /* attributes for share in the command */
+    protected $total_count;
+    protected $processed_count;
+    protected $message;
+    protected $status;
+
     /**
      * Create a new command instance.
      *
@@ -33,6 +39,11 @@ class ImportEmployeeJob extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->total_count = 0;
+        $this->processed_count = 0;
+        $this->message = '';
+        $this->status = 'Completed';
     }
 
     /**
@@ -47,7 +58,7 @@ class ImportEmployeeJob extends Command
         $task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
-            'status','Initiated'
+            'status' => 'Initiated',
         ]);
 
         $this->info( now() );
@@ -55,9 +66,17 @@ class ImportEmployeeJob extends Command
         $this->UpdateEmployeeJob();
         $this->info( now() );
 
+        $this->info( 'Total count : ' . $this->total_count  );
+        $this->info( 'Processed count : ' . $this->processed_count  );
+
         // Update the Task Audit log
+        $this->message .= 'Total count : ' . $this->total_count . PHP_EOL;
+        $this->message .= 'Processed count : ' . $this->processed_count . PHP_EOL;
+
+
         $task->end_time = Carbon::now();
-        $task->status = 'Completed';
+        $task->status = $this->status;
+        $task->message = $this->message;
         $task->save();
 
         return 0;
@@ -74,13 +93,31 @@ class ImportEmployeeJob extends Command
         $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ;
 
         //$filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
-        $filter = '';  // Disbaled the filter due to process timimg issue
+        $filter = "";  // Disabled the filter due to process timimg issue
+        $orderBy = 'EMPLID asc, EMPL_RCD asc, EFFDT asc, EFFSEQ asc';
 
-        $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT').'?$count=true&$top=1'.'&$filter='.$filter);
+        try {
+            // Validate the value...
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT').'?$count=true&$top=1'.
+                                '&$filter='.$filter.'&$orderBy='.$orderBy);
+        } catch (\Exception $ex) {
+
+            // Note any method of class PDOException can be called on $ex.
+            $this->info( 'Error' );
+            $this->info( $ex->getMessage() );
+
+            // write to log message 
+            $this->status = 'Error';
+            $this->message .= $ex->getMessage() . PHP_EOL;
+
+            return 1;
+        }
+    
 
         $row_count = json_decode($response->body())->{'@odata.count'};
+        $this->total_count = $row_count;
 
         $organization = \App\Models\Organization::where('code', 'GOV')->first();
         $business_units = \App\Models\BusinessUnit::pluck('id','code')->toArray();
@@ -92,85 +129,105 @@ class ImportEmployeeJob extends Command
             $top  = $size;
             $skip = $size * $i;
 
-            // Loading pledge history data
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.'&$filter='.$filter) ;
+            try {
+                // Loading pledge history data
+                $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                    ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                    ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.
+                                    '&$filter='.$filter.'&$orderBy='.$orderBy) ;
 
-            $this->info( 'Total Count = '. $row_count .' $i = '. $i .' $top = '. $top .' $skip '. $skip);
-            // Loading pledge history data
-            // $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            //     ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT'));
+                $this->info( 'Total Count = '. $row_count .' $i = '. $i .' $top = '. $top .' $skip '. $skip);
+                // Loading pledge history data
+                // $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                //     ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT'));
 
-            if ($response->successful()) {
-                $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+                if ($response->successful()) {
+                    $data = json_decode($response->body())->value;
+                    $batches = array_chunk($data, 1000);
 
-                foreach ($batches as $key => $batch) {
-                    $this->info( '    -- each batch (1000) $key - '. $key );
-                    foreach ($batch as $row) {
+                    foreach ($batches as $key => $batch) {
+                        $this->info( '    -- each batch (1000) $key - '. $key );
+                        foreach ($batch as $row) {
 
-                        // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
-                        // $business_unit = \App\Models\BusinessUnit::where('code', $row->BUSINESS_UNIT)->first();
-                        // $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first();
+                            // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
+                            // $business_unit = \App\Models\BusinessUnit::where('code', $row->BUSINESS_UNIT)->first();
+                            // $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first();
 
-                        EmployeeJob::updateOrCreate([
-                            'emplid' => $row->EMPLID,
-                            'empl_rcd' => $row->EMPL_RCD,
-                        ],[
-                            'organization_id' => $organization ? $organization->id : null,
-                            'effdt' => $row->EFFDT,
-                            'effseq' => $row->EFFSEQ,
-                            'empl_status' => $row->EMPL_STATUS,
-                            'empl_ctg' => $row->EMPL_CTG,
-                            'empl_class' => $row->EMPL_CLASS,
-                            'job_indicator' => $row->job_indicator,
-                            'position_number' => $row->position_number,
-                            'position_title' => $row->position_title,
-                            'appointment_status' => $row->appointment_status,
-                            'first_name' => $row->first_name,
-                            'last_name' => $row->last_name,
-                            'name' => $row->name,
-                            'email' => $row->email,
-                            'guid' => trim($row->GUID),
-                            'idir' => trim($row->IDIR),
+                            EmployeeJob::updateOrCreate([
+                                'emplid' => $row->EMPLID,
+                                'empl_rcd' => $row->EMPL_RCD,
+                            ],[
+                                'organization_id' => $organization ? $organization->id : null,
+                                'effdt' => $row->EFFDT,
+                                'effseq' => $row->EFFSEQ,
+                                'empl_status' => $row->EMPL_STATUS,
+                                'empl_ctg' => $row->EMPL_CTG,
+                                'empl_class' => $row->EMPL_CLASS,
+                                'job_indicator' => $row->job_indicator,
+                                'position_number' => $row->position_number,
+                                'position_title' => $row->position_title,
+                                'appointment_status' => $row->appointment_status,
+                                'first_name' => $row->first_name,
+                                'last_name' => $row->last_name,
+                                'name' => $row->name,
+                                'email' => $row->email,
+                                'guid' => trim($row->GUID),
+                                'idir' => trim($row->IDIR),
 
-                            'business_unit' => $row->BUSINESS_UNIT,
-                            'business_unit_id' => array_key_exists( $row->BUSINESS_UNIT , $business_units) ? $business_units[$row->BUSINESS_UNIT] : null,
-                            'deptid' => $row->DEPTID,
-                            'dept_name' => $row->dept_name,
-                            'tgb_reg_district' => $row->tgb_reg_district,
-                            'region_id' => array_key_exists( $row->tgb_reg_district , $regions) ? $regions[$row->tgb_reg_district] : null,
-                            'city' => $row->city,
-                            'stateprovince' => $row->stateprovince,
-                            'country' => $row->country,
+                                'business_unit' => $row->BUSINESS_UNIT,
+                                'business_unit_id' => array_key_exists( $row->BUSINESS_UNIT , $business_units) ? $business_units[$row->BUSINESS_UNIT] : null,
+                                'deptid' => $row->DEPTID,
+                                'dept_name' => $row->dept_name,
+                                'tgb_reg_district' => $row->tgb_reg_district,
+                                'region_id' => array_key_exists( $row->tgb_reg_district , $regions) ? $regions[$row->tgb_reg_district] : null,
+                                'city' => $row->city,
+                                'stateprovince' => $row->stateprovince,
+                                'country' => $row->country,
 
-                            'organization' => trim($row->Organization),
-                            'level1_program' => trim($row->level1_program),
-                            'level2_division' => trim($row->level2_division),
-                            'level3_branch' => trim($row->level3_branch),
-                            'level4' => trim($row->level4),
-                            'supervisor_emplid' => $row->supervisor_emplid,
-                            'supervisor_name' => $row->supervisor_name,
-                            'supervisor_email' => $row->supervisor_email,
-                            'date_updated' => $row->date_updated,
-                            'date_deleted' => $row->date_deleted,
+                                'organization' => trim($row->Organization),
+                                'level1_program' => trim($row->level1_program),
+                                'level2_division' => trim($row->level2_division),
+                                'level3_branch' => trim($row->level3_branch),
+                                'level4' => trim($row->level4),
+                                'supervisor_emplid' => $row->supervisor_emplid,
+                                'supervisor_name' => $row->supervisor_name,
+                                'supervisor_email' => $row->supervisor_email,
+                                'date_updated' => $row->date_updated,
+                                'date_deleted' => $row->date_deleted,
 
-                            'created_by_id' => null,
-                            'updated_by_id' => null,
+                                'created_by_id' => null,
+                                'updated_by_id' => null,
 
-                        ]);
+                            ]);
+
+                            $this->processed_count += 1;
+                        }
                     }
+                    
+                } else {
+                    $this->info( $response->status() );
+                    $this->info( $response->body() );
+
+                    // write to log message 
+                    $this->status = 'Error';
+                    $this->message .= 'Status: ' . $response->status() . ' Response Body: ' . $response->body()  . PHP_EOL;
+
                 }
-            } else {
-                $this->info( $response->status() );
-                $this->info( $response->body() );
+
+            } catch (\Exception $ex) {
+
+                $this->info( $ex->getMessage() );
+
+                // write to log message 
+                $this->status = 'Error';
+                $this->message .= $ex->getMessage() . PHP_EOL;
+
+                return 1;
             }
+                    
 
         }
     }
-
-
 
 }

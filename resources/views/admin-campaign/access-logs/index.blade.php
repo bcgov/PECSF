@@ -69,8 +69,10 @@
                     <th>User Name</th>
                     <th>IDIR</th>
                     <th>Employee ID</th>
+                    <th>User ID</th>
                     <th>Login Method</th>
                     <th>Identity Provider</th>
+                    <th>Login IP</th>
                     <th>Logout at</th>
 				</tr>
 			</thead>
@@ -141,9 +143,11 @@
                 {data: 'name', name: 'users.name', className: "dt-nowrap" },
                 {data: 'idir',  name: 'users.idir',  className: "dt-nowrap" },
                 {data: 'emplid',  name: 'users.emplid',  className: "dt-nowrap" },
+                {data: 'user_id',  name: 'user_id',  className: "dt-nowrap" },
                 {data: 'login_method', name: 'login_method'},
                 {data: 'identity_provider', name: 'identity_provider'},
-                {data: 'logout_at', name: 'logout_at'},
+                {data: 'login_ip', name: 'login_ip'},
+                {data: 'logout_at', name: 'logout_at', className: "dt-nowrap"},
             ],
             columnDefs: [
                     {
