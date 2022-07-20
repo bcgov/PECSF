@@ -3,9 +3,10 @@
 @section('content')
 
 <style>
-    p{
+    p.text-primary{
         font-size:12px;
-        color:black;
+        color:#1a5a96;
+        font-weight:bold;
     }
 </style>
 <div class="container mt-5">
@@ -145,9 +146,12 @@
         $(".card_hook").addClass("col-md-3");
         $(".card_hook .card").css("height","auto");
         $(".card_hook .card").css("background","white");
-        $(".card_hook .card").find("span").css("color","#000");
+        $(".card_hook .card").find("span").css("color","#1a5a96");
         $(".card_hook .card").find("i").css("color","#1a5a96");
+
         $(".card_hook .card").find("p").css("color","#000");
+        $(".card_hook .card").find("p.text-primary").css("color","#1a5a96");
+
         $(".card_hook .card").find("img").css("filter","none");
 
 
