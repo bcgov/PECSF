@@ -76,9 +76,10 @@ class KeycloakLoginController extends Controller
     {
 
         // Update logout time in Access Log
+        $login_method = empty(session('accessToken')) ? 'Laravel UI' : 'Keycloak';
         $accessLog = \App\Models\AccessLog::where('user_id', Auth::Id() )
                                         ->whereNull('logout_at')
-                                        ->where('login_method', 'Keycloak')
+                                        ->where('login_method', $login_method)
                                         ->orderBy('login_at', 'desc')
                                         ->first();   
         if ($accessLog) {
@@ -143,10 +144,6 @@ class KeycloakLoginController extends Controller
                 $isUser->keycloak_id = $keycloak_user->getId();
                 $isUser->idir_email_addr = $keycloak_user->getEmail();
             }
-
-            // if (!($isUser->email)) {
-            //     $isUser->email = $keycloak_user->getMail();
-            // } 
 
             $isUser->last_signon_at = now();
             $isUser->save();
