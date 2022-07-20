@@ -74,6 +74,9 @@
                     <th>Identity Provider</th>
                     <th>Login IP</th>
                     <th>Logout at</th>
+                    <th>Business Unit</th>
+                    <th>Department</th>
+                    <th>Organization</th>
 				</tr>
 			</thead>
 		</table>
@@ -148,6 +151,10 @@
                 {data: 'identity_provider', name: 'identity_provider'},
                 {data: 'login_ip', name: 'login_ip'},
                 {data: 'logout_at', name: 'logout_at', className: "dt-nowrap"},
+                {data: 'user.primary_job.business_unit', searchable: false, orderable: false, className: "dt-nowrap"},
+                {data: 'user.primary_job.dept_name', searchable: false, orderable: false, className: "dt-nowrap"},
+                {data: 'user.primary_job.organization_name', searchable: false, orderable: false, className: "dt-nowrap"},
+                
             ],
             columnDefs: [
                     {

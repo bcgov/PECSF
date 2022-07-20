@@ -47,7 +47,8 @@ class AccessLogController extends Controller
                             ->when($request->login_at_to, function($query) use($request) {
                                 return $query->where('login_at', '<=', $request->login_at_to); 
                             })
-                            ->select('access_logs.*', 'users.name', 'users.idir', 'users.emplid');
+                            ->select('access_logs.*', 'users.name', 'users.idir', 'users.emplid')
+                            ->with('user','user.primary_job');
                             
 //    return( [$access_logs->toSql(), $access_logs->getBindings() ]);                                
 
