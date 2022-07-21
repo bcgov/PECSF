@@ -161,6 +161,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Access Log 
     Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access_logs');
+    Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
     // Schedule Job Audit 
     Route::get('/schedule-job-audits', [ScheduleJobAuditController::class, 'index'])->name('schedule_job_audits');

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use App\Models\AccessLog;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -31,8 +32,6 @@ class AccessLogController extends Controller
     
         if($request->ajax()) {
 
-
-            // $columns = ["code","name","status","created_at"];
             $access_logs = AccessLog::join('users', 'users.id', 'access_logs.user_id')
                             ->where( function($query) use($request) {
                                 return $query->when($request->term, function($q) use($request) {
@@ -50,14 +49,24 @@ class AccessLogController extends Controller
                             ->select('access_logs.*', 'users.name', 'users.idir', 'users.emplid')
                             ->with('user','user.primary_job');
                             
-//    return( [$access_logs->toSql(), $access_logs->getBindings() ]);                                
-
             return Datatables::of($access_logs)
-                    ->addIndexColumn()
+                    ->addColumn('user_detail_link', function ($access_log) {
+                            return '<a class="ml-2 user-detail-link" data-id="'. $access_log->user_id .
+                            '" data-name="'. $access_log->user->name . '">'.$access_log->user->name .' </a>';
+                    })
+                    ->rawColumns(['user_detail_link'])
                     ->make(true);
         }
 
         return view('admin-campaign.access-logs.index',compact('request') );
+
+    }
+
+    public function show(Request $request, $id) {
+
+        $user = User::where('id', $id)->with('primary_job')->first();
+
+        return view('admin-campaign.access-logs.partials.user-detail', compact('user') )->render();
 
     }
 

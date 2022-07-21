@@ -49,7 +49,11 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+        // Update the last signon datetime
+        $user->last_signon_at = Carbon::now();
+        $user->save();
 
+        // Write to access log
         \App\Models\AccessLog::create([
             'user_id' => $user->id,
             'login_at' => Carbon::now(), 

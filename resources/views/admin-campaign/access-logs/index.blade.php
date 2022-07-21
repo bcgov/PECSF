@@ -66,7 +66,7 @@
 				<tr>
                     <th>Tran ID </th>
                     <th>Login at </th>
-                    <th>User Name</th>
+                    <th>User link</th>
                     <th>IDIR</th>
                     <th>Employee ID</th>
                     <th>User ID</th>
@@ -82,6 +82,30 @@
 		</table>
 
 	</div>
+</div>
+
+{{-- Modal Box  --}}
+
+<div class="modal fade" id="user-detail-modal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+	  <div class="modal-content">
+		<div class="modal-header bg-primary">
+		  <h5 class="modal-title" id="userModalLabel">User detail</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+
+            
+            
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+    
+    </div>
 </div>
 
 @endsection
@@ -143,7 +167,7 @@
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
                 {data: 'login_at', name: 'login_at', className: "dt-nowrap" },
-                {data: 'name', name: 'users.name', className: "dt-nowrap" },
+                {data: 'user_detail_link',  searchable: false, orderable: false,  className: "dt-nowrap" },
                 {data: 'idir',  name: 'users.idir',  className: "dt-nowrap" },
                 {data: 'emplid',  name: 'users.emplid',  className: "dt-nowrap" },
                 {data: 'user_id',  name: 'user_id',  className: "dt-nowrap" },
@@ -187,6 +211,33 @@
 
             oTable.search( '' ).columns().search( '' ).draw();
         });
+
+
+        // Model -- Show
+    	$(document).on("click", ".user-detail-link" , function(e) {
+			e.preventDefault();
+
+            id =  $(this).attr('data-id');
+            title = $(this).attr('data-name');
+            $.ajax({
+                method: "GET",
+                url:  '/settings/access-logs-user-detail/' + id,
+                dataType: 'html',
+                success: function(data)
+                {
+                    $('#userModalLabel').html('User : ' + title );
+
+                    $('#user-detail-modal div.modal-body').html(data); 
+                    //  started at ' + data.start_time);
+                    // $('#modal-status').html(data.status);
+                    // $('#modal-message').val(data.message);
+                    $('#user-detail-modal').modal('show');
+                },
+                error: function(response) {
+                    console.log('Error');
+                }
+            });
+    	});
 
     });
 
