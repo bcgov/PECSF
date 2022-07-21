@@ -45,7 +45,7 @@ class CampaignPledgeController extends Controller
             return Datatables::of($pledges)
                 ->addColumn('description', function($pledge) {
                     $text =  $pledge->type == 'P' ? $pledge->fund_supported_pool->region->name : 
-                                       $pledge->distinct_charities()->count() . ' chartites'  ;
+                                       $pledge->distinct_charities()->count() . ' charities'  ;
                     //   $title = implode(', ',  $pledge->distinct_charities()->pluck('charity.charity_name')->toArray());
                     return "<span>" . $text . '</span>' ;
                 })
