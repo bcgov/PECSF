@@ -21,6 +21,21 @@ class EmployeeJob extends Model
          'date_updated', 'date_deleted', 'created_by_id', 'updated_by_id'
     ];
 
+    protected $attributes = [
+        'first_name' => '', 
+        'last_name' => '',
+        'name' => '', 
+        'email' => '',
+        'business_unit' => '',
+        'dept_name' => '',
+        'organization' => '',
+        'tgb_reg_district' => '',
+        'level1_program' => '',
+        'level2_division' => '',
+        'level3_branch' => '',
+        'level4' => '', 
+    ];
+
     protected $appends = [
         'organization_name',        // Organization under the Org Chart 
     ];
