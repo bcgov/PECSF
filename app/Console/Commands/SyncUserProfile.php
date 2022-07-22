@@ -36,6 +36,7 @@ class SyncUserProfile extends Command
     protected $updated_count;
     protected $locked_count;
     protected $message;
+    protected $status;
     
 
     /**
@@ -51,6 +52,7 @@ class SyncUserProfile extends Command
         $this->updated_count = 0;
         $this->locked_count = 0;
         $this->message = '';
+        $this->status = 'Completed';
 
     }
 
@@ -62,28 +64,26 @@ class SyncUserProfile extends Command
     public function handle()
     {
 
-        $task = ScheduleJobAudit::Create([
+        $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
-            'status' => 'Initiated',
+            'status' => 'Processing',
         ]);
 
-
-        $this->info("Update/Create - User Profile");
+        $this->LogMessage( now() );        
+        $this->LogMessage("Update/Create - User Profile");
         $this->SyncUserProfile();
-        $this->info( now() );        
+        $this->LogMessage( now() );        
 
-        $this->message .= 'Total new created row(s) : ' . $this->created_count . PHP_EOL;
-        $this->message .= 'Total Updated row(s) : ' . $this->updated_count . PHP_EOL;
-        $this->message .= 'Total locked row(s) : ' . $this->locked_count . PHP_EOL;
+        $this->LogMessage( 'Total new created row(s) : ' . $this->created_count );
+        $this->LogMessage( 'Total Updated row(s) : ' . $this->updated_count );
+        $this->LogMessage( 'Total locked row(s) : ' . $this->locked_count );
 
-        echo  $this->message;        
-        
         // Update the Task Audit log
-        $task->end_time = Carbon::now();
-        $task->status = 'Completed';
-        $task->message = $this->message;
-        $task->save();
+        $this->task->end_time = Carbon::now();
+        $this->task->status = $this->status;
+        $this->task->message = $this->message;
+        $this->task->save();
 
         return 0;
 
@@ -116,15 +116,15 @@ class SyncUserProfile extends Command
 
 
         // Step 1 : Create and Update User Profile
-        $this->info( now() );
-        $this->info('Step 1 - Create or Update User Profile' );
+        $this->LogMessage( now() );
+        $this->LogMessage('Step 1 - Create or Update User Profile' );
 
         $organization = Organization::where('code', 'GOV')->first();
         $password = Hash::make(env('SYNC_USER_PROFILE_SECRET'));
 
         $sql->chunk(1000, function($chuck) use($new_sync_at, $organization, $password, &$n) {
 
-            $this->info( "batch (1000) - " . ++$n );
+            $this->LogMessage( "batch (1000) - " . ++$n );
 
             // foreach ($employees as $employee) {
             foreach($chuck as $employee) {
@@ -160,6 +160,7 @@ class SyncUserProfile extends Command
                             $user->save();
 
                             $this->updated_count += 1;
+                            $this->LogMessage( 'User was updated - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
 
                         } catch(\Illuminate\Database\QueryException $ex){ 
 
@@ -187,6 +188,8 @@ class SyncUserProfile extends Command
                         ]);
 
                         $this->created_count += 1;
+                        $this->LogMessage( 'New User was created - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
+
 
                 }
             
@@ -196,8 +199,8 @@ class SyncUserProfile extends Command
 
 
         // Step 2 : Lock Inactivate User account
-        $this->info( now() );        
-        $this->info('Step 2 - Lock Out Inactivate User account');
+        $this->LogMessage( now() );        
+        $this->LogMessage('Step 2 - Lock Out Inactivate User account');
 
         $users = User::where(function ($query) {
                             $query->where('source_type', self::SOURCE_TYPE)
@@ -235,10 +238,25 @@ class SyncUserProfile extends Command
                 $user->save();
 
                 $this->locked_count += 1;
+
+                $this->LogMessage( 'User was locked - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
             }
 
         }
 
+    }
+
+    protected function LogMessage($text) 
+    {
+
+        $this->info( $text );
+
+        // write to log message 
+        $this->message .= $text . PHP_EOL;
+
+        $this->task->message = $this->message;
+        $this->task->save();
+        
     }
 
 }

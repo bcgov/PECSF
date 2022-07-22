@@ -72,8 +72,7 @@ class ExportDatabaseToBI extends Command
     public function handle()
     {
 
-
-        $this->info( now() );
+        $this->LogMessage( now() );
 
         // Main Loop
         foreach ($this->db_tables as $table) {
@@ -88,14 +87,13 @@ class ExportDatabaseToBI extends Command
         return 0;
     }
 
-
     /**
      * Main Function for sending pledges transactions to Datawarehouse.
      *
      * @return int
      */
     private function sendTableDataToDataWarehouse($table_name, $delta_field, $hidden_fields) {
-        $this->info("Table '{$table_name}' Detail to BI (Datawarehouse) start");
+        $this->LogMessage("Table '{$table_name}' Detail to BI (Datawarehouse) start");
 
         $this->success = 0;
         $this->failure = 0;
@@ -108,7 +106,7 @@ class ExportDatabaseToBI extends Command
         $task = ScheduleJobAudit::Create([
             'job_name' => $job_name,
             'start_time' => Carbon::now(),
-            'status' => 'Initiated',
+            'status' => 'Processing',
         ]);
 
         // Write to Message log
@@ -131,7 +129,7 @@ class ExportDatabaseToBI extends Command
             
         // Chucking
         $sql->chunk(5000, function($chuck) use($table_name, $hidden_fields, $last_job, &$n) {
-            $this->info( "Sending table '{$table_name}' batch (5000) - " . ++$n );
+            $this->LogMessage( "Sending table '{$table_name}' batch (5000) - " . ++$n );
 
             //$chuck->makeHidden(['password', 'remember_token']);
             if ($hidden_fields) {
@@ -153,19 +151,10 @@ class ExportDatabaseToBI extends Command
             unset($pushdata);
         });
 
-        // $this->info("Table '{$table_name}' data sent completed");
-        // $this->info( now() );
-        // $this->info("Success - " . $this->success);
-        // $this->info("failure - " . $this->failure);
-
-        $text = "Table '{$table_name}' data sent completed" . PHP_EOL;
-        $text .= now() . PHP_EOL;
-        $text .= "Success - " . $this->success . PHP_EOL;
-        $text .= "failure - " . $this->failure . PHP_EOL;
-
-        echo $text;
-
-        $this->message .= $text;
+        $this->LogMessage("Table '{$table_name}' data sent completed");
+        $this->LogMessage( now() );
+        $this->LogMessage("Success - " . $this->success);
+        $this->LogMessage("failure - " . $this->failure);
 
         // Update the Task Audit log
         $task->end_time = Carbon::now();
@@ -176,7 +165,6 @@ class ExportDatabaseToBI extends Command
         return 0;
 
     }
-
     
     protected function sendData($pushdata) {
 
@@ -193,28 +181,35 @@ class ExportDatabaseToBI extends Command
 
             } else {
 
-                $this->info( $response->status() );
-                $this->info( $response->body() );
-
-                // Write to log message
+                // log message in system
                 $this->status = 'Error';
-                $this->message .= 'Status: ' . $response->status() . ' Response Body: ' . $response->body()  . PHP_EOL;
+                $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
                 $this->failure += 1;
             }
         
         } catch (\Exception $ex) {
 
-            $this->info( $ex->getMessage() );
-
-            // write to log message 
+            // log message in system
             $this->status = 'Error';
-            $this->message .= $ex->getMessage() . PHP_EOL;
+            $this->LogMessage( $ex->getMessage() );
 
             return 1;
         }
 
+    }
 
+    protected function LogMessage($text) 
+    {
+
+        $this->info( $text );
+
+        // write to log message 
+        $this->message .= $text . PHP_EOL;
+
+        $this->task->message = $this->message;
+        $this->task->save();
+        
     }
 
 }

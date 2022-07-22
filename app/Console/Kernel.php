@@ -34,16 +34,24 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('command:ExportDatabaseToBI')
                  ->weekdays()
-                 ->at('5:00');
+                 ->at('4:00');
 
         $schedule->command('command:ImportEmployeeJob')
                  ->weekdays()
-                 ->at('6:00');
+                 ->at('5:00');
 
         $schedule->command('command:SyncUserProfile')
                  ->weekdays()
-                 ->at('6:30');
+                 ->at('5:30');
 
+        // Donor statitsics for challenge pages                  
+        $schedule->command('command:DonorHistoryDataFromBI')
+                 ->weekdays()
+                 ->at('6:00');      
+                 
+        $schedule->command('command:ImportEligibleEmployees')
+                 ->weekdays()
+                 ->at('6:10');      
     }
 
     /**

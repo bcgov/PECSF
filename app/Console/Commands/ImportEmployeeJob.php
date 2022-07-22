@@ -55,29 +55,24 @@ class ImportEmployeeJob extends Command
     {
         ini_set('memory_limit', '4096M');
 
-        $task = ScheduleJobAudit::Create([
+        $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
             'status' => 'Initiated',
         ]);
 
-        $this->info( now() );
-        $this->info("Update/Create - Employee Job Information");
+        $this->LogMessage( now() );
+        $this->LogMessage("Update/Create - Employee Job Information");
         $this->UpdateEmployeeJob();
-        $this->info( now() );
+        $this->LogMessage( now() );
 
-        $this->info( 'Total count : ' . $this->total_count  );
-        $this->info( 'Processed count : ' . $this->processed_count  );
+        $this->LogMessage( 'Total count : ' . $this->total_count  );
+        $this->LogMessage( 'Processed count : ' . $this->processed_count  );
 
-        // Update the Task Audit log
-        $this->message .= 'Total count : ' . $this->total_count . PHP_EOL;
-        $this->message .= 'Processed count : ' . $this->processed_count . PHP_EOL;
-
-
-        $task->end_time = Carbon::now();
-        $task->status = $this->status;
-        $task->message = $this->message;
-        $task->save();
+        $this->task->end_time = Carbon::now();
+        $this->task->status = $this->status;
+        $this->task->message = $this->message;
+        $this->task->save();
 
         return 0;
 
@@ -104,17 +99,13 @@ class ImportEmployeeJob extends Command
                                 '&$filter='.$filter.'&$orderBy='.$orderBy);
         } catch (\Exception $ex) {
 
-            // Note any method of class PDOException can be called on $ex.
-            $this->info( 'Error' );
-            $this->info( $ex->getMessage() );
-
             // write to log message 
             $this->status = 'Error';
-            $this->message .= $ex->getMessage() . PHP_EOL;
+            $this->LogMessage( $ex->getMessage() );
 
             return 1;
         }
-    
+   
 
         $row_count = json_decode($response->body())->{'@odata.count'};
         $this->total_count = $row_count;
@@ -136,7 +127,7 @@ class ImportEmployeeJob extends Command
                     ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.
                                     '&$filter='.$filter.'&$orderBy='.$orderBy) ;
 
-                $this->info( 'Total Count = '. $row_count .' $i = '. $i .' $top = '. $top .' $skip '. $skip);
+                $this->LogMessage( 'Total Count = '. $row_count .' $i = '. $i .' $top = '. $top .' $skip '. $skip);
                 // Loading pledge history data
                 // $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
@@ -206,28 +197,36 @@ class ImportEmployeeJob extends Command
                     }
                     
                 } else {
-                    $this->info( $response->status() );
-                    $this->info( $response->body() );
 
                     // write to log message 
                     $this->status = 'Error';
-                    $this->message .= 'Status: ' . $response->status() . ' Response Body: ' . $response->body()  . PHP_EOL;
+                    $this->LogMessage( 'Status: ' . $response->status() . ' Response Body: ' .  $response->body() );
 
                 }
 
             } catch (\Exception $ex) {
 
-                $this->info( $ex->getMessage() );
-
                 // write to log message 
                 $this->status = 'Error';
-                $this->message .= $ex->getMessage() . PHP_EOL;
+                $this->LogMessage( $ex->getMessage() );
 
                 return 1;
             }
-                    
 
         }
+    }
+
+    protected function LogMessage($text) 
+    {
+
+        $this->info( $text );
+
+        // write to log message 
+        $this->message .= $text . PHP_EOL;
+
+        $this->task->message = $this->message;
+        $this->task->save();
+        
     }
 
 }
