@@ -53,7 +53,25 @@
                 <label for="search">
                     &nbsp;
                 </label>
+                <input type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />
+            </div>
+            <div class="form-group col-md-1">
+                <label for="search">
+                    &nbsp;
+                </label>
                 <input type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="include_trashed" name="include_trashed">
+                    <label class="form-check-label" for="include_trashed">
+                    Include Trashed Schedule Job Audit
+                    </label>
+                </div>
+            </div>
         </div>
 
     </div>    
@@ -70,7 +88,10 @@
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Status</th>
+                    <th>Action</th>
                     <th>Message</th>
+                    <th>Delete by</th>
+                    <th>Delete at</th>
 				</tr>
 			</thead>
 		</table>
@@ -119,6 +140,7 @@
 
 
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/fixedheader/3.2.4/css/fixedHeader.dataTables.min.css" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 	<style>
@@ -143,12 +165,19 @@
 
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.4/js/dataTables.fixedHeader.min.js"></script>
     
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
 
     $(function() {
+
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        });
  
         // Datatables
         var oTable = $('#audit-table').DataTable({
@@ -159,13 +188,16 @@
             serverSide: true,
             // select: true,
             'order': [[ 0, 'desc']],
-            
+            fixedHeader: true,            
             ajax: {
-                url: '{!! route('settings.schedule_job_audits') !!}',
+                url: '{!! route('settings.schedule-job-audits.index') !!}',
                 data: function (data) {
                     // data.term = $('#user').val();
+                    data.job_name = $('#job_name').val();
+                    data.status = $('#status').val();
                     data.start_time = $('#start_time').val();
                     data.end_time  = $('#end_time').val();
+                    data.include_trashed = $('#include_trashed').prop("checked") ? '1' : '0';
                 }
             },
             columns: [
@@ -174,7 +206,11 @@
                 {data: 'start_time', name: 'start_time', className: "dt-nowrap" },
                 {data: 'end_time',  name: 'end_time',  className: "dt-nowrap" },
                 {data: 'status',  name: 'status',  className: "dt-nowrap" },
-                {data: 'message_text', name: 'message_text'},
+                {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
+                {data: 'message_text', name: 'message_text', className: "dt-nowrap"},
+                {data: 'deleted_by', name: 'delete_by', orderable: false, searchable: false, className: "dt-nowrap"},
+                {data: 'deleted_at', name: 'delete_at', orderable: false, searchable: false, className: "dt-nowrap"},
+                
             ],
             columnDefs: [
                     {
@@ -185,7 +221,7 @@
 
         });
 
-
+/*
         $('#job_name').on('keyup change', function () {
             oTable.columns( 'job_name:name' ).search( this.value ).draw();            
         });
@@ -194,20 +230,27 @@
             oTable.columns( 'status:name' ).search( this.value ).draw();            
         });
 
-        $('.datetime-range-filter').on('change', function () {
+        $(document).on("change", ".datetime-range-filter, #include_trashed" , function(e) {
+            oTable.draw();
+        });
+*/        
+
+        $('#refresh-btn').on('click', function() {
+            // oTable.ajax.reload(null, true);
             oTable.draw();
         });
 
         $('#reset-btn').on('click', function() {
-            $('#user').val('');
+            $('#job_name').val('');
             $('.datetime-range-filter').val('');
-            $('#login_method').val('');
+            $('#status').val('');
+            $('#include_trashed').prop('checked', false);
 
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
         // Model -- Show
-    	$(document).on("click", ".more-link" , function(e) {
+    	$(document).on("click", ".more-link , .show-audit" , function(e) {
 			e.preventDefault();
 
             id =  $(this).attr('data-id');
@@ -228,6 +271,51 @@
                 }
             });
     	});
+
+
+        // Model -- Delete
+        $(document).on("click", ".delete-audit" , function(e) {
+            e.preventDefault();
+
+            id = $(this).attr('data-id');
+            title = $(this).attr('data-code');
+
+            Swal.fire( {
+                title: 'Are you sure you want to delete schedule job "' + title + '" ?',
+                text: 'This action cannot be undone.',
+                // icon: 'question',
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-danger', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // Swal.fire('Saved!', '', '')
+                    $.ajax({
+                        method: "DELETE",
+                        url:  '/settings/schedule-job-audits/' + id,
+                        success: function(data)
+                        {
+                            oTable.ajax.reload(null, false);	// reload datatables
+                            Toast('Success', 'Schedule Job Audit ' + title +  ' was successfully deleted.', 'bg-success' );
+                        },
+                        error: function(response) {
+                            console.log('Error');
+                        }
+                    });
+                } else if (result.isCancelledDenied) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
+        });
+
 
     });
 

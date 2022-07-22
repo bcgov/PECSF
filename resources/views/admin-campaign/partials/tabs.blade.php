@@ -87,7 +87,7 @@
 
     <li class="nav-item dropdown">
         @php $active =  ( str_contains(Route::current()->getName(), 'settings.administrators') ||
-                          str_contains(Route::current()->getName(),  'settings.schedule-job-audits') ||
+                          str_contains(Route::current()->getName(), 'settings.schedule-job-audits') ||
                           str_contains(Route::current()->getName(), 'settings.access-logs') 
                         ) ? 'active' : ''
         @endphp
@@ -96,7 +96,7 @@
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : ''}}"
                 href="{{ route('settings.administrators.index') }}">PECSF Administrators</a>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.schedule-job-audits') ? 'active' : ''}}"
-                href="{{ route('settings.schedule_job_audits') }}">Schedule Job Audit Logs</a>
+                href="{{ route('settings.schedule-job-audits.index') }}">Schedule Job Audit Logs</a>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.access-logs') ? 'active' : ''}}"
                 href="{{ route('settings.access_logs') }}">Access Logs</a>      
         </div>
