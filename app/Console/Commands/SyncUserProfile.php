@@ -153,14 +153,18 @@ class SyncUserProfile extends Command
                     } else {                
 
                         try {
+
+                            $this->LogMessage('(UPDATED) => [before] - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir     . ' | ' . ($user->acctlock ? '1' : '0') );
+                            $this->LogMessage('           [ after] - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . self::SOURCE_TYPE  . ' | ' . $target_email . ' | ' . $employee->idir . ' | ' . ($acctlock ? '1' : '0') );
+
                             $user->source_type = self::SOURCE_TYPE;
                             $user->email  = $target_email;
                             $user->idir = $employee->idir;
                             $user->last_sync_at = $new_sync_at;
+                            $user->acctlock = $acctlock;  
                             $user->save();
 
                             $this->updated_count += 1;
-                            $this->LogMessage( 'User was updated - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
 
                         } catch(\Illuminate\Database\QueryException $ex){ 
 
@@ -188,7 +192,7 @@ class SyncUserProfile extends Command
                         ]);
 
                         $this->created_count += 1;
-                        $this->LogMessage( 'New User was created - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
+                        $this->LogMessage( '(CREATED) => id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
 
 
                 }
@@ -239,7 +243,7 @@ class SyncUserProfile extends Command
 
                 $this->locked_count += 1;
 
-                $this->LogMessage( 'User was locked - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
+                $this->LogMessage( '(LOCKED) => - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
             }
 
         }
