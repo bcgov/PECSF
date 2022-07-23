@@ -85,21 +85,9 @@
         </div>
     </li>
 
-    <li class="nav-item dropdown">
-        @php $active =  ( str_contains(Route::current()->getName(), 'settings.administrators') ||
-                          str_contains(Route::current()->getName(), 'settings.schedule-job-audits') ||
-                          str_contains(Route::current()->getName(), 'settings.access-logs') 
-                        ) ? 'active' : ''
-        @endphp
-        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">System Security</a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : ''}}"
+    <li class="nav-item">
+          <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : ''}}"
                 href="{{ route('settings.administrators.index') }}">PECSF Administrators</a>
-          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.schedule-job-audits') ? 'active' : ''}}"
-                href="{{ route('settings.schedule-job-audits.index') }}">Schedule Job Audit Logs</a>
-          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.access-logs') ? 'active' : ''}}"
-                href="{{ route('settings.access_logs') }}">Access Logs</a>      
-        </div>
     </li>
 
   </ul>

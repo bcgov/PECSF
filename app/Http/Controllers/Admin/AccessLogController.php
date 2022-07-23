@@ -58,7 +58,7 @@ class AccessLogController extends Controller
                     ->make(true);
         }
 
-        return view('admin-campaign.access-logs.index',compact('request') );
+        return view('system-security.access-logs.index',compact('request') );
 
     }
 
@@ -66,7 +66,7 @@ class AccessLogController extends Controller
 
         $user = User::where('id', $id)->with('primary_job')->first();
 
-        return view('admin-campaign.access-logs.partials.user-detail', compact('user') )->render();
+        return view('system-security.access-logs.partials.user-detail', compact('user') )->render();
 
     }
 

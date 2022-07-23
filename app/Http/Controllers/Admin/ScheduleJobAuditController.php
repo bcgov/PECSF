@@ -87,7 +87,7 @@ class ScheduleJobAuditController extends Controller
 
         $status_list = ScheduleJobAudit::job_status_options();
 
-        return view('admin-campaign.schedule-job-audits.index', compact('request', 'status_list') );
+        return view('system-security.schedule-job-audits.index', compact('request', 'status_list') );
 
     }
 

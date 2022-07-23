@@ -4,7 +4,7 @@
        href="{{ $item['href'] }}" @if(isset($item['target'])) target="{{ $item['target'] }}" @endif
        {!! $item['data-compiled'] ?? '' !!}>
 
-       @if (str_contains($item['icon'], ' far '))
+       @if ( str_contains($item['icon'], ' far ') || str_contains($item['icon'], ' fa ') )
             <i class="{{ $item['icon'] ?? 'far fa-fw fa-circle' }} {{
                 isset($item['icon_color']) ? 'text-'.$item['icon_color'] : ''
             }}"></i> 

@@ -2,7 +2,7 @@
 
 @section('content_header')
 
-@include('admin-campaign.partials.tabs')
+@include('system-security.partials.tabs')
 
     <div class="d-flex mt-3">
         <h4>Schedule Job Audit</h4>

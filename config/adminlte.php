@@ -232,23 +232,23 @@ return [
         [
             'text' => 'Donations',
             'url' => '/donations',
-            'icon' => 'give',
+            'icon' => 'nav-icon fa fa-hand-holding-heart', //'give',
             'active' => ['/donations/*', '/donate','/donate/*'],
         ],
         [
             'text' => 'Volunteering',
             'url' => '/volunteering',
-            'icon' => 'nav-icon fas fa-hands-helping',
+            'icon' => 'nav-icon fa fa-hands-helping',
             'active' => ['volunteering/*'],
             'submenu' => [
                 [
                     'text' => 'Dashboard',
-                    'icon' => 'nav-icon far fa-calendar-alt',
+                    'icon' => 'nav-icon fa fa-columns',
                     'url'  => '/volunteering',
                 ],
                 [
                     'text' => 'Forms',
-                    'icon' => 'nav-icon far fa-calendar-alt',
+                    'icon' => 'nav-icon fa fa-money-check',
                     'url'  => '/bank_deposit_form',
                 ],
                 ]
@@ -256,7 +256,7 @@ return [
         [
             'text' => 'Challenge',
             'url' => '/challenge',
-            'icon' => 'challenge',
+            'icon' => 'nav-icon fa fa-sort-amount-up-alt', // 'challenge',
             'active' => ['challenge/*']
         ],
         [
@@ -266,32 +266,37 @@ return [
         ],
         [
             'text'    => 'Administration',
-            'icon'    => 'nav-icon far fa-sun',
+            'icon'    => 'nav-icon fa fa-cog',
             'url'     => '/administrators/dashboard',
             'id'      => 'admin-menu',
             'can'     => ['setting'],
             'submenu' => [
                 [
                     'text' => 'Pledge Administration',
-                    'icon' => 'nav-icon far fa-calendar-alt',
+                    'icon' => 'nav-icon fa fa-piggy-bank',
                     'url'  => '/admin-pledge/campaign',
                 ],
                 [
                     'text' => 'Campaign Set-up',
-                    'icon' => 'nav-icon far fa-id-card',
+                    'icon' => 'nav-icon fa fa-cogs',
                     'url'  => '/settings/campaignyears',
                 ],
                 [
                     'text' => 'Training, Communications and Engagement',
-                    'icon' => 'nav-icon far fa-id-card',
+                    'icon' => 'nav-icon fa fa-graduation-cap',
                     'url'  => '/settings/others',
                 ],
                 [
                     'text' => 'Reporting',
-                    'icon' => 'nav-icon far fa-id-card',
+                    'icon' => 'nav-icon fa fa-file-alt',
                     'url'  => '/reporting/donation-upload',
                 ],
             ],
+        ],
+        [
+            'text' => 'System Security',
+            'icon' => 'nav-icon fa fa-user-shield',
+            'url'  => '/settings/schedule-job-audits',
         ],
         [
             'text' => 'PECSF',
