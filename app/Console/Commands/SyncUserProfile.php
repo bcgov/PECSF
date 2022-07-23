@@ -154,9 +154,6 @@ class SyncUserProfile extends Command
 
                         try {
 
-                            $this->LogMessage('(UPDATED) => [before] - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir     . ' | ' . ($user->acctlock ? '1' : '0') );
-                            $this->LogMessage('           [ after] - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . self::SOURCE_TYPE  . ' | ' . $target_email . ' | ' . $employee->idir . ' | ' . ($acctlock ? '1' : '0') );
-
                             $user->source_type = self::SOURCE_TYPE;
                             $user->email  = $target_email;
                             $user->idir = $employee->idir;
@@ -164,12 +161,18 @@ class SyncUserProfile extends Command
                             $user->acctlock = $acctlock;  
                             $user->save();
 
+                            $this->LogMessage('(UPDATED) => emplid | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
+                            $changes = $user->getChanges();
+                            unset($changes["updated_at"]);
+                            $this->LogMessage('  summary => '. json_encode( $changes ) );
+
                             $this->updated_count += 1;
 
                         } catch(\Illuminate\Database\QueryException $ex){ 
 
-                            $this->message .= 'Exception -- ' . $ex->getMessage() . PHP_EOL;
-                            // Note any method of class PDOException can be called on $ex.
+                            $this->status = 'Error';
+                            $this->LogMessage('Exception -- ' . $ex->getMessage() ); 
+
                         }
 
                     }
@@ -192,7 +195,7 @@ class SyncUserProfile extends Command
                         ]);
 
                         $this->created_count += 1;
-                        $this->LogMessage( '(CREATED) => id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
+                        $this->LogMessage( '(CREATED) => id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
 
 
                 }
@@ -243,7 +246,10 @@ class SyncUserProfile extends Command
 
                 $this->locked_count += 1;
 
-                $this->LogMessage( '(LOCKED) => - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid );
+                $this->LogMessage('(LOCKED) => - id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
+                $changes = $user->getChanges();
+                unset($changes["updated_at"]);
+                $this->LogMessage('  summary => '. json_encode( $changes ) );
             }
 
         }

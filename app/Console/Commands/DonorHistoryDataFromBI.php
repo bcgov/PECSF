@@ -30,6 +30,7 @@ class DonorHistoryDataFromBI extends Command
      */
     protected $description = 'Load Donor History Data From BI';
 
+    /* attributes for share in the command */
     protected $message;
     protected $status;
 
@@ -58,7 +59,7 @@ class DonorHistoryDataFromBI extends Command
         $this->task = ScheduleJobAudit::Create([
                 'job_name' => $this->signature,
                 'start_time' => Carbon::now(),
-                'status','Initiated'
+                'status' => 'Processing',
         ]);
 
         // $this->info("Update/Create - Business Unit");
@@ -66,19 +67,19 @@ class DonorHistoryDataFromBI extends Command
         // $this->info("Update/Create - Region District");
         // $this->UpdateRegionalDistrict();
         $this->LogMessage( now() );   
-        $this->LogMessage("Update/Create - Department");
+        $this->LogMessage("Task-- Update/Create - Department");
         $this->UpdateDepartment();
 
         $this->LogMessage( now() );   
-        $this->LogMessage("Create - Donor By Business Unit");
+        $this->LogMessage("Task-- Create - Donor By Business Unit");
         $this->UpdateDonorByBusinessUnit();
 
         $this->LogMessage( now() );   
-        $this->LogMessage("Create - Donor By Regioinal District");
+        $this->LogMessage("Task-- Create - Donor By Regioinal District");
         $this->UpdateDonorByRegionalDistrict();
 
         $this->LogMessage( now() );   
-        $this->LogMessage("Create - Donor By Department");
+        $this->LogMessage("Task-- Create - Donor By Department");
         $this->UpdateDonorByDepartment();
 
         $this->LogMessage( now() );   
@@ -175,22 +176,28 @@ class DonorHistoryDataFromBI extends Command
 
     protected function UpdateDepartment()
     {
+
+        $total_count = 0;
+        $created_count = 0;
+        $updated_count = 0;
+       
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                 ->get(env('ODS_INBOUND_REPORT_DEPARTMENTS_BI_ENDPOINT'));
 
             if ($response->successful()) {
+                $size = 1000;
                 $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+                $batches = array_chunk($data, $size);
 
                 foreach ($batches as $key => $batch) {
-                    $this->LogMessage( $key . ' - ' . count($batch) );
+                    $this->LogMessage( '    -- each batch ('.$size.') $key - '. $key );
                     foreach ($batch as $row) {
 
                         $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
 
-                        Department::updateOrCreate([
+                        $rec = Department::updateOrCreate([
                             'bi_department_id' => $row->department_id,
                         ], [
                             'department_name' => $row->department_name,
@@ -200,8 +207,24 @@ class DonorHistoryDataFromBI extends Command
                             'business_unit_name' => $row->business_unit_name,
                             'business_unit_id' => $business_unit ? $business_unit->id : null,
                         ]);
+
+                        $total_count += 1;
+
+                        if ($rec->wasRecentlyCreated) {
+                            $created_count += 1;
+                        } elseif ($rec->wasChanged() ) {
+                            $updated_count += 1;
+                        } else {
+                            // No Action
+                        }                            
+
                     }
                 }
+
+                $this->LogMessage('    Total Row count     : ' . $total_count  );
+                $this->LogMessage('    Total Created count : ' . $created_count  );
+                $this->LogMessage('    Total Updated count : ' . $updated_count  );
+
             } else {
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
@@ -220,6 +243,10 @@ class DonorHistoryDataFromBI extends Command
     protected function UpdateDonorByBusinessUnit()
     {
 
+        $total_count = 0;
+        $created_count = 0;
+        $updated_count = 0;
+
         // Truncate Donar By Reggional District table
         DonorByBusinessUnit::truncate();
 
@@ -228,24 +255,49 @@ class DonorHistoryDataFromBI extends Command
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                 ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_ORG_BI_ENDPOINT'));
 
+
             if ($response->successful()) {
+                $size = 1000;
                 $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+                $batches = array_chunk($data, $size);
                 foreach ($batches as $key => $batch) {
-                    $this->LogMessage( $key . ' - ' . count($batch) );
+                    $this->LogMessage( '    -- each batch ('.$size.') $key - '. $key );
                     foreach ($batch as $row) {
-                        if($business_unit = BusinessUnit::where('code', $row->business_unit_code)->first())
-                        {
-                            DonorByBusinessUnit::updateOrCreate([
-                                'business_unit_id' => $business_unit ? $business_unit->id : null,
+
+                        $total_count += 1;
+
+                        $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
+
+                        if ( $row->business_unit_code && !empty(trim($row->business_unit_code))  ) {
+                            $rec = DonorByBusinessUnit::updateOrCreate([
                                 'yearcd' => $row->year,
+                                'business_unit_id' => $business_unit ? $business_unit->id : 0,
+                            ],[
                                 'business_unit_code' => $row->business_unit_code,
                                 'dollars' => $row->dollars,
                                 'donors' => $row->donors,
                             ]);
+
+                            if ($rec->wasRecentlyCreated) {
+                                $created_count += 1;
+                            } elseif ($rec->wasChanged() ) {
+                                $updated_count += 1;
+                            } else {
+                                // No Action
+                            }      
+                        } else {
+
+                            $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
+
                         }
+
                     }
                 }
+
+                $this->LogMessage('    Total Row count     : ' . $total_count  );
+                $this->LogMessage('    Total Created count : ' . $created_count  );
+                $this->LogMessage('    Total Updated count : ' . $updated_count  );
+                
             } else {
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
@@ -264,6 +316,10 @@ class DonorHistoryDataFromBI extends Command
     protected function UpdateDonorByRegionalDistrict()
     {
 
+        $total_count = 0;
+        $created_count = 0;
+        $updated_count = 0;
+       
         // Truncate Donar By Reggional District table
         DonorByRegionalDistrict::truncate();
 
@@ -273,24 +329,41 @@ class DonorHistoryDataFromBI extends Command
                 ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_REG_DIST_BI_ENDPOINT'));
 
             if ($response->successful()) {
+                $size = 1000;
                 $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+                $batches = array_chunk($data, $size);
 
                 foreach ($batches as $key => $batch) {
-                    $this->LogMessage( $key . ' - ' . count($batch) );
+                    $this->LogMessage( '    -- each batch ('.$size.') $key - '. $key );
                     foreach ($batch as $row) {
 
                         $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 
-                        DonorByRegionalDistrict::updateOrCreate([
+                        $rec = DonorByRegionalDistrict::updateOrCreate([
                             'regional_district_id' => $regional_district ? $regional_district->id : '',
                             'yearcd' => $row->year,
                             'tgb_reg_district' => $row->tgb_reg_district,
                             'dollars' => $row->dollars,
                             'donors' => $row->donors,
                         ]);
+
+                        $total_count += 1;
+
+                        if ($rec->wasRecentlyCreated) {
+                            $created_count += 1;
+                        } elseif ($rec->wasChanged() ) {
+                            $updated_count += 1;
+                        } else {
+                            // No Action
+                        }      
+
                     }
                 }
+
+                $this->LogMessage('    Total Row count     : ' . $total_count  );
+                $this->LogMessage('    Total Created count : ' . $created_count  );
+                $this->LogMessage('    Total Updated count : ' . $updated_count  );
+
             } else {
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
@@ -307,6 +380,9 @@ class DonorHistoryDataFromBI extends Command
 
     protected function UpdateDonorByDepartment()
     {
+        $total_count = 0;
+        $created_count = 0;
+        $updated_count = 0;
 
         // Truncate Donar By department table
         DonorByDepartment::truncate();
@@ -317,16 +393,17 @@ class DonorHistoryDataFromBI extends Command
                 ->get(env('ODS_INBOUND_REPORT_DONORS_BY_DEPT_BI_ENDPOINT'));
 
             if ($response->successful()) {
+                $size = 1000;
                 $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+                $batches = array_chunk($data, $size);
 
                 foreach ($batches as $key => $batch) {
-                    $this->LogMessage( $key . ' - ' . count($batch) );
+                    $this->LogMessage( '    -- each batch ('.$size.') $key - '. $key );
                     foreach ($batch as $row) {
 
                         $department = Department::where('bi_department_id', $row->department_id)->first();
 
-                        DonorByDepartment::Create([
+                        $rec = DonorByDepartment::Create([
                             'department_id' => $department ? $department->id : '',
                             'yearcd' => $row->year,
                             'date' => $row->date,
@@ -334,8 +411,24 @@ class DonorHistoryDataFromBI extends Command
                             'dollars' => $row->dollars,
                             'donors' => $row->donors,
                         ]);
+
+                        $total_count += 1;
+
+                        if ($rec->wasRecentlyCreated) {
+                            $created_count += 1;
+                        } elseif ($rec->wasChanged() ) {
+                            $updated_count += 1;
+                        } else {
+                            // No Action
+                        }      
+
                     }
                 }
+
+                $this->LogMessage('    Total Row count     : ' . $total_count  );
+                $this->LogMessage('    Total Created count : ' . $created_count  );
+                $this->LogMessage('    Total Updated count : ' . $updated_count  );
+
             } else {
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
