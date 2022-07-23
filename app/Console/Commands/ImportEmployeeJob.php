@@ -27,7 +27,8 @@ class ImportEmployeeJob extends Command
 
     /* attributes for share in the command */
     protected $total_count;
-    protected $processed_count;
+    protected $created_count;
+    protected $updated_count;
     protected $message;
     protected $status;
 
@@ -39,9 +40,9 @@ class ImportEmployeeJob extends Command
     public function __construct()
     {
         parent::__construct();
-
         $this->total_count = 0;
-        $this->processed_count = 0;
+        $this->created_count = 0;
+        $this->updated_count = 0;
         $this->message = '';
         $this->status = 'Completed';
     }
@@ -58,7 +59,7 @@ class ImportEmployeeJob extends Command
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
-            'status' => 'Initiated',
+            'status' => 'Processing',
         ]);
 
         $this->LogMessage( now() );
@@ -66,8 +67,10 @@ class ImportEmployeeJob extends Command
         $this->UpdateEmployeeJob();
         $this->LogMessage( now() );
 
-        $this->LogMessage( 'Total count : ' . $this->total_count  );
-        $this->LogMessage( 'Processed count : ' . $this->processed_count  );
+        $this->LogMessage( 'Total Row count     : ' . $this->total_count  );
+        $this->LogMessage( '' );
+        $this->LogMessage( 'Total Created count : ' . $this->created_count  );
+        $this->LogMessage( 'Total Updated count : ' . $this->updated_count  );
 
         $this->task->end_time = Carbon::now();
         $this->task->status = $this->status;
@@ -89,7 +92,7 @@ class ImportEmployeeJob extends Command
 
         //$filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
         $filter = "";  // Disabled the filter due to process timimg issue
-        $orderBy = 'EMPLID asc, EMPL_RCD asc, EFFDT asc, EFFSEQ asc';
+        $orderBy = 'EMPLID asc, EMPL_RCD asc, EFFDT desc, EFFSEQ desc, date_updated desc';
 
         try {
             // Validate the value...
@@ -105,7 +108,6 @@ class ImportEmployeeJob extends Command
 
             return 1;
         }
-   
 
         $row_count = json_decode($response->body())->{'@odata.count'};
         $this->total_count = $row_count;
@@ -115,6 +117,12 @@ class ImportEmployeeJob extends Command
         $regions = \App\Models\Region::pluck('id','code')->toArray();
 
         $size = 1000;
+
+        // This is the previous $row for comparison purpose
+        $last_row = new \stdClass;
+        $last_row->EMPLID = null;
+        $last_row->EMPL_RCD = null;
+
         for ($i = 0; $i <= $row_count / $size ; $i++) {
 
             $top  = $size;
@@ -132,20 +140,27 @@ class ImportEmployeeJob extends Command
                 // $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                 //     ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT'));
-
+                                    
                 if ($response->successful()) {
                     $data = json_decode($response->body())->value;
-                    $batches = array_chunk($data, 1000);
+                    $batches = array_chunk($data, $size);
 
                     foreach ($batches as $key => $batch) {
-                        $this->info( '    -- each batch (1000) $key - '. $key );
+                        $this->LogMessage( '    -- each batch ('.$size.') $key - '. $key );
+
                         foreach ($batch as $row) {
 
                             // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
                             // $business_unit = \App\Models\BusinessUnit::where('code', $row->BUSINESS_UNIT)->first();
                             // $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first();
 
-                            EmployeeJob::updateOrCreate([
+                            if (trim($row->EMPLID) == trim($last_row->EMPLID) && trim($row->EMPL_RCD) == trim($last_row->EMPL_RCD)) {
+                                // SKIP when the same EMPLID and EMPL_RCD 
+                                // echo 'skip = ' . $row->EMPLID . ' - ' . $row->EMPL_RCD . '|'.  $last_row->EMPLID . ' - ' . $last_row->EMPL_RCD .PHP_EOL;
+                                continue;
+                            }
+
+                            $job = EmployeeJob::updateOrCreate([
                                 'emplid' => $row->EMPLID,
                                 'empl_rcd' => $row->EMPL_RCD,
                             ],[
@@ -184,15 +199,34 @@ class ImportEmployeeJob extends Command
                                 'supervisor_emplid' => $row->supervisor_emplid,
                                 'supervisor_name' => $row->supervisor_name,
                                 'supervisor_email' => $row->supervisor_email,
-                                'date_updated' => $row->date_updated,
-                                'date_deleted' => $row->date_deleted,
+                                'date_updated' => $row->date_updated ? (substr($row->date_updated,0,10).' '.substr($row->date_updated,11,8)) : null,
+                                'date_deleted' => $row->date_deleted ? (substr($row->date_deleted,0,10).' '.substr($row->date_deleted,11,8)) : null,
 
                                 'created_by_id' => null,
                                 'updated_by_id' => null,
 
                             ]);
 
-                            $this->processed_count += 1;
+                            if ($job->wasRecentlyCreated) {
+
+                                $this->LogMessage('(CREATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
+
+                                $this->created_count += 1;
+
+                            } elseif ($job->wasChanged() ) {
+
+                                $this->LogMessage('(UPDATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
+                                $changes = $job->getChanges();
+                                unset($changes["updated_at"]);
+                                $this->LogMessage('  summary => '. json_encode( $changes ) );
+
+                                $this->updated_count += 1;
+                            } else {
+                                // No Action
+                            }
+
+                            // Keep the previous role
+                            $last_row = $row;
                         }
                     }
                     

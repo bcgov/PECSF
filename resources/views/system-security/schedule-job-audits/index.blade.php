@@ -103,7 +103,7 @@
 {{-- Modal Box  --}}
 
 <div class="modal fade" id="audit-show-modal" tabindex="-1" role="dialog" aria-labelledby="auditModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
+	<div class="modal-dialog modal-xl" role="document">
 	  <div class="modal-content">
 		<div class="modal-header bg-primary">
 		  <h5 class="modal-title" id="auditModalLabel">Existing details</h5>
@@ -121,7 +121,7 @@
 
             <div class="form-group px-2">
                 <label for="message">Log Message</label>
-                <textarea class="form-control" id="modal-message" rows="15"></textarea>
+                <pre id="modal-message" class="border"></pre>
             </div>
             
         </div>
@@ -263,7 +263,7 @@
                     $('#auditModalLabel').html('Job : ' + data.id + ' (' + data.job_name + ')' );
                     //  started at ' + data.start_time);
                     $('#modal-status').html(data.status);
-                    $('#modal-message').val(data.message);
+                    $('#modal-message').html(data.message);
                     $('#audit-show-modal').modal('show');
                 },
                 error: function(response) {
