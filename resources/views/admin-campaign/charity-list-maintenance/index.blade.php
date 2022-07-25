@@ -42,6 +42,7 @@
                    </tr>
                 @endforeach
                 @foreach ($completed_jobs as $job)
+                 @if(!empty($job->getCommand()->file_name))
                     <tr>
                         <td>{{ $job->getCommand()->file_name }}</td>
                         <td>{{ $job->getLastModified() }}</td>
@@ -49,6 +50,7 @@
                         <td>{{ $job->getCommand()->file_size }}</td>
                         <td>Completed</td>
                     </tr>
+                    @endif
                 @endforeach
                 @foreach ($failed_jobs as $job)
                     <tr>
