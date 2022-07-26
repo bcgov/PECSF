@@ -19,12 +19,28 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
-            <div class="form-group col-md-3">
-                <label for="user">
-                    User Name / IDIR / Employee ID
+
+            <div class="form-group col-md-4">
+                <label for="user_id">
+                    User 
                 </label>
-                <input name="user" id="user"  class="form-control" />
+                <select class="form-control select2" style="width:100%;" name="user_id" id="user_id">
+                    @if ( old('user_id') && session()->get('selected_user') )
+                        <option value="{{ old('user_id') }}">{{ session()->get('selected_user')->name }}</option>
+                    @endif
+                   {{-- <option value="" selected>-- choose user --</option> --}}
+                </select>
             </div>
+
+            <div class="form-group col-md-4">
+                <label for="term">
+                    IDIR / Employee ID
+                </label>
+                <input name="term" id="term"  class="form-control" />
+            </div>
+
+        </div>
+        <div class="form-row">
 
             <div class="form-group col-md-2">
                 <label for="login_at_from">Login at (From)</label>
@@ -51,6 +67,12 @@
                 <label for="search">
                     &nbsp;
                 </label>
+                <input type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />
+            </div>
+            <div class="form-group col-md-1">
+                <label for="Reset">
+                    &nbsp;
+                </label>
                 <input type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary" />
             </div>
         </div>
@@ -66,7 +88,7 @@
 				<tr>
                     <th>Tran ID </th>
                     <th>Login at </th>
-                    <th>User link</th>
+                    <th>User</th>
                     <th>IDIR</th>
                     <th>Employee ID</th>
                     <th>User ID</th>
@@ -115,6 +137,7 @@
 
 
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 	<style>
@@ -131,6 +154,19 @@
         margin-bottom: 10px;
     }
 
+    .select2-selection--multiple{
+        overflow: hidden !important;
+        height: auto !important;
+        min-height: 38px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+    }
+
 </style>
 @endpush
 
@@ -139,7 +175,7 @@
 
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
@@ -157,11 +193,14 @@
             'order': [[ 0, 'desc']],
             
             ajax: {
-                url: '{!! route('settings.access_logs') !!}',
+                url: '{!! route('system.access-logs') !!}',
                 data: function (data) {
-                    data.term = $('#user').val();
+                    data.user_id = $('#user_id').val();
+                    data.term = $('#term').val();
                     data.login_at_from = $('#login_at_from').val();
                     data.login_at_to  = $('#login_at_to').val();
+                    data.login_method  = $('#login_method').val();
+                    
                 }
             },
             columns: [
@@ -190,28 +229,43 @@
 
         });
 
-
-
-        $('#user').on('keyup change', function () {
-            oTable.draw();
+        // Filter by User ID
+        $('#user_id').select2({
+            allowClear: true,
+            placeholder: "Select a user",
+            ajax: {
+                url: '{{ route('system.access-logs.users') }}'
+                , dataType: 'json'
+                , delay: 250
+                , data: function(params) {
+                    var query = {
+                        'q': params.term,
+                    }
+                    return query;
+                }
+                , processResults: function(data) {
+                    return {
+                        results: data
+                        };
+                }
+                , cache: false
+            }
         });
 
-        $('#login_method').on('change', function () {
-            oTable.columns( 'login_method:name' ).search( this.value ).draw();            
-        });
 
-        $('.date-range-filter').on('change', function () {
+        $('#refresh-btn').on('click', function() {
+            // oTable.ajax.reload(null, true);
             oTable.draw();
         });
 
         $('#reset-btn').on('click', function() {
-            $('#user').val('');
+            $('#term').val('');
             $('.date-range-filter').val('');
             $('#login_method').val('');
 
             oTable.search( '' ).columns().search( '' ).draw();
         });
-
+        
 
         // Model -- Show
     	$(document).on("click", ".user-detail-link" , function(e) {
@@ -221,7 +275,7 @@
             title = $(this).attr('data-name');
             $.ajax({
                 method: "GET",
-                url:  '/settings/access-logs-user-detail/' + id,
+                url:  '/system/access-logs-user-detail/' + id,
                 dataType: 'html',
                 success: function(data)
                 {

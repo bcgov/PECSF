@@ -296,7 +296,8 @@ return [
         [
             'text' => 'System Security',
             'icon' => 'nav-icon fa fa-user-shield',
-            'url'  => '/settings/schedule-job-audits',
+            'url'  => '/system/schedule-job-audits',
+            'can'  => ['setting'],
         ],
         [
             'text' => 'PECSF',

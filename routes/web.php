@@ -13,10 +13,11 @@ use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
-use App\Http\Controllers\Admin\AccessLogController;
+
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
 use App\Http\Controllers\Admin\CRACharityController;
+
 
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
@@ -25,12 +26,17 @@ use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
-use App\Http\Controllers\Admin\ScheduleJobAuditController;
+
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
+
+use App\Http\Controllers\System\AccessLogController;
+use App\Http\Controllers\System\UserMaintenanceController;
+use App\Http\Controllers\System\ScheduleJobAuditController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -159,13 +165,6 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/administrators/users', [AdministratorController::class,'getUsers'])->name('administrators.users');
     // Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
 
-    // Access Log 
-    Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access_logs');
-    Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
-
-    // Schedule Job Audit 
-    Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
-
 });
 
 Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
@@ -188,5 +187,21 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(function() {
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store']);
+
+});
+
+
+Route::middleware(['auth'])->prefix('system')->name('system.')->group(function() {
+
+    // Schedule Job Audit 
+    Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
+
+    // Users Maintenance
+    Route::resource('/users', UserMaintenanceController::class)->only(['index','show', 'edit', 'update']);
+
+    // Access Log 
+    Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access-logs');
+    Route::get('/access-logs-user', [AccessLogController::class, 'getUsers'])->name('access-logs.users');
+    Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
 });
