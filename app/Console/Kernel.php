@@ -52,7 +52,7 @@ class Kernel extends ConsoleKernel
                  
         $schedule->command('command:ImportEligibleEmployees')
                  ->weekdays()
-                 ->at('6:10');      
+                 ->at('6:15');      
     }
 
     /**
