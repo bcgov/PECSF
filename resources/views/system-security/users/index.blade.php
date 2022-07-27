@@ -19,7 +19,7 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-1">
                 <label for="source_type">
                     Type
                 </label>
@@ -31,7 +31,7 @@
                 </select>
             </div>
             
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
                 <label for="user_name">
                     User Name
                 </label>
@@ -48,6 +48,25 @@
                     <option value="{{ $organization->id }}">{{ $organization->code }} ({{ $organization->name }})</option>
                     @endforeach 
                 </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="business_unit">
+                    Business Unit
+                </label>
+                <input name="business_unit" id="business_unit"  class="form-control" />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="deptid">
+                    Department
+                </label>
+                <input name="deptid" id="deptid"  class="form-control" />
+            </div>
+            <div class="form-group col-md-2">
+                <label for="tgb_reg_district">
+                    Regional District
+                </label>
+                <input name="tgb_reg_district" id="tgb_reg_district"  class="form-control" />
             </div>
         </div>
 
@@ -100,14 +119,23 @@
                     <th>Type</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Organization</th>
+                    <th>IDIR</th>
                     <th>Locked </th>
                     <th>Sign On Count</th>
+
+                    <th>Organization</th>                    
+                    <th>Bus Unit</th>
+                    <th>Dept ID</th>
+                    <th>Dept Name</th>
+                    <th>Region</th>
+                    <th>Region Name</th>
+                    <th>City</th>
+
                     <th>Last Signon at</th>
                     <th>Last Sync at</th>
                     <th>Created at</th>
                     <th>Updated at</th>
-                    <th>Action</th>
+                    {{-- <th>Action</th> --}}
 				</tr>
 			</thead>
 		</table>
@@ -210,19 +238,21 @@
                     data.user_name = $('#user_name').val();
                     data.source_type = $('#source_type').val();
                     data.organization_id = $('#organization_id').val();
+                    data.business_unit = $('#business_unit').val();
+                    data.deptid = $('#deptid').val();
+                    data.tgb_reg_district = $('#tgb_reg_district').val();
                     data.last_signon_from = $('#last_signon_from').val();
                     data.last_signon_to  = $('#last_signon_to').val();
                     data.last_sync_from = $('#last_sync_from').val();
                     data.last_sync_to  = $('#last_sync_to').val();
-
                 }
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
                 {data: 'source_type', name: 'source_type', className: "dt-nowrap" },
                 {data: 'name', name: 'name', className: "dt-nowrap" },
-                {data: 'primary_job.email', name: 'email', defaultContent: '', className: "dt-nowrap" },
-                {data: 'organization.code',  name: 'code', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.email', name: 'primary_job.email', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.idir', name: 'primary_job.idir', defaultContent: '', className: "dt-nowrap" },
                 {data: 'acctlock', render: function ( data, type, row, meta ) {
                         if(data == 0) {
                             return '<i class="fa fa-user-check fa-lg text-primary"> </i>';
@@ -240,11 +270,18 @@
                         }
                     }
                 },
+                {data: 'organization.code',  name: 'organization.code', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.business_unit', name: 'primary_job.business_unit', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.deptid', name: 'primary_job.deptid', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.dept_name', name: 'primary_job.dept_name', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.tgb_reg_district', name: 'primary_job.tgb_reg_district', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.region.name', name: 'primary_job.region.name', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.city', name: 'primary_job.city', defaultContent: '', className: "dt-nowrap" },                
                 {data: 'last_signon_at', name: 'last_signon_at', className: "dt-nowrap"},
                 {data: 'last_sync_at', name: 'last_sync_at', className: "dt-nowrap"},
                 {data: 'created_at', name: 'created_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'updated_at', name: 'updated_at', orderable: false, searchable: false, className: "dt-nowrap"},
-                {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
+                // {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
                 
             ],
             columnDefs: [

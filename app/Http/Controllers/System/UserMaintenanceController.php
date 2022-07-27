@@ -32,14 +32,31 @@ class UserMaintenanceController extends Controller
         if($request->ajax()) {
 
             $users = User::select('users.*')
+                        ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                        ->leftJoin('regions', 'employee_jobs.region_id', '=', 'regions.id')
                         ->when($request->source_type, function($query) use($request) {
-                            return $query->where('source_type',  $request->source_type);
+                            return $query->where('users.source_type',  $request->source_type);
                         })
                         ->when($request->user_name, function($query) use($request) {
-                            return $query->where('name', 'like', '%'.$request->user_name.'%');
+                            return $query->where('users.name', 'like', '%'.$request->user_name.'%');
                         })
                         ->when($request->organization_id, function($query) use($request) {
-                            return $query->where('organization_id', $request->organization_id);
+                            return $query->where('users.organization_id', $request->organization_id);
+                        })
+                        ->when($request->business_unit, function($query) use($request) {
+                            return $query->where('employee_jobs.business_unit', 'like', '%'. $request->business_unit .'%');
+                        })
+                        ->when($request->deptid, function($query) use($request) {
+                            return $query->where( function($q) use($request) {
+                                return $q->where('employee_jobs.deptid',  'like', '%'. $request->deptid .'%')
+                                         ->orWhere('employee_jobs.dept_name',  'like', '%'. $request->deptid .'%');
+                            });
+                        })
+                        ->when($request->tgb_reg_district, function($query) use($request) {
+                            return $query->where( function($q) use($request) {
+                                return $q->where('employee_jobs.tgb_reg_district',  'like', '%'. $request->tgb_reg_district .'%')
+                                         ->orWhere('regions.name',  'like', '%'. $request->tgb_reg_district .'%');
+                            });
                         })
                         // ->when($request->status, function($query) use($request) {
                         //     return $query->where('status', $request->status);
@@ -54,7 +71,7 @@ class UserMaintenanceController extends Controller
                             $to = $request->last_sync_to ?? '2099-12-31';
                             return  $query->whereBetween('last_sync_at',[ $from, $to]);
                         })
-                        ->with('primary_job', 'organization')
+                        ->with('organization', 'primary_job','primary_job.region')
                         ->withCount('access_logs')
                         // ->having('access_logs_count', '>', 3)
                         ;
@@ -69,6 +86,12 @@ class UserMaintenanceController extends Controller
                         // ->addColumn('deleted_by', function ($user) {
                         //     return $user->deleted_at ? $user->updated_by->name : '';       
                         // })
+                        ->editColumn('created_at', function ($user) {
+                            return $user->created_at->format('Y-m-d H:m:s'); // human readable format
+                        })
+                        ->editColumn('updated_at', function ($user) {
+                            return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
+                        })
                         ->rawColumns(['action'])
                         ->make(true);
         }
