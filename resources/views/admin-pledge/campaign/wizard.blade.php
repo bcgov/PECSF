@@ -307,8 +307,9 @@
 
 $(function () {
 
-    // For keep tracking the current page in wizard
+    // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
+    var submit_count = 0;
    
     $(".next").on("click", function() {
         var nextstep = false;
@@ -384,12 +385,15 @@ $(function () {
 
     // Validation when click on 'next' button
     function checkForm() {
+
+        // reset submission count 
+        submit_count = 0;
         
         var valid = true;
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
             if (step == 1) {
-                fields = ['campaign_year_id','organization_id', 'user_id'];
+                fields = ['campaign_year_id','organization_id', 'user_id', 'pecsf_id', 'pecsf_first_name', 'pecsf_last_name', 'pecsf_city'];
             }
             if (step == 2) {
                 fields = ['pay_period_amount_other', 'one_time_amount_other'];
@@ -460,6 +464,16 @@ $(function () {
     $('#organization_id').change( function() {
         reset_user_profile_info();
         $('#user_id').val(null).trigger('change');
+
+        code = $("select[name='organization_id']").find(":selected").attr('code');
+        if (code == 'GOV') {
+            $('.emplid_section').show();   
+            $('.pecsf_id_section').hide();
+        } else {
+            $('.emplid_section').hide();   
+            $('.pecsf_id_section').show();
+        }
+
     });
 
     $('#user_id').select2({
@@ -505,6 +519,19 @@ $(function () {
         var data = e.params.data;
             reset_user_profile_info();            
     });
+
+    $('#pecsf_id').on('blur', function (e) {
+        console.log(this.value);
+        e.stopPropagation();
+    })
+
+    $('#pecsf_id').on('keypress', function (e) {
+        var keycode = (e.keyCode ? e.keyCode : e.which);
+        if(keycode == '13') {
+            console.log('enter pressed - ' +  this.value);
+        }
+        e.stopPropagation();
+    })
 
 
     // Page 2 -- Amount
@@ -594,6 +621,18 @@ $(function () {
         });
     }
 
+    // Page 4 -- summary (handle single submission only )
+    $(document).on("click", "button[type='submit']", function(e) {
+
+        // this.disabled = true;
+        $("#admin-pldege-campaign-form").submit(function(e){
+            if(submit_count > 0){
+                e.preventDefault();
+            }
+            submit_count++;
+        });
+    });        
+
     //onload: call the above function 
     $("select[name='charities[]']").each(function() {
         initializeSelect2($(this));
@@ -653,38 +692,12 @@ $(function () {
     });
 
     $(document).on("keyup", "input[name='percentages[]']", function(e) {
-
         reallocate_charity_amount( e.target );
-        // // Calculate bi-weekly amount
-        // pay_period_amount = $("input[name='pay_period_amount']:checked").val();
-        // pay_period_amount_other = $("input[name='pay_period_amount_other']").val();
-        // pay_period_amt = Math.max(pay_period_amount, pay_period_amount_other);
-
-        // if($.isNumeric(pay_period_amt)){
-        //      if(pay_period_amt >= 0 && pay_period_amt <= 100) {
-        //         pay_period_amt_allocated = pay_period_amt * e.target.value / 100;
-        //         $(e.target).closest('div.form-row').find("input[name='pay_period_allocated_amount[]']").val( pay_period_amt_allocated );
-        //      }
-        //  } else {
-        //      //Not a number
-        //  }
-
-        // // Calculate one-time amount
-        // one_time_amount = $("input[name='one_time_amount']:checked").val();
-        // one_time_amount_other = $("input[name='one_time_amount_other']").val();
-        // one_time_amt = Math.max(one_time_amount, one_time_amount_other);
-
-        // if($.isNumeric(one_time_amt)){
-        //      if(one_time_amt >= 0 && one_time_amt <= 100) {
-        //         one_time_amt_allocated = one_time_amt * e.target.value / 100;
-        //         $(e.target).closest('div.form-row').find("input[name='one_time_allocated_amount[]']").val( one_time_amt_allocated );
-        //      }
-        //  } else {
-        //      //Not a number
-        //  }
-
     });
-  
+
+    $(document).ready(function() {
+        $("#organization_id").trigger("change"); // Initial the page when 1st laoded
+    });
 
 });
 

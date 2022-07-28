@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\City;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
@@ -36,11 +37,57 @@ class CampaignPledgeController extends Controller
     public function index(Request $request)
     {
         //
+        // data.organization_id = $('#organization_id').val();
+        // data.pecsf_id = $('#pecsf_id').val();
+        // data.name = $('#name').val();
+        // data.pecsf_city = $('#pecsf_city').val();
+        // data.campaign_year_id = $('#campaign_year_id').val();
+        // data.one_time_amt_from = $('#one_time_amt_from').val();
+        // data.one_time_amt_to = $('#one_time_amt_to').val();
+        // data.pay_period_amt_from = $('#pay_period_amt_from').val();
+        // data.pay_period_amt_to = $('#pay_period_amt_to').val();
+
         if($request->ajax()) {
 
             $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'distinct_charities', 'distinct_charities.charity')
+                            ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                            ->when( $request->organization_id, function($query) use($request) {
+                                $query->where('organization_id', $request->organization_id);
+                            })
+                            ->when( $request->pecsf_id, function($query) use($request) {
+                                $query->where('pecsf_id', 'like', '%'. $request->pecsf_id .'%');
+                            })
+                            ->when( $request->emplid, function($query) use($request) {
+                                $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
+                            })
+                            ->when( $request->name, function($query) use($request) {
+                                $query->where('first_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('first_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('name', 'like', '%' . $request->name . '%');
+                            })
+                            ->when( $request->city, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
+                                             ->orWhere('pledges.city', 'like', '%'. $request->city .'%');
+                                });
+                            })
+                            ->when( $request->campaign_year_id, function($query) use($request) {
+                                $query->where('campaign_year_id', $request->campaign_year_id);
+                            })
+                            ->when( is_numeric($request->one_time_amt_from) || is_numeric($request->one_time_amt_to), function($query) use($request) {
+                                $from = is_numeric($request->one_time_amt_from) ? $request->one_time_amt_from : 0;
+                                $to = is_numeric($request->one_time_amt_to) ? $request->one_time_amt_to : 9999999;
+                                return  $query->whereBetween('one_time_amount',[ $from, $to]);
+                            })
+                            ->when( is_numeric($request->pay_period_amt_from) || is_numeric($request->pay_period_amt_to), function($query) use($request) {
+                                $from = is_numeric($request->pay_period_amt_from) ? $request->pay_period_amt_from : 0;
+                                $to = is_numeric($request->pay_period_amt_to) ? $request->pay_period_amt_to : 9999999;
+                                return  $query->whereBetween('pay_period_amount',[ $from, $to]);
+                            })
                             ->select('pledges.*');
+
 
             return Datatables::of($pledges)
                 ->addColumn('description', function($pledge) {
@@ -52,15 +99,25 @@ class CampaignPledgeController extends Controller
                 ->addColumn('action', function ($pledge) {
                     return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
                         '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>';
-            })->rawColumns(['action','description'])
-            ->make(true);
+                })
+                ->editColumn('created_at', function ($user) {
+                    return $user->created_at->format('Y-m-d H:m:s'); // human readable format
+                })
+                ->editColumn('updated_at', function ($user) {
+                    return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
+                })                        
+                ->rawColumns(['action','description'])
+                ->make(true);
         }
 
         // get all the record 
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
+        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
+        $campaign_years = CampaignYear::orderBy('calendar_year')->get();
+        $cities = City::orderBy('city')->get();
 
         // load the view and pass 
-        return view('admin-pledge.campaign.index');
+        return view('admin-pledge.campaign.index', compact('organizations', 'campaign_years','cities'));
 
     }
 
@@ -79,6 +136,7 @@ class CampaignPledgeController extends Controller
 
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
         $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
+        $cities = City::orderBy('city')->get();
 
         $pay_period_amount = 20;
         $one_time_amount = 20;
@@ -86,7 +144,7 @@ class CampaignPledgeController extends Controller
         $one_time_amount_other = null;
 
         return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears',
-            'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
+                    'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
     }
 
     /**
@@ -108,6 +166,7 @@ class CampaignPledgeController extends Controller
 
 
                 $user = User::where('id', $request->user_id)->first() ?? null;
+                $organization = Organization::where('id', $request->organization_id)->first() ?? null;
                 $campaign_year = CampaignYear::where('id', $request->campaign_year_id)->first();
 
                 $pool  = FSPool::current()->where('id', $request->pool_id)->first() ?? null;
@@ -131,8 +190,10 @@ class CampaignPledgeController extends Controller
                     array_push($selected_charities, $charity);
                 }
 
-                return view('admin-pledge.campaign.partials.summary', compact('user', 'campaign_year', 'pool_option', 'pool', 
-                            'charities', 'selected_charities', 'pay_period_amount', 'pay_period_total_amount', 'one_time_amount' ))->render();
+                return view('admin-pledge.campaign.partials.summary', compact('user', 'organization', 'campaign_year',
+                            'pool_option', 'pool', 'charities', 'selected_charities', 
+                            'pay_period_amount', 'pay_period_total_amount', 'one_time_amount',
+                             'request'))->render();
 
             }
             
@@ -140,8 +201,13 @@ class CampaignPledgeController extends Controller
 
         }
        
+        
         /* Final submission -- form submission (non-ajax call) */
+
+
         $campaign_year = CampaignYear::where('id', $request->campaign_year_id)->first();
+        $gov_organization = Organization::where('code', 'GOV')->first();
+        $is_GOV = ($request->organization_id == $gov_organization->id);
 
         $pay_period_amount = $request->pay_period_amount  ? 
                     $request->pay_period_amount : $request->pay_period_amount_other ;
@@ -170,9 +236,17 @@ class CampaignPledgeController extends Controller
 
         } else {
             // Create a new Pledge
+
             $pledge = Pledge::Create([
                 'organization_id' => $request->organization_id,
-                'user_id' => $request->user_id,
+
+                'user_id' =>    $is_GOV ? $request->user_id : 0,
+
+                "pecsf_id" =>   $is_GOV ? null : $request->pecsf_id,
+                "first_name" => $is_GOV ? null : $request->pecsf_first_name,
+                "last_name" =>  $is_GOV ? null : $request->pecsf_last_name,
+                "city" =>       $is_GOV ? null : $request->pecsf_city,
+
                 'campaign_year_id' => $request->campaign_year_id,
                 'type' => $request->pool_option,
                 'f_s_pool_id' => $request->pool_option == 'P' ? $request->pool_id : 0,
@@ -301,8 +375,10 @@ class CampaignPledgeController extends Controller
             return $pool->region->name;
         });
 
+        $organization = Organization::where('id', $pledge->organization_id)->first();
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
         $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
+        $cities = City::orderBy('city')->get();
 
         $pool_option = $pledge->type;
         $pay_period_amount = $pledge->pay_period_amount ?? 0;
@@ -313,9 +389,8 @@ class CampaignPledgeController extends Controller
         $pay_period_amount_other = in_array($pay_period_amount, $amt_choices) ? '' :   $pay_period_amount;
         $one_time_amount_other = in_array($one_time_amount, $amt_choices) ? '' :   $one_time_amount;
 
-
-        return view('admin-pledge.campaign.wizard', compact('pledge', 'pool_option', 'fspools', 'organizations','campaignYears',
-                    'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other'));
+        return view('admin-pledge.campaign.wizard', compact('pledge', 'pool_option', 'fspools', 'organization', 'organizations','campaignYears',
+                    'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other'));
     
     }
 

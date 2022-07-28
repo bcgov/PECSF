@@ -36,86 +36,119 @@
                 <label for="user_id">Organization</label>
                     @isset($pledge)
                         <select class="form-control" style="width:100%;" name="organization_id" id="organization_id" readonly>
-                            <option value="{{ $pledge->organization_id }}" selected>{{ $pledge->organization->name }}</option>
+                            <option value="{{ $pledge->organization_id }}"  code="{{ $organization->code }}" selected>{{ $pledge->organization->name }}</option>
                         </select>
                     @endisset
                     @empty($pledge)
                         <select class="form-control" style="width:100%;" name="organization_id" id="organization_id">
                             @foreach ($organizations as $organization)
-                                <option value="{{ $organization->id }}" {{ $organization->code == 'GOV' ? 'selected' : '' }}>
+                                <option value="{{ $organization->id }}" code="{{ $organization->code }}" {{ $organization->code == 'GOV' ? 'selected' : '' }}>
                                     {{ $organization->name }}</option>
                             @endforeach
                         </select>
                     @endempty
                 
             </div>
-            <div class="form-group col-md-7">
+            <div class="form-group col-md-7 emplid_section">
                 <label for="user">Employee</label>
                 @if (isset($pledge))
                         <select class="form-control" name="user_id" id="user" readonly>
-                            <option value="{{ $pledge->user_id }}" selected>{{ $pledge->user->name }}</option>
+                            <option value="{{ $pledge->user_id }}" selected>{{ $pledge->user ? $pledge->user->name : '' }}</option>
                         </select>
                 @else 
-                
                     <select class="form-control select2" style="width:100%;" name="user_id" id="user_id">
                         {{-- <option value="" selected>-- choose user --</option> --}}
                     </select>
                 @endif
             </div>
+            <div class="form-group col-md-3 pecsf_id_section">
+                <label for="user">PECSF ID</label>
+                @if (isset($pledge))
+                    <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $pledge->pecsf_id }}" readonly>
+                @else 
+                    <input type="text" class="form-control" name="pecsf_id" id="pecsf_id">
+                @endif
+            </div>
+
         </div>
 
+        <div class="form-row pecsf_id_section">
+            <div class="col-md-3 mb-3">
+                <label for="pecsf_first_name">First Name</label>
+                <input type="text" class="form-control" id="pecsf_first_name" name="pecsf_first_name" 
+                    value="{{ old('pecsf_first_name') ?? ( isset($pledge) ? $pledge->first_name : '') }}" {{ isset($pledge) ? 'readonly' : '' }}>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="pecsf_last_name">Last Name</label>
+                <input type="text" class="form-control" id="pecsf_last_name" name="pecsf_last_name" 
+                    value="{{ old('pecsf_last_name') ?? ( isset($pledge) ? $pledge->last_name : '') }}" {{ isset($pledge) ? 'readonly' : '' }}>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="pecsf_city">City</label>
+                <select class="form-control" style="width:100%;" name="pecsf_city" id="pecsf_city" {{ isset($pledge) ? 'disabled' : '' }}>
+                    <option value="">Select a City</option>
+                    @foreach ($cities as $city)
+                        <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || (isset($pledge) && $city->city == $pledge->city) ? 'selected' : '' }}>
+                            {{ $city->city }}</option>
+                    @endforeach
+                </select>
 
-        <div class="form-row">
+                {{-- <input type="text" class="form-control" id="pecsf_city" name="pecsf_city" 
+                    value="{{ old('pecsf_city') ?? ( isset($pledge) ? $pledge->city : '') }}" {{ isset($pledge) ? 'readonly' : '' }}> --}}
+            </div>
+        </div>
+
+        <div class="form-row emplid_section">
             <div class="col-md-2 mb-3">
                 <label for="user_emplid">Employee ID</label>
                 <input type="text" class="form-control border-0" id="user_emplid" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->emplid : '' }}" 
+                        value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->emplid : '' }}" 
                     disabled>
             </div>
             <div class="col-md-5 mb-3">
                 <label for="user_region">Region</label>
                 <input type="text" class="form-control border-0" id="user_region" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->region->name . ' (' . $pledge->user->primary_job->region->code . ')'  : '' }}" 
+                        value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->region->name . ' (' . $pledge->user->primary_job->region->code . ')'  : '' }}" 
                      disabled>
             </div>
             <div class="col-md-5 mb-3">
                 <label for="user_dept">Department</label>
                 <input type="text" class="form-control border-0" id="user_dept" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->dept_name . ' (' . $pledge->user->primary_job->deptid . ')' : '' }}" 
+                        value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->dept_name . ' (' . $pledge->user->primary_job->deptid . ')' : '' }}" 
                     disabled>
             </div>
         </div>
-        <div class="form-row">
+        <div class="form-row emplid_section">
             <div class="col-md-4 mb-3">
                 <label for="user_first_name">First name</label>
                 <input type="text" class="form-control border-0" id="user_first_name" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->first_name : '' }}"
+                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->first_name : '' }}"
                     disabled>
             </div>
             <div class="col-md-4 mb-3">
                 <label for="user_last_name">Last name</label>
                 <input type="text" class="form-control border-0" id="user_last_name" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->last_name : '' }}"
+                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->last_name : '' }}"
                     disabled>
             </div>
             <div class="col-md-4 mb-3">
                 <label for="user_email">Email</label>
                 <input type="text" class="form-control border-0" id="user_email" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->email : '' }}"
+                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->email : '' }}"
                      disabled>
             </div>
         </div>
-        <div class="form-row">
+        <div class="form-row emplid_section">
             <div class="col-md-4 mb-3">
                 <label for="user_bu">Business Unit</label>
                 <input type="text" class="form-control border-0" id="user_bu" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->bus_unit->name . ' (' . $pledge->user->primary_job->bus_unit->code . ')' : '' }}" 
+                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->bus_unit->name . ' (' . $pledge->user->primary_job->bus_unit->code . ')' : '' }}" 
                      disabled>
             </div>
             <div class="col-md-4 mb-3">
                 <label for="user_org">Organization</label>
                 <input type="text" class="form-control border-0" id="user_org" 
-                    value="{{ isset($pledge) ? $pledge->user->primary_job->organization_name : '' }}" 
+                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->organization_name : '' }}" 
                     disabled>
             </div>
         </div>

@@ -10,16 +10,21 @@
         <div class="h5"> Employee Information</div>
     </div>
     <div class="card-body ">
+@if( $user )        
         <div class="form-row">
-            <div class="col-md-2 mb-3">
+            <div class="col-md-3 mb-3">
+                <label for="user_emplid">Organization</label>
+                <input type="text" class="form-control" value="{{ $organization->name }}" disabled>
+            </div>
+            <div class="col-md-3 mb-3">
                 <label for="user_emplid">Employee ID</label>
                 <input type="text" class="form-control" value="{{ $user->primary_job->emplid }}" disabled>
             </div>
-            <div class="col-md-5 mb-3">
+            <div class="col-md-3 mb-3">
                 <label for="user_region">Region</label>
                 <input type="text" class="form-control" value="{{ $user->primary_job->region->name }}" disabled>
             </div>
-            <div class="col-md-5 mb-3">
+            <div class="col-md-3 mb-3">
                 <label for="user_dept">Department</label>
                 <input type="text" class="form-control" value="{{ $user->primary_job->deptid }}" disabled>
             </div>
@@ -48,7 +53,34 @@
                 <input type="text" class="form-control" value="{{ $user->primary_job->organization }}" disabled>
             </div>
         </div>
+@else
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="">Organization</label>
+                <input type="text" class="form-control" value="{{ $organization->name }}" disabled>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="">PECSF ID</label>
+                <input type="text" class="form-control" value="{{ $request->pecsf_id }}" disabled>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="">First name</label>
+                <input type="text" class="form-control" value="{{ $request->pecsf_first_name }}" disabled>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="">Last name</label>
+                <input type="text" class="form-control" value="{{ $request->pecsf_last_name }}" disabled>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="">City</label>
+                <input type="text" class="form-control"  value="{{ $request->pecsf_city }}" disabled>
+            </div>
+        </div>
 
+
+@endif
     </div>
 </div>
 
