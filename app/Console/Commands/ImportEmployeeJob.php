@@ -45,6 +45,9 @@ class ImportEmployeeJob extends Command
         $this->updated_count = 0;
         $this->message = '';
         $this->status = 'Completed';
+
+        $this->normal_run = true; 
+
     }
 
     /**
@@ -55,6 +58,10 @@ class ImportEmployeeJob extends Command
     public function handle()
     {
         ini_set('memory_limit', '4096M');
+
+        if (EmployeeJob::count() < 20000) {
+            $this->normal_run = false;    // mean first load
+        }
 
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
@@ -209,7 +216,9 @@ class ImportEmployeeJob extends Command
 
                             if ($job->wasRecentlyCreated) {
 
-                                $this->LogMessage('(CREATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
+                                if ($this->normal_run) {
+                                    $this->LogMessage('(CREATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
+                                }                                    
 
                                 $this->created_count += 1;
 

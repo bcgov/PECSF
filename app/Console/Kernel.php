@@ -14,10 +14,11 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
-        
         Commands\ImportEmployeeJob::class,
         Commands\SyncUserProfile::class,
         Commands\ExportDatabaseToBI::class,
+        Commands\DonorHistoryDataFromBI::class,
+        Commands\ImportEligibleEmployee::class,
         
     ];
 
@@ -34,15 +35,15 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('command:ExportDatabaseToBI')
                  ->weekdays()
-                 ->at('4:00');
+                 ->at('5:00');
 
         $schedule->command('command:ImportEmployeeJob')
                  ->weekdays()
-                 ->at('5:00');
+                 ->at('5:15');
 
         $schedule->command('command:SyncUserProfile')
                  ->weekdays()
-                 ->at('5:30');
+                 ->at('5:45');
 
         // Donor statitsics for challenge pages                  
         $schedule->command('command:DonorHistoryDataFromBI')
@@ -51,7 +52,7 @@ class Kernel extends ConsoleKernel
                  
         $schedule->command('command:ImportEligibleEmployees')
                  ->weekdays()
-                 ->at('6:10');      
+                 ->at('6:15');      
     }
 
     /**

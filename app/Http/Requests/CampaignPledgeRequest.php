@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Organization;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,19 +28,32 @@ class CampaignPledgeRequest extends FormRequest
         
         $my_rules = [];
 
+        $organization = Organization::where('code', 'GOV')->first();
+
         if ($this->step == 1 && empty($this->pledge_id) ) {
             $my_rules = array_merge($my_rules, 
                 [
                     //
                     'campaign_year_id'    => ['required', 'exists:campaign_years,id',
-                                        Rule::unique('pledges')->where(function ($query) {
-                                            $query->where('organization_id', $this->organization_id)
-                                                  ->where('user_id', $this->user_id)
-                                                  ->where('campaign_year_id', $this->campaign_year_id);
-                                        })->ignore($this->pledge_id)
+                                    Rule::unique('pledges')->where(function ($query) use($organization) {
+                                          $query->where('organization_id', $this->organization_id)
+                                                ->when($this->organization_id == $organization->id, function($q) {
+                                                    return $q->where('user_id', $this->user_id);
+                                                }) 
+                                                ->when($this->organization_id != $organization->id, function($q) {
+                                                    return $q->where('pecsf_id', $this->pecsf_id);
+                                                }) 
+                                                ->where('campaign_year_id', $this->campaign_year_id);
+                                    })->ignore($this->pledge_id),
                     ],
                     'organization_id'  => ['required'],
-                    'user_id'       => ['required', 'exists:users,id' ],
+                    'user_id'       => [$this->organization_id == $organization->id ? 'required' : 'nullable',  'exists:users,id' ],
+                    
+                    'pecsf_id'      => ['digits:6',  $this->organization_id != $organization->id ? 'required' : 'nullable'],
+                    'pecsf_first_name'  => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
+                    'pecsf_last_name'   => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
+                    'pecsf_city'   => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
+                    // 'city_id'   => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
                 
                 ]
             );
@@ -126,6 +140,11 @@ class CampaignPledgeRequest extends FormRequest
 
             'campaign_year_id.unique' => 'The campaign year has already been taken',
             'user_id.required'       => 'The Employee field is required.',
+            'pecsf_id.required'      => 'The PECSF ID field is required.',
+            'pecsf_first_name.required'  => 'The First Name field is required.',
+            'pecsf_last_name.required'   => 'The Last Name field is required.',
+            'pecsf_city.required'   => 'The City field is required.',
+
             'charities.*.required_if' => 'The Charity field is required.',
 
             'percentages.*.required' => 'The Percentage field is required.',

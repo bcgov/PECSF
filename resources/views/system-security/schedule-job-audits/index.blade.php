@@ -190,7 +190,7 @@
             'order': [[ 0, 'desc']],
             fixedHeader: true,            
             ajax: {
-                url: '{!! route('settings.schedule-job-audits.index') !!}',
+                url: '{!! route('system.schedule-job-audits.index') !!}',
                 data: function (data) {
                     // data.term = $('#user').val();
                     data.job_name = $('#job_name').val();
@@ -220,20 +220,7 @@
             ],
 
         });
-
-/*
-        $('#job_name').on('keyup change', function () {
-            oTable.columns( 'job_name:name' ).search( this.value ).draw();            
-        });
-
-        $('#status').on('change', function () {
-            oTable.columns( 'status:name' ).search( this.value ).draw();            
-        });
-
-        $(document).on("change", ".datetime-range-filter, #include_trashed" , function(e) {
-            oTable.draw();
-        });
-*/        
+     
 
         $('#refresh-btn').on('click', function() {
             // oTable.ajax.reload(null, true);
@@ -256,7 +243,7 @@
             id =  $(this).attr('data-id');
             $.ajax({
                 method: "GET",
-                url:  '/settings/schedule-job-audits/' + id,
+                url:  '/system/schedule-job-audits/' + id,
                 dataType: 'json',
                 success: function(data)
                 {
@@ -300,7 +287,7 @@
                     // Swal.fire('Saved!', '', '')
                     $.ajax({
                         method: "DELETE",
-                        url:  '/settings/schedule-job-audits/' + id,
+                        url:  '/system/schedule-job-audits/' + id,
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables

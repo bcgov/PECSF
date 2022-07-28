@@ -126,7 +126,7 @@ return [
     'classes_content_header' => '',
     'classes_content' => '',
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
-    'classes_sidebar_nav' => '',
+    'classes_sidebar_nav' => 'nav-child-indent',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
@@ -296,7 +296,27 @@ return [
         [
             'text' => 'System Security',
             'icon' => 'nav-icon fa fa-user-shield',
-            'url'  => '/settings/schedule-job-audits',
+            'url'  => '/system/schedule-job-audits',
+            'can'  => ['setting'],
+            'active' => ['system/*'],
+            'submenu' => [
+                [
+                    'text' => 'Schedule Job Audits',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '/system/schedule-job-audits',
+                ],
+                [
+                    'text' => 'Users',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '/system/users',
+                ],
+                [
+                    'text' => 'Access Logs',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '/system/access-logs',
+                ],
+
+            ],
         ],
         [
             'text' => 'PECSF',

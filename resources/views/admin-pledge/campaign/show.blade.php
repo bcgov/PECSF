@@ -28,22 +28,27 @@
                     <span><b class="pr-3">Transaction ID: </b>{{ $pledge->id }}</span>
             </div>
         </div>
-
+        
         <div class="card m-0 pb-3">
             <div class="card-header bg-light">
                 <div class="h5"> Employee Information</div>
             </div>
             <div class="card-body ">
+            @if( $pledge->user )                        
                 <div class="form-row">
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
+                        <label for="">Organization</label>
+                        <input type="text" class="form-control" value="{{ $pledge->organization->name }}" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
                         <label for="user_emplid">Employee ID</label>
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->emplid }}" disabled>
                     </div>
-                    <div class="col-md-5 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="user_region">Region</label>
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->region->name }}" disabled>
                     </div>
-                    <div class="col-md-5 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="user_dept">Department</label>
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->deptid }}" disabled>
                     </div>
@@ -72,7 +77,32 @@
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->organization }}" disabled>
                     </div>
                 </div>
-
+            @else
+                <div class="form-row">
+                    <div class="col-md-3 mb-3">
+                        <label for="">Organization</label>
+                        <input type="text" class="form-control" value="{{ $pledge->organization->name }}" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="">PECSF ID</label>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_id }}" disabled>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 mb-3">
+                        <label for="">First name</label>
+                        <input type="text" class="form-control" value="{{ $pledge->first_name }}" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="">Last name</label>
+                        <input type="text" class="form-control" value="{{ $pledge->last_name }}" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="">City</label>
+                        <input type="text" class="form-control"  value="{{ $pledge->city }}" disabled>
+                    </div>
+                </div>                
+            @endif
             </div>
         </div>
 

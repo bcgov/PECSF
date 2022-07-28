@@ -12,6 +12,12 @@ class Pledge extends Model
     protected $fillable = [
         'organization_id',
         'user_id',
+
+        "pecsf_id",
+        "first_name",
+        "last_name",
+        "city",
+
         'campaign_year_id',
         'type',
         'f_s_pool_id',
@@ -64,10 +70,9 @@ class Pledge extends Model
     }
 
     public function fund_supported_pool() {
-        
+       
             return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id')->withDefault();
-        
-        
+            
     }
 
     public function organization() {

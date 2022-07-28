@@ -23,6 +23,111 @@
 
 <p><a href="/administrators/dashboard">Back</a></p>
 
+<div class="card">
+<form class="filter">
+    <div class="card-body pb-0 search-filter">
+        <h2>Search Criteria</h2>
+
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="organization_id">
+                    Organization
+                </label>
+                <select name="organization_id" id="organization_id" value="" class="form-control">
+                    <option value="">All</option>
+                    @foreach( $organizations as $organization)
+                    <option value="{{ $organization->id }}">{{ $organization->code }} ({{ $organization->name }})</option>
+                    @endforeach 
+                </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="emplid">
+                    Empl ID
+                </label>
+                <input name="emplid" id="emplid"  class="form-control" />
+            </div> 
+
+            <div class="form-group col-md-2">
+                <label for="pecsf_id">
+                    PECSF ID
+                </label>
+                <input name="pecsf_id" id="pecsf_id"  class="form-control" />
+            </div> 
+
+            <div class="form-group col-md-2">
+                <label for="name">
+                    Name
+                </label>
+                <input name="name" id="name"  class="form-control" />
+            </div> 
+
+            <div class="form-group col-md-2">
+                <label for="city">
+                    City
+                </label>
+                <select class="form-control" name="city" id="city" {{ isset($pledge) ? 'disabled' : '' }}>
+                    <option value="">All</option>
+                    @foreach ($cities as $city)
+                        <option value="{{ $city->city }}" >
+                            {{ $city->city }}</option>
+                    @endforeach
+                </select>
+            </div> 
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="campaign_year">
+                    Campaign Year
+                </label>
+                <select id="campaign_year_id" class="form-control" name="campaign_year_id">
+                    <option value="">All</option>
+                    @foreach ($campaign_years as $cy)
+                        <option value="{{ $cy->id }}">{{ $cy->calendar_year }}
+                        </option>
+                    @endforeach
+                </select>
+            </div> 
+
+            <div class="form-group col-md-2">
+                <label for="one_time_amt_from">One Time Amt (From)</label>
+                <input class="form-control " type="number" id="one_time_amt_from" name="one_time_amt_from">
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="one_time_amt_to">One Time Amt (To)</label>
+                <input class="form-control " type="number" id="one_time_amt_to" name="one_time_amt_to">
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="pay_period_amt_from">Bi-weekly Amt (From)</label>
+                <input class="form-control " type="number" id="pay_period_amt_from" name="pay_period_amt_from">
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="pay_period_amt_to">Bi-weekly Amt (To)</label>
+                <input class="form-control " type="number" id="pay_period_amt_to" name="pay_period_amt_to">
+            </div>
+
+            <div class="form-group col-md-1">
+                <label for="search">
+                    &nbsp;
+                </label>
+                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
+            </div>
+            <div class="form-group col-md-1">
+                <label for="search">
+                    &nbsp;
+                </label>
+                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Reset</button>
+            </div>
+
+        </div>
+
+    </div> 
+</form>  
+</div>   
 
 <div class="card">
 	<div class="card-body">
@@ -40,17 +145,24 @@
 			<thead>
 				<tr>
                     <th>ID</th>
-                    <th>Organization</th>
+                    <th>Org</th>
 					<th>Empl ID</th>
+                    <th>PECSF ID</th>
                     <th>Name</th>
+                    <th>City</th>
                     <th>Campaign Year</th>
                     <th>FS Pool / Charities</th>
                     <th>One Time Amount</th>
                     <th>Bi Weekly Amount</th>
                     <th>Goal Amount</th>
                     <th>Action </th>
+                    <th>Send to PSFT</th>
+                    <th>Send At </th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
                     <th>Pool Name</th>
                     <th>Charites Name</th>
+
 
 				</tr>
 			</thead>
@@ -70,6 +182,11 @@
 		text-align: right !important;
         padding-right: 10px;
 	}
+    
+    #campaign-table_filter {
+        display: none;
+    }
+
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
@@ -81,11 +198,6 @@
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-    // window.setTimeout(function() {
-    //     $(".alert").fadeTo(500, 0).slideUp(500, function(){
-    //         $(this).remove();
-    //     });
-    // }, 3000);
 
     $(function() {
 
@@ -99,28 +211,84 @@
             'order': [[0, 'desc']],
             ajax: {
                 url: '{!! route('admin-pledge.campaign.index') !!}',
-                data: function (d) {
+                type: "GET",
+                data: function (data) {
+                    data.organization_id = $('#organization_id').val();
+                    data.emplid = $('#emplid').val();
+                    data.pecsf_id = $('#pecsf_id').val();
+                    data.name = $('#name').val();
+                    data.city = $('#city').val();
+                    data.campaign_year_id = $('#campaign_year_id').val();
+                    data.one_time_amt_from = $('#one_time_amt_from').val();
+                    data.one_time_amt_to = $('#one_time_amt_to').val();
+                    data.pay_period_amt_from = $('#pay_period_amt_from').val();
+                    data.pay_period_amt_to = $('#pay_period_amt_to').val();
                 }
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},
-                {data: 'organization.name',  className: "dt-nowrap"},
+                {data: 'organization.code',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'user.primary_job.emplid', defaultContent: '' },
-                {data: 'user.primary_job.name', defaultContent: '', className: "dt-nowrap"},
-                {data: 'campaign_year.calendar_year', "className": "dt-center"},
-                {data: 'description', orderable: false, searchable: false},
+                {data: 'pecsf_id', defaultContent: '' },
+                {data: 'user.primary_job.name', defaultContent: '', className: "dt-nowrap",
+                    render: function ( data, type, row, meta ) {
+                        if(row.pecsf_id) {
+                            return row.last_name + ',' + row.first_name;
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+                {data: 'user.primary_job.city', defaultContent: '', className: "dt-nowrap",
+                    render: function ( data, type, row, meta ) {
+                            if(row.pecsf_id) {
+                                return row.city;
+                            } else {
+                                return data;
+                            }
+                        }
+                },
+                {data: 'campaign_year.calendar_year', className: "dt-nowrap", className: "dt-center"},
+                {data: 'description', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'one_time_amount', name: 'one_time_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'pay_period_amount', name: 'pay_period_amount',  'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'goal_amount', name: 'goal_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '') },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
+                {data: 'ods_export_status', name: 'ods_export_status', className: "dt-nowrap",
+                    render: function ( data, type, row, meta ) {
+                            if( data == 'C') {
+                                return 'Completed';
+                            } else {
+                                return '';
+                            }
+                        }
+                },
+                {data: 'ods_export_at', name: 'ods_export_at', className: "dt-nowrap" },
+                {data: 'created_at', name: 'created_at', className: "dt-nowrap" },
+                {data: 'updated_at', name: 'updated_at', className: "dt-nowrap" },
                 {data: 'fund_supported_pool.region.name', defaultContent: '', visible: false, searchable: true},
-                {data: 'distinct_charities.charity.charity_name', defaultContent: '', visible: false, searchable: true}
+                {data: 'distinct_charities.charity.charity_name', defaultContent: '', visible: false, searchable: true},
+
             ],
             columnDefs: [
                     {
 
                     },
             ]
+        });
+
+        $('#refresh-btn').on('click', function() {
+            // oTable.ajax.reload(null, true);
+            oTable.draw();
+        });
+
+        $('#reset-btn').on('click', function() {
+
+            // Reset filter fields value
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
+
+            oTable.search( '' ).columns().search( '' ).draw();
         });
 
     });

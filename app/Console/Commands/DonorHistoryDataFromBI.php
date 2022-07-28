@@ -270,10 +270,10 @@ class DonorHistoryDataFromBI extends Command
 
                         if ( $row->business_unit_code && !empty(trim($row->business_unit_code))  ) {
                             $rec = DonorByBusinessUnit::updateOrCreate([
-                                'yearcd' => $row->year,
-                                'business_unit_id' => $business_unit ? $business_unit->id : 0,
-                            ],[
                                 'business_unit_code' => $row->business_unit_code,
+                                'yearcd' => $row->year,
+                            ],[
+                                'business_unit_id' => $business_unit ? $business_unit->id : 0,
                                 'dollars' => $row->dollars,
                                 'donors' => $row->donors,
                             ]);
@@ -282,12 +282,16 @@ class DonorHistoryDataFromBI extends Command
                                 $created_count += 1;
                             } elseif ($rec->wasChanged() ) {
                                 $updated_count += 1;
+                                $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
+                                $changes = $user->getChanges();
+                                $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
                             }      
                         } else {
 
-                            $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
+                            // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
+                            $this->LogMessage('    Exception => Empty Business_unit_code ' . json_encode( $row ) );
 
                         }
 
@@ -339,23 +343,36 @@ class DonorHistoryDataFromBI extends Command
 
                         $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 
-                        $rec = DonorByRegionalDistrict::updateOrCreate([
-                            'regional_district_id' => $regional_district ? $regional_district->id : '',
-                            'yearcd' => $row->year,
-                            'tgb_reg_district' => $row->tgb_reg_district,
-                            'dollars' => $row->dollars,
-                            'donors' => $row->donors,
-                        ]);
+                        if ( $row->tgb_reg_district && !empty(trim($row->tgb_reg_district))  ) {
+                            $rec = DonorByRegionalDistrict::updateOrCreate([
+                                'regional_district_id' => $regional_district ? $regional_district->id : '',
+                                'yearcd' => $row->year,
+                            ],[
+                                'tgb_reg_district' => $row->tgb_reg_district,
+                                'dollars' => $row->dollars,
+                                'donors' => $row->donors,
+                            ]);
 
-                        $total_count += 1;
+                            $total_count += 1;
 
-                        if ($rec->wasRecentlyCreated) {
-                            $created_count += 1;
-                        } elseif ($rec->wasChanged() ) {
-                            $updated_count += 1;
+                            if ($rec->wasRecentlyCreated) {
+                                $created_count += 1;
+                            } elseif ($rec->wasChanged() ) {
+                                
+                                $updated_count += 1;
+
+                                $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
+                                $changes = $user->getChanges();
+                                $this->LogMessage('  summary => '. json_encode( $changes ) );
+                            } else {
+                                // No Action
+                            }      
                         } else {
-                            // No Action
-                        }      
+
+                            // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
+                            $this->LogMessage('    Exception => Empty tgb_reg_district ' . json_encode( $row ) );
+
+                        }
 
                     }
                 }
@@ -403,24 +420,36 @@ class DonorHistoryDataFromBI extends Command
 
                         $department = Department::where('bi_department_id', $row->department_id)->first();
 
-                        $rec = DonorByDepartment::Create([
-                            'department_id' => $department ? $department->id : '',
-                            'yearcd' => $row->year,
-                            'date' => $row->date,
-                            'bi_department_id' => $row->department_id,
-                            'dollars' => $row->dollars,
-                            'donors' => $row->donors,
-                        ]);
+                        if ( $row->department_id && !empty(trim($row->department_id))  ) {
+                            $rec = DonorByDepartment::Create([
+                                'department_id' => $department ? $department->id : '',
+                                'yearcd' => $row->year,
+                                'date' => $row->date,
+                            ],[
+                                'bi_department_id' => $row->department_id,                            
+                                'dollars' => $row->dollars,
+                                'donors' => $row->donors,
+                            ]);
 
-                        $total_count += 1;
+                            $total_count += 1;
 
-                        if ($rec->wasRecentlyCreated) {
-                            $created_count += 1;
-                        } elseif ($rec->wasChanged() ) {
-                            $updated_count += 1;
+                            if ($rec->wasRecentlyCreated) {
+                                $created_count += 1;
+                            } elseif ($rec->wasChanged() ) {
+                                $updated_count += 1;
+
+                                $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
+                                $changes = $user->getChanges();
+                                $this->LogMessage('  summary => '. json_encode( $changes ) );
+                            } else {
+                                // No Action
+                            }  
                         } else {
-                            // No Action
-                        }      
+
+                            // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
+                            $this->LogMessage('    Exception => Empty department_id ' . json_encode( $row ) );
+
+                        }    
 
                     }
                 }

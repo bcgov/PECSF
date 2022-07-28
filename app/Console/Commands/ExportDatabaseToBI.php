@@ -206,9 +206,6 @@ class ExportDatabaseToBI extends Command
 
         // write to log message 
         $this->message .= $text . PHP_EOL;
-
-        $this->task->message = $this->message;
-        $this->task->save();
         
     }
 
