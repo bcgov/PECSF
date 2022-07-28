@@ -53,6 +53,12 @@ class SyncUserProfile extends Command
         $this->locked_count = 0;
         $this->message = '';
         $this->status = 'Completed';
+        $this->normal_run = true;
+
+        $count = User::where('id', '>', 999)->count();
+        if ( $count < 20000) {
+            $this->normal_run = false;  // mean first load
+        }         
 
     }
 
@@ -195,8 +201,10 @@ class SyncUserProfile extends Command
                         ]);
 
                         $this->created_count += 1;
-                        $this->LogMessage( '(CREATED) => id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
 
+                        if ($this->normal_run) {
+                            $this->LogMessage( '(CREATED) => id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
+                        }
 
                 }
             
