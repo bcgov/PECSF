@@ -48,9 +48,6 @@ class ImportEmployeeJob extends Command
 
         $this->normal_run = true; 
 
-        if (EmployeeJob::count() < 20000)
-            $this->normal_run = false;
-
     }
 
     /**
@@ -61,6 +58,10 @@ class ImportEmployeeJob extends Command
     public function handle()
     {
         ini_set('memory_limit', '4096M');
+
+        if (EmployeeJob::count() < 20000) {
+            $this->normal_run = false;    // mean first load
+        }
 
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,

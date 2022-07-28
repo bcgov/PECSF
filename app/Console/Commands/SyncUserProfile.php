@@ -55,11 +55,6 @@ class SyncUserProfile extends Command
         $this->status = 'Completed';
         $this->normal_run = true;
 
-        $count = User::where('id', '>', 999)->count();
-        if ( $count < 20000) {
-            $this->normal_run = false;  // mean first load
-        }         
-
     }
 
     /**
@@ -69,6 +64,10 @@ class SyncUserProfile extends Command
      */
     public function handle()
     {
+
+        if (EmployeeJob::count() < 20000) {
+            $this->normal_run = false;    // mean first load
+        }
 
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
