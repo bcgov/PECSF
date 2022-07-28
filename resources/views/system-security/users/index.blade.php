@@ -5,17 +5,16 @@
 @include('system-security.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Schedule Job user</h4>
+        <h4>Users</h4>
         <div class="flex-fill"></div>
 
     </div>
 @endsection
 @section('content')
 
-<p><a href="/administrators/dashboard">Back</a></p>
-<div class="card">
+<div class="card search-filter">
 
-    <div class="card-body pb-0">
+    <div class="card-body pb-0 ">
         <h2>Search Criteria</h2>
 
         <div class="form-row">
@@ -95,18 +94,22 @@
                 <label for="search">
                     &nbsp;
                 </label>
-                <input type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />
+                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />Search</button>
             </div>
             <div class="form-group col-md-1">
                 <label for="search">
                     &nbsp;
                 </label>
-                <input type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary" />
+                <button type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary">Reset</button>
             </div>
 
         </div>
 
     </div>    
+
+</div>
+
+<div class="card">
     
     <div class="px-4"></div>
 
@@ -230,7 +233,7 @@
             serverSide: true,
             // select: true,
             'order': [[0, 'asc']],
-            //fixedHeader: true,            
+            fixedHeader: true,            
             ajax: {
                 url: '{!! route('system.users.index') !!}',
                 data: function (data) {
@@ -277,8 +280,8 @@
                 {data: 'primary_job.tgb_reg_district', name: 'primary_job.tgb_reg_district', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.region.name', name: 'primary_job.region.name', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.city', name: 'primary_job.city', defaultContent: '', className: "dt-nowrap" },                
-                {data: 'last_signon_at', name: 'last_signon_at', className: "dt-nowrap"},
-                {data: 'last_sync_at', name: 'last_sync_at', className: "dt-nowrap"},
+                {data: 'last_signon_at', name: 'last_signon_at', orderable: false, searchable: false, className: "dt-nowrap"},
+                {data: 'last_sync_at', name: 'last_sync_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'created_at', name: 'created_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'updated_at', name: 'updated_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 // {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
@@ -299,10 +302,9 @@
         });
 
         $('#reset-btn').on('click', function() {
-            $('#user_name').val('');
-            $('.datetime-range-filter').val('');
-            $('#source_type').val('');
-            $('#include_trashed').prop('checked', false);
+           
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
 
             oTable.search( '' ).columns().search( '' ).draw();
         });
