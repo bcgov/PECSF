@@ -228,11 +228,20 @@ class BankDepositFormController extends Controller
                 }
             }
 
-            foreach(request('attachments') as $key => $attachment){
-                if(empty($attachment) || $attachment == "undefined" ){
-                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
-                };
+            if(!empty(request("attachments"))){
+                foreach(request('attachments') as $key => $attachment){
+                    if(!in_array($attachment,$request->ignoreFiles)){
+                        if(empty($attachment) || $attachment == "undefined"){
+                            $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                        };
+                    }
+                }
             }
+            else{
+                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+
+            }
+
 
 
         });
@@ -279,6 +288,12 @@ class BankDepositFormController extends Controller
         $upload_images = $request->file('attachments') ? $request->file('attachments') : [];
 
         foreach($upload_images as $key => $file){
+
+            if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
+            {
+                continue;
+            }
+
                 $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                 $file->move(public_path( $this->doc_folder ), $filename);
                 BankDepositFormAttachments::create([

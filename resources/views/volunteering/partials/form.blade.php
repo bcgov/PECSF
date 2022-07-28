@@ -350,50 +350,26 @@
 
     <div class="form-row form-header">
             <h3 class="blue">Attachment</h3>
+
+    </div>
+
+    <div class="form-row form-body">
+        <div style="padding:8px;" class="upload-area form-group col-md-3">
+            <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
+            <br>
+            <br>
+            <label style="text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</label>
+            <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
+        </div>
+        <div id="attachments" class="form-group col-md-6">
+
+        </div>
+    </div>
             <span class="attachment_errors errors">
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
                         </span>
-    </div>
-
-    <div class="form-row form-body">
-        <div class="form-group col-md-12">
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th class="blue"></th>
-                    <th class="blue">Attached File</th>
-                    <th class="blue">Add Attachment</th>
-                    <th class="blue">View Attachment</th>
-                    <th class="blue">Delete Attachment</th>
-                    <th class="blue"></th>
-
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="attachment" id="attachment1">
-                    <td>
-                                    <span class="attachment_errors  errors">
-                       @error('attachment.0')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-                    </td>
-                    <td><span class="filename"></span></td>
-                    <td><label class="btn btn-primary" for="attachment_input_1"><input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />Add</label></td>
-                    <td><button class="btn btn-primary view_attachment">View</button></td>
-                    <td></td>
-                    <td><i class="fas fa-plus add_attachment_row"></i></td>
-                </tr>
-
-
-                </tbody>
-            </table>
-
-        </div>
-    </div>
 <br>
     <br>
     <input type="submit" class="btn btn-primary" value="Submit" />

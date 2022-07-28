@@ -87,12 +87,12 @@ $(this).parents("tr").remove();
 }
 
 });
-
+var formData = new FormData();
 $("#bank_deposit_form").submit(function(e)
 {
 e.preventDefault();
 var form = document.getElementById("create_pool");
-var formData = new FormData();
+
 $("select").each(function(){
 if($(this).val()){
 if($(this).val().length > 0){
@@ -109,7 +109,7 @@ formData.append($(this).attr("name"), $(this).val());
 }
 }
 else if($(this).attr('type') == "file"){
-formData.append('attachments[]',  $(this)[0].files[0]);
+//formData.append('attachments[]',  $(this)[0].files[0]);
 }
 else if($(this).val().length > 0){
 formData.append($(this).attr("name"), $(this).val());
@@ -122,6 +122,8 @@ formData.append($(this).attr("name"), $(this).val());
 }
 });
 formData.append("org_count", $(".organization").length);
+formData.append("ignoreFiles[]", ignoreFiles);
+
 $(this).fadeTo("slow",0.2);
 $.ajax({
 url: "{{ route("bank_deposit_form") }}",
@@ -150,7 +152,7 @@ tag = prop.substring(0,prop.indexOf("."));
 error = errors[prop][0].split(".");
 error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
-$("#attachment"+(parseInt(count)+1)).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+$("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>');
 }
@@ -219,3 +221,51 @@ const result = event.target.result;
 });
 reader.readAsDataURL(file);
 }
+
+
+$("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); });
+
+// Drag enter
+$('.upload-area').on('dragenter', function (e) {
+e.stopPropagation();
+e.preventDefault();
+$("#upload-area-text").text("Drop");
+});
+
+// Drag over
+$('.upload-area').on('dragover', function (e) {
+e.stopPropagation();
+e.preventDefault();
+$("#upload-area-text").html("<span style='margin-left:75px'>Drop</span>");
+});
+
+// Drag over
+$('.upload-area').on('dragleave', function (e) {
+e.stopPropagation();
+e.preventDefault();
+$("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+});
+
+
+// Drop
+$('.upload-area').on('drop', function (e) {
+e.stopPropagation();
+e.preventDefault();
+$("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+var file = e.originalEvent.dataTransfer.files;
+formData.append('attachments[]', file[0]);
+$("#attachments").append("<span>"+file[0].name+"</span> <i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i><br>");
+const index = ignoreFiles.indexOf(file[0].name);
+if (index > -1) { // only splice array when item is found
+ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
+}
+
+
+});
+
+var ignoreFiles = [];
+$("body").on("click",".remove_attachment",function(){
+$(this)[0].previousElementSibling.remove()
+$(this).remove();
+ignoreFiles.push($(this).attr("attachment"));
+});
