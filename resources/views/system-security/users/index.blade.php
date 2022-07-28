@@ -125,6 +125,7 @@
                     <th>IDIR</th>
                     <th>Locked </th>
                     <th>Sign On Count</th>
+                    <th>Active Job Count</th>
 
                     <th>Organization</th>                    
                     <th>Bus Unit</th>
@@ -267,7 +268,18 @@
                 {data: 'access_logs_count', name: 'access_logs_count', className: "dt-nowrap",
                      render: function ( data, type, row, meta ) {
                         if(data > 0) {
-                            return '<a href="{{ route('system.access-logs') . '?user_id=' }}' + row.id + '">' + data + '</a>';
+                            // TO DO -- Drill Down
+                            // return '<a href="{{ route('system.access-logs') . '?user_id=' }}' + row.id + '">' + data + '</a>';
+                            return data;
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+                {data: 'active_employee_jobs_count', name: 'active_employee_jobs_count', className: "dt-nowrap",
+                     render: function ( data, type, row, meta ) {
+                        if(data > 0) {
+                            return '<a href="{{ route('system.access-logs') . '?emplid=' }}' + row.emplid + '">' + data + '</a>';
                         } else {
                             return data;
                         }

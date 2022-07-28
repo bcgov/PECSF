@@ -73,6 +73,7 @@ class UserMaintenanceController extends Controller
                         })
                         ->with('organization', 'primary_job','primary_job.region')
                         ->withCount('access_logs')
+                        ->withCount('active_employee_jobs')
                         // ->having('access_logs_count', '>', 3)
                         ;
                             
