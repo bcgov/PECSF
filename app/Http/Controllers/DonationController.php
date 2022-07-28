@@ -48,7 +48,7 @@ class DonationController extends Controller {
                         ->unionAll($sql_1)
                         ->get();
 
-        $old_pledges_by_yearcd = $old_pledges->sortByDesc('yearcd')->groupBy('campaign_year.calendar_year');
+        $old_pledges_by_yearcd = $old_pledges->sortByDesc('campaign_year.calendar_year')->groupBy('campaign_year.calendar_year');
 
         // Pledge Histoy data (source BI)
         $old_bi_pool_pledges = PledgeHistory::where('GUID', $user->guid)

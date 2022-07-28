@@ -3,7 +3,7 @@
     aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary">
                 <h5 class="modal-title" id="learnMoreModalTitle">
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">

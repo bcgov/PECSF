@@ -50,6 +50,14 @@ class CharityController extends Controller
 
     public function start(Request $request)
     {
+
+        // Only allow when the campaign pledge period is opened
+        $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                            ->orderBy('calendar_year', 'desc')->first();
+        if ( !$campaignYear->isOpen() ) {
+            return redirect()->route('donations.list');
+        }
+
         $pool_option = "C";
         if (Session::has('pool_option')) {
             $pool_option = Session::get('pool_option');
