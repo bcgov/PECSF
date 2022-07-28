@@ -1,9 +1,18 @@
 <form id="bank_deposit_form" action="{{ route("bank_deposit_form") }}" method="POST"
       enctype="multipart/form-data">
     @csrf
+    <br>
+
+
+    <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding:8px;">
+        <h1>Event bank deposit form</h1>
+    </div>
+    <div class="card">
+        <div class="card-body">
+
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="organization_code">Organization Code:</label>
+            <label for="organization_code">Organization code</label>
             <select type="text" class="form-control errors" name="organization_code" id="organization_code" placeholder="">
             </select>
             <span class="organization_code_errors errors">
@@ -13,7 +22,7 @@
             </span>
         </div>
         <div class="form-group col-md-4">
-            <label for="form_submitter">Form Submitter:</label>
+            <label for="form_submitter">Form submitter</label>
             <div id="form_submitter">{{$current_user->name}}</div>
             <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
 
@@ -25,7 +34,7 @@
 
         </div>
         <div class="form-group col-md-4">
-            <label for="campaign_year">Campaign Year:</label>
+            <label for="campaign_year">Campaign year</label>
             <div id="campaign_year">{{$campaign_year->calendar_year}}</div>
             <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
@@ -38,12 +47,12 @@
     </div>
 <br>
     <div class="form-row form-header">
-            <h2 class="blue">Event Details</h2>
+            <h3 class="blue">Event details</h3>
     </div>
 
     <div class="form-row form-body">
         <div class="form-group col-md-6">
-            <label for="description">Event Name:</label>
+            <label for="description">Event name</label>
             <input class="form-control" type="text" name="description" id="description" />
             <span>Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
             <span class="description_errors errors">
@@ -53,7 +62,7 @@
                   </span>
         </div>
         <div id="pecsfid" class="form-group col-md-6">
-            <label for="pecsf_id">PECSF ID:</label>
+            <label for="pecsf_id">PECSF ID</label>
             <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
             <span class="pecsf_id_errors errors">
                        @error('pecsf_id')
@@ -62,7 +71,7 @@
                   </span>
         </div>
         <div id="bcgovid" class="form-group col-md-6" style="display:none;">
-            <label for="bc_gov_id">BC Gov ID:</label>
+            <label for="bc_gov_id">BC gov ID</label>
             <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
             <span class="bc_gov_id_errors errors">
                        @error('bc_gov_id')
@@ -72,13 +81,13 @@
         </div>
 
         <div class="form-group col-md-3">
-            <label for="event_type">Event Type:</label>
+            <label for="event_type">Event type</label>
             <select class="form-control" type="text" id="event_type" name="event_type">
-                <option value="">Select an Event Type</option>
-                <option value="Cash One-Time Donation">Cash One-Time Donation</option>
-                <option value="Cheque One-Time Donation">Cheque One-Time Donation</option>
-                <option value="Fundraiser">Fundraiser</option>
-                <option value="Gaming">Gaming</option>
+                <option value="">Select an event type</option>
+                <option value="Cash One-Time Donation">Cash one-time donation</option>
+                <option value="Cheque One-Time Donation">Cheque one-time donation</option>
+                <option value="Fundraiser">fundraiser</option>
+                <option value="Gaming">gaming</option>
             </select>
             <span class="event_type_errors errors">
                        @error('form_submitter')
@@ -88,7 +97,7 @@
 
         </div>
         <div class="form-group col-md-3 sub_type">
-            <label for="sub_type">Sub Type:</label>
+            <label for="sub_type">Sub type</label>
             <select class="form-control" type="text" id="sub_type" name="sub_type" disabled="true">
                 <option value="false">Disabled</option>
             </select>
@@ -101,7 +110,7 @@
         </div>
 
         <div class="form-group col-md-3">
-            <label for="sub_type">Deposit Date:</label>
+            <label for="sub_type">Deposit date</label>
             <input class="form-control" type="date" id="deposit_date" name="deposit_date">
             <span class="deposit_date_errors errors">
                        @error('form_submitter')
@@ -112,7 +121,7 @@
         </div>
 
         <div class="form-group col-md-3">
-            <label for="sub_type">Deposit Amount:</label>
+            <label for="sub_type">Deposit amount ($)</label>
             <input class="form-control" type="text" id="deposit_amount" name="deposit_amount" />
 
             <span class="deposit_amount_errors errors">
@@ -129,14 +138,14 @@
 
 
     <div class="form-row form-header">
-            <h2 class="blue">Work Location</h2>
+            <h3 class="blue">Work location</h3>
     </div>
     <div class="form-row form-body">
 
         <div class="form-group col-md-4">
-            <label for="event_type">Employment City:</label>
+            <label for="event_type">Employment city</label>
             <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
-                <option value="">Select a City</option>
+                <option value="">Select a city</option>
                 @foreach($cities as $city)
                     <option value="{{$city->city}}">{{$city->city}}</option>
                     @endforeach
@@ -150,9 +159,9 @@
 
         </div>
         <div class="form-group col-md-4">
-            <label for="region">Region:</label>
+            <label for="region">Region</label>
             <select class="form-control search_icon" id="region" name="region">
-                <option value="">Select a Region</option>
+                <option value="">Select a region</option>
             @foreach($regions as $region)
                     <option value="{{$region->id}}">{{$region->name}}</option>
                 @endforeach
@@ -166,9 +175,9 @@
         </div>
 
         <div class="form-group col-md-4">
-            <label for="sub_type">Business Unit:</label>
+            <label for="sub_type">Business unit</label>
             <select class="form-control search_icon" id="business_unit" name="business_unit">
-                <option value="">Select a Business Unit</option>
+                <option value="">Select a business unit</option>
             @foreach($business_units as $bu)
                     @if(!empty($bu->name))
                     <option value="{{$bu->id}}">{{$bu->name}}</option>
@@ -186,13 +195,13 @@
 
     </div>
     <br>
-    <div class="form-row form-header address_hook">
-            <h2 class="blue">Mailing address for charitable receipt</h2>
+    <div class="form-row form-header address_hook" style="display:none;">
+            <h3 class="blue">Mailing address for charitable receipt</h3>
     </div>
-    <div class="form-row form-body address_hook">
+    <div class="form-row form-body address_hook" style="display:none;">
 
         <div class="form-group col-md-12" id="address_line_1" style="">
-            <label for="event_type">Address Line 1:</label>
+            <label for="event_type">Address line 1</label>
             <input class="form-control" type="text" id="address_1" name="address_1"/>
 
             <span class="address_1_errors errors">
@@ -205,10 +214,10 @@
 
 
         <div class="form-group col-md-4">
-            <label for="sub_type">City:</label>
+            <label for="sub_type">City</label>
 
             <select class="form-control search_icon" type="text" id="city" name="city" >
-                <option value="">Select a City</option>
+                <option value="">Select a city</option>
             @foreach($cities as $city)
                 <option value="{{$city->city}}">{{$city->city}}</option>
             @endforeach
@@ -222,18 +231,18 @@
         </div>
 
         <div class="form-group col-md-4">
-            <label for="sub_type">Province:</label>
+            <label for="sub_type">Province</label>
             <select class="form-control" type="text" id="province" name="province">
-                <option value="">Select a Province</option>
+                <option value="">Select a  province</option>
 
                 <option value="Alberta">Alberta</option>
-                <option value="British Columbia">British Columbia</option>
+                <option value="British Columbia">British columbia</option>
                 <option value="Manitoba">Manitoba</option>
-                <option value="New Brunswick">New Brunswick</option>
-                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                <option value="Nova Scotia">Nova Scotia</option>
+                <option value="New Brunswick">New brunswick</option>
+                <option value="Newfoundland and Labrador">Newfoundland and labrador</option>
+                <option value="Nova Scotia">Nova scotia</option>
                 <option value="Nunavut">Nunavut</option>
-                <option value="Prince Edward Island">Prince Edward Island</option>
+                <option value="Prince Edward Island">Prince edward island</option>
                 <option value="Quebec">Quebec</option>
                 <option value="Saskatchewan">Saskatchewan</option>
                 <option value="Yukon">Yukon</option>
@@ -248,7 +257,7 @@
 
         </div>
         <div class="form-group col-md-4">
-            <label for="sub_type">Postal Code:</label>
+            <label for="sub_type">Postal Code</label>
             <input class="form-control" type="text" id="postal_code" name="postal_code" />
             <span class="postal_code_errors errors">
                        @error('postal_code')
@@ -262,13 +271,13 @@
 <br>
     <br>
     <div class="form-row form-header">
-            <h2 class="">Charity selections and distribution</h2>
+            <h3 class="">Charity selections and distribution</h3>
     </div>
 
     <div class="form-row form-body">
         <div class="form-group col-md-12">
             <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
-            <label class="blue" for="charity_selection_1">Fund Supported Pool</label>
+            <label class="blue" for="charity_selection_1">Fund supported pool</label>
             <span class="charity_selection_errors errors">
                        @error('charity_selection')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -290,26 +299,22 @@
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
 
-                        <img class="col-md-10" style="height:80px;float-left;" src="img/uploads/{{$pool->charities()->get()[0]->image}}"/>
-
-                        <div class="form-check float-right">
+                        <div class="form-check float-left">
                             <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->id }}"
                                    value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
 
                         </div>
                         <br>
 
-                        <label style="font-weight:bold;font-size:12px;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
+                        <label style="font-weight:bold;font-size:12px;text-align: center;
+    width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
-
+                        <span style="color:blue;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
+                              data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}">View Details</span>
                     </div>
 
-                    <div class=" text-right m-2 pt-2" data-id="{{ $pool->id }}">
-                        <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}"
-                           data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}"></i>
 
-                    </div>
                 </div>
 
             </div>
@@ -326,7 +331,7 @@
 
         <div class="form-group col-md-6">
             <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
-            <label class="blue" for="charity_selection_2">Donor Choice:</label>
+            <label class="blue" for="charity_selection_2">Donor choice</label>
         </div>
         <div class="form-group  col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
@@ -336,7 +341,7 @@
         </table>
 
         <div class="form-group pointer col-md-12" style="display:none;" id="add_row">
-            <h5 class="blue"> <i class="fas fa-plus"></i>&nbsp;Add Another Organization</h5>
+            <h5 class="blue"> <i class="fas fa-plus"></i>&nbsp;Add another organization</h5>
         </div>
     </div>
 <br>
@@ -344,7 +349,7 @@
 
 
     <div class="form-row form-header">
-            <h5 class="blue">Attachment</h5>
+            <h3 class="blue">Attachment</h3>
             <span class="attachment_errors errors">
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -400,6 +405,8 @@
         Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting your charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.
         Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or PECSF@gov.bc.ca.
     </p>
+        </div>
+    </div>
 </form>
 <!-- Modal -->
 <div class="modal fade" id="regionalPoolModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
@@ -420,3 +427,7 @@
         </div>
     </div>
 </div>
+
+<script>
+
+</script>

@@ -159,11 +159,11 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/administrators/users', [AdministratorController::class,'getUsers'])->name('administrators.users');
     // Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
 
-    // Access Log 
+    // Access Log
     Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access_logs');
     Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
-    // Schedule Job Audit 
+    // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
 
 });
@@ -175,6 +175,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
+    Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
 
 });
 

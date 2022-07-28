@@ -222,6 +222,29 @@ class MaintainEventPledgeController extends Controller
             'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
     }
 
+    public function createEvent(){
+        $pools = FSPool::where('start_date', '=', function ($query) {
+            $query->selectRaw('max(start_date)')
+                ->from('f_s_pools as A')
+                ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->where('A.start_date', '<=', today());
+        })
+            ->where('status', 'A')
+            ->get();
+        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
+        $business_units = BusinessUnit::all();
+        $regions = Region::where("status","=","A")->get();
+        $departments = Department::all();
+        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+            ->first();
+        $current_user = User::where('id', Auth::id() )->first();
+        $cities = City::all();
+        if(empty($current_user)){
+            redirect("login");
+        }
+        return view('admin-pledge.create.index', compact('pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
+    }
+
     /**
      * Store a newly created resource in storage.
      *

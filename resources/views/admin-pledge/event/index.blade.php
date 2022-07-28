@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header blue">
-                <h1 class="modal-charity-name" id="charity-modal-label">Add a New Value</h1>
+                <h1 class="modal-charity-name" id="charity-modal-label">Add a New Event Pledge</h1>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -34,7 +34,7 @@
 @section('content')
 
 
-<p><a href="/administrators/dashboard">Back</a></p>
+
 
 <p>
     Enter any information you have and click Search. Leave fields blank for a list of all values.

@@ -14,14 +14,11 @@
     @include('volunteering.partials.form_tabs')
 
 
-    <div class="card">
-        <div class="card-body">
-        <h3 class="blue">PECSF Bank Deposit Form</h3>
+
 
             @include('volunteering.partials.form')
 
-        </div>
-    </div>
+
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 

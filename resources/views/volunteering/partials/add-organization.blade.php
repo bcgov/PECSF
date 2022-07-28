@@ -37,7 +37,7 @@
             </div>
 
             <div class="form-group col-md-4">
-                <label for="sub_type">Donation Percent:</label>
+                <label for="sub_type">Donation Percent (%)</label>
                 <input class="form-control" type="text" id="donation_percent" name="donation_percent[]">
                 <span class="donation_percent_errors  errors">
                        @error('donation_percent.'.$index)
