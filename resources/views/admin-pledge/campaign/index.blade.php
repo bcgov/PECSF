@@ -177,6 +177,8 @@
 @push('css')
 
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
 	<style>
 	#campaign-table_filter label {
 		text-align: right !important;
@@ -196,10 +198,17 @@
 @push('js')
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
 
     $(function() {
+
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        });
 
         var oTable = $('#campaign-table').DataTable({
             "scrollX": true,
@@ -290,6 +299,68 @@
 
             oTable.search( '' ).columns().search( '' ).draw();
         });
+
+
+        function Toast( toast_title, toast_body, toast_class) {
+            $(document).Toasts('create', {
+                            class: toast_class,
+                            title: toast_title,
+                            autohide: true,
+                            delay: 3000,
+                            body: toast_body
+            });
+        }
+
+        // Model -- Delete
+        $(document).on("click", ".delete-pledge" , function(e) {
+            e.preventDefault();
+
+            id = $(this).attr('data-id');
+            title = $(this).attr('data-code');
+
+            Swal.fire( {
+                title: 'Are you sure you want to delete the pledge "' + title + '" ?',
+                text: 'This action cannot be undone.',
+                // icon: 'question',
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-danger', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // Swal.fire('Saved!', '', '')
+                    $.ajax({
+                        method: "DELETE",
+                        url:  '/admin-pledge/campaign/' + id,
+                        success: function(data)
+                        {
+                            oTable.ajax.reload(null, false);	// reload datatables
+                            Toast('Success', 'Pledge ' + title +  ' was successfully deleted.', 'bg-success' );
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.responseJSON.error,
+                            })
+                            console.log(response.responseJSON.error);
+                        }
+                    });
+                } else if (result.isCancelledDenied) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
+
+        });
+
+
 
     });
     </script>

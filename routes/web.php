@@ -178,7 +178,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
 
     // Pledge Administration - Campaign Pledge
-    Route::resource('/campaign', CampaignPledgeController::class)->except(['destroy']);
+    Route::resource('/campaign', CampaignPledgeController::class);
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);

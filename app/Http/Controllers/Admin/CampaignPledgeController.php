@@ -7,11 +7,13 @@ use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
 use App\Models\Charity;
+use App\Models\Donation;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CampaignPledgeRequest;
@@ -88,6 +90,7 @@ class CampaignPledgeController extends Controller
                             })
                             ->select('pledges.*');
 
+            $gov = Organization::where('code', 'GOV')->first();
 
             return Datatables::of($pledges)
                 ->addColumn('description', function($pledge) {
@@ -96,9 +99,13 @@ class CampaignPledgeController extends Controller
                     //   $title = implode(', ',  $pledge->distinct_charities()->pluck('charity.charity_name')->toArray());
                     return "<span>" . $text . '</span>' ;
                 })
-                ->addColumn('action', function ($pledge) {
+                ->addColumn('action', function ($pledge) use($gov) {
+                    $delete = ($pledge->organization_id != $gov->id)  ? '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
+                             $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
                     return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
-                        '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>';
+                        '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>'
+                        . $delete;
+
                 })
                 ->editColumn('created_at', function ($user) {
                     return $user->created_at->format('Y-m-d H:m:s'); // human readable format
@@ -143,7 +150,10 @@ class CampaignPledgeController extends Controller
         $pay_period_amount_other = null;
         $one_time_amount_other = null;
 
+        $edit_pecsf_allow = true;
+
         return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears',
+                    'edit_pecsf_allow',
                     'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
     }
 
@@ -389,7 +399,20 @@ class CampaignPledgeController extends Controller
         $pay_period_amount_other = in_array($pay_period_amount, $amt_choices) ? '' :   $pay_period_amount;
         $one_time_amount_other = in_array($one_time_amount, $amt_choices) ? '' :   $one_time_amount;
 
-        return view('admin-pledge.campaign.wizard', compact('pledge', 'pool_option', 'fspools', 'organization', 'organizations','campaignYears',
+        // For Non-Government 
+        $edit_pecsf_allow = false;
+        
+        if ($pledge->pecsf_id) {
+            $count = Donation::where('org_code', $organization->code)
+                                ->where('pecsf_id', $pledge->pecsf_id)
+                                ->where('yearcd', $pledge->campaign_year->calendar_year)
+                                ->count();
+            if ($count == 0) {
+                $edit_pecsf_allow = true;
+            }
+        }
+
+        return view('admin-pledge.campaign.wizard', compact('edit_pecsf_allow', 'pledge', 'pool_option', 'fspools', 'organization', 'organizations','campaignYears',
                     'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other'));
     
     }
@@ -499,9 +522,40 @@ class CampaignPledgeController extends Controller
      * @param  \App\Models\Pledge  $pledge
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pledge $pledge)
+    public function destroy(Request $request, $id)
     {
         //
+        $pledge = Pledge::where('id', $id)->first();
+
+        $gov = Organization::where('code', 'GOV')->first();
+
+        if ($pledge->organization_id == $gov->id) {
+            return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422); 
+        }       
+
+        // Check whether there is transactions exists
+        $sql = Donation::whereExists(function ($query) use($id) {
+                    $query->select(DB::raw(1))
+                          ->from('pledges')
+                          ->Join('organizations', 'pledges.organization_id', 'organizations.id')
+                          ->Join('campaign_years', 'pledges.campaign_year_id', 'campaign_years.id')
+                          ->whereColumn('donations.pecsf_id', 'pledges.pecsf_id')
+                          ->whereColumn('donations.org_code', 'organizations.code')
+                          ->whereColumn('donations.yearcd', 'campaign_years.calendar_year')
+                          ->where('pledges.id', $id);
+                  });
+
+        if ($sql->count() > 0) {
+            return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . ', has donation transactions loaded.'], 422); 
+        }       
+        
+        // Delete the pledge
+        $pledge->delete();
+
+        return response()->noContent();
+        
+
+
     }
 
 

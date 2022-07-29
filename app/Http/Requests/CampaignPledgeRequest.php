@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CampaignPledgeRequest extends FormRequest
@@ -28,36 +30,70 @@ class CampaignPledgeRequest extends FormRequest
         
         $my_rules = [];
 
-        $organization = Organization::where('code', 'GOV')->first();
+        $gov = Organization::where('code', 'GOV')->first();
 
-        if ($this->step == 1 && empty($this->pledge_id) ) {
-            $my_rules = array_merge($my_rules, 
-                [
-                    //
-                    'campaign_year_id'    => ['required', 'exists:campaign_years,id',
-                                    Rule::unique('pledges')->where(function ($query) use($organization) {
-                                          $query->where('organization_id', $this->organization_id)
-                                                ->when($this->organization_id == $organization->id, function($q) {
-                                                    return $q->where('user_id', $this->user_id);
-                                                }) 
-                                                ->when($this->organization_id != $organization->id, function($q) {
-                                                    return $q->where('pecsf_id', $this->pecsf_id);
-                                                }) 
-                                                ->where('campaign_year_id', $this->campaign_year_id);
-                                    })->ignore($this->pledge_id),
-                    ],
-                    'organization_id'  => ['required'],
-                    'user_id'       => [$this->organization_id == $organization->id ? 'required' : 'nullable',  'exists:users,id' ],
+        if ($this->step == 1) { 
+            if (empty($this->pledge_id) ) {
+                $my_rules = array_merge($my_rules, 
+                    [
+                        //
+                        'campaign_year_id'    => ['required', 'exists:campaign_years,id',
+                                        Rule::unique('pledges')->where(function ($query) use($gov) {
+                                            $query->where('organization_id', $this->organization_id)
+                                                    ->when($this->organization_id == $gov->id, function($q) {
+                                                        return $q->where('user_id', $this->user_id);
+                                                    }) 
+                                                    ->when($this->organization_id != $gov->id, function($q) {
+                                                        return $q->where('pecsf_id', $this->pecsf_id);
+                                                    }) 
+                                                    ->where('campaign_year_id', $this->campaign_year_id);
+                                        })->ignore($this->pledge_id),
+                        ],
+                        'organization_id'  => ['required'],
+                        'user_id'       => [$this->organization_id == $gov->id ? 'required' : 'nullable',  'exists:users,id' ],
+                        
+                        'pecsf_id'      => ['digits:6',  $this->organization_id != $gov->id ? 'required' : 'nullable'],
+                        'pecsf_first_name'  => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
+                        'pecsf_last_name'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
+                        'pecsf_city'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
+                        // 'city_id'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
                     
-                    'pecsf_id'      => ['digits:6',  $this->organization_id != $organization->id ? 'required' : 'nullable'],
-                    'pecsf_first_name'  => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
-                    'pecsf_last_name'   => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
-                    'pecsf_city'   => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
-                    // 'city_id'   => [$this->organization_id != $organization->id ? 'required' : 'nullable'],
-                
-                ]
-            );
-        }
+                    ]
+                );
+            } else {
+                // Allow edit 
+                if ($this->organization_id != $gov->id) {
+
+                    $organization = Organization::where('id', $this->organization_id)->first();
+                    $org_code = $organization ? $organization->code : null;
+
+                    $cy  = CampaignYear::where('id',  $this->campaign_year_id)->first();
+                    $year = $cy ? $cy->calendar_year : null;
+                    
+                    $my_rules = array_merge($my_rules,
+                        [ 
+                            'pecsf_id'      => ['digits:6', 'required',
+                                    Rule::unique('donations')->where(function ($query) use($org_code, $year) {
+                                        $query->where('org_code', $org_code)
+                                              ->where('year cd', $year)
+                                              ->whereNotExists(function ($query) {
+                                                $query->select(DB::raw(1))
+                                                      ->from('pledges')
+                                                      ->leftJoin('organizations', 'pledges.organization_id', 'organizations.id')
+                                                      ->whereColumn('donations.pecsf_id', 'pledges.pecsf_id')
+                                                      ->whereColumn('donations.org_code', 'organizations.code')
+                                                      ->where('pledges.id', $this->pledge_id);
+                                              });
+                                    }),
+                            ],
+                            'pecsf_first_name'  => ['required' ],
+                            'pecsf_last_name'   => [ 'required' ],
+                            'pecsf_city'   => ['required' ],
+                        ]
+                    );
+                }
+            }
+        } 
 
         if ($this->step >= 2) {
             $my_rules = array_merge($my_rules, 
