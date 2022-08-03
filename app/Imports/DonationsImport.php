@@ -3,10 +3,12 @@
 namespace App\Imports;
 
 use App\Models\Donation;
+use App\Models\CampaignYear;
+use App\Models\Organization;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -19,6 +21,8 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
     protected $org_code;
     protected $history_id;
 
+    protected $in_current_row;
+
     protected $row_count;
     protected $skip_count;
     protected $errors;
@@ -30,6 +34,8 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
         $this->history_id = $history_id;
         $this->org_code = $org_code;
 
+        $this->in_current_row = [];
+
         $this->row_count = 0;
         $this->skip_count = 0;
         $this->errors = [];
@@ -40,23 +46,9 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
     public function model(array $row)
     {
 
-        $exists = Donation::where('org_code', $row['co'])
-                        ->where('emplid', $row['id'])
-                        ->where('yearcd', $row['calendar_year'])
-                        ->where('pay_end_date', $row['pay_period_end_date'])
-                        ->where('source_type', 10)
-                        ->where('frequency', $row['frequency_of_pay_period'])
-                        ->first();
-
-        if ($exists) {
-            $this->skip_count += 1;
-            // array_push($this->errors, $row);
-            return null;
-        }
-
         return new Donation([
             'org_code'     => $row['co'],
-            'emplid'       => $row['id'],
+            'pecsf_id'     => $row['id'],
             'name'         => $row['employee_name'],
             'yearcd'       => $row['calendar_year'],
             'pay_end_date' => $row['pay_period_end_date'],
@@ -69,14 +61,40 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
         ]);
     }
 
+    public function prepareForValidation($data, $index)
+    {
+        // get and store the current row for validation purpose
+        $this->in_current_row = $data;
+
+        return $data;
+    }
+
     public function rules(): array
     {
 
         $orgs = [ $this->org_code ];
 
+        $input_org = Organization::where('code', $this->in_current_row['co'])->first();
+        $input_cy  = CampaignYear::where('calendar_year', $this->in_current_row['calendar_year'])->first();
+
+        $row = $this->in_current_row;
+
         return [
             'co' => ['required', Rule::in( $orgs )],
-            'id' => 'required',
+            'id' => ['required', Rule::exists('pledges', 'pecsf_id')                     
+                                    ->where(function ($query) use ($input_org, $input_cy) {                      
+                                        $query->where('organization_id', $input_org->id)
+                                              ->where('campaign_year_id', $input_cy->id);                                   
+                                    }),
+                                 Rule::unique('donations','pecsf_id')
+                                    ->where(function ($query) use ($row) {                      
+                                        $query->where('org_code', $row['co'])
+                                                ->where('yearcd', $row['calendar_year'])
+                                                ->where('pay_end_date', $row['pay_period_end_date'])
+                                                ->where('source_type', 10)
+                                                ->where('frequency', $row['frequency_of_pay_period']);
+                                 }),
+            ],
             'employee_name' => 'required',
             'calendar_year' => 'required',
             'pay_period_end_date' => 'required',
@@ -84,7 +102,18 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
             'frequency_of_pay_period' => 'required',
             'employee_pecsf_contribution_amount' => 'required',
 
-            // '1' => 'unique:users',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function customValidationMessages()
+    {
+        return [
+            'co.in' => 'The organization on upload file doesn\'t match with the selected org.',
+            'id.exists' => 'No pledge was setup for this pecsf_id.',
+            'id.unique' => 'The same pay deduction transactions was loaded',
         ];
     }
     
@@ -112,11 +141,7 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
                             'status' => 'Processing',
                             'start_at' => now(),
                         ]);
-                        // DB::commit();
 
-
-                    // cache()->forever("total_rows_{$this->id}", array_values($totalRows)[0]);
-                    // cache()->forever("start_date_{$this->id}", now()->unix());
                 }
             },
             AfterImport::class => function (AfterImport $event) {
@@ -137,12 +162,6 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
                     'end_at' => now(),
                 ]);
 
-                    // DB::commit();
-
-                // cache(["end_date_{$this->id}" => now()], now()->addMinute());
-                // cache()->forget("total_rows_{$this->id}");
-                // cache()->forget("start_date_{$this->id}");
-                // cache()->forget("current_row_{$this->id}");
             },
         ];
     }

@@ -195,7 +195,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
 Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(function() {
 
-    Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store']);
+    Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
 
 });
 

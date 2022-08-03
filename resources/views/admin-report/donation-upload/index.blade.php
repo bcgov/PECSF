@@ -77,31 +77,52 @@
 
             <table class="table table-bordered" id="history-table" style="width:100%">
                 <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>Submitted At</th>
-                    <th>Start At</th>
-                    <th>End At</th>
-                    <th>Status</th>
-                    <th>Message</th>
-                </tr>
-                {{-- @foreach ($process_histories as $history)
-                   <tr>
-                       <td>{{ $history->original_filename }}</td>
-                       <td>{{ $history->created_at }}</td>
-                       <td>{{ $history->start_at }}</td>
-                       <td>{{ $history->end_at }}</td>
-                       <td>{{ $history->status }}</td>
-                       <td>{{ $history->message }}</td>
-                   </tr>
-                @endforeach --}}
-                
+                    <tr>
+                        <th>File Name</th>
+                        <th>Submitted At</th>
+                        <th>Start At</th>
+                        <th>End At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Message</th>
+                    </tr>
                 </thead>
             </table>
         </div>
 
     </div>
 
+{{-- Modal Box  --}}
+<div class="modal fade" id="process-show-modal" tabindex="-1" role="dialog" aria-labelledby="processModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+	  <div class="modal-content">
+		<div class="modal-header bg-primary">
+		  <h5 class="modal-title" id="processModalLabel">Existing details</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+
+            
+                <p class="px-2"><b>Status : </b>
+                <span id="modal-status"></span>
+                </p>
+
+
+            <div class="form-group px-2">
+                <label for="message">Log Message</label>
+                <pre id="modal-message" class="border" style="white-space:pre-line;"></pre>
+            </div>
+            
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+    
+    </div>
+</div>
 
 @endsection
 
@@ -163,8 +184,8 @@
                 {data: 'start_at', defaultContent: '', className: "dt-nowrap" },
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},
-                {data: 'short_message'},
-                // {data: 'message'},
+                {data: 'action'},
+                {data: 'message_text'},
             ],
             columnDefs: [
                     {
@@ -178,59 +199,31 @@
             oTable.ajax.reload( null, false );
         })
 
-    });
 
+        // Model -- Show
+    	$(document).on("click", ".more-link , .show-process" , function(e) {
+			e.preventDefault();
 
-
-        var charitiesTimer;
-        $(".invalid-feedback").fadeTo("slow",1);
-        function updateCharities(){
+            id =  $(this).attr('data-id');
             $.ajax({
                 method: "GET",
-                url:  '{{ route('reporting.donation-upload.index')  }}',
-                data: $("#charity-search").serialize(), // serializes the form's elements.
-                success: function(html)
+                url:  '{!! route('reporting.donation-upload.index') !!}/' + id,
+                dataType: 'json',
+                success: function(data)
                 {
-                    $("#charity-table-body").html(html);
+                    $('#processModalLabel').html('Process : ' + data.id + ' (' + data.process_name + ')' );
+                    //  started at ' + data.start_time);
+                    $('#modal-status').html(data.status);
+                    $('#modal-message').html(data.message);
+                    $('#process-show-modal').modal('show');
                 },
-                error: function(html) {
-                    $("#charity-table-body").html(html);
+                error: function(response) {
                     console.log('Error');
                 }
             });
-        }
+    	});
 
-        $("input[name='charity_list']").change(function(){
-            $(this).parents("form").submit();
+    });
 
-        });
-
-        $(function() {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': '{{csrf_token()}}'
-                }
-            });
-
-$("input[name='organization_name'],input[name='business_number']").keyup(function(){
-    clearTimeout(charitiesTimer);
-    charitiesTimer = setTimeout(updateCharities,1500);
-
-});
-
-
-            function Toast( toast_title, toast_body, toast_class) {
-                $(document).Toasts('create', {
-                    icon: 'fas fa-solid fa-check',
-                    class: toast_class,
-                    title: toast_title,
-                    autohide: true,
-                    delay: 8000,
-                    body: toast_body
-                });
-            }
-
-        });
     </script>
 @endpush
