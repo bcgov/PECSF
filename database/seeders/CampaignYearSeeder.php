@@ -17,7 +17,7 @@ class CampaignYearSeeder extends Seeder
     public function run()
     {
 
-        for ($x = 2005; $x <= 2030; $x++) {
+        for ($x = 2005; $x <= 2023; $x++) {
           
           $periods = 26;
           if ($x == 2015 or $x == 2027) {

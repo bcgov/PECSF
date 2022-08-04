@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Pledge;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
@@ -28,6 +29,11 @@ class ExportPledgesToPSFT extends Command
      */
     protected $description = 'Sending pledge transactions to PeopleSoft via ODS';
 
+    /* Source Type is HCM */
+    protected $message;
+    protected $status;
+    
+
     /**
      * Create a new command instance.
      *
@@ -37,8 +43,13 @@ class ExportPledgesToPSFT extends Command
     {
         parent::__construct();
 
+
         $this->success = 0;
+        $this->skip = 0;
         $this->failure = 0;
+
+        $this->message = '';
+        $this->status = 'Completed';
 
     }
 
@@ -50,27 +61,35 @@ class ExportPledgesToPSFT extends Command
     public function handle()
     {
 
-        $task = ScheduleJobAudit::Create([
+        $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
-            'status','Initiated'
+            'status' => 'Processing',
         ]);
 
         // Step 1 : Send Campiagn Type data to PeopleSoft access endpoint 
-        $this->info("Sending Annual Type pledge data to PeopleSoft");
+        $this->LogMessage( now() );        
+        $this->LogMessage("Sending Annual Campaign Type pledge data to PeopleSoft");
         $this->sendCampaignDonationToPeopleSoft();
         
         // Update the Task Audit log
-        $task->end_time = Carbon::now();
-        $task->status = 'Completed';
-        $task->save();
+        $this->task->end_time = Carbon::now();
+        $this->task->status = $this->status;
+        $this->task->message = $this->message;
+        $this->task->save();
+
 
             
     }
 
     private function sendCampaignDonationToPeopleSoft() {
 
-        $pledgeData = Pledge::where('ods_export_status', null)->orderBy('updated_at')->get();
+        $pledgeData = Pledge::join('organizations', 'pledges.organization_id', 'organizations.id')
+                            ->where('organizations.code', 'GOV')
+                            ->where('pledges.ods_export_status', null)
+                            ->select('pledges.*')
+                            ->orderBy('pledges.id')->get();
+
         foreach($pledgeData as $pledge) {
 
             // switch ($pledge->frequency)
@@ -93,6 +112,14 @@ class ExportPledgesToPSFT extends Command
             //     default:
             //         break;                    
             // }
+
+            // validation -- GUID 
+            $user = User::where('id', $pledge->user_id)->first();
+            if (!$user->guid ) {
+                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->skip += 1;
+                continue;
+            }
 
 
             $one_time_sent = false;
@@ -157,6 +184,10 @@ class ExportPledgesToPSFT extends Command
                 $pledge->ods_export_status = 'C';
                 $pledge->ods_export_at = Carbon::now()->format('c');
                 $pledge->save();
+
+                //                         
+                $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
+
             }
 
             // //$response = $this->pushToODS($pushData);
@@ -178,33 +209,67 @@ class ExportPledgesToPSFT extends Command
 
         }
 
-        $this->info("Sent data complete");
-        $this->info("Success - " . $this->success);
-        $this->info("failure - " . $this->failure);
-        return 0;
 
+        $this->LogMessage("Sent data was completed");
+        $this->LogMessage("Success - " . $this->success);
+        $this->LogMessage("Skip    - " . $this->skip);
+        $this->LogMessage("failure - " . $this->failure);
+        $this->LogMessage( now() );
+        
+        return 0;
     }
 
     protected function sendData($pushdata) {
 
-        $response = Http::withBasicAuth(
-            env('ODS_USERNAME'),
-            env('ODS_TOKEN')
-        )->withBody( json_encode($pushdata), 'application/json')
-        ->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
+        try {
 
-        if ($response->successful()) {
-            $this->success += 1;
-            return true;
+            $response = Http::withBasicAuth(
+                env('ODS_USERNAME'),
+                env('ODS_TOKEN')
+            )->withBody( json_encode($pushdata), 'application/json')
+            ->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
 
-        } else {
-            $this->info( $response->status() );
-            $this->info( $response->body() );
-            $this->failure += 1;
+            if ($response->successful()) {
+                $this->success += 1;
+                return true;
 
-            return false;
+            } else {
+
+                // log message in system
+                $this->status = 'Error';
+                $this->LogMessage( "(Error) - Data - " . json_encode($pushdata) );
+                $this->LogMessage( "        - " . $response->status() . ' - ' . $response->body() );
+
+                $this->failure += 1;
+
+                return false;
+            }
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            $this->status = 'Error';
+            $this->LogMessage( "(Error) - " . json_encode($pushdata) );
+            $this->LogMessage( "          " - $ex->getMessage() );
+            
+            return 1;
         }
+
       
+    }
+
+
+    protected function LogMessage($text) 
+    {
+
+        $this->info( $text );
+
+        // write to log message 
+        $this->message .= $text . PHP_EOL;
+
+        $this->task->message = $this->message;
+        $this->task->save();
+        
     }
 
 
