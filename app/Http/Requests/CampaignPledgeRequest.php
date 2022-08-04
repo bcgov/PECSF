@@ -75,7 +75,7 @@ class CampaignPledgeRequest extends FormRequest
                             'pecsf_id'      => ['digits:6', 'required',
                                     Rule::unique('donations')->where(function ($query) use($org_code, $year) {
                                         $query->where('org_code', $org_code)
-                                              ->where('year cd', $year)
+                                              ->where('yearcd', $year)
                                               ->whereNotExists(function ($query) {
                                                 $query->select(DB::raw(1))
                                                       ->from('pledges')
