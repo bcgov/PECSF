@@ -17,7 +17,7 @@ class CampaignPledgesSeeder extends Seeder
     {
 
         $generated_count = 100;
-        $yearcd = 2022;
+        $yearcd = 2023;
 
         //
         $faker = Factory::create();
