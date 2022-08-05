@@ -37,6 +37,26 @@
                 <input name="user_name" id="user_name"  class="form-control" />
             </div>
 
+            <div class="form-group col-md-2">
+                <label for="emplid">
+                    Emplid
+                </label>
+                <input name="emplid" id="emplid"  class="form-control" />
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="filter_allow_inapp_msg">
+                    Locked
+                </label>
+                <select name="acctlock" id="acctlock" value="" class="form-control">
+                    <option value="">Select a option</option>
+                    <option value="1">Yes (locked)</option>
+                    <option value="0">No (Unlocked)</option>
+                </select>
+            </div>
+        </div>    
+
+        <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="organization_id">
                     Organization
@@ -123,6 +143,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>IDIR</th>
+                    <th>Emplid</th>
                     <th>Locked </th>
                     <th>Sign On Count</th>
                     <th>Active Job Count</th>
@@ -240,6 +261,8 @@
                 data: function (data) {
                     // data.term = $('#user').val();
                     data.user_name = $('#user_name').val();
+                    data.emplid = $('#emplid').val();
+                    data.acctlock = $('#acctlock').val();
                     data.source_type = $('#source_type').val();
                     data.organization_id = $('#organization_id').val();
                     data.business_unit = $('#business_unit').val();
@@ -257,6 +280,7 @@
                 {data: 'name', name: 'name', className: "dt-nowrap" },
                 {data: 'primary_job.email', name: 'primary_job.email', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.idir', name: 'primary_job.idir', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.emplid', name: 'primary_job.emplid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'acctlock', render: function ( data, type, row, meta ) {
                         if(data == 0) {
                             return '<i class="fa fa-user-check fa-lg text-primary"> </i>';
