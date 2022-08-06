@@ -9,20 +9,20 @@
 @endsection
 @section('content')
 
-        @if ($message = Session::get('success'))
+        {{-- @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }} 
+                <span>{{ $message }}</span>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-        @endif
+        @endif --}}
 
     <h6>Select the relevant organization, upload PECSF Donation files for non BC Gov entities below, then click "Submit" to send reports to PECSF administration.</h6>
     <div class="card">
         <div class="card-body">
     
-            <form action="{{ route("reporting.donation-upload.store") }}" method="POST"
+            <form id="upload-form" action="{{ route("reporting.donation-upload.store") }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
                 <h6 class="text-primary font-weight-bold">Upload Donation Files</h6>
@@ -43,8 +43,12 @@
                 </div> --}}
 
                 <div class="form-group col-md-6">
+                    
+
                     <div class="image">
                         <label>Attach file</label>
+                        
+
                             <input id="donation_file" accept=".xlsx" type="file" class="form-control-file @error('donation_file') is-invalid @enderror"
                                     name="donation_file" value="{{ old('donation_file') }}">
                             {{-- <img style="width:auto;height:300px;" id="output" /> --}}
@@ -185,7 +189,7 @@
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},
                 {data: 'action'},
-                {data: 'message_text'},
+                {data: 'message_text', className: "dt-nowrap"},
             ],
             columnDefs: [
                     {
@@ -222,6 +226,75 @@
                 }
             });
     	});
+
+        function Toast( toast_title, toast_body, toast_class) {
+            $(document).Toasts('create', {
+                            class: toast_class,
+                            title: toast_title,
+                            autohide: true,
+                            delay: 12000,
+                            body: toast_body
+            });
+        }
+
+        $("#upload-form").submit(function(e) {
+            console.log('Test');
+            e.preventDefault();
+
+            var form = document.getElementById("upload-form");
+            var formData = new FormData();
+            $("select[name='organization_id']").each(function(){
+                formData.append('organization_id', $(this).val());
+            });
+            $("input[name='donation_file']").each(function(){
+                formData.append('donation_file',  $(this)[0].files[0]);
+            });
+
+            var fields = ['organization_id', 'donation_file'];
+                $.each( fields, function( index, field_name ) {
+                    $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
+                });
+
+            $("#upload-form").fadeTo("slow",0.2);
+            $.ajax({
+                url: "{{ route('reporting.donation-upload.store') }}",
+                type:"POST",
+                data: formData,
+                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                processData: false,     // tell jQuery not to process the data
+                contentType: false,     // tell jQuery not to set contentType
+                cache: false,
+                dataType: 'json',
+                success:function(response){
+
+                    // Clear up the uploded file 
+                    $("input[name='donation_file']").val(''); 
+
+                    oTable.ajax.reload(null, false);	// reload datatables
+
+                    // var code = $("#bu-edit-model-form [name='code']").val();
+                    Toast('Success', response.success,  'bg-success');
+
+                    // window.location = response[0];
+                    console.log(response);
+                  
+                },
+                error: function(response) {
+                    if (response.status == 422) {
+                        $.each(response.responseJSON.errors, function(field_name,error){
+                            $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+                        })
+                    }
+                    console.log('Error');
+                },
+                complete:function(){ 
+                    $("#upload-form").fadeTo("slow",1);
+                }
+            });
+
+
+
+        });
 
     });
 

@@ -55,19 +55,26 @@ class DonationsImportJob implements ShouldQueue
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
-            // $text = '';
-            // foreach ($failures as $failure) {
-            //     $text .= $failure->row(); // row that went wrong
-            //     $text .= ' - ' . $failure->attribute(); // either heading key (if using heading row concern) or column index
-            //     $text .= ' - ' . $failure->errors(); // Actual error messages from Laravel validator
-            //     $text .= ' - ' . $failure->values(); // The values of the row that has failed.
-            // }
+            $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+
+            $text = 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
+            $text .= PHP_EOL;
+            $text .= 'Exceptional found: ' . PHP_EOL;
+            $text .= PHP_EOL;
+
+            foreach ($failures as $failure) {
+                $text .= 'Row : ' . $failure->row(); // row that went wrong
+                $text .= ' - ' . $failure->attribute(); // either heading key (if using heading row concern) or column index
+                $text .= ' - ' . implode(', ', $failure->errors()) ; // Actual error messages from Laravel validator
+                $text .= ' - ' . implode(', ', $failure->values()); // The values of the row that has failed.
+                $text .= PHP_EOL;
+            }
 
             \App\Models\ProcessHistory::UpdateOrCreate([
                     'id' => $this->history_id,
             ],[                    
                    'status' => 'Error',
-                   'message' => $failures,
+                   'message' => $text,
                    'end_at'  => now(),
             ]);
 

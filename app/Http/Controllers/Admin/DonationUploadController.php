@@ -111,19 +111,23 @@ class DonationUploadController extends Controller
         $org_filename = $request->file('donation_file') ? $request->file('donation_file')->getClientOriginalName() : '';
 
          $validator = Validator::make(request()->all(), [
-             'donation_file'          => 'required|max:102400|mimes:xlsx',
+             'organization_id'          => 'required',
+             'donation_file'          => 'required|max:102400|mimes:xls,xlsx',
          ],[
              'donation_file.required' => 'Please upload an xls xlsx Excel File', 
              'donation_file.mimes' => 'The donation file must be a file of type: xls, xlsx, your uploaded file is called ' . $org_filename,
              'donation_file.max' => 'Sorry! Maximum allowed size for an image is 10MB, your uploaded file is called ' . $org_filename,
          ]);
  
-         if ($validator->fails()) {
-             return redirect()->route('reporting.donation-upload.index')
-                 ->withErrors($validator)
-                 ->withInput();
-         }
- 
+        //run validation which will redirect on failure
+        $validated = $validator->validate();
+
+        //  if ($validator->fails()) {
+        //      return redirect()->route('reporting.donation-upload.index')
+        //          ->withErrors($validator)
+        //          ->withInput();
+        //  }
+
         $organization = Organization::where('id', $request->organization_id )->first();
 
         $upload_file = $request->file('donation_file') ?? null;
@@ -132,10 +136,16 @@ class DonationUploadController extends Controller
         $filename=date('YmdHis').'_'. str_replace(' ', '_', $original_filename );
         $filePath = $upload_file->storeAs(  $this->donation_file_folder , $filename);
 
+        $parameters = [
+            'Organization' => $organization->code . ' - ' . $organization->name,
+            'File Name' => $original_filename, 
+        ];
+
         // Submit a Job
         $history = \App\Models\ProcessHistory::create([
             'batch_id' => 0,
             'process_name' => 'DonationsImportJob',
+            'parameters' => json_encode( $parameters ),
             'status'  => 'Queued',
             'submitted_at' => now(),
             'original_filename' => $original_filename,
@@ -157,10 +167,13 @@ class DonationUploadController extends Controller
         $history->save();
 
         //  ProcessCharityList::dispatch(public_path( $this->donation_file_folder)."/".$filename,$filename,$filesize);
- 
-         return redirect()->route('reporting.donation-upload.index')
-            ->withInput()
-            ->with('success','File ' . $original_filename . ' for organization ' . $organization->code . ' was successfully uploaded and added to the process queue.');
+        return response()->json([
+                'success' => 'File ' . $original_filename . ' for organization ' . $organization->code . ' was successfully uploaded and added to the process queue.'
+            ]);
+
+        //  return redirect()->route('reporting.donation-upload.index')
+        //     ->withInput()
+        //     ->with('success','File ' . $original_filename . ' for organization ' . $organization->code . ' was successfully uploaded and added to the process queue.');
  
      }
 

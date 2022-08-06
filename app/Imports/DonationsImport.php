@@ -13,8 +13,11 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEvents
+
+class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithEvents, WithBatchInserts, WithStartRow
 {
     use Importable;
 
@@ -43,6 +46,8 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
         // $this->users = User::all(['id', 'name'])->pluck('id', 'name')->limit(100000);
     }
     
+    
+
     public function model(array $row)
     {
 
@@ -123,6 +128,11 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
         return 2;
     }
 
+    public function startRow(): int
+    {
+        return 3;
+    }
+
     public function registerEvents(): array
     {
         return [
@@ -164,6 +174,11 @@ class DonationsImport implements ToModel, WithHeadingRow, WithValidation, WithEv
 
             },
         ];
+    }
+
+    public function batchSize(): int
+    {
+        return 10000;
     }
 
 }
