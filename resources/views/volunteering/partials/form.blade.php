@@ -274,7 +274,7 @@
             <h3 class="">Charity selections and distribution</h3>
     </div>
 
-    <div class="form-row form-body">
+    <div class="form-row  form-body">
         <div class="form-group col-md-12">
             <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
             <label class="blue" for="charity_selection_1">Fund supported pool</label>
@@ -333,17 +333,56 @@
             <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
             <label class="blue" for="charity_selection_2">Donor choice</label>
         </div>
-        <div class="form-group  col-md-6">
+        <div class="form-group  org_hook col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
         </div>
-        <table id="organizations" style="display:none;width:100%">
-            @include('volunteering.partials.add-organization', ['index' => 0])
-        </table>
 
-        <div class="form-group pointer col-md-12" style="display:none;" id="add_row">
-            <h5 class="blue"> <i class="fas fa-plus"></i>&nbsp;Add another organization</h5>
+
+        <div class="form-group org_hook col-md-4">
+            <label for="keyword">Search by Keyword</label>
+            <input class="form-control" type="text" name="keyword" value="" id="keyword" />
+        </div>
+        <div class="form-group org_hook col-md-4">
+            <label for="category">Search by Category</label>
+            <select class="form-control" type="text" name="category" id="category">
+                <option value="">Choose a Category</option>
+                @foreach($organizations[0]::CATEGORY_LIST as $key => $value)
+                   <option value="{{$key}}">{{$value}}</option>
+                    @endforeach
+             </select>
+        </div>
+        <div class="form-group org_hook col-md-4">
+            <label for="category">Search by Province</label>
+            <select class="form-control" type="text" name="province" id="charity_province">
+                <option value="">Choose a Province</option>
+                @foreach($organizations[0]::PROVINCE_LIST as $key => $value)
+                    <option value="{{$key}}">{{$value}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group org_hook  col-md-12">
+            <h4 class="blue">Search Results</h4>
+            <h5>{{$organizations->total()}} results</h5>
+        <table id="charities">
+          @include("volunteering.partials.organizations")
+        </table>
+            <div>
+                {{$organizations->links()}}
+            </div>
+            <h4>Your Charities</h4>
+            <table id="organizations" style="display:none;width:100%">
+
+
+
+            </table>
         </div>
     </div>
+
+
+
+
+
+
 <br>
 
 

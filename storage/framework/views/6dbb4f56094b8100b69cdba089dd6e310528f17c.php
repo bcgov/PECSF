@@ -129,7 +129,7 @@ formData.append("ignoreFiles[]", ignoreFiles);
 
 $(this).fadeTo("slow",0.2);
 $.ajax({
-url: "{{ route("bank_deposit_form") }}",
+url: "<?php echo e(route("bank_deposit_form")); ?>",
 type:"POST",
 data: formData,
 headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
@@ -273,3 +273,4 @@ $(this)[0].previousElementSibling.remove()
 $(this).remove();
 ignoreFiles.push($(this).attr("attachment"));
 });
+<?php /**PATH C:\Users\x257354\Sites\PECSF\resources\views/volunteering/partials/add-event-js.blade.php ENDPATH**/ ?>

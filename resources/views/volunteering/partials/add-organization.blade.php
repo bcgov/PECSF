@@ -5,8 +5,8 @@
                 <label for="event_type">Organization Name:</label>
                <!--<input class="form-control" type="text" id="organization_name" name="organization_name[]"/>-->
                 <div>
-                    <select type="text" class="form-control errors organization_name" name="id[]"  placeholder="">
-                    </select>
+                    <input type="text" disabled class="form-control errors organization_name" name="id[]"  placeholder="" />
+
                     {{--
                         <form action="{{route('donate.save.select')}}" method="post">
                             @csrf
