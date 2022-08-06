@@ -462,9 +462,13 @@ $(function () {
     }
 
     $('#organization_id').change( function() {
-        reset_user_profile_info();
-        $('#user_id').val(null).trigger('change');
 
+        pledge_id = $('#pledge_id').val();
+        if (!pledge_id) {
+            reset_user_profile_info();
+        }
+        $('#user_id').val(null).trigger('change');
+        
         code = $("select[name='organization_id']").find(":selected").attr('code');
         if (code == 'GOV') {
             $('.emplid_section').show();   

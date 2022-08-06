@@ -53,8 +53,8 @@ class CampaignPledgeRequest extends FormRequest
                         'user_id'       => [$this->organization_id == $gov->id ? 'required' : 'nullable',  'exists:users,id' ],
                         
                         'pecsf_id'      => ['digits:6',  $this->organization_id != $gov->id ? 'required' : 'nullable'],
-                        'pecsf_first_name'  => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
-                        'pecsf_last_name'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
+                        'pecsf_first_name'  => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[\pL\s\-]+$/u'],
+                        'pecsf_last_name'   => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[\pL\s\-]+$/u'],
                         'pecsf_city'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
                         // 'city_id'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
                     
@@ -86,8 +86,8 @@ class CampaignPledgeRequest extends FormRequest
                                               });
                                     }),
                             ],
-                            'pecsf_first_name'  => ['required' ],
-                            'pecsf_last_name'   => [ 'required' ],
+                            'pecsf_first_name'  => ['required', 'regex:/^[\pL\s\-]+$/u' ],
+                            'pecsf_last_name'   => [ 'required', 'regex:/^[\pL\s\-]+$/u' ],
                             'pecsf_city'   => ['required' ],
                         ]
                     );
@@ -175,10 +175,14 @@ class CampaignPledgeRequest extends FormRequest
         return [
 
             'campaign_year_id.unique' => 'The campaign year has already been taken',
-            'user_id.required'       => 'The Employee field is required.',
-            'pecsf_id.required'      => 'The PECSF ID field is required.',
+            'user_id.required'       => 'The Employee field is required',
+            'pecsf_id.required'      => 'The PECSF ID field is required',
+            'pecsf_id.digits'      => 'The PECSF ID must be 6 digits',
+            'pecsf_id.unique'      => 'The Pledge for this PECSF ID has already been taken',
             'pecsf_first_name.required'  => 'The First Name field is required.',
+            'pecsf_first_name.regex' => "The First Name must only contain letters, hyphens, spaces.",
             'pecsf_last_name.required'   => 'The Last Name field is required.',
+            'pecsf_last_name.regex' => "The Last Name must only contain letters, hyphens, spaces.",
             'pecsf_city.required'   => 'The City field is required.',
 
             'charities.*.required_if' => 'The Charity field is required.',

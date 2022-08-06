@@ -38,7 +38,15 @@ class UserMaintenanceController extends Controller
                             return $query->where('users.source_type',  $request->source_type);
                         })
                         ->when($request->user_name, function($query) use($request) {
-                            return $query->where('users.name', 'like', '%'.$request->user_name.'%');
+                            return $query->where( function($q) use($request) {
+                                return $q->where('users.name', 'like', '%'.$request->user_name.'%');
+                            });
+                        })
+                        ->when($request->emplid, function($query) use($request) {
+                            return $query->where('employee_jobs.emplid', 'like', $request->emplid.'%');
+                        })
+                        ->when($request->acctlock, function($query) use($request) {
+                            return $query->where('users.acctlock', $request->acctlock);
                         })
                         ->when($request->organization_id, function($query) use($request) {
                             return $query->where('users.organization_id', $request->organization_id);
