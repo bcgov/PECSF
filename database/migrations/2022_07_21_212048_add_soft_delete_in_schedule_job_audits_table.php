@@ -18,7 +18,7 @@ class AddSoftDeleteInScheduleJobAuditsTable extends Migration
             $table->bigInteger('created_by_id')->nullable()->after('message');
             $table->bigInteger('updated_by_id')->nullable()->after('created_by_id');
 
-            $table->index(['job_name','start_time','end_time', 'status']); 
+            $table->index(['job_name','start_time','end_time', 'status']);
             $table->softDeletes();
 
         });
@@ -33,11 +33,11 @@ class AddSoftDeleteInScheduleJobAuditsTable extends Migration
     {
         Schema::table('schedule_job_audits', function (Blueprint $table) {
             //
-            $table->dropIndex(['job_name','start_time','end_time', 'status']); 
+            $table->dropIndex(['job_name','start_time','end_time', 'status']);
             $table->dropColumn('deleted_at');
             $table->dropColumn('created_by_id');
             $table->dropColumn('updated_by_id');
-            
+
         });
     }
 }

@@ -9,6 +9,23 @@
 @endphp
 @extends('adminlte::page')
 @section('content_header')
+
+    <ul class="nav nav-pills mb-3" id="pills-tab" >
+        <li class="nav-item">
+            <a class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.leaderboard') ? 'active' : ''); ?>"
+
+               href="<?php echo e(route('challege.leaderboard')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">Leaderboard</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.daily_campaign') ? 'active' : ''); ?>"
+
+               href="<?php echo e(route('challege.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
+        </li>
+
+
+    </ul>
+
 <div class="mt-3">
 <h1>Challenge</h1>
 <p class="h5 mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
@@ -33,11 +50,12 @@ Campaign Year
 <table class="table table-bordered rounded" id="myTable2">
 <tr class="bg-light">
 <th onclick="sortTable('rank')" style="cursor: pointer;">Rank</th>
-<th onclick="sortTable('name')" style="cursor: pointer;">Organization Name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
+<th onclick="sortTable('name')" style="cursor: pointer;">Organization name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Previous participation rate </th>
+    <th style="cursor: pointer;">Change</th>
 <th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
-<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollar Donated <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
+<th onclick="sortTable('dollars')" style="cursor: pointer;">Dollars Donated <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
 </tr>
 
 
@@ -45,8 +63,8 @@ Campaign Year
 <!--  <tr>
 <td>{{$count == 0 ? 'st' : ($count == 1 ? 'nd' : ($count == 2 ? 'rd' : 'th')) }}</td>
 <td>{{$charity['name']}}</td>
-<td>{{$charity['participation_rate']}}%</td>
-<td>{{$charity['final_participation_rate']}}%</td>
+<td>{{round($charity['participation_rate'])}}%</td>
+<td>{{round($charity['final_participation_rate'])}}%</td>
 <td>
 @if($charity['change'] < 0)
     <span style="color:red">
@@ -75,10 +93,11 @@ Campaign Year
                     @endphp
 
                     <td>{{$charity['name']}}</td>
-                    <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
-                    <td>{{$charity['previous_participation_rate']}}%</td>
+                    <td>{{round(($charity['participation_rate'] * 100))}}%</td>
+                    <td>{{round($charity['previous_participation_rate'])}}%</td>
+                    <td>{{round($charity['change'])}}%</td>
                     <td>{{$charity['donors']}}</td>
-                    <td>${{$charity['dollars']}}</td>
+                    <td>${{number_format($charity['dollars'])}}</td>
                 </tr>
             @endforeach
         </table>
@@ -93,47 +112,8 @@ Campaign Year
 
 <br>
 <br>
-<form id="download_report" method="GET" enctype="multipart/form-data" action="{{ route("challege.download") }}" >
-    @csrf
-<div class="form-row">
-    <div class="form-group col-md-12">
-        <h1>Daily Campaign Update</h1>
-        <h6>View and download daily statistics updates during the annual PECSF campaign.</h6>
-    </div>
-
-</div>
-
-<div class="form-row">
-    <div class="form-group col-md-2">
-
-        <label for="sort">
-            View by
-        </label>
-            <select id="sort" class="select form-control" name="sort">
-                <option type="radio" style="position: relative;top: 2px;" name="sort" value="region"> By Region</option>
-                <option type="radio" style="position: relative;top: 2px;" checked name="sort" value="organization"> By Organization</option>
-                <option type="radio" style="position: relative;top: 2px;" name="sort" value="department"> By Department</option>
-            </select>
 
 
-    </div>
-    <div class="form-group col-md-3">
-        <label for="sort">
-            Specify dates (Optional)
-        </label>
-        <input class="form-control" type="date" id="start_date" name="start_date" />
-    </div>
-    <div class="form-group col-md-1">
-        <input type="submit" style="margin-top:30px;" class="btn btn-primary" value="Download Report" />
-    </div>
-</div>
-</form>
-
-<div class="form-row">
-    <div id="preview" class="form-group col-md-12">
-
-    </div>
-</div>
 
 
 @endsection
