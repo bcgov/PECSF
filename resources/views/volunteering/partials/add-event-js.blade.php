@@ -265,6 +265,22 @@ ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
 }
 
 
+
+
+});
+$("#attachment_input_1").change(function(e){
+e.stopPropagation();
+e.preventDefault();
+$("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+var file = e.target.files;
+formData.append('attachments[]', file[0]);
+$("#attachments").append("<span>"+file[0].name+"</span> <i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i><br>");
+const index = ignoreFiles.indexOf(file[0].name);
+if (index > -1) { // only splice array when item is found
+ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
+}
+
+
 });
 
 var ignoreFiles = [];
