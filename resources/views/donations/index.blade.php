@@ -21,6 +21,7 @@
                     @endif
                 @else
                     <p>Thank you for choosing to support PECSF!</p> 
+                    <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p> 
                     <p class="card-text text-left">
                         {{-- The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca --}}
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>. 
@@ -90,8 +91,8 @@
 <div class="modal fade" id="pledgeDetailModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-        <div class="modal-header bg-light">
-            <h5 class="modal-title text-dark" id="pledgeDetailModalTitle">Pledge Detail
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title" id="pledgeDetailModalTitle">Pledge Detail
                     <span class="text-dark font-weight-bold"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
