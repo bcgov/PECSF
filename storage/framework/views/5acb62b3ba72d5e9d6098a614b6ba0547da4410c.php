@@ -1,25 +1,23 @@
-@extends('adminlte::page')
-
-@section('content_header')
+<?php $__env->startSection('content_header'); ?>
     <div class="d-flex mt-3">
         <h1>Forms</h1>
         <div class="flex-fill"></div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
 
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-    @include('volunteering.partials.form_tabs')
-
-
+    <?php echo $__env->make('volunteering.partials.form_tabs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 
-            @include('volunteering.partials.form')
 
 
-    @push('css')
+            <?php echo $__env->make('volunteering.partials.form', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
+
+    <?php $__env->startPush('css'); ?>
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 
@@ -46,21 +44,21 @@
 
         </style>
 
-    @endpush
+    <?php $__env->stopPush(); ?>
 
 
-    @push('js')
+    <?php $__env->startPush('js'); ?>
        <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>-->
 
         <script type="x-tmpl" id="organization-tmpl">
-            @include('volunteering.partials.add-organization', ['index' => 'XXX'] )
+            <?php echo $__env->make('volunteering.partials.add-organization', ['index' => 'XXX'] , \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </script>
 
 
 
         <script>
 
-            @include('volunteering.partials.add-event-js')
+            <?php echo $__env->make('volunteering.partials.add-event-js', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
         </script>
         <script>
@@ -101,5 +99,7 @@
 
             });
         </script>
-    @endpush
-@endsection
+    <?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('adminlte::page', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\x257354\Sites\PECSF\resources\views/volunteering/forms.blade.php ENDPATH**/ ?>

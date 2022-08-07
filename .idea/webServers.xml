@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c35f6b86-26d7-4cf2-a3df-e64f8f6133b5" name="Local" url="http://greenfield.ca">
+        <fileTransfer mountedRoot="C:\Users\x257354\Sites\PECSF" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

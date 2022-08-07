@@ -109,12 +109,16 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
 Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
 Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
 Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');
+Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
 
 Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
 
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
+    Route::get('/leaderboard', [ChallengeController::class, 'index'])->name('leaderboard');
+    Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
+
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
     Route::get('/preview', [ChallengeController::class, 'preview'])->name('preview');
 });

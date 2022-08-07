@@ -49428,3 +49428,7 @@ h4{
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+
+.org_hook{
+    display:none;
+}

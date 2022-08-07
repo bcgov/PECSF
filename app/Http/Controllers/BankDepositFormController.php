@@ -53,6 +53,8 @@ class BankDepositFormController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
+        $organizations = Charity::where("charity_status","=","Registered")->paginate(7);
+
         $charities=Charity::when($request->has("title"),function($q)use($request){
 
             $searchValues = preg_split('/\s+/', $request->get("title"), -1, PREG_SPLIT_NO_EMPTY);
@@ -128,7 +130,7 @@ class BankDepositFormController extends Controller
                 }
             }
         }
-        return view('volunteering.forms',compact('selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        return view('volunteering.forms',compact('organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
     public function store(Request $request) {
@@ -196,7 +198,7 @@ class BankDepositFormController extends Controller
             }
             else{
                 $total = 0;
-                for($i=0;$i<=$request->org_count;$i++){
+                for($i=0;$i<$request->org_count;$i++){
 
 
 
@@ -349,5 +351,37 @@ class BankDepositFormController extends Controller
             }
         }
         echo json_encode($response);
+    }
+
+    public function donors(Request $request)
+    {
+        if($request->isAjax())
+        {
+
+        }
+
+    }
+
+    public function organizations(Request $request)
+    {
+        $organizations = Charity::where("charity_status","=","Registered");
+
+        if($request->province != "")
+        {
+            $organizations->where("province","=",$request->province);
+        }
+
+        if($request->category != "")
+        {
+            $organizations->where("category_code","=",$request->category);
+        }
+
+        if($request->keyword != "")
+        {
+            $organizations->where("charity_name","LIKE","%".$request->keyword."%");
+        }
+
+        $organizations = $organizations->paginate(7);
+        return view('volunteering.partials.organizations', compact('organizations'))->render();
     }
 }

@@ -131,6 +131,11 @@ class ChallengeController extends Controller
 
 
     }
+
+    public function daily_campaign(Request $request){
+        return view('challenge.daily_campaign');
+    }
+
     public function download(Request $request)
     {
 
@@ -202,6 +207,8 @@ else if($request->sort == "department"){
 }
         return response()->stream($callback, 200, $headers);
     }
+
+
 
 
 }
