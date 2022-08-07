@@ -34,11 +34,14 @@ class CRACharityRequest extends FormRequest
             'alt_address2'   => [ Rule::when( $this->exists('use_alt_address'), ['max:60']) ],
             'alt_city'       => [ Rule::when( $this->exists('use_alt_address'), ['required']) ],
             'alt_province'       => [ Rule::when( $this->exists('use_alt_address'), ['required', 'max:2']) ],
-            'alt_postal_code'       => [ Rule::when( $this->exists('use_alt_address'), ['required']) ],
+            'alt_postal_code'       => [ Rule::when( $this->exists('use_alt_address'), ['required']),
+                                            'regex:/^([A-Z]\d[A-Z])\ {1}(\d[A-Z]\d)$/',
+                                ],
             'alt_country'   => [ Rule::when( $this->exists('use_alt_address'), ['required']) ],
             'financial_contact_name'  => 'nullable|max:60',
             'financial_contact_title'  => 'nullable|max:60',
             'financial_contact_email'  => 'nullable|email',
+            'comments'  => 'nullable',
         ];
     }
 
@@ -51,14 +54,16 @@ class CRACharityRequest extends FormRequest
     public function messages()
     {
         return [
-            'alt_address1.required' => 'The address 1 field is required.',
-            'alt_address1.max' => 'The address 1 must not be greater than 60 characters.',
-            'alt_address2.max' => 'The address 2 must not be greater than 60 characters.',
-            'alt_city.required' => 'The city field is required.',
-            'alt_province.required' => 'The province field is required.',
-            'alt_province.max' => 'The province must not be greater than 2 characters.',
-            'alt_postal_code.required' => 'The postal code field is required.',
-            'alt_country.required' => 'The country field is required.',
+            'alt_address1.required' => 'The Address 1 field is required.',
+            'alt_address1.max' => 'The Address 1 must not be greater than 60 characters.',
+            'alt_address2.max' => 'The Address 2 must not be greater than 60 characters.',
+            'alt_city.required' => 'The City field is required.',
+            'alt_province.required' => 'The Province field is required.',
+            'alt_province.max' => 'The Province must not be greater than 2 characters.',
+            'alt_postal_code.required' => 'The Postal Code field is required.',
+            'alt_postal_code.regex' => 'The Postal Code format is invalid. (two, three character sets with space e.g. M6E 1A5).',
+            'alt_country.required' => 'The Country field is required.',
+            'financial_contact_email.email' => 'The Charity Financial Email must be a valid email address.',
         ];
     }
     

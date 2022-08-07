@@ -87,7 +87,6 @@
         width: 18px;
         height: 18px;
     }
-
     
 </style>
 @endpush
@@ -142,7 +141,7 @@
                 {data: 'category_code',  },
                 {data: 'province',   },
                 {data: 'country', },
-                {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
 
             ],
             columnDefs: [
@@ -235,6 +234,14 @@
     	$(document).on("click", ".edit-charity" , function(e) {
 			e.preventDefault();
 
+            // clean up old error messages
+            var fields = ['alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_postal_code', 
+                        'alt_country', 'financial_contact_name', 'financial_contact_title',
+                        'financial_contact_email', 'comments'];
+            $.each( fields, function( index, field_name ) {
+                $('#charity-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
+            });
+
             id = $(this).attr('data-id');
 
             $.ajax({
@@ -273,13 +280,7 @@
             });
         }
 
-        // Toast.fire({
-        //                     icon: 'success',
-                            
-        //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //                 });
-
-        $(document).on("click", "#save-confirm-btn" , function(e) {
+         $(document).on("click", "#save-confirm-btn" , function(e) {
 		
             var form = $('#charity-edit-model-form');
             var id = $("#charity-edit-model-form [name='id']").val();
@@ -289,7 +290,7 @@
             {
                 var fields = ['alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_postal_code', 
                             'alt_country', 'financial_contact_name', 'financial_contact_title',
-                            'financial_contact_email'];
+                            'financial_contact_email', 'comments'];
                 $.each( fields, function( index, field_name ) {
                     $('#charity-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -341,7 +342,7 @@
                                 $('#charity-show-model-form input[name=use_alt_address]').prop('checked', true);
                             else 
                                 $('#charity-show-model-form input[name=use_alt_address]').prop('checked', false);
-                            console.log(field_value);
+                            // console.log(field_value);
                         }
                     });
                     
