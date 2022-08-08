@@ -25,18 +25,20 @@
         function fetch_data(page=1)
         {
             $("#charities").fadeTo("slow",0.2);
+            $(".noresults").html("");
             $.ajax({
                 url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#category").val()+"&province="+$("#charity_province").val()+"&keyword="+$("#keyword").val(),
                 success:function(data)
                 {
                     $("#charities").fadeTo("slow",1);
                     $('#charities').html(data);
+
                 }
             });
         }
         $("body").on("click",".select",function(e){
             e.preventDefault();
-
+            $("#noselectedresults").html("");
             text = $("#organization-tmpl").html();
             text = text.replace(/XXX/g, row_number + 1);
             $('#organizations').append( text );
@@ -49,7 +51,15 @@
         });
         $("body").on("click",".remove",function(e){
             e.preventDefault();
+
+            if($(this).parents("tr").siblings().length < 1)
+            {
+                $("#noselectedresults").html("You have not chosen any charities");
+            }
+
             $(this).parents("tr").remove();
+
+
         });
 
         $("body").on("click",".view_details",function(){

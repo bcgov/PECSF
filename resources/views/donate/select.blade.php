@@ -1,7 +1,7 @@
 @extends('donate.layout.main')
 
 @section ("step-content")
-    <div style="position:relative;top:-400px;">
+    <div style="">
 <h2 class="mt-5">2. Choose your charities (up to 10)</h2>
         <form action="{{route('donate.save.select')}}" method="post">
 <div class=" form-row">

@@ -1,9 +1,12 @@
 @extends('donate.layout.main')
 
 @section ("step-content")
-<h3 class="mt-5">3. Decide on the frequency and amount</h3>
+    <div style="" class="col-md-12">
+        <h3 class="">3. Decide on the frequency and amount</h3>
+    </div>
+<br>
 @if (session('errors'))
-    <div class="row  mt-3">
+    <div class="  mt-3">
         <div class="col-md-12">
             <div class="alert alert-warning alert-dismissable" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -17,8 +20,10 @@
         </div>
     </div>
 @endif
-<div>
-    <div>
+<div class=""></div>
+<div  style="" >
+    <br>
+    <div class="">
         <div class="btn-group btn-group-toggle mt-3 frequency" role="group" aria-label="Select frequency" data-toggle="buttons">
             <label class="btn btn-outline-primary btn-lg" for="bi-weekly-btn">
                 <input type="radio" name="frequency" class="btn-check" id="bi-weekly-btn" autocomplete="off" value="bi-weekly" {{$preselectedData['frequency'] == 'bi-weekly' ? 'checked' : ''}}>
@@ -35,7 +40,7 @@
             </label>
         </div>
     </div>
-    <div id="bi-weekly-section">
+    <div class="" id="bi-weekly-section">
         <div class="predefined-amounts-bi-weekly" >
             <div class="btn-group d-flex mt-3 amounts btn-group-toggle" data-toggle="buttons" role="group" aria-label="Select amount">
                 @foreach ($amounts["bi-weekly"] as $amount)
@@ -56,7 +61,7 @@
             </label>
         </div>
     </div>
-    <div id="one-time-section">
+    <div class="" id="one-time-section">
         <div class="predefined-amounts-one-time">
             <div class="btn-group d-flex mt-3 amounts btn-group-toggle" data-toggle="buttons" role="group" aria-label="Select amount">
                 @foreach ($amounts["one-time"] as $amount)
