@@ -49,3 +49,76 @@
             <h5 style="width:100%;text-align:center" class="align-content-center">You have not chosen any charities</h5>
         </table>
 </div>
+<div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <table class="table">
+                    <tr>
+                        <td>Business/Registration Number</td>
+                        <td id="registration_number"></td>
+                    </tr>
+                    <tr>
+                        <td>Charity Status</td>
+                        <td id="charity_status"></td>
+                    </tr>
+                    <tr>
+                        <td>Effective date of status</td>
+                        <td id="effective_date_of_status"></td>
+                    </tr>
+                    <tr>
+                        <td>Sanction</td>
+                        <td id="sanction"></td>
+                    </tr>
+                    <tr>
+                        <td>Designation</td>
+                        <td id="designation"></td>
+                    </tr>
+                    <tr>
+                        <td>Category</td>
+                        <td id="category"></td>
+                    </tr>
+                    <tr>
+                        <td>Address</td>
+                        <td id="address"></td>
+                    </tr>
+                    <tr>
+                        <td>City</td>
+                        <td id="city"></td>
+                    </tr>
+                    <tr>
+                        <td>Province, Territory</td>
+                        <td id="province"></td>
+                    </tr>
+                    <tr>
+                        <td>Country</td>
+                        <td id="country"></td>
+                    </tr>
+                    <tr>
+                        <td>Postal code/zip code:</td>
+                        <td id="postal_code"></td>
+                    </tr>
+                    <tr>
+                        <td>Website:</td>
+                        <td id="uri"></td>
+                    </tr>
+                    <tr>
+                        <td>Charitable Programs</td>
+                        <td id="charitable_programs"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -43,12 +43,31 @@
             $("#organizations").css("display","block");
             row_number++;
             $('.organization').last().find(".organization_name").val($(this).attr("name"));
+            $('.organization').last().append("<input type='hidden' name='id[]' value='"+$(this).attr('org_id')+"'/>");
             $('.organization').last().append("<input type='hidden' name='vendor_id[]' value='"+$(this).attr('org_id')+"'/>");
+
         });
         $("body").on("click",".remove",function(e){
             e.preventDefault();
             $(this).parents("tr").remove();
         });
+
+        $("body").on("click",".view_details",function(){
+            $("#registration_number").html($(this).attr("registration_number"));
+            $("#charity_status").html($(this).attr("charity_status"));
+            $("#effective_date_of_status").html($(this).attr("effective_date_of_status"));
+            $("#sanction").html($(this).attr("sanction"));
+            $("#designation").html($(this).attr("designation"));
+            $("#category").html($(this).attr("category"));
+            $("#address").html($(this).attr("address"));
+            $("#city").html($(this).attr("city"));
+            $("#province").html($(this).attr("province"));
+            $("#country").html($(this).attr("country"));
+            $("#postal_code").html($(this).attr("postal_code"));
+            $("#uri").html($(this).attr("website"));
+            $("#charityDetails").modal("show");
+        });
+
     });
 
 

@@ -48,7 +48,7 @@
             </div>
             <div class="form-group col-md-12">
                 <label for="sub_type">Specific Community Or Initiative (Optional):</label>
-                <input class="form-control" type="text" id="specific_community_or_initiative" name="specific_community_or_initiative[]" />
+                <input class="form-control" type="text" id="specific_community_or_initiative" name="additional[]" />
                 <span class="specific_community_or_initiative_errors  errors">
                        @error('specific_community_or_initiative.'.$index)
                         <span class="invalid-feedback">{{  $message  }}</span>

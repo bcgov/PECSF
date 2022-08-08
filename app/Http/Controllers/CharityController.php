@@ -231,19 +231,22 @@ class CharityController extends Controller
         $province_list = Charity::PROVINCE_LIST;
 
         $selected_charities = [];
+        //Session::forget("charities");
         if (Session::has('charities')) {
             $selectedCharities = Session::get('charities');
 
             $_charities = Charity::whereIn('id', $selectedCharities['id'])
                 ->get(['id', 'charity_name as text']);
 
-            foreach ($_charities as $charity) {
-                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
-                if (!$charity['additional']) {
-                    $charity['additional'] = '';
-                }
+            if(!empty($_charities)){
+                foreach ($_charities as $charity) {
+                    $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
+                    if (!$charity['additional']) {
+                        $charity['additional'] = '';
+                    }
 
-                array_push($selected_charities, $charity);
+                    array_push($selected_charities, $charity);
+                }
             }
         } else {
 
