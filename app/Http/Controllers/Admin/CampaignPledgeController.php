@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
+use App\Models\NonGovPledgeHistory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CampaignPledgeRequest;
@@ -56,10 +57,10 @@ class CampaignPledgeController extends Controller
                             ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
                             ->when( $request->organization_id, function($query) use($request) {
-                                $query->where('organization_id', $request->organization_id);
+                                $query->where('pledges.organization_id', $request->organization_id);
                             })
                             ->when( $request->pecsf_id, function($query) use($request) {
-                                $query->where('pecsf_id', 'like', '%'. $request->pecsf_id .'%');
+                                $query->where('pledges.pecsf_id', 'like', '%'. $request->pecsf_id .'%');
                             })
                             ->when( $request->emplid, function($query) use($request) {
                                 $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
@@ -597,4 +598,49 @@ class CampaignPledgeController extends Controller
         return response()->json($formatted_users);
 
     }    
+
+    public function getNonGovUserDetail(Request $request) {
+     
+        if($request->ajax()) {
+
+            // Search for the Non-Gov History
+            $pledge = Pledge::join('campaign_years', 'pledges.campaign_year_id', 'campaign_years.id')
+                            ->where('pledges.organization_id', $request->org_id )
+                            ->where('pledges.pecsf_id', $request->pecsf_id)
+                            ->orderBy('campaign_years.calendar_year', 'desc')
+                            ->first();
+
+            if ($pledge) {
+                $formatted_result = (object) [
+                        'first_name' => $pledge->first_name,
+                        'last_name' => $pledge->last_name,
+                        'city' => $pledge->city,
+                    ];
+
+                return json_encode( $formatted_result );
+            }
+            
+
+            // Search Non-Gov History
+            $history = NonGovPledgeHistory::leftJoin('organizations', 'non_gov_pledge_histories.org_code', 'organizations.code')
+                            ->where('organizations.id', $request->org_id )
+                            ->where('non_gov_pledge_histories.pecsf_id', $request->pecsf_id)
+                            ->orderBy('non_gov_pledge_histories.yearcd', 'desc')
+                            ->first();
+
+            if ($history) {
+                $formatted_result = (object) [
+                        'first_name' => $history->first_name,
+                        'last_name' => $history->last_name,
+                        'city' => $history->city,
+                    ];
+
+                return json_encode( $formatted_result );
+            }
+                
+            return response()->noContent();    
+
+        }
+    }
+
 }
