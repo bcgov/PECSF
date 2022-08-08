@@ -176,6 +176,20 @@
                         </div>
                     </div>
 
+                    <h6 class="text-primary font-weight-bold">Notes</h6>
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="form-row">
+
+                                <div class="form-group col-md-12">
+                                    <textarea class="form-control" id="comments" name="comments" rows="5" readonly></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <hr />
 
                     <div class="form-group row">

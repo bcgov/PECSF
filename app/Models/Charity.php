@@ -28,6 +28,7 @@ class Charity extends Model
         'use_alt_address', 'alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_country',
         'alt_postal_code',
         'financial_contact_name', 'financial_contact_title', 'financial_contact_email',
+        'comments',
         'created_by_id', 'updated_by_id',
         
     ];

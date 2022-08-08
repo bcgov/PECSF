@@ -128,6 +128,7 @@ class ExportDatabaseToBI extends Command
             ->orderBy('id');
             
         // Chucking
+        $row_count = 0;
         $sql->chunk(5000, function($chuck) use($table_name, $hidden_fields, $last_job, &$n) {
             $this->LogMessage( "Sending table '{$table_name}' batch (5000) - " . ++$n );
 
@@ -138,6 +139,8 @@ class ExportDatabaseToBI extends Command
                         // unset($item->password);
                         unset($item->$hidden_field);
                     }
+
+                    $row_count += 1;
                 }
             }
 
@@ -153,8 +156,11 @@ class ExportDatabaseToBI extends Command
 
         $this->LogMessage("Table '{$table_name}' data sent completed");
         $this->LogMessage( now() );
-        $this->LogMessage("Success - " . $this->success);
-        $this->LogMessage("failure - " . $this->failure);
+        $this->LogMessage("Success (Batch) - " . $this->success);
+        $this->LogMessage("Failure (Batch) - " . $this->failure);
+        $this->LogMessage( "" );
+        $this->LogMessage("No of row sent  - " . $row_count);
+        
 
         // Update the Task Audit log
         $task->end_time = Carbon::now();
