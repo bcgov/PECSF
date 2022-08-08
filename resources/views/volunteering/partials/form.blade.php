@@ -336,45 +336,10 @@
         <div class="form-group  org_hook col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
         </div>
-
-
-        <div class="form-group org_hook col-md-4">
-            <label for="keyword">Search by Keyword</label>
-            <input class="form-control" type="text" name="keyword" value="" id="keyword" />
-        </div>
-        <div class="form-group org_hook col-md-4">
-            <label for="category">Search by Category</label>
-            <select class="form-control" type="text" name="category" id="category">
-                <option value="">Choose a Category</option>
-                @foreach($organizations[0]::CATEGORY_LIST as $key => $value)
-                   <option value="{{$key}}">{{$value}}</option>
-                    @endforeach
-             </select>
-        </div>
-        <div class="form-group org_hook col-md-4">
-            <label for="category">Search by Province</label>
-            <select class="form-control" type="text" name="province" id="charity_province">
-                <option value="">Choose a Province</option>
-                @foreach($organizations[0]::PROVINCE_LIST as $key => $value)
-                    <option value="{{$key}}">{{$value}}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="form-group org_hook  col-md-12">
-            <h4 class="blue">Search Results</h4>
-            <h5>{{$organizations->total()}} results</h5>
-        <table id="charities">
-          @include("volunteering.partials.organizations")
-        </table>
-            <div>
-                {{$organizations->links()}}
-            </div>
-            <h4>Your Charities</h4>
-            <table id="organizations" style="display:none;width:100%">
+        @include('donate.partials.choose-charity')
 
 
 
-            </table>
         </div>
     </div>
 

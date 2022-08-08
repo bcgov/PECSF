@@ -20,8 +20,8 @@ class Campaign
         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
         ->first();
 
-        if (!($campaignYear->isOpen() ))  {   
-            return redirect( route('donations.list') )->with('error','The open enrollment is not opened');
+        if (!($campaignYear->isOpen() ))  {
+            //return redirect( route('donations.list') )->with('error','The open enrollment is not opened');
         }
 
         return $next($request);

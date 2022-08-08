@@ -20,10 +20,10 @@
                         <a href="{{ route('donate') }}" class="btn btn-primary">Donate to Annual Campaign Now</a>
                     @endif
                 @else
-                    <p>Thank you for choosing to support PECSF!</p> 
+                    <p>Thank you for choosing to support PECSF!</p>
                     <p class="card-text text-left">
                         {{-- The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca --}}
-                        If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>. 
+                        If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
                         {{-- Click the detail button below to see your campaign pledge in VIEW mode.    --}}
                     </p>
                     <p>

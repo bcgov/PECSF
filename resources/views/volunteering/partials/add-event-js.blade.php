@@ -1,5 +1,5 @@
 
-
+<script>
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
 $("#organizations").show();
@@ -56,22 +56,10 @@ $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
 });
 
 
-let row_number = 0;
 
 
 
 
-$("body").on("click",".select",function(e){
-e.preventDefault();
-
-text = $("#organization-tmpl").html();
-text = text.replace(/XXX/g, row_number + 1);
-$('#organizations').append( text );
-$("#organizations").css("display","block");
-row_number++;
-$('.organization').last().find(".organization_name").val($(this).attr("name"));
-$('.organization').last().append("<input type='hidden' name='vendor_id[]' value='"+$(this).attr('org_id')+"'/>");
-});
 
 
 
@@ -84,10 +72,7 @@ $('.attachment').last().after( text );
 attachment_number++;
 });
 
-$("body").on("click",".remove",function(e){
-e.preventDefault();
-$(this).parents("tr").remove();
-});
+
 var formData = new FormData();
 $("#bank_deposit_form").submit(function(e)
 {
@@ -289,3 +274,4 @@ $(this)[0].previousElementSibling.remove()
 $(this).remove();
 ignoreFiles.push($(this).attr("attachment"));
 });
+</script>

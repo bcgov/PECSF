@@ -55,51 +55,8 @@
         <script type="x-tmpl" id="organization-tmpl">
             @include('volunteering.partials.add-organization', ['index' => 'XXX'] )
         </script>
-
-
-
-        <script>
-
             @include('volunteering.partials.add-event-js')
+            @include('donate.partials.choose-charity-js')
 
-        </script>
-        <script>
-            $(document).ready(function(){
-                var keywordTypingTimer;
-
-                $(document).on('click', '.pagination a', function(event){
-                    event.preventDefault();
-                    var page = $(this).attr('href').split('page=')[1];
-                    fetch_data(page);
-                });
-
-                $("#keyword").keyup(function(){
-                    clearTimeout(keywordTypingTimer);
-                    keywordTypingTimer = setTimeout(fetch_data,800)
-                });
-
-                $("#category").change(function(){
-                    fetch_data(1);
-                });
-
-                $("#charity_province").change(function(){
-                    fetch_data(1);
-                });
-
-                function fetch_data(page=1)
-                {
-                    $("#charities").fadeTo("slow",0.2);
-                    $.ajax({
-                        url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#category").val()+"&province="+$("#charity_province").val()+"&keyword="+$("#keyword").val(),
-                        success:function(data)
-                        {
-                            $("#charities").fadeTo("slow",1);
-                            $('#charities').html(data);
-                        }
-                    });
-                }
-
-            });
-        </script>
     @endpush
 @endsection

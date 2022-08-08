@@ -382,6 +382,7 @@ class BankDepositFormController extends Controller
         }
 
         $organizations = $organizations->paginate(7);
-        return view('volunteering.partials.organizations', compact('organizations'))->render();
+        $total = $organizations->total();
+        return view('volunteering.partials.organizations', compact('organizations','total'))->render();
     }
 }

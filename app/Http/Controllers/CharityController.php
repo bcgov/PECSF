@@ -55,7 +55,7 @@ class CharityController extends Controller
         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
                             ->orderBy('calendar_year', 'desc')->first();
         if ( !$campaignYear->isOpen() ) {
-            return redirect()->route('donations.list');
+    //        return redirect()->route('donations.list');
         }
 
         $pool_option = "C";
@@ -286,7 +286,8 @@ class CharityController extends Controller
         }
 
         $multiple = true;
-        return view('donate.select', compact('multiple','charities','terms','designation_list','category_list','province_list','selected_charities'));
+        $organizations = [];
+        return view('donate.select', compact('organizations','multiple','charities','terms','designation_list','category_list','province_list','selected_charities'));
     }
 
     // public function edit(Request $request, $id = null) {
