@@ -35,7 +35,7 @@
                   </span>
 
             </div>
-
+@if (!Request::is('donate/select'))
             <div class="form-group col-md-4">
                 <label for="sub_type">Donation Percent (%)</label>
                 <input class="form-control" type="text" id="donation_percent" name="donation_percent[]">
@@ -44,8 +44,8 @@
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
                   </span>
-
             </div>
+            @endif
             <div class="form-group col-md-12">
                 <label for="sub_type">Specific Community Or Initiative (Optional):</label>
                 <input class="form-control" type="text" id="specific_community_or_initiative" name="additional[]" />
