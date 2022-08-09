@@ -101,6 +101,7 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
 });
 
 
+
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
@@ -184,6 +185,8 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     // Pledge Administration - Campaign Pledge
     Route::resource('/campaign', CampaignPledgeController::class);
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
+    Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');    
+    
     Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
     Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');

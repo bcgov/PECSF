@@ -524,17 +524,51 @@ $(function () {
             reset_user_profile_info();            
     });
 
+
+    function get_nongov_user_detail() {
+
+        // clean up the old values 
+        $('#pecsf_first_name').val('');
+        $('#pecsf_last_name').val('');
+        $('#pecsf_city').val('');
+        
+        $.get({
+            url: '{{ route('admin-pledge.administrators.nongovuser') }}' + 
+                        '?org_id=' + $('#organization_id').val() +
+                        '&pecsf_id=' + $('#pecsf_id').val(),
+            dataType: 'json',
+            async: false,
+            cache: false,
+            timeout: 30000,
+            success: function(data)
+            {
+                console.log( data );
+                if(data) {
+                    $('#pecsf_first_name').val( data.first_name );
+                    $('#pecsf_last_name').val( data.last_name );
+                    $('#pecsf_city').val( data.city );
+                }
+
+            },
+            error: function(response) {
+                 console.log('Error');
+            }
+        });
+    }
+
     $('#pecsf_id').on('blur', function (e) {
-        console.log(this.value);
         e.stopPropagation();
+        get_nongov_user_detail();
     })
 
     $('#pecsf_id').on('keypress', function (e) {
+        e.stopPropagation();
+
         var keycode = (e.keyCode ? e.keyCode : e.which);
         if(keycode == '13') {
-            console.log('enter pressed - ' +  this.value);
+            // console.log('enter pressed - ' +  this.value);
+            get_nongov_user_detail();
         }
-        e.stopPropagation();
     })
 
 
