@@ -6,6 +6,7 @@
 /public/bank_deposit_form_attachments/*
 /storage/*.key
 /storage/framework/laravel-excel/*
+/storage/framework/views/*
 /vendor
 .env
 .env.backup
