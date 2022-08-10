@@ -53,7 +53,7 @@ class BankDepositFormController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
-        $organizations = Charity::where("charity_status","=","Registered")->paginate(7);
+        $organizations = [];// Charity::where("charity_status","=","Registered")->paginate(7);
 
         $charities=Charity::when($request->has("title"),function($q)use($request){
 
@@ -183,11 +183,6 @@ class BankDepositFormController extends Controller
                 {
                     $validator->errors()->add('postal_code','An Postal Code is required.');
                 }
-
-
-
-
-
             }
 
             if($request->charity_selection == "fsp")
@@ -231,21 +226,22 @@ class BankDepositFormController extends Controller
             }
 
             if(!empty(request("attachments"))){
-                foreach(request('attachments') as $key => $attachment){
-                    if(!in_array($attachment,$request->ignoreFiles)){
-                        if(empty($attachment) || $attachment == "undefined"){
-                            $validator->errors()->add('attachment.0','Atleast one attachment is required.');
-                        };
+                $fileFound = false;
+                foreach(array_reverse(request('attachments')) as $key => $attachment){
+                    if(in_array($attachment->getClientOriginalName(),explode(",",$request->ignoreFiles)) || empty($attachment) || $attachment == "undefined"){
                     }
+                    else{
+                        $fileFound = true;
+                        break;
+                    }
+                }
+                if(!$fileFound){
+                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
                 }
             }
             else{
                 $validator->errors()->add('attachment.0','Atleast one attachment is required.');
-
             }
-
-
-
         });
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
