@@ -193,9 +193,7 @@ class BankDepositFormController extends Controller
             }
             else{
                 $total = 0;
-                for($i=0;$i<$request->org_count;$i++){
-
-
+                for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
 
                     if(empty(request("id")[$i]))
                     {
@@ -220,7 +218,7 @@ class BankDepositFormController extends Controller
                 }
                 if($total != 100) {
                     for ($j = 0; $j < $request->org_count; $j++) {
-                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent is Does not equal 100%.');
+                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
                     }
                 }
             }
