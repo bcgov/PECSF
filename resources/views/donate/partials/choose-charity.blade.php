@@ -47,6 +47,7 @@
 
         <table class="charity-container" id="organizations" style="display:none;width:100%">
             <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
+            <span class="charity_errors"></span>
         </table>
 </div>
 <div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-hidden="true">

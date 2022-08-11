@@ -79,6 +79,6 @@
         });
 
     });
-
-
+    $("#charity_province").select2();
+    $("#category").select2();
 </script>

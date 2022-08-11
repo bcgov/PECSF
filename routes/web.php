@@ -65,6 +65,7 @@ Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
 // Route::post('/logout', [MicrosoftGraphLoginController::class, 'destroy'])
 //                 ->middleware('auth')
 //                 ->name('logout');
+//                 ->name('logout');
 // Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
 
 
@@ -185,8 +186,8 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     // Pledge Administration - Campaign Pledge
     Route::resource('/campaign', CampaignPledgeController::class);
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
-    Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');    
-    
+    Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
+
     Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
     Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');

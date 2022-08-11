@@ -1,5 +1,8 @@
 
 <script>
+    $("#sub_type").select2();
+    $("#event_type").select2();
+
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
 $("#organizations").show();
@@ -33,20 +36,22 @@ $("#sub_type").attr("disabled",false);
 if($(this).val()=="Fundraiser"){
 $("#sub_type").html('<option value="">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
 $(".address_hook").hide();
-//$("#sub_type").select2();
+$("#sub_type").select2();
 }
 else if($(this).val()=="Gaming"){
 $("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
 $(".address_hook").hide();
-//$("#sub_type").select2();
+$("#sub_type").select2();
 }
 else{
 $(".address_hook").show();
 
 $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);
-//$("#sub_type").select2();
+$("#sub_type").select2();
 $(".sub_type .selection").children(0).children(0).remove();
+$("#city").select2();
+$("#province").select2();
 }
 
 });
@@ -79,7 +84,6 @@ $("#bank_deposit_form").submit(function(e)
 e.preventDefault();
 var form = document.getElementById("create_pool");
 
-formData = new FormData();
 
 $("select").each(function(){
 if($(this).val()){
@@ -99,7 +103,7 @@ formData.append($(this).attr("name"), $(this).val());
 else if($(this).attr('type') == "file"){
 //formData.append('attachments[]',  $(this)[0].files[0]);
 }
-else if($(this).val().length > 0){
+else{
 formData.append($(this).attr("name"), $(this).val());
 }
 }
@@ -110,7 +114,7 @@ formData.append($(this).attr("name"), $(this).val());
 }
 });
 formData.append("org_count", $(".organization").length);
-formData.append("ignoreFiles[]", ignoreFiles);
+formData.append("ignoreFiles", ignoreFiles);
 
 $(this).fadeTo("slow",0.2);
 $.ajax({
@@ -151,20 +155,24 @@ $("#bank_deposit_form").fadeTo("slow",1);
 });
 
 });
-/*
+
 $('#organization_code').select2({
 ajax: {
 url: '/bank_deposit_form/organization_code',
 dataType: 'json'
 }
 });
+
+
 $('.organization_name').select2({
 ajax: {
 url: '/bank_deposit_form/organization_name',
 dataType: 'json'
 }
 });
-*/
+
+$("#employment_city,#region,#business_unit").select2();
+
 $(".sub_type .selection").children(0).children(0).remove();
 $('.more-info').click( function(event) {
 event.stopPropagation();
@@ -258,20 +266,24 @@ e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.target.files;
-formData.append('attachments[]', file[0]);
-$("#attachments").append("<span>"+file[0].name+"</span> <i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i><br>");
-const index = ignoreFiles.indexOf(file[0].name);
-if (index > -1) { // only splice array when item is found
-ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
+
+if(file[0].size < 2000000)
+{
+    formData.append('attachments[]', file[0]);
+    $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
+    const index = ignoreFiles.indexOf(file[0].name);
+    if (index > -1) { // only splice array when item is found
+        ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
+    }
 }
-
-
+else{
+    $(".attachment_errors").html("Please upload a smaller file");
+}
 });
 
 var ignoreFiles = [];
 $("body").on("click",".remove_attachment",function(){
-$(this)[0].previousElementSibling.remove()
-$(this).remove();
+$(this).parent().remove();
 ignoreFiles.push($(this).attr("attachment"));
 });
 </script>

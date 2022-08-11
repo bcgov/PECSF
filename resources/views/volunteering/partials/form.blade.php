@@ -4,16 +4,18 @@
     <br>
 
 
-    <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding:8px;">
-        <h1>Event bank deposit form</h1>
+    <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
+        <h2>Event bank deposit form</h2>
     </div>
-    <div class="card">
+    <div class="card" style="border-radius:0px;">
         <div class="card-body">
 
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="organization_code">Organization code</label>
-            <select type="text" class="form-control errors" name="organization_code" id="organization_code" placeholder="">
+            <select type="text" class="form-control " name="organization_code" id="organization_code" placeholder="">
+            <option value="null" selected="selected">Choose and Org Code</option>
+
             </select>
             <span class="organization_code_errors errors">
                           @error('organization_code')
@@ -71,7 +73,7 @@
                   </span>
         </div>
         <div id="bcgovid" class="form-group col-md-6" style="display:none;">
-            <label for="bc_gov_id">BC gov ID</label>
+            <label for="bc_gov_id">Employee ID</label>
             <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
             <span class="bc_gov_id_errors errors">
                        @error('bc_gov_id')
@@ -271,7 +273,7 @@
 <br>
     <br>
     <div class="form-row form-header">
-            <h3 class="">Charity selections and distribution</h3>
+            <h3 class="blue">Charity selections and distribution</h3>
     </div>
 
     <div class="form-row  form-body">
@@ -310,7 +312,7 @@
     width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
-                        <span style="color:blue;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
+                        <span style="color:#1a5a96;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
                               data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}">View Details</span>
                     </div>
 
@@ -336,52 +338,60 @@
         <div class="form-group  org_hook col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
         </div>
+        <div class="form-group org_hook col-md-12">
+            <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered charitable organizations.
+                Our system uses the official name of the charity registered with the CRA. You can use the View CRA Charity List link to confirm if the organization you would like to support is registered. You can also support a specific branch or program name.</p>
+
+        </div>
         @include('donate.partials.choose-charity')
 
 
 
         </div>
-    </div>
-
-
-
-
-
-
-<br>
-
-
-
-    <div class="form-row form-header">
-            <h3 class="blue">Attachment</h3>
-
-    </div>
-
-    <div class="form-row form-body">
-        <div style="padding:8px;" class="upload-area form-group col-md-3">
-            <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
             <br>
-            <br>
-            <label style="text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</label>
-            <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
-        </div>
-        <div id="attachments" class="form-group col-md-6">
 
-        </div>
-    </div>
+
+
+            <div class="form-row form-header">
+                <h3 class="blue">Upload File(s)</h3>
+
+            </div>
+
+            <div class="form-row form-body">
+                <div style="padding:8px;" class="upload-area form-group col-md-3">
+                    <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
+                    <br>
+                    <br>
+                    <label style="text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</label>
+                    <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
+                </div>
+                <div id="attachments" class="form-group col-md-6">
+
+                </div>
+            </div>
             <span class="attachment_errors errors">
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
                         </span>
+    </div>
+
+
+
+
+
+
+
 <br>
     <br>
-    <input type="submit" class="btn btn-primary" value="Submit" />
+    <input type="submit" style="margin-left:20px;" class="col-md-1 btn btn-primary" value="Submit" />
     <br>
     <br>
-    <p>Once information has been submitted to PECSF Administration, no further changes are<br> possible through eForm. Please contact pecsf@gov.bc.ca</p>
-    <h5>Freedom of Information and Protection of Privacy Act</h5>
-    <p>
+    <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are<br> possible through eForm. Please contact pecsf@gov.bc.ca</p>
+
+        <h5 style="padding-left:20px;">Freedom of Information and Protection of Privacy Act</h5>
+    <p style="padding:20px;">
+
         Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting your charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.
         Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or PECSF@gov.bc.ca.
     </p>

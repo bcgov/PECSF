@@ -49,11 +49,11 @@ Campaign Year
 <div class="card-body">
 <table class="table table-bordered rounded" id="myTable2">
 <tr class="bg-light">
-<th onclick="sortTable('rank')" style="cursor: pointer;">Rank</th>
+<th onclick="sortTable('rank')" style="cursor: pointer;">Rank </th>
 <th onclick="sortTable('name')" style="cursor: pointer;">Organization name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Previous participation rate </th>
-    <th style="cursor: pointer;">Change</th>
+    <th onclick="sortTable('change')" style="cursor: pointer;">Change <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
 <th onclick="sortTable('dollars')" style="cursor: pointer;">Dollars Donated <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
 </tr>
@@ -102,9 +102,7 @@ Campaign Year
             @endforeach
         </table>
 <br>
-        <div>
-            {{$charities->links()}}
-        </div>
+
 
 
     </div>

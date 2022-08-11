@@ -11,9 +11,18 @@ use App\Models\Region;
 use App\Models\BusinessUnit;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ChallengeController extends Controller
 {
+
+    public function __construct()
+    {
+         if(empty(Auth::id())){
+             redirect("/login");
+         }
+    }
+
     public function index(Request $request) {
 
         if(isset($request->year)){
@@ -32,8 +41,9 @@ class ChallengeController extends Controller
             ->where('donor_by_business_units.yearcd',"=",$year)
             ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
             ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
-            ->orderBy(($request->field ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
-        ->paginate(10);
+            ->orderBy((($request->field && $request->field != 'change') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+            ->limit(500)
+            ->get();
 
         if($request->sort == "ASC"){
             $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
@@ -42,7 +52,7 @@ class ChallengeController extends Controller
                 ->where('donor_by_business_units.yearcd',"=",$year)
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
                 ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
-                ->orderBy(($request->field ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+                ->orderBy((($request->field && $request->field != 'change') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
                 ->count();
         }
         else{
@@ -57,7 +67,7 @@ class ChallengeController extends Controller
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
                 ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
                 ->where('business_units.id',"=",$charity->id)
-                ->orderBy(($request->field ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+                ->orderBy((($request->field && $request->field != 'change') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
                 ->first();
 
             if(!empty($previousYear))
@@ -70,7 +80,19 @@ class ChallengeController extends Controller
             {
                 $charities[$index]->previous_participation_rate = "No Data";
                 $charities[$index]->previous_donors = "No Data";
-                $charities[$index]->change = "No Data";
+                $charities[$index]->change = 0;
+            }
+        }
+
+        if($request->field == "change")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("change");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("change");
             }
         }
 

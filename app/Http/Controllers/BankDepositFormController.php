@@ -53,7 +53,7 @@ class BankDepositFormController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
-        $organizations = Charity::where("charity_status","=","Registered")->paginate(7);
+        $organizations = [];// Charity::where("charity_status","=","Registered")->paginate(7);
 
         $charities=Charity::when($request->has("title"),function($q)use($request){
 
@@ -154,12 +154,26 @@ class BankDepositFormController extends Controller
          ]);
         $validator->after(function ($validator) use($request) {
 
-            if(empty($request->pecsf_id) && $request->organization_code != "GOV")
+            if($request->organization_code != "GOV")
             {
-                $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                if(empty($request->pecsf_id))
+                {
+                    $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                }
+                else if(!is_numeric($request->pecsf_id))
+                {
+                    $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
+                }
             }
-            if(empty($request->bc_gov_id) && $request->organization_code == "GOV"){
-                $validator->errors()->add('bc_gov_id','A BC GOV ID is required.');
+            if($request->organization_code == "GOV"){
+                if(empty($request->bc_gov_id))
+                {
+                    $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+                }
+                else if(!is_numeric($request->bc_gov_id))
+                {
+                    $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                }
             }
 
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
@@ -183,11 +197,6 @@ class BankDepositFormController extends Controller
                 {
                     $validator->errors()->add('postal_code','An Postal Code is required.');
                 }
-
-
-
-
-
             }
 
             if($request->charity_selection == "fsp")
@@ -198,54 +207,58 @@ class BankDepositFormController extends Controller
             }
             else{
                 $total = 0;
-                for($i=0;$i<$request->org_count;$i++){
 
+                if($request->org_count < 1){
+                    $validator->errors()->add('charity','You need to Select a Charity.');
+                }
+                else{
+                    for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
 
-
-                    if(empty(request("id")[$i]))
-                    {
-                        $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
-                    }
-                    if(empty(request('vendor_id')[$i])){
-                        $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
-                    };
-                    if(empty(request('donation_percent')[$i])){
-                        $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
-                    }
-                    else if(!is_numeric(request('donation_percent')[$i])){
-                        $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
-                    }
-                    else{
-                        if(!empty(request("donation_percent")[$i]))
+                        if(empty(request("id")[$i]))
                         {
-                            $total = request('donation_percent')[$i] + $total;
+                            $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
+                        }
+                        if(empty(request('vendor_id')[$i])){
+                            $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
+                        };
+                        if(empty(request('donation_percent')[$i])){
+                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
+                        }
+                        else if(!is_numeric(request('donation_percent')[$i])){
+                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
+                        }
+                        else{
+                            if(!empty(request("donation_percent")[$i]))
+                            {
+                                $total = request('donation_percent')[$i] + $total;
+                            }
                         }
                     }
-
-                }
-                if($total != 100) {
-                    for ($j = 0; $j < $request->org_count; $j++) {
-                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent is Does not equal 100%.');
+                    if($total != 100) {
+                        for ($j = 0; $j < $request->org_count; $j++) {
+                            $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
+                        }
                     }
                 }
             }
 
             if(!empty(request("attachments"))){
-                foreach(request('attachments') as $key => $attachment){
-                    if(!in_array($attachment,$request->ignoreFiles)){
-                        if(empty($attachment) || $attachment == "undefined"){
-                            $validator->errors()->add('attachment.0','Atleast one attachment is required.');
-                        };
+                $fileFound = false;
+                foreach(array_reverse(request('attachments')) as $key => $attachment){
+                    if(in_array($attachment->getClientOriginalName(),explode(",",$request->ignoreFiles)) || empty($attachment) || $attachment == "undefined"){
                     }
+                    else{
+                        $fileFound = true;
+                        break;
+                    }
+                }
+                if(!$fileFound){
+                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
                 }
             }
             else{
                 $validator->errors()->add('attachment.0','Atleast one attachment is required.');
-
             }
-
-
-
         });
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
@@ -291,10 +304,13 @@ class BankDepositFormController extends Controller
 
         foreach($upload_images as $key => $file){
 
-            if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
-            {
-                continue;
+            if(is_array($request->ignoreFiles)){
+                if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
+                {
+                    continue;
+                }
             }
+
 
                 $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                 $file->move(public_path( $this->doc_folder ), $filename);
