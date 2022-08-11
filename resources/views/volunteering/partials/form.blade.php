@@ -13,7 +13,9 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="organization_code">Organization code</label>
-            <select type="text" class="form-control errors" name="organization_code" id="organization_code" placeholder="">
+            <select type="text" class="form-control " name="organization_code" id="organization_code" placeholder="">
+                
+
             </select>
             <span class="organization_code_errors errors">
                           @error('organization_code')

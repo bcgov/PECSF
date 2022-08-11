@@ -50,6 +50,8 @@ $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);
 $("#sub_type").select2();
 $(".sub_type .selection").children(0).children(0).remove();
+$("#city").select2();
+$("#province").select2();
 }
 
 });
@@ -160,12 +162,16 @@ url: '/bank_deposit_form/organization_code',
 dataType: 'json'
 }
 });
+
+
 $('.organization_name').select2({
 ajax: {
 url: '/bank_deposit_form/organization_name',
 dataType: 'json'
 }
 });
+
+$("#employment_city,#region,#business_unit").select2();
 
 $(".sub_type .selection").children(0).children(0).remove();
 $('.more-info').click( function(event) {

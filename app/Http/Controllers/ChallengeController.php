@@ -11,9 +11,18 @@ use App\Models\Region;
 use App\Models\BusinessUnit;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ChallengeController extends Controller
 {
+
+    public function __construct()
+    {
+         if(empty(Auth::id())){
+             redirect("/login");
+         }
+    }
+
     public function index(Request $request) {
 
         if(isset($request->year)){

@@ -154,12 +154,26 @@ class BankDepositFormController extends Controller
          ]);
         $validator->after(function ($validator) use($request) {
 
-            if(empty($request->pecsf_id) && $request->organization_code != "GOV")
+            if($request->organization_code != "GOV")
             {
-                $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                if(empty($request->pecsf_id))
+                {
+                    $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                }
+                else if(!is_numeric($request->pecsf_id))
+                {
+                    $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
+                }
             }
-            if(empty($request->bc_gov_id) && $request->organization_code == "GOV"){
-                $validator->errors()->add('bc_gov_id','A BC GOV ID is required.');
+            if($request->organization_code == "GOV"){
+                if(empty($request->bc_gov_id))
+                {
+                    $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+                }
+                else if(!is_numeric($request->bc_gov_id))
+                {
+                    $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                }
             }
 
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
@@ -193,32 +207,37 @@ class BankDepositFormController extends Controller
             }
             else{
                 $total = 0;
-                for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
 
-                    if(empty(request("id")[$i]))
-                    {
-                        $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
-                    }
-                    if(empty(request('vendor_id')[$i])){
-                        $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
-                    };
-                    if(empty(request('donation_percent')[$i])){
-                        $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
-                    }
-                    else if(!is_numeric(request('donation_percent')[$i])){
-                        $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
-                    }
-                    else{
-                        if(!empty(request("donation_percent")[$i]))
+                if($request->org_count < 1){
+                    $validator->errors()->add('charity','You need to Select a Charity.');
+                }
+                else{
+                    for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
+
+                        if(empty(request("id")[$i]))
                         {
-                            $total = request('donation_percent')[$i] + $total;
+                            $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
+                        }
+                        if(empty(request('vendor_id')[$i])){
+                            $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
+                        };
+                        if(empty(request('donation_percent')[$i])){
+                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
+                        }
+                        else if(!is_numeric(request('donation_percent')[$i])){
+                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
+                        }
+                        else{
+                            if(!empty(request("donation_percent")[$i]))
+                            {
+                                $total = request('donation_percent')[$i] + $total;
+                            }
                         }
                     }
-
-                }
-                if($total != 100) {
-                    for ($j = 0; $j < $request->org_count; $j++) {
-                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
+                    if($total != 100) {
+                        for ($j = 0; $j < $request->org_count; $j++) {
+                            $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
+                        }
                     }
                 }
             }
