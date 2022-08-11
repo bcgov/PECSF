@@ -304,10 +304,13 @@ class BankDepositFormController extends Controller
 
         foreach($upload_images as $key => $file){
 
-            if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
-            {
-                continue;
+            if(is_array($request->ignoreFiles)){
+                if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
+                {
+                    continue;
+                }
             }
+
 
                 $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                 $file->move(public_path( $this->doc_folder ), $filename);

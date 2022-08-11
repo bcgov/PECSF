@@ -192,7 +192,8 @@ class MaintainEventPledgeController extends Controller
         $multiple = 'false';
         // load the view and pass
 
-        return view('admin-pledge.event.index',compact('multiple','selected_charities','terms','charities','province_list','category_list','designation_list','cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
+        $organizations = [];
+        return view('admin-pledge.event.index',compact('organizations','multiple','selected_charities','terms','charities','province_list','category_list','designation_list','cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
 
 
     }
