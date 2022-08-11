@@ -23,8 +23,8 @@
         </select>
     </div>
 
-    <div class="charity-container form-group org_hook  col-md-12">
-        <h4 class="blue">Search Results</h4>
+    <div class="charity-container card form-group org_hook  col-md-12">
+        <h4 class="blue" style="padding-left:8px;">Search Results</h4>
         @include("volunteering.partials.organizations")
 
 
@@ -41,9 +41,9 @@
         <br>
         <br>
 
-<div class="charity-container form-group org_hook  col-md-12">
+<div class="charity-container card form-group org_hook  col-md-12">
 
-        <h4 class="blue">Your Charities</h4>
+        <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
 
         <table class="charity-container" id="organizations" style="display:none;width:100%">
             <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
