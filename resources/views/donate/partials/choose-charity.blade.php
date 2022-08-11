@@ -23,7 +23,7 @@
         </select>
     </div>
 
-    <div class="charity-container card form-group org_hook  col-md-12">
+    <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
         <h4 class="blue" style="padding-left:8px;">Search Results</h4>
         @include("volunteering.partials.organizations")
 
@@ -41,7 +41,7 @@
         <br>
         <br>
 
-<div class="charity-container card form-group org_hook  col-md-12">
+<div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
 
