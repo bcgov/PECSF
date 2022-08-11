@@ -103,7 +103,7 @@ formData.append($(this).attr("name"), $(this).val());
 else if($(this).attr('type') == "file"){
 //formData.append('attachments[]',  $(this)[0].files[0]);
 }
-else if($(this).val().length > 0){
+else{
 formData.append($(this).attr("name"), $(this).val());
 }
 }

@@ -14,7 +14,7 @@
         <div class="form-group col-md-4">
             <label for="organization_code">Organization code</label>
             <select type="text" class="form-control " name="organization_code" id="organization_code" placeholder="">
-                
+            <option value="null" selected="selected">Choose and Org Code</option>
 
             </select>
             <span class="organization_code_errors errors">
