@@ -55,7 +55,7 @@ class CharityController extends Controller
         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
                             ->orderBy('calendar_year', 'desc')->first();
         if ( !$campaignYear->isOpen() ) {
-    //        return redirect()->route('donations.list');
+            return redirect()->route('donations.list');
         }
 
         $pool_option = "C";
