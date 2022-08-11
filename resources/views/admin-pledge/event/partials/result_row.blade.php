@@ -1,6 +1,6 @@
 <tr>
     <td>{{$pledge->organization_code}}</td>
-    <td>{{$pledge->form_submitter_id}}</td>
+    <td>{{$pledge->pecsf_id ? $pledge->pecsf_id : $pledge->bc_gov_id}}</td>
     <td>{{$pledge->id}}</td>
     <td>{{$pledge->created_at}}</td>
     <td>{{$pledge->event_type}}</td>

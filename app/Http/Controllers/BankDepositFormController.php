@@ -286,17 +286,21 @@ class BankDepositFormController extends Controller
         );
 
         if($request->charity_selection == "dc"){
-            foreach($request->id as $key => $name){
+            $orgName = count($request->organization_name) -1;
+            $orgCount = $orgName;
+            foreach($request->organization_name as $org){
 
-               ;
-
+                if($orgName <= ($orgCount - $request->org_count)){
+                    break;
+                }
                 BankDepositFormOrganizations::create([
-                    'organization_name' => $request->id[$key],
-                    'vendor_id' => $request->vendor_id[$key],
-                    'donation_percent' => $request->donation_percent[$key],
-                    'specific_community_or_initiative' =>  (isset($request->specific_community_or_initiative[$key])?$request->specific_community_or_initiative[$key]:""),
+                    'organization_name' => $request->organization_name[$orgName],
+                    'vendor_id' => $request->vendor_id[$orgName],
+                    'donation_percent' => $request->donation_percent[$orgName],
+                    'specific_community_or_initiative' =>  (isset($request->additional[$orgName])?$request->additional[$orgName]:""),
                     'bank_deposit_form_id' => $form->id
                 ]);
+                $orgName--;
             }
         }
 
