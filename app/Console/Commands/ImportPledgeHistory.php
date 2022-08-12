@@ -7,7 +7,9 @@ use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
 use App\Models\RegionalDistrict;
 use App\Models\ScheduleJobAudit;
+use Illuminate\Support\Facades\DB;
 use App\Models\PledgeHistoryVendor;
+use App\Models\PledgeHistorySummary;
 use Illuminate\Support\Facades\Http;
 
 class ImportPledgeHistory extends Command
@@ -58,17 +60,21 @@ class ImportPledgeHistory extends Command
             'status' => 'Processing',
         ]);
         
-        $this->LogMessage( now() );
-        $this->LogMessage("Step - 1 : Update/Create - Region District");
-        $this->UpdateRegionalDistrict();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Step - 1 : Update/Create - Region District");
+        // $this->UpdateRegionalDistrict();
         
-        $this->LogMessage( now() );
-        $this->LogMessage("Step - 2 : Create - Pledge History Vendor");
-        $this->UpdatePledgeHistoryVendor();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Step - 2 : Create - Pledge History Vendor");
+        // $this->UpdatePledgeHistoryVendor();
+
+        // $this->LogMessage( now() );    
+        // $this->LogMessage("Step - 3 : Create - Pledge History");
+        // $this->UpdatePledgeHistory();
 
         $this->LogMessage( now() );    
-        $this->LogMessage("Step - 3 : Create - Pledge History");
-        $this->UpdatePledgeHistory();
+        $this->LogMessage("Step - 4 : Create - Pledge History Summary");
+        $this->UpdatePledgeHistorySummary();
 
         $this->LogMessage( now() );    
 
@@ -249,6 +255,11 @@ class ImportPledgeHistory extends Command
                         $this->LogMessage( '    -- each batch (1000) $key - '. $key );
                         foreach ($batch as $row) {
 
+                            // Skip if the GUID is blank
+                            if (empty($row->GUID)) {
+                                continue;
+                            }
+
                             // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 
                             $region = \App\Models\Region::where('code', $row->tgb_reg_district)->first(); 
@@ -314,6 +325,49 @@ class ImportPledgeHistory extends Command
 
         }
     }
+
+    protected function UpdatePledgeHistorySummary() {
+
+        // Truncate Pledge History table
+        PledgeHistorySummary::truncate();
+
+        DB::statement( $this->getInsertAnnualSummarySQL() );
+        DB::statement( $this->getInsertNonAnnualSummarySQL() );
+
+    }
+
+    private function getInsertAnnualSummarySQL(): string
+    {
+        return <<<SQL
+            insert into pledge_history_summaries
+                (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region)
+                select min(pledge_histories.id), GUID, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,  
+                    campaign_type, frequency, max(per_pay_amt),  max(pledge) as pledge, 
+                    case when max(source) = 'Pool' then (select regions.name from regions where max(pledge_histories.tgb_reg_district)  = regions.code) else '' end
+                from pledge_histories  
+                where campaign_type in ('Annual') 
+                  and GUID <> ''
+                group by GUID, yearcd, campaign_type, frequency;
+        SQL;
+
+    }
+
+    private function getInsertNonAnnualSummarySQL(): string
+    {
+        return <<<SQL
+            insert into pledge_history_summaries               
+                (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region)
+                select pledge_histories.id, GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,
+                    campaign_type, frequency, per_pay_amt, pledge,    
+                    case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end
+                    from pledge_histories 
+                where `campaign_type` not in ('Annual') 
+                    and GUID <> '';
+        SQL;
+
+    }
+
+
 
 
     protected function LogMessage($text) 
