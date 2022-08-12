@@ -60,17 +60,17 @@ class ImportPledgeHistory extends Command
             'status' => 'Processing',
         ]);
         
-        // $this->LogMessage( now() );
-        // $this->LogMessage("Step - 1 : Update/Create - Region District");
-        // $this->UpdateRegionalDistrict();
+        $this->LogMessage( now() );
+        $this->LogMessage("Step - 1 : Update/Create - Region District");
+        $this->UpdateRegionalDistrict();
         
-        // $this->LogMessage( now() );
-        // $this->LogMessage("Step - 2 : Create - Pledge History Vendor");
-        // $this->UpdatePledgeHistoryVendor();
+        $this->LogMessage( now() );
+        $this->LogMessage("Step - 2 : Create - Pledge History Vendor");
+        $this->UpdatePledgeHistoryVendor();
 
-        // $this->LogMessage( now() );    
-        // $this->LogMessage("Step - 3 : Create - Pledge History");
-        // $this->UpdatePledgeHistory();
+        $this->LogMessage( now() );    
+        $this->LogMessage("Step - 3 : Create - Pledge History");
+        $this->UpdatePledgeHistory();
 
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 4 : Create - Pledge History Summary");
