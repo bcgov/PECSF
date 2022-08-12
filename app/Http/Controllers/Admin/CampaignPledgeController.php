@@ -192,12 +192,12 @@ class CampaignPledgeController extends Controller
 
                 //
                 $selected_charities =[];
-
                 $_charities = Charity::whereIn('id', $request->charities)->get() ?? [];
 
                 foreach ($_charities as $key => $charity) {
-                    $charity['additional'] = $request->additional[$key];
-                    $charity['percentage'] = $request->percentages[$key];
+                    $idx = array_search( $charity->id,  $request->charities);
+                    $charity['additional'] = $request->additional[$idx];
+                    $charity['percentage'] = $request->percentages[$idx];
                     array_push($selected_charities, $charity);
                 }
 
@@ -284,7 +284,6 @@ class CampaignPledgeController extends Controller
 
                 $last_key = array_key_last($request->charities);
                 foreach($request->charities as $key => $charity) {
-
                     $percent = $request->percentages[$key];
 
                     $new_one_time = round( $percent * $one_time_amount /100, 2);
