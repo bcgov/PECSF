@@ -15,7 +15,15 @@ class AddIndexYearcdInPledgeHistoriesTable extends Migration
     {
         Schema::table('pledge_histories', function (Blueprint $table) {
             //
-            $table->index(['GUID', 'yearcd', 'campaign_type', 'frequency'], 'pledge_histories_guid_plus_others');
+
+            $table->string('source',20)->change();
+            $table->string('yearcd',20)->change();
+            $table->string('GUID', 50)->nullable()->change();
+            $table->string('campaign_type',20)->change();
+            $table->string('frequency',20)->change();
+            $table->string('tgb_reg_district',20)->nullable()->change();
+
+            $table->index(['source', 'GUID', 'yearcd', 'campaign_type', 'frequency', 'tgb_reg_district'], 'pledge_histories_guid_plus_others');
             
         });
     }
@@ -29,6 +37,7 @@ class AddIndexYearcdInPledgeHistoriesTable extends Migration
     {
         Schema::table('pledge_histories', function (Blueprint $table) {
             //
+
             $table->dropIndex('pledge_histories_guid_plus_others');
         });
     }

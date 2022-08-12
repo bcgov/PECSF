@@ -60,13 +60,6 @@ class CreatePledgeHistoryView extends Migration
                 from donate_now_pledges, users
                 where donate_now_pledges.user_id = users.id)
             union all 
-               (select 'BI', min(pledge_histories.id), GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,  
-                campaign_type, frequency, per_pay_amt,  max(pledge) as pledge, 
-                    case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end 
-                from pledge_histories  
-                where campaign_type in ('Annual') 
-                group by GUID, yearcd, yearcd, campaign_type, frequency)
-            union all 
                 (select 'BI', pledge_histories.id, GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,
                 campaign_type, frequency, per_pay_amt, pledge,    
                 (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code)
