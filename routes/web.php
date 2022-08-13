@@ -8,34 +8,35 @@ use App\Http\Controllers\PledgeController;
 use App\Http\Controllers\CharityController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ChallengeController;
+use App\Http\Controllers\DonateNowController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\VolunteeringController;
-use App\Http\Controllers\PledgeCharityController;
 
+use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
+
+
 use App\Http\Controllers\Admin\CRACharityController;
-
-
+use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
+
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
-
+use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
+use App\Http\Controllers\System\ScheduleJobAuditController;
+
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
-
-use App\Http\Controllers\System\AccessLogController;
-use App\Http\Controllers\System\UserMaintenanceController;
-use App\Http\Controllers\System\ScheduleJobAuditController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,7 +74,7 @@ Route::get('/donate', [CharityController::class, 'start'])->name('donate');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
-Route::get('donations/old-pledge-detail', [DonationController::class, 'oldPledgeDetail'])->name('donation.old-pledge-detail');
+Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
 Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
     Route::get('/start', [CharityController::class, 'start'])->name('start');
     Route::get('/select', [CharityController::class, 'select'])->name('select-charities');
@@ -101,7 +102,11 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
 });
 
-
+// Donate Now
+Route::middleware(['auth'])->group(function () {
+    Route::resource('donate-now', DonateNowController::class)->except(['show','destroy']);
+    Route::get('/donate-now/thank-you', [DonateNowController::class, 'thankYou'])->name('donate-now.thank-you');
+});
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');

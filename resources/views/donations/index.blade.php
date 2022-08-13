@@ -41,7 +41,7 @@
         @if($pledges->count() > 0)
             <div class="flex-fill"></div>
             @if (!$campaignYear->isOpen() )
-                <x-button :href="route('donate')">Donate to PECSF Now</x-button>
+                <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
             @endif
             <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
         @endif
@@ -64,7 +64,8 @@
             </div>
         </div>
         {{-- @if($pledges->count() > 0) --}}
-        @if ($old_pledges_by_yearcd->count() > 0 or $old_bi_pledges_by_yearcd->count() > 0 )
+        {{-- @if ($old_pledges_by_yearcd->count() > 0 or $old_bi_pledges_by_yearcd->count() > 0 ) --}}
+        @if ($pledges_by_yearcd->count() > 0) 
             @include('donations.partials.history')
         @else
         <div class="text-center text-primary">
@@ -133,7 +134,7 @@
         yearcd = $(this).data('yearcd');
         frequency = $(this).data('frequency');
         source = $(this).data('source');
-        type = $(this).data('type');
+        donation_type = $(this).data('type');
         id  = $(this).data('id');
 
         target = '.modal-body';
@@ -143,9 +144,9 @@
         if ( yearcd  ) {
             // Lanuch Modal page for listing the Pool detail
             $.ajax({
-                url: '/donations/old-pledge-detail',
+                url: '{{ route("donations.pledge-detail") }}',
                 type: 'GET',
-                data: 'yearcd='+ yearcd + '&frequency='+ frequency +'&source='+ source + '&id='+id+ '&type='+type   ,
+                data: 'yearcd='+ yearcd + '&frequency='+ frequency +'&source='+ source + '&id='+id+ '&donation_type='+donation_type   ,
                 dataType: 'html',
                 success: function (result) {
                     // $('.modal-title span').html(name);
