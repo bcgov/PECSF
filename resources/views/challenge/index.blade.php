@@ -93,9 +93,9 @@ Campaign Year
                     @endphp
 
                     <td>{{$charity['name']}}</td>
-                    <td>{{round(($charity['participation_rate'] * 100))}}%</td>
-                    <td>{{round($charity['previous_participation_rate'])}}%</td>
-                    <td>{{round($charity['change'])}}%</td>
+                    <td>{{is_numeric($charity['participation_rate'])? round($charity['participation_rate'] * 100) : "No Data"}}%</td>
+                    <td>{{is_numeric($charity['previous_participation_rate']) ? round($charity['previous_participation_rate']): "No Data"}}%</td>
+                    <td>{{is_numeric($charity['change']) ? round($charity['change']) : "No Data"}}%</td>
                     <td>{{$charity['donors']}}</td>
                     <td>${{number_format($charity['dollars'])}}</td>
                 </tr>
