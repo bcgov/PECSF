@@ -143,7 +143,7 @@ class BankDepositFormController extends Controller
             'deposit_date'         => 'required|before:today',
             'deposit_amount'         => 'required|integer',
             'employment_city'         => 'required',
-            'postal_code'         => 'postal_code:CA',
+            'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
             'region'         => 'required',
             'business_unit'         => 'required',
             'charity_selection' => 'required',
