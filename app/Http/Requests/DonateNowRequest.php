@@ -68,6 +68,9 @@ class DonateNowRequest extends FormRequest
 
             // 'campaign_year_id.unique' => 'The campaign year has already been taken',
             // 'user_id.required'       => 'The Employee field is required',
+
+            'pool_id.required_if' => 'You have not chosen any Fund Supported Pool. The Fund Supported Pool is required when selected Pool option.',
+            'charity_id.required_if' => 'You have not chosen any charities. The charity is required when selected Charity option.',
         ];
     }
 

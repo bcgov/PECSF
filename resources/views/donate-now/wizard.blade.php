@@ -35,9 +35,12 @@
                     </div>
                 </div>
             
+            <div id="error-message" class="m-4 p-3 alert alert-warning" style="display:none"></div>
+
+
               <div class="card-body py-0">
                 <form action="{{ isset($pledge) ? route("donate-now.update", $pledge->id) : route("donate-now.store") }}" 
-                        id="admin-pldege-campaign-form" method="POST">
+                        id="donate-now-pledge-form" method="POST">
                     @csrf
                     @isset($pledge)
                         @method('PUT')
@@ -75,7 +78,7 @@
                             </span>
 
                             <span id="charity-selection-section">
-                                {{-- @include('donate-now.partials.choose-charity') --}}
+                                @include('donate-now.partials.choose-charity')
                             </span>
                         </div>
 
@@ -384,24 +387,25 @@ $(function () {
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
             if (step == 1) {
-                fields = ['campaign_year_id','organization_id', 'user_id', 'pecsf_id', 'pecsf_first_name', 'pecsf_last_name', 'pecsf_city'];
+                fields = ['pool_option', 'pool_id'];
             }
             if (step == 2) {
-                fields = ['pay_period_amount_other', 'one_time_amount_other'];
+                fields = ['pool_id', 'charity_id', 'special_program'];
             }
             if (step == 3) {
-                fields = ['pool_option', 'pool_id'];                
+                fields = ['one_time_amount', 'one_time_amount_custom'];                
             }
 
             $.each( fields, function( index, field_name ) {
-                $('#admin-pldege-campaign-form [name='+ field_name +']').nextAll('span.text-danger').remove();
-                $('#admin-pldege-campaign-form [name='+ field_name +']').removeClass('is-invalid');
+                $('#donate-now-pledge-form [name='+ field_name +']').nextAll('span.text-danger').remove();
+                $('#donate-now-pledge-form [name='+ field_name +']').removeClass('is-invalid');
             });
-            $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
-            $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
 
-            var form = $('#admin-pldege-campaign-form');
-            $('#admin-pldege-campaign-form input[name=step]').val( step );
+            $('#error-message').html('');
+            $('#error-message').hide();
+
+            var form = $('#donate-now-pledge-form');
+            $('#donate-now-pledge-form input[name=step]').val( step );
 
             $.ajax({
                 method: "POST",
@@ -417,10 +421,18 @@ $(function () {
                     if (step == 3)  {
                             $('#summary-page').html(data); 
                     }
+
                 },
                 error: function(response) {
                     valid = false;
                     if (response.status == 422) {   
+                        
+                        // $('#error-message').html( response.responseJSON.errors );
+                        $('#error-message').html('');
+                        $.each(response.responseJSON.errors, function( field_name, error){
+                            $('#error-message').append('<div class="text-strong text-danger">' + error + '</div>');
+                        })
+                        $('#error-message').show();
                         // $.each(response.responseJSON.errors, function(field_name,error){
                         //     if ( field_name.includes('.') ) {   
                         //         items = field_name.split(".");
@@ -440,221 +452,17 @@ $(function () {
         return valid;
     }
 
-    // On page 1 - reset Donor/User Profile
-    function reset_user_profile_info() {
-        $('#user_first_name').val('');
-        $('#user_last_name').val('');
-        $('#user_email').val('');
-        $('#user_emplid').val('');
-        $('#user_dept').val('');
-        $('#user_bu').val('');
-        $('#user_org').val('');
-        $('#user_region').val('');  
-    }
+    // On page 1 - Option Pool or Charity 
 
-    $('#organization_id').change( function() {
+    // On Page 2 -- Select Pool or Select Charity 
 
-        pledge_id = $('#pledge_id').val();
-        if (!pledge_id) {
-            reset_user_profile_info();
-        }
-        $('#user_id').val(null).trigger('change');
-        
-        code = $("select[name='organization_id']").find(":selected").attr('code');
-        if (code == 'GOV') {
-            $('.emplid_section').show();   
-            $('.pecsf_id_section').hide();
-        } else {
-            $('.emplid_section').hide();   
-            $('.pecsf_id_section').show();
-        }
+    // On Page 3
 
-    });
-
-    $('#user_id').select2({
-        allowClear: true,
-        placeholder: "Type employee ID",
-        ajax: {
-            url: '{{ route('admin-pledge.administrators.users') }}'
-            , dataType: 'json'
-            , delay: 250
-            , data: function(params) {
-                var query = {
-                     'org_id' : $('#organization_id').val(),
-                    'q': params.term
-                , }
-                return query;
-            }
-            , processResults: function(data) {
-                return {
-                    results: data
-                    };
-            }
-            , cache: false
-        }
-    });
-
-    $('#user_id').on('select2:select', function (e) {
-        var data = e.params.data;
-            
-        reset_user_profile_info();
-        if (data.emplid) {
-            $('#user_first_name').val( data.first_name );
-            $('#user_last_name').val( data.last_name );
-            $('#user_email').val( data.email);
-            $('#user_emplid').val( data.emplid );
-            $('#user_dept').val( data.department );
-            $('#user_bu').val( data.business_unit );
-            $('#user_org').val( data.organization);
-            $('#user_region').val(data.region);
-        }
-    });
-
-    $('#user_id').on('select2:unselect', function (e) {
-        var data = e.params.data;
-            reset_user_profile_info();            
-    });
-
-
-    function get_nongov_user_detail() {
-
-        // clean up the old values 
-        $('#pecsf_first_name').val('');
-        $('#pecsf_last_name').val('');
-        $('#pecsf_city').val('');
-        
-        $.get({
-            url: '{{ route('admin-pledge.administrators.nongovuser') }}' + 
-                        '?org_id=' + $('#organization_id').val() +
-                        '&pecsf_id=' + $('#pecsf_id').val(),
-            dataType: 'json',
-            async: false,
-            cache: false,
-            timeout: 30000,
-            success: function(data)
-            {
-                console.log( data );
-                if(data) {
-                    $('#pecsf_first_name').val( data.first_name );
-                    $('#pecsf_last_name').val( data.last_name );
-                    $('#pecsf_city').val( data.city );
-                }
-
-            },
-            error: function(response) {
-                 console.log('Error');
-            }
-        });
-    }
-
-    $('#pecsf_id').on('blur', function (e) {
-        e.stopPropagation();
-        get_nongov_user_detail();
-    })
-
-    $('#pecsf_id').on('keypress', function (e) {
-        e.stopPropagation();
-
-        var keycode = (e.keyCode ? e.keyCode : e.which);
-        if(keycode == '13') {
-            // console.log('enter pressed - ' +  this.value);
-            get_nongov_user_detail();
-        }
-    })
-
-
-    // Page 2 -- Amount
-    function reallocate_charity_amount( elem ) {
-
-        // Calculate bi-weekly amount
-        pay_period_amount = $("input[name='pay_period_amount']:checked").val();
-        pay_period_amount_other = $("input[name='pay_period_amount_other']").val();
-        pay_period_amt = Math.max(pay_period_amount, pay_period_amount_other);
-        $('#pay_period_figure').html( parseFloat(pay_period_amt).toFixed(2) );
-
-        if($.isNumeric(pay_period_amt)){
-                pay_period_amt_allocated = parseFloat( pay_period_amt * elem.value / 100).toFixed(2) ;
-                $(elem).closest('div.form-row').find("input[name='pay_period_allocated_amount[]']").val( pay_period_amt_allocated );
-         } else {
-             //Not a number
-         }
-
-        // Calculate one-time amount
-        one_time_amount = $("input[name='one_time_amount']:checked").val();
-        one_time_amount_other = $("input[name='one_time_amount_other']").val();
-        one_time_amt = Math.max(one_time_amount, one_time_amount_other);
-        $('#one_time_figure').html( parseFloat(one_time_amt).toFixed(2) );
-        
-        if($.isNumeric(one_time_amt)){
-                one_time_amt_allocated = parseFloat( one_time_amt * elem.value / 100).toFixed(2) ;
-                $(elem).closest('div.form-row').find("input[name='one_time_allocated_amount[]']").val( one_time_amt_allocated );
-         } else {
-             //Not a number
-         }
-
-    }
-
-    // function recalculate_allocation() {
-    //     $("#method-selection-2 input[name='percentages[]'").each(function() {
-    //         //$( this ).toggleClass( "example" );
-    //         console.log( this );
-    //         reallocate_charity_amount( this );
-    //     });
-    // }
-
-
-    // $("input[name=pay_period_amount_other]").focus(function() {
-    //     $("input[name=pay_period_amount][value='']").prop('checked', true);
-    //     recalculate_allocation();
-    // });
-
-    // $("input[name=pay_period_amount]").change(function() {
-    //     $("input[name=pay_period_amount_other]").val('');
-    //     recalculate_allocation();
-    // });
-
-    // $("input[name=one_time_amount_other]").focus(function() {
-    //     $("input[name=one_time_amount][value='']").prop('checked', true);
-    //     recalculate_allocation();
-    // });
-
-    // $("input[name=one_time_amount]").change(function() {
-    //     $("input[name=one_time_amount_other]").val('');
-    //     recalculate_allocation();
-    // });
-
-
-    // Page 3
-    // function to initialize select2 dynamic
-    function initializeSelect2(selectElementObj) {
-        selectElementObj.select2({
-            placeholder: 'select charity',
-            allowClear: true,
-            ajax: {
-                url: '/settings/fund-supported-pools/charities'
-                , dataType: 'json'
-                , delay: 250
-                , data: function(params) {
-                    var query = {
-                        'q': params.term
-                    , }
-                    return query;
-                }
-                , processResults: function(data) {
-                    return {
-                        results: data
-                        };
-                }
-                , cache: false
-            }
-        });
-    }
-
-    // Page 4 -- summary (handle single submission only )
+    // On Page 4 -- summary (handle single submission only )
     $(document).on("click", "button[type='submit']", function(e) {
 
         // this.disabled = true;
-        $("#admin-pldege-campaign-form").submit(function(e){
+        $("#donate-now-pledge-form").submit(function(e){
             if(submit_count > 0){
                 e.preventDefault();
             }
@@ -662,25 +470,10 @@ $(function () {
         });
     });        
 
-    //onload: call the above function 
-    $("select[name='charities[]']").each(function() {
-        initializeSelect2($(this));
-    });
-
-    $(document).on("select2:select", "select[name='charities[]']", function(e) {
-        $(e.target).closest('td').find("input[name='additional[]']").val('');
-    });
-
-    $(document).on("select2:clear", "select[name='charities[]']", function(e) {
-        $(e.target).closest('td').find("input[name='additional[]']").val('');
-    });
-
-    
-
 });
 
 </script>
 
-{{-- @include('donate-now.partials.choose-charity-js') --}}
+@include('donate-now.partials.choose-charity-js')
 
 @endpush

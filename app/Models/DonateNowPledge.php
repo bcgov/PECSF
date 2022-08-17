@@ -11,7 +11,7 @@ class DonateNowPledge extends Model
 
     protected $fillable = [
         'organization_id', 'user_id', 'pecsf_id', 'yearcd', 'seqno',
-        'type', 'f_s_pool_id', 'charity_id',
+        'type', 'f_s_pool_id', 'charity_id', 'special_program',
         'one_time_amount',
         'first_name', 'last_name', 'city',
         'ods_export_status', 'ods_export_at',
