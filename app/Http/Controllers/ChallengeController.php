@@ -40,8 +40,13 @@ class ChallengeController extends Controller
             ->join("elligible_employees","business_units.code","=","elligible_employees.business_unit")
             ->where('donor_by_business_units.yearcd',"=",$year)
             ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
-            ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
-            ->orderBy((($request->field && $request->field != 'change') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+            ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
+
+        if(strlen($request->organization_name) > 0){
+            $charities = $charities->where("business_units.name","LIKE",$request->organization_name."%");
+        }
+
+        $charities = $charities->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
             ->limit(500)
             ->get();
 
@@ -51,9 +56,13 @@ class ChallengeController extends Controller
                 ->join("elligible_employees","business_units.code","=","elligible_employees.business_unit")
                 ->where('donor_by_business_units.yearcd',"=",$year)
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
-                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year))
-                ->orderBy((($request->field && $request->field != 'change') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
-                ->count();
+                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
+
+            if(strlen($request->organization_name) > 0){
+                $count = $count->where("business_units.name","LIKE",$request->organization_name."%");
+            }
+                $count = $count->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+                    ->count();
         }
         else{
             $count = 1 ;
@@ -67,7 +76,7 @@ class ChallengeController extends Controller
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
                 ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
                 ->where('business_units.id',"=",$charity->id)
-                ->orderBy((($request->field && $request->field != 'change') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+                ->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
                 ->first();
 
             if(!empty($previousYear))
@@ -78,8 +87,8 @@ class ChallengeController extends Controller
             }
             else
             {
-                $charities[$index]->previous_participation_rate = "No Data";
-                $charities[$index]->previous_donors = "No Data";
+                $charities[$index]->previous_participation_rate = 0;
+                $charities[$index]->previous_donors = 0;
                 $charities[$index]->change = 0;
             }
         }
@@ -93,6 +102,18 @@ class ChallengeController extends Controller
             else
             {
                 $charities = $charities->sortByDesc("change");
+            }
+        }
+
+        if($request->field == "previous_participation_rate")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("previous_participation_rate");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("previous_participation_rate");
             }
         }
 

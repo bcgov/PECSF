@@ -47,7 +47,7 @@ class BankDepositFormController extends Controller
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::all();
+        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
@@ -140,8 +140,8 @@ class BankDepositFormController extends Controller
             'campaign_year'         => 'required',
             'event_type'         => 'required',
             'sub_type'         => 'required',
-            'deposit_date'         => 'required|before:today',
-            'deposit_amount'         => 'required|integer',
+            'deposit_date'         => 'required|before:tomorrow',
+            'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
             'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
             'region'         => 'required',

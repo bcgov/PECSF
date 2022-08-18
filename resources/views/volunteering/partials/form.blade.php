@@ -88,8 +88,8 @@
                 <option value="">Select an event type</option>
                 <option value="Cash One-Time Donation">Cash one-time donation</option>
                 <option value="Cheque One-Time Donation">Cheque one-time donation</option>
-                <option value="Fundraiser">fundraiser</option>
-                <option value="Gaming">gaming</option>
+                <option value="Fundraiser">Fundraiser</option>
+                <option value="Gaming">Gaming</option>
             </select>
             <span class="event_type_errors errors">
                        @error('form_submitter')
@@ -296,7 +296,7 @@
         @foreach( $pools as $pool )
             <div class="form-group col-md-2 form-pool">
 
-                <div class="card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+                <div class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
                     {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
@@ -308,11 +308,11 @@
                         </div>
                         <br>
 
-                        <label style="font-weight:bold;font-size:12px;text-align: center;
+                        <label style="font-weight:bold;font-size:16px;text-align: center;
     width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
-                        <span style="color:#1a5a96;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
+                        <span style="font-size:16px;color:#1a5a96;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
                               data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}">View Details</span>
                     </div>
 
@@ -392,9 +392,9 @@
         <h5 style="padding-left:20px;">Freedom of Information and Protection of Privacy Act</h5>
     <p style="padding:20px;">
 
-        Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting your charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.
-        Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or PECSF@gov.bc.ca.
-    </p>
+        Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting your charitable contributions to the Community Fund and for program evaluation and improvement under sections 26 (c) and (e) of the Freedom of Information and Protection of Privacy Act.
+
+        Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.  </p>
         </div>
     </div>
 </form>

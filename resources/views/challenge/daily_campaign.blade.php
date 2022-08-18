@@ -9,24 +9,17 @@
 @endphp
 @extends('adminlte::page')
 @section('content_header')
-
+    <h1>Daily Campaign</h1>
     <ul class="nav nav-pills mb-3" id="pills-tab" >
-        <li class="nav-item">
-            <a class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.leaderboard') ? 'active' : ''); ?>"
-
-               href="<?php echo e(route('challege.leaderboard')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">Leaderboard</a>
+        <li class="nav-item col-md-3">
+            <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.index') ? 'active' : ''); ?>"
+               href="<?php echo e(route('challege.index')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">Leaderboard</a>
         </li>
-
-        <li class="nav-item">
-            <a class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.daily_campaign') ? 'active' : ''); ?>"
-
+        <li class="nav-item col-md-3">
+            <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.daily_campaign') ? 'active' : ''); ?>"
                href="<?php echo e(route('challege.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
         </li>
-
-
     </ul>
-
-
 @endsection
 @section('content')
 

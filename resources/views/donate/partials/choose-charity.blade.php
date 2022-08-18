@@ -26,16 +26,6 @@
     <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
         <h4 class="blue" style="padding-left:8px;">Search Results</h4>
         @include("volunteering.partials.organizations")
-
-
-        <div>
-            @if($organizations)
-                {{$organizations->links()}}
-            @else
-
-            @endif
-
-        </div>
     </div>
     <div class="col-md-3"></div>
         <br>
