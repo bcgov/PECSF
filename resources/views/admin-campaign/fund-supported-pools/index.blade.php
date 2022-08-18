@@ -36,8 +36,8 @@
 
             <div class="category-filter">
                 <select id="effectiveTypeFilter" class="form-control form-control-sm ml-1">
-                    <option value="">Show All</option>
-                    <option value="C" selected>Current</option>
+                    <option value="" selected>Show All</option>
+                    <option value="C">Current</option>
                     <option value="F">Future</option>
                     <option value="H">History</option>
                 </select>

@@ -264,7 +264,13 @@
                             error = error[0] + error[1].substring(1,error[1].length);
                             error = error.replace("_"," ");
 
-                            $("#charity"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>')
+                            charity_tags = $('#fspools_table tr');
+                            charity_name = "#charity"+count;
+                            if(!isNaN(count)) {
+                               charity_name = "#"+charity_tags[count].id;
+                            } 
+
+                            $(charity_name).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>')
                             $("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>')
                         }
                     }
@@ -336,7 +342,7 @@ $(function() {
         e.preventDefault();
 
         Swal.fire({
-            text: 'Are you sure to delete this line ?'  ,
+            text: 'Are you sure you want to remove this charity ?'  ,
             // icon: 'question'
             //showDenyButton: true,
             showCancelButton: true,
