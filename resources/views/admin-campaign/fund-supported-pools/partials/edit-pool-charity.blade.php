@@ -98,7 +98,7 @@
                     @enderror
                 </div>
                 <div class="form-group col-md-5">
-                    <label for="contact_titles">Charity Program Contact Title</label>
+                    <label for="contact_titles">Charity Program Contact Title  (Optional)</label>
                     <input type="text" name="contact_titles[]" class="form-control @error('contact_titles.'.$index) is-invalid @enderror" 
                         value="{{ old('contact_titles.' . $index) ?? (count($errors) == 0 ? $pool_charity->contact_title : '') }}" />
                     @error( 'contact_titles.'.$index )
@@ -118,7 +118,7 @@
                 </div>
 
                 <div class="form-group col-md-8">
-                    <label for="notes">Notes</label>
+                    <label for="notes">Notes  (Optional)</label>
                     <input type="text" name="notes[]" class="form-control @error('notes.'.$index) is-invalid @enderror" 
                         value="{{ old('notes.' . $index) ?? (count($errors) == 0 ? $pool_charity->notes : '') }}" />
                     @error( 'notes.'.$index )
@@ -142,7 +142,7 @@
                 <div class="form-group col-md-6">
                     
                     <div class="image">
-                        <label for="images">Upload new image file</label>
+                        <label for="images">Upload new image file (suggested file types: .png, .jpg, .svg)</label>
                         <input type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror" 
                                 name="images[]" value="{{ old('images.'.$index) }}">
                         @error( 'images.'.$index )

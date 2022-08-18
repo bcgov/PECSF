@@ -104,8 +104,10 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
 
 // Donate Now
 Route::middleware(['auth'])->group(function () {
-    Route::resource('donate-now', DonateNowController::class)->except(['show','destroy']);
+    Route::resource('donate-now', DonateNowController::class)->except(['show','edit','update','destroy']);
     Route::get('/donate-now/thank-you', [DonateNowController::class, 'thankYou'])->name('donate-now.thank-you');
+    Route::get('/donate-now/charities', [DonateNowController::class, 'searchCharities'])->name('donate-now.charities');
+    Route::get('/donate-now/{id}/summary', [DonateNowController::class, 'summary'])->name('donate-now.summary');
 });
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {

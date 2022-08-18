@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\DonateNowRequest;
+use Illuminate\Support\Facades\Session;
 
 
 
@@ -134,15 +135,17 @@ class DonateNowController extends Controller
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $pool_option,
-            'f_s_pool_id' => $request->pool_id ?? null,
-            'charity_id' => $request->charity_id ?? null,
+            'f_s_pool_id' => ($pool_option == 'P' ? $request->pool_id : null),
+            'charity_id' =>  ($pool_option == 'C' ? $request->charity_id : null),
             'one_time_amount' => $one_time_amount ?? 0,
+            'special_program' => $request->special_program,
             'created_by_id' => $user->id,
             'updated_by_id' => $user->id,
         ]);
 
         $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
 
+        Session::flash('pledge_id', $pledge->id ); 
         return redirect()->route('donate-now.thank-you')
                 ->with('success', $message_text);
         
@@ -241,14 +244,17 @@ class DonateNowController extends Controller
         $organization_id = $user->organization_id;
 
         $pledge->type  = $pool_option;
-        $pledge->f_s_pool_id  = $request->pool_id ?? null;
-        $pledge->charity_id  = $request->charity_id ?? null;
+        $pledge->f_s_pool_id  = ($pool_option == 'P' ? $request->pool_id : null);
+        $pledge->charity_id  = ($pool_option == 'C' ? $request->charity_id : null);
         $pledge->one_time_amount = $one_time_amount ?? 0;
+        $pledge->special_program = $request->special_program;
         $pledge->updated_by_id = $user->id;
         $pledge->save();
 
+       Session::flash('pledge_id', $pledge->id ); 
        return redirect()->route('donate-now.thank-you')
-                ->with('success','Pledge with Transaction ID ' . $pledge->id . ' have been updated successfully');
+                    ->with(['success' => 'Pledge with Transaction ID ' . $pledge->id . ' have been updated successfully'
+                           ]);
 
     }
 
@@ -266,8 +272,76 @@ class DonateNowController extends Controller
 
     public function thankYou()
     {
-        return view('donate-now.thankyou');
+        $pledge_id = session()->get('pledge_id');
+
+        if ($pledge_id) {
+            return view('donate-now.thankyou', compact('pledge_id') );
+        } else {
+            return abort(403);
+        }
+
     }
 
 
+    public function searchCharities(Request $request)
+    {
+        $charities = Charity::where("charity_status","=","Registered");
+
+        if($request->province != "")
+        {
+            $charities->where("province","=",$request->province);
+        }
+
+        if($request->category != "")
+        {
+            $charities->where("category_code","=",$request->category);
+        }
+
+        if($request->keyword != "")
+        {
+            $charities->where("charity_name","LIKE","%".$request->keyword."%");
+        }
+
+        $charities = $charities->paginate(7);
+        $total = $charities->total();
+
+        return view('donate-now.partials.search-charity-result', compact('charities','total'))->render();
+    }
+
+    public function summary(Request $request, $id) {
+
+        $pledge = DonateNowPledge::where('id', $id)->first();
+
+        // Make sure this transaction is for the current logged user 
+        if (!$pledge) {
+            return abort(404);
+        } elseif  (!($pledge->user_id == Auth::id())) {
+            return abort(403);
+        }
+
+        $user = User::where('id', $pledge->user_id )->first();
+
+        $one_time_amount = $pledge->one_time_amount;
+        $in_support_of = "";
+        if ($pledge->type == 'P')  {
+            $pool  = FSPool::current()->where('id', $pledge->f_s_pool_id)->first();
+            $in_support_of = $pool ? $pool->region->name : '';
+        } else {
+            $charity = Charity::where('id', $pledge->charity_id)->first();
+            $in_support_of = $charity ? $charity->charity_name : '';
+        }
+
+        // download PDF file with download method
+        if(isset($request->download_pdf)){
+            // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
+            //     'pledge', 'pledges_by_yearcd'));
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
+            return $pdf->download('Donation Summary.pdf');
+        } else {
+            return view('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
+        }
+     
+    }
+
 }
+

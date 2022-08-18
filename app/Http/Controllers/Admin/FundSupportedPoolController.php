@@ -67,22 +67,38 @@ class FundSupportedPoolController extends Controller
 
             return Datatables::of($pools)
                 ->addColumn('action', function ($pool) {
-                    $html = '<a href="'. route('settings.fund-supported-pools.show', $pool->id) .
-                            '"class="btn btn-info btn-sm  show-pool" data-id="'. $pool->id .'" >Show</a>' ;
+                    // $html = '<a href="'. route('settings.fund-supported-pools.show', $pool->id) .
+                    //         '"class="btn btn-info btn-sm  show-pool" data-id="'. $pool->id .'" >Show</a>' ;
+                    // if ($pool->canDelete) {
+                    //     $html .= '<a href="'. route('settings.fund-supported-pools.edit', $pool->id) .
+                    //         '"class="btn btn-primary btn-sm ml-2 edit-pool" data-id="'. $pool->id .'" >Edit</a>';
+                    //     // $html .= '<button type="button" class="btn btn-danger btn-sm ml-2 delete-pool" data-toggle="modal" ' .
+                    //     //     ' "data-target="#pool-delete-modal" data-id="'. $pool->id .
+                    //     //     ' "data-region="' . $pool->region->name . '">Delete</button>';
+                    // }
+                    // if ($pool->EffectiveType == 'C') {
+                    //     $html .= '<a class="btn btn-success btn-sm ml-2 duplicate-pool" data-id="'. $pool->id .
+                    //         '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Duplicate</a>';
+                    // }
+                    // if ($pool->canDelete) {
+                    //     $html .= '<a class="btn btn-danger btn-sm ml-2 delete-pool" data-id="'. $pool->id .
+                    //         '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Delete</a>';
+                    // }
+                    $html = '<form action="'. route('settings.fund-supported-pools.show', $pool->id) . '" style="display:inline">' .
+                                '<input class="btn btn-info btn-sm show-pool" type="submit" value="Show">' .               
+                            '</form>';
                     if ($pool->canDelete) {
-                        $html .= '<a href="'. route('settings.fund-supported-pools.edit', $pool->id) .
-                            '"class="btn btn-primary btn-sm ml-2 edit-pool" data-id="'. $pool->id .'" >Edit</a>';
-                        // $html .= '<button type="button" class="btn btn-danger btn-sm ml-2 delete-pool" data-toggle="modal" ' .
-                        //     ' "data-target="#pool-delete-modal" data-id="'. $pool->id .
-                        //     ' "data-region="' . $pool->region->name . '">Delete</button>';
+                        $html .= '<form action="'. route('settings.fund-supported-pools.edit', $pool->id) . '" style="display:inline">' .
+                                    '<input class="btn  btn-primary btn-sm ml-2 edit-pool" type="submit" value="Edit">' .               
+                                  '</form>';
                     }
                     if ($pool->EffectiveType == 'C') {
-                        $html .= '<a class="btn btn-success btn-sm ml-2 duplicate-pool" data-id="'. $pool->id .
-                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Duplicate</a>';
+                        $html .= '<button class="btn btn-success btn-sm ml-2 duplicate-pool" data-id="'. $pool->id .
+                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Duplicate</button>';
                     }
                     if ($pool->canDelete) {
-                        $html .= '<a class="btn btn-danger btn-sm ml-2 delete-pool" data-id="'. $pool->id .
-                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Delete</a>';
+                        $html .= '<button class="btn btn-danger btn-sm ml-2 delete-pool" data-id="'. $pool->id .
+                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Delete</button>';
                     }
                     return $html;
             })
@@ -141,25 +157,26 @@ class FundSupportedPoolController extends Controller
             'status.*'          => ['required', Rule::in(['A', 'I'])],
             'names.*'           => 'required|max:50',
             'descriptions.*'    => 'required',
-            'percentages.*'     => 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
+            'percentages.*'     => 'required|numeric|min:0.01|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
             'contact_emails.*'  => 'required|email',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp|max:2048',
         ],[
+            'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.required' => 'The charity field is required.',
             'status.in' => 'The selected status is invalid.',
             'names.required' => 'The name field is required.',
             'descriptions.required' => 'The description field is required.',
             'percentages.required' => 'The Percentage field is required.',
             'percentages.max' => 'The Percentage must not be greater than 100.',
-            'percentages.min' => 'The Percentage must be at least 0.',
+            'percentages.min' => 'The Percentage must be greater than 0.',
             'percentages.numeric' => 'The Percentage must be a number.',
             'percentages.between' => 'The percentages.0 must be between 0 and 100.',
             'percentages.regex' => 'The percentages format is invalid.',
             'contact_names.required' => 'The Contact Name field is required.',
             'contact_titles.required' => 'The Contact Title field is required.',
             'contact_emails.required' => 'The Contact Email field is required.',
-            'contact_emails.email' => 'The Email field is invalid.',
+            'contact_emails.email' => 'Please enter a valid email format.',
             'notes.required' => 'The Notes field is required.',
             'images.required' => 'Please upload an image',
             'images.max' => 'Sorry! Maximum allowed size for an image is 2MB',
@@ -224,9 +241,8 @@ class FundSupportedPoolController extends Controller
                         $validator->errors()->add('images.' .$i, 'The image file is required.');
                     }
                 }
-            }
-        else{
-                $validator->errors()->add('region_id', 'You must include atleast one Charity.');
+            } else {
+                $validator->errors()->add('region_id', 'You must include at least one Charity.');
             }
         });
 
@@ -360,11 +376,11 @@ class FundSupportedPoolController extends Controller
         //
         $validator = Validator::make(request()->all(), [
             'region_id'         => 'required',
-            'start_date'        => ['required',
-                // Rule::unique('f_s_pools')->where(function ($query) use($request) {
-                //     return $query->where('region_id', $request->input('region_id'))
-                //                     ->where('start_date', $request->input('start_date'));
-                // })
+            'start_date'        => ['required','date', 'after:today',
+                Rule::unique('f_s_pools')->where(function ($query) use($request) {
+                    return $query->where('region_id', $request->input('region_id'))
+                                    ->where('start_date', $request->input('start_date'));
+                })->ignore($id),
             ],
             'pool_status'       => ['required', Rule::in(['A', 'I']) ],
 
@@ -372,27 +388,28 @@ class FundSupportedPoolController extends Controller
             'status.*'          => ['required', Rule::in(['A', 'I'])],
             'names.*'           => 'required|max:50',
             'descriptions.*'    => 'required',
-            'percentages.*'     => 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
+            'percentages.*'     => 'required|numeric|min:0.01|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
             'contact_titles.*'  => 'nullable',
             'contact_emails.*'  => 'required|email',
             'notes.*'           => 'nullable',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp.gif|max:2048',
         ],[
+            'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.*.required' => 'The charity field is required.',
             'status.*.in' => 'The selected status is invalid.',
             'names.*.required' => 'The name field is required.',
             'descriptions.*.required' => 'The description field is required.',
             'percentages.*.required' => 'The Percentage field is required.',
             'percentages.*.max' => 'The Percentage must not be greater than 100.',
-            'percentages.*.min' => 'The Percentage must be at least 0.',
+            'percentages.min' => 'The Percentage must be greater than 0.',
             'percentages.*.numeric' => 'The Percentage must be a number.',
             'percentages.*.between' => 'The percentages.0 must be between 0 and 100.',
             'percentages.*.regex' => 'The percentages format is invalid.',
             'contact_names.*.required' => 'The Contact Name field is required.',
             'contact_titles.*.required' => 'The Contact Title field is required.',
             'contact_emails.*.required' => 'The Contact Email field is required.',
-            'contact_emails.*.email' => 'The Email field is invalid.',
+            'contact_emails.*.email' => 'Please enter a valid email format.',
             'notes.*.required' => 'The Notes field is required.',
             'images.*.required' => 'Please upload an image',
             'images.*.mimes' => 'Only jpg, jpeg, png and bmp images are allowed',
@@ -451,6 +468,8 @@ class FundSupportedPoolController extends Controller
                         }
                     }
                 }
+            } else {
+                $validator->errors()->add('region_id', 'You must include at least one Charity.');
             }
 
         });
@@ -530,6 +549,7 @@ class FundSupportedPoolController extends Controller
         FSPoolCharity::whereIn('id', $dels)->delete();
 
         // Step 3 -- Update the header
+        $pool->start_date = $request->start_date;
         $pool->status = $request->pool_status;
         $pool->updated_by_id = Auth::id();
         $pool->save();
