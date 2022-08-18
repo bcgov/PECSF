@@ -39,15 +39,16 @@
         $("body").on("click",".select",function(e){
             e.preventDefault();
             $("#noselectedresults").html("");
-            text = $("#organization-tmpl").html();
-            text = text.replace(/XXX/g, row_number + 1);
-            $('#organizations').append( text );
-            $("#organizations").css("display","block");
-            row_number++;
-            $('.organization').last().find(".organization_name").val($(this).attr("name"));
-            $('.organization').last().append("<input type='hidden' name='id[]' value='"+$(this).attr('org_id')+"'/>");
-            $('.organization').last().append("<input type='hidden' name='vendor_id[]' value='"+$(this).attr('org_id')+"'/>");
-
+            if($(".organization").length < 10){
+                text = $("#organization-tmpl").html();
+                text = text.replace(/XXX/g, row_number + 1);
+                $('#organizations').append( text );
+                $("#organizations").css("display","block");
+                row_number++;
+                $('.organization').last().find(".organization_name").val($(this).attr("name"));
+                $('.organization').last().append("<input type='hidden' name='id[]' value='"+$(this).attr('org_id')+"'/>");
+                $('.organization').last().append("<input type='hidden' name='vendor_id[]' value='"+$(this).attr('org_id')+"'/>");
+            }
         });
         $("body").on("click",".remove",function(e){
             e.preventDefault();

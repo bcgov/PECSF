@@ -71,10 +71,12 @@ $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
 let attachment_number = 1;
 $("body").on("click",".add_attachment_row",function(e){
 e.preventDefault();
-text = $("#attachment-tmpl").html();
-text = text.replace(/XXX/g, attachment_number + 1);
-$('.attachment').last().after( text );
-attachment_number++;
+
+    text = $("#attachment-tmpl").html();
+    text = text.replace(/XXX/g, attachment_number + 1);
+    $('.attachment').last().after( text );
+    attachment_number++;
+
 });
 
 
@@ -248,26 +250,28 @@ $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 $('.upload-area').on('drop', function (e) {
 e.stopPropagation();
 e.preventDefault();
+$(".attachment_errors").html("");
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.originalEvent.dataTransfer.files;
-formData.append('attachments[]', file[0]);
-$("#attachments").append("<span>"+file[0].name+"</span> <i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i><br>");
-const index = ignoreFiles.indexOf(file[0].name);
-if (index > -1) { // only splice array when item is found
-ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
-}
-
-
-
-
+    if(file[0].size < 2097152) {
+        formData.append('attachments[]', file[0]);
+        $("#attachments").append("<span>"+file[0].name+"</span> <i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i><br>");
+        const index = ignoreFiles.indexOf(file[0].name);
+        if (index > -1) { // only splice array when item is found
+            ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
+        }
+    }
+    else{
+        $(".attachment_errors").html("Please upload a smaller file < 2MB");
+    }
 });
 $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.target.files;
-
-if(file[0].size < 2000000)
+    $(".attachment_errors").html("");
+if(file[0].size < 2097152)
 {
     formData.append('attachments[]', file[0]);
     $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
@@ -277,7 +281,7 @@ if(file[0].size < 2000000)
     }
 }
 else{
-    $(".attachment_errors").html("Please upload a smaller file");
+    $(".attachment_errors").html("Please upload a smaller file < 2MB");
 }
 });
 

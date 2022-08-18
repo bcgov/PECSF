@@ -312,7 +312,7 @@
     width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
-                        <span style="font-size:16px;color:#1a5a96;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
+                        <span style="font-size:16px;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
                               data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}">View Details</span>
                     </div>
 
