@@ -285,6 +285,7 @@ class DonateNowController extends Controller
 
     public function searchCharities(Request $request)
     {
+
         $charities = Charity::where("charity_status","=","Registered");
 
         if($request->province != "")
@@ -304,8 +305,9 @@ class DonateNowController extends Controller
 
         $charities = $charities->paginate(7);
         $total = $charities->total();
+        $selected_charity_id = $request->selected_charity_id;
 
-        return view('donate-now.partials.search-charity-result', compact('charities','total'))->render();
+        return view('donate-now.partials.search-charity-result', compact('charities','total','selected_charity_id'))->render();
     }
 
     public function summary(Request $request, $id) {

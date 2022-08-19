@@ -33,15 +33,15 @@
 
         <h5 id="charity_count" class="noresults" style="width:100%;text-align:center" class="align-content-center">No results</h5>
 
-        <table id="charities">
+        <div id="charities">
 
-        </table>
+        </div>
 
     </div>
 
     <div class="charity-container form-group  col-md-12 bg-light">
 
-        <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
+        <h4 class="blue pl-1 pb-2" >Your Charities</h4>
 
         @empty($pledge)
             <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
@@ -55,31 +55,29 @@
                     <tr class="selected_charity" id="selected_charity0">
                         <td>
                             <div class="container">    
-                                <div class="row">
-                                    <div class="form-group col-10">
-                                        <label for="charity_name">Charity Name:</label>
+                                <div class="font-row">
+                                    <div class="col-12">
                                         <div>
                                             <input type="hidden" name="charity_id" value="{{ $pledge->charity_id }}">
-                                            <input type="text" disabled="" class="form-control errors charity_name font-weigth-bold" name="charity_name"
-                                                value="{{ $pledge->charity->charity_name }}" placeholder="">
+                                            <h6 class="font-weight-bold" id="selected_charity_name">{{ $pledge->charity->charity_name }}</h6>
                                         </div>
                                         <span class="selected_charity_name_errors  errors"></span>
                                     </div>
-                                    <div class="form-group  col-2">
-                                        <label for="charity_name">&nbsp;</label>
-                                        <div>
-                                            <button class="btn btn-danger remove">Remove</button>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label for="sub_type">Specific Community Or Initiative (Optional):</label>
+                                    <div class="form-group col-md-11">
                                         <input class="form-control" type="text" id="special_program" name="special_program" 
-                                                value="{{ $pledge->special_program }}">
+                                                value="{{ $pledge->special_program }}"
+                                                placeholder="Optional: If you have a specific community or initiative in mind, eneter it here.">
                                         <span class="specific_community_or_initiative_errors  errors">
                                             </span>
                                     </div>
+                                    <div class="form-group col-1">
+                                        <div>
+                                            <button class="btn btn-danger remove"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </td>
