@@ -49488,3 +49488,11 @@ h4{
     opacity: 1;
 }
 
+.error{
+    background:#f2dede;
+    color:#b65754;
+    font-weight:bold;
+    padding:8px;
+    border-radius:3px;
+    margin-bottom:10px;
+}

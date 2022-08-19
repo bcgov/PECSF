@@ -26,8 +26,14 @@
         {
             $("#charities").fadeTo("slow",0.2);
             $(".noresults").html("");
+
+            var selected_vendors = "";
+            $("input[name='vendor_id[]']").each(function(){
+                selected_vendors += $(this).val() != "undefined" ? $(this).val()+",":"";
+            });
+
             $.ajax({
-                url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#category").val()+"&province="+$("#charity_province").val()+"&keyword="+$("#keyword").val(),
+                url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#category").val()+"&province="+$("#charity_province").val()+"&keyword="+$("#keyword").val()+"&selected_vendors="+selected_vendors,
                 success:function(data)
                 {
                     $("#charities").fadeTo("slow",1);
@@ -48,19 +54,34 @@
                 $('.organization').last().find(".organization_name").val($(this).attr("name"));
                 $('.organization').last().append("<input type='hidden' name='id[]' value='"+$(this).attr('org_id')+"'/>");
                 $('.organization').last().append("<input type='hidden' name='vendor_id[]' value='"+$(this).attr('org_id')+"'/>");
+                $(this).addClass("active");
+                $(this).html("Selected");
+                $(this).removeClass("select")
+                $(this).addClass("selected")
+            }
+            else{
+                $(".max-charities-error").show();
+                $(".charity-error-hook").css("border","red 2px solid")
             }
         });
-        $("body").on("click",".remove",function(e){
+        $("body").on("click",".selected",function(e) {
             e.preventDefault();
+            $(":input[value='"+$(this).attr("org_id")+"']").parents("tr").remove();
+            $(this).html("Select").removeClass("active").addClass("select").removeClass("selected");
+        });
+
+            $("body").on("click",".remove",function(e){
 
             if($(this).parents("tr").siblings().length < 1)
             {
                 $("#noselectedresults").html("You have not chosen any charities");
             }
-
             $(this).parents("tr").remove();
-
-
+            if($(".organization").length < 10){
+                $(".charity-error-hook").css("border","none")
+                $(".max-charities-error").hide();
+                $("div[org_id='"+$(this).parents(".organization").find("input[name='vendor_id[]']").val() +"'").html("Select").removeClass("active").addClass("select");
+            }
         });
 
         $("body").on("click",".view_details",function(){

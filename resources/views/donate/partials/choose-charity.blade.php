@@ -31,9 +31,10 @@
         <br>
         <br>
 
-<div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+<div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
+    <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
         <table class="charity-container" id="organizations" style="display:none;width:100%">
             <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
