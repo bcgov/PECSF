@@ -130,11 +130,11 @@
 
 @push('css')
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 <style>
-    .select2-selection--multiple{
+    /* .select2-selection--multiple{
         overflow: hidden !important;
         height: auto !important;
         min-height: 38px !important;
@@ -145,7 +145,7 @@
         }
     .select2-container--default .select2-selection--single .select2-selection__arrow {
         height: 38px !important;
-    }
+    } */
 
     /* tracking */
 .bs4-step-tracking {
@@ -279,12 +279,8 @@
 
 @push('js')
 
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
-
-{{-- <script type="x-tmpl" id="charity-tmpl">
-    @include('admin-pledge.campaign.partials.charities', ['index' => 'XXX'] )
-</script> --}}
 
 <script>
 
@@ -317,6 +313,8 @@ $(function () {
                 stepProgress(step);
                 $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
             }
+
+            $(window).scrollTop(0);
             hideButtons(step);
         }
     });
@@ -433,6 +431,7 @@ $(function () {
                             $('#error-message').append('<div class="text-strong text-danger">' + error + '</div>');
                         })
                         $('#error-message').show();
+                        $("html, body").animate({ scrollTop: 0 }, 500);
                         // $.each(response.responseJSON.errors, function(field_name,error){
                         //     if ( field_name.includes('.') ) {   
                         //         items = field_name.split(".");
