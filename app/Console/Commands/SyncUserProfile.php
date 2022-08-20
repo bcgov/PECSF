@@ -65,7 +65,7 @@ class SyncUserProfile extends Command
     public function handle()
     {
 
-        if (EmployeeJob::count() < 20000) {
+        if (EmployeeJob::count() > 20000) {
             $this->normal_run = false;    // mean first load
         }
 
