@@ -38,7 +38,7 @@
 <div class="card">
 <div class="card-body">
     <div class="form-row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label>
                 Campaign Year
                 <select name="year" id="year" style="min-width: 380px" class="form-control ">
@@ -47,8 +47,8 @@
                 </select>
             </label>
         </div>
-        <div class="col-md-4">
-            <label style="min-width: 380px">
+        <div class="col-md-3">
+            <label style="min-width:380px;">
                 Organization Name
                 <input type="text" id="organization_name" value="{{$request->organization_name}}" name="organization_name" class="form-control " />
             </label>
