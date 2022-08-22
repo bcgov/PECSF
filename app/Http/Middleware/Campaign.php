@@ -21,7 +21,7 @@ class Campaign
         ->first();
 
         if (!($campaignYear->isOpen() ))  {
-            //return redirect( route('donations.list') )->with('error','The open enrollment is not opened');
+            return redirect( route('donations.list') )->with('error','The open enrollment is not opened');
         }
 
         return $next($request);

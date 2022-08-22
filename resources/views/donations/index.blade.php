@@ -22,7 +22,7 @@
                 @else
 
                     <p class="font-weight-bold">Thank you for choosing to support PECSF!</p>
-                    <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p> 
+                    <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p>
                     <p class="card-text text-left">
                         {{-- The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca --}}
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
@@ -65,7 +65,7 @@
         </div>
         {{-- @if($pledges->count() > 0) --}}
         {{-- @if ($old_pledges_by_yearcd->count() > 0 or $old_bi_pledges_by_yearcd->count() > 0 ) --}}
-        @if ($pledges_by_yearcd->count() > 0) 
+        @if ($pledges_by_yearcd->count() > 0)
             @include('donations.partials.history')
         @else
         <div class="text-center text-primary">
@@ -76,7 +76,7 @@
                 You do not have any active campaigns right now. <br>
                 Click on one of the options below to get started!
             </p>
-            <x-button :href="route('donate')">Donate to PECSF Now</x-button>
+            <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
             <p class="pt-3">
                 OR
             </p>

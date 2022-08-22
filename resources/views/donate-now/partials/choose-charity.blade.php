@@ -1,7 +1,7 @@
 <h3 class="mt-1">2. Choose your charity</h3>
 
 <div class="form-row">
-    
+
     <div class="form-group  col-md-4">
         <label for="charity_keyword">Search by Keyword</label>
         <input class="form-control" type="search" value="" id="charity_keyword" />
@@ -31,7 +31,7 @@
         <h4 class="blue" style="padding-left:8px;">Search Results</h4>
 
 
-        <h5 id="charity_count" class="noresults" style="width:100%;text-align:center" class="align-content-center">No results</h5>
+        <h5 id="charity_count" class="noresults pl-2" style="width:100%;text-align:center" class="align-content-center">No results</h5>
 
         <div id="charities">
 
@@ -54,7 +54,7 @@
                 @if ($pledge->charity_id)
                     <tr class="selected_charity" id="selected_charity0">
                         <td>
-                            <div class="container">    
+                            <div class="container">
                                 <div class="font-row">
                                     <div class="col-12">
                                         <div>
@@ -66,7 +66,7 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-11">
-                                        <input class="form-control" type="text" id="special_program" name="special_program" 
+                                        <input class="form-control" type="text" id="special_program" name="special_program"
                                                 value="{{ $pledge->special_program }}"
                                                 placeholder="Optional: If you have a specific community or initiative in mind, eneter it here.">
                                         <span class="specific_community_or_initiative_errors  errors">
@@ -84,7 +84,7 @@
                     </tr>
                 @endif
             @endisset
-            
+
 
         </table>
 
@@ -166,4 +166,4 @@
     </div>
 </div>
 
-    
+
