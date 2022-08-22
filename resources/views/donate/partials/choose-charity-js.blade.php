@@ -68,6 +68,17 @@
             e.preventDefault();
             $(":input[value='"+$(this).attr("org_id")+"']").parents("tr").remove();
             $(this).html("Select").removeClass("active").addClass("select").removeClass("selected");
+
+            if($(this).parents("tr").siblings().length < 1)
+            {
+                $("#noselectedresults").html("You have not chosen any charities");
+            }
+
+            if($(".organization").length < 10){
+                $(".charity-error-hook").css("border","none")
+                $(".max-charities-error").hide();
+                $("div[org_id='"+$(this).parents(".organization").find("input[name='vendor_id[]']").val() +"'").html("Select").removeClass("active").addClass("select");
+            }
         });
 
             $("body").on("click",".remove",function(e){

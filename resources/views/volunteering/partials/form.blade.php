@@ -322,7 +322,7 @@
             </div>
         @endforeach
 
-        @for($i=0;$i<(4 - count($pools));$i++)
+        @for($i=0;$i<(4 - (count($pools)%6) );$i++)
             <div class="form-group col-md-2 form-pool">
 
 
