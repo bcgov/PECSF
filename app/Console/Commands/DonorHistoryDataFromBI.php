@@ -283,7 +283,7 @@ class DonorHistoryDataFromBI extends Command
                             } elseif ($rec->wasChanged() ) {
                                 $updated_count += 1;
                                 $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
-                                $changes = $user->getChanges();
+                                $changes = $rec->getChanges();
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
@@ -362,7 +362,7 @@ class DonorHistoryDataFromBI extends Command
                                 $updated_count += 1;
 
                                 $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
-                                $changes = $user->getChanges();
+                                $changes = $rec->getChanges();
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
@@ -439,7 +439,7 @@ class DonorHistoryDataFromBI extends Command
                                 $updated_count += 1;
 
                                 $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
-                                $changes = $user->getChanges();
+                                $changes = $rec->getChanges();
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
