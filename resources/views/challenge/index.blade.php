@@ -41,12 +41,12 @@
         <div class="col-md-6">
             <label>
                 Campaign Year
-                <select name="year" id="year" style="min-width:300px;" class="form-control ">
+                <select name="year" id="year" style="min-width:250px;" class="form-control ">
                     <option {{$year==2021?"selected":""}} value="2021">2021</option>
                     <option {{$year==2020?"selected":""}} value="2020">2020</option>
                 </select>
             </label>
-            <label style="min-width:300px;">
+            <label class="pl-2" style="min-width:250px;">
                 Organization Name
                 <input type="text" id="organization_name" value="{{$request->organization_name}}" name="organization_name" class="form-control " />
             </label>
