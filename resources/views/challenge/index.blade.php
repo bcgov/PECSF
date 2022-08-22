@@ -38,25 +38,24 @@
 <div class="card">
 <div class="card-body">
     <div class="form-row">
-        <div class="col-md-3">
+        <div class="col-md-6">
             <label>
                 Campaign Year
-                <select name="year" id="year" style="min-width: 380px" class="form-control ">
+                <select name="year" id="year" style="min-width:300px;" class="form-control ">
                     <option {{$year==2021?"selected":""}} value="2021">2021</option>
                     <option {{$year==2020?"selected":""}} value="2020">2020</option>
                 </select>
             </label>
-        </div>
-        <div class="col-md-3">
-            <label style="min-width:380px;">
+            <label style="min-width:300px;">
                 Organization Name
                 <input type="text" id="organization_name" value="{{$request->organization_name}}" name="organization_name" class="form-control " />
             </label>
         </div>
-        <div class="d-flex col-md-4">
+        <div class="d-flex col-md-6">
 
         </div>
     </div>
+    <br>
 <table class="table table-bordered rounded" id="myTable2">
     <thead>
     <tr class="bg-light">
