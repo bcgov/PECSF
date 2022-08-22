@@ -59,7 +59,7 @@ class ImportEmployeeJob extends Command
     {
         ini_set('memory_limit', '4096M');
 
-        if (EmployeeJob::count() < 20000) {
+        if (EmployeeJob::count() > 20000) {
             $this->normal_run = false;    // mean first load
         }
 
