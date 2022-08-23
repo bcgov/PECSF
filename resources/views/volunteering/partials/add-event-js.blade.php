@@ -129,6 +129,7 @@ cache: false,
 contentType: false,
 dataType: 'json',
 success:function(response){
+    Toast("Message","Success! Your form has been submitted.","bg-success");
 $("#bank_deposit_form").fadeTo("slow",1);
 $('.errors').html("");
 
@@ -255,7 +256,7 @@ $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.originalEvent.dataTransfer.files;
     if(file[0].size < 2097152) {
         formData.append('attachments[]', file[0]);
-        $("#attachments").append("<span>"+file[0].name+"</span> <i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i><br>");
+        $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
         const index = ignoreFiles.indexOf(file[0].name);
         if (index > -1) { // only splice array when item is found
             ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
@@ -289,5 +290,15 @@ var ignoreFiles = [];
 $("body").on("click",".remove_attachment",function(){
 $(this).parent().remove();
 ignoreFiles.push($(this).attr("attachment"));
+$("#attachment_input_1").val("");
 });
+    function Toast( toast_title, toast_body, toast_class) {
+        $(document).Toasts('create', {
+            class: toast_class,
+            title: toast_title,
+            autohide: true,
+            delay: 3000,
+            body: toast_body
+        });
+    }
 </script>

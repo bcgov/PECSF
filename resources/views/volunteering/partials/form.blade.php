@@ -387,7 +387,7 @@
     <input type="submit" style="margin-left:20px;" class="col-md-1 btn btn-primary" value="Submit" />
     <br>
     <br>
-    <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are<br> possible through eForm. Please contact pecsf@gov.bc.ca</p>
+    <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are possible through eForm. Please contact pecsf@gov.bc.ca</p>
 
         <h5 style="padding-left:20px;">Freedom of Information and Protection of Privacy Act</h5>
     <p style="padding:20px;">
