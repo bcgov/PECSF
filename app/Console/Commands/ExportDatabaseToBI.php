@@ -131,7 +131,7 @@ class ExportDatabaseToBI extends Command
             
         // Chucking
         $row_count = 0;
-        $sql->chunk(5000, function($chuck) use($table_name, $hidden_fields, $last_job, &$n) {
+        $sql->chunk(5000, function($chuck) use($table_name, $hidden_fields, $last_job, $row_count, &$n) {
             $this->LogMessage( "Sending table '{$table_name}' batch (5000) - " . ++$n );
 
             //$chuck->makeHidden(['password', 'remember_token']);
