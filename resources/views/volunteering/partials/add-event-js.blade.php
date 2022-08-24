@@ -80,14 +80,6 @@ $("body").on("change","[name='attachments[]']",function(){
 $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
 });
 
-
-
-
-
-
-
-
-
 let attachment_number = 1;
 $("body").on("click",".add_attachment_row",function(e){
 e.preventDefault();

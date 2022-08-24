@@ -1,9 +1,9 @@
 <div id="accordion">
-    
+
     @foreach($pledges_by_yearcd as $key => $pledges)
     <div class="card">
         <div class="card-header" id="heading0{{ $loop->index }}">
-            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}" 
+            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                    aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
                 <button class="btn btn-link font-weight-bold">
                     {{  $key }}
@@ -28,7 +28,7 @@
                     @foreach($pledges as $pledge)
                         <tr class="">
                             <td>{{ $pledge->donation_type }}</td>
-                            @if ($pledge->type == 'P') 
+                            @if ($pledge->type == 'P')
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
@@ -38,7 +38,7 @@
                             <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
                             <td class="text-right">
                                 {{-- @if ($pledge->campaign_type == 'Annual')  --}}
-                                <button type="button" class="more-info btn btn-sm btn-outline-primary" 
+                                <button type="button" class="more-info btn btn-sm btn-outline-primary"
                                             data-source="{{ $pledge->source  }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
@@ -46,15 +46,24 @@
                                             data-yearcd="{{ $pledge->yearcd }}">Details
                                 </button>
                                 {{-- @endif --}}
-                            </td>                                        
+                            </td>
                         </tr>
                     @endforeach
                 </table>
+                <a href="/donate/duplicate/{{$pledge->id}}">
+                <button type="button" class="duplicate btn btn-sm btn-outline-primary"
+                        data-source="{{ $pledge->source  }}"
+                        data-type="{{ $pledge->donation_type }}"
+                        data-id="{{ $pledge->id }}"
+                        data-frequency="{{ $pledge->frequency }}"
+                        data-yearcd="{{ $pledge->yearcd }}">Duplicate this pledge
+                </button>
+                </a>
             </div>
         </div>
     </div>
-    
+
     @endforeach
 
-    
+
 </div>

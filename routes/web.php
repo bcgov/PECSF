@@ -84,6 +84,7 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
     Route::get('/summary', [CharityController::class, 'summary'])->name('summary');
     Route::get('/thank-you', [CharityController::class, 'thankYou'])->name('save.thank-you');
     Route::get('/charities/{charity_id}',[CharityController::class, 'show']);
+    Route::get('/duplicate/{pledge_id}',[CharityController::class, 'duplicate'])->name("duplicate");
 
     Route::get('/regional-pool', [CharityController::class, 'regionalPool'])->name('regional-pool');
     Route::get('/regional-pool-detail/{id}', [CharityController::class, 'regionalPoolDetail'])->name('regional-pool-detail');

@@ -891,26 +891,119 @@ class CharityController extends Controller
                 }
             }
         }
-
         DB::commit();
-
         $forPDF = [
             'charities' => $request->session()->get('charities'),
             'amount-step' => $request->session()->get('amount-step'),
             'request' => $request->validated()
         ];
-
         $request->session()->put('forPDF', $forPDF);
         $request->session()->forget(['pool_option', 'charities', 'amount']);
-
-
             return redirect()->route('donate.save.thank-you');
-
-
     }
 
     public function thankYou()
     {
         return view('donate.thankyou');
+    }
+
+    public function duplicate(Request $request)
+    {
+        session()->forget('pool_option');
+        session()->forget('regional_pool_id');
+        session()->forget('charities');
+
+        $pledge = Pledge::where("id","=",$request->pledge_id)->first();
+        if(!empty($pledge))
+        {
+            if(empty($pledge->f_s_pool_id))
+            {
+                $fs_pool_option = "C";
+                if (!Session::has('charities')) {
+                    $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+                        ->first();
+                 /*   $pledge = Pledge::where('user_id', Auth::id())
+                        ->whereHas('campaign_year', function($q){
+                            $q->where('calendar_year','=', today()->year + 1 );
+                        })->first();*/
+                    if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 ) {
+
+
+                        $charities = $pledge->charities()->get();
+                    }
+                }
+
+                $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
+                session()->put('amount-step',  array (
+                    'one-time-amount' => $pledge->one_time_amount,
+                    'bi-weekly-amount' => $pledge->pay_period_amount,
+                    'frequency' => $frequency,
+                ));
+
+                $preselectedData = Session::get('amount-step');
+                $totalAmountOneTime = $preselectedData['one-time-amount'];
+                $totalAmountBiWeekly = $preselectedData['bi-weekly-amount'];
+                $frequency = $preselectedData['frequency'];
+
+                if ($frequency === 'one-time' || $frequency === 'both') {
+                    $totalAmountOneTime= 0;
+                    foreach($charities as $charity){
+                        $totalAmountOneTime += $charity->amount;
+                    }
+                        // Correct $input['amount']
+                        foreach($charities as $index => $a) {
+                            $input['oneTimeAmount'][$index] = $totalAmountOneTime * $a->amount / 100;
+                        }
+                        // Correct $input['percent']
+                        foreach($charities as $index => $a) {
+                            $input['oneTimePercent'][$index] = round(100 * $a->amount / $totalAmountOneTime, 2);
+                        }
+
+                    //
+                    foreach($input['oneTimePercent'] as $charityId => $percentageAmount) {
+                        $selectedCharities['one-time-percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
+                    }
+                    foreach($input['oneTimeAmount'] as $charityId => $amount) {
+                        $selectedCharities['one-time-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
+                    }
+                }
+                if ($frequency === 'bi-weekly' || $frequency === 'both') {
+                    $totalAmountBiWeekly = 0;
+                    foreach($charities as $charity){
+                        $totalAmountBiWeekly += $charity->amount;
+                    }
+
+                        // Correct $input['amount']
+                        foreach($charities as $index => $a) {
+                            $input['biWeeklyAmount'][$index] = $totalAmountBiWeekly * $a->amount / 100;
+                        }
+                        // Correct $input['percent']
+                        foreach($charities as $index => $a) {
+                            $input['biWeeklyPercent'][$index] = round(100 * $a->amount / ($totalAmountBiWeekly * count($charities)), 2);
+                        }
+
+                    foreach($input['biWeeklyPercent'] as $charityId => $percentageAmount) {
+                        $selectedCharities['bi-weekly-percentage-distribution'][array_search($charityId, $charities['id'])] = $percentageAmount;
+                    }
+                    foreach($input['biWeeklyAmount'] as $charityId => $amount) {
+                        $selectedCharities['bi-weekly-amount-distribution'][array_search($charityId, $charities['id'])] = $amount;
+                    }
+                }
+                session()->put('charities', $selectedCharities);
+            }
+            else {
+                $fs_pool_option = "P";
+                session()->put('regional_pool_id', $pledge->f_s_pool_id);
+            }
+            session()->put('pool_option', $fs_pool_option);
+            return redirect()->route('donate.summary');
+        }
+        else{
+            return redirect()->route('donate.list');
+        }
+
+
+
+
     }
 }
