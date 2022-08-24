@@ -37,15 +37,35 @@ if($(this).val()=="Fundraiser"){
 $("#sub_type").html('<option value="">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
 $(".address_hook").hide();
 $("#sub_type").select2();
+    $("#pecsfid").find("input").hide();
+    $("#bcgovid").find("input").hide();
+    $("#pecsfid").find("label").hide();
+    $("#bcgovid").find("label").hide();
+
 }
 else if($(this).val()=="Gaming"){
 $("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
 $(".address_hook").hide();
 $("#sub_type").select2();
+$("#pecsfid").find("input").hide();
+$("#bcgovid").find("input").hide();
+$("#pecsfid").find("label").hide();
+$("#bcgovid").find("label").hide();
 }
 else{
+    if($("[name='organization_code']").val() == "GOV"){
+        $("#pecsfid").find("label").hide();
+        $("#pecsfid").find("input").hide();
+        $("#bcgovid").find("label").show();
+        $("#bcgovid").find("input").show();
+    }
+    else{
+        $("#pecsfid").find("label").show();
+        $("#pecsfid").find("input").show();
+        $("#bcgovid").find("label").hide();
+        $("#bcgovid").find("input").hide();
+    }
 $(".address_hook").show();
-
 $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);
 $("#sub_type").select2();
