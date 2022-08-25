@@ -24,8 +24,8 @@ class DonateStep2Request extends FormRequest
     public function rules()
     {
         return [
-            "one-time-amount" => "required_unless:frequency,bi-weekly|numeric|min:1",
-            "bi-weekly-amount" => "required_unless:frequency,one-time|numeric|min:1",
+            "one-time-amount" => "required_unless:frequency,bi-weekly|numeric|min:0",
+            "bi-weekly-amount" => "required_unless:frequency,one-time|numeric|min:0",
             "frequency" => "required|in:bi-weekly,one-time,both"
         ];
     }

@@ -47,7 +47,7 @@
 
     @include('donate.partials.choose-charity-js')
     <script type="x-tmpl" id="organization-tmpl">
-        @include('volunteering.partials.add-organization', ['index' => 'XXX'] )
+        @include('volunteering.partials.add-organization', ['index' => 'XXX', 'charity' => 'YYY'] )
     </script>
     <script>
         $(".org_hook").show();

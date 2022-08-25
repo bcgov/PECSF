@@ -283,7 +283,6 @@ class CharityController extends Controller
             }
         }
 
-
         if($request->ajax()){
             return view('donate.partials.charity-pagination', compact('charities','terms','designation_list','category_list','province_list','selected_charities') );
         }
@@ -365,6 +364,7 @@ class CharityController extends Controller
 
     public function amount()
     {
+
         $preselectedAmountOneTime = 20;
         $preselectedAmountBiWeekly = 20;
 
@@ -376,8 +376,9 @@ class CharityController extends Controller
 
         if (Session::has('amount-step')) {
             $preselectedData = Session::get('amount-step');
-            $preselectedAmountOneTime = $preselectedData['one-time-amount'];
-            $preselectedAmountBiWeekly = $preselectedData['bi-weekly-amount'];
+            $preselectedAmountOneTime = isset($preselectedData['one-time-amount'])? $preselectedData['one-time-amount'] : 0;
+            $preselectedAmountBiWeekly = isset($preselectedData['bi-weekly-amount'])? $preselectedData['bi-weekly-amount'] : 0;
+            $preselectedData['one-time-amount'] = isset($preselectedData['one-time-amount'])? $preselectedData['one-time-amount'] : 0;
         }
 
         $amounts = [
@@ -927,22 +928,37 @@ class CharityController extends Controller
                             $q->where('calendar_year','=', today()->year + 1 );
                         })->first();*/
                     if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 ) {
-
-
                         $charities = $pledge->charities()->get();
                     }
                 }
 
                 $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
-                session()->put('amount-step',  array (
-                    'one-time-amount' => $pledge->one_time_amount,
-                    'bi-weekly-amount' => $pledge->pay_period_amount,
-                    'frequency' => $frequency,
-                ));
+
+               if($frequency == "bi-weekly")
+               {
+                   session()->put('amount-step',  array (
+                       'bi-weekly-amount' => $pledge->pay_period_amount,
+                       'frequency' => $frequency,
+                   ));
+               }
+               else if($frequency == "one-time"){
+                   session()->put('amount-step',  array (
+                       'one-time-amount' => $pledge->one_time_amount,
+                       'frequency' => $frequency,
+                   ));
+               }
+               else{
+                   session()->put('amount-step',  array (
+                       'one-time-amount' => $pledge->one_time_amount,
+                       'bi-weekly-amount' => $pledge->pay_period_amount,
+                       'frequency' => $frequency,
+                   ));
+               }
+
 
                 $preselectedData = Session::get('amount-step');
-                $totalAmountOneTime = $preselectedData['one-time-amount'];
-                $totalAmountBiWeekly = $preselectedData['bi-weekly-amount'];
+                $totalAmountOneTime = isset($preselectedData['one-time-amount']) ? $preselectedData['one-time-amount'] : 0;
+                $totalAmountBiWeekly = isset($preselectedData['bi-weekly-amount']) ? $preselectedData['bi-weekly-amount']: 0;
                 $frequency = $preselectedData['frequency'];
 
                 foreach($charities as $charity){
@@ -994,7 +1010,7 @@ class CharityController extends Controller
                         $selectedCharities['bi-weekly-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
                     }
                 }
-                session()->put('charities', $selectedCharities);
+              session()->put('charities', $selectedCharities);
             }
             else {
                 $fs_pool_option = "P";
@@ -1006,9 +1022,5 @@ class CharityController extends Controller
         else{
             return redirect()->route('donate.list');
         }
-
-
-
-
     }
 }

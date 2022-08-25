@@ -52,8 +52,8 @@
                 $("#organizations").css("display","block");
                 row_number++;
                 $('.organization').last().find(".organization_name").val($(this).attr("name"));
-                $('.organization').last().append("<input type='hidden' name='id[]' value='"+$(this).attr('org_id')+"'/>");
-                $('.organization').last().append("<input type='hidden' name='vendor_id[]' value='"+$(this).attr('org_id')+"'/>");
+                $('.organization').last().find("[name='id[]']").val($(this).attr('org_id'));
+                $('.organization').last().find("[name='vendor_id[]']").val($(this).attr('org_id'));
                 $(this).addClass("active");
                 $(this).html("Selected");
                 $(this).removeClass("select")

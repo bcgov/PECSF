@@ -36,9 +36,16 @@
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
     <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
-        <table class="charity-container" id="organizations" style="display:none;width:100%">
-            <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
-            <span class="charity_errors"></span>
+        <table class="charity-container" id="organizations" style="display:block;width:100%">
+           @if(count($selected_charities) > 1)
+            @foreach($selected_charities as $index => $charity)
+                @include('volunteering.partials.add-organization', ['index' => $index,'charity' => $charity] )
+
+            @endforeach
+            @else
+                <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
+                <span class="charity_errors"></span>
+            @endif
         </table>
 </div>
 <div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-hidden="true">
