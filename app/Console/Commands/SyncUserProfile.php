@@ -30,6 +30,9 @@ class SyncUserProfile extends Command
      */
     protected $description = 'Update Or Create User Profile';
 
+    const MAX_CREATE_COUNT = 1000;
+    const MAX_UPDATE_COUNT = 5000;
+
     /* Source Type is HCM */
     protected const SOURCE_TYPE = 'HCM';
     protected $created_count;
@@ -53,7 +56,6 @@ class SyncUserProfile extends Command
         $this->locked_count = 0;
         $this->message = '';
         $this->status = 'Completed';
-        $this->normal_run = true;
 
     }
 
@@ -65,10 +67,6 @@ class SyncUserProfile extends Command
     public function handle()
     {
 
-        if (EmployeeJob::count() > 20000) {
-            $this->normal_run = false;    // mean first load
-        }
-
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
@@ -78,9 +76,22 @@ class SyncUserProfile extends Command
         $this->LogMessage( now() );        
         $this->LogMessage("Update/Create - User Profile");
         $this->SyncUserProfile();
-        $this->LogMessage( now() );        
+        $this->LogMessage( now() );     
+        
+        if  ($this->created_count > self::MAX_CREATE_COUNT)  {
+            $this->LogMessage( '' );
+            $this->LogMessage( '*NOTE: more than ' . self::MAX_CREATE_COUNT . ' new row found, only the first ' . self::MAX_CREATE_COUNT . ' lines detail were shown in the log');
+            $this->LogMessage( '' );
+        }
+
+        if  ($this->updated_count > self::MAX_UPDATE_COUNT)  {
+            $this->LogMessage( '' );
+            $this->LogMessage( '*NOTE: more than ' . self::MAX_UPDATE_COUNT . ' changes found, only the first ' . self::MAX_UPDATE_COUNT . ' lines detail were shown in the log');
+            $this->LogMessage( '' );
+        }
 
         $this->LogMessage( 'Total new created row(s) : ' . $this->created_count );
+        $this->LogMessage( '' );
         $this->LogMessage( 'Total Updated row(s) : ' . $this->updated_count );
         $this->LogMessage( 'Total locked row(s) : ' . $this->locked_count );
 
@@ -166,12 +177,14 @@ class SyncUserProfile extends Command
                             $user->acctlock = $acctlock;  
                             $user->save();
 
-                            $this->LogMessage('(UPDATED) => emplid | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
-                            $changes = $user->getChanges();
-                            unset($changes["updated_at"]);
-                            $this->LogMessage('  summary => '. json_encode( $changes ) );
-
                             $this->updated_count += 1;
+
+                            if  ($this->updated_count <= self::MAX_UPDATE_COUNT)  {
+                                $this->LogMessage('(UPDATED) => emplid | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
+                                $changes = $user->getChanges();
+                                unset($changes["updated_at"]);
+                                $this->LogMessage('  summary => '. json_encode( $changes ) );
+                            }
 
                         } catch(\Illuminate\Database\QueryException $ex){ 
 
@@ -201,7 +214,7 @@ class SyncUserProfile extends Command
 
                         $this->created_count += 1;
 
-                        if ($this->normal_run) {
+                        if  ($this->created_count <= self::MAX_CREATE_COUNT)  {
                             $this->LogMessage( '(CREATED) => id | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
                         }
 
