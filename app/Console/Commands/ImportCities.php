@@ -79,7 +79,7 @@ class ImportCities extends Command
 
         $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            ->get(env('PS_TGB_CITY_TBL_ENDPOINT').'?$count=true&$top=1000'.'&$filter='.$filter);
+            ->get(env('ODS_INBOUND_PS_TGB_CITY_TBL_ENDPOINT').'?$count=true&$top=1000'.'&$filter='.$filter);
 
         if ($response->successful()) {
             $data = json_decode($response->body())->value;
