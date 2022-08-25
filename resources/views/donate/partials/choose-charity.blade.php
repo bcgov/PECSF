@@ -37,7 +37,7 @@
     <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
         <table class="charity-container" id="organizations" style="display:block;width:100%">
-           @if(count($selected_charities) > 1)
+           @if(count($selected_charities) > 0)
             @foreach($selected_charities as $index => $charity)
                 @include('volunteering.partials.add-organization', ['index' => $index,'charity' => $charity] )
 

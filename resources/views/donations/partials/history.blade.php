@@ -1,5 +1,7 @@
 <div id="accordion">
-
+    @php
+        $ignore = false;
+    @endphp
     @foreach($pledges_by_yearcd as $key => $pledges)
     <div class="card">
         <div class="card-header" id="heading0{{ $loop->index }}">
@@ -32,7 +34,7 @@
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
-                                <td>{{ '' }} </td>
+                                <td>{{ 'Multiple' }} </td>
                             @endif
                             <td>{{ $pledge->frequency }} </td>
                             <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
@@ -50,15 +52,27 @@
                         </tr>
                     @endforeach
                 </table>
-                <a href="/donate/duplicate/{{$pledge->id}}">
-                <button type="button" class="duplicate btn btn-sm btn-outline-primary"
+
+                @if($key >= $currentYear || $ignore)
+                    @php
+                        $ignore = true;
+                    @endphp
+                @else
+
+                <a style="margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    display: block;" href="/donate/duplicate/{{$pledge->id}}">
+                <button type="button" class="pl-5 pr-5 duplicate align-content-center btn-lg btn-primary"
                         data-source="{{ $pledge->source  }}"
                         data-type="{{ $pledge->donation_type }}"
                         data-id="{{ $pledge->id }}"
                         data-frequency="{{ $pledge->frequency }}"
-                        data-yearcd="{{ $pledge->yearcd }}">Duplicate this pledge
+                        data-yearcd="{{ $pledge->yearcd }}">{{$ignore}}Duplicate this pledge
                 </button>
                 </a>
+                @endif
+
             </div>
         </div>
     </div>
