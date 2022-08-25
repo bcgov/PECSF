@@ -945,6 +945,11 @@ class CharityController extends Controller
                 $totalAmountBiWeekly = $preselectedData['bi-weekly-amount'];
                 $frequency = $preselectedData['frequency'];
 
+                foreach($charities as $charity){
+                    $selectedCharities['id'][] = $charity->id;
+                    $selectedCharities['additional'][] = $charity->additional;
+                }
+
                 if ($frequency === 'one-time' || $frequency === 'both') {
                     $totalAmountOneTime= 0;
                     foreach($charities as $charity){
@@ -975,18 +980,18 @@ class CharityController extends Controller
 
                         // Correct $input['amount']
                         foreach($charities as $index => $a) {
-                            $input['biWeeklyAmount'][$index] = $totalAmountBiWeekly * $a->amount / 100;
+                            $input['biWeeklyAmount'][$a->id] = $totalAmountBiWeekly * $a->amount / 100;
                         }
                         // Correct $input['percent']
                         foreach($charities as $index => $a) {
-                            $input['biWeeklyPercent'][$index] = round(100 * $a->amount / ($totalAmountBiWeekly * count($charities)), 2);
+                            $input['biWeeklyPercent'][$a->id] = round(100 * $a->amount / ($totalAmountBiWeekly * count($charities)), 2);
                         }
 
                     foreach($input['biWeeklyPercent'] as $charityId => $percentageAmount) {
-                        $selectedCharities['bi-weekly-percentage-distribution'][array_search($charityId, $charities['id'])] = $percentageAmount;
+                        $selectedCharities['bi-weekly-percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
                     }
                     foreach($input['biWeeklyAmount'] as $charityId => $amount) {
-                        $selectedCharities['bi-weekly-amount-distribution'][array_search($charityId, $charities['id'])] = $amount;
+                        $selectedCharities['bi-weekly-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
                     }
                 }
                 session()->put('charities', $selectedCharities);
