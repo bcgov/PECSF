@@ -25,6 +25,9 @@ class ImportEmployeeJob extends Command
      */
     protected $description = 'Import the Employee Information from BI';
 
+    const MAX_CREATE_COUNT = 1000;
+    const MAX_UPDATE_COUNT = 5000;
+
     /* attributes for share in the command */
     protected $total_count;
     protected $created_count;
@@ -46,8 +49,6 @@ class ImportEmployeeJob extends Command
         $this->message = '';
         $this->status = 'Completed';
 
-        $this->normal_run = true; 
-
     }
 
     /**
@@ -59,10 +60,6 @@ class ImportEmployeeJob extends Command
     {
         ini_set('memory_limit', '4096M');
 
-        if (EmployeeJob::count() > 20000) {
-            $this->normal_run = false;    // mean first load
-        }
-
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
@@ -73,6 +70,18 @@ class ImportEmployeeJob extends Command
         $this->LogMessage("Update/Create - Employee Job Information");
         $this->UpdateEmployeeJob();
         $this->LogMessage( now() );
+
+        if  ($this->created_count > self::MAX_CREATE_COUNT)  {
+            $this->LogMessage( '' );
+            $this->LogMessage( '*NOTE: more than ' . self::MAX_CREATE_COUNT . ' new row found, only the first ' . self::MAX_CREATE_COUNT . ' lines detail were shown in the log');
+            $this->LogMessage( '' );
+        }
+
+        if  ($this->updated_count > self::MAX_UPDATE_COUNT)  {
+            $this->LogMessage( '' );
+            $this->LogMessage( '*NOTE: more than ' . self::MAX_UPDATE_COUNT . ' changes found, only the first ' . self::MAX_UPDATE_COUNT . ' lines detail were shown in the log');
+            $this->LogMessage( '' );
+        }
 
         $this->LogMessage( 'Total Row count     : ' . $this->total_count  );
         $this->LogMessage( '' );
@@ -216,20 +225,23 @@ class ImportEmployeeJob extends Command
 
                             if ($job->wasRecentlyCreated) {
 
-                                if ($this->normal_run) {
+                                $this->created_count += 1;
+
+                                if  ($this->created_count <= self::MAX_CREATE_COUNT)  {
                                     $this->LogMessage('(CREATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
                                 }                                    
 
-                                $this->created_count += 1;
-
                             } elseif ($job->wasChanged() ) {
 
-                                $this->LogMessage('(UPDATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
-                                $changes = $job->getChanges();
-                                unset($changes["updated_at"]);
-                                $this->LogMessage('  summary => '. json_encode( $changes ) );
-
                                 $this->updated_count += 1;
+
+                                if  ($this->updated_count <= self::MAX_UPDATE_COUNT)  {
+                                    $this->LogMessage('(UPDATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
+                                    $changes = $job->getChanges();
+                                    unset($changes["updated_at"]);
+                                    $this->LogMessage('  summary => '. json_encode( $changes ) );
+                                }
+
                             } else {
                                 // No Action
                             }
