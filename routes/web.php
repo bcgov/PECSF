@@ -116,6 +116,9 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
     Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_deposit_form');
 });
+Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
+Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');
+
 Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
 Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
 Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');

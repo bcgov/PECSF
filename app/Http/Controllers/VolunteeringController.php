@@ -38,6 +38,20 @@ class VolunteeringController extends Controller
         return view('volunteering.index', compact('organizations', 'user', 'totalPledgedDataTillNow'));
     }
 
+    public function training(){
+        $organizations = Organization::where('status' ,"=", "A")->get();
+        $user = User::find(Auth::id());
+        $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
+        return view('volunteering.training', compact('organizations', 'user', 'totalPledgedDataTillNow'));
+    }
+
+    public function profile(){
+        $organizations = Organization::where('status' ,"=", "A")->get();
+        $user = User::find(Auth::id());
+        $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
+        return view('volunteering.profile', compact('organizations', 'user', 'totalPledgedDataTillNow'));
+    }
+
     public function store(VolunteerRegistrationRequest $request) {
         $validator = Validator::make(request()->all(), [
             'organization_code'         => 'required',

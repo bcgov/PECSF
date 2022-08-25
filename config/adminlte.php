@@ -243,12 +243,23 @@ return [
             'submenu' => [
                 [
                     'text' => 'Dashboard',
-                    'icon' => 'nav-icon fa fa-columns',
+                    'icon' => 'nav-icon fa fa-circle',
                     'url'  => '/volunteering',
+                ]
+                ,
+                [
+                    'text' => 'Volunteer Profile',
+                    'icon' => 'nav-icon fa fa-circle',
+                    'url'  => '/profile',
+                ],
+                [
+                    'text' => 'Training',
+                    'icon' => 'nav-icon fa fa-circle',
+                    'url'  => '/training',
                 ],
                 [
                     'text' => 'Forms',
-                    'icon' => 'nav-icon fa fa-money-check',
+                    'icon' => 'nav-icon fa fa-circle',
                     'url'  => '/bank_deposit_form',
                 ],
                 ]
