@@ -34,7 +34,7 @@
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
-                                <td>{{ 'Multiple' }} </td>
+                                <td>{{ '' }} </td>
                             @endif
                             <td>{{ $pledge->frequency }} </td>
                             <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
