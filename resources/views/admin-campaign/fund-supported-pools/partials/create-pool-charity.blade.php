@@ -169,8 +169,9 @@
                            name="images[]" value="{{ old('images.'.$index) }}">
                     <span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image (suggested file types: .png, .jpg, .svg)</span></label>
                     <br>
-                <img style="width:auto;height:300px;" id="output" />
-
+                <img style="width:auto;height:150px;display:none;" id="output" />
+                <div class="delete-image-button-area pt-3"> 
+                </div>
                 <span class="images_errors">
                     @error( 'images.'.$index )
                         <span class="invalid-feedback">{{ $message }}</span>

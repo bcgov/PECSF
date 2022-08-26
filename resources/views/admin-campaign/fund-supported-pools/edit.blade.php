@@ -206,6 +206,26 @@
 
 <script>
 
+    function loadFile(event) {
+        $(event.target).parents("label").siblings("img").attr('src', URL.createObjectURL(event.target.files[0]));
+        $(event.target).parents("label").siblings("img").css("display","block");
+
+        el = $(event.target).parents("div.image");        
+        $(el).find('.delete-image-button-area').html("<button class='delete-image-button btn btn-sm btn-outline-danger' type='button'>Delete the upload image</button>");
+    }
+
+    $(function() {   
+        $(document).on("click",".delete-image-button",function(event) {
+            event.preventDefault();
+
+            el = $(event.target).parents("div.image");        
+            $(el).find("img").attr('src', null);
+            $(el).find("img").css('display', 'none');
+            $(el).find("input[name='images[]']").val(null);
+            $(el).find('div.delete-image-button-area').html('');
+        });
+    });
+
 $(function() {    
 
     //function to initialize select2
@@ -359,9 +379,27 @@ $(function() {
             }
         }
     });
-     
+
+
+    $(document).on("click",".delete-current-image-button",function(event) {
+            event.preventDefault();
+
+            image_name = $(event.target).attr('data-name');
+            if (!confirm('Are you sure you want to remove the image "' + image_name + '" ?')) {
+                    return;
+            }
+
+            el = $(event.target).parents("div.current-image");        
+            $(el).find("figure").css('display', 'none');
+            $(el).find("input[name='current_images[]']").val(null);
+            $(el).find('.delete-current-image-button').css('display', 'none');
+
+            // alert("click bound to document listening for #test-element");
+     });
+
 
     $('.collapse').each( function (index) { if  ($(this).find('.invalid-feedback').length > 0 ) { $(this).collapse('show') }  });
+
 
 
 });

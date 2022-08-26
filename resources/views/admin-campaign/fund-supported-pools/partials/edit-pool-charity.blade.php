@@ -128,23 +128,35 @@
             </div>    
 
             <div class="form-row">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4 current-image">
                     @php (  $image_name = old('current_images.' . $index) ?? (count($errors) == 0 ? $pool_charity->image : '')  )
                     <input name="current_images[]" type="hidden" value="{{ $image_name  }}">
                     @if ( $image_name ) 
                     <figure>
-                        <img src="{{asset('img/uploads')}}/{{ $image_name }}" width="80" height="80">
+                        <img src="{{asset('img/uploads')}}/{{ $image_name }}" width="auto" height="150">
                         <figcaption ><span class="font-weight-bold">Current file name: </span>{{ $image_name }}</figcaption>
                     </figure>    
+                    <button class='delete-current-image-button btn btn-sm btn-outline-danger ml-4' 
+                            type='button' data-name='{{ $image_name }}'>Delete the previous image</button>
                     @endif
+
                 </div>
 
                 <div class="form-group col-md-6">
                     
                     <div class="image">
-                        <label for="images">Upload new image file (suggested file types: .png, .jpg, .svg)</label>
+                        <label>Add Image</label><br>
+                        <label>
+                            <input id="images" accept=".png,.jpg,.jpeg,.bmp" style="display:none;" onchange="loadFile(event)" type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror"
+                                   name="images[]" value="{{ old('images.'.$index) }}">
+                            <span style="font-weight:normal;background:#efefef;border:#000 1px solid; padding:5px;">Choose an Image (suggested file types: .png, .jpg, .svg)</span></label>
+                            <br>
+                        <img style="width:auto;height:150px;display:none;" id="output" />
+                        <div class="delete-image-button-area pt-3"> 
+                        </div>
+                        {{-- <label for="images">Upload new image file (suggested file types: .png, .jpg, .svg)</label>
                         <input type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror" 
-                                name="images[]" value="{{ old('images.'.$index) }}">
+                                onchange="loadFile(event)" name="images[]" value="{{ old('images.'.$index) }}"> --}}
                         @error( 'images.'.$index )
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror

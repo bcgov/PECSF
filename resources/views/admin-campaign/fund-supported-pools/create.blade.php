@@ -166,13 +166,46 @@
     function loadFile(event) {
         $(event.target).parents("label").siblings("img").attr('src', URL.createObjectURL(event.target.files[0]));
         $(event.target).parents("label").siblings("img").css("display","block");
+
+        el = $(event.target).parents("div.image");        
+        $(el).find('.delete-image-button-area').html("<button class='delete-image-button btn btn-sm btn-outline-danger' type='button'>Delete the upload image</button>");
     }
+
+    $(function() {
+        $(document).on("click",".delete-image-button",function(event) {
+            event.preventDefault();
+
+            if (!confirm('Are you sure you want to remove the image ?')) {
+                    return;
+            }
+
+            el = $(event.target).parents("div.image");        
+            $(el).find("img").attr('src', null);
+            $(el).find("img").css('display', 'none');
+            $(el).find("input[name='images[]']").val(null);
+            $(el).find('div.delete-image-button-area').html('');
+        });
+    });
 
     $(document).ready(function()
     {
         $("#create_pool").submit(function(e)
         {
             e.preventDefault();
+
+            // // Check all image were upload FIRST
+            // images_count = 0; 
+            // charity_count = $("select[name='charities[]']").length;
+            // $("input[name='images[]']").each(function(){
+            //     if ($(this)[0].files[0]) {
+            //         images_count += 1;
+            //     }
+            // });
+            // if (images_count != charity_count) {
+            //     alert('Please upload the image file for all charity before click the save button.');
+            //     return;
+            // }
+
             var form = document.getElementById("create_pool");
             var formData = new FormData();
             $("select[name='charities[]']").each(function(){
@@ -207,8 +240,8 @@
 
             formData.append('start_date', $('#start_date').val());
 
-            $("input[name='images[]']").each(function(){
-                formData.append('images[]',  $(this)[0].files[0]);
+            $("input[name='images[]']").each(function( index){
+                formData.append('images['+index+']',  $(this)[0].files[0]);
             });
 
             $("#create_pool").fadeTo("slow",0.2);
@@ -260,8 +293,9 @@
                             count = prop.substring(prop.indexOf(".")+1);
                             tag = prop.substring(0,prop.indexOf("."))
 
-                            error = errors[prop][0].split(".");
-                            error = error[0] + error[1].substring(1,error[1].length);
+                            // error = errors[prop][0].split(".");
+                            // error = error[0] + error[1].substring(1,error[1].length);
+                            error = errors[prop][0];
                             error = error.replace("_"," ");
 
                             charity_tags = $('#fspools_table tr');

@@ -163,23 +163,25 @@ class FundSupportedPoolController extends Controller
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp|max:2048',
         ],[
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
-            'charities.required' => 'The charity field is required.',
-            'status.in' => 'The selected status is invalid.',
-            'names.required' => 'The name field is required.',
-            'descriptions.required' => 'The description field is required.',
-            'percentages.required' => 'The Percentage field is required.',
-            'percentages.max' => 'The Percentage must not be greater than 100.',
-            'percentages.min' => 'The Percentage must be greater than 0.',
-            'percentages.numeric' => 'The Percentage must be a number.',
-            'percentages.between' => 'The percentages.0 must be between 0 and 100.',
-            'percentages.regex' => 'The percentages format is invalid.',
-            'contact_names.required' => 'The Contact Name field is required.',
-            'contact_titles.required' => 'The Contact Title field is required.',
-            'contact_emails.required' => 'The Contact Email field is required.',
-            'contact_emails.email' => 'Please enter a valid email format.',
-            'notes.required' => 'The Notes field is required.',
-            'images.required' => 'Please upload an image',
-            'images.max' => 'Sorry! Maximum allowed size for an image is 2MB',
+            'charities.*.required' => 'The charity field is required.',
+            'status.*.in' => 'The selected status is invalid.',
+            'names.*.required' => 'Please enter a supported program name.',
+            'descriptions.*.required' => 'Please enter a supported program description.',
+            'percentages.*.required' => 'Please enter a percentage.',
+            'percentages.*.max' => 'The percentage must not be greater than 100.',
+            'percentages.*.min' => 'The percentages must be at least 0.01',
+            'percentages.*.numeric' => 'The percentage must be a number.',
+            'percentages.*.between' => 'The percentage must be between 0 and 100.',
+            'percentages.*.regex' => 'The percentage format is invalid.',
+            'contact_names.*.required' => 'Please enter a contact name.',
+            'contact_titles.*.required' => 'Please enter a contact title',
+            'contact_emails.*.required' => 'Please enter a valid email format.',
+            'contact_emails.*.email' => 'Please enter a valid email format.',
+            'notes.*.required' => 'The Notes field is required.',
+            'images.*.required' => 'Please upload an image',
+            'images.*.max' => 'Sorry! Maximum allowed size for an image is 2MB',
+            'images.*.mimes' => 'The image must be a file of type: jpg, jpeg, png, bmp.',
+            
         ]);
 
         //hook to add additional rules by calling the ->after method
@@ -398,17 +400,17 @@ class FundSupportedPoolController extends Controller
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.*.required' => 'The charity field is required.',
             'status.*.in' => 'The selected status is invalid.',
-            'names.*.required' => 'The name field is required.',
-            'descriptions.*.required' => 'The description field is required.',
-            'percentages.*.required' => 'The Percentage field is required.',
-            'percentages.*.max' => 'The Percentage must not be greater than 100.',
-            'percentages.min' => 'The Percentage must be greater than 0.',
-            'percentages.*.numeric' => 'The Percentage must be a number.',
-            'percentages.*.between' => 'The percentages.0 must be between 0 and 100.',
-            'percentages.*.regex' => 'The percentages format is invalid.',
-            'contact_names.*.required' => 'The Contact Name field is required.',
-            'contact_titles.*.required' => 'The Contact Title field is required.',
-            'contact_emails.*.required' => 'The Contact Email field is required.',
+            'names.*.required' => 'Please enter a supported program name.',
+            'descriptions.*.required' => 'Please enter a supported program description.',
+            'percentages.*.required' => 'Please enter a percentage.',
+            'percentages.*.max' => 'The percentage must not be greater than 100.',
+            'percentages.*.min' => 'The percentages must be at least 0.01',
+            'percentages.*.numeric' => 'The percentage must be a number.',
+            'percentages.*.between' => 'The percentage must be between 0 and 100.',
+            'percentages.*.regex' => 'The percentage format is invalid.',
+            'contact_names.*.required' => 'Please enter a contact name.',
+            'contact_titles.*.required' => 'Please enter a contact title',
+            'contact_emails.*.required' => 'Please enter a valid email format.',
             'contact_emails.*.email' => 'Please enter a valid email format.',
             'notes.*.required' => 'The Notes field is required.',
             'images.*.required' => 'Please upload an image',
@@ -423,7 +425,6 @@ class FundSupportedPoolController extends Controller
             $status = request('status');
             $percentages = request('percentages');
             $current_images = request('current_images');
-
 
             $status = request('status');
             if ($charities) {
@@ -633,6 +634,7 @@ class FundSupportedPoolController extends Controller
             ]
         ],[
             // 'new_start_date.required' => 'The New Start Date field is required.',
+            'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'start_date.yesterday' => 'The New Start Date field is required.',
         ]);
 
