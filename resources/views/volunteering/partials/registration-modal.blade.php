@@ -1,9 +1,12 @@
 <!-- Modal -->
-<div class="modal fade" id="volunteer-registration" tabindex="-1" aria-labelledby="volunteerRegistrationTitle" data-backdrop="static" 
+<div class="modal fade" id="volunteer-registration" tabindex="-1" aria-labelledby="volunteerRegistrationTitle" data-backdrop="static"
     aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
+            <div style="background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;" class="modal-header">
+                <h1 style="color:#fff;" class="modal-title" id="volunteerRegistrationTitle">
+                    Register As a Volunteer
+                </h1>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -11,104 +14,126 @@
             <div class="modal-body" style="height: calc(100vh - 200px);">
                 <form action="{{route('volunteering.store')}}" method="POST" id="volunteer_registration_form">
                     @csrf
-                    <h4 class="modal-title text-center text-primary" id="volunteerRegistrationTitle">
-                        Volunteer Registration
-                    </h4>
-                    <div class="formsteps d-flex mt-5" style="justify-content: space-evenly;">
-                        <div class="empty flex-fill"></div>
-                        <div class="step active text-center">
-                            <div class="count">1</div>
-                            <div class="title">Enter Organization Details</div>
-                        </div>
-                        <div class="divider flex-fill"></div>
-                        <div class="step text-center">
-                            <div>
-                                <div class="count">2</div>
-                                <div class="title">Set Volunteer Preferences</div>
-                            </div>
-                        </div>
-                        <div class="divider flex-fill"></div>
-                        <div class="step text-center">
-                            <div>
-                                <div class="count">3</div>
-                                <div class="title">Volunteer Registration Summary</div>
-                            </div>
-                        </div>
-                        <div class="divider flex-fill"></div>
-                        <div class="step text-center">
-                            <div>
-                                <div class="count">4</div>
-                                <div class="title">Begin Volunteer Training</div>
-                            </div>
-                        </div>
-                        <div class="empty flex-fill"></div>
-                    </div>
+
+
                     <div id="volunteer-registration-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
                         <div class="carousel-inner">
-                            <div class="carousel-item active p-3" data-step="1">
+
+                            <div class="carousel-item p-3 active" data-step="1">
+                                <h1 class="text-primary">Volunteer Details</h1>
                                 <div class="row mt-5">
-                                    <div class="col-12 col-md-6 offset-md-3">
-                                        <div class="step-1 text-center">
+                                    <div class="col-12 col-md-6 ">
+
+                                    <div class="step-1 ">
+                                        <p class="text-muted">
+                                            Your Organization
+                                        </p>
+                                        <select name="organization_id" id="" class="form-control" required>
+                                            <option value="">Please select</option>
+                                            @foreach($organizations as $org)
+                                                <option value="{{$org->id}}">{{$org->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-12 col-md-6">
+                                        <div class="step-1">
+                                            <div class="step-1">
                                             <p class="text-muted">
-                                                Please use the dropdown menu below to select your organization. *
+                                                How many years have you been working with PECSF
                                             </p>
-                                            <select name="organization_id" id="" class="form-control form-control-sm" required>
-                                                <option value="">Please select</option>
-                                                @foreach($organizations as $org) 
-                                                    <option value="{{$org->id}}">{{$org->name}}</option>
-                                                @endforeach
-                                            </select>
+                                                <select name="no_of_years" id="" class="form-control" required>
+                                                    <option value="">Please select</option>
+                                                        <option value="-1">Prefer not to say</option>
+                                                    <option value="0">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+
                                         </div>
                                     </div>
+                                    </div>
+
+                                </div>
+                                    <div class="row mt-5">
+                                    <div class="col-12 col-md-6">
+                                            <div class="step-1">
+                                                <p class="text-muted">
+                                                    Your Preferred Volunteer Role
+                                                </p>
+                                                <select name="volunteer_role" id="" class="form-control" required>
+                                                    <option value="">Please Select</option>
+                                                    <option value="canvasser">Canvasser</option>
+                                                    <option value="lead_coordinator">Lead Coordinator</option>
+                                                    <option value="office_contract">Office Contract</option>
+                                                    <option value="event_planner">Event Planner</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                            </div>
+
+
+                                <div class="row mt-5">
+                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
+                                    <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
                                 </div>
                             </div>
-                        
-                            <div class="carousel-item p-3" data-step="1">
-                                <div class="row mt-5">
-                                    <div class="col-12 col-md-6 offset-md-3">
-                                        <div class="step-1 text-center">
-                                            <p class="text-muted">
-                                                Using the field below, please identify the number of years you have been volunteering with PECSF.
-                                            </p>
-                                            <input name="no_of_years" type="text" class="form-control form-control-sm" placeholder="Enter number of years" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col text-center">
-                                        <input type="hidden" name="no_of_years_opt_out" value="0">
+                            <div class="carousel-item p-3" data-step="2">
+                                <h1 class="text-primary">Recognition Items</h1>
+                                <p class="text-muted">At the end of every campaign, PECSF distributes recognition items to all volunteers. Please select if you would like us to use your address as shown in the Global Address Listing or enter a new address in the field below.</p>
+
+                                <div class="row text-left mt-4">
+                                    <div class="col">
                                         <label>
-                                            <input type="checkbox" name="no_of_years_opt_out" value="1">
-                                            I wish to opt-out from identifying the number of years I have been volunteering with PECSF.
+                                            <input type="radio" selected name="global" value="global">
+                                            Use my Global Address Listing
                                         </label>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="row text-left mt-4">
+                                    <div class="col">
+                                        <label>
+                                            <input type="radio" name="global" value="new_address">
+                                            Use the following address:
+                                        </label>
+                                    </div>
+                                </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label>Street address</label>
+                                                            <input name="street_address" type="text" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label>City</label>
+                                                            <select name="city" class="form-control">
+                                                                <option value="">Select a City</option>
+                                                            </select>
+                                                        </div>
 
-                            <div class="carousel-item p-3" data-step="2">
-                                <div class="row mt-5">
-                                    <div class="col-12 col-md-6 offset-md-3">
-                                        <div class="step-1 text-center">
-                                            <p class="text-muted">
-                                                At the end of every Campaign, PECSF distributes recognition items to all volunteers. Please select if you would like us to use your address as shown in the Global Address Listing or enter a new address in the field below.
-                                            </p>
-                                            <div class="row text-left">
-                                                <div class="col">
-                                                    <label>
-                                                        <input type="radio" name="address_type" value="Global" checked>
-                                                        Global Address Listing
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="row text-left">
-                                                <div class="col">
-                                                    <label>
-                                                        <input type="radio" name="address_type" value="New">
-                                                        New Address
-                                                    </label>
-                                                    <input name="new_address" type="text" class="form-control form-control-sm" placeholder="Physical Address, City, Prov, Postal Code">
-                                                </div>
-                                            </div>
+
+                                                        <div class="col-md-4">
+                                                            <label>Province</label>
+                                                            <select class="form-control" name="province">
+                                                                <option value="">Select a Province</option>
+                                                            </select>
+                                                        </div>
+
+
+                                                        <div class="col-md-4">
+                                                            <label>Postal Code</label>
+                                                            <input name="postal_code" type="text" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
                                             <div class="row text-left mt-4">
                                                 <div class="col">
                                                     <label>
@@ -117,79 +142,82 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="carousel-item p-3" data-step="2">
+
                                 <div class="row mt-5">
-                                    <div class="col-12 col-md-6 offset-md-3">
-                                        <div class="step-1 text-center">
-                                            <p class="text-muted">
-                                                Using the dropdown below, please select your preferred volunteer role. * <br>
-                                                To learn more about the available volunteer roles with PECSF, please click <a href="#" target="_blank">here</a>
-                                            </p>
-                                            <select name="preferred_role" id="" class="form-control form-control-sm" required>
-                                                <option value="">Please select</option>
-                                                <option value="Coordinator">Coordinator</option>
-                                                <option value="Canvasser">Canvasser</option>
-                                                <option value="Event Coordinator">Event Coordinator</option>
-                                                <option value="Office Contact">Office Contact</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
+                                    <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
                                 </div>
                             </div>
+
+
                             <div class="carousel-item p-3"  data-step="3">
+                                <h1>Confirmation</h1>
+<h2>Your Details</h2>
                                 <div class="row mt-5">
-                                    <div class="col-12 col-md-6 offset-md-3 text-center">
-                                        <p class="text-muted">
-                                            Please take a moment to review yout Volunteer Preferences below before continuting to Step 4.
-                                        </p>
-                                        <div class="d-flex bg-light p-3 flex-column" id="summary-table">
+                                    <div class="col-12 col-md-12 ">
+                                        <div class="d-flex p-3 flex-column" id="summary-table">
                                             <div class="d-flex">
-                                                <div>
-                                                    Organization
-                                                </div>
-                                                <div class="flex-fill"></div>
+                                            <strong>
+                                                Your Organization
+                                            </strong>
+                                            </div>
+                                            <div class="d-flex">
                                                 <div data-value-for="organization">
                                                     Value
                                                 </div>
                                             </div>
+
                                             <div class="d-flex">
                                                 <div>
-                                                    Number of years volunteering with PECSF
+                                                    Number of years you have been volunteering with PECSF
                                                 </div>
-                                                <div class="flex-fill"></div>
+                                            </div>
+                                            <div class="d-flex">
                                                 <div data-value-for="no_of_years">
                                                     Value
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="d-flex">
                                                 <div>
-                                                    Address Preference
+                                                    Your preferred Volunteer Role
                                                 </div>
-                                                <div class="flex-fill"></div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div data-value-for="preferred_role">
+
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div>
+                                                    <h2 class="text-primary">Mailing Address</h2>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
                                                 <div data-value-for="address_type">
                                                     Value
                                                 </div>
                                             </div>
-                                            <div class="d-flex">
-                                                <div>
-                                                    Preferred Volunteer Role
-                                                </div>
-                                                <div class="flex-fill"></div>
-                                                <div data-value-for="preferred_role">
-                                                    
-                                                </div>
+<hr>
+                                            <div class="col-md-12">
+                                                <p>Personal information collected through this registration process is collected by the BC Public Service Agency for the purpose of facilitating PECSF volunteering recognition activities and program improvements under section 26 (c) and (e) of the Freedom of Information and Protection of Privacy Act</p>
+                                            <p>Questions about the collection of your personal information can be directed to the Campaign Manager Provincial Employees Community Services Fund at 250 356-1736 or <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a></p>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
+                                </div>
+                                <div class="row mt-5">
+                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
+                                    <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
                                 </div>
                             </div>
                             <div class="carousel-item p-3"  data-step="4">
+                                <h1>Registration Complete</h1>
                                 <div class="row mt-5">
                                     <div class="col-12 col-md-6 offset-md-3">
                                         <div class="step-1 text-center">
@@ -199,6 +227,12 @@
                                             <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ui-7PMerNnU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
+                                    <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
+                                    <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
                                 </div>
                             </div>
                             <div class="carousel-item p-3"  data-step="5">
@@ -218,15 +252,11 @@
                             </div>
                         </div>
                     </div>
-                
+
                 </form>
             </div>
             <div class="modal-footer">
-                <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
-                <div class="flex-fill"></div>
-                <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
-                <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
-                <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
+
             </div>
         </div>
     </div>
