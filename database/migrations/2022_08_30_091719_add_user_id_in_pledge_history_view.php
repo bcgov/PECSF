@@ -47,7 +47,7 @@ class AddUserIdInPledgeHistoryView extends Migration
                 and pledges.user_id = users.id
                 and pledges.pay_period_amount <> 0 ) 
             union all
-            (select 'GF', pledges.user_id, pledges.id,  users.GUID, campaign_years.calendar_year as yearcd, type,
+            (select 'GF', pledges.user_id, pledges.id, users.GUID, campaign_years.calendar_year as yearcd, type,
                 'Annual', 'One-Time', pledges.one_time_amount, pledges.one_time_amount, 
                     (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id =   pledges.f_s_pool_id)
                 from pledges, campaign_years, users
@@ -61,11 +61,9 @@ class AddUserIdInPledgeHistoryView extends Migration
                 from donate_now_pledges, users
                 where donate_now_pledges.user_id = users.id)
             union all 
-                (select 'BI', NULL, pledge_histories.id, GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,
-                campaign_type, frequency, per_pay_amt, pledge,    
-                (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code)
-                from pledge_histories 
-                where `campaign_type` not in ('Annual') );
+            (select 'BI', NULL, pledge_history_id, GUID, yearcd, source,  
+                campaign_type, frequency, per_pay_amt, pledge, region 
+                from pledge_history_summaries);
 
         SQL;
 
@@ -120,11 +118,9 @@ class AddUserIdInPledgeHistoryView extends Migration
                 from donate_now_pledges, users
                 where donate_now_pledges.user_id = users.id)
             union all 
-                (select 'BI', pledge_histories.id, GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,
-                campaign_type, frequency, per_pay_amt, pledge,    
-                (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code)
-                from pledge_histories 
-                where `campaign_type` not in ('Annual') );
+            (select 'BI', pledge_history_id, GUID, yearcd, source,  
+                campaign_type, frequency, per_pay_amt, pledge, region 
+                from pledge_history_summaries);
 
         SQL;
 
