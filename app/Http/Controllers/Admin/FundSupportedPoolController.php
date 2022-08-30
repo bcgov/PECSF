@@ -159,7 +159,7 @@ class FundSupportedPoolController extends Controller
             'descriptions.*'    => 'required',
             'percentages.*'     => 'required|numeric|min:0.01|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
-            'contact_emails.*'  => 'required|email',
+            'contact_emails.*'  => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp|max:2048',
         ],[
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
@@ -177,6 +177,7 @@ class FundSupportedPoolController extends Controller
             'contact_titles.*.required' => 'Please enter a contact title',
             'contact_emails.*.required' => 'Please enter a valid email format.',
             'contact_emails.*.email' => 'Please enter a valid email format.',
+            'contact_emails.*.regex' => 'Please enter a valid email format.',
             'notes.*.required' => 'The Notes field is required.',
             'images.*.required' => 'Please upload an image',
             'images.*.max' => 'Sorry! Maximum allowed size for an image is 2MB',
@@ -393,7 +394,7 @@ class FundSupportedPoolController extends Controller
             'percentages.*'     => 'required|numeric|min:0.01|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
             'contact_titles.*'  => 'nullable',
-            'contact_emails.*'  => 'required|email',
+            'contact_emails.*'  => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix',
             'notes.*'           => 'nullable',
             'images.*'          => 'required|mimes:jpg,jpeg,png,bmp.gif|max:2048',
         ],[
@@ -412,6 +413,7 @@ class FundSupportedPoolController extends Controller
             'contact_titles.*.required' => 'Please enter a contact title',
             'contact_emails.*.required' => 'Please enter a valid email format.',
             'contact_emails.*.email' => 'Please enter a valid email format.',
+            'contact_emails.*.regex' => 'Please enter a valid email format.',
             'notes.*.required' => 'The Notes field is required.',
             'images.*.required' => 'Please upload an image',
             'images.*.mimes' => 'Only jpg, jpeg, png and bmp images are allowed',
