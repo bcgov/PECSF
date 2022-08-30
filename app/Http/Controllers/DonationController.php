@@ -38,8 +38,9 @@ class DonationController extends Controller {
         $user = User::where('id', Auth::id() )->first();
                         
         // NOTE: Must use the raw select statement in Laravel for querying this custom SQL view due to the performance issue
-        $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE GUID = '" . $user->guid . "' order by yearcd desc, donation_type desc;" ) );
-
+        $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid . 
+                                                "' and GUID <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
+ 
         $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->groupBy('yearcd');
 
         $totalPledgedDataTillNow = 0;

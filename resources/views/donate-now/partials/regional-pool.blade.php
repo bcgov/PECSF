@@ -148,7 +148,7 @@ $( function() {
         if ( id  ) {
             // Lanuch Modal page for listing the Pool detail
             $.ajax({
-                url: '/donate/regional-pool-detail/' + id,
+                url: '/donate-now/regional-pool-detail/' + id,
                 type: 'GET',
                 // data: $("#notify-form").serialize(),
                 dataType: 'html',

@@ -65,6 +65,11 @@
 
             // check if the selection is not previous one 
             if ( $(this).attr("org_id") == $("input[name='charity_id']").val()) {
+
+                $('#selected_charity0').remove();
+                $("#noselectedresults").html("You have not chosen any charities");
+                Toast('Message', 'Charity "' + $(this).attr("name") +  '" was removed.', 'bg-danger' );
+                resetCharitySelection();
                 return;
             }
 

@@ -109,6 +109,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/donate-now/thank-you', [DonateNowController::class, 'thankYou'])->name('donate-now.thank-you');
     Route::get('/donate-now/charities', [DonateNowController::class, 'searchCharities'])->name('donate-now.charities');
     Route::get('/donate-now/{id}/summary', [DonateNowController::class, 'summary'])->name('donate-now.summary');
+    Route::get('/donate-now/regional-pool-detail/{id}', [DonateNowController::class, 'regionalPoolDetail'])->name('donate-now.regional-pool-detail');
 });
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
@@ -197,6 +198,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::resource('/campaign', CampaignPledgeController::class);
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
+    Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
 
     Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
