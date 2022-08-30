@@ -47,9 +47,10 @@
     
 <div>
     <strong>Freedom of Information and Protection of Privacy Act</strong>
-    <p class="py-3">Personal information on this form is collected by the BC Public Service Agency for the purposes of processing and reporting on your pledge for charitable contributions to the Community Fund under section 26(c) of the Freedom of Information and Protection of Privacy Act.</p>
+    <p class="py-3">Personal information on this form is collected under sections 26 (c) and (e) of the Freedom of Information and Protection of Privacy Act by the BC Public Service Agency for the purposes of processing and reporting on your donation for charitable contributions to the Community Fund, fund disbursement and reconciliation, as well as program analysis and improvement purposes.</p>
     <p>By clicking the Pledge button, you hereby consent to the disclosure, within Canada only, by the BC Public Service Agency of your name to your organization’s Lead PECSF Coordinator for the purpose of administering the organization's participation incentive draws for the current campaign. This consent is effective until such time as my consent is revoked by you, in writing, to the PECSF Campaign Manager.</p>
-    <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund, at 250 356-1736, PECSF@gov.bc.ca  or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5.</p>
+    <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund, 
+            at 250 356-1736, <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.</p>
 </div>
 
 

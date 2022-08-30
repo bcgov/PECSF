@@ -38,7 +38,7 @@
 
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
-        @if($pledges->count() > 0)
+        @if($totalPledgedDataTillNow > 0)
             <div class="flex-fill"></div>
             @if (!$campaignYear->isOpen() )
                 <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
@@ -48,7 +48,7 @@
     </div>
     <div class="d-flex flex-column">
         <p class="m-0">
-            Since you started giving* through PECSF, you've donated ${{ number_format($totalPledgedDataTillNow,0) }}, as BC Public Servant.
+            Since you started giving through PECSF, you've donated ${{ number_format($totalPledgedDataTillNow,0) }}, as BC Public Servant.
         </p>
         <small>reflects pledge totals from 2005 onwards</small>
     </div>

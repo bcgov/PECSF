@@ -1,4 +1,4 @@
-<h3 class="mt-1">2. Choose your charity</h3>
+<h3 class="mt-1">2. Choose your charity (Choose 1)</h3>
 
 <div class="form-row">
 
