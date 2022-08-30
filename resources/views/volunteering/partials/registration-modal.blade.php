@@ -68,10 +68,10 @@
                                                 </p>
                                                 <select name="preferred_role" id="" class="form-control" required>
                                                     <option value="">Please Select</option>
-                                                    <option value="canvasser">Canvasser</option>
-                                                    <option value="lead_coordinator">Lead Coordinator</option>
-                                                    <option value="office_contract">Office Contract</option>
-                                                    <option value="event_planner">Event Planner</option>
+                                                    <option value="Canvasser">Canvasser</option>
+                                                    <option value="Lead Coordinator">Lead Coordinator</option>
+                                                    <option value="Office Contact">Office Contact</option>
+                                                    <option value="Event Planner">Event Planner</option>
                                                 </select>
                                             </div>
                                         </div>

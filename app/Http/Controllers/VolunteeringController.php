@@ -56,12 +56,7 @@ class VolunteeringController extends Controller
     }
 
     public function store(VolunteerRegistrationRequest $request) {
-        $validator = Validator::make(request()->all(), [
-            'organization_code'         => 'required',
-        ],[
-            'organization_code' => 'The Organization Code is required.',
-        ]);
-        $validator->validate();
+
 
         $form = BankDepositForm::Create(
             [
@@ -83,19 +78,7 @@ class VolunteeringController extends Controller
             ]
         );
 
-        foreach($request->organizations as $organization){
-            $form->organizations()->create([
-                'organization_name' => $organization->name,
-                'vendor_id' => $organization->vendor_id,
-                'donation_percent' => $organization->donation_percent,
-                'specific_community_or_initiative' => $organization->specific_community_or_initiative
-            ]);
-        }
 
-        $filepath = "/uploads";
-        $form->attachments()->create([
-            'local_path' => $filepath
-        ]);
 
         return redirect()->route('volunteering.index');
     }
