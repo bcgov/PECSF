@@ -58,23 +58,14 @@ class VolunteeringController extends Controller
     public function store(VolunteerRegistrationRequest $request) {
 
 
-        $form = BankDepositForm::Create(
+        $form = Volunteer::Create(
             [
-                'organization_code' => $request->organization_code,
-                'form_submitter_id' =>  $request->form_submitter_id,
-                'event_type' =>  $request->event_type,
-                'sub_type' => $request->sub_type,
-                'deposit_date' => $request->deposit_date,
-                'deposit_amount' => $request->deposit_amount,
-                'description' => $request->description,
-                'employment_city' => $request->employment_city,
-                'region_id' => $request->region_id,
-                'department_id' => $request->department_id,
-                'address_line_1' => $request->address_line_1,
-                'address_line_2' => $request->address_line_2,
-                'address_city' => $request->address_city,
-                'address_province' => $request->address_province,
-                'address_postal_code' => $request->address_postal_code
+                'user_id' => Auth::id(),
+                'address_type' =>  $request->address_type,
+                'new_address' =>  $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
+                'no_of_years' => $request->no_of_years,
+                'preferred_role' => $request->preferred_role,
+                'organization_id' => $request->organization_id,
             ]
         );
 

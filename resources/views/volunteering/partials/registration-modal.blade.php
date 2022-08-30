@@ -96,7 +96,7 @@
                                 <div class="row text-left mt-4">
                                     <div class="col">
                                         <label>
-                                            <input checked type="radio" name="address_type" value="global">
+                                            <input checked type="radio" name="address_type" value="Global">
                                             Use my Global Address Listing
                                         </label>
                                     </div>
@@ -104,7 +104,7 @@
                                 <div class="row text-left mt-4">
                                     <div class="col">
                                         <label>
-                                            <input type="radio" name="address_type" value="new_address">
+                                            <input type="radio" name="address_type" value="New">
                                             Use the following address:
                                         </label>
                                     </div>
@@ -247,39 +247,23 @@
                                     <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
                                 </div>
                             </div>
+
                             <div class="carousel-item p-3"  data-step="4">
                                 <h1>Registration Complete</h1>
-                                <div class="row mt-5">
-                                    <div class="col-12 col-md-6 offset-md-3">
-                                        <div class="step-1 text-center">
-                                            <p class="text-muted">
-                                                Below you will find your first 30-minutes online volunteer training video. When you are finished watching the video, click the button below to sign up for more training events.
-                                            </p>
-                                            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ui-7PMerNnU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-5">
-                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
-                                    <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
-                                    <x-button href="#volunteer-registration-carousel" role="button" class="finish-btn d-none" data-slide="next">Finish Registration</x-button>
-                                    <x-button href="#" role="button" class="signup-btn d-none">Begin Volunteer Training</x-button>
-                                </div>
-                            </div>
-                            <div class="carousel-item p-3"  data-step="5">
-                                <div class="row mt-5">
+                                <div class="row mt-3">
                                     <div class="col-12 col-md-6 offset-md-3">
                                         <div class="step-1 text-center">
                                             <p class="text-muted">
                                                 You have successfully registered as a volunteer with PECSF. <br>
                                                 Click the button below to begin volunteer training process.
                                             </p>
-                                            <div class="m-5">
+                                            <div class="m-3">
                                                 <img src="{{asset('img/volunteering-intro/finished-registraion.jpeg')}}" class="img-fluid">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <x-button href="/training" role="button" class="center signup-btn d-none">Begin Volunteer Training</x-button>
                             </div>
                         </div>
                     </div>
