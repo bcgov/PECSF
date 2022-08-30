@@ -35,21 +35,24 @@ class VolunteeringController extends Controller
         $organizations = Organization::where('status' ,"=", "A")->get();
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
-        return view('volunteering.index', compact('organizations', 'user', 'totalPledgedDataTillNow'));
+        $cities = City::all();
+        return view('volunteering.index', compact('organizations', 'user', 'totalPledgedDataTillNow','cities'));
     }
 
     public function training(){
         $organizations = Organization::where('status' ,"=", "A")->get();
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
-        return view('volunteering.training', compact('organizations', 'user', 'totalPledgedDataTillNow'));
+        $cities = City::all();
+        return view('volunteering.training', compact('organizations', 'user', 'totalPledgedDataTillNow','cities'));
     }
 
     public function profile(){
         $organizations = Organization::where('status' ,"=", "A")->get();
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
-        return view('volunteering.profile', compact('organizations', 'user', 'totalPledgedDataTillNow'));
+        $cities = City::all();
+        return view('volunteering.profile', compact('organizations', 'user', 'totalPledgedDataTillNow','cities'));
     }
 
     public function store(VolunteerRegistrationRequest $request) {

@@ -75,12 +75,27 @@
                 });
                 if(e.to == 0) {
                     $(this).find(".prev-btn").addClass("d-none");
-                } else if (e.to == 5) {
-                    $(this).find(".prev-btn").removeClass("d-none");
-                    $(this).find(".finish-btn").removeClass("d-none");
-                    $(this).find(".signup-btn").addClass("d-none");
-                    $(this).find(".next-btn").addClass("d-none");
-                }  else if (e.to == 6) {
+                } else if (e.to == 2) {
+                    fail = false;
+                    if($("[name=address_type]:checked").val() == "new_address")
+                    {
+                        $("[name=city],[name=province],[name=postal_code],[name=street_address]").each(function(){
+                            if($(this).val().length < 3){
+                                fail = true;
+                                $("#"+$(this).attr("name")+"_error").html("The "+$(this).attr("name").replace("_"," ")+" field is required");
+                            }
+                        });
+                    }
+                    if(fail){
+                        e.preventDefault();
+                    }
+                    else{
+                        $(this).find(".prev-btn").removeClass("d-none");
+                        $(this).find(".finish-btn").removeClass("d-none");
+                        $(this).find(".signup-btn").addClass("d-none");
+                        $(this).find(".next-btn").addClass("d-none");
+                    }
+                }  else if (e.to == 3) {
                     $(this).find(".finish-btn").addClass("d-none");
                     $(this).find(".signup-btn").removeClass("d-none");
                     $(this).find(".prev-btn").addClass("d-none");
@@ -91,8 +106,8 @@
                     $(this).find(".finish-btn").addClass("d-none");
                 }
 
-                const no_of_years = $("#volunteer-registration").find("[type=checkbox][name=no_of_years_opt_out]").prop('checked') ? 'Opt-out' : $("#volunteer-registration").find("[type=text][name=no_of_years]").val();
-                const address_type = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val();
+                const no_of_years =  $("#volunteer-registration").find("[name=no_of_years]").val();
+                const address_type = ($("#volunteer-registration").find("[type=radio][name=address_type]:checked").val() == "Opt-out")? "Opt-out" : $("[name=street_address]").val() + ", " + $("[name=city]").val() + ", " + $("[name=province]").val()+", "+$("[name=postal_code]").val();
 
 
 
