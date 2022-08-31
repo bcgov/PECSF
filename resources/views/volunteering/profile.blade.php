@@ -1,14 +1,62 @@
 @extends('adminlte::page')
 @section('content_header')
     <div class="d-flex mt-3">
-        <h1>PECSF Volunteering</h1>
+        <h1>Volunteer Profile</h1>
         <div class="flex-fill"></div>
     </div>
 @endsection
 @section('content')
 
     @if($is_registered)
-Registered
+        <a href="/volunteering/edit"><button class="btn btn-primary">Edit Your Information</button></a>
+        <div class="card p-4 mt-4">
+            <h1 class="text-primary">Volunteer Details</h1>
+            <div class="d-flex ">
+                <strong>
+                    Your Organization
+                </strong>
+            </div>
+            <div class="d-flex">
+                <div data-value-for="organization">
+                    {{$is_registered->name}}
+                </div>
+            </div>
+
+            <div class="d-flex mt-2">
+                <strong>
+                    Number of years you have been volunteering with PECSF
+                </strong>
+            </div>
+            <div class="d-flex">
+                <div data-value-for="no_of_years">
+                    {{$is_registered->no_of_years}}
+                </div>
+            </div>
+
+            <div class="d-flex mt-2">
+                <strong>
+                    Your preferred Volunteer Role
+                </strong>
+            </div>
+            <div class="d-flex">
+                <div data-value-for="preferred_role">
+                    {{$is_registered->preferred_role}}
+                </div>
+            </div>
+            <a class="text-primary text-bold mt-4" style="text-decoration:underline;">Learn more about available volunteer roles with PECSF</a>
+
+            <h1 class="text-primary mt-4">Recognition Items</h1>
+            <div class="d-flex mt-1">
+                <div>
+                    <strong>Address for receiving recognition items</strong>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div data-value-for="address_type">
+                  {{$is_registered->new_address}}
+                </div>
+            </div>
+        </div>
         @else
         <div class="card">
             <div class="card-body">

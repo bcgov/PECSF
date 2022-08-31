@@ -116,6 +116,8 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
     Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_deposit_form');
+    Route::get('/edit', [VolunteeringController::class, 'edit'])->name('edit');
+
 });
 Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
 Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');

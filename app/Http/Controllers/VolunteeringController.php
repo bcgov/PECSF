@@ -53,8 +53,16 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? true : false;
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
         return view('volunteering.profile', compact('organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
+    }
+
+    public function edit(){
+        $organizations = Organization::where('status' ,"=", "A")->get();
+        $user = User::find(Auth::id());
+        $cities = City::all();
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+        return view('volunteering.edit', compact('organizations', 'user', 'cities','is_registered'));
     }
 
     public function store(VolunteerRegistrationRequest $request) {
