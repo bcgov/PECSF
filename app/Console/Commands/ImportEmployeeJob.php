@@ -26,7 +26,7 @@ class ImportEmployeeJob extends Command
     protected $description = 'Import the Employee Information from BI';
 
     const MAX_CREATE_COUNT = 1000;
-    const MAX_UPDATE_COUNT = 5000;
+    const MAX_UPDATE_COUNT = 1000;
 
     /* attributes for share in the command */
     protected $total_count;
@@ -34,6 +34,7 @@ class ImportEmployeeJob extends Command
     protected $updated_count;
     protected $message;
     protected $status;
+    protected $last_refresh_time;
 
     /**
      * Create a new command instance.
@@ -48,6 +49,8 @@ class ImportEmployeeJob extends Command
         $this->updated_count = 0;
         $this->message = '';
         $this->status = 'Completed';
+
+        $this->last_refresh_time = time();
 
     }
 
@@ -203,6 +206,14 @@ class ImportEmployeeJob extends Command
                                 'dept_name' => $row->dept_name,
                                 'tgb_reg_district' => $row->tgb_reg_district,
                                 'region_id' => array_key_exists( $row->tgb_reg_district , $regions) ? $regions[$row->tgb_reg_district] : null,
+
+                                'office_address1' => $row->office_address1,
+                                'office_address2' => $row->office_address2,
+                                'office_city' => $row->office_city, 
+                                'office_stateprovince' => $row->office_stateprovince, 
+                                'office_country' => $row->office_country,
+                                'office_postal' => $row->office_postal,
+
                                 'city' => $row->city,
                                 'stateprovince' => $row->stateprovince,
                                 'country' => $row->country,
@@ -279,8 +290,12 @@ class ImportEmployeeJob extends Command
         // write to log message 
         $this->message .= $text . PHP_EOL;
 
-        $this->task->message = $this->message;
-        $this->task->save();
+        if (time() - $this->last_refresh_time > 5) {
+            $this->task->message = $this->message;
+            $this->task->save();
+
+            $this->last_refresh_time = time();
+        }
         
     }
 
