@@ -152,7 +152,7 @@
             </div>
 
             <div class="row mt-5">
-                <button href="#" class="btn-secondary" class="cancel-btn">Cancel</button>
+                <button href="#" class="" style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="cancel-btn">Cancel</button>
                 &nbsp;
                 <x-button class="save-btn">Save</x-button>
                 &nbsp;

@@ -267,7 +267,7 @@ return [
         [
             'text' => 'Challenge',
             'url' => '/challenge',
-            'icon' => 'nav-icon fa fa-sort-amount-up-alt', // 'challenge',
+            'icon' => 'nav-icon fa fa-chart-bar', // 'challenge',
             'active' => ['challenge/*']
         ],
         [
