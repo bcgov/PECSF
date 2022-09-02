@@ -8,6 +8,8 @@
 @section('content')
 
     @if($is_registered)
+        <form action="{{route('volunteering.update')}}" method="POST" id="volunteer_registration_form">
+            @csrf
 
         <div class="card p-4 mt-4">
             <h1 class="text-primary">Volunteer Details</h1>
@@ -58,10 +60,10 @@
 
                         <select name="preferred_role" id="" class="form-control" required>
                             <option value="">Please Select</option>
-                            <option value="Canvasser">Canvasser</option>
-                            <option value="Lead Coordinator">Lead Coordinator</option>
-                            <option value="Office Contact">Office Contact</option>
-                            <option value="Event Planner">Event Planner</option>
+                            <option value="Canvasser" {{$is_registered->preferred_role == "Canvasser" ? "selected":""}}>Canvasser</option>
+                            <option value="Lead Coordinator" {{$is_registered->preferred_role == "Lead Coordinator" ? "selected" :""}}>Lead Coordinator</option>
+                            <option value="Office Contact" {{$is_registered->preferred_role == "Office Contact" ? "selected":""}}>Office Contact</option>
+                            <option value="Event Planner" {{$is_registered->preferred_role == "Event Planner" ? "selected":""}}>Event Planner</option>
                         </select>
 
                     </div>
@@ -78,7 +80,7 @@
             <div class="row text-left mt-4">
                 <div class="col">
                     <label>
-                        <input checked type="radio" name="address_type" value="Global">
+                        <input type="radio" {{$is_registered->address_type == "Global" ? "checked":""}} name="address_type" value="Global">
                         Use my Global Address Listing
                     </label>
                 </div>
@@ -86,7 +88,7 @@
             <div class="row text-left mt-4">
                 <div class="col">
                     <label>
-                        <input type="radio" name="address_type" value="New">
+                        <input {{$is_registered->address_type == "New" ? "checked":""}} type="radio" name="address_type" value="New">
                         Use the following address:
                     </label>
                 </div>
@@ -94,8 +96,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <label>Street address</label>
-                    <input name="street_address" type="text" class="form-control" placeholder="">
-                    <span id="street_address_error" class="text-danger"></span>
+                    <input name="new_address" type="text" value="{{explode(",",$is_registered->new_address)[0]}}" class="form-control" placeholder="">
+                    <span class="new_address_error" class="text-danger"></span>
 
                 </div>
             </div>
@@ -103,19 +105,19 @@
                 <div class="col-md-4">
                     <label>City</label>
                     <select name="city" class="form-control">
-                        <option value="">Select a City</option>
+                        <option>Select a City</option>
                         @foreach($cities as $city)
-                            <option value="{{$city->city}}">{{$city->city}}</option>
+                            <option {{strtolower($city->city)}}  {{ ((strtolower(explode(",",$is_registered->new_address)[1]) == strtolower($city->city)) ? "selected" : "") }} value="{{$city->city}}">{{$city->city}}</option>
                         @endforeach
                     </select>
-                    <span id="city_error" class="text-danger"></span>
+                    <span class="city_error" class="text-danger"></span>
                 </div>
 
 
                 <div class="col-md-4">
                     <label>Province</label>
                     <select class="form-control" name="province">
-                        <option value="">Select a Province</option>
+                        <option  value="">Select a Province</option>
                         <option value="Alberta">Alberta</option>
                         <option value="British Columbia">British columbia</option>
                         <option value="Manitoba">Manitoba</option>
@@ -127,37 +129,71 @@
                         <option value="Quebec">Quebec</option>
                         <option value="Saskatchewan">Saskatchewan</option>
                         <option value="Yukon">Yukon</option>
-
-                        <option value="Ontario">Ontario</option>
+                        <option
+                        value="Ontario">Ontario</option>
                     </select>
-                    <span id="province_error" class="text-danger"></span>
+                    <span class="province_error" class="text-danger"></span>
                 </div>
 
 
                 <div class="col-md-4">
                     <label>Postal Code</label>
-                    <input name="postal_code" type="text" class="form-control" placeholder="">
-                    <span id="postal_code_error" class="text-danger"></span>
+                    <input name="postal_code" value="{{explode(",",$is_registered->new_address)[3]}}" type="text" class="form-control" placeholder="">
+                    <span class="postal_code_error" class="text-danger"></span>
                 </div>
             </div>
             <div class="row text-left mt-4">
                 <div class="col">
                     <label>
-                        <input type="radio" name="address_type" value="Opt-out">
+                        <input type="radio" {{$is_registered->address_type == "Opt-out" ? "checked":""}}  name="address_type" value="Opt-out">
                         I wish to opt-out from receiving recognition items.
                     </label>
                 </div>
             </div>
 
             <div class="row mt-5">
-                <button href="#" class="btn-secondary" class="prev-btn">Cancel</button>
+                <button href="#" class="btn-secondary" class="cancel-btn">Cancel</button>
                 &nbsp;
-                <x-button href="#" class="next-btn">Save</x-button>
+                <x-button class="save-btn">Save</x-button>
                 &nbsp;
             </div>
         </div>
+        </form>
         @push('js')
             <script>
+               $("[name=province]").val('{{str_replace(" ","",ucfirst($province))}}');
+               $("[name=city]").val('{{str_replace(" ","",ucfirst($setcity))}}');
+
+               $('.save-btn').on('click', function (e) {
+                    e.preventDefault();
+                   const form = $('#volunteer_registration_form').get(0);
+                   $(".invalid-feedback").remove();
+                   $.ajax({
+                       type: "POST",
+                       url: form.action,
+                       data: $(form).serialize(),
+                       success: function (response) {
+                           // Silent
+                          alert("success");
+                       },
+                       error: function (response) {
+                           if(response.responseJSON.errors) {
+                               errors = response.responseJSON.errors;
+                               for (const prop in response.responseJSON.errors) {
+                                   count = prop.substring(prop.indexOf(".") + 1);
+                                   tag = prop.substring(0, prop.indexOf("."));
+                                   error = errors[prop][0];
+                                   error = error.replace("_", " ");
+                                   $("." + prop + "_error").html('<span class="invalid-feedback">'+error+'</span>');
+                               }
+                           }
+                           $(".invalid-feedback").show();
+                       },
+                       complete: function () {
+                           registrationUnderProcess = false;
+                       }
+                   });
+               });
 
             </script>
         @endpush

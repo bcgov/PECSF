@@ -62,7 +62,13 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
-        return view('volunteering.edit', compact('organizations', 'user', 'cities','is_registered'));
+
+        if($is_registered)
+        {
+            $province = explode(",",$is_registered->new_address)[2];
+            $setcity = explode(",",$is_registered->new_address)[1];
+        }
+        return view('volunteering.edit', compact('organizations', 'user', 'cities','is_registered','province','setcity'));
     }
 
     public function store(VolunteerRegistrationRequest $request) {
@@ -77,6 +83,48 @@ class VolunteeringController extends Controller
             ]
         );
         return redirect()->route('volunteering.index');
+    }
+
+    public function update(Request $request){
+        $validator = Validator::make(request()->all(), [
+            'organization_id' => 'required',
+            'no_of_years' => 'required',
+            'preferred_role' => 'required',
+            'address_type' => 'required'
+        ]);
+
+        $validator->after(function ($validator) use($request) {
+            if ($request->address_type == "New") {
+                if (empty($request->city)) {
+                    $validator->errors()->add('city', 'A City is required.');
+                }
+                if (empty($request->province)) {
+                    $validator->errors()->add('province', 'A Province is required.');
+                }
+                if (empty($request->postal_code)) {
+                    $validator->errors()->add('postal_code', 'A Postal Code is required.');
+                }
+                if (empty($request->new_address)) {
+                    $validator->errors()->add('new_address', 'A Street Address is required.');
+                }
+            }
+        });
+
+
+        $validator->validate();
+
+        Volunteer::updateOrCreate(
+            ["user_id" => Auth::id()],
+        [
+            'new_address'         => $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
+            'address_type'         => $request->address_type,
+            'organization_id' => $request->organization_id,
+            'no_of_years' => $request->no_of_years,
+            'preferred_role' =>  $request->preferred_role
+        ]
+        );
+
+
     }
 
     public function bank_deposit_form(Request $request) {
