@@ -40,6 +40,8 @@ class SyncUserProfile extends Command
     protected $locked_count;
     protected $message;
     protected $status;
+
+    protected $last_refresh_time;
     
 
     /**
@@ -56,6 +58,8 @@ class SyncUserProfile extends Command
         $this->locked_count = 0;
         $this->message = '';
         $this->status = 'Completed';
+
+        $this->last_refresh_time = time();
 
     }
 
@@ -284,9 +288,13 @@ class SyncUserProfile extends Command
         // write to log message 
         $this->message .= $text . PHP_EOL;
 
-        $this->task->message = $this->message;
-        $this->task->save();
-        
+        if (time() - $this->last_refresh_time > 5) {
+            $this->task->message = $this->message;
+            $this->task->save();
+    
+            $this->last_refresh_time = time();
+        }
+
     }
 
 }
