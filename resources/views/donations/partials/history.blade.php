@@ -53,7 +53,7 @@
                     @endforeach
                 </table>
 
-                @if($key >= $currentYear || $ignore)
+                @if($key > $currentYear || $ignore)
                     @php
                         $ignore = true;
                     @endphp
