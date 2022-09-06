@@ -72,6 +72,19 @@ class CampaignPledgeRequest extends FormRequest
                     
                     $my_rules = array_merge($my_rules,
                         [ 
+                            'campaign_year_id'    => ['required', 'exists:campaign_years,id',
+                                Rule::unique('pledges')->where(function ($query) use($gov) {
+                                    $query->where('organization_id', $this->organization_id)
+                                            // ->when($this->organization_id == $gov->id, function($q) {
+                                            //     return $q->where('user_id', $this->user_id);
+                                            // }) 
+                                            ->when($this->organization_id != $gov->id, function($q) {
+                                                return $q->where('pecsf_id', $this->pecsf_id);
+                                            }) 
+                                            ->where('campaign_year_id', $this->campaign_year_id);
+                                })->ignore($this->pledge_id),
+                            ],
+                            'organization_id'  => ['required'],
                             'pecsf_id'      => ['digits:6', 'required',
                                     Rule::unique('donations')->where(function ($query) use($org_code, $year) {
                                         $query->where('org_code', $org_code)

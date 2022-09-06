@@ -105,11 +105,14 @@
 
 
         <div class="p-2 ">
+            <button type="button" class="action cancel btn  btn-outline-secondary"
+                onclick="window.location='{{ route('admin-pledge.campaign.index') }}'"
+                >Cancel</button>
             <button type="button" class="action back btn  btn-outline-secondary"
                 style="display: none">Back</button>
             <button type="button" class="action next btn  btn-outline-primary float-right"
                 >Next</button>
-            <button type="submit" class="action submit btn  btn-outline-success float-right"
+            <button type="submit" class="action submit btn  btn-outline-primary float-right"
                 style="display: none">Submit</button>
         </div>
 
@@ -371,8 +374,12 @@ $(function () {
     hideButtons = function(step) {
         var limit = parseInt($(".step").length);
         $(".action").hide();
+        $(".cancel").hide();
         if (step < limit) {
             $(".next").show();
+        }
+        if(step==1) {
+            $(".cancel").show();
         }
         if (step > 1) {
             $(".back").show();
@@ -381,6 +388,7 @@ $(function () {
             $(".next").hide();
             $(".submit").show();
         }
+
     };
 
     // Validation when click on 'next' button
@@ -440,6 +448,20 @@ $(function () {
                                 $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name=' + field_name + ']').addClass('is-invalid');
                             }
+
+                            // additional checking for pledge existence
+                            code = $("select[name='organization_id'] option:selected").attr('code');
+
+                            if (step == 1 && field_name == 'campaign_year_id' && code != 'GOV') {
+
+                                pledge_id = get_campaign_pledge_id();
+                                if (pledge_id > 0) {
+                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="d-block text-strong text-danger">' + 
+                                        'There is an existing pledge for this donor. Would you like to change it? Click <a ' + 
+                                        'href="/admin-pledge/campaign/'+pledge_id+'/edit">here</a> to proceed.' + '</span>');
+                                }
+                            }
+
                         })
                     }
                     console.log('Error');
@@ -524,6 +546,32 @@ $(function () {
             reset_user_profile_info();            
     });
 
+    function get_campaign_pledge_id()
+    {
+        pledge_id = 0;
+        $.get({
+            url: '{{ route('admin-pledge.administrators.pledgeid') }}' + 
+                        '?org_id=' + $('#organization_id').val() +
+                        '&campaign_year_id=' + $('#campaign_year_id').val() +
+                        '&user_id=' + $('#user_id').val() +
+                        '&pecsf_id=' + $('#pecsf_id').val(),
+            dataType: 'json',
+            async: false,
+            cache: false,
+            timeout: 30000,
+            success: function(data)
+            {
+                // console.log( data.id );
+                pledge_id =  data.id;
+            },
+            error: function(response) {
+                 console.log('Error');
+            }
+        });
+
+        return pledge_id;        
+
+    }
 
     function get_nongov_user_detail() {
 
@@ -548,7 +596,6 @@ $(function () {
                     $('#pecsf_last_name').val( data.last_name );
                     $('#pecsf_city').val( data.city );
                 }
-
             },
             error: function(response) {
                  console.log('Error');

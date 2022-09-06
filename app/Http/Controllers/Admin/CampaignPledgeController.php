@@ -432,11 +432,23 @@ class CampaignPledgeController extends Controller
         $pledge = Pledge::where('id', $id)->first();
         $campaign_year = $pledge->campaign_year;
 
+        $gov_organization = Organization::where('code', 'GOV')->first();
+        $is_GOV = ($request->organization_id == $gov_organization->id);
+
+
         $pay_period_amount = $request->pay_period_amount ? 
                     $request->pay_period_amount : $request->pay_period_amount_other ;
         $one_time_amount = $request->one_time_amount ? 
                     $request->one_time_amount : $request->one_time_amount_other;
         $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
+
+        if (!$is_GOV) {
+            $pledge->organization_id = $request->organization_id;
+            $pledge->pecsf_id   =   $request->pecsf_id;
+            $pledge->first_name = $request->pecsf_first_name;
+            $pledge->last_name  = $request->pecsf_last_name;
+            $pledge->city       = $request->pecsf_city;
+        }
 
         $pledge->type = $request->pool_option;
         $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
@@ -597,6 +609,27 @@ class CampaignPledgeController extends Controller
         return response()->json($formatted_users);
 
     }    
+
+    public function getCampaignPledgeID(Request $request) {
+
+        if($request->ajax()) {
+
+            $gov = Organization::where('code', 'GOV')->first();
+       
+            $pledge = Pledge::where('campaign_year_id', $request->campaign_year_id)
+                            ->where('organization_id', $request->org_id)
+                            ->when($request->org_id == $gov->id, function($q) use($request) {
+                                    return $q->where('user_id', $request->user_id);
+                            }) 
+                            ->when($request->org_id != $gov->id, function($q) use($request) {
+                                return $q->where('pecsf_id', $request->pecsf_id);
+                            })
+                            ->first(); 
+
+            $result = (object) [ 'id' => ($pledge ? $pledge->id : null) ]; 
+            return json_encode( $result );
+        }
+    }
 
     public function getNonGovUserDetail(Request $request) {
      

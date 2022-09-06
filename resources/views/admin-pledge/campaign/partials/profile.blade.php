@@ -7,12 +7,12 @@
               <div class="form-group ">
                   <label for="campaign_year_id">Calendar Year : &nbsp&nbsp</label>
                     @isset($pledge)
-                        <select id="campaign_year_id" class="form-control" name="campaign_year_id" readonly>
+                        <select id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;" readonly>
                             <option value="{{ $pledge->campaign_year_id }}" selected>{{ $pledge->campaign_year->calendar_year }}</option>
                         </select>
                     @endisset
                     @empty($pledge)
-                        <select id="campaign_year_id" class="form-control" name="campaign_year_id">
+                        <select id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;">
                             @foreach ($campaignYears as $cy)
                                 <option value="{{ $cy->id }}"
                                     {{ ($cy->calendar_year == date('Y')+1) ? 'selected' : '' }}>

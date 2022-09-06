@@ -37,7 +37,7 @@
                     </div>
                     <div class="form-check ">
                         <input class="form-check-input" type="radio" name="pay_period_amount" id="pay_period_amt_4"
-                            value="50" >
+                            value="50" {{ $pay_period_amount == 50 ? 'checked' : '' }}>
                         <label class="form-check-label" for="pay_period_amt_4">
                             $50 per pay
                         </label>
