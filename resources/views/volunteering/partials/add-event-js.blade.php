@@ -19,16 +19,12 @@ $(".org_hook").hide();
 });
 
 $("[name='organization_code']").change(function(){
-if($(this).val() == "GOV"){
-$("#pecsfid").hide();
-$("#bcgovid").show();
-}
-else{
-$("#pecsfid").show();
-$("#bcgovid").hide();
-}
-});
 
+});
+    $("#pecsfid").find("label").hide();
+    $("#pecsfid").find("input").hide();
+    $("#bcgovid").find("label").hide();
+    $("#bcgovid").find("input").hide();
 $("[name='event_type']").change(function(){
 $("#sub_type").attr("disabled",false);
 
@@ -65,6 +61,7 @@ else{
         $("#bcgovid").find("label").hide();
         $("#bcgovid").find("input").hide();
     }
+
 $(".address_hook").show();
 $("#sub_type").html('<option value="false">Disabled</option>');
 $("#sub_type").attr("disabled",true);

@@ -63,7 +63,7 @@
                     @enderror
                   </span>
         </div>
-        <div id="pecsfid" class="form-group col-md-6">
+        <div id="pecsfid" class="form-group col-md-6" style="">
             <label for="pecsf_id">PECSF ID</label>
             <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
             <span class="pecsf_id_errors errors">
