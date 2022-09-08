@@ -96,7 +96,13 @@
                                 <div class="row text-left mt-4">
                                     <div class="col">
                                         <label>
-                                            <input checked type="radio" name="address_type" value="Global">
+                                            <input @php
+                                               if(empty($global_address))
+                                                {
+                                                    echo "disabled";
+                                                }
+                                                    @endphp
+                                                   type="radio" name="address_type" value="Global">
                                             Use my Global Address Listing
                                             <input type="hidden" name="global_address" id="global_address" value="{{$global_address}}"/>
                                         </label>
@@ -105,7 +111,7 @@
                                 <div class="row text-left mt-4">
                                     <div class="col">
                                         <label>
-                                            <input type="radio" name="address_type" value="New">
+                                            <input checked type="radio" name="address_type" value="New">
                                             Use the following address:
                                         </label>
                                     </div>
