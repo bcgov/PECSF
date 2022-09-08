@@ -71,13 +71,20 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+        $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
 
+        if($global_address){
+            $global_address =  $global_address->office_address1." ".$global_address->office_address2." ,".$global_address->office_city." ,".$global_address->stateprovince." ,".$global_address->country." ,".$global_address->postal;
+        }
+        else{
+            $global_address = "";
+        }
         if($is_registered)
         {
             $province = explode(",",$is_registered->new_address)[2];
             $setcity = explode(",",$is_registered->new_address)[1];
         }
-        return view('volunteering.edit', compact('organizations', 'user', 'cities','is_registered','province','setcity'));
+        return view('volunteering.edit', compact('global_address','organizations', 'user', 'cities','is_registered','province','setcity'));
     }
 
     public function store(VolunteerRegistrationRequest $request) {
@@ -126,7 +133,7 @@ class VolunteeringController extends Controller
         Volunteer::updateOrCreate(
             ["user_id" => Auth::id()],
         [
-            'new_address'         => $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
+            'new_address'         => ($request->address_type=="Global") ? $request->global_address : $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
             'address_type'         => $request->address_type,
             'organization_id' => $request->organization_id,
             'no_of_years' => $request->no_of_years,
