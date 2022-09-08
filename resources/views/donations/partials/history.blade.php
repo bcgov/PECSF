@@ -26,7 +26,7 @@
                         <th>Amount</th>
                         <th></th>
                     </tr>
-                    @php $total = 0; @endphp
+                    @php $total = 0; $ignore = true; @endphp
                     @foreach($pledges as $pledge)
                         <tr class="">
                             <td>{{ $pledge->donation_type }}</td>
@@ -37,6 +37,14 @@
                                 <td>{{ '' }} </td>
                             @endif
                             <td>{{ $pledge->frequency }} </td>
+
+                            @php
+
+                            if($pledge->frequency == "Bi-Weekly" || $pledge->frequency == "Annual")
+                                {
+                                 $ignore = false;
+                                }
+                            @endphp
                             <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
                             <td class="text-right">
                                 {{-- @if ($pledge->campaign_type == 'Annual')  --}}
