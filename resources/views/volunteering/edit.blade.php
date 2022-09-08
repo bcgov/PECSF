@@ -80,7 +80,15 @@
             <div class="row text-left mt-4">
                 <div class="col">
                     <label>
-                        <input type="radio" {{$is_registered->address_type == "Global" ? "checked":""}} name="address_type" value="Global">
+                        <input type="radio" disabled
+                               @php
+                               if(empty($global_address))
+                                   {
+                                       echo "disabled";
+                                   }
+                               @endphp
+
+                               {{$is_registered->address_type == "Global" ? "checked":""}} name="address_type" value="Global">
                         <input type="hidden" name="global_address" value="{{$global_address}}" />
                         Use my Global Address Listing
                     </label>

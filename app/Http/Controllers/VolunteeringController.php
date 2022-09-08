@@ -75,15 +75,18 @@ class VolunteeringController extends Controller
 
         if($global_address){
             $global_address =  $global_address->office_address1." ".$global_address->office_address2." ,".$global_address->office_city." ,".$global_address->stateprovince." ,".$global_address->country." ,".$global_address->postal;
+            $province = "";
+            $setcity = "";
         }
         else{
             $global_address = "";
+            if($is_registered)
+            {
+                $province = explode(",",$is_registered->new_address)[2];
+                $setcity = explode(",",$is_registered->new_address)[1];
+            }
         }
-        if($is_registered)
-        {
-            $province = explode(",",$is_registered->new_address)[2];
-            $setcity = explode(",",$is_registered->new_address)[1];
-        }
+
         return view('volunteering.edit', compact('global_address','organizations', 'user', 'cities','is_registered','province','setcity'));
     }
 
