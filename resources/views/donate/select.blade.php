@@ -9,7 +9,7 @@
         @csrf
 </div>
             <div class="mt-2">
-                <button class="btn btn-lg btn-outline-primary">Cancel</button>
+                <button class="btn btn-lg btn-outline-primary">Back</button>
                 <button class="btn btn-lg btn-primary" type="submit">Next</button>
             </div>
         </form>

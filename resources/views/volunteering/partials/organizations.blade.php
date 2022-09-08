@@ -12,7 +12,7 @@
         <tr tabindex="{{$key+3}}">
             <td style="width:70%;"><b>{{$organization->charity_name}}</b><br>{{$organization::CATEGORY_LIST[$organization->category_code]}} | {{$organization->city}} | {{$organization->province}} | {{$organization->country}}</td>
             <td class="blue" style="width:15%"><span class="view_details" registration_number="{{$organization->registration_number}}" charity_status="{{$organization->charity_status}}" effective_date_of_status="{{$organization->effective_date_of_status}}" sanction="{{$organization->sanction}}" designation="{{$organization->designation}}" category="{{$organization->category}}" address="{{$organization->address}}" city="{{$organization->city}}" province="{{$organization->province}}" country="{{$organization->country}}" postal="{{$organization->postal_code}}" website="{{$organization->uri}}" charitable_programs=""><b><u>View Details</u></b></span></td>
-            <td style="width:5%"><div style="width:100px;" class="
+            <td style="width:5%"><button style="width:100px;" class="
             @php
             if(in_array($organization->id,$selected_vendors))
                 {
@@ -31,7 +31,7 @@
                     else{
                     echo "Select";
                     }
-                    @endphp</div></td>
+                    @endphp</button></td>
         </tr>
     @endforeach
 </table>
