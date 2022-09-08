@@ -996,11 +996,11 @@ class CharityController extends Controller
 
                         // Correct $input['amount']
                         foreach($charities as $index => $a) {
-                            $input['biWeeklyAmount'][$a->id] = $totalAmountBiWeekly * $a->amount / 100;
+                            $input['biWeeklyAmount'][$a->id] = $a->amount;
                         }
                         // Correct $input['percent']
                         foreach($charities as $index => $a) {
-                            $input['biWeeklyPercent'][$a->id] = round(100 * $a->amount / ($totalAmountBiWeekly * count($charities)), 2);
+                            $input['biWeeklyPercent'][$a->id] = round(100 * ($a->amount / $totalAmountBiWeekly), 2);
                         }
 
                     foreach($input['biWeeklyPercent'] as $charityId => $percentageAmount) {
