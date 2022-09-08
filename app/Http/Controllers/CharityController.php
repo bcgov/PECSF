@@ -1016,6 +1016,29 @@ class CharityController extends Controller
                 $fs_pool_option = "P";
                 session()->put('regional_pool_id', $pledge->f_s_pool_id);
             }
+            $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
+
+            if($frequency == "bi-weekly")
+            {
+                session()->put('amount-step',  array (
+                    'bi-weekly-amount' => $pledge->pay_period_amount,
+                    'frequency' => $frequency,
+                ));
+            }
+            else if($frequency == "one-time"){
+                session()->put('amount-step',  array (
+                    'one-time-amount' => $pledge->one_time_amount,
+                    'frequency' => $frequency,
+                ));
+            }
+            else{
+                session()->put('amount-step',  array (
+                    'one-time-amount' => $pledge->one_time_amount,
+                    'bi-weekly-amount' => $pledge->pay_period_amount,
+                    'frequency' => $frequency,
+                ));
+            }
+
             session()->put('pool_option', $fs_pool_option);
             return redirect()->route('donate.summary');
         }
