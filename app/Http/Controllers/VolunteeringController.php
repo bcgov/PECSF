@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Pledge;
 use App\Models\Volunteer;
 use App\Models\City;
+use App\Models\EmployeeJob;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -54,7 +55,15 @@ class VolunteeringController extends Controller
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
-        return view('volunteering.profile', compact('organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
+        $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
+
+        if($global_address){
+            $global_address =  $global_address->office_address1." ".$global_address->office_address2." ,".$global_address->office_city." ,".$global_address->stateprovince." ,".$global_address->country." ,".$global_address->postal;
+        }
+        else{
+            $global_address = "";
+        }
+        return view('volunteering.profile', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
 
     public function edit(){
@@ -76,13 +85,14 @@ class VolunteeringController extends Controller
             [
                 'user_id' => Auth::id(),
                 'address_type' =>  $request->address_type,
-                'new_address' =>  $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
+                'new_address' =>  ($request->address_type=="Global") ? $request->global_address : $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
                 'no_of_years' => $request->no_of_years,
                 'preferred_role' => $request->preferred_role,
                 'organization_id' => $request->organization_id,
             ]
         );
-        return redirect()->route('volunteering.index');
+
+        return redirect()->route('profile');
     }
 
     public function update(Request $request){

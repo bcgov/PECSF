@@ -98,6 +98,7 @@
                                         <label>
                                             <input checked type="radio" name="address_type" value="Global">
                                             Use my Global Address Listing
+                                            <input type="hidden" name="global_address" id="global_address" value="{{$global_address}}"/>
                                         </label>
                                     </div>
                                 </div>

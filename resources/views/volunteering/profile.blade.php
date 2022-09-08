@@ -128,7 +128,7 @@
                         $(this).find(".prev-btn").addClass("d-none");
                     } else if (e.to == 2) {
                         fail = false;
-                        if($("[name=address_type]:checked").val() == "new_address")
+                        if($("[name=address_type]:checked").val() == "New")
                         {
                             $("[name=city],[name=province],[name=postal_code],[name=street_address]").each(function(){
                                 if($(this).val().length < 3){
@@ -159,7 +159,7 @@
                     }
 
                     const no_of_years =  $("#volunteer-registration").find("[name=no_of_years]").val();
-                    const address_type = ($("#volunteer-registration").find("[type=radio][name=address_type]:checked").val() == "Opt-out")? "Opt-out" : $("[name=street_address]").val() + ", " + $("[name=city]").val() + ", " + $("[name=province]").val()+", "+$("[name=postal_code]").val();
+                    const address_type = ($("#volunteer-registration").find("[type=radio][name=address_type]:checked").val() == "Opt-out")? "Opt-out" : $("[type=radio][name=address_type]:checked").val() == "Global" ? $("#global_address").val() : $("[name=street_address]").val() + ", " + $("[name=city]").val() + ", " + $("[name=province]").val()+", "+$("[name=postal_code]").val();
                     $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=organization_id] option:selected").text());
                     $("#summary-table").find('[data-value-for="no_of_years"]').html(no_of_years);
                     $("#summary-table").find('[data-value-for="address_type"]').html(address_type);
