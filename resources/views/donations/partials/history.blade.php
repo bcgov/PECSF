@@ -61,8 +61,12 @@
                     @endforeach
                 </table>
 
-                @if($key > $currentYear || $ignore)
+                @if($key > $currentYear || $ignore || isset($globalIgnore))
                     @php
+                    if($key>$currentYear)
+                        {
+                            $globalIgnore = true;
+                        }
                         $ignore = true;
                     @endphp
                 @else
