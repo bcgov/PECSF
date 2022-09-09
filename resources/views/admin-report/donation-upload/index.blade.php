@@ -42,28 +42,34 @@
                     <input type="file" style="display:none;" accept=".txt" id="charity_list" name="charity_list" />
                 </div> --}}
 
-                <div class="form-group col-md-6">
-                    
-
-                    <div class="image">
-                        <label>Attach file</label>
-                        
-
-                            <input id="donation_file" accept=".xlsx" type="file" class="form-control-file @error('donation_file') is-invalid @enderror"
-                                    name="donation_file" value="{{ old('donation_file') }}">
-                            {{-- <img style="width:auto;height:300px;" id="output" /> --}}
-        
-                        <span class="images_errors">
+                <div class="form-row"> 
+                    <div class="form-group col-md-5">
+                        <div class="file-upload">
+                            <div class="file-select">
+                                <div class="file-select-button" id="fileName">Choose File</div>
+                                <div class="file-select-name" id="noFile">No file chosen...</div> 
+                                <input type="file" accept=".xlsx,xls" name="donation_file" id="donation_file">
+                            </div>
+                        </div>
+                        <span class="donation_file_error">
                             @error( 'donation_file' )
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </span>
                     </div>
-                </div>
 
+                    <div class="col-md-1" id="remove-upload-area" style="display: none;">
+                        <div class="pt-1"><button id="remove-upload-file" class="btn btn-danger">
+                            <i class="fas fa-trash-alt fa-lg"></i></button></div> 
+                    </div>
+
+                </div>
                 
-                <div class="form-group">
-                    <input class="btn btn-primary" type="submit" value="Submit">
+                <div class="form-row pt-3">
+                    <div class="form-group col-md-6 float-right">
+                        <input class="btn btn-outline-secondary" id="cancel-btn" type="button" value="Cancel">
+                        <input class="btn btn-primary " type="submit" value="Submit">
+                    </div>
                 </div>
 
             </form>
@@ -157,6 +163,21 @@
             padding-bottom : 20px;
         }
 
+
+.file-upload {display:block;text-align:center;font-family: Helvetica, Arial, sans-serif;font-size: 12px;}
+.file-upload .file-select{display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
+.file-upload .file-select .file-select-button{background:#dce4ec;padding:0 10px;display:inline-block;height:40px;line-height:40px;}
+.file-upload .file-select .file-select-name{line-height:40px;display:inline-block;padding:0 10px;}
+.file-upload .file-select:hover{border-color:#34495e;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload .file-select:hover .file-select-button{background:#34495e;color:#FFFFFF;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload.active .file-select{border-color:#3fa46a;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload.active .file-select .file-select-button{background:#3fa46a;color:#FFFFFF;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload .file-select input[type=file]{z-index:100;cursor:pointer;position:absolute;height:100%;width:100%;top:0;left:0;opacity:0;filter:alpha(opacity=0);}
+.file-upload .file-select.file-select-disabled{opacity:0.65;}
+.file-upload .file-select.file-select-disabled:hover{cursor:default;display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;margin-top:5px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
+.file-upload .file-select.file-select-disabled:hover .file-select-button{background:#dce4ec;color:#666666;padding:0 10px;display:inline-block;height:40px;line-height:40px;}
+.file-upload .file-select.file-select-disabled:hover .file-select-name{line-height:40px;display:inline-block;padding:0 10px;}
+
     </style>
 @endpush
 
@@ -237,8 +258,34 @@
             });
         }
 
+        // Functions for handling the upload file 
+        $('#donation_file').bind('change', function () {
+            var filename = $("#donation_file").val();
+            if (/^\s*$/.test(filename)) {
+                $(".file-upload").removeClass('active');
+                $("#noFile").text("No file chosen..."); 
+
+                $('.donation_file_error').html();
+            }
+            else {
+                $(".file-upload").addClass('active');
+                $("#noFile").text(filename.replace("C:\\fakepath\\", "")); 
+
+                $('#remove-upload-area').show();
+            }
+        });
+
+        $(document).on("click", "#remove-upload-file, #cancel-btn" , function(e) {
+            e.preventDefault();
+            $("input[name='donation_file']").val(null);
+            $(".file-upload").removeClass('active');
+            $("#noFile").text("No file chosen..."); 
+            $('#remove-upload-area').hide();
+
+        });
+
+        // Format Submission (Ajax)
         $("#upload-form").submit(function(e) {
-            console.log('Test');
             e.preventDefault();
 
             var form = document.getElementById("upload-form");
@@ -247,13 +294,16 @@
                 formData.append('organization_id', $(this).val());
             });
             $("input[name='donation_file']").each(function(){
-                formData.append('donation_file',  $(this)[0].files[0]);
+                if ($(this).val() ) {
+                    formData.append('donation_file',  $(this)[0].files[0]);
+                }
             });
 
             var fields = ['organization_id', 'donation_file'];
-                $.each( fields, function( index, field_name ) {
-                    $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
-                });
+            $.each( fields, function( index, field_name ) {
+                $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
+            });
+            $('.donation_file_error').html();
 
             $("#upload-form").fadeTo("slow",0.2);
             $.ajax({
@@ -268,7 +318,11 @@
                 success:function(response){
 
                     // Clear up the uploded file 
-                    $("input[name='donation_file']").val(''); 
+                    //$("input[name='donation_file']").val('');
+                    $("input[name='donation_file']").val(null);
+                    $(".file-upload").removeClass('active');
+                    $("#noFile").text("No file chosen..."); 
+                    $('#remove-upload-area').hide(); 
 
                     oTable.ajax.reload(null, false);	// reload datatables
 
@@ -282,7 +336,12 @@
                 error: function(response) {
                     if (response.status == 422) {
                         $.each(response.responseJSON.errors, function(field_name,error){
-                            $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+
+                            if (field_name == 'donation_file') {
+                                $('.donation_file_error').html( '<span class="text-strong text-danger">' + error + '</span>');
+                            } else {
+                                $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+                            }
                         })
                     }
                     console.log('Error');
