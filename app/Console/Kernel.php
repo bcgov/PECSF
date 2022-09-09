@@ -19,6 +19,8 @@ class Kernel extends ConsoleKernel
         Commands\ExportDatabaseToBI::class,
         Commands\DonorHistoryDataFromBI::class,
         Commands\ImportEligibleEmployee::class,
+        Commands\ImportPayCalendar::class,
+        Commands\ImportCities::class,
         
     ];
 
@@ -53,6 +55,14 @@ class Kernel extends ConsoleKernel
         $schedule->command('command:ImportEligibleEmployees')
                  ->weekdays()
                  ->at('6:15');      
+
+        $schedule->command('command:ImportPayCalendar')
+                 ->weekdays()
+                 ->at('6:30');
+
+        $schedule->command('command:ImportCities')
+                 ->yearlyOn(9, 1, '02:00');
+                 
     }
 
     /**

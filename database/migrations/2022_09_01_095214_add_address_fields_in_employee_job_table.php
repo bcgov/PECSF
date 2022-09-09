@@ -15,12 +15,12 @@ class AddAddressFieldsInEmployeeJobTable extends Migration
     {
         Schema::table('employee_jobs', function (Blueprint $table) {
             //
-            $table->string('office_address1')->nullbale()->after('region_id');
-            $table->string('office_address2')->nullbale()->after('office_address1');
-            $table->string('office_city')->nullbale()->after('office_address2');
-            $table->string('office_stateprovince')->nullbale()->after('office_city');
-            $table->string('office_country')->nullbale()->after('office_stateprovince');
-            $table->string('office_postal')->nullbale()->after('office_country');
+            $table->string('office_address1')->nullable()->after('region_id');
+            $table->string('office_address2')->nullable()->after('office_address1');
+            $table->string('office_city')->nullable()->after('office_address2');
+            $table->string('office_stateprovince')->nullable()->after('office_city');
+            $table->string('office_country')->nullable()->after('office_stateprovince');
+            $table->string('office_postal')->nullable()->after('office_country');
 
         });
     }
