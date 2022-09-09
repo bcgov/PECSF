@@ -8870,7 +8870,16 @@ fieldset:disabled a.btn {
 }
 .btn-outline-primary:focus, .btn-outline-primary.focus {
   box-shadow: 0 0 0 0 rgba(26, 90, 150, 0.5);
+    background:#1a5a96;
+    color:white;
 }
+
+.btn-outline-primary.active:focus
+{
+
+    border: #000 2px solid !important;
+}
+
 .btn-outline-primary.disabled, .btn-outline-primary:disabled {
   color: #1a5a96;
   background-color: transparent;
