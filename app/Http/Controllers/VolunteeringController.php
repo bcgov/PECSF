@@ -46,7 +46,14 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        return view('volunteering.training', compact('organizations', 'user', 'totalPledgedDataTillNow','cities'));
+        $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
+
+        if($global_address){
+            $global_address =  $global_address->office_address1." ".$global_address->office_address2." ,".$global_address->office_city." ,".$global_address->stateprovince." ,".$global_address->country." ,".$global_address->postal;
+            $province = "";
+            $setcity = "";
+        }
+        return view('volunteering.training', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities'));
     }
 
     public function profile(){
