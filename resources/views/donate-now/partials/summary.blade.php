@@ -21,7 +21,7 @@
         <div class="container mt-2">
             <div class="row">
                 <div class="col-6">Deduction date :</div>
-                <div class="col-6"></div>
+                <div class="col-6">{{ $check_dt }}</div>
             </div>
         </div>
 

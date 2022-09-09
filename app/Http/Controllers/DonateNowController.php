@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Charity;
+use App\Models\PayCalendar;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\DonateNowPledge;
@@ -90,6 +91,15 @@ class DonateNowController extends Controller
         $pool_option = $request->pool_option;
         $one_time_amount = $request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom ;
         
+        $period = PayCalendar::whereRaw(" ( date(SYSDATE()) between pay_begin_dt and pay_end_dt) ")->first();
+
+        $check_dt = '';
+        if ($period) {
+            $deduct_dt  = Carbon::createFromFormat('!Y-m-d', $period->check_dt );
+            $deduct_dt->addDays(28); 
+            $check_dt = $deduct_dt->format('Y-m-d');
+        }
+
         if ($request->ajax()) {
 
             // Generate Summary Page 
@@ -108,7 +118,7 @@ class DonateNowController extends Controller
                 }
 
                 return view('donate-now.partials.summary', compact('user', 'one_time_amount',
-                        'in_support_of', 'request'))->render();
+                        'in_support_of', 'check_dt', 'request'))->render();
             }
             return response()->noContent();
         }
@@ -138,6 +148,7 @@ class DonateNowController extends Controller
             'f_s_pool_id' => ($pool_option == 'P' ? $request->pool_id : null),
             'charity_id' =>  ($pool_option == 'C' ? $request->charity_id : null),
             'one_time_amount' => $one_time_amount ?? 0,
+            'deduct_pay_from' => $check_dt,
             'special_program' => $request->special_program,
             'created_by_id' => $user->id,
             'updated_by_id' => $user->id,
