@@ -37,13 +37,8 @@
                                 <td>{{ '' }} </td>
                             @endif
                             <td>{{ $pledge->frequency }} </td>
-
                             @php
 
-                            if($pledge->frequency == "Bi-Weekly" || $pledge->frequency == "Annual")
-                                {
-                                 $ignore = false;
-                                }
                             @endphp
                             <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
                             <td class="text-right">
@@ -60,7 +55,15 @@
                         </tr>
                     @endforeach
                 </table>
-
+                @php
+                foreach($pledges as $pledge){
+                    if($pledge->donation_type == "Annual")
+                    {
+                        $ignore = false;
+                        break;
+                    }
+                }
+                @endphp
                 @if($key > $currentYear || $ignore || isset($globalIgnore))
                     @php
                     if($key>$currentYear)
