@@ -83,6 +83,7 @@
             $('#add-event-modal').modal('show');
         });
         $("select").select2();
-        @include('volunteering.partials.add-event-js')
+
     </script>
+    @include('volunteering.partials.add-event-js')
 @endpush
