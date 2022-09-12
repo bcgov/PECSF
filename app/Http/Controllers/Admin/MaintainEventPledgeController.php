@@ -240,10 +240,12 @@ class MaintainEventPledgeController extends Controller
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
         $cities = City::all();
+        $organizations = [];
+        $selected_charities = [];
         if(empty($current_user)){
             redirect("login");
         }
-        return view('admin-pledge.create.index', compact('pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
+        return view('admin-pledge.create.index', compact('selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
     }
 
     /**

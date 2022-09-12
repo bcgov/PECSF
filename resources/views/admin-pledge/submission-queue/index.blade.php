@@ -119,7 +119,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script type="x-tmpl" id="organization-tmpl">
-        @include('volunteering.partials.add-organization', ['index' => 'XXX'] )
+        @include('volunteering.partials.add-organization', ['index' => 'XXX', 'charity' => "YYY"] )
     </script>
 
     <script type="x-tmpl" id="attachment-tmpl">
