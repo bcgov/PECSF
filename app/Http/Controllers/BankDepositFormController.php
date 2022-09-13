@@ -153,17 +153,19 @@ class BankDepositFormController extends Controller
             'organization_code' => 'The Organization Code is required.',
          ]);
         $validator->after(function ($validator) use($request) {
-
+            if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV")
             {
-                if(empty($request->pecsf_id))
-                {
-                    $validator->errors()->add('pecsf_id','A PECSF ID is required.');
-                }
-                else if(!is_numeric($request->pecsf_id))
-                {
-                    $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
-                }
+
+                    if(empty($request->pecsf_id))
+                    {
+                        $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                    }
+                    else if(!is_numeric($request->pecsf_id))
+                    {
+                        $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
+                    }
+
             }
             if($request->organization_code == "GOV"){
                 if(empty($request->bc_gov_id))
@@ -175,7 +177,7 @@ class BankDepositFormController extends Controller
                     $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
                 }
             }
-
+            }
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
             {
                 if(empty($request->address_1))
