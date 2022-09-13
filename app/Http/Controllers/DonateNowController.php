@@ -91,14 +91,8 @@ class DonateNowController extends Controller
         $pool_option = $request->pool_option;
         $one_time_amount = $request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom ;
         
-        $period = PayCalendar::whereRaw(" ( date(SYSDATE()) between pay_begin_dt and pay_end_dt) ")->first();
-
-        $check_dt = '';
-        if ($period) {
-            $deduct_dt  = Carbon::createFromFormat('!Y-m-d', $period->check_dt );
-            $deduct_dt->addDays(28); 
-            $check_dt = $deduct_dt->format('Y-m-d');
-        }
+        $period = PayCalendar::where('check_dt', '>=',  Carbon::today() )->skip(2)->take(1)->orderBy('check_dt')->first();
+        $check_dt = $period ? $period->check_dt : null;
 
         if ($request->ajax()) {
 
