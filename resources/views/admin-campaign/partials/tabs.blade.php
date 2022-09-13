@@ -54,6 +54,9 @@
                 href="{{ route('settings.organizations.index') }}">Organization</a>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.regions') ? 'active' : ''}}"
                 href="{{ route('settings.regions.index') }}">Regions</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.pay-calendars') ? 'active' : ''}}"
+            href="{{ route('settings.pay-calendars.index') }}">Pay Calendars</a>
         </div>
     </li>
 

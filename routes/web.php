@@ -21,18 +21,19 @@ use App\Http\Controllers\BankDepositFormController;
 
 use App\Http\Controllers\Admin\CRACharityController;
 use App\Http\Controllers\System\AccessLogController;
+use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
-use App\Http\Controllers\Admin\AdministratorController;
 
+use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
-use App\Http\Controllers\System\ScheduleJobAuditController;
 
+use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
@@ -170,6 +171,8 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Business Units
     Route::resource('/business-units', BusinessUnitController::class)->except(['create']);
 
+    // Pay Calendars
+    Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
     // Business Units
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
