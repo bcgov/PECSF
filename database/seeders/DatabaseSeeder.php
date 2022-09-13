@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserTableSeeder::class);
         
         // Core tables
-        $this->call(BusinessunitSeeder::class);
+        //$this->call(BusinessunitSeeder::class);   // Based on TEST export on Sep 13, 2022
+        $this->call(BusinessUnitSqlFileSeeder::class);   // Based on TEST export on Sep 13, 2022
         $this->call(CampaignYearSeeder::class);
         $this->call(RegionSeeder::class);
         $this->call(OrganizationSeeder::class);
