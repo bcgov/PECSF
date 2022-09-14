@@ -95,6 +95,7 @@
                         $(this).find(".ready-btn").addClass("d-none");
                     }
                 });
+                $(".error").hide();
                 $("#volunteer-registration").on('click', '[name=no_of_years_opt_out]', function (e) {
                     $("#volunteer-registration").find("[name=no_of_years]").prop('required', !this.checked);
                 });
@@ -106,8 +107,23 @@
                 $('#volunteer-registration').on('slide.bs.carousel', function (e) {
                     const activeStep = Number.parseInt($(e.relatedTarget).data('step')) - 1;
                     const requiredQuestion = $("#volunteer-registration-carousel").find('.carousel-item.active').find("[required]");
-                    if (requiredQuestion && requiredQuestion.length && requiredQuestion.val() === '') {
+              /*      if (requiredQuestion && requiredQuestion.length && requiredQuestion.val() === '') {
                         alert("Please fill the mandatory fields to proceed");
+                        return false;
+                    }
+                    */
+                    var stop = false;
+                    $(".error").hide();
+                    requiredQuestion.each((index,e) => {
+                        if(e.value == "")
+                        {
+                            $("."+e.name+"_error").html(e.attributes[0].value);
+                            $("."+e.name+"_error").show();
+                            stop = true;
+                        }
+                    });
+
+                    if(stop){
                         return false;
                     }
                     $(".formsteps .step").each((index, e) => {

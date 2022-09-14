@@ -28,8 +28,11 @@
                                         <p class="text-muted">
                                             Your Organization
                                         </p>
-                                        <select name="organization_id" id="" class="form-control" required>
-                                            <option value="">Please select</option>
+                                        <div class="error organization_id_error">
+
+                                        </div>
+                                        <select error_message="The organization field is required" name="organization_id" id="" class="form-control" required>
+                                            <option value="">Select your organization</option>
                                             @foreach($organizations as $org)
                                                 <option value="{{$org->id}}">{{$org->name}}</option>
                                             @endforeach
@@ -43,16 +46,19 @@
                                             <div class="step-1">
                                             <p class="text-muted">
                                                 How many years have you been working with PECSF
+
                                             </p>
-                                                <select name="no_of_years" id="" class="form-control" required>
-                                                    <option value="">Please select</option>
+                                                <div class="error no_of_years_error">
+
+                                                </div>
+                                                <select  error_message="The number of years field is required" name="no_of_years" id="" class="form-control" required>
+                                                    <option value="">Select number of years</option>
                                                         <option value="Prefer not to say">Prefer not to say</option>
-                                                    <option value="0">0</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
+                                                    @php
+                                                    for($i=0;$i<51;$i++){
+                                                        echo '<option value="'.$i.'">'.$i.'</option>';
+                                                    }
+                                                    @endphp
                                                 </select>
 
                                         </div>
@@ -66,8 +72,11 @@
                                                 <p class="text-muted">
                                                     Your Preferred Volunteer Role
                                                 </p>
-                                                <select name="preferred_role" id="" class="form-control" required>
-                                                    <option value="">Please Select</option>
+                                                <div class="error preferred_role_error">
+
+                                                </div>
+                                                <select  error_message="The preferred role field is required" name="preferred_role" id="" class="form-control" required>
+                                                    <option value="">Select a role</option>
                                                     <option value="Canvasser">Canvasser</option>
                                                     <option value="Lead Coordinator">Lead Coordinator</option>
                                                     <option value="Office Contact">Office Contact</option>

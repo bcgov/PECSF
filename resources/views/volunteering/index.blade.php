@@ -37,8 +37,20 @@
     $('#volunteer-registration').on('slide.bs.carousel', function (e) {
         const activeStep = Number.parseInt($(e.relatedTarget).data('step')) - 1;
         const requiredQuestion = $("#volunteer-registration-carousel").find('.carousel-item.active').find("[required]");
-        if (requiredQuestion && requiredQuestion.length && requiredQuestion.val() === '') {
+      /*  if (requiredQuestion && requiredQuestion.length && requiredQuestion.val() === '') {
             alert("Please fill the mandatory fields to proceed");
+            return false;
+        }*/
+var stop = false;
+        requiredQuestion.each((index,e) => {
+            if(this.val() == "")
+            {
+                $("."+this.name+"_error").val(this.error);
+                stop = true;
+            }
+        });
+
+        if(stop){
             return false;
         }
         $(".formsteps .step").each((index, e) => {
