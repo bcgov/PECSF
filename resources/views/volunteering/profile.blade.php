@@ -53,7 +53,7 @@
             </div>
             <div class="d-flex">
                 <div data-value-for="address_type">
-                  {{$is_registered->new_address}}
+                  {{$is_registered->address_type == "Opt-out" ? $is_registered->address_type : $is_registered->new_address}}
                 </div>
             </div>
         </div>

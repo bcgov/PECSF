@@ -8593,8 +8593,7 @@ textarea.form-control {
   text-decoration: none;
 }
 .btn:focus, .btn.focus {
-  outline: 0;
-  box-shadow: none;
+  box-shadow: 3px red;
 }
 .btn.disabled, .btn:disabled {
   opacity: 0.65;
@@ -8626,7 +8625,7 @@ fieldset:disabled a.btn {
   color: #fff;
   background-color: #144675;
   border-color: #12406b;
-  box-shadow: 0 0 0 0 rgba(60, 115, 166, 0.5);
+  box-shadow: 3px red;
 }
 .btn-primary.disabled, .btn-primary:disabled {
   color: #fff;
@@ -16103,7 +16102,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-muted {
-  color: #6c757d !important;
+  color: #313132 !important;
 }
 
 .text-black-50 {
@@ -32602,7 +32601,7 @@ html.maximized-card {
   color: #fff;
   background-color: #335476;
   border-color: #304e6d;
-  box-shadow: 0 0 0 0 rgba(92, 126, 162, 0.5);
+  box-shadow: 3px red;
 }
 .dark-mode .btn-primary.disabled, .dark-mode .btn-primary:disabled {
   color: #fff;

@@ -2,7 +2,7 @@
 <div class="modal fade" id="volunteer-registration" tabindex="-1" aria-labelledby="volunteerRegistrationTitle" data-backdrop="static"
     aria-hidden="true">
     <div class="modal-dialog modal-xl">
-        <div class="modal-content">
+        <div class="modal-content" style="height:100%">
             <div style="background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;" class="modal-header">
                 <h1 style="color:#fff;" class="modal-title" id="volunteerRegistrationTitle">
                     Register As a Volunteer
@@ -11,7 +11,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="height: calc(100vh - 200px);">
+            <div class="modal-body" style="height:100%;">
                 <form action="{{route('volunteering.store')}}" method="POST" id="volunteer_registration_form">
                     @csrf
 
@@ -20,8 +20,8 @@
                         <div class="carousel-inner">
 
                             <div class="carousel-item p-3 active" data-step="1">
-                                <h1 class="text-primary">Volunteer Details</h1>
-                                <div class="row mt-5">
+                                <h3 class="text-primary">Volunteer Details</h3>
+                                <div class="row mt-2">
                                     <div class="col-12 col-md-6 ">
 
                                     <div class="step-1 ">
@@ -40,7 +40,7 @@
                                     </div>
                                     </div>
                                 </div>
-                                <div class="row mt-5">
+                                <div class="row mt-2">
                                     <div class="col-12 col-md-6">
                                         <div class="step-1">
                                             <div class="step-1">
@@ -66,7 +66,7 @@
                                     </div>
 
                                 </div>
-                                    <div class="row mt-5">
+                                    <div class="row mt-2">
                                     <div class="col-12 col-md-6">
                                             <div class="step-1">
                                                 <p class="text-muted">
@@ -87,8 +87,12 @@
 
                             </div>
 
+                                <div class="row mt-1 pl-2">
+                                    <a href="#">Learn more about the available volunteer roles with PECSF.</a>
+                                </div>
 
-                                <div class="row mt-5">
+
+                                <div class="row mt-2">
                                     <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
                                     &nbsp;
                                     <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
@@ -99,7 +103,7 @@
                                 </div>
                             </div>
                             <div class="carousel-item p-3" data-step="2">
-                                <h1 class="text-primary">Recognition Items</h1>
+                                <h3 class="text-primary">Recognition Items</h3>
                                 <p class="text-muted">At the end of every campaign, PECSF distributes recognition items to all volunteers. Please select if you would like us to use your address as shown in the Global Address Listing or enter a new address in the field below.</p>
 
                                 <div class="row text-left mt-4">
@@ -196,8 +200,8 @@
 
 
                             <div class="carousel-item p-3"  data-step="3">
-                                <h1 class="text-primary">Confirmation</h1>
-                                <h2 class="text-primary">Your Details</h2>
+                                <h3 class="text-primary">Confirmation</h3>
+                                <h4 class="text-primary">Your Details</h4>
                                 <div class="row">
                                     <div class="col-12 col-md-12 ">
                                         <div class="d-flex p-3 flex-column" id="summary-table">
@@ -235,7 +239,7 @@
                                             </div>
                                             <div class="d-flex mt-1">
                                                 <div>
-                                                    <h2 class="text-primary">Mailing Address</h2>
+                                                    <h4 class="text-primary">Mailing Address</h4>
                                                 </div>
                                             </div>
                                             <div class="d-flex">
@@ -286,9 +290,7 @@
 
                 </form>
             </div>
-            <div class="modal-footer">
 
-            </div>
         </div>
     </div>
 </div>

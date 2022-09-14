@@ -20,6 +20,9 @@
                         <p class="">
                             <strong>Your Organization</strong>
                         </p>
+                        <div class="organization_id_error">
+
+                        </div>
                         <select name="organization_id" id="" class="form-control" required>
                             <option value="">Please select</option>
                             @foreach($organizations as $org)
@@ -36,15 +39,16 @@
                            <strong>
                                How many years have you been working with PECSF
                            </strong>
+                            <div class="no_of_years_error">
+
+                            </div>
                             <select   name="no_of_years" id="" class="form-control" required>
                                 <option value="">Please select</option>
-                                <option {{$is_registered->no_of_years == "Prefer not to say" ? "selected":""}} value="Prefer not to say">Prefer not to say</option>
-                                <option {{$is_registered->no_of_years == 0 ? "selected":""}} value="0">0</option>
-                                <option {{$is_registered->no_of_years == 1 ? "selected":""}} value="1">1</option>
-                                <option {{$is_registered->no_of_years == 2 ? "selected":""}} value="2">2</option>
-                                <option {{$is_registered->no_of_years == 3 ? "selected":""}} value="3">3</option>
-                                <option {{$is_registered->no_of_years == 4 ? "selected":""}} value="4">4</option>
-                                <option {{$is_registered->no_of_years == 5 ? "selected":""}} value="5">5</option>
+                                @php
+                                    for($i=0;$i<51;$i++){
+                                        echo '<option '.(($is_registered->no_of_years == $i) ? "selected" : " ").' value="'.$i.'">'.$i.'</option>';
+                                    }
+                                @endphp
                             </select>
 
                         </div>
@@ -57,7 +61,9 @@
                     <div class="step-1">
                     <strong>                            Your Preferred Volunteer Role
                     </strong>
+<div class="preferred_role_error">
 
+</div>
                         <select name="preferred_role" id="" class="form-control" required>
                             <option value="">Please Select</option>
                             <option value="Canvasser" {{$is_registered->preferred_role == "Canvasser" ? "selected":""}}>Canvasser</option>
@@ -80,7 +86,7 @@
             <div class="row text-left mt-4">
                 <div class="col">
                     <label>
-                        <input type="radio" disabled
+                        <input type="radio"
                                @php
                                if(empty($global_address))
                                    {
@@ -161,7 +167,7 @@
             </div>
 
             <div class="row mt-5">
-                <button href="#" class="" style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="cancel-btn">Cancel</button>
+                <a href="/profile"><button  style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="btn cancel-btn">Cancel</button></a>
                 &nbsp;
                 <x-button class="save-btn">Save</x-button>
                 &nbsp;
@@ -173,6 +179,13 @@
                $("[name=province]").val('{{str_replace(" ","",ucfirst($province))}}');
                $("[name=city]").val('{{str_replace(" ","",ucfirst($setcity))}}');
 
+               $('.btn').on('click', function (e) {
+                if($(this).hasClass("cancel-btn")){
+                    e.preventDefault();
+                    window.location = $(this).parents("a").attr("href");
+                }
+                });
+
                $('.save-btn').on('click', function (e) {
                     e.preventDefault();
                    const form = $('#volunteer_registration_form').get(0);
@@ -183,7 +196,8 @@
                        data: $(form).serialize(),
                        success: function (response) {
                            // Silent
-                          alert("success");
+                          alert("You have successfully updated your PECSF volunteer registration ");
+                          window.location = "/profile";
                        },
                        error: function (response) {
                            if(response.responseJSON.errors) {
