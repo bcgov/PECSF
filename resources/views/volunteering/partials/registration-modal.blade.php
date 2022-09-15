@@ -88,7 +88,7 @@
                             </div>
 
                                 <div class="row mt-1 pl-2">
-                                    <a href="#">Learn more about the available volunteer roles with PECSF.</a>
+                                    <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer">Learn more about the available volunteer roles with PECSF.</a>
                                 </div>
 
 

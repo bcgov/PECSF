@@ -43,7 +43,7 @@
                     {{$is_registered->preferred_role}}
                 </div>
             </div>
-            <a class="text-primary text-bold mt-4" style="text-decoration:underline;">Learn more about available volunteer roles with PECSF</a>
+            <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" class="text-primary text-bold mt-4" style="text-decoration:underline;">Learn more about available volunteer roles with PECSF</a>
 
             <h1 class="text-primary mt-4">Recognition Items</h1>
             <div class="d-flex mt-1">
