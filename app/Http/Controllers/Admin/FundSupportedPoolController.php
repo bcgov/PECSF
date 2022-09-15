@@ -206,7 +206,7 @@ class FundSupportedPoolController extends Controller
 
              //   $sum = $percentages;
 
-                if ($sum != 100) {
+                if ( round($sum,2) != 100) {
                     for ($i=0; $i < count($charities); $i++) {
                         if ($status[$i] == 'A') {
                             $validator->errors()->add('percentages.' .$i, 'The sum of percentage is not 100%.');
@@ -438,7 +438,7 @@ class FundSupportedPoolController extends Controller
                         $sum += $percentages[$i];
                     }
                 }
-                if ($sum != 100) {
+                if ( round($sum,2) != 100) {
                     for ($i=0; $i < count($charities); $i++) {
                         if ($status[$i] == 'A') {
                             $validator->errors()->add('percentages.' .$i, 'The sum of percentage is not 100.');
