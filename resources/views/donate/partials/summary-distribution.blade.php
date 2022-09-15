@@ -2,12 +2,24 @@
     <p class="mt-4"><b>Your {{($key_)}} charitable donations will be disbursed as follows:</b></p>
     @if (($viewMode ?? '') !== 'pdf')
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <div class="form-check form-switch p-0">
+       <!-- <div class="form-check form-switch p-0">
             <label class="form-check-label" for="distributeByDollarAmount{{ucfirst($keyCase)}}">
                 <input class="form-check-input" type="checkbox" id="distributeByDollarAmount{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" checked>
                 <i></i><span class="percent-amount-text">Distribute by Dollar Amount</span>
             </label>
+        </div> -->
+
+        <div class="btn-group btn-group-toggle mt-3 frequency" role="group"  aria-label="Select frequency" data-toggle="buttons">
+            <label class="btn btn-outline-primary btn-lg active" for="distributeByDollar">
+                <input type="radio"  class="btn-check"  autocomplete="off"  id="distributeByDollar" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" >
+                Dollar amount
+            </label>
+            <label class="btn btn-outline-primary btn-lg" for="distributeByPercentage">
+                <input type="radio"  checked class="btn-check"  autocomplete="off"  id="distributeByPercentage" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" >
+                Percentage
+            </label>
         </div>
+
     </div>
     @endif
 

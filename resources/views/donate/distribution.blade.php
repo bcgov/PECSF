@@ -37,20 +37,23 @@
 @push('js')
     <script>
 
-        $(document).on('change', '#distributeByDollarAmountOneTime, #distributeByDollarAmountBiWeekly', function () {
-            const frequency = $(this).attr('id') === 'distributeByDollarAmountOneTime' ? '#oneTimeSection' : '#biWeeklySection';
-            if (!$(this).prop("checked")) {
+        $(document).on('change', '#distributeByPrecentage, #distributeByDollar', function () {
+            const frequency = '#oneTimeSection';
+
+            if ($(this).attr('id') == "distributeByDollar") {
                 $(frequency).find(".by-amount").removeClass("d-none");
-                $(frequency).find(".by-percent").addClass("d-none"); 
+                $(frequency).find(".by-percent").addClass("d-none");
                 $(frequency).find(".percent-amount-text").html("Distribute by Percentage");
             } else {
                 $(frequency).find(".by-percent").removeClass("d-none");
                 $(frequency).find(".by-amount").addClass("d-none");
                 $(frequency).find(".percent-amount-text").html("Distribute by Dollar Amount");
             }
+            $(".percent-input").change();
+            $(".amount-input").change();
         });
 
-        function redistribute(type, section) 
+        function redistribute(type, section)
         {
             let sum = 0.00;
             expectedTotal = section.find(".total-amount").data('expected-total');
@@ -62,22 +65,22 @@
                 rows = section.find(".amount-input");
                 target_rows= section.find(".percent-input");
             }
-           
+
             $.each(rows, function(i) {
                 if (i == (rows.length -1 ) ) {
                     newValue = 0;
-                    if (type == 'amount') 
+                    if (type == 'amount')
                         newValue = expectedTotal - sum;
-                     else 
+                     else
                         newValue = 100 - sum;
                     $(target_rows[i]).val( newValue.toFixed(2) );
                 } else {
                     current = $(this).val();
                     newValue = 0;
-                    if (type == 'amount') 
-                        newValue = Math.round(( (current / 100 ) * expectedTotal) * 100) / 100; 
+                    if (type == 'amount')
+                        newValue = Math.round(( (current / 100 ) * expectedTotal) * 100) / 100;
                     else
-                        newValue = Math.round(( current / expectedTotal * 100) * 100) / 100; 
+                        newValue = Math.round(( current / expectedTotal * 100) * 100) / 100;
                     $(target_rows[i]).val( newValue.toFixed(2) );
                     sum += newValue
                 }
@@ -131,8 +134,8 @@
 
         $(document).on('click', '.distribute-evenly', function () {
 
-            // calucated and distributed  
-            function distribute_evenly(expectedTotal, rows) 
+            // calucated and distributed
+            function distribute_evenly(expectedTotal, rows)
             {
                 sum = 0;
                 $.each(rows, function(i) {
@@ -140,7 +143,7 @@
                         newValue = expectedTotal - sum;
                         $(this).val( newValue );
                     } else {
-                        newValue = Math.round(( expectedTotal / rows.length) * 100) / 100; 
+                        newValue = Math.round(( expectedTotal / rows.length) * 100) / 100;
                         $( this).val( newValue );
                         sum += newValue
                     }
@@ -162,15 +165,15 @@
                 distribute_evenly(expectedTotal, rows);
             // }
 
-            // calucated and distributed  
+            // calucated and distributed
             // sum = 0;
             // $.each(rows, function(i) {
             //     if (i == (rows.length -1 ) ) {
             //         newValue = expectedTotal - sum;
             //         $(this).val( newValue );
-            //         console.log( 'LAST ' + i + ' - ' +  $( this).val() );    
+            //         console.log( 'LAST ' + i + ' - ' +  $( this).val() );
             //     } else {
-            //         newValue = Math.round(( expectedTotal / rows.length) * 100) / 100; 
+            //         newValue = Math.round(( expectedTotal / rows.length) * 100) / 100;
             //         $( this).val( newValue );
             //         sum += newValue
             //         console.log( i + ' - ' +  $( this).val() );
