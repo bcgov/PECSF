@@ -15,6 +15,7 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
+use Illuminate\Support\Facades\Session;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -59,9 +60,11 @@ class EventSubmissionQueueController extends Controller
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
         $cities = City::all();
+        $organizations = [];
+        $selected_charities = [];
 
         // load the view and pass
-        return view('admin-pledge.submission-queue.index',compact('cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
+        return view('admin-pledge.submission-queue.index',compact('selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
 
     }
 

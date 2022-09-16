@@ -58,12 +58,13 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Go To</th>
                     <th>Donation Type</th>
-                    <th>Creators Employee Id</th>
+                    <th>Employee Id</th>
                     <th>Name</th>
                     <th>Deposit Amount</th>
                     <th>Business Unit</th>
+                    <th>Status</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
