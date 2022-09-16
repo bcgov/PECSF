@@ -64,7 +64,7 @@
                     }
                 }
                 @endphp
-                @if($key > $currentYear || $ignore || isset($globalIgnore))
+                @if($key > $currentYear || $ignore || isset($globalIgnore) || !$campaignYear->isOpen())
                     @php
                     if($key>$currentYear)
                         {
