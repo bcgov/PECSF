@@ -37,17 +37,17 @@
 @push('js')
     <script>
 
-        $(document).on('change', '#distributeByPrecentage, #distributeByDollar', function () {
+        $(document).on('click', '#distributeByPercentage, #distributeByDollar', function () {
             const frequency = '#oneTimeSection';
 
             if ($(this).attr('id') == "distributeByDollar") {
-                $(frequency).find(".by-amount").removeClass("d-none");
-                $(frequency).find(".by-percent").addClass("d-none");
-                $(frequency).find(".percent-amount-text").html("Distribute by Percentage");
+                $("body").find(".by-amount").removeClass("d-none");
+                $("body").find(".by-percent").addClass("d-none");
+                $("body").find(".percent-amount-text").html("Distribute by Percentage");
             } else {
-                $(frequency).find(".by-percent").removeClass("d-none");
-                $(frequency).find(".by-amount").addClass("d-none");
-                $(frequency).find(".percent-amount-text").html("Distribute by Dollar Amount");
+                $("body").find(".by-percent").removeClass("d-none");
+                $("body").find(".by-amount").addClass("d-none");
+                $("body").find(".percent-amount-text").html("Distribute by Dollar Amount");
             }
             $(".percent-input").change();
             $(".amount-input").change();
