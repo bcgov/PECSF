@@ -1,18 +1,16 @@
-<div class="modal fade" id="add-event-modal">
+<div class="modal fade" id="edit-event-modal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-charity-name" id="charity-modal-label">Add a New Value</h5>
+                <h5 class="modal-charity-name" id="charity-modal-label">Submission Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <!-- content will be load here -->
-                <div id="add-event-modal-body">
-
+                <div id="edit-event-modal-body">
                     @include('volunteering.partials.form')
-
                 </div>
             </div>
             <div class="modal-footer">
@@ -129,11 +127,19 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
-        $(document).on("click", ".add-event-modal" , function(e) {
+        $(document).on("click", ".edit-event-modal" , function(e) {
             e.preventDefault();
-            $('#add-event-modal').modal('show');
+            $.get("/admin-pledge/details",
+                {
+                    form_id: $(this).attr("form-id")
+                },
+                function (data, status) {
+                    $('#edit-event-modal').modal('show');
+                    console.log(data);
+                },"json");
         });
         $("select").select2();
-        @include('volunteering.partials.add-event-js')
     </script>
+    @include('volunteering.partials.add-event-js')
+
 @endpush

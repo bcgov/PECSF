@@ -16492,7 +16492,7 @@ body,
   position: relative;
 }
 .wrapper .content-wrapper {
-  min-height: 1050px!important;
+  /*min-height: 1050px!important;*/
 }
 .layout-boxed .wrapper {
   box-shadow: 0 0 10 rgba(0, 0, 0, 0.3);
@@ -35201,7 +35201,7 @@ body.iframe-mode-fullscreen {
 }
 
 .content-wrapper {
-  height: 100%;
+  /*height: 100%;*/
 }
 .content-wrapper.iframe-mode .btn-iframe-close {
   color: #e3342f;

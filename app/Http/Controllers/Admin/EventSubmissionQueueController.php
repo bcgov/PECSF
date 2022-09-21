@@ -41,6 +41,9 @@ class EventSubmissionQueueController extends Controller
      */
     public function index(Request $request)
     {
+
+
+
      $submissions = BankDepositForm::where("approved","=",0)
          ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
          ->get();
@@ -67,6 +70,23 @@ class EventSubmissionQueueController extends Controller
         return view('admin-pledge.submission-queue.index',compact('selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
 
     }
+    /**
+     * Display a listing of pledge details.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function details(Request $request){
+        $submissions = BankDepositForm::where("approved","=",0)
+            ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
+            ->join("bank_deposit_form_attachments","bank_deposit_forms.id","=", "bank_deposit_form_attachments.bank_deposit_form_id")
+            ->get();
+        foreach($submissions as $index => $submission){
+            $submissions[$index]["charities"] = $submission->organizations();
+        }
+
+        echo json_encode($submissions);
+    }
+
 
     /**
      * Show the form for creating a new resource.
