@@ -94,8 +94,8 @@
                                    }
                                @endphp
 
-                               {{$is_registered->address_type == "Global" ? "checked":""}} name="address_type" value="Global">
-                        <input type="hidden" name="global_address" value="{{$global_address}}" />
+                               {{$is_registered->address_type == "Global" ? "checked":""}} id="globalOption" name="address_type" value="Global">
+                        <input type="hidden"  name="global_address" value="{{$global_address}}" />
                         Use my Global Address Listing
                     </label>
                 </div>
@@ -120,9 +120,9 @@
                 <div class="col-md-4">
                     <label>City</label>
                     <select name="city" class="form-control">
-                        <option>Select a City</option>
+                        <option value="">Select a City</option>
                         @foreach($cities as $city)
-                            <option {{strtolower($city->city)}}  {{ ((strtolower(explode(",",$is_registered->new_address)[1]) == strtolower($city->city)) ? "selected" : "") }} value="{{$city->city}}">{{$city->city}}</option>
+                            <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
                         @endforeach
                     </select>
                     <span class="city_error" class="text-danger"></span>
@@ -153,14 +153,14 @@
 
                 <div class="col-md-4">
                     <label>Postal Code</label>
-                    <input name="postal_code" value="{{explode(",",$is_registered->new_address)[3]}}" type="text" class="form-control" placeholder="">
+                    <input name="postal_code" value="{{$is_registered->address_type == "New" ? explode(",",$is_registered->new_address)[3] : ""}}" type="text" class="form-control" placeholder="">
                     <span class="postal_code_error" class="text-danger"></span>
                 </div>
             </div>
             <div class="row text-left mt-4">
                 <div class="col">
                     <label>
-                        <input type="radio" {{$is_registered->address_type == "Opt-out" ? "checked":""}}  name="address_type" value="Opt-out">
+                        <input id="optOut" type="radio" {{$is_registered->address_type == "Opt-out" ? "checked":""}}  name="address_type" value="Opt-out">
                         I wish to opt-out from receiving recognition items.
                     </label>
                 </div>
@@ -176,8 +176,20 @@
         </form>
         @push('js')
             <script>
-               $("[name=province]").val('{{str_replace(" ","",ucfirst($province))}}');
-               $("[name=city]").val('{{str_replace(" ","",ucfirst($setcity))}}');
+
+                if($("#globalOption").is(":checked") || $("#optOut").is(":checked"))
+                {
+                    $("[name=province]").val('');
+                    $("[name=city]").val('');
+                    $("[name=postal_code]").val('');
+                    $("[name=new_address]").val('');
+                }
+                else{
+                    $("[name=province]").val('{{str_replace(" ","",ucfirst($province))}}');
+                    $("[name=city]").val('{{str_replace(" ","",ucfirst($setcity))}}');
+                }
+
+
 
                $('.btn').on('click', function (e) {
                 if($(this).hasClass("cancel-btn")){
