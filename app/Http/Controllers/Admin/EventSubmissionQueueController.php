@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\BankDepositForm;
+use App\Models\BankDepositFormOrganizations;
+use App\Models\BankDepositFormAttachments;
 use App\Models\BusinessUnit;
 use App\Models\Department;
 use App\Models\Region;
@@ -41,10 +43,7 @@ class EventSubmissionQueueController extends Controller
      */
     public function index(Request $request)
     {
-
-
-
-     $submissions = BankDepositForm::where("approved","=",0)
+     $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id")->where("approved","=",0)
          ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
          ->get();
         $pools = FSPool::where('start_date', '=', function ($query) {
@@ -76,12 +75,15 @@ class EventSubmissionQueueController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function details(Request $request){
-        $submissions = BankDepositForm::where("approved","=",0)
+        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id ")
+        ->where("approved","=",0)
+            ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
-            ->join("bank_deposit_form_attachments","bank_deposit_forms.id","=", "bank_deposit_form_attachments.bank_deposit_form_id")
             ->get();
         foreach($submissions as $index => $submission){
-            $submissions[$index]["charities"] = $submission->organizations();
+            $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id","=",$request->form_id)->get();
+            $submissions[$index]["attachments"] = BankDepositFormAttachments::where("bank_deposit_form_id","=",$request->form_id)->get();
+
         }
 
         echo json_encode($submissions);

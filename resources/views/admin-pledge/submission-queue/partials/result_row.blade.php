@@ -5,6 +5,6 @@
     <td>{{$submission->deposit_amount}}</td>
     <td>{{$submission->organization_code}}</td>
     <td><select><option>Status</option></select></td>
-    <td class="edit-event-modal" form-id="{{$submission->id}}">View Details</td>
+    <td class="edit-event-modal" form-id="{{$submission->bank_deposit_form_id}}">View Details</td>
 </tr>
 
