@@ -135,20 +135,42 @@
                     form_id: $(this).attr("form-id")
                 },
                 function (data, status) {
-                for(i=0;i<data[0].charities.length;i++){
-                    text = $("#organization-tmpl").html();
-                    text = text.replace(/XXX/g, row_number + 1);
-                    $('#organizations').append( text );
-                    $("#organizations").css("display","block");
-                    row_number++;
-                    $('.organization').last().find(".organization_name").val(data[0].charities[i].organization_name);
-                    $('.organization').last().find("[name='id[]']").val(data[0].charities[i].vendor_id);
-                    $('.organization').last().find("[name='vendor_id[]']").val(data[0].charities[i].vendor_id);
-                    $('.organization').last().find("[name='donation_percentd[]']").val(data[0].charities[i].donation_percent);
-                    $(".next_button").attr("disabled",false);
-                }
+                    $('#organizations').html("");
+
+                    if(data[0].charities.length > 0){
+
+                        $("#organizations").show();
+                        $(".org_hook").show();
+                        $("#add_row").show();
+                        $(".form-pool").hide();
+                        $("input[value='dc']").attr("checked","checked");
+
+                        for(i=0;i<data[0].charities.length;i++){
+                            text = $("#organization-tmpl").html();
+                            text = text.replace(/XXX/g, row_number + 1);
+                            $('#organizations').append( text );
+                            $("#organizations").css("display","block");
+                            row_number++;
+                            $('.organization').last().find(".organization_name").val(data[0].charities[i].organization_name);
+                            $('.organization').last().find("[name='id[]']").val(data[0].charities[i].vendor_id);
+                            $('.organization').last().find("[name='vendor_id[]']").val(data[0].charities[i].vendor_id);
+                            $('.organization').last().find("[name='donation_percent[]']").val(data[0].charities[i].donation_percent);
+                            $(".next_button").attr("disabled",false);
+                        }
+                    }
 
 
+                    let attachment_number = 1;
+                    $(".upload-area").hide();
+
+                    for(i=0;i<data[0].attachments.length;i++) {
+                        text = $("#attachment-tmpl").html();
+                        text = text.replace(/XXX/g, attachment_number + 1);
+                        $('#attachments').append( text );
+                        attachment_number++;
+                        $('.attachment').last().find(".filename").html(data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
+                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form_attachments"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
+                    }
 
                     $('#edit-event-modal').modal('show');
                     console.log(data);

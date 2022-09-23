@@ -365,9 +365,9 @@
                     <label style="text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</label>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
-                <div id="attachments" class="form-group col-md-6">
+                <table id="attachments" class=" form-group col-md-6">
 
-                </div>
+                </table>
             </div>
             <span class="attachment_errors errors">
                        @error('attachments')
@@ -396,7 +396,7 @@
 
         Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund at 250 356-1736 or <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.  </p>
         </div>
-    </div>
+
 </form>
 <!-- Modal -->
 <div class="modal fade" id="regionalPoolModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
@@ -418,6 +418,3 @@
     </div>
 </div>
 
-<script>
-
-</script>
