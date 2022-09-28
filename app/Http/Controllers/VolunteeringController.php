@@ -92,7 +92,7 @@ class VolunteeringController extends Controller
         if($is_registered)
         {
             $province = str_replace(" ","",explode(",",$is_registered->new_address)[2]);
-            $setcity = str_replace(" ","",explode(",",$is_registered->new_address)[1]);
+            $setcity = substr(explode(",",$is_registered->new_address)[1],1,strlen(explode(",",$is_registered->new_address)[1]));
         }
 
         return view('volunteering.edit', compact('global_address','organizations', 'user', 'cities','is_registered','province','setcity'));

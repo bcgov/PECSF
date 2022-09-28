@@ -185,8 +185,8 @@
                     $("[name=new_address]").val('');
                 }
                 else{
-                    $("[name=province]").val('{{str_replace(" ","",ucfirst($province))}}');
-                    $("[name=city]").val('{{str_replace(" ","",ucfirst($setcity))}}');
+                    $("[name=province]").val('{{substr(ucfirst($province),0,strlen($province))}}');
+                    $("[name=city]").val('{{substr(ucfirst($setcity),0,strlen($setcity))}}');
                 }
 
 

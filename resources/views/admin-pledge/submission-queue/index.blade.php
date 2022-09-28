@@ -31,12 +31,13 @@
             </div>
             <div class="modal-body">
                 <!-- content will be load here -->
-                <h5>If a new submission is required current submission should be locked to prevent accidental use.<br>This action cannot be undone.</h5>
+                <p>If a new submission is required current submission should be locked to prevent accidental use.<br>This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="submission_id" />
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger lock-submission">Lock Submission</button>
+                <button type="button" class="btn btn-danger lock-submission">Lock Submission <i class="fa fa-lock" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -155,8 +156,8 @@
             }
         });
         $(".edit").click(function(){
-            $("select").attr("disabled",false);
-            $("input").attr("disabled",false);
+            $("#edit-event-modal").find("select").attr("disabled",false);
+            $("#edit-event-modal").find("input").attr("disabled",false);
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
@@ -238,8 +239,8 @@
                         $('.attachment').last().find(".filename").html(data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
                         $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form_attachments"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
                     }
-                    $("select").attr("disabled",true);
-                    $("input").attr("disabled",true);
+                    $("#edit-event-modal").find("select").attr("disabled",true);
+                    $("#edit-event-modal").find("input").attr("disabled",true);
                     $('#edit-event-modal').modal('show');
                     console.log(data);
                 },"json");
@@ -293,6 +294,8 @@
                 },
                 function (data, status) {
                 });
+
+            $('#lock-event-modal').modal("hide");
         });
 
     </script>
