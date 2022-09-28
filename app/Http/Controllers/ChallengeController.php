@@ -83,7 +83,7 @@ class ChallengeController extends Controller
             {
                 $charities[$index]->previous_participation_rate = $previousYear->participation_rate;
                 $charities[$index]->previous_donors = $previousYear->donors;
-                $charities[$index]->change = ($charity->participation_rate*100) - $previousYear->participation_rate;
+                $charities[$index]->change = ($charity->participation_rate*100) - ($previousYear->participation_rate*100);
             }
             else
             {
