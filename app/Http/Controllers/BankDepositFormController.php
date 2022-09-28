@@ -336,6 +336,164 @@ class BankDepositFormController extends Controller
         }
 
     }
+    public function update(Request $request) {
+        $validator = Validator::make(request()->all(), [
+            'organization_code'         => 'required',
+            'form_submitter'         => 'required',
+            'campaign_year'         => 'required',
+            'event_type'         => 'required',
+            'sub_type'         => 'required',
+            'deposit_date'         => 'required|before:tomorrow',
+            'deposit_amount'         => 'required|numeric|gt:0',
+            'employment_city'         => 'required',
+            'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
+            'region'         => 'required',
+            'business_unit'         => 'required',
+            'charity_selection' => 'required',
+            'description' => 'required',
+        ],[
+            'organization_code' => 'The Organization Code is required.',
+        ]);
+        $validator->after(function ($validator) use($request) {
+            if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
+                if($request->organization_code != "GOV")
+                {
+
+                    if(empty($request->pecsf_id))
+                    {
+                        $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                    }
+                    else if(!is_numeric($request->pecsf_id))
+                    {
+                        $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
+                    }
+
+                }
+                if($request->organization_code == "GOV"){
+                    if(empty($request->bc_gov_id))
+                    {
+                        $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+                    }
+                    else if(!is_numeric($request->bc_gov_id))
+                    {
+                        $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                    }
+                }
+            }
+            if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+            {
+                if(empty($request->address_1))
+                {
+                    $validator->errors()->add('address_1','An Address is required.');
+                }
+
+                if(empty($request->city))
+                {
+                    $validator->errors()->add('city','An City is required.');
+                }
+
+                if(empty($request->province))
+                {
+                    $validator->errors()->add('province','An Province is required.');
+                }
+
+                if(empty($request->postal_code))
+                {
+                    $validator->errors()->add('postal_code','An Postal Code is required.');
+                }
+            }
+
+            if($request->charity_selection == "fsp")
+            {
+                if(empty($request->regional_pool_id)){
+                    $validator->errors()->add('regional_pool_id','Select a Regional Pool.');
+                }
+            }
+            else{
+                $total = 0;
+
+                if($request->org_count < 1){
+                    $validator->errors()->add('charity','You need to Select a Charity.');
+                }
+                else{
+                    for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
+
+                        if(empty(request("id")[$i]))
+                        {
+                            $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
+                        }
+                        if(empty(request('vendor_id')[$i])){
+                            $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
+                        };
+                        if(empty(request('donation_percent')[$i])){
+                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
+                        }
+                        else if(!is_numeric(request('donation_percent')[$i])){
+                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
+                        }
+                        else{
+                            if(!empty(request("donation_percent")[$i]))
+                            {
+                                $total = request('donation_percent')[$i] + $total;
+                            }
+                        }
+                    }
+                    if($total != 100) {
+                        for ($j = 0; $j < $request->org_count; $j++) {
+                            $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
+                        }
+                    }
+                }
+            }
+        });
+        $validator->validate();
+        $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
+
+        $form = BankDepositForm::where("id","=",$request->id)->update(
+            [
+                'organization_code' => $request->organization_code,
+                'form_submitter_id' =>  $request->form_submitter,
+                'event_type' =>  $request->event_type,
+                'sub_type' => $request->sub_type,
+                'deposit_date' => $request->deposit_date,
+                'deposit_amount' => $request->deposit_amount,
+                'description' => $request->description,
+                'employment_city' => $request->employment_city,
+                'region_id' => $request->region,
+                'regional_pool_id' => $regional_pool_id,
+                'address_line_1' => $request->address_1,
+                'address_line_2' => $request->address_2,
+                'address_city' => $request->city,
+                'address_province' => $request->province,
+                'address_postal_code' => $request->postal_code,
+                'bc_gov_id' => $request->bc_gov_id,
+                'pecsf_id' => $request->pecsf_id
+            ]
+        );
+
+        if($request->charity_selection == "dc"){
+            $orgName = count($request->organization_name) -1;
+            $orgCount = $orgName;
+            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->id)->delete();
+
+            foreach($request->organization_name as $org){
+
+                if($orgName <= ($orgCount - $request->org_count)){
+                    break;
+                }
+                BankDepositFormOrganizations::create([
+                    'organization_name' => $request->organization_name[$orgName],
+                    'vendor_id' => $request->vendor_id[$orgName],
+                    'donation_percent' => $request->donation_percent[$orgName],
+                    'specific_community_or_initiative' =>  (isset($request->additional[$orgName])?$request->additional[$orgName]:""),
+                    'bank_deposit_form_id' => $form->id
+                ]);
+                $orgName--;
+            }
+        }
+        echo json_encode(["/admin-pledge/submission-queue"]);
+    }
+
 
     public function organization_code(Request $request)
     {

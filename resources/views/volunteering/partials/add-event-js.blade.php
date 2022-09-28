@@ -129,7 +129,7 @@ formData.append("ignoreFiles", ignoreFiles);
 
 $(this).fadeTo("slow",0.2);
 $.ajax({
-url: "{{ route("bank_deposit_form") }}",
+url: $("#bank_deposit_form").attr("action"),
 type:"POST",
 data: formData,
 headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
@@ -310,4 +310,20 @@ $("#attachment_input_1").val("");
             body: toast_body
         });
     }
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+
+        var $state = $(
+            '<span><i class="'+state.element.text+'color nav-icon fa fa-circle "></i> ' + state.text + '</span>'
+        );
+        return $state;
+    };
+    $(".status").select2(
+        {
+            templateResult:formatState,
+            templateSelection:formatState
+        }
+    );
 </script>

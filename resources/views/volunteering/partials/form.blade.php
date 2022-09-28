@@ -3,13 +3,13 @@
     @csrf
     <br>
 
+    <input type="hidden" name="id" id="id" value="" />
 
     <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
         <h2>Event bank deposit form</h2>
     </div>
     <div class="card" style="border-radius:0px;">
         <div class="card-body">
-
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="organization_code">Organization code</label>
@@ -353,7 +353,7 @@
 
 
             <div class="form-row form-header">
-                <h3 class="blue">Upload File(s)</h3>
+                <h3 class="blue">File(s)</h3>
 
             </div>
 
@@ -384,7 +384,7 @@
 
 <br>
     <br>
-    <input type="submit" style="margin-left:20px;" class="col-md-1 btn btn-primary" value="Submit" />
+    <input type="submit" style="margin-left:20px;" class="col-md-2 btn btn-primary" value="Submit" />
     <br>
     <br>
     <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are possible through eForm. Please contact pecsf@gov.bc.ca</p>

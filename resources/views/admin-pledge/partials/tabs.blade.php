@@ -14,5 +14,4 @@
            id="pills-home-tab" href="{{ route('admin-pledge.campaign.index') }}" role="tab"
            aria-controls="pills-home" aria-selected="true">PECSF Maintain Donate Now Pledge</a>
     </li>
-
 </ul>

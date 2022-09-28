@@ -131,6 +131,7 @@ Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::c
 Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
 
 Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
+Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
 
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {

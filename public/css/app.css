@@ -49508,3 +49508,15 @@ h4{
 .center{
     margin-left: auto;margin-right: Auto;display: block;width: fit-content;
 }
+
+.approvedcolor{
+    color:green!important;
+}
+
+.pendingcolor{
+    color:yellow!important;
+}
+
+.lockedcolor{
+    color:red!important;
+}

@@ -9,12 +9,34 @@
             </div>
             <div class="modal-body">
                 <!-- content will be load here -->
+                <button class="btn btn-primary edit">Edit</button>
                 <div id="edit-event-modal-body">
                     @include('volunteering.partials.form')
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="lock-event-modal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-charity-name" id="charity-modal-label">Lock this submission?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- content will be load here -->
+                <h5>If a new submission is required current submission should be locked to prevent accidental use.<br>This action cannot be undone.</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger">Lock Submission</button>
+
             </div>
         </div>
     </div>
@@ -127,23 +149,61 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
+
+        $(".edit").click(function(){
+            $("select").attr("disabled",false);
+            $("input").attr("disabled",false);
+        });
+
         $(document).on("click", ".edit-event-modal" , function(e) {
             e.preventDefault();
             var row_number = 0;
+            $("#id").val($(this).attr("form-id"));
+            $("#bank_deposit_form").attr("action","/bank_deposit_form/update")
             $.get("/admin-pledge/details",
                 {
                     form_id: $(this).attr("form-id")
                 },
                 function (data, status) {
                     $('#organizations').html("");
+                    $("#event_type").val(data[0].event_type).select2();
+                    $("#business_unit").val(data[0].business_unit).select2();
+                    $("[name='event_type']").trigger("change");
+                    $("#deposit_amount").val(data[0].deposit_amount);
+                    $("#deposit_date").val(data[0].deposit_date.substring(0,data[0].deposit_date.indexOf(" ")));
+
+                    if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
+                      $("#sub_type").attr("disabled",false);
+                      $("#sub_type").val(data[0].sub_type).select2();
+                    }
+                    else{
+                        $("#address_1").val(data[0].address_line_1);
+                        $("#city").val(data[0].address_city).select2();
+                        $("#province").val(data[0].address_province).select2();
+                        $("#postal_code").val(data[0].address_postal_code);
+                    }
+
+                    $("#employment_city").val(data[0].employment_city).select2();
+                    $("#region").val(data[0].region_id).select2();
+                    $("#description").val(data[0].name);
+
+                    $("#organization_code").html("<option value='"+data[0].organization_code+"'>"+data[0].organization_code+"</option>");
+                    $("#organization_code").select2({
+                        ajax: {
+                            url: '/bank_deposit_form/organization_code',
+                            dataType: 'json'
+                        }
+                    });
+
+
 
                     if(data[0].charities.length > 0){
-
                         $("#organizations").show();
                         $(".org_hook").show();
                         $("#add_row").show();
                         $(".form-pool").hide();
                         $("input[value='dc']").attr("checked","checked");
+
 
                         for(i=0;i<data[0].charities.length;i++){
                             text = $("#organization-tmpl").html();
@@ -158,11 +218,14 @@
                             $(".next_button").attr("disabled",false);
                         }
                     }
+                    else{
+                        $("#pool"+data[0].regional_pool_id).attr("checked",true);
+                    }
 
 
                     let attachment_number = 1;
                     $(".upload-area").hide();
-
+                    $('#attachments').html("");
                     for(i=0;i<data[0].attachments.length;i++) {
                         text = $("#attachment-tmpl").html();
                         text = text.replace(/XXX/g, attachment_number + 1);
@@ -171,12 +234,27 @@
                         $('.attachment').last().find(".filename").html(data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
                         $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form_attachments"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
                     }
-
+                    $("select").attr("disabled",true);
+                    $("input").attr("disabled",true);
                     $('#edit-event-modal').modal('show');
                     console.log(data);
                 },"json");
         });
         $("select").select2();
+
+        $(".status").change(function(e){
+            e.preventDefault();
+            if($(this).val()==2)
+            {
+                $(this).val(0).select2(
+                    {
+                        templateResult:formatState,
+                        templateSelection:formatState
+                    }
+                );
+                $('#lock-event-modal').modal("show");
+            }
+        });
     </script>
     @include('volunteering.partials.add-event-js')
 
