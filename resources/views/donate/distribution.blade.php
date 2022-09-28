@@ -37,10 +37,29 @@
 @push('js')
     <script>
 
-        $(document).on('click', '#distributeByPercentage, #distributeByDollar', function () {
+
+        if($("#distributeByPercentageOneTime").length > 0){
+            $(".frequencybiWeekly").hide();
+        }
+        $(document).on('click', '#distributeByPercentageOneTime, #distributeByDollarOneTime', function () {
             const frequency = '#oneTimeSection';
 
-            if ($(this).attr('id') == "distributeByDollar") {
+            if ($(this).attr('id') == "distributeByDollarOneTime") {
+                $("body").find(".by-amount").removeClass("d-none");
+                $("body").find(".by-percent").addClass("d-none");
+                $("body").find(".percent-amount-text").html("Distribute by Percentage");
+            } else {
+                $("body").find(".by-percent").removeClass("d-none");
+                $("body").find(".by-amount").addClass("d-none");
+                $("body").find(".percent-amount-text").html("Distribute by Dollar Amount");
+            }
+            $(".percent-input").change();
+            $(".amount-input").change();
+        });
+        $(document).on('click', '#distributeByPercentageBiWeekly, #distributeByDollarBiWeekly', function () {
+            const frequency = '#oneTimeSection';
+
+            if ($(this).attr('id') == "distributeByDollarBiWeekly") {
                 $("body").find(".by-amount").removeClass("d-none");
                 $("body").find(".by-percent").addClass("d-none");
                 $("body").find(".percent-amount-text").html("Distribute by Percentage");

@@ -102,6 +102,10 @@
 @endpush
 @push('js')
     <script>
+        if($("#distributeByPercentage").length > 0){
+            $(".frequencybiWeekly").hide();
+        }
+
         $(document).on('click', '#distributeByDollar, #distributeByPercentage', function () {
             const frequency = $(this).attr('id') === 'distributeByDollarAmountOneTime' ? '#oneTimeSection' : '#biWeeklySection';
             if ($(this).attr('id') == "distributeByDollar") {
