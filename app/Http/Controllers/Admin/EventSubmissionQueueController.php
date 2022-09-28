@@ -36,6 +36,38 @@ class EventSubmissionQueueController extends Controller
          $this->middleware('permission:setting');
     }
 
+    public function status(Request $request){
+
+        $form = BankDepositForm::where("id",$request->submission_id)->first();
+        if($request->status == 1){
+            if($form->event_type == "Gaming")
+            {
+                $count = BankDepositForm::where("event_type","Gaming")->count() + 1;
+                $zeroes = 3 - strlen($count);
+                $id = "G".date("y");
+                for($i = 0; $i<$zeroes;$i++){
+                    $id.= "0";
+                }
+                $id .= $count;
+            }
+
+            if($form->event_type == "Fundraiser")
+            {
+                $count = BankDepositForm::where("event_type","Fundraiser")->count() + 1;
+                $zeroes = 3 - strlen($count);
+                $id = "G".date("y");
+                for($i = 0; $i<$zeroes;$i++){
+                    $id.= "0";
+                }
+                $id .= $count;
+            }
+            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+        }
+        else{
+            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -43,7 +75,7 @@ class EventSubmissionQueueController extends Controller
      */
     public function index(Request $request)
     {
-     $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id")->where("approved","=",0)
+     $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id")
          ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
          ->get();
         $pools = FSPool::where('start_date', '=', function ($query) {
@@ -76,7 +108,6 @@ class EventSubmissionQueueController extends Controller
      */
     public function details(Request $request){
         $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id ")
-        ->where("approved","=",0)
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
             ->get();

@@ -21,7 +21,7 @@
     </div>
 </div>
 <div class="modal fade" id="lock-event-modal">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-charity-name" id="charity-modal-label">Lock this submission?</h5>
@@ -34,9 +34,9 @@
                 <h5>If a new submission is required current submission should be locked to prevent accidental use.<br>This action cannot be undone.</h5>
             </div>
             <div class="modal-footer">
+                <input type="hidden" id="submission_id" />
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger">Lock Submission</button>
-
+                <button type="button" class="btn btn-danger lock-submission">Lock Submission</button>
             </div>
         </div>
     </div>
@@ -149,7 +149,11 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script>
-
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        });
         $(".edit").click(function(){
             $("select").attr("disabled",false);
             $("input").attr("disabled",false);
@@ -240,10 +244,12 @@
                     console.log(data);
                 },"json");
         });
+
         $("select").select2();
 
         $(".status").change(function(e){
             e.preventDefault();
+            $("#submission_id").val($(this).attr("submission_id"))
             if($(this).val()==2)
             {
                 $(this).val(0).select2(
@@ -254,7 +260,41 @@
                 );
                 $('#lock-event-modal').modal("show");
             }
+            else if($(this).val() == 1){
+                $.post("/admin-pledge/status",
+                    {
+                        submission_id: $("#submission_id").val(),
+                        status: 1
+                    },
+                    function (data, status) {
+                    });
+            }
+            else{
+                $.post("/admin-pledge/status",
+                    {
+                        submission_id: $("#submission_id").val(),
+                        status: 0
+                    },
+                    function (data, status) {
+                    });
+            }
         });
+
+        $(".lock-submission").click(function(){
+            $(".status"+$("#submission_id").val()).val(2).select2(
+                {
+                    templateResult:formatState,
+                    templateSelection:formatState
+                });
+            $.post("/admin-pledge/status",
+                {
+                    submission_id: $("#submission_id").val(),
+                    status: 2
+                },
+                function (data, status) {
+                });
+        });
+
     </script>
     @include('volunteering.partials.add-event-js')
 
