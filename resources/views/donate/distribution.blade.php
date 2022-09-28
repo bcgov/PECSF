@@ -37,8 +37,8 @@
 @push('js')
     <script>
 
-
-        if($("#distributeByPercentageOneTime").length > 0){
+        $(".frequencybiWeekly").show();
+        if($(".frequencyoneTime").length > 0){
             $(".frequencybiWeekly").hide();
         }
         $(document).on('click', '#distributeByPercentageOneTime, #distributeByDollarOneTime', function () {

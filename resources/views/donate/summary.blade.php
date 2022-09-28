@@ -102,7 +102,8 @@
 @endpush
 @push('js')
     <script>
-        if($("#distributeByPercentage").length > 0){
+        $(".frequencybiWeekly").show();
+        if($(".frequencyoneTime").length > 0){
             $(".frequencybiWeekly").hide();
         }
 
