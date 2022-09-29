@@ -91,7 +91,7 @@ class VolunteeringController extends Controller
         }
         if($is_registered)
         {
-            $province = str_replace(" ","",explode(",",$is_registered->new_address)[2]);
+            $province = substr(explode(",",$is_registered->new_address)[2],1,strlen(explode(",",$is_registered->new_address)[2]));;
             $setcity = substr(explode(",",$is_registered->new_address)[1],1,strlen(explode(",",$is_registered->new_address)[1]));
         }
 
