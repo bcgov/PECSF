@@ -268,7 +268,7 @@ class BankDepositFormController extends Controller
         $form = BankDepositForm::Create(
             [
                 'organization_code' => $request->organization_code,
-                'form_submitter' =>  $request->form_submitter,
+                'form_submitter_id' =>  $request->form_submitter,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
