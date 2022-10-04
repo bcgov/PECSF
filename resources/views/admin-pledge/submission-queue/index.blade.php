@@ -155,6 +155,7 @@
                 'X-CSRF-TOKEN': '{{csrf_token()}}'
             }
         });
+
         $(".edit").click(function(){
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);

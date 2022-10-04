@@ -49,9 +49,10 @@ class EventSubmissionQueueController extends Controller
                     $id.= "0";
                 }
                 $id .= $count;
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
             }
 
-            if($form->event_type == "Fundraiser")
+            else if($form->event_type == "Fundraiser")
             {
                 $count = BankDepositForm::where("event_type","Fundraiser")->count() + 1;
                 $zeroes = 3 - strlen($count);
@@ -60,8 +61,12 @@ class EventSubmissionQueueController extends Controller
                     $id.= "0";
                 }
                 $id .= $count;
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
             }
-            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+            else{
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+            }
+
         }
         else{
             BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);

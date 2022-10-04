@@ -12,6 +12,7 @@
 @include('volunteering.partials.learn-more-modal')
 @include('volunteering.partials.registration-modal')
 @push('js')
+
 <script>
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
         if(e.to == 0) {
