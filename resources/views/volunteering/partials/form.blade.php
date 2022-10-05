@@ -3,7 +3,7 @@
     @csrf
     <br>
 
-    <input type="hidden" name="id" id="id" value="" />
+    <input type="hidden" name="form_id" id="form_id" value="" />
 
     <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
         <h2>Event bank deposit form</h2>
@@ -276,7 +276,7 @@
             <h3 class="blue">Charity selections and distribution</h3>
     </div>
 
-    <div class="form-row  form-body">
+    <div class="form-row" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
         <div class="form-group col-md-12">
             <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
             <label class="blue" for="charity_selection_1">Fund supported pool</label>
@@ -329,7 +329,8 @@
 
             </div>
             @endfor
-
+    </div>
+            <div class="form-row"style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;border-bottom:#ccc 1px solid;border-radius:5px;">
 
         <div class="form-group col-md-6">
             <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />

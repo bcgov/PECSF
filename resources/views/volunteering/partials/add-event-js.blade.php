@@ -54,12 +54,16 @@ else{
         $("#pecsfid").find("input").hide();
         $("#bcgovid").find("label").show();
         $("#bcgovid").find("input").show();
+        $("#pecsfid").hide();
+        $("#bcgovid").show();
     }
     else{
         $("#pecsfid").find("label").show();
         $("#pecsfid").find("input").show();
         $("#bcgovid").find("label").hide();
         $("#bcgovid").find("input").hide();
+        $("#pecsfid").show();
+        $("#bcgovid").hide();
     }
 
 $(".address_hook").show();

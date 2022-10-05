@@ -164,7 +164,7 @@
         $(document).on("click", ".edit-event-modal" , function(e) {
             e.preventDefault();
             var row_number = 0;
-            $("#id").val($(this).attr("form-id"));
+            $("#form_id").val($(this).attr("form-id"));
             $("#bank_deposit_form").attr("action","/bank_deposit_form/update")
             $.get("/admin-pledge/details",
                 {
@@ -187,6 +187,27 @@
                         $("#city").val(data[0].address_city).select2();
                         $("#province").val(data[0].address_province).select2();
                         $("#postal_code").val(data[0].address_postal_code);
+                        $("#sub_type").val(data[0].sub_type).select2();
+                        $("#pecsf_id").val(data[0].pecsf_id);
+                        $("#bcgov_id").val(data[0].bcgov_id);
+
+                        if(data[0].organization_code == "GOV"){
+                            $("#pecsfid").find("label").hide();
+                            $("#pecsfid").find("input").hide();
+                            $("#bcgovid").find("label").show();
+                            $("#bcgovid").find("input").show();
+                            $("#pecsfid").hide();
+                            $("#bcgovid").show();
+                        }
+                        else{
+                            $("#pecsfid").find("label").show();
+                            $("#pecsfid").find("input").show();
+                            $("#bcgovid").find("label").hide();
+                            $("#bcgovid").find("input").hide();
+                            $("#pecsfid").show();
+                            $("#bcgovid").hide();
+                        }
+
                     }
 
                     $("#employment_city").val(data[0].employment_city).select2();
@@ -227,7 +248,7 @@
                     else{
                         $("#pool"+data[0].regional_pool_id).attr("checked",true);
                     }
-
+                    $("#edit-event-modal-body").find(".col-md-2").removeClass("col-md-2").addClass("col-md-4");
 
                     let attachment_number = 1;
                     $(".upload-area").hide();
@@ -301,5 +322,5 @@
 
     </script>
     @include('volunteering.partials.add-event-js')
-
+    @include('donate.partials.choose-charity-js')
 @endpush

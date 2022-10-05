@@ -283,7 +283,8 @@ class BankDepositFormController extends Controller
                 'address_province' => $request->province,
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
-                'pecsf_id' => $request->pecsf_id
+                'pecsf_id' => $request->pecsf_id,
+                'business_unit' => $request->business_unit
             ]
         );
 
@@ -418,7 +419,7 @@ class BankDepositFormController extends Controller
                 else{
                     for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
 
-                        if(empty(request("id")[$i]))
+                        if(empty(request("organization_name")[$i]))
                         {
                             $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
                         }
@@ -449,7 +450,7 @@ class BankDepositFormController extends Controller
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
 
-        $form = BankDepositForm::where("id","=",$request->id)->update(
+        $form = BankDepositForm::where("id","=",$request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
@@ -467,7 +468,8 @@ class BankDepositFormController extends Controller
                 'address_province' => $request->province,
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
-                'pecsf_id' => $request->pecsf_id
+                'pecsf_id' => $request->pecsf_id,
+                'business_unit' => $request->business_unit
             ]
         );
 
@@ -486,7 +488,7 @@ class BankDepositFormController extends Controller
                     'vendor_id' => $request->vendor_id[$orgName],
                     'donation_percent' => $request->donation_percent[$orgName],
                     'specific_community_or_initiative' =>  (isset($request->additional[$orgName])?$request->additional[$orgName]:""),
-                    'bank_deposit_form_id' => $form->id
+                    'bank_deposit_form_id' => $request->form_id
                 ]);
                 $orgName--;
             }
