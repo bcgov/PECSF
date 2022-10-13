@@ -43,12 +43,12 @@
                 </div> --}}
 
                 <div class="form-row"> 
-                    <div class="form-group col-md-5">
+                    <div class="form-group col-md-10">
                         <div class="file-upload">
                             <div class="file-select">
                                 <div class="file-select-button" id="fileName">Choose File</div>
                                 <div class="file-select-name" id="noFile">No file chosen...</div> 
-                                <input type="file" accept=".xlsx,xls" name="donation_file" id="donation_file">
+                                <input type="file" accept=".xlsx,.xls" name="donation_file" id="donation_file">
                             </div>
                         </div>
                         <span class="donation_file_error">
@@ -204,7 +204,7 @@
                 }
             },
             columns: [
-                {data: 'original_filename',  className: "dt-nowrap"},
+                {data: 'original_filename', width: '80px'},
                 {data: 'submitted_at',  className: "dt-nowrap"},
                 {data: 'start_at', defaultContent: '', className: "dt-nowrap" },
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
