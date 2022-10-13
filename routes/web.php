@@ -37,6 +37,7 @@ use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
+use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 
 /*
@@ -177,6 +178,10 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Business Units
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
+
+    // Special Campaign Setup 
+    Route::get('/special-campaigns/charities', [SpecialCampaignSetupController::class,'getCharities']);
+    Route::resource('/special-campaigns', SpecialCampaignSetupController::class);
 
     // Fund Supported Pools
     Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);

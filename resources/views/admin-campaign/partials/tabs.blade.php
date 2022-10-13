@@ -31,9 +31,15 @@
     <li class="nav-item">
       <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.campaignyears') ? 'active' : ''}}"
         {{-- id="pills-home-tab"  --}}
-        href="{{ route('settings.campaignyears.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Campaign Year</a>
+        href="{{ route('settings.campaignyears.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Campaign Years</a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.special-campaigns') ? 'active' : '' }}"
+          {{-- id="pills-profile-tab"  --}}
+          href="{{ route('settings.special-campaigns.index') }}"  aria-controls="pills-profile" aria-selected="false">Special Campaigns</a>
+    </li>
+ 
     <li class="nav-item">
       <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.fund-supported-pools') ? 'active' : '' }}"
         {{-- id="pills-profile-tab"  --}}
