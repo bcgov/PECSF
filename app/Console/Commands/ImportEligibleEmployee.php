@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\DonorByDepartment;
 use App\Models\ElligibleEmployee;
 use Carbon\Carbon;
 use App\Models\EmployeeJob;
@@ -42,7 +43,7 @@ class ImportEligibleEmployee extends Command
 
         $this->message = '';
         $this->status = 'Completed';
-    
+
     }
 
     /**
@@ -85,6 +86,7 @@ class ImportEligibleEmployee extends Command
 
         //$filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
         $filter = '';  // Disbaled the filter due to process timimg issue
+        ElligibleEmployee::truncate();
 
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
@@ -122,7 +124,7 @@ class ImportEligibleEmployee extends Command
 
         } catch (\Exception $ex) {
 
-            // write to log message 
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -131,17 +133,17 @@ class ImportEligibleEmployee extends Command
 
     }
 
-    protected function LogMessage($text) 
+    protected function LogMessage($text)
     {
 
         $this->info( $text );
 
-        // write to log message 
+        // write to log message
         $this->message .= $text . PHP_EOL;
 
         $this->task->message = $this->message;
         $this->task->save();
-        
+
     }
 
 

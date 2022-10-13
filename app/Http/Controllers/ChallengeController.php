@@ -36,8 +36,8 @@ class ChallengeController extends Controller
         $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
             ->join("elligible_employees", function($join){
-                $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                    ->on("business_units.code", '=', 'elligible_employees.business_unit');
+              //  $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                $join->on("business_units.code", '=', 'elligible_employees.business_unit');
             })
 
             ->where('donor_by_business_units.yearcd',"=",$year)
@@ -56,8 +56,8 @@ class ChallengeController extends Controller
             $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
                 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
                 ->join("elligible_employees", function($join){
-                    $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                        ->on("business_units.code", '=', 'elligible_employees.business_unit');
+                   // $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                        $join->on("business_units.code", '=', 'elligible_employees.business_unit');
                 })
                 ->where('donor_by_business_units.yearcd',"=",$year)
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
@@ -77,8 +77,8 @@ class ChallengeController extends Controller
             $previousYear = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
                 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
                 ->join("elligible_employees", function($join){
-                    $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                        ->on("business_units.code", '=', 'elligible_employees.business_unit');
+                    //$join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                        $join->on("business_units.code", '=', 'elligible_employees.business_unit');
                 })
                 ->where('donor_by_business_units.yearcd',"=",($year-1))
                 ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
