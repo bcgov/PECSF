@@ -28,7 +28,7 @@ class SpecialCampaignSetupRequest extends FormRequest
            
         $my_rules = [
                 'name'          => 'required|unique:special_campaigns,name|max:30',
-                'charity_id'    => 'required',
+                'charity_id'    => 'required|exists:charities,id',
                 'start_date'    => 'required|date|before_or_equal:end_date',
                 'end_date'      => 'required|date|after_or_equal:start_date',
                 'description'   => 'required|max:255',
