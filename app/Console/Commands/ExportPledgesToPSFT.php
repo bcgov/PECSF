@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Pledge;
+use App\Models\PayCalendar;
+use App\Models\CampaignYear;
+use App\Models\DonateNowPledge;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\Http;
@@ -69,9 +72,14 @@ class ExportPledgesToPSFT extends Command
 
         // Step 1 : Send Campiagn Type data to PeopleSoft access endpoint 
         $this->LogMessage( now() );        
-        $this->LogMessage("Sending Annual Campaign Type pledge data to PeopleSoft");
+        $this->LogMessage("1) Sending Annual Campaign Type pledge data to PeopleSoft");
         $this->sendCampaignDonationToPeopleSoft();
         
+        // Step 2 : Send Donate Now Pledge data to PeopleSoft access endpoint 
+        $this->LogMessage( now() );        
+        $this->LogMessage("2) Sending Donate Now Type pledge data to PeopleSoft");
+        $this->sendDonateNowToPeopleSoft();
+
         // Update the Task Audit log
         $this->task->end_time = Carbon::now();
         $this->task->status = $this->status;
@@ -83,6 +91,10 @@ class ExportPledgesToPSFT extends Command
     }
 
     private function sendCampaignDonationToPeopleSoft() {
+
+        $this->success = 0;
+        $this->skip = 0;
+        $this->failure = 0;
 
         $pledgeData = Pledge::join('organizations', 'pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
@@ -121,6 +133,20 @@ class ExportPledgesToPSFT extends Command
                 continue;
             }
 
+            // check whether the campaign is not open or active
+            $campaign_year = CampaignYear::where('id',   $pledge->campaign_year_id )->first();
+            if (!($campaign_year->canSendToPSFT() )) {
+                $this->LogMessage( "(SKIP) Campaign Year is not allow to send to PSFT in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->skip += 1;
+                continue;
+            }
+
+            // Calculate the deduct pay from 
+            $check_dt = $pledge->campaign_year->calendar_year . '-01-01';
+            $period = PayCalendar::where('check_dt', '>=',  $check_dt)->orderBy('check_dt')->first();
+            $start_date = $period ? $period->check_dt : $check_dt;
+            $end_date   = $pledge->campaign_year->calendar_year . '-12-31';
+
 
             $one_time_sent = false;
             $pay_period_sent = false;
@@ -144,11 +170,16 @@ class ExportPledgesToPSFT extends Command
                     "Deduction_Code" => "PECSF1",   // always "PECSF1" for one-time deduction
                     // "pledge_start_date" => $pledge->updated_at->format('Y-m-d'),
                     // "pledge_end_date" => $pledge->updated_at->format('Y-m-d'),
-                    'pledge_start_date' => $pledge->campaign_year->calendar_year . '-01-01',
-                    'pledge_end_date' => $pledge->campaign_year->calendar_year . '-12-31',
+                    'pledge_start_date' => $start_date,  // $pledge->campaign_year->calendar_year . '-01-01',
+                    'pledge_end_date' => $end_date,    // $pledge->campaign_year->calendar_year . '-12-31',
                 ];
 
                 $one_time_sent = $this->sendData($one_time_data);
+
+                if ($one_time_sent) { 
+                    $this->LogMessage( "    Transaction {$pledge->id} (One-Time) has been sent - " . json_encode( $one_time_data ) );
+                }
+
             } else {
                 $one_time_sent = true;
             }
@@ -171,10 +202,15 @@ class ExportPledgesToPSFT extends Command
                     "Deduction_Code" => "PECSF",   // always "PECSF" for one-time deduction
                     // "pledge_start_date" => $pledge->updated_at->format('Y-m-d'),
                     // "pledge_end_date" => $pledge->updated_at->format('Y-12-31'),    // always last date of the year
-                    'pledge_start_date' => $pledge->campaign_year->calendar_year . '-01-01',
-                    'pledge_end_date' => $pledge->campaign_year->calendar_year . '-12-31',
+                    'pledge_start_date' => $start_date, // $pledge->campaign_year->calendar_year . '-01-01',
+                    'pledge_end_date' => $end_date,     // $pledge->campaign_year->calendar_year . '-12-31',
                 ];
                 $pay_period_sent = $this->sendData($pay_period_data);
+
+                if ($pay_period_sent) { 
+                    $this->LogMessage( "    Transaction {$pledge->id} (Bi-Weekly) has been sent - " . json_encode( $pay_period_data ) );
+                }
+
             } else {
                 $pay_period_sent = true;
             }                
@@ -186,7 +222,7 @@ class ExportPledgesToPSFT extends Command
                 $pledge->save();
 
                 //                         
-                $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
+                // $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
 
             }
 
@@ -207,6 +243,72 @@ class ExportPledgesToPSFT extends Command
             //     $failure += 1;
             // }
 
+        }
+
+
+        $this->LogMessage("Sent data was completed");
+        $this->LogMessage("Success - " . $this->success);
+        $this->LogMessage("Skip    - " . $this->skip);
+        $this->LogMessage("failure - " . $this->failure);
+        $this->LogMessage( now() );
+        
+        return 0;
+    }
+
+
+    private function sendDonateNowToPeopleSoft() {
+
+        $this->success = 0;
+        $this->skip = 0;
+        $this->failure = 0;
+
+        $pledgeData = DonateNowPledge::join('organizations', 'donate_now_pledges.organization_id', 'organizations.id')
+                            ->where('organizations.code', 'GOV')
+                            ->where('donate_now_pledges.ods_export_status', null)
+                            ->select('donate_now_pledges.*')
+                            ->orderBy('donate_now_pledges.id')->get();
+
+        foreach($pledgeData as $pledge) {
+
+            // validation -- GUID 
+            $user = User::where('id', $pledge->user_id)->first();
+            if (!$user->guid ) {
+                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->skip += 1;
+                continue;
+            }
+
+            // One-time
+            if ($pledge->one_time_amount != 0) { 
+                $one_time_data = [
+                    "@odata.type" => "CDataAPI.[employee_info]",
+                    "date_posted" =>  Carbon::now()->format('Y-m-d'), // Carbon::now()->format('c'), 
+
+                    "Donation_Type" => 'N',   // Always 'N" for Donate Now
+                    'yearcd' => $pledge->yearcd,
+                    'transaction_id' => $pledge->id,
+                    'frequency' => 'One-Time',
+
+                    "GUID" => $pledge->user->guid,
+                    "Employee_Name" => $pledge->user->name,    
+                    "Amount" =>  $pledge->one_time_amount,
+
+                    "Deduction_Code" => "PECADD",   // always "PECADD" for one-time Donate Now deduction
+                  
+                    'pledge_start_date' => $pledge->deduct_pay_from,
+                    'pledge_end_date' => $pledge->deduct_pay_from,
+                ];
+
+                $one_time_sent = $this->sendData($one_time_data);
+                       
+                // Update the complete flag in pledge table
+                $pledge->ods_export_status = 'C';
+                $pledge->ods_export_at = Carbon::now()->format('c');
+                $pledge->save();
+
+                // Log Message                 
+                $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
+            }
         }
 
 

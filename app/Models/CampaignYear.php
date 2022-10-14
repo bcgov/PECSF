@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -28,7 +29,7 @@ class CampaignYear extends Model
         'end_date' => 'date:Y-m-d',
         'close_date' => 'date:Y-m-d',
     ];
-
+ 
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
@@ -49,6 +50,15 @@ class CampaignYear extends Model
         return ($this->status == 'A');
     }
 
+    public function canSendToPSFT() {
+
+        $today = today();
+        $from_date = $this->start_date;
+        $to_date =  $this->end_date->addDays(7);
+
+        return ( $this->status == 'I' && (!($today >= $from_date && $today <= $to_date)) );
+
+    }
 
 
 }

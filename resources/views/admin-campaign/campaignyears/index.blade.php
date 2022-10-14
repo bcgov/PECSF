@@ -38,7 +38,10 @@
 				<tr>
                     <th>Calendar Year</th>
 					<th>Status</th>
-                    <th>Number of periods</th>
+                    <th>Number of periods</th>                    
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Closed Date</th>
                     <th>Action </th>
 				</tr>
 			</thead>
@@ -93,7 +96,11 @@
             columns: [
                 {data: 'calendar_year', name: 'calendar_year'},
                 {data: 'status', name: 'status'},
-                {data: 'number_of_periods', name: 'number_of_periods'},
+                {data: 'number_of_periods', name: 'number_of_periods', 'className': 'dt-center'},                
+                {data: 'start_date', name: 'start_date'},
+                {data: 'end_date', name: 'end_date'},
+                {data: 'close_date', name: 'close_date'},
+
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             columnDefs: [
