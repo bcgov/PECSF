@@ -276,7 +276,7 @@
             <h3 class="blue">Charity selections and distribution</h3>
     </div>
 
-    <div class="form-row" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
+    <div class="form-row p-3" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
         <div class="form-group col-md-12">
             <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
             <label class="blue" for="charity_selection_1">Fund supported pool</label>
@@ -330,7 +330,7 @@
             </div>
             @endfor
     </div>
-            <div class="form-row"style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;border-bottom:#ccc 1px solid;border-radius:5px;">
+            <div class="form-row p-3"style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;border-bottom:#ccc 1px solid;border-radius:5px;">
 
         <div class="form-group col-md-6">
             <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
