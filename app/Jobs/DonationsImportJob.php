@@ -5,6 +5,8 @@ namespace App\Jobs;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use App\Imports\DonationsImport;
+use App\Imports\DonationsImportLA;
+use App\Imports\DonationsImportBCS;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -43,7 +45,24 @@ class DonationsImportJob implements ShouldQueue
     {
         //
         try {
-            Excel::import(new DonationsImport( $this->history_id, $this->org_code), $this->uploadFilePath );
+            
+            switch ($this->org_code) {
+                case 'LDB':     // BC Liquor Distribution Branch
+                    Excel::import(new DonationsImport( $this->history_id, $this->org_code), $this->uploadFilePath );
+                    break;
+                case 'BCS':     // BC Securities Commission
+                    Excel::import(new DonationsImportBCS( $this->history_id, $this->org_code), $this->uploadFilePath );
+                    break;
+                case 'LA':      // Legislative Assembly of BC
+                    Excel::import(new DonationsImportLA( $this->history_id, $this->org_code), $this->uploadFilePath );
+                    break;
+                default:
+                    Excel::import(new DonationsImport( $this->history_id, $this->org_code), $this->uploadFilePath );
+                    break;
+
+            }
+
+
 
             // \App\Models\ProcessHistory::UpdateOrCreate([
             //     'id' => $this->history_id,

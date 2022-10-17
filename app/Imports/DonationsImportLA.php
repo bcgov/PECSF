@@ -15,9 +15,9 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
-
-class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithEvents, WithBatchInserts, WithStartRow
+class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, WithEvents, WithBatchInserts, WithStartRow
 {
     use Importable;
 
@@ -27,10 +27,16 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
     protected $in_current_row;
 
     protected $row_count;
+    protected $total_amount;
+
     protected $skip_count;
     protected $errors;
 
     protected $imported_rows;
+
+    // information on the header rows
+    protected $C1_org_name;
+    protected $C2_pay_end_date;
 
     public function __construct($history_id, $org_code)
     {
@@ -48,40 +54,50 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
 
         $this->imported_rows = '';
 
+        // $this->users = User::all(['id', 'name'])->pluck('id', 'name')->limit(100000);
     }
     
-    
+    // public function isEmptyWhen(array $row): bool
+    // {
+    //     return false;
+    //     // return empty($row[0]);
+    // }
 
     public function model(array $row)
     {
 
-        if (!isset($row['co'])) {
+        if (!preg_match("/^[0-9]{6}$/", $row[0])) {
             return null;
         }
 
         $this->done_count += 1;
-        $this->total_amount += $row['employee_pecsf_contribution_amount'];
+        $this->total_amount += $row[4];
 
         $this->imported_rows .= implode(",", $row) . PHP_EOL;
 
         return new Donation([
-            'org_code'     => $row['co'],
-            'pecsf_id'     => $row['id'],
-            'name'         => $row['employee_name'],
-            'yearcd'       => $row['calendar_year'],
-            'pay_end_date' => $row['pay_period_end_date'],
+            'org_code'     => 'LA',   //        $row[0],      // Organization
+            'pecsf_id'     => $row[0],
+            'name'         => $row[2] . ' ' . $row[1],
+            'yearcd'       => $this->C2_pay_end_date->format('Y'),   // Calendar Year (from header row)
+            'pay_end_date' => $this->C2_pay_end_date,   // pay end daye (from header row
             'source_type'  => '10',
-            'frequency'    => 'Bi-Weekly', // $row['frequency_of_pay_period'],
-            'amount'       => $row['employee_pecsf_contribution_amount'],
+            'frequency'    => 'Bi-Weekly',      // $row[4],  // Bi-Weekly
+
+            'amount'       => $row[5],
 
             'process_history_id' => $this->history_id,
             
         ]);
+
     }
 
     public function prepareForValidation($data, $index)
     {
         // get and store the current row for validation purpose
+        // $data[1] = str_pad($data[1], 6, "0", STR_PAD_LEFT); 
+        $data[0] = substr($data[0], 1, 6);
+
         $this->in_current_row = $data;
 
         return $data;
@@ -91,36 +107,44 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
     {
 
         $orgs = [ $this->org_code ];
+      
+        $org_code = $this->org_code;
+        $yearcd = $this->C2_pay_end_date->format('Y');
+        $pay_end_date = $this->C2_pay_end_date;
+        $frequency = 'Bi-Weekly';
 
-        $input_org = Organization::where('code', $this->in_current_row['co'])->first();
-        $input_cy  = CampaignYear::where('calendar_year', $this->in_current_row['calendar_year'])->first();
+        $input_org = Organization::where('code', $this->org_code )->first();
+        $input_cy  = CampaignYear::where('calendar_year', $this->C2_pay_end_date->format('Y') )->first();
 
         $row = $this->in_current_row;
 
         return [
-            'co' => ['required', Rule::in( $orgs )],
-            'id' => ['required', Rule::exists('pledges', 'pecsf_id')                     
+            // Heading
+            // '0' => ['required', Rule::in( $orgs )],
+            '0' => ['required', Rule::exists('pledges', 'pecsf_id')                     
                                     ->where(function ($query) use ($input_org, $input_cy) {                      
-                                        $query->where('organization_id', $input_org->id)
-                                              ->where('campaign_year_id', $input_cy->id);                                   
+                                        $query->where('organization_id', $input_org->id ?? null)
+                                              ->where('campaign_year_id', $input_cy->id ?? null);                                   
                                     }),
                                  Rule::unique('donations','pecsf_id')
-                                    ->where(function ($query) use ($row) {                      
-                                        $query->where('org_code', $row['co'])
-                                                ->where('yearcd', $row['calendar_year'])
-                                                ->where('pay_end_date', $row['pay_period_end_date'])
+                                    ->where(function ($query) use ($row, $org_code, $yearcd, $pay_end_date, $frequency) {                      
+                                        $query->where('org_code', $org_code )
+                                                ->where('yearcd', $yearcd )
+                                                ->where('pay_end_date', $pay_end_date)
                                                 ->where('source_type', 10)
-                                                ->where('frequency', $row['frequency_of_pay_period']);
+                                                ->where('frequency', $frequency);
                                  }),
             ],
-            'employee_name' => 'required',
-            'calendar_year' => 'required',
-            'pay_period_end_date' => 'required',
-
-            'frequency_of_pay_period' => 'required',
-            'employee_pecsf_contribution_amount' => 'required',
+          
+            // '2' => 'required',  // Calendar Year
+            // '3' => 'required',  // Pay Period End Date
+            // '4' => 'required',  // frequency_of_pay_period
+            '1' => 'required',  // Employee Name
+            '2' => 'required',  // Employee Name
+            '5' => 'required',  // Amount
 
         ];
+    
     }
 
     /**
@@ -129,21 +153,15 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
     public function customValidationMessages()
     {
         return [
-            'co.in' => 'The organization on upload file doesn\'t match with the selected org.',
-            'id.exists' => 'No pledge was setup for this pecsf_id.',
-            'id.unique' => 'The same pay deduction transactions was loaded',
+            // '0.in' => 'The organization on upload file doesn\'t match with the selected org.',
+            '0.exists' => 'No pledge was setup for this pecsf_id.',
+            '0.unique' => 'The same pay deduction transactions was loaded',
         ];
     }
     
-  
-    public function headingRow(): int
-    {
-        return 2;
-    }
-
     public function startRow(): int
     {
-        return 3;
+        return 7;
     }
 
     public function registerEvents(): array
@@ -152,9 +170,16 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
             BeforeImport::class => function (BeforeImport $event) {
                 $totalRows = $event->getReader()->getTotalRows();
 
+                $spreadsheet = $event->getReader()->getDelegate();
+                // C1 -- Organization Name
+                $this->C1_org_name = $spreadsheet->getActiveSheet()->getCell('C1')->getValue();
+                // C2 -- Pay End Date
+                $value = $spreadsheet->getActiveSheet()->getCell('C2')->getFormattedValue();
+                $this->C2_pay_end_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+
                 if (filled($totalRows)) {
 
-                    $this->row_count = array_values($totalRows)[0] - 2;  // Note: first 2 rows is heading
+                    $this->row_count = array_values($totalRows)[0] - 1;  // Note: first 2 rows is heading
 
                       \App\Models\ProcessHistory::UpdateOrCreate([
                             'id' => $this->history_id,
@@ -170,17 +195,18 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
             AfterImport::class => function (AfterImport $event) {
 
                 $status = 'Completed';
+                
                 $messages = 'Success: ' . $this->done_count . ' row(s) were imported. ' . PHP_EOL;
                 $messages .= 'Total Amount : ' . number_format($this->total_amount, 2, '.', ',') . PHP_EOL;
                 $messages .= PHP_EOL;
-                $messages .= 'The imported data details : '. PHP_EOL;
+                $messages .= 'The imported data details for "' . $this->C1_org_name . '" and pay end date was "' . $this->C2_pay_end_date->format('Y-m-d') . '" :' . PHP_EOL;
                 $messages .= PHP_EOL;                
                 $messages .= $this->imported_rows;
                 $messages .= PHP_EOL;
-
+                
                 if ($this->skip_count > 0) {
                     $status = 'Warning';
-                    $messages .= 'Warning: ' . $this->skip_count . ' out of ' . $this->row_count . ' row(s) were skipped due to duplication.';
+                    $this->messages = 'Warning: ' . $this->skip_count . ' out of ' . $this->row_count . ' row(s) were skipped due to duplication.';
                 }
 
                 \App\Models\ProcessHistory::UpdateOrCreate([
@@ -188,7 +214,7 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
                 ],[
                     'status' => $status,
                     'message' => $messages,
-                    'done_count' => ($this->row_count - $this->skip_count),
+                    'done_count' => $this->done_count,
                     'end_at' => now(),
                 ]);
 

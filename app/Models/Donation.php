@@ -10,7 +10,7 @@ class Donation extends Model
     use HasFactory;
 
     protected $fillable =[
-        'org_code', 'emplid', 'name', 'yearcd', 
+        'org_code', 'pecsf_id', 'name', 'yearcd', 
         'pay_end_date', 'source_type', 'frequency', 'amount', 
         'process_history_id', 'process_status', 'process_date', 'created_by_id', 'updated_by_id', 
     ];

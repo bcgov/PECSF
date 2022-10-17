@@ -35,7 +35,7 @@ class CampaignYearController extends Controller
 
         if($request->ajax()) {
 
-            $campignyears = CampaignYear::select(['id', 'calendar_year', 'status', 'number_of_periods']);
+            $campignyears = CampaignYear::select(['campaign_years.*']);
 
             return Datatables::of($campignyears)
                 ->addColumn('action', function ($campaign_year) {
