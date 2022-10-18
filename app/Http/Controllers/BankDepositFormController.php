@@ -153,6 +153,15 @@ class BankDepositFormController extends Controller
             'organization_code' => 'The Organization Code is required.',
          ]);
         $validator->after(function ($validator) use($request) {
+
+            $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
+
+
+            if(strlen($decimals) == 3)
+            {
+                $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
+            }
+
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV")
             {
@@ -165,6 +174,9 @@ class BankDepositFormController extends Controller
                     {
                         $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
                     }
+                    else if(strlen($request->pecsf_id) != 6){
+                        $validator->errors()->add('pecsf_id','The PECSF ID must be 6 digits.');
+                    }
 
             }
             if($request->organization_code == "GOV"){
@@ -175,6 +187,9 @@ class BankDepositFormController extends Controller
                 else if(!is_numeric($request->bc_gov_id))
                 {
                     $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                }
+                else if(strlen($request->bc_gov_id) != 6){
+                    $validator->errors()->add('bc_gov_id','The Employee ID must be 6 digits.');
                 }
             }
             }
