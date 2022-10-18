@@ -24,14 +24,13 @@ class SpecialCampaignSetupRequest extends FormRequest
      */
     public function rules()
     {
-
            
         $my_rules = [
-                'name'          => 'required|unique:special_campaigns,name|max:30',
+                'name'          => ['required', 'max:50', Rule::unique('special_campaigns')->ignore($this->id) ],
                 'charity_id'    => 'required|exists:charities,id',
                 'start_date'    => 'required|date|before_or_equal:end_date',
                 'end_date'      => 'required|date|after_or_equal:start_date',
-                'description'   => 'required|max:255',
+                'description'   => 'required|max:2048',
                 'banner_text'   => 'required|max:255',
         ];
 
