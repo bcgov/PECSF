@@ -74,6 +74,28 @@
 </head>
 
 <body class="@yield('classes_body')" @yield('body_data')>
+    @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+
+    <div class="top-message-bar p-3 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top">
+        <span class="flex-fill"></span>
+        <span class="mx-2 h6 text-primary font-weight-bold">
+            {{-- <i class="icon fas fa-exclamation-circle"></i> --}}
+            <span class>{{ session()->get('special-campaign-banner-text') }}<span class="ml-2 ">|</span></span>
+        </span>
+        
+        <span class="h6 text-primary font-weight-bold special-campaign">
+            <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
+        </span>
+        <span class="flex-fill"></span>
+
+        <div class="form-inline" style="position:absolute; right:20px">
+            {{-- <x-button :href="route('home')" size="sm" style="light" class="mx-2">Return to my profile</x-button> --}}
+            <button type="submit" class="close">
+                <span aria-hidden="true" class="h2 font-weight-bold">×</span>
+            </button>
+        </div>
+    </div>
+    @endif
 
     {{-- Body Content --}}
     @yield('body')
@@ -113,6 +135,33 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
+    @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+    <script>
+        $(function() {
+
+            $('div.top-message-bar span.special-campaign').on('click', function(e) {
+                $('div.top-message-bar').removeClass('d-flex');
+                $('div.top-message-bar').fadeOut(1000);
+            });
+
+            $('div.top-message-bar .close').on('click', function(e) {
+                $(this).hide();
+                $('div.top-message-bar').removeClass('d-flex');
+                $('div.top-message-bar').fadeOut(1000);
+                
+                $.ajax({
+                    method: "POST",
+                    url:  "{{ route('special-campaign-banner.dismiss')  }}",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                    },
+                });
+
+            });
+            
+        });
+    </script>
+    @endif
 </body>
 
 </html>

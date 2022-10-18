@@ -49,6 +49,13 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+
+        // Set Special Campaign Banner when activated special campaign
+        $banner_text = \App\Models\SpecialCampaign::activeBannerText();
+        if ($banner_text) {
+            session()->put('special-campaign-banner-text', $banner_text );
+        }
+
         // Update the last signon datetime
         $user->last_signon_at = Carbon::now();
         $user->save();
