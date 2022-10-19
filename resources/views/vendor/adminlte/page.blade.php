@@ -68,7 +68,7 @@
     <script>
         $("li#admin-menu.nav-item").click(function(e)
         {
-            if(!e.target.classList.contains("right")) 
+            if(!e.target.classList.contains("right"))
             {
                 let url = $(this).find('a.nav-link').attr('href');
                 window.location = url;

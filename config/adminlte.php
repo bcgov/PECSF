@@ -226,7 +226,7 @@ return [
         [
             'text' => 'Home',
             'url' => '/',
-            'icon' => 'home'
+            'icon' => 'nav-icon fa fa-home'
         ],
 
         [
@@ -243,23 +243,23 @@ return [
             'submenu' => [
                 [
                     'text' => 'Dashboard',
-                    'icon' => 'nav-icon fa fa-circle',
+                    'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/volunteering',
                 ]
                 ,
                 [
                     'text' => 'Volunteer Profile',
-                    'icon' => 'nav-icon fa fa-circle',
+                    'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/profile',
                 ],
                 [
                     'text' => 'Training',
-                    'icon' => 'nav-icon fa fa-circle',
+                    'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/training',
                 ],
                 [
                     'text' => 'Forms',
-                    'icon' => 'nav-icon fa fa-circle',
+                    'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/bank_deposit_form',
                 ],
                 ]

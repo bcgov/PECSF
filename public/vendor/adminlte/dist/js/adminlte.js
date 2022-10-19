@@ -1615,8 +1615,8 @@
   var Default$6 = {
     scrollbarTheme: 'os-theme-light',
     scrollbarAutoHide: 'l',
-    panelAutoHeight: true,
-    panelAutoHeightMode: 'min-height',
+    panelAutoHeight: false,
+    panelAutoHeightMode: 'height',
     preloadDuration: 200,
     loginRegisterAutoHeight: true
   };

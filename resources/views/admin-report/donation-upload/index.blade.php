@@ -1,4 +1,5 @@
 @extends('adminlte::page')
+
 @section('content_header')
     <h2>Reporting</h2>
     @include('admin-report.partials.tabs')
@@ -21,7 +22,7 @@
     <h6>Select the relevant organization, upload PECSF Donation files for non BC Gov entities below, then click "Submit" to send reports to PECSF administration.</h6>
     <div class="card">
         <div class="card-body">
-    
+
             <form id="upload-form" action="{{ route("reporting.donation-upload.store") }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
@@ -42,12 +43,12 @@
                     <input type="file" style="display:none;" accept=".txt" id="charity_list" name="charity_list" />
                 </div> --}}
 
-                <div class="form-row"> 
+                <div class="form-row">
                     <div class="form-group col-md-10">
                         <div class="file-upload">
                             <div class="file-select">
                                 <div class="file-select-button" id="fileName">Choose File</div>
-                                <div class="file-select-name" id="noFile">No file chosen...</div> 
+                                <div class="file-select-name" id="noFile">No file chosen...</div>
                                 <input type="file" accept=".xlsx,.xls" name="donation_file" id="donation_file">
                             </div>
                         </div>
@@ -60,11 +61,11 @@
 
                     <div class="col-md-1" id="remove-upload-area" style="display: none;">
                         <div class="pt-1"><button id="remove-upload-file" class="btn btn-danger">
-                            <i class="fas fa-trash-alt fa-lg"></i></button></div> 
+                            <i class="fas fa-trash-alt fa-lg"></i></button></div>
                     </div>
 
                 </div>
-                
+
                 <div class="form-row pt-3">
                     <div class="form-group col-md-6 float-right">
                         <input class="btn btn-outline-secondary" id="cancel-btn" type="button" value="Cancel">
@@ -114,7 +115,7 @@
 		</div>
 		<div class="modal-body">
 
-            
+
                 <p class="px-2"><b>Status : </b>
                 <span id="modal-status"></span>
                 </p>
@@ -124,16 +125,16 @@
                 <label for="message">Log Message</label>
                 <pre id="modal-message" class="border" style="white-space:pre-line;"></pre>
             </div>
-            
+
         </div>
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </div>
-    
+
     </div>
 </div>
-
+</div>
 @endsection
 
 
@@ -258,18 +259,18 @@
             });
         }
 
-        // Functions for handling the upload file 
+        // Functions for handling the upload file
         $('#donation_file').bind('change', function () {
             var filename = $("#donation_file").val();
             if (/^\s*$/.test(filename)) {
                 $(".file-upload").removeClass('active');
-                $("#noFile").text("No file chosen..."); 
+                $("#noFile").text("No file chosen...");
 
                 $('.donation_file_error').html();
             }
             else {
                 $(".file-upload").addClass('active');
-                $("#noFile").text(filename.replace("C:\\fakepath\\", "")); 
+                $("#noFile").text(filename.replace("C:\\fakepath\\", ""));
 
                 $('#remove-upload-area').show();
             }
@@ -279,7 +280,7 @@
             e.preventDefault();
             $("input[name='donation_file']").val(null);
             $(".file-upload").removeClass('active');
-            $("#noFile").text("No file chosen..."); 
+            $("#noFile").text("No file chosen...");
             $('#remove-upload-area').hide();
 
         });
@@ -317,12 +318,12 @@
                 dataType: 'json',
                 success:function(response){
 
-                    // Clear up the uploded file 
+                    // Clear up the uploded file
                     //$("input[name='donation_file']").val('');
                     $("input[name='donation_file']").val(null);
                     $(".file-upload").removeClass('active');
-                    $("#noFile").text("No file chosen..."); 
-                    $('#remove-upload-area').hide(); 
+                    $("#noFile").text("No file chosen...");
+                    $('#remove-upload-area').hide();
 
                     oTable.ajax.reload(null, false);	// reload datatables
 
@@ -331,7 +332,7 @@
 
                     // window.location = response[0];
                     console.log(response);
-                  
+
                 },
                 error: function(response) {
                     if (response.status == 422) {
@@ -346,7 +347,7 @@
                     }
                     console.log('Error');
                 },
-                complete:function(){ 
+                complete:function(){
                     $("#upload-form").fadeTo("slow",1);
                 }
             });
