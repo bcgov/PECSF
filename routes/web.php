@@ -19,20 +19,21 @@ use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
 
 
+use App\Http\Controllers\SpecialCampaignController;
 use App\Http\Controllers\Admin\CRACharityController;
 use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\OrganizationController;
-use App\Http\Controllers\Auth\KeycloakLoginController;
 
+use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\System\UserMaintenanceController;
-use App\Http\Controllers\Admin\FundSupportedPoolController;
 
+use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
@@ -112,6 +113,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/donate-now/charities', [DonateNowController::class, 'searchCharities'])->name('donate-now.charities');
     Route::get('/donate-now/{id}/summary', [DonateNowController::class, 'summary'])->name('donate-now.summary');
     Route::get('/donate-now/regional-pool-detail/{id}', [DonateNowController::class, 'regionalPoolDetail'])->name('donate-now.regional-pool-detail');
+});
+
+// Special Campaign (Donation)
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/special-campaign-banner-dismiss', [SpecialCampaignController::class, 'dismissSpecialCampaignBanner'])->name('special-campaign-banner.dismiss');
+
+    Route::resource('special-campaign', SpecialCampaignController::class)->except(['show','edit','update','destroy']);
+    Route::get('/special-campaign/thank-you', [SpecialCampaignController::class, 'thankYou'])->name('special-campaign.thank-you');
+    Route::get('/special-campaign/{id}/summary', [SpecialCampaignController::class, 'summary'])->name('special-campaign.summary');
+    
 });
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {

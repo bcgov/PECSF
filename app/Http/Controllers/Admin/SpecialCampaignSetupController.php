@@ -177,15 +177,16 @@ class SpecialCampaignSetupController extends Controller
             $special_campaign = SpecialCampaign::where('id', $id)->first();
             $special_campaign->fill( $request->validated() );
 
-            // Clean up old file
-            if ($special_campaign->image) {
-                $old_filename = public_path( $this->image_folder ).'/'.$special_campaign->image;
-                if (File::exists( $old_filename )) {
-                    File::delete( $old_filename );
-                }
-            }
-
             if ($new_filename) {
+
+                // Clean up old file
+                if ($special_campaign->image) {
+                    $old_filename = public_path( $this->image_folder ).'/'.$special_campaign->image;
+                    if (File::exists( $old_filename )) {
+                        File::delete( $old_filename );
+                    }
+                }
+
                 $special_campaign->image = $new_filename;
             }
             $special_campaign->updated_by_id = Auth::id();

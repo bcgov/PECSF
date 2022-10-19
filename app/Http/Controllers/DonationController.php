@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Models\SpecialCampaignPledge;
 
 
 class DonationController extends Controller {
@@ -128,6 +129,27 @@ class DonationController extends Controller {
 
                 return view('donations.partials.donate-now-pledge-detail-modal',
                         compact('year', 'frequency', 'pledge_amt', 'total_amount', 'pledge') )->render();
+
+            } elseif ($request->donation_type == 'Special Campaign') {
+                // Special Campaign - Detail
+
+                $pledge = SpecialCampaignPledge::where('id', $request->id)->first();
+              
+                $year = $request->yearcd;
+                $frequency = $request->frequency;
+                $pledge_amt = $pledge->one_time_amount;
+                $total_amount = $pledge->one_time_amount;
+                $check_dt = $pledge->deduct_pay_from;
+
+                // $special_campaign = SpecialCampaign::where('id', $pledge->special_campaign_id)->first();
+                $in_support_of = $pledge ? $pledge->special_campaign->charity->charity_name : '';
+                $special_campaign_name = $pledge ? $pledge->special_campaign->name : '';
+
+                return view('donations.partials.special-campaign-pledge-detail-modal',
+                        compact('year', 'frequency', 'pledge_amt', 
+                                 'in_support_of', 'special_campaign_name', 'check_dt',
+                                    'total_amount', 'pledge') )->render();
+
 
             }
 

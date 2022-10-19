@@ -34,7 +34,11 @@
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
-                                <td>{{ '' }} </td>
+                                @if ($pledge->donation_type == 'Special Campaign')
+                                    <td>{{ $pledge->region }} </td>
+                                @else 
+                                    <td>{{ '' }} </td>
+                                @endif
                             @endif
                             <td>{{ $pledge->frequency }} </td>
                             @php

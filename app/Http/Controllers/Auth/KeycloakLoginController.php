@@ -46,6 +46,12 @@ class KeycloakLoginController extends Controller
                     'tokenExpiresIn' => $keycloak_user->expiresIn,
                 ]);
 
+                // Set Special Campaign Banner when activated special campaign
+                $banner_text = \App\Models\SpecialCampaign::activeBannerText();
+                if ($banner_text) {
+                    session()->put('special-campaign-banner-text', $banner_text );
+                }
+
                 Auth::loginUsingId($isUser->id);
                 $request->session()->regenerate();
 
