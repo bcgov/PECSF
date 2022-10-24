@@ -20,9 +20,11 @@ class ExportDatabaseToBI extends Command
         ['name' => 'f_s_pools',          'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'f_s_pool_charities', 'delta' => 'updated_at', 'hidden' => ['image'] ],
         ['name' => 'organizations',      'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'special_campaigns',  'delta' => 'updated_at', 'hidden' => ['image'] ],
         ['name' => 'pledge_charities',   'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'pledges',            'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'donate_now_pledges', 'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'special_campaign_pledges', 'delta' => 'updated_at', 'hidden' => null ],
 
         ['name' => 'regions',            'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'users',              'delta' => 'updated_at', 'hidden' => ['password', 'remember_token'] ],
