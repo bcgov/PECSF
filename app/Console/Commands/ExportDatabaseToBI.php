@@ -28,10 +28,11 @@ class ExportDatabaseToBI extends Command
 
         ['name' => 'regions',            'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'users',              'delta' => 'updated_at', 'hidden' => ['password', 'remember_token'] ],
-        ['name' => 'volunteers',         'delta' => 'updated_at', 'hidden' => null ],
 
-        ['name' => 'access_logs',         'delta' => 'updated_at', 'hidden' => null ],
-        ['name' => 'schedule_job_audits', 'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'bank_deposit_forms',                'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'bank_deposit_form_organizations',   'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'bank_deposit_form_attachments',     'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'volunteers',                        'delta' => 'updated_at', 'hidden' => null ],
 
     ];
  
