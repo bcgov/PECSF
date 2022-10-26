@@ -18488,8 +18488,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   color: #fff;
 }
 [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active, [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:hover, [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:focus {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #343a40;
+  color: #fcba19;
 }
 [class*=sidebar-dark-] .nav-flat .nav-item .nav-treeview .nav-treeview {
   border-color: rgba(255, 255, 255, 0.9);
@@ -49419,11 +49418,16 @@ h4{
     background:none;
 }
 
+.fa-sm{
+    font-size:8px!important;
+}
+
 .nav-link.active{
     color:#003366;
+    font-weight:bold;
     text-decoration:none;
     background:none;
-    border-bottom: #003366 2px solid;
+    border-bottom:#003366 2px solid;
 }
 
 .nav-link:hover{
@@ -49519,4 +49523,12 @@ h4{
 
 .lockedcolor{
     color:red!important;
+}
+
+.nav-link p{
+    font-weight:700!important;
+}
+
+.nav-link{
+    font-weight:400!important;
 }

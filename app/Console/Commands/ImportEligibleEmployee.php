@@ -131,6 +131,49 @@ class ImportEligibleEmployee extends Command
             return 1;
         }
 
+        try {
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                ->get(env('ODS_INBOUND_REPORT_PECSF_ELIGIBLE_EMPLOYEE_ENDPOINT').'?$count=true&$top=1000'.'&$filter='.$filter);
+
+            if ($response->successful()) {
+                $data = json_decode($response->body())->value;
+                $batches = array_chunk($data, 1000);
+
+                foreach ($batches as $key => $batch) {
+                    $this->LogMessage( '    -- count batch (1000) - '. count($batch));
+
+                    foreach ($batch as $row) {
+                        ElligibleEmployee::updateOrCreate([
+                            'as_of_date' => $row->as_of_date,
+                            'ee_count' => $row->ee_cnt,
+                            'business_unit' => $row->business_unit,
+                            'business_unit_name' => $row->business_unit_name,
+                            'cde' => $row->cde,
+                            'year' => $row->year
+                        ],[
+                            'as_of_date' => $row->as_of_date,
+                            'ee_count' => $row->ee_cnt,
+                            'business_unit' => $row->business_unit,
+                            'business_unit_name' => $row->business_unit_name,
+                            'cde' => $row->cde,
+                            'year' => $row->year
+                        ]);
+                    }
+                }
+            } else {
+                $this->LogMessage( 'Status : ' . $response->status() . ' - ' . $response->body() );
+            }
+
+        } catch (\Exception $ex) {
+
+            // write to log message
+            $this->status = 'Error';
+            $this->LogMessage( $ex->getMessage() );
+
+            return 1;
+        }
+
     }
 
     protected function LogMessage($text)

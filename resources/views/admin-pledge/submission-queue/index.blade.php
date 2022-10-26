@@ -48,7 +48,7 @@
 
 
     <div class="d-flex mt-3">
-        <h4>Pledge Administration</h4>
+        <h1>Pledge Administration</h1>
         <div class="flex-fill"></div>
     </div>
     <br>
@@ -59,11 +59,9 @@
 @section('content')
 
 
-    <p><a href="/administrators/dashboard">Back</a></p>
+    <p><a class="btn btn-primary" role="button" onclick="window.history.back();">Back</a></p>
 
-    <p>
-        Enter any information you have and click Search. Leave fields blank for a list of all values.
-    </p>
+
 
 
 

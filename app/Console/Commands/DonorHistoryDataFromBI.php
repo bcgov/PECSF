@@ -66,23 +66,23 @@ class DonorHistoryDataFromBI extends Command
         // $this->UpdateBusinessUnit();
         // $this->info("Update/Create - Region District");
         // $this->UpdateRegionalDistrict();
-        $this->LogMessage( now() );   
+        $this->LogMessage( now() );
         $this->LogMessage("Task-- Update/Create - Department");
         $this->UpdateDepartment();
 
-        $this->LogMessage( now() );   
+        $this->LogMessage( now() );
         $this->LogMessage("Task-- Create - Donor By Business Unit");
         $this->UpdateDonorByBusinessUnit();
 
-        $this->LogMessage( now() );   
+        $this->LogMessage( now() );
         $this->LogMessage("Task-- Create - Donor By Regioinal District");
         $this->UpdateDonorByRegionalDistrict();
 
-        $this->LogMessage( now() );   
+        $this->LogMessage( now() );
         $this->LogMessage("Task-- Create - Donor By Department");
         $this->UpdateDonorByDepartment();
 
-        $this->LogMessage( now() );   
+        $this->LogMessage( now() );
 
         // $this->ClearODSHistoryData();
 
@@ -123,8 +123,8 @@ class DonorHistoryDataFromBI extends Command
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
         } catch (\Exception $ex) {
-                            
-            // write to log message 
+
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -164,8 +164,8 @@ class DonorHistoryDataFromBI extends Command
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
         } catch (\Exception $ex) {
-                        
-            // write to log message 
+
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -180,7 +180,7 @@ class DonorHistoryDataFromBI extends Command
         $total_count = 0;
         $created_count = 0;
         $updated_count = 0;
-       
+
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
@@ -216,7 +216,7 @@ class DonorHistoryDataFromBI extends Command
                             $updated_count += 1;
                         } else {
                             // No Action
-                        }                            
+                        }
 
                     }
                 }
@@ -230,8 +230,8 @@ class DonorHistoryDataFromBI extends Command
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
         } catch (\Exception $ex) {
-                    
-            // write to log message 
+
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -287,7 +287,7 @@ class DonorHistoryDataFromBI extends Command
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
-                            }      
+                            }
                         } else {
 
                             // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
@@ -301,14 +301,79 @@ class DonorHistoryDataFromBI extends Command
                 $this->LogMessage('    Total Row count     : ' . $total_count  );
                 $this->LogMessage('    Total Created count : ' . $created_count  );
                 $this->LogMessage('    Total Updated count : ' . $updated_count  );
-                
+
             } else {
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
         } catch (\Exception $ex) {
-                
-            // write to log message 
+
+            // write to log message
+            $this->status = 'Error';
+            $this->LogMessage( $ex->getMessage() );
+
+            return 1;
+        }
+
+        try {
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                ->get(env('ODS_INBOUND_REPORT_DON_DOL_BY_ORG_BI_CURRENT_ENDPOINT'));
+
+
+            if ($response->successful()) {
+                $size = 1000;
+                $data = json_decode($response->body())->value;
+                $batches = array_chunk($data, $size);
+                foreach ($batches as $key => $batch) {
+                    $this->LogMessage( '    -- each batch ('.$size.') $key - '. $key );
+                    foreach ($batch as $row) {
+
+                        $total_count += 1;
+
+                        $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
+
+                        if ( $row->business_unit_code && !empty(trim($row->business_unit_code))  ) {
+                            $rec = DonorByBusinessUnit::updateOrCreate([
+                                'business_unit_code' => $row->business_unit_code,
+                                'yearcd' => $row->year,
+                            ],[
+                                'business_unit_id' => $business_unit ? $business_unit->id : 0,
+                                'dollars' => $row->dollars,
+                                'donors' => $row->donors,
+                            ]);
+
+                            if ($rec->wasRecentlyCreated) {
+                                $created_count += 1;
+                            } elseif ($rec->wasChanged() ) {
+                                $updated_count += 1;
+                                $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
+                                $changes = $rec->getChanges();
+                                $this->LogMessage('  summary => '. json_encode( $changes ) );
+                            } else {
+                                // No Action
+                            }
+                        } else {
+
+                            // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
+                            $this->LogMessage('    Exception => Empty Business_unit_code ' . json_encode( $row ) );
+
+                        }
+
+                    }
+                }
+
+                $this->LogMessage('    Total Row count     : ' . $total_count  );
+                $this->LogMessage('    Total Created count : ' . $created_count  );
+                $this->LogMessage('    Total Updated count : ' . $updated_count  );
+
+            } else {
+                $this->status = 'Error';
+                $this->LogMessage( $response->status() . ' - ' . $response->body() );
+            }
+        } catch (\Exception $ex) {
+
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -323,7 +388,7 @@ class DonorHistoryDataFromBI extends Command
         $total_count = 0;
         $created_count = 0;
         $updated_count = 0;
-       
+
         // Truncate Donar By Reggional District table
         DonorByRegionalDistrict::truncate();
 
@@ -358,7 +423,7 @@ class DonorHistoryDataFromBI extends Command
                             if ($rec->wasRecentlyCreated) {
                                 $created_count += 1;
                             } elseif ($rec->wasChanged() ) {
-                                
+
                                 $updated_count += 1;
 
                                 $this->LogMessage('(UPDATED) => '. json_encode( $row ) );
@@ -366,7 +431,7 @@ class DonorHistoryDataFromBI extends Command
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
-                            }      
+                            }
                         } else {
 
                             // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
@@ -386,8 +451,8 @@ class DonorHistoryDataFromBI extends Command
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
         } catch (\Exception $ex) {
-            
-            // write to log message 
+
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -426,7 +491,7 @@ class DonorHistoryDataFromBI extends Command
                                 'yearcd' => $row->year,
                                 'date' => $row->date,
                             ],[
-                                'bi_department_id' => $row->department_id,                            
+                                'bi_department_id' => $row->department_id,
                                 'dollars' => $row->dollars,
                                 'donors' => $row->donors,
                             ]);
@@ -443,13 +508,13 @@ class DonorHistoryDataFromBI extends Command
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             } else {
                                 // No Action
-                            }  
+                            }
                         } else {
 
                             // $this->LogMessage('    Exception => Empty Business_unit_code ' . $row->business_unit_code . ' | ' . $row->year . ' | ' . $row->dollars . ' | ' . $row->donors . ' | ' . $row->business_unit_name . ' | ' . $row->cde );
                             $this->LogMessage('    Exception => Empty department_id ' . json_encode( $row ) );
 
-                        }    
+                        }
 
                     }
                 }
@@ -463,8 +528,8 @@ class DonorHistoryDataFromBI extends Command
             }
 
         } catch (\Exception $ex) {
-        
-            // write to log message 
+
+            // write to log message
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
@@ -507,17 +572,17 @@ class DonorHistoryDataFromBI extends Command
 
     }
 
-    protected function LogMessage($text) 
+    protected function LogMessage($text)
     {
 
         $this->info( $text );
 
-        // write to log message 
+        // write to log message
         $this->message .= $text . PHP_EOL;
 
         $this->task->message = $this->message;
         $this->task->save();
-        
+
     }
 
 

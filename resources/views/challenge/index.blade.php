@@ -42,8 +42,9 @@
             <label>
                 Campaign Year
                 <select name="year" id="year" style="min-width:250px;" class="form-control ">
-                    <option {{$year==2021?"selected":""}} value="2021">2021</option>
-                    <option {{$year==2020?"selected":""}} value="2020">2020</option>
+                    @foreach($years as $annum)
+                        <option {{$year==$annum->yearcd?"selected":""}} value="{{$annum->yearcd}}">{{$annum->yearcd}}</option>
+                    @endforeach
                 </select>
             </label>
             <label class="pl-2" style="min-width:250px;">

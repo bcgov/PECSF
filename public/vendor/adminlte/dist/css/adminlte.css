@@ -35706,6 +35706,7 @@ body.iframe-mode-fullscreen {
 
 .content-wrapper {
   height: 100%;
+    min-height:800px!important;
 }
 
 .content-wrapper.iframe-mode .btn-iframe-close {
