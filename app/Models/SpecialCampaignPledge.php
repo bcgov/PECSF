@@ -16,6 +16,13 @@ class SpecialCampaignPledge extends Model
         'ods_export_status', 'ods_export_at', 'created_by_id','updated_by_id',
     ];
 
+    public function organization() {
+        return $this->belongsTo(Organization::class)->withDefault();
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class)->withDefault();
+    }
 
     public function special_campaign() 
     {

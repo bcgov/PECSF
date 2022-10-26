@@ -14,11 +14,19 @@ class SpecialCampaign extends Model
         'image', 'created_by_id', 'updated_by_id'
     ];
 
+    protected $appends = [
+        'status',  
+    ];
+
+    public function getStatusAttribute() {
+        return ( $this->start_date <= today() and $this->end_date >= today() ) ? 'Open' : 'Close';
+    } 
+
     public function charity() 
     {
         return $this->belongsTo(Charity::Class, 'charity_id', 'id');
     }
-    
+
     public static function activeBannerText() {
 
         $banner_text = null;

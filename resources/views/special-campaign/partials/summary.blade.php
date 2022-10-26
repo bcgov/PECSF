@@ -6,28 +6,28 @@
         
         <div class="container">
             <div class="row">
-                <div class="col-6">Your One-time payroll deductions :</div>
+                <div class="col-6 font-weight-bold">Your One-time payroll deductions :</div>
                 <div class="col-6">${{ number_format($one_time_amount,2) }}</div>
             </div>
         </div>
 
         <div class="container mt-2">
             <div class="row">
-                <div class="col-6">In support of :</div>
+                <div class="col-6 font-weight-bold">In support of :</div>
                 <div class="col-6">{{ $in_support_of }}</div>
             </div>
         </div>
 
         <div class="container mt-2">
             <div class="row">
-                <div class="col-6">Initative :</div>
+                <div class="col-6 font-weight-bold">Initative :</div>
                 <div class="col-6">{{ $special_campaign_name }}</div>
             </div>
         </div>
 
         <div class="container mt-2">
             <div class="row">
-                <div class="col-6">Deduction date :</div>
+                <div class="col-6 font-weight-bold">Deduction date :</div>
                 <div class="col-6">{{ $check_dt }}</div>
             </div>
         </div>
