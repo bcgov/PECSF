@@ -442,16 +442,21 @@ $(function () {
     // On Page 2 -- Amount  
 
     // On Page 3 -- summary (handle single submission only )
-    $(document).on("click", "button[type='submit']", function(e) {
+    $('#special-campaign-pledge-form').on('submit', function () {
+        $("#special-campaign-pledge-form button[type='submit']").attr('disabled', 'true'); 
+        $("#special-campaign-pledge-form button[type='submit']").html('Pledge submitted');
+    });
 
-        // this.disabled = true;
-        $("#special-campaign-pledge-form").submit(function(e){
-            if(submit_count > 0){
-                e.preventDefault();
-            }
-            submit_count++;
-        });
-    });        
+    // $(document).on("click", "button[type='submit']", function(e) {
+        
+    //     // this.disabled = true;
+    //     $("#special-campaign-pledge-form").submit(function(e){
+    //         if(submit_count > 0){
+    //             e.preventDefault();
+    //         }
+    //         submit_count++;
+    //     });
+    // });        
 
 });
 
