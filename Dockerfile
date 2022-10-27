@@ -43,6 +43,8 @@ COPY ./start.sh /usr/local/bin/start
 
 # Create cache and session storage structure
 RUN bash -c 'mkdir -p /var/www/html/storage{app,framework,logs}'
+RUN echo "Storage dir contents: " 
+RUN ls -lrt /var/www/html/storage
 RUN chmod -R 755 /var/www/html/storage
 
 RUN composer update --ignore-platform-reqs
