@@ -577,6 +577,10 @@ class BankDepositFormController extends Controller
         {
             $organizations->where("charity_name","LIKE","%".$request->keyword."%");
         }
+        if ($request->pool_filter !="") {
+            $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
+            $organizations->whereIn('id', $pool->charities->pluck('charity_id') );
+        }
 
         $organizations = $organizations->paginate(7);
         $total = $organizations->total();

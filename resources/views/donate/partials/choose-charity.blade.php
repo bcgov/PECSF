@@ -1,11 +1,10 @@
-
 <div class="form-group org_hook col-md-4">
             <label for="keyword">Search by Keyword</label>
             <input class="form-control" type="text" name="keyword" value="" id="keyword" />
         </div>
         <div class="form-group org_hook col-md-4">
             <label for="category">Search by Category</label>
-            <select class="form-control" style="width:270px;" type="text" name="category" id="category">
+            <select class="form-control" style="width:100%;" type="text" name="category" id="category">
                 <option value="">Choose a Category</option>
 
 @foreach(\App\Models\Charity::CATEGORY_LIST as $key => $value)
@@ -15,13 +14,25 @@
     </div>
     <div class="form-group org_hook col-md-4">
         <label for="category">Search by Province</label>
-        <select class="form-control" style="width:270px;" type="text" name="province" id="charity_province">
+        <select class="form-control" style="width:100%;" type="text" name="province" id="charity_province">
             <option value="">Choose a Province</option>
             @foreach(\App\Models\Charity::PROVINCE_LIST as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
             @endforeach
         </select>
     </div>
+
+
+    <div class="form-group col-md-4">
+        <label for="pool_selection_id">Search by Fund Support Pool</label>
+        <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
+            <option value="">Choose a Fund Support Pool</option>
+            @foreach($fund_support_pool_list as $pool)
+                <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
 
     <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
         <h4 class="blue" style="padding-left:8px;">Search Results</h4>
