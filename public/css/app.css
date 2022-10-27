@@ -11799,7 +11799,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 @media (min-width: 992px) {
   .modal-lg,
 .modal-xl {
-    max-width: 800px;
+    max-width: 1024px;
   }
 }
 @media (min-width: 1200px) {

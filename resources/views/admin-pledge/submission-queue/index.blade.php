@@ -61,12 +61,6 @@
 
     <p><a class="btn btn-primary" role="button" onclick="window.history.back();">Back</a></p>
 
-
-
-
-
-    @include('admin-pledge.partials.menu')
-
     <div style="clear:both;float:none;"></div>
     <br>
     <br>
@@ -157,6 +151,7 @@
         $(".edit").click(function(){
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);
+            $("#edit-event-modal").find("button").attr("disabled",false);
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
@@ -210,7 +205,7 @@
 
                     $("#employment_city").val(data[0].employment_city).select2();
                     $("#region").val(data[0].region_id).select2();
-                    $("#description").val(data[0].name);
+                    $("#description").val(data[0].description);
 
                     $("#organization_code").html("<option value='"+data[0].organization_code+"'>"+data[0].organization_code+"</option>");
                     $("#organization_code").select2({
@@ -261,6 +256,8 @@
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
+                    $("#edit-event-modal").nextAll("button").attr("disabled",true);
+
                     $('#edit-event-modal').modal('show');
                     console.log(data);
                 },"json");
