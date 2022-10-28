@@ -101,10 +101,11 @@ class EventSubmissionQueueController extends Controller
         $cities = City::all();
         $organizations = [];
         $selected_charities = [];
-
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
         // load the view and pass
-        return view('admin-pledge.submission-queue.index',compact('selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
-
+        return view('admin-pledge.submission-queue.index',compact('fund_support_pool_list','selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
     }
     /**
      * Display a listing of pledge details.
@@ -119,9 +120,7 @@ class EventSubmissionQueueController extends Controller
         foreach($submissions as $index => $submission){
             $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id","=",$request->form_id)->get();
             $submissions[$index]["attachments"] = BankDepositFormAttachments::where("bank_deposit_form_id","=",$request->form_id)->get();
-
         }
-
         echo json_encode($submissions);
     }
 
@@ -453,7 +452,6 @@ class EventSubmissionQueueController extends Controller
 
        return redirect()->route('admin-pledge.campaign.index')
                 ->with('success','Pledge with Transaction ID ' . $pledge->id . ' have been updated successfully');
-
     }
 
     /**
@@ -502,8 +500,6 @@ class EventSubmissionQueueController extends Controller
                     'organization' => $user->primary_job->organization_name ?? '',
             ];
         }
-
         return response()->json($formatted_users);
-
     }
 }
