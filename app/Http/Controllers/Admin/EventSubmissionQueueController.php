@@ -145,8 +145,11 @@ class EventSubmissionQueueController extends Controller
         $one_time_amount = 20;
         $pay_period_amount_other = null;
         $one_time_amount_other = null;
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
 
-        return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears',
+        return view('admin-pledge.campaign.wizard', compact('fund_support_pool_list','pool_option', 'fspools', 'organizations','campaignYears',
             'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
     }
 

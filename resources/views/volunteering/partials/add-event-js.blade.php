@@ -142,7 +142,7 @@ cache: false,
 contentType: false,
 dataType: 'json',
 success:function(response){
-    Toast("Message","Success! Your form has been submitted.","bg-success");
+
 $("#bank_deposit_form").fadeTo("slow",1);
 $('.errors').html("");
 
