@@ -1,6 +1,6 @@
 @extends('donate.layout.main')
 
-@section ("content")
+@section ("step-content")
 <div class="container">
     <form action="{{route('donate.save.summary')}}" method="POST">
     <div class="row">
