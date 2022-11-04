@@ -57,7 +57,6 @@ EXPOSE 8000
 RUN chgrp -R 0 /app && \
     chmod +x /usr/local/bin/start && \
     chmod -R g=u /app
-USER 1001
 
 #CMD php artisan serve --host=0.0.0.0 --port=8000
 CMD ["/usr/local/bin/start"]
