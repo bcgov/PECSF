@@ -199,6 +199,9 @@
             serverSide: true,
             // select: true,
             'order': [[1, 'desc']],
+            "initComplete": function(settings, json) {
+                oTable.columns.adjust().draw();
+            },
             ajax: {
                 url: '{!! route('reporting.donation-upload.index') !!}',
                 data: function (d) {

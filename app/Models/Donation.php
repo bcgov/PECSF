@@ -52,6 +52,15 @@ class Donation extends Model
         return array_key_exists($this->source_type, self::SOURCE_TYPE_LIST) ? self::SOURCE_TYPE_LIST[$this->source_type] : '';
     }
 
+    public function organization() {
+        return $this->belongsTo(Organization::class, 'org_code', 'code')->withDefault([
+            'name' => '',
+        ]);
+    }
+
+    public function process_history() {
+        return $this->belongsTo(ProcessHistory::class, 'process_history_id', 'id')->withDefault();
+    }
 
     public function created_by()
     {
