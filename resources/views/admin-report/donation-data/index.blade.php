@@ -221,7 +221,7 @@
                 {data: 'name', defaultContent: '' },
                 {data: 'yearcd', defaultContent: '' },
                 {data: 'pay_end_date', defaultContent: '', className: "dt-nowrap", },
-                {data: 'source_type_descr', defaultContent: '', className: "dt-nowrap", },
+                {data: 'source_type_descr', name: 'source_type', defaultContent: '', className: "dt-nowrap", },
                 {data: 'frequency', defaultContent: '', className: "dt-nowrap", },
                 {data: 'amount', name: 'amount', defaultContent: '', 'className': 'dt-right',
                          render: $.fn.dataTable.render.number(',', '.', 2, '')

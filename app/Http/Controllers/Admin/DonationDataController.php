@@ -90,7 +90,7 @@ class DonationDataController extends Controller
         $frequencies = Donation::orderBy('frequency')->distinct('frequency')->pluck('frequency');
 
         // load the view and pass 
-        return view('admin-report.donation.index', compact('organizations', 'years', 'source_type_list', 'frequencies'));
+        return view('admin-report.donation-data.index', compact('organizations', 'years', 'source_type_list', 'frequencies'));
 
     }
 
