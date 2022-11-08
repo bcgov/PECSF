@@ -119,7 +119,7 @@
 
                 <div class="mt-2 toggle">
                   {{-- <button  name="cancel" value='cancel' class="btn btn-lg btn-outline-primary">Cancel</button> --}}
-                  <a class="btn btn-lg btn-outline-primary" href="{{route('donate.start')}}">Previous</a>
+                  <a class="btn btn-lg BC-Gov-SecondaryButton" href="{{route('donate.start')}}">Back</a>
                   <button class="btn btn-lg btn-primary" type="submit">Next</button>
                 </div>
             </form>

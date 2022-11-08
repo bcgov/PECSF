@@ -9,7 +9,7 @@
     @include('admin-pledge.partials.tabs')
 @endsection
 @section('content')
-    <p><a class="btn btn-primary" role="button" onclick="window.history.back();">Back</a></p>
+    <p><button class="btn btn-primary" role="button"  onclick="window.history.back();">Back</button></p>
 
     <div style="clear:both;float:none;"></div>
     <br>

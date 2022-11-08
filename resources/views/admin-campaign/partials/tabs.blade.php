@@ -27,7 +27,7 @@
 
 </div> --}}
 
-<ul class="nav nav-pills mb-3" id="pills-tab" >
+<ul class="menu nav nav-pills mb-3" id="pills-tab" >
     <li class="nav-item">
       <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.campaignyears') ? 'active' : ''}}"
         {{-- id="pills-home-tab"  --}}
@@ -39,7 +39,7 @@
           {{-- id="pills-profile-tab"  --}}
           href="{{ route('settings.special-campaigns.index') }}"  aria-controls="pills-profile" aria-selected="false">Special Campaigns</a>
     </li>
- 
+
     <li class="nav-item">
       <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.fund-supported-pools') ? 'active' : '' }}"
         {{-- id="pills-profile-tab"  --}}
@@ -88,7 +88,7 @@
         <div class="dropdown-menu">
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.charities') ? 'active' : ''}}"
                 href="{{ route('settings.charities.index') }}">Update Charity</a>
-          
+
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.charity-list-maintenance') ? 'active' : ''}}"
                 href="{{ route('settings.charity-list-maintenance.index') }}">CRA List Maintenance</a>
         </div>

@@ -250,7 +250,7 @@ class MaintainEventPledgeController extends Controller
         $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
-        return view('admin-pledge.create.index', compact('fund_support_pool_list','selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
+        return view('admin-pledge.create.index', compact('selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
     }
 
     /**

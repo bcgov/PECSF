@@ -101,11 +101,9 @@ class EventSubmissionQueueController extends Controller
         $cities = City::all();
         $organizations = [];
         $selected_charities = [];
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
+
         // load the view and pass
-        return view('admin-pledge.submission-queue.index',compact('fund_support_pool_list','selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
+        return view('admin-pledge.submission-queue.index',compact('selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
     }
     /**
      * Display a listing of pledge details.
@@ -145,11 +143,9 @@ class EventSubmissionQueueController extends Controller
         $one_time_amount = 20;
         $pay_period_amount_other = null;
         $one_time_amount_other = null;
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
 
-        return view('admin-pledge.campaign.wizard', compact('fund_support_pool_list','pool_option', 'fspools', 'organizations','campaignYears',
+
+        return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears',
             'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
     }
 

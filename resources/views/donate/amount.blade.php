@@ -86,7 +86,7 @@
         <form action="{{route('donate.save.amount')}}" method="post" onsubmit="prepareForm()">
             @csrf
             <div id="amount-values"></div>
-            <a class="btn btn-lg btn-outline-primary" href="{{  $pool_option == "C" ? route('donate.select-charities') : route('donate.regional-pool') }}">Previous</a>
+            <a class="btn btn-lg BC-Gov-SecondaryButton" href="{{  $pool_option == "C" ? route('donate.select-charities') : route('donate.regional-pool') }}">Back</a>
             <button class="btn btn-lg btn-primary" type="submit">Next</button>
         </form>
     </div>

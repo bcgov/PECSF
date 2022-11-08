@@ -37677,6 +37677,5 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 
 setTimeout(function() {
     $(".content-wrapper").css("min-height", $(".main-sidebar").height()+"px");
-    $(".main-sidebar").css("min-height", $(".content-wrapper").height()+"px");
-
-},1500);
+    $(".main-sidebar").css("min-height", $(".content-wrapper").height()+40+"px");
+},50);

@@ -99,6 +99,8 @@ $("#bank_deposit_form").submit(function(e)
 e.preventDefault();
 var form = document.getElementById("create_pool");
 
+    $(".max-charities-error").hide();
+    $(".charity-error-hook").css("border","none")
 
 $("select").each(function(){
 if($(this).val()){

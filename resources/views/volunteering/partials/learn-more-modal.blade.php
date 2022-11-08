@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="learn-more-modal" tabindex="-1" aria-labelledby="learnMoreModalTitle" data-backdrop="static" 
+<div class="modal fade" id="learn-more-modal" tabindex="-1" aria-labelledby="learnMoreModalTitle" data-backdrop="static"
     aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -65,7 +65,7 @@
                                         <li><x-bullet />Two hours of PECSF online volunteering training</li>
                                     </ul>
                                 </div>
-                                
+
                             </div>
                         </div>
 
@@ -154,11 +154,11 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="modal-footer d-flex">
-                <x-button href="#donateGuideCarousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
+                <x-button href="#donateGuideCarousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Back</x-button>
                 <div class="flex-fill"></div>
                 <x-button href="#donateGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                 <x-button data-toggle="modal" data-target="#volunteer-registration" role="button" class="ready-btn d-none">I'm ready to Volunteer!</x-button>

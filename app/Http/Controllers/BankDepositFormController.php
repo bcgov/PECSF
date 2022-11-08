@@ -130,10 +130,8 @@ class BankDepositFormController extends Controller
                 }
             }
         }
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
-        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+
+        return view('volunteering.forms',compact('organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
     public function store(Request $request) {
@@ -157,13 +155,14 @@ class BankDepositFormController extends Controller
          ]);
         $validator->after(function ($validator) use($request) {
 
-            $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
-
-
-            if(strlen($decimals) == 3)
-            {
-                $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
+            if(strpos($request->deposit_amount,".") !== FALSE){
+                $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
+                if(strlen($decimals) == 3)
+                {
+                    $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
+                }
             }
+
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV")
@@ -580,7 +579,7 @@ class BankDepositFormController extends Controller
         {
             $organizations->where("charity_name","LIKE","%".$request->keyword."%");
         }
-        if ($request->pool_filter !="") {
+        if (is_numeric($request->pool_filter)) {
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
             $organizations->whereIn('id', $pool->charities->pluck('charity_id') );
         }

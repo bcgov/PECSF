@@ -9,27 +9,20 @@
 @endphp
 @extends('adminlte::page')
 @section('content_header')
-
-
-
 <div class="mt-3">
 <h1>Challenge</h1>
-    <ul class="nav nav-pills mb-3" id="pills-tab" >
-        <li class="nav-item col-md-3">
+    <ul class="menu nav nav-pills" id="pills-tab">
+        <li class="nav-item nav-center-4">
             <a style="text-align:center;" class="nav-link <?php echo (Route::current()->getName() == 'challege.index') ? 'active' : ''; ?>"
                href="<?php echo e(route('challege.index')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">
                 Leaderboard</a>
         </li>
-
-        <li class="nav-item col-md-3">
+        <li class="nav-item nav-center-4">
             <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.daily_campaign') ? 'active' : ''); ?>"
                href="<?php echo e(route('challege.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
         </li>
-
-
     </ul>
 <h5 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-    View and download daily statistics updates below.<br>
     If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h5>
 </div>
 @endsection
