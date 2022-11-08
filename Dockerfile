@@ -41,7 +41,7 @@ COPY . /app
 COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 COPY ./start.sh /usr/local/bin/start
 
-RUN php artisan cache:clear
+#RUN php artisan cache:clear
 
 RUN composer update --ignore-platform-reqs
 
