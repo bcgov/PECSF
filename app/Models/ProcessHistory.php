@@ -16,4 +16,14 @@ class ProcessHistory extends Model
         'created_by_id', 'updated_by_id'
     ];
 
+    public function created_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'created_by_id');
+    }
+
+    public function updated_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'updated_by_id');
+    }
+
 }
