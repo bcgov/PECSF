@@ -1,4 +1,4 @@
-<ul class="nav nav-pills justify-content-center" id="pills-tab">
+<ul class="menu nav nav-pills justify-content-center" id="pills-tab">
     <li class="nav-item nav-center-4">
         <a class="nav-link  {{ str_contains(Route::current()->getName(), 'admin-pledge.campaign') ? 'active' : '' }}"
             id="pills-home-tab" href="{{ route('admin-pledge.campaign.index') }}" role="tab"

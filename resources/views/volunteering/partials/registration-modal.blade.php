@@ -93,7 +93,7 @@
 
 
                                 <div class="row mt-2">
-                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Previous</x-button>
+                                    <x-button href="#volunteer-registration-carousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Back</x-button>
                                     &nbsp;
                                     <x-button href="#volunteer-registration-carousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                                     &nbsp;

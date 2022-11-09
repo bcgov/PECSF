@@ -86,8 +86,8 @@
                 </p>
 
             <div class="mt-3">
-                <a class="btn btn-lg btn-outline-primary"
-                    href="{{ $pool_option == 'C' ? route('donate.distribution') : route('donate.amount')}}">Previous</a>
+                <a class="btn btn-lg BC-Gov-SecondaryButton"
+                    href="{{ $pool_option == 'C' ? route('donate.distribution') : route('donate.amount')}}">Back</a>
                 <button class="btn btn-lg btn-primary" type="submit">Pledge</button>
             </div>
         </div>

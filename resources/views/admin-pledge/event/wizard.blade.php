@@ -36,7 +36,7 @@
     </div>
 
   <div class="card-body py-0">
-    <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}" 
+    <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}"
             id="admin-pldege-campaign-form" method="POST">
         @csrf
         @isset($pledge)
@@ -44,7 +44,7 @@
             <input type="hidden" id="pledge_id" name="pledge_id" value="{{ $pledge->id }}">
         @endisset
         <input type="hidden" id="step" name="step" value="">
-        
+
         {{-- Nav Items --}}
         <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
             <li class="nav-item">
@@ -56,11 +56,11 @@
             <li class="nav-item">
               <a class=" nav-link" id="nav-amount-tab" data-toggle="tab" href="#nav-amount" data-id="1" role="tab" aria-controls="nav-amount" aria-selected="false">Frequency and Amount</a>
             </li>
-            <li class="nav-item">  
+            <li class="nav-item">
               <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="2" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
             </li>
         </ul>
-    
+
         <div class="tab-content pb-3 px-1" id="nav-tabContent">
             <div class="tab-pane fade step show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                 <div class="pl-2 font-weight-bold">Step 1 -  Select donor</div>
@@ -70,13 +70,13 @@
                     </ul>
 
                 @include('admin-pledge.campaign.partials.profile')
-                
+
             </div>
             <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-                
+
                 <div class="pl-2 font-weight-bold">Step 2 - Select preferred method for choosing charities</div>
                 <div class="pl-5">Choose a regional Fund Supported Pool or the CRA charity list option </div>
-            
+
 
                 @include('admin-pledge.campaign.partials.method-selection')
 
@@ -99,7 +99,7 @@
 
 
         <div class="p-2 ">
-            <button type="button" class="action back btn  btn-outline-secondary"
+            <button type="button" class="action back btn  BC-Gov-SecondaryButton"
                 style="display: none">Back</button>
             <button type="button" class="action next btn  btn-outline-primary float-right"
                 >Next</button>
@@ -111,14 +111,14 @@
           <div class="col">
             <div class="card mt-3">
               <div class="card-header font-weight-bold">My Bootstrap 5 multi-step-form</div>
-                    
+
                 <div class="card-body p-5 step" style="">Step 1</div>
 
                     <div class="card-body p-5 step" style="display: none;">Step 2</div>
                     <div class="card-body p-5 step" style="display: none;">Step 3</div>
                     <div class="card-body p-5 step" style="display: none;">Step 4</div>
                     <div class="card-body p-5 step" style="display: none;">Step 5</div>
-                    
+
                     <div class="card-footer">
                         <button type="button" class="action back btn btn-sm btn-outline-secondary"
                             style="display: none">Back</button>
@@ -175,7 +175,7 @@
     font-weight: 400;
     color: #878788;
     text-align: center;
-    z-index: 100; 
+    z-index: 100;
 }
 
 .bs4-step-tracking li:first-child:before {
@@ -191,7 +191,7 @@
 }
 
 .bs4-step-tracking li> div {
-    color: #fff; 
+    color: #fff;
     width: 38px;
     text-align: center;
     line-height: 38px;
@@ -212,7 +212,7 @@
     right: 0%;
     top: 20px;
     /* z-index: -1; */
-     z-index: -2; 
+     z-index: -2;
 }
 
 .bs4-step-tracking li:first-child:after {
@@ -257,7 +257,7 @@
     .summary-card .form-control[disabled] {
         border: 0;
         background-color: rgb(252, 252, 252) ;
-    } 
+    }
 
     .amount-selection input[type=radio] {
         width: 18px;
@@ -292,7 +292,7 @@ $(function () {
 
     // For keep tracking the current page in wizard
     var step = 1;
-   
+
     $(".next").on("click", function() {
         var nextstep = false;
         if (step == 1) {
@@ -339,11 +339,11 @@ $(function () {
         //     .css("width", percent + "%")
         //     .html(percent + "%");
         //
-        $('.bs4-step-tracking li').map( function (index, item) { 
+        $('.bs4-step-tracking li').map( function (index, item) {
             if (index < currstep) {
-                $(item).addClass('active');   
+                $(item).addClass('active');
             } else {
-                $(item).removeClass('active');   
+                $(item).removeClass('active');
             }
         });
     };
@@ -366,7 +366,7 @@ $(function () {
 
     // Validation when click on 'next' button
     function checkForm() {
-        
+
         var valid = true;
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
@@ -392,24 +392,24 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '/admin-pledge/campaign/' , 
-                //data: form.serialize(), 
+                url:  '/admin-pledge/campaign/' ,
+                //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
                 cache: false,
                 timeout: 30000,
                 success: function(data)
                 {
-                    // console.log(data ); 
+                    // console.log(data );
                     if (step == 3)  {
-                            $('#summary-page').html(data); 
+                            $('#summary-page').html(data);
                     }
                 },
                 error: function(response) {
                     valid = false;
-                    if (response.status == 422) {   
+                    if (response.status == 422) {
                         $.each(response.responseJSON.errors, function(field_name,error){
-                            if ( field_name.includes('.') ) {   
+                            if ( field_name.includes('.') ) {
                                 items = field_name.split(".");
                                 pos = Number(items[ items.length -1 ]);
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
@@ -436,7 +436,7 @@ $(function () {
         $('#user_dept').val('');
         $('#user_bu').val('');
         $('#user_org').val('');
-        $('#user_region').val('');  
+        $('#user_region').val('');
     }
 
     $('#organization_id').change( function() {
@@ -469,7 +469,7 @@ $(function () {
 
     $('#user_id').on('select2:select', function (e) {
         var data = e.params.data;
-            
+
         reset_user_profile_info();
         if (data.emplid) {
             $('#user_first_name').val( data.first_name );
@@ -485,7 +485,7 @@ $(function () {
 
     $('#user_id').on('select2:unselect', function (e) {
         var data = e.params.data;
-            reset_user_profile_info();            
+            reset_user_profile_info();
     });
 
     // Page 2
@@ -514,12 +514,12 @@ $(function () {
         });
     }
 
-    //onload: call the above function 
+    //onload: call the above function
     $("select[name='charities[]']").each(function() {
         initializeSelect2($(this));
     });
 
-    // variable for keep track detail lines 
+    // variable for keep track detail lines
     let row_number = {{ (isset($pledge)) ? $pledge->distinct_charities->count() + 1 : 1 }};
 
     $("#add_row").click(function(e){
@@ -541,7 +541,7 @@ $(function () {
 
     });
 
-   
+
 
     $(document).on("click", "div.delete_this_row" , function(e) {
         e.preventDefault();
