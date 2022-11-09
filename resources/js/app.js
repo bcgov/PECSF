@@ -23,3 +23,7 @@ require('./bootstrap');
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+setTimeout(function() {
+    $(".content-wrapper").css("min-height", $(".main-sidebar").height()+"px");
+    $(".main-sidebar").css("min-height", $(".content-wrapper").height()+40+"px");
+},50);
