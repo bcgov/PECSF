@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\Pledge;
 use App\Models\Donation;
 use App\Models\CampaignYear;
 use App\Models\Organization;
@@ -11,22 +12,22 @@ use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\WithStartRow;
 
 
-class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithEvents, WithBatchInserts, WithStartRow
+class DonationsImport implements  ToModel, WithValidation, WithEvents, WithBatchInserts, WithStartRow
 {
     use Importable;
 
     protected $org_code;
     protected $history_id;
 
-    protected $in_current_row;
-
     protected $row_count;
+    protected $total_amount;
+
     protected $skip_count;
     protected $errors;
 
@@ -37,8 +38,6 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
 
         $this->history_id = $history_id;
         $this->org_code = $org_code;
-
-        $this->in_current_row = [];
 
         $this->row_count = 0;
         $this->done_count = 0;
@@ -55,24 +54,35 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
     public function model(array $row)
     {
 
-        if (!isset($row['co'])) {
+        if (!isset($row[0])) {
             return null;
         }
 
         $this->done_count += 1;
-        $this->total_amount += $row['employee_pecsf_contribution_amount'];
+        $this->total_amount += $row[5];  // Employee PECSF Contribution Amount
 
         $this->imported_rows .= implode(",", $row) . PHP_EOL;
 
+        $frequency = 'bi-weekly';    
+        switch ( strtolower($row[4]) ) {
+            case 'bi-weekly':
+                $frequency = 'bi-weekly';    
+                break;
+            case 'one-time deduction':     
+                $frequency = 'one-time'; 
+                break;
+        }
+
         return new Donation([
-            'org_code'     => $row['co'],
-            'pecsf_id'     => $row['id'],
-            'name'         => $row['employee_name'],
-            'yearcd'       => $row['calendar_year'],
-            'pay_end_date' => $row['pay_period_end_date'],
+            'org_code'     => $row[0],      // Co
+            'pecsf_id'     => $row[1],      // ID
+            'name'         => $row[6],      // Employee Name
+
+            'yearcd'       => $row[2],      // calendar_year
+            'pay_end_date' => $row[3],      // pay_period_end_date
             'source_type'  => '10',
-            'frequency'    => 'Bi-Weekly', // $row['frequency_of_pay_period'],
-            'amount'       => $row['employee_pecsf_contribution_amount'],
+            'frequency'    => $frequency,      // frequency_of_pay_period -- "Bi-Weely" or "One-Time Deduction"
+            'amount'       => $row[5],      // employee_pecsf_contribution_amount
 
             'process_history_id' => $this->history_id,
             
@@ -81,8 +91,37 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
 
     public function prepareForValidation($data, $index)
     {
-        // get and store the current row for validation purpose
-        $this->in_current_row = $data;
+
+        // Preapre Data for checking exists and unique 
+        $frequency = '';
+        switch ( strtolower($data[4]) ) {
+            case 'bi-weekly':
+                $frequency = 'bi-weekly';    
+                break;
+            case 'one-time deduction':     
+                $frequency = 'one-time'; 
+                break;
+        }
+
+        $pledge = Pledge::join('organizations','pledges.organization_id','organizations.id')
+                        ->join('campaign_years','pledges.campaign_year_id','campaign_years.id')
+                        ->where('organizations.code', $data[0])
+                        ->where('pledges.pecsf_id', $data[1])
+                        ->where('campaign_years.calendar_year', $data[2])
+                        ->first();
+
+        $donation = Donation::where('org_code', $data[0])
+                        ->where('pecsf_id', $data[1])
+                        ->where('yearcd', $data[2])
+                        ->where('pay_end_date', $data[3])
+                        ->where('source_type', 10)
+                        ->where('frequency', $frequency )
+                        ->first();
+
+                     
+        // // special fields for checking unique 
+        $data['pledge'] = $pledge ? $pledge->id : '';
+        $data['donation'] = $donation ? $donation->id : '';
 
         return $data;
     }
@@ -92,33 +131,17 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
 
         $orgs = [ $this->org_code ];
 
-        $input_org = Organization::where('code', $this->in_current_row['co'])->first();
-        $input_cy  = CampaignYear::where('calendar_year', $this->in_current_row['calendar_year'])->first();
-
-        $row = $this->in_current_row;
-
         return [
-            'co' => ['required', Rule::in( $orgs )],
-            'id' => ['required', Rule::exists('pledges', 'pecsf_id')                     
-                                    ->where(function ($query) use ($input_org, $input_cy) {                      
-                                        $query->where('organization_id', $input_org->id)
-                                              ->where('campaign_year_id', $input_cy->id);                                   
-                                    }),
-                                 Rule::unique('donations','pecsf_id')
-                                    ->where(function ($query) use ($row) {                      
-                                        $query->where('org_code', $row['co'])
-                                                ->where('yearcd', $row['calendar_year'])
-                                                ->where('pay_end_date', $row['pay_period_end_date'])
-                                                ->where('source_type', 10)
-                                                ->where('frequency', $row['frequency_of_pay_period']);
-                                 }),
-            ],
-            'employee_name' => 'required',
-            'calendar_year' => 'required',
-            'pay_period_end_date' => 'required',
+            '0' => ['required', Rule::in( $orgs )],
+            '1' => 'required',
+            '2' => 'required|numeric',            // calendar_year
+            '3' => 'required|date',               // pay_period_end_date
+            '4' => ['required', Rule::in(["Bi-Weekly", "One-time Deduction"]) ],   //frequency_of_pay_period
+            '5' => 'required|numeric',                  // employee_pecsf_contribution_amount' 
+            '6' => 'required',                      //employee_name
 
-            'frequency_of_pay_period' => 'required',
-            'employee_pecsf_contribution_amount' => 'required',
+            'pledge' => 'exists:pledges,id',
+            'donation' => 'unique:donations,id',
 
         ];
     }
@@ -129,18 +152,17 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
     public function customValidationMessages()
     {
         return [
-            'co.in' => 'The organization on upload file doesn\'t match with the selected org.',
-            'id.exists' => 'No pledge was setup for this pecsf_id.',
-            'id.unique' => 'The same pay deduction transactions was loaded',
+            '0.in' =>    'The organization on upload file doesn\'t match with the selected org.',
+            '2.numeric' => 'The 2 field must be a number',
+            '3.date' =>  'The 3 field is not a valid date',
+            '4.in'  =>   'The 4 field is invalid frequency (either Bi-Weekly or On-Time Deduction)',
+            '5.numeric' => 'The 5 field must be a number',
+
+            'pledge.exists' => 'No pledge was setup for this pecsf_id.',
+            'donation.unique' => 'The same pay deduction transactions has been loaded.',
         ];
     }
     
-  
-    public function headingRow(): int
-    {
-        return 2;
-    }
-
     public function startRow(): int
     {
         return 3;
@@ -170,7 +192,13 @@ class DonationsImport implements  ToModel, WithHeadingRow, WithValidation, WithE
             AfterImport::class => function (AfterImport $event) {
 
                 $status = 'Completed';
-                $messages = 'Success: ' . $this->done_count . ' row(s) were imported. ' . PHP_EOL;
+
+                $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+               
+                $messages = 'Process ID : ' . $this->history_id . PHP_EOL;
+                $messages .= 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
+                $messages .= PHP_EOL;
+                $messages .= 'Success: ' . $this->done_count . ' row(s) were imported. ' . PHP_EOL;
                 $messages .= 'Total Amount : ' . number_format($this->total_amount, 2, '.', ',') . PHP_EOL;
                 $messages .= PHP_EOL;
                 $messages .= 'The imported data details : '. PHP_EOL;
