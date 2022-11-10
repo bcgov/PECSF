@@ -284,6 +284,7 @@ class BankDepositFormController extends Controller
 
         $form = BankDepositForm::Create(
             [
+                'business_unit' => $request->business_unit,
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
                 'event_type' =>  $request->event_type,
@@ -301,7 +302,7 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
-                'business_unit' => $request->business_unit
+
             ]
         );
 

@@ -13,8 +13,8 @@ class CreateSpecialCampaignsTable extends Migration
      */
     public function up()
     {
-        Schema::create('special_campaigns', function (Blueprint $table) {
-            
+   /*     Schema::create('special_campaigns', function (Blueprint $table) {
+
             $table->id();
 
             $table->string('name');
@@ -34,6 +34,7 @@ class CreateSpecialCampaignsTable extends Migration
             $table->index([ 'name', 'description', 'banner_text']);
 
         });
+   */
     }
 
     /**

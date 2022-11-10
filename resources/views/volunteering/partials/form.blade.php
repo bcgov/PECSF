@@ -5,7 +5,8 @@
 
     <input type="hidden" name="form_id" id="form_id" value="" />
 
-    <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
+    <div class="form-row" style="left: 5px;
+    position: relative;width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
         <h2>Event bank deposit form</h2>
     </div>
     <div class="card" style="border-radius:0px;">
@@ -364,7 +365,7 @@
                     <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <a href="" onclick="$('#attachment_input_1').click();" style="font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
+                    <button  onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</button>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">
