@@ -153,8 +153,8 @@ class DonationsImport implements  ToModel, WithValidation, WithEvents, WithBatch
     {
         return [
             '0.in' =>    'The organization on upload file doesn\'t match with the selected org.',
-            '1.min' => 'The 1 field must be 6 characters (without the prefix "E").',
-            '1.max' => 'The 1 field must be 6 characters (without the prefix "E").',
+            '1.min' => 'The 1 field must be 6 characters.',
+            '1.max' => 'The 1 field must be 6 characters.',
             '2.numeric' => 'The 2 field must be a number',
             '3.date' =>  'The 3 field is not a valid date',
             '4.in'  =>   'The 4 field is invalid frequency (either Bi-Weekly or On-Time Deduction)',
