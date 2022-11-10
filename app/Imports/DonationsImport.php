@@ -120,8 +120,8 @@ class DonationsImport implements  ToModel, WithValidation, WithEvents, WithBatch
 
                      
         // // special fields for checking unique 
-        $data['pledge'] = $pledge ? $pledge->id : '';
-        $data['donation'] = $donation ? $donation->id : '';
+        $data['pledge'] = $pledge ? $pledge->id : 0;
+        $data['donation'] = $donation ? $donation->id : 0;
 
         return $data;
     }
@@ -133,7 +133,7 @@ class DonationsImport implements  ToModel, WithValidation, WithEvents, WithBatch
 
         return [
             '0' => ['required', Rule::in( $orgs )],
-            '1' => 'required',
+            '1' => 'required|min:6|max:6',
             '2' => 'required|numeric',            // calendar_year
             '3' => 'required|date',               // pay_period_end_date
             '4' => ['required', Rule::in(["Bi-Weekly", "One-time Deduction"]) ],   //frequency_of_pay_period
@@ -153,6 +153,8 @@ class DonationsImport implements  ToModel, WithValidation, WithEvents, WithBatch
     {
         return [
             '0.in' =>    'The organization on upload file doesn\'t match with the selected org.',
+            '1.min' => 'The 1 field must be 6 characters (without the prefix "E").',
+            '1.max' => 'The 1 field must be 6 characters (without the prefix "E").',
             '2.numeric' => 'The 2 field must be a number',
             '3.date' =>  'The 3 field is not a valid date',
             '4.in'  =>   'The 4 field is invalid frequency (either Bi-Weekly or On-Time Deduction)',

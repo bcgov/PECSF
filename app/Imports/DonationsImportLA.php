@@ -72,6 +72,17 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
 
         $this->imported_rows .= implode(",", $row) . PHP_EOL;
 
+        // 
+        $frequency = 'bi-weekly';    
+        switch ( strtolower($row[6]) ) {
+            case 'biweekly':
+                $frequency = 'bi-weekly';    
+                break;
+            case 'one-time deduction':     
+                $frequency = 'one-time'; 
+                break;
+        }
+
         return new Donation([
             'org_code'     => $row['org_code'],   // 'LA',   //        $row[0],      // Organization
             'pecsf_id'     => $row[0],
@@ -79,7 +90,7 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
             'yearcd'       => $row['yearcd'],   // Calendar Year (from header row)
             'pay_end_date' => $row['pay_end_date'],   // pay end daye (from header row
             'source_type'  => '10',
-            'frequency'    => $row['frequency'],      // $row[4],  // Bi-Weekly
+            'frequency'    => $frequency,      // $row[6],  // Bi-Weekly
 
             'amount'       => $row[5],
 
@@ -95,12 +106,24 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
         // $data[1] = str_pad($data[1], 6, "0", STR_PAD_LEFT); 
         $data[0] = substr($data[0], 1);
 
+        $data[6] = $data[6] ? $data[6] : 'bi-weekly';
+
         // Preapre Data for checking exists and unique 
         $data['org_code'] = $this->org_code;  
         $data['pay_end_date'] = $this->C2_pay_end_date->format('Y-m-d');;
         $data['org_name'] = $this->C1_org_name;
-        $data['frequency'] = 'bi-weekly';
         $data['yearcd'] = $this->C2_pay_end_date->format('Y');
+
+        // Preapre Data for checking exists and unique 
+        $frequency = '';
+        switch ( strtolower($data[6]) ) {
+            case 'biweekly':
+                $frequency = 'bi-weekly';    
+                break;
+            case 'one-time deduction':     
+                $frequency = 'one-time'; 
+                break;
+        }
 
         $pledge = Pledge::join('organizations','pledges.organization_id','organizations.id')
                     ->join('campaign_years','pledges.campaign_year_id','campaign_years.id')
@@ -114,12 +137,12 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
                     ->where('yearcd', $data['yearcd']  )
                     ->where('pay_end_date', $data['pay_end_date'] )
                     ->where('source_type', 10)
-                    ->where('frequency', $data['frequency'] )
+                    ->where('frequency', $data[6] )
                     ->first();
 
         // // special fields for checking unique 
-        $data['pledge'] = $pledge ? $pledge->id : '';
-        $data['donation'] = $donation ? $donation->id : '';
+        $data['pledge'] = $pledge ? $pledge->id : 0;
+        $data['donation'] = $donation ? $donation->id : 0;
 
         return $data;
     }
@@ -154,6 +177,7 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
             '1' => 'required',  // Employee Last Name
             '2' => 'required',  // Employee First Name
             '5' => 'required|numeric',  // Amount
+            '6' => ['required', Rule::in(["bi-weekly", "One-Time Deduction"]) ],   
 
             'pledge' => 'exists:pledges,id',
             'donation' => 'unique:donations,id',
@@ -161,7 +185,6 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
             'org_code' => ['required', Rule::in( $orgs )],
             'pay_end_date' => 'required|date',
             'org_name' => ['required', Rule::in(["LEGISLATIVE ASSEMBLY EMPLOYEES"]) ],   
-            'frequency'  => ['required', Rule::in(["bi-weekly"]) ],   
             'yearcd' => 'required|numeric',
 
         ];
@@ -181,12 +204,12 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
             '0.min' => 'The 0 field must be 6 characters (without the prefix "E").',
             '0.max' => 'The 0 field must be 6 characters (without the prefix "E").',
             '5.numeric' => 'The 5 field must be a number',
+            '6.in' => 'The 6 field is invalid frequency (either "Blank" or One-Time Deduction)',
 
-            'org_name.in' =>  'The Col C Row 1 field is invalid (must be "LEGISLATIVE ASSEMBLY EMPLOYEES"',
+            'org_name.in' =>  'The cell C1 field is invalid (must be "LEGISLATIVE ASSEMBLY EMPLOYEES"',
             'org_code.in' =>  'The organization on upload file doesn\'t match with the selected org.',
-            'pay_end_date.date' => 'The Col C Row 3 field is not a valid date',
-            'yearcd.numeric' => 'The Col C Row 3 field is not a valid year',
-            'frequency.in'  =>  'The frequency field is invalid frequency (must be bi-weekly)',
+            'pay_end_date.date' => 'The cell C3 field is not a valid date',
+            'yearcd.numeric' => 'The Cell C3 field is not a valid year',
 
             'pledge.exists' => 'No pledge was setup for this pecsf_id.',
             'donation.unique' => 'The same pay deduction transactions has been loaded.',
