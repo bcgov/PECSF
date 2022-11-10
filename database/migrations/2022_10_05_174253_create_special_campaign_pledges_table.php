@@ -14,7 +14,7 @@ class CreateSpecialCampaignPledgesTable extends Migration
     public function up()
     {
         Schema::create('special_campaign_pledges', function (Blueprint $table) {
-            /*
+
             $table->id();
 
             $table->bigInteger('organization_id')->nullable();
@@ -36,7 +36,7 @@ class CreateSpecialCampaignPledgesTable extends Migration
             $table->timestamps();
 
             $table->index(['organization_id', 'user_id', 'pecsf_id', 'yearcd', 'seqno'], 'tran_key_index');
-*/
+
         });
     }
 
