@@ -95,7 +95,7 @@
                     </tr>
                     <tr>
                         <td>Category</td>
-                        <td id="category"></td>
+                        <td id="modalcategory"></td>
                     </tr>
                     <tr>
                         <td>Address</td>
