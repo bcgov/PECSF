@@ -6,7 +6,7 @@
 @endif
 
 
-<table id="charities">
+<table id="charities" class="col-md-12">
     @foreach($organizations as $key => $organization)
 
 
