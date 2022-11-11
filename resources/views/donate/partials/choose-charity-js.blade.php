@@ -44,8 +44,7 @@
                 success:function(data)
                 {
                     $("#charities").fadeTo("slow",1);
-                    $('#charities').html(data);
-
+                    $(".charity-container").html(data);
                 }
             });
         }

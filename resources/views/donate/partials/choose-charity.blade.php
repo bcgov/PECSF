@@ -36,19 +36,19 @@
 
 
     <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
-        <h4 class="blue" style="padding-left:8px;">Search Results</h4>
+
         @include("volunteering.partials.organizations")
     </div>
     <div class="col-md-3"></div>
         <br>
         <br>
 
-<div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+<div class="charity-error-hook  {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
     <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
-        <table class="charity-container" id="organizations" style="display:block;width:100%">
+        <table class="" id="organizations" style="display:block;width:100%">
            @if(count($selected_charities) > 0)
             @foreach($selected_charities as $index => $charity)
                 @include('volunteering.partials.add-organization', ['index' => $index,'charity' => $charity] )

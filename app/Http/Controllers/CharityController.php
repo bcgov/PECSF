@@ -488,6 +488,11 @@ class CharityController extends Controller
             $annualBiWeeklyAmount = $biWeeklyAmount * 26;
             $annualOneTimeAmount = $oneTimeAmount;
 
+            if($oneTimeAmount == 0 && $biWeeklyAmount == 0)
+            {
+                return redirect()->route('donate.amount');
+            }
+
             $oneTimeAmountPerCharity = round($oneTimeAmount / count($selectedCharities['id']), 2);
             $biWeeklyAmountPerCharity = round($biWeeklyAmount / count($selectedCharities['id']), 2);
 
