@@ -297,7 +297,7 @@
         @foreach( $pools as $pool )
             <div class="form-group col-md-2 form-pool">
 
-                <div class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+                <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
                     {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
@@ -323,7 +323,7 @@
             </div>
         @endforeach
 
-        @for($i=0;$i<(4 - (count($pools)%6) );$i++)
+        @for($i=0;$i<((count($pools)%6) );$i++)
             <div class="form-group col-md-2 form-pool">
 
 
