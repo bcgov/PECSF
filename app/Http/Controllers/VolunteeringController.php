@@ -39,6 +39,7 @@ class VolunteeringController extends Controller
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? true : false;
         $global_address = "";
+
         return view('volunteering.index', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
 

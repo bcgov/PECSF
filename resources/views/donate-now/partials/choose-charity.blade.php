@@ -28,7 +28,7 @@
     </div>
 
     <div class="charity-container form-group  col-md-12 bg-light">
-        <h4 class="blue" style="padding-left:8px;">Search Results</h4>
+
 
 
         <h5 id="charity_count" class="noresults pl-2" style="width:100%;text-align:center" class="align-content-center">No results</h5>
@@ -39,7 +39,7 @@
 
     </div>
 
-    <div class="charity-container form-group  col-md-12 bg-light">
+    <div class="form-group  col-md-12 bg-light">
 
         <h4 class="blue pl-1 pb-2" >Your Charities</h4>
 
@@ -48,7 +48,7 @@
             <span class="charity_errors"></span>
         @endempty
 
-        <table class="charity-container bg-light" id="selected_charity" style="width:100%">
+        <table class=" bg-light" id="selected_charity" style="width:100%">
 
             @isset($pledge)
                 @if ($pledge->charity_id)

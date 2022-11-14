@@ -1,3 +1,6 @@
+@extends('adminlte::page')
+
+@section('content_header')
 <div class="modal fade" id="add-event-modal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -17,9 +20,7 @@
         </div>
     </div>
 </div>
-@extends('adminlte::page')
 
-@section('content_header')
 
 
     <div class="d-flex mt-3">

@@ -91,6 +91,7 @@
                     <th>Registration Number</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Status</th>                    
                     <th>Action</th>
 				</tr>
 			</thead>
@@ -213,6 +214,7 @@
                 {data: 'charity.registration_number', name: 'registration_number' },
                 {data: 'start_date', name: 'start_date'},
                 {data: 'end_date', name: 'start_date'},
+                {data: 'status', name: 'status', orderable: false, searchable: false },
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
             columnDefs: [

@@ -1,11 +1,10 @@
-
 <div class="form-group org_hook col-md-4">
             <label for="keyword">Search by Keyword</label>
             <input class="form-control" type="text" name="keyword" value="" id="keyword" />
         </div>
         <div class="form-group org_hook col-md-4">
             <label for="category">Search by Category</label>
-            <select class="form-control" style="width:270px;" type="text" name="category" id="category">
+            <select class="form-control" style="width:100%;" type="text" name="category" id="category">
                 <option value="">Choose a Category</option>
 
 @foreach(\App\Models\Charity::CATEGORY_LIST as $key => $value)
@@ -15,7 +14,7 @@
     </div>
     <div class="form-group org_hook col-md-4">
         <label for="category">Search by Province</label>
-        <select class="form-control" style="width:270px;" type="text" name="province" id="charity_province">
+        <select class="form-control" style="width:100%;" type="text" name="province" id="charity_province">
             <option value="">Choose a Province</option>
             @foreach(\App\Models\Charity::PROVINCE_LIST as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
@@ -23,20 +22,33 @@
         </select>
     </div>
 
+    @isset($fund_support_pool_list)
+        <div class="form-group col-md-4">
+            <label for="pool_selection_id">Search by Fund Support Pool</label>
+            <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
+                <option value="">Choose a Fund Support Pool</option>
+                @foreach($fund_support_pool_list as $pool)
+                    <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    @endisset
+
+
     <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
-        <h4 class="blue" style="padding-left:8px;">Search Results</h4>
+
         @include("volunteering.partials.organizations")
     </div>
     <div class="col-md-3"></div>
         <br>
         <br>
 
-<div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+<div class="charity-error-hook  {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
     <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
-        <table class="charity-container" id="organizations" style="display:block;width:100%">
+        <table class="" id="organizations" style="display:block;width:100%">
            @if(count($selected_charities) > 0)
             @foreach($selected_charities as $index => $charity)
                 @include('volunteering.partials.add-organization', ['index' => $index,'charity' => $charity] )
@@ -83,7 +95,7 @@
                     </tr>
                     <tr>
                         <td>Category</td>
-                        <td id="category"></td>
+                        <td id="modalcategory"></td>
                     </tr>
                     <tr>
                         <td>Address</td>

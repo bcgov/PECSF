@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DonorByBusinessUnit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -29,17 +30,15 @@ class ChallengeController extends Controller
             $year = $request->year;
         }
         else{
-            $date = Carbon::now()->subYear();
+            $date = Carbon::now();
             $year = $date->format("Y");
         }
 
+        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->orderBy('yearcd')->get();
+
         $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-            ->join("elligible_employees", function($join){
-              //  $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                $join->on("business_units.code", '=', 'elligible_employees.business_unit');
-            })
-
+            ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
             ->where('donor_by_business_units.yearcd',"=",$year)
             ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
             ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
@@ -125,7 +124,7 @@ class ChallengeController extends Controller
             }
         }
 
-        return view('challenge.index', compact('charities','year','request','count'));
+        return view('challenge.index', compact('charities','year','request','count','years'));
     }
 
     /**

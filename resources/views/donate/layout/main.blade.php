@@ -1,5 +1,4 @@
 @extends('adminlte::page')
-
 @section('content')
 <div class="container mt-1">
     <div class="row">
@@ -12,12 +11,11 @@
             <img src="{{ asset('img/donor.png') }}" alt="Group of volunteers making wreaths at a table" class="py-5 img-fluid">
         </div>
 
-        <div class="col-9 col-sm-9">
+        <div class="col-0 col-sm-9">
 
         </div>
 
 
     </div>
 </div>
-
 @endsection

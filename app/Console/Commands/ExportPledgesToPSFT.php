@@ -11,6 +11,7 @@ use App\Models\DonateNowPledge;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\Http;
+use App\Models\SpecialCampaignPledge;
 
 class ExportPledgesToPSFT extends Command
 {
@@ -79,6 +80,11 @@ class ExportPledgesToPSFT extends Command
         $this->LogMessage( now() );        
         $this->LogMessage("2) Sending Donate Now Type pledge data to PeopleSoft");
         $this->sendDonateNowToPeopleSoft();
+
+        // Step 3 : Send Special Campaign Pledge data to PeopleSoft access endpoint 
+        $this->LogMessage( now() );        
+        $this->LogMessage("3) Sending Sepcial Campaign Type pledge data to PeopleSoft");
+        $this->sendSpecialCampaignToPeopleSoft();
 
         // Update the Task Audit log
         $this->task->end_time = Carbon::now();
@@ -294,6 +300,73 @@ class ExportPledgesToPSFT extends Command
                     "Amount" =>  $pledge->one_time_amount,
 
                     "Deduction_Code" => "PECADD",   // always "PECADD" for one-time Donate Now deduction
+                  
+                    'pledge_start_date' => $pledge->deduct_pay_from,
+                    'pledge_end_date' => $pledge->deduct_pay_from,
+                ];
+
+                $one_time_sent = $this->sendData($one_time_data);
+                       
+                // Update the complete flag in pledge table
+                $pledge->ods_export_status = 'C';
+                $pledge->ods_export_at = Carbon::now()->format('c');
+                $pledge->save();
+
+                // Log Message                 
+                $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
+            }
+        }
+
+
+        $this->LogMessage("Sent data was completed");
+        $this->LogMessage("Success - " . $this->success);
+        $this->LogMessage("Skip    - " . $this->skip);
+        $this->LogMessage("failure - " . $this->failure);
+        $this->LogMessage( now() );
+        
+        return 0;
+    }
+
+
+    private function sendSpecialCampaignToPeopleSoft() {
+
+        $this->success = 0;
+        $this->skip = 0;
+        $this->failure = 0;
+
+        $pledgeData = SpecialCampaignPledge::join('organizations', 'special_campaign_pledges.organization_id', 'organizations.id')
+                            ->where('organizations.code', 'GOV')
+                            ->where('special_campaign_pledges.ods_export_status', null)
+                            ->select('special_campaign_pledges.*')
+                            ->orderBy('special_campaign_pledges.id')
+                            ->get();
+
+        foreach($pledgeData as $pledge) {
+
+            // validation -- GUID 
+            $user = User::where('id', $pledge->user_id)->first();
+            if (!$user->guid ) {
+                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->skip += 1;
+                continue;
+            }
+
+            // One-time
+            if ($pledge->one_time_amount != 0) { 
+                $one_time_data = [
+                    "@odata.type" => "CDataAPI.[employee_info]",
+                    "date_posted" =>  Carbon::now()->format('Y-m-d'), // Carbon::now()->format('c'), 
+
+                    "Donation_Type" => 'S',   // Always 'S" for Speical Campaign
+                    'yearcd' => $pledge->yearcd,
+                    'transaction_id' => $pledge->id,
+                    'frequency' => 'One-Time',
+
+                    "GUID" => $pledge->user->guid,
+                    "Employee_Name" => $pledge->user->name,    
+                    "Amount" =>  $pledge->one_time_amount,
+
+                    "Deduction_Code" => "PECSPL",   // always "PECSPL" for special campaign deduction
                   
                     'pledge_start_date' => $pledge->deduct_pay_from,
                     'pledge_end_date' => $pledge->deduct_pay_from,

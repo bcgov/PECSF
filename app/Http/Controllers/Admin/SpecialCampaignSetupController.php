@@ -58,10 +58,10 @@ class SpecialCampaignSetupController extends Controller
 
             return Datatables::of($special_campaigns)
                 ->addColumn('action', function ($special_campaign) {
-                return '<a class="btn btn-info btn-sm  show-bu" data-id="'. $special_campaign->id .'" >Show</a>' .
-                       '<a class="btn btn-primary btn-sm ml-2 edit-bu" data-id="'. $special_campaign->id .'" >Edit</a>' .
-                       '<a class="btn btn-danger btn-sm ml-2 delete-bu" data-id="'. $special_campaign->id .
-                       '" data-name="'. $special_campaign->name . '">Delete</a>';
+                return '<button class="btn btn-info btn-sm  show-bu" data-id="'. $special_campaign->id .'" >Show</button>' .
+                       '<button class="btn btn-primary btn-sm ml-2 edit-bu" data-id="'. $special_campaign->id .'" >Edit</button>' .
+                       '<button class="btn btn-danger btn-sm ml-2 delete-bu" data-id="'. $special_campaign->id .
+                       '" data-name="'. $special_campaign->name . '">Delete</button>';
             })
             ->rawColumns(['action'])
             ->make(true);

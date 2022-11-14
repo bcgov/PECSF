@@ -9,7 +9,7 @@
         @csrf
 </div>
             <div class="mt-2">
-                <a href="{{route('donate.start')}}"><div class="btn btn-lg btn-outline-primary">Back</div></a>
+                <a href="{{route('donate.start')}}"><div class="btn btn-lg BC-Gov-SecondaryButton">Back</div></a>
                 <button class="next_button btn btn-lg btn-primary" disabled type="submit">Next</button>
             </div>
         </form>

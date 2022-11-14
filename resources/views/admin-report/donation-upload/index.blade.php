@@ -89,6 +89,7 @@
             <table class="table table-bordered" id="history-table" style="width:100%">
                 <thead>
                     <tr>
+                        <th>Process ID</th>
                         <th>File Name</th>
                         <th>Submitted At</th>
                         <th>Start At</th>
@@ -198,13 +199,17 @@
             processing: true,
             serverSide: true,
             // select: true,
-            'order': [[1, 'desc']],
+            'order': [[0, 'desc']],
+            "initComplete": function(settings, json) {
+                oTable.columns.adjust().draw();
+            },
             ajax: {
                 url: '{!! route('reporting.donation-upload.index') !!}',
                 data: function (d) {
                 }
             },
             columns: [
+                {data: 'id', className: "dt-nowrap"},
                 {data: 'original_filename', width: '80px'},
                 {data: 'submitted_at',  className: "dt-nowrap"},
                 {data: 'start_at', defaultContent: '', className: "dt-nowrap" },
@@ -254,7 +259,7 @@
                             class: toast_class,
                             title: toast_title,
                             autohide: true,
-                            delay: 12000,
+                            delay: 8000,
                             body: toast_body
             });
         }
@@ -286,74 +291,81 @@
         });
 
         // Format Submission (Ajax)
+        var isLoading = false;
+
         $("#upload-form").submit(function(e) {
             e.preventDefault();
 
-            var form = document.getElementById("upload-form");
-            var formData = new FormData();
-            $("select[name='organization_id']").each(function(){
-                formData.append('organization_id', $(this).val());
-            });
-            $("input[name='donation_file']").each(function(){
-                if ($(this).val() ) {
-                    formData.append('donation_file',  $(this)[0].files[0]);
-                }
-            });
+            if (!isLoading) {
+                isLoading = true;
 
-            var fields = ['organization_id', 'donation_file'];
-            $.each( fields, function( index, field_name ) {
-                $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
-            });
-            $('.donation_file_error').html();
-
-            $("#upload-form").fadeTo("slow",0.2);
-            $.ajax({
-                url: "{{ route('reporting.donation-upload.store') }}",
-                type:"POST",
-                data: formData,
-                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
-                processData: false,     // tell jQuery not to process the data
-                contentType: false,     // tell jQuery not to set contentType
-                cache: false,
-                dataType: 'json',
-                success:function(response){
-
-                    // Clear up the uploded file
-                    //$("input[name='donation_file']").val('');
-                    $("input[name='donation_file']").val(null);
-                    $(".file-upload").removeClass('active');
-                    $("#noFile").text("No file chosen...");
-                    $('#remove-upload-area').hide();
-
-                    oTable.ajax.reload(null, false);	// reload datatables
-
-                    // var code = $("#bu-edit-model-form [name='code']").val();
-                    Toast('Success', response.success,  'bg-success');
-
-                    // window.location = response[0];
-                    console.log(response);
-
-                },
-                error: function(response) {
-                    if (response.status == 422) {
-                        $.each(response.responseJSON.errors, function(field_name,error){
-
-                            if (field_name == 'donation_file') {
-                                $('.donation_file_error').html( '<span class="text-strong text-danger">' + error + '</span>');
-                            } else {
-                                $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
-                            }
-                        })
+                var form = document.getElementById("upload-form");
+                var formData = new FormData();
+                $("select[name='organization_id']").each(function(){
+                    formData.append('organization_id', $(this).val());
+                });
+                $("input[name='donation_file']").each(function(){
+                    if ($(this).val() ) {
+                        formData.append('donation_file',  $(this)[0].files[0]);
                     }
-                    console.log('Error');
-                },
-                complete:function(){
-                    $("#upload-form").fadeTo("slow",1);
-                }
-            });
+                });
 
+                var fields = ['organization_id', 'donation_file'];
+                $.each( fields, function( index, field_name ) {
+                    $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
+                });
+                $('.donation_file_error').html('');
 
+                $("#upload-form").fadeTo("slow",0.2);
+                $.ajax({
+                    url: "{{ route('reporting.donation-upload.store') }}",
+                    type:"POST",
+                    data: formData,
+                    headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                    processData: false,     // tell jQuery not to process the data
+                    contentType: false,     // tell jQuery not to set contentType
+                    cache: false,
+                    dataType: 'json',
+                    success:function(response){
 
+                        // Clear up the uploded file
+                        //$("input[name='donation_file']").val('');
+                        $("input[name='donation_file']").val(null);
+                        $(".file-upload").removeClass('active');
+                        $("#noFile").text("No file chosen...");
+                        $('#remove-upload-area').hide();
+
+                        oTable.ajax.reload(null, false);	// reload datatables
+
+                        // var code = $("#bu-edit-model-form [name='code']").val();
+                        Toast('Success', response.success,  'bg-success');
+
+                        // window.location = response[0];
+                        console.log(response);
+
+                    },
+                    error: function(response) {
+                        if (response.status == 422) {
+                            $.each(response.responseJSON.errors, function(field_name,error){
+
+                                if (field_name == 'donation_file') {
+                                    $('.donation_file_error').html( '<span class="text-strong text-danger">' + error + '</span>');
+                                } else {
+                                    $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+                                }
+                            })
+                        }
+                        console.log('Error');
+                    },
+                    complete:function(){
+                        $("#upload-form").fadeTo("slow",1.0);
+                        isLoading = false;
+                    }
+                    
+                });
+
+            }
+            
         });
 
     });

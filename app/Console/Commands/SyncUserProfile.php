@@ -127,13 +127,15 @@ class SyncUserProfile extends Command
             //         ->orWhere('date_deleted', '>=', $last_start_time);
             // })
             //         ->orWhere('date_deleted', '>=', $last_start_time);
-            ->whereNull('date_deleted')
+            ->where(function ($query)  {
+                $query->whereNull('date_deleted')
+                    ->orWhereBetween('date_deleted',['2021-09-01','2022-12-31']);    // To create 2022 donatiion in Greenfield for testing purpose (User Profile required)
+            })
             ->orderBy('guid','asc')                // 
             ->orderBy('job_indicator','desc')      // Job indicator -- Secondary, then Primary 
             ->select(['id', 'emplid', 'empl_rcd', 'email', 'guid', 'idir', 
                 'first_name', 'last_name', 'name', 'appointment_status', 'empl_ctg', 'job_indicator',
                 'date_updated', 'date_deleted']);
-
 
         // Step 1 : Create and Update User Profile
         $this->LogMessage( now() );
@@ -167,6 +169,8 @@ class SyncUserProfile extends Command
                     if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) and
                          (trim($user->email) == $target_email ) and 
                          ($user->source_type == self::SOURCE_TYPE) and   
+                         ($user->employee_job_id == $employee->id) and 
+                         ($user->emplid == $employee->emplid) and 
                          ($user->acctlock == $acctlock)  
                         ) {
                             // reach here mean No Differece found -- no action required

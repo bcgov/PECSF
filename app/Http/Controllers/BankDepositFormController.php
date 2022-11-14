@@ -130,6 +130,7 @@ class BankDepositFormController extends Controller
                 }
             }
         }
+
         return view('volunteering.forms',compact('organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
@@ -154,13 +155,14 @@ class BankDepositFormController extends Controller
          ]);
         $validator->after(function ($validator) use($request) {
 
-            $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
-
-
-            if(strlen($decimals) == 3)
-            {
-                $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
+            if(strpos($request->deposit_amount,".") !== FALSE){
+                $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
+                if(strlen($decimals) == 3)
+                {
+                    $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
+                }
             }
+
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV")
@@ -282,6 +284,7 @@ class BankDepositFormController extends Controller
 
         $form = BankDepositForm::Create(
             [
+                'business_unit' => $request->business_unit,
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
                 'event_type' =>  $request->event_type,
@@ -299,7 +302,7 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
-                'business_unit' => $request->business_unit
+
             ]
         );
 
@@ -576,6 +579,10 @@ class BankDepositFormController extends Controller
         if($request->keyword != "")
         {
             $organizations->where("charity_name","LIKE","%".$request->keyword."%");
+        }
+        if (is_numeric($request->pool_filter)) {
+            $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
+            $organizations->whereIn('id', $pool->charities->pluck('charity_id') );
         }
 
         $organizations = $organizations->paginate(7);

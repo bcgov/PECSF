@@ -24,15 +24,14 @@ class Donation extends Model
     [
         "01" => "Cash",
         "02" => "Credit Card",
+        "13" => "Donate Today",
         "04" => "Fund Raiser Event",
         "05" => "Gaming",
+        "99" => "Other",        
         "06" => "Personal Cheque",
         "10" => "Pledge",
         "11" => "Pledge One-time",
         "12" => "Special Campaign",
-        "13" => "Donate Today",
-        "99" => "Other",
-
     ];
 
     public const PROCESS_STATUS_LIST = 
@@ -52,6 +51,15 @@ class Donation extends Model
         return array_key_exists($this->source_type, self::SOURCE_TYPE_LIST) ? self::SOURCE_TYPE_LIST[$this->source_type] : '';
     }
 
+    public function organization() {
+        return $this->belongsTo(Organization::class, 'org_code', 'code')->withDefault([
+            'name' => '',
+        ]);
+    }
+
+    public function process_history() {
+        return $this->belongsTo(ProcessHistory::class, 'process_history_id', 'id')->withDefault();
+    }
 
     public function created_by()
     {

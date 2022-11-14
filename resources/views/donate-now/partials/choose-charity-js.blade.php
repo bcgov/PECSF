@@ -37,8 +37,7 @@
                 success:function(data)
                 {
                     $("#charities").fadeTo("slow",1);
-                    $('#charities').html(data);
-
+                    $(".charity-container").html(data);
                 }
             });
         }
@@ -63,7 +62,7 @@
         $("#charity-selection-section").on("click",".select-btn",function(e){
             e.preventDefault();
 
-            // check if the selection is not previous one 
+            // check if the selection is not previous one
             if ( $(this).attr("org_id") == $("input[name='charity_id']").val()) {
 
                 $('#selected_charity0').remove();
@@ -84,7 +83,7 @@
             // row_number++;
             // $('.selected_charity').last().find(".charity_name").val($(this).attr("name"));
             $('#selected_charity_name').html($(this).attr("name"));
-            
+
             $('.selected_charity').last().find("input[name='charity_id']").val($(this).attr("org_id"));
 
             // $('.selected_charity').last().append("<input type='hidden' name='id[]' value='"+$(this).attr('org_id')+"'/>");
@@ -109,7 +108,7 @@
         $("#charity-selection-section").on("click",".remove",function(e){
             e.preventDefault();
 
-            name = $('#selected_charity_name').html(); 
+            name = $('#selected_charity_name').html();
 
             if (!confirm('Are you sure you want to remove this charity "' + name + '" ?')) {
                     return;
@@ -151,7 +150,7 @@
 <script type="x-tmpl" id="selected-charity-tmpl">
 <tr class="selected_charity" id="selected_charity0">
     <td>
-        <div class="container">        
+        <div class="container">
             <div class="form-row">
                 <div class="col-12">
                     <div>
@@ -163,7 +162,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group col-md-11">
-                    <input class="form-control" type="text" id="special_program" name="special_program" 
+                    <input class="form-control" type="text" id="special_program" name="special_program"
                         value=""
                         placeholder="Optional: If you have a specific community or initiative in mind, eneter it here.">
                     <span class="specific_community_or_initiative_errors  errors"></span>

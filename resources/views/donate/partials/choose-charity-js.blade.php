@@ -22,6 +22,10 @@
             fetch_data(1);
         });
 
+        $("#pool_filter").change(function(){
+            fetch_data(1);
+        });
+
         function fetch_data(page=1)
         {
             $("#charities").fadeTo("slow",0.2);
@@ -33,12 +37,14 @@
             });
 
             $.ajax({
-                url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#category").val()+"&province="+$("#charity_province").val()+"&keyword="+$("#keyword").val()+"&selected_vendors="+selected_vendors,
+                url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#category").val()
+                        +"&province="+$("#charity_province").val()+"&keyword="+$("#keyword").val()
+                        +"&pool_filter="+$("#pool_filter").val()
+                        +"&selected_vendors="+selected_vendors,
                 success:function(data)
                 {
                     $("#charities").fadeTo("slow",1);
-                    $('#charities').html(data);
-
+                    $(".charity-container").html(data);
                 }
             });
         }
@@ -113,7 +119,7 @@
             $("#effective_date_of_status").html($(this).attr("effective_date_of_status"));
             $("#sanction").html($(this).attr("sanction"));
             $("#designation").html($(this).attr("designation"));
-            $("#category").html($(this).attr("category"));
+            $("#modalcategory").html($(this).attr("category"));
             $("#address").html($(this).attr("address"));
             $("#city").html($(this).attr("city"));
             $("#province").html($(this).attr("province"));

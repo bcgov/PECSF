@@ -223,7 +223,7 @@ class ImportPledgeHistory extends Command
     {
         // Truncate Pledge History table
         PledgeHistory::truncate();
-
+        
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
@@ -299,6 +299,14 @@ class ImportPledgeHistory extends Command
                                 'amount' => $row->amount,
                                 'vendor_id' => $row->vendor_id,
                                 'additional_info' => $row->additional_info,
+
+                                'vendor_name1' => $row->vendor_name1,
+                                'vendor_name2' => $row->vendor_name2,
+                                'vendor_bn' => $row->vendor_bn,
+                                'remit_vendor' => $row->remit_vendor,
+                                'deptid' => $row->DEPTID,
+                                'city' => $row->city,
+                                'created_date' => $row->created,
 
                             ]);
                         }

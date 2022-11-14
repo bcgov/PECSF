@@ -76,9 +76,11 @@ class DonationsImportJob implements ShouldQueue
 
             $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
 
-            $text = 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
+            $text = 'Process ID : ' . $this->history_id . PHP_EOL;
+            $text .= 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
             $text .= PHP_EOL;
             $text .= 'Exceptional found: ' . PHP_EOL;
+            $text .= 'Note: The field position is start from 0 (0 -> Column A, 1 -> Column B, 2 -> Column C etc)' . PHP_EOL;
             $text .= PHP_EOL;
 
             foreach ($failures as $failure) {

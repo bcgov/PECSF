@@ -230,6 +230,11 @@ class CharityController extends Controller
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
 
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+                                    return $pool->region->name;
+                                  });
+
+
         $selected_charities = [];
         //Session::forget("charities");
         if (Session::has('charities')) {
@@ -284,12 +289,12 @@ class CharityController extends Controller
         }
 
         if($request->ajax()){
-            return view('donate.partials.charity-pagination', compact('charities','terms','designation_list','category_list','province_list','selected_charities') );
+            return view('donate.partials.charity-pagination', compact('charities','terms','designation_list','category_list','province_list','fund_support_pool_list','selected_charities') );
         }
 
         $multiple = true;
         $organizations = [];
-        return view('donate.select', compact('organizations','multiple','charities','terms','designation_list','category_list','province_list','selected_charities'));
+        return view('donate.select', compact('organizations','multiple','charities','terms','designation_list','category_list','province_list','fund_support_pool_list','selected_charities'));
     }
 
     // public function edit(Request $request, $id = null) {
@@ -482,6 +487,11 @@ class CharityController extends Controller
 
             $annualBiWeeklyAmount = $biWeeklyAmount * 26;
             $annualOneTimeAmount = $oneTimeAmount;
+
+            if($oneTimeAmount == 0 && $biWeeklyAmount == 0)
+            {
+                return redirect()->route('donate.amount');
+            }
 
             $oneTimeAmountPerCharity = round($oneTimeAmount / count($selectedCharities['id']), 2);
             $biWeeklyAmountPerCharity = round($biWeeklyAmount / count($selectedCharities['id']), 2);

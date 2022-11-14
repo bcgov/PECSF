@@ -10,10 +10,18 @@ class NonGovPledgeHistory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'org_code', "emplid", "pecsf_id", 'pledge_type', 'yearcd', 
-        'vendor_id', 'vendor_bn', 'remit_vendor', 'remit_vendor_bn',
-        'name', 'first_name', 'last_name', 'city', 'amount',
-        'created_by_id', 'updated_by_id',
+        // 'org_code', "emplid", "pecsf_id", 'pledge_type', 'yearcd', 
+        // 'vendor_id', 'vendor_bn', 'remit_vendor', 'remit_vendor_bn',
+        // 'name', 'first_name', 'last_name', 'city', 'amount',
+        'pledge_type', 'source', 'tgb_reg_district', 'charity_bn', 'yearcd',
+        'org_code', 'emplid', 'pecsf_id', 'name', 'first_name', 'last_name',
+        'guid', 'vendor_id', 'additional_info','frequency',
+        'per_pay_amt', 'pledge', 'percent', 'amount', 'deduction_code',
+        'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor',
+        'deptid', 'city', 'created_date',
+        'created_by_id', 'updated_by_id',       
+
+
     ];
 
     public function created_by() 
