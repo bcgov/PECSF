@@ -43,19 +43,14 @@ COPY ./start.sh /usr/local/bin/start
 
 RUN php artisan cache:clear
 
-# RUN composer update --ignore-platform-reqs
+RUN composer update --ignore-platform-reqs
 
 
-# # Create cache and session storage structure
-# RUN bash -c 'mkdir -p /var/www/html/storage{app,framework,logs}'
-# RUN chmod -R 755 /var/www/html/storage
+EXPOSE 8000
 
+RUN chgrp -R 0 /app && \
+    chmod +x /usr/local/bin/start && \
+    chmod -R g=u /app
 
-# EXPOSE 8000
-
-# RUN chgrp -R 0 /app && \
-#     chmod +x /usr/local/bin/start && \
-#     chmod -R g=u /app
-
-# #CMD php artisan serve --host=0.0.0.0 --port=8000
-# CMD ["/usr/local/bin/start"]
+#CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["/usr/local/bin/start"]
