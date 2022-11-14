@@ -77,7 +77,7 @@ jobs:
      NAMESPACE: 1fd77b-dev
      BUILD_NAMESPACE: 1fd77b-tools
      BRANCH: ${{ github.ref_name }}
-     APP: pecsf
+     APP: pecsf-new
      APP_HOST: pecsf-dev.apps.silver.devops.gov.bc.ca
      DB_NAME: pecsf
     needs:
@@ -118,7 +118,7 @@ jobs:
                 -p DB_USER=pecsf\
                 -p HTTP_PORT=8000 \
                 -p DB_PORT=3306 \
-                -p SITE_NAME=PECSF \
+                -p SITE_NAME=PECSF-NEW \
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
@@ -153,7 +153,7 @@ jobs:
      NAMESPACE: 1fd77b-test
      BUILD_NAMESPACE: 1fd77b-tools
      BRANCH: ${{ github.ref_name }}
-     APP: pecsf
+     APP: pecsf-new
      APP_HOST: pecsf-test.apps.silver.devops.gov.bc.ca
      DB_NAME: pecsf
     needs:
@@ -194,7 +194,7 @@ jobs:
                 -p DB_USER=pecsf\
                 -p HTTP_PORT=8000 \
                 -p DB_PORT=3306 \
-                -p SITE_NAME=PECSF \
+                -p SITE_NAME=PECSF-NEW \
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
@@ -228,7 +228,7 @@ jobs:
      NAMESPACE: 1fd77b-prod
      BUILD_NAMESPACE: 1fd77b-tools
      BRANCH: ${{ github.ref_name }}
-     APP: pecsf
+     APP: pecsf-new
      APP_HOST: pecsf.apps.silver.devops.gov.bc.ca
      DB_NAME: pecsf
     needs:
@@ -269,7 +269,7 @@ jobs:
                 -p DB_USER=pecsf\
                 -p HTTP_PORT=8000 \
                 -p DB_PORT=3306 \
-                -p SITE_NAME=PECSF \
+                -p SITE_NAME=PECSF-NEW\
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
