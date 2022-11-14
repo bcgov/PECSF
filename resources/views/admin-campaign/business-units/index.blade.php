@@ -21,7 +21,7 @@
 @endsection
 @section('content')
 
-<p><a href="/administrators/dashboard">Back</a></p>
+<p><a href="/administrators/dashboard" class="BC-Gov-SecondaryButton">Back</a></p>
 <div class="card">
 	<div class="card-body">
 

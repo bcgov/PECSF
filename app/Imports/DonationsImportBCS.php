@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\Pledge;
 use App\Models\Donation;
 use App\Models\CampaignYear;
 use App\Models\Organization;
@@ -11,11 +12,11 @@ use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\WithStartRow;
-use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
 class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, WithEvents, WithBatchInserts, WithStartRow
 {
@@ -40,8 +41,6 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
         $this->history_id = $history_id;
         $this->org_code = $org_code;
 
-        $this->in_current_row = [];
-
         $this->row_count = 0;
         $this->done_count = 0;
         $this->total_amount = 0;
@@ -65,6 +64,17 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
 
         $this->imported_rows .= implode(",", $row) . PHP_EOL;
 
+        // 
+        $frequency = 'bi-weekly';    
+        switch ( strtolower($row[4]) ) {
+            case 'biweekly':
+                $frequency = 'bi-weekly';    
+                break;
+            case 'one-time deduction':     
+                $frequency = 'one-time'; 
+                break;
+        }
+
         return new Donation([
             'org_code'     => $row[0],      // Organization
             'pecsf_id'     => $row[1],
@@ -72,15 +82,13 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
             'yearcd'       => $row[2],      // Calendar Year
             'pay_end_date' => $row[3],
             'source_type'  => '10',
-            'frequency'    => 'Bi-Weekly',   // $row[4],  
+            'frequency'    => $frequency,    // $data[4],  
 
             'amount'       => $row[5],
 
             'process_history_id' => $this->history_id,
             
         ]);
-
-
 
     }
 
@@ -89,7 +97,35 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
         // get and store the current row for validation purpose
         $data[1] = str_pad($data[1], 6, "0", STR_PAD_LEFT); 
 
-        $this->in_current_row = $data;
+        // Preapre Data for checking exists and unique 
+        $frequency = '';
+        switch ( strtolower($data[4]) ) {
+            case 'biweekly':
+                $frequency = 'bi-weekly';    
+                break;
+            case 'one-time deduction':     
+                $frequency = 'one-time'; 
+                break;
+        }
+
+        $pledge = Pledge::join('organizations','pledges.organization_id','organizations.id')
+                        ->join('campaign_years','pledges.campaign_year_id','campaign_years.id')
+                        ->where('organizations.code', $data[0])
+                        ->where('pledges.pecsf_id', $data[1])
+                        ->where('campaign_years.calendar_year', $data[2])
+                        ->first();
+
+        $donation = Donation::where('org_code', $data[0])
+                        ->where('pecsf_id', $data[1])
+                        ->where('yearcd', $data[2])
+                        ->where('pay_end_date', $data[3])
+                        ->where('source_type', 10)
+                        ->where('frequency', $frequency)
+                        ->first();
+                     
+        // // special fields for checking unique 
+        $data['pledge'] = $pledge ? $pledge->id : 0;
+        $data['donation'] = $donation ? $donation->id : 0;
 
         return $data;
     }
@@ -98,35 +134,19 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
     {
 
         $orgs = [ $this->org_code ];
-      
-        $input_org = Organization::where('code', $this->in_current_row[0])->first();
-        $input_cy  = CampaignYear::where('calendar_year', $this->in_current_row[2])->first();
-
-        $row = $this->in_current_row;
 
         return [
             // Heading
             '0' => ['required', Rule::in( $orgs )],
-            '1' => ['required', Rule::exists('pledges', 'pecsf_id')                     
-                                    ->where(function ($query) use ($input_org, $input_cy) {                      
-                                        $query->where('organization_id', $input_org->id ?? null)
-                                              ->where('campaign_year_id', $input_cy->id ?? null);                                   
-                                    }),
-                                 Rule::unique('donations','pecsf_id')
-                                    ->where(function ($query) use ($row) {                      
-                                        $query->where('org_code', $row[0])
-                                                ->where('yearcd', $row[2])
-                                                ->where('pay_end_date', $row[3])
-                                                ->where('source_type', 10)
-                                                ->where('frequency', $row[4]);
-                                 }),
-            ],
-          
-            '2' => 'required',  // Calendar Year
-            '3' => 'required',  // Pay Period End Date
-            '4' => 'required',  // frequency_of_pay_period
-            '5' => 'required',  // Amount
+            '1' => 'required|min:6|max:6',
+            '2' => 'required|numeric',  // Calendar Year
+            '3' => 'required|date',  // Pay Period End Date
+            '4' => ['required', Rule::in(["Biweekly", "One-Time Deduction"]) ],  // frequency_of_pay_period
+            '5' => 'required|numeric',  // Amount
             '6' => 'required',  // Employee Name
+
+            'pledge' => 'exists:pledges,id',
+            'donation' => 'unique:donations,id',
 
         ];
     
@@ -138,9 +158,17 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
     public function customValidationMessages()
     {
         return [
-            '0.in' => 'The organization on upload file doesn\'t match with the selected org.',
-            '1.exists' => 'No pledge was setup for this pecsf_id.',
-            '1.unique' => 'The same pay deduction transactions was loaded',
+            '0.in' =>    'The organization on upload file doesn\'t match with the selected org.',
+            '1.min' => 'The 1 field must be 6 characters.',
+            '1.max' => 'The 1 field must be 6 characters.',
+            '2.numeric' => 'The 2 field must be a number',
+            '3.date' =>  'The 3 field is not a valid date',
+            '4.in'  =>   'The 4 field is invalid frequency (either Biweekly or One-Time Deduction)',
+            '5.numeric' => 'The 5 field must be a number',
+
+            'pledge.exists' => 'No pledge was setup for this pecsf_id.',
+            'donation.unique' => 'The same pay deduction transactions has been loaded.',
+
         ];
     }
     
@@ -173,7 +201,13 @@ class DonationsImportBCS implements  ToModel, SkipsEmptyRows, WithValidation, Wi
             AfterImport::class => function (AfterImport $event) {
 
                 $status = 'Completed';
-                $messages = 'Success: ' . $this->done_count . ' row(s) were imported. ' . PHP_EOL;
+
+                $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+               
+                $messages = 'Process ID : ' . $this->history_id . PHP_EOL;
+                $messages .= 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
+                $messages .= PHP_EOL;
+                $messages .= 'Success: ' . $this->done_count . ' row(s) were imported. ' . PHP_EOL;
                 $messages .= 'Total Amount : ' . number_format($this->total_amount, 2, '.', ',') . PHP_EOL;
                 $messages .= PHP_EOL;
                 $messages .= 'The imported data details : ' . PHP_EOL;

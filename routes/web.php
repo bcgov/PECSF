@@ -25,14 +25,15 @@ use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
-use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\Admin\DonationDataController;
 
+use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
-use App\Http\Controllers\System\UserMaintenanceController;
 
+use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
@@ -239,6 +240,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(function() {
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
+    Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
 });
 

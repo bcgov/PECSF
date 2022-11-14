@@ -52,11 +52,13 @@
 
     #special-campaign-area .card:hover {
         background-color: #ddeaee ;
+        
         /* color: white; */
     }
     #special-campaign-area .card.active {
         /* background-color: #a9c8e5; */
         background-color: #fcfcfc;
+        border: 1px solid red;
 
     }
 

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\EmployeeJob;
 use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
+use App\Models\EmployeeJobAudit;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\Http;
 
@@ -179,6 +180,10 @@ class ImportEmployeeJob extends Command
                                 continue;
                             }
 
+                            $old_job = EmployeeJob::where('emplid',  $row->EMPLID)
+                                                    ->where('empl_rcd', $row->EMPL_RCD)
+                                                    ->first();
+
                             $job = EmployeeJob::updateOrCreate([
                                 'emplid' => $row->EMPLID,
                                 'empl_rcd' => $row->EMPL_RCD,
@@ -238,6 +243,9 @@ class ImportEmployeeJob extends Command
 
                                 $this->created_count += 1;
 
+                                // Audit -- New
+                                EmployeeJobAudit::create( array_merge(  ['audit_stamp' => now(), 'audit_action' => 'A'], $job->toArray() ) );
+
                                 if  ($this->created_count <= self::MAX_CREATE_COUNT)  {
                                     $this->LogMessage('(CREATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
                                 }                                    
@@ -246,11 +254,19 @@ class ImportEmployeeJob extends Command
 
                                 $this->updated_count += 1;
 
+                                // Audit -- Change
+                                EmployeeJobAudit::create( array_merge(  ['audit_stamp' => now(), 'audit_action' => 'K'], $old_job->toArray() ) );
+                                EmployeeJobAudit::create( array_merge(  ['audit_stamp' => now(), 'audit_action' => 'N'], $job->toArray() ) );
+
                                 if  ($this->updated_count <= self::MAX_UPDATE_COUNT)  {
-                                    $this->LogMessage('(UPDATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
+                                    $this->LogMessage('(UPDATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $old_job->guid . ' | ' . $old_job->idir );
                                     $changes = $job->getChanges();
                                     unset($changes["updated_at"]);
-                                    $this->LogMessage('  summary => '. json_encode( $changes ) );
+
+                                    $original = array_intersect_key($old_job->toArray(),$changes);
+                                    $this->LogMessage('  summary => ' );
+                                    $this->LogMessage('      original : '. json_encode( $original ) );
+                                    $this->LogMessage('      change   : '. json_encode( $changes ) );
                                 }
 
                             } else {

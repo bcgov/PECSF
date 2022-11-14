@@ -13,6 +13,7 @@ class PledgeHistory extends Model
         'campaign_type', 'source', 'frequency', 'yearcd', 'campaign_year_id', 'tgb_reg_district', 'region_id', 
         'name1', 'name2', 'emplid', 'GUID', 'vendor_id', 'additional_info',
         'charity_bn', 'charity_id', 'per_pay_amt', 'pledge', 'percent', 'amount',
+        'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor', 'deptid', 'city', 'created_date',
     ];
 
     public function region() {

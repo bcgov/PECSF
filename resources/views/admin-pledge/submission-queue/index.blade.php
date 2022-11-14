@@ -1,73 +1,15 @@
-<div class="modal fade" id="edit-event-modal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-charity-name" id="charity-modal-label">Submission Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- content will be load here -->
-                <button class="btn btn-primary edit">Edit</button>
-                <div id="edit-event-modal-body">
-                    @include('volunteering.partials.form')
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="lock-event-modal">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-charity-name" id="charity-modal-label">Lock this submission?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- content will be load here -->
-                <p>If a new submission is required current submission should be locked to prevent accidental use.<br>This action cannot be undone.</p>
-            </div>
-            <div class="modal-footer">
-                <input type="hidden" id="submission_id" />
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger lock-submission">Lock Submission <i class="fa fa-lock" aria-hidden="true"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 @extends('adminlte::page')
-
 @section('content_header')
-
-
     <div class="d-flex mt-3">
-        <h4>Pledge Administration</h4>
+        <h1>Pledge Administration</h1>
         <div class="flex-fill"></div>
     </div>
     <br>
     <br>
     @include('admin-pledge.partials.tabs')
-
 @endsection
 @section('content')
-
-
-    <p><a href="/administrators/dashboard">Back</a></p>
-
-    <p>
-        Enter any information you have and click Search. Leave fields blank for a list of all values.
-    </p>
-
-
-
-    @include('admin-pledge.partials.menu')
+    <p><button class="btn btn-primary" role="button"  onclick="window.history.back();">Back</button></p>
 
     <div style="clear:both;float:none;"></div>
     <br>
@@ -99,7 +41,50 @@
         </div>
     </div>
 
-
+    <div class="modal fade" id="edit-event-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-charity-name" id="charity-modal-label">Submission Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- content will be load here -->
+                    <button class="btn btn-primary edit">Edit</button>
+                    <div id="edit-event-modal-body">
+                        @include('volunteering.partials.form')
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="lock-event-modal">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-charity-name" id="charity-modal-label">Lock this submission?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- content will be load here -->
+                    <p>If a new submission is required current submission should be locked to prevent accidental use.<br>This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="submission_id" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger lock-submission">Lock Submission <i class="fa fa-lock" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 @push('css')
@@ -159,6 +144,7 @@
         $(".edit").click(function(){
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);
+            $("#edit-event-modal").find("button").attr("disabled",false);
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
@@ -212,7 +198,7 @@
 
                     $("#employment_city").val(data[0].employment_city).select2();
                     $("#region").val(data[0].region_id).select2();
-                    $("#description").val(data[0].name);
+                    $("#description").val(data[0].description);
 
                     $("#organization_code").html("<option value='"+data[0].organization_code+"'>"+data[0].organization_code+"</option>");
                     $("#organization_code").select2({
@@ -263,6 +249,8 @@
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
+                    $("#edit-event-modal").nextAll("button").attr("disabled",true);
+
                     $('#edit-event-modal').modal('show');
                     console.log(data);
                 },"json");

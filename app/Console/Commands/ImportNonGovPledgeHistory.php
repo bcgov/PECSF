@@ -75,85 +75,84 @@ class ImportNonGovPledgeHistory extends Command
     
     }
 
-    protected function UpdateNonGovPledgeHistory() {
+    protected function UpdateNonGovPledgeHistory() 
+    {
 
         // Truncate Pledge History table
         NonGovPledgeHistory::truncate();
-
-        $currentYear = Carbon::now()->format('Y');
-
-        // Loop the years
-        for($yr=2005; $yr <= $currentYear; $yr++) {
-            
-            $this->row_count = 0;
-
-            $this->UpdateNonGovPledgeHistoryForYear( $yr );
-
-            $this->LogMessage ( 'Total rows for (' . $yr . ') : ' . $this->row_count );
-        }
-
-        
-    }
-
-    protected function UpdateNonGovPledgeHistoryForYear( $year ) 
-    {
-
-        $pushdata = new stdClass();
-        $pushdata->YearCd = $year;
-
+                
         try {
-            // $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            //     ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1');
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1');
 
-            $response = Http::withBasicAuth(
-                env('ODS_USERNAME'),
-                env('ODS_TOKEN')
-            )->withBody( json_encode($pushdata), 'application/json')
-            ->post( env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') );
-
-            // $row_count = json_decode($response->body())->{'@odata.count'};
+            $row_count = json_decode($response->body())->{'@odata.count'};
             
+            $size = 10000;
+            for ($i = 0; $i <= $row_count / $size ; $i++) {
+
+                $top  = $size;
+                $skip = $size * $i;
+                // Loading pledge history data
+                $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                    ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                    ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip) ;
+
+                $this->LogMessage( 'Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip '. $skip);
+                // Loading pledge history data
+                // $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+                //     ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT'));
+
                 if ($response->successful()) {
                     $data = json_decode($response->body())->value; 
+                    $batches = array_chunk($data, 1000);
                     
-                    
-                    foreach ($data as $row) {
+                    foreach ($batches as $key => $batch) {
+                        $this->LogMessage( '    -- each batch (1000) $key - '. $key );
+                        foreach ($batch as $row) {
 
-                        $this->row_count += 1;
-
-                        $first_name = null;
-                        $last_name = null;
-
-                        if (isset($row->name)) {
-                            $names = explode(",", $row->name);
-                            if (count($names) == 2) {
-                                $last_name = $names[0];
-                                $first_name = $names[1];
+                            // Skip if the GUID is blank
+                            if (empty($row->GUID)) {
+                                continue;
                             }
-                        }
-
-                        
-                        if (isset($row->tgb_pecsf_id)) {
 
                             NonGovPledgeHistory::Create([
-                                'org_code' => $row->tgb_org_cde,
+                                'pledge_type' => $row->campaign_type,
+                                'source' => $row->source,
+                                'tgb_reg_district' => $row->tgb_reg_district,
+                                'charity_bn' => $row->charity_bn,
                                 'yearcd' => $row->yearcd,
-                                'pledge_type' => $row->pledge_type,
-                                'emplid' => $row->emplid,
-                                'pecsf_id' => $row->tgb_pecsf_id,
+                                'org_code' => $row->tgb_org_cde,
+                                'emplid' => $row->tgb_org_cde == 'GOV' ? $row->emplid : null,
+                                'pecsf_id' => $row->tgb_org_cde <> 'GOV' ? $row->emplid : null, // $row->tgb_pecsf_id,
+                                'name' => $row->employee_disp_name,
+                                'first_name' => $row->first_name,
+                                'last_name' => $row->last_name,
+                                'guid' =>  $row->GUID, 
                                 'vendor_id' => $row->vendor_id,
+                                'additional_info' => $row->additional_info,
+                                'frequency' => $row->frequency,
+                                'per_pay_amt' => $row->per_pay_amt,
+                                'pledge' => $row->pledge,
+                                'percent' => $row->percent,
+                                'amount' => $row->amount,
+                                'deduction_code' => $row->deduction_code,
+
+                                'vendor_name1' => $row->vendor_name1,
+                                'vendor_name2' => $row->vendor_name2,
                                 'vendor_bn' => $row->vendor_bn,
                                 'remit_vendor' => $row->remit_vendor,
-                                'remit_vendor_bn' => $row->remit_vendor_bn,
-                                'name' => $row->name,
-                                'first_name' => $first_name,
-                                'last_name' => $last_name,
+
+                                'deptid' => $row->DEPTID,
                                 'city' => $row->city,
-                                'amount' => $row->amount,
+                                'created_date' => $row->created,
+
                             ]);
                         }
                     }
+
+                    $this->message .= 'Total rows : ' . $row_count . PHP_EOL;
 
                 } else {
 
@@ -162,9 +161,10 @@ class ImportNonGovPledgeHistory extends Command
 
                 }
 
+            }
 
         } catch (\Exception $ex) {
-        
+
             // write to log message 
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
@@ -172,6 +172,7 @@ class ImportNonGovPledgeHistory extends Command
             return 1;
 
         }
+
     }
 
 

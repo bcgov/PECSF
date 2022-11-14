@@ -49,8 +49,10 @@ class CharityListMaintenanceController extends Controller
         }
 
         $jobs = count(Jobs::all()) > 0 ? Jobs::all() : [];
-        $completed_jobs = CompletedJobs::all();
-        $failed_jobs = FailedJobs::all();
+        $completed_jobs = CompletedJobs::where('payload','like', '%commandName%ProcessCharityList%')
+                                ->orderBy('created_at', 'desc')->get();
+        $failed_jobs = FailedJobs::where('payload','like', '%commandName%ProcessCharityList%')
+                                ->orderBy('failed_at', 'desc')->get();
 
         // load the view and pass the sharks
         return view('admin-campaign.charity-list-maintenance.index',compact('jobs','failed_jobs','completed_jobs'));

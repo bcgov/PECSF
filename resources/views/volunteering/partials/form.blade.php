@@ -5,7 +5,8 @@
 
     <input type="hidden" name="form_id" id="form_id" value="" />
 
-    <div class="form-row" style="width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
+    <div class="form-row" style="left: 5px;
+    position: relative;width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
         <h2>Event bank deposit form</h2>
     </div>
     <div class="card" style="border-radius:0px;">
@@ -296,7 +297,7 @@
         @foreach( $pools as $pool )
             <div class="form-group col-md-2 form-pool">
 
-                <div class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+                <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
                     {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
@@ -322,7 +323,7 @@
             </div>
         @endforeach
 
-        @for($i=0;$i<(4 - (count($pools)%6) );$i++)
+        @for($i=0;$i<((count($pools)%6) );$i++)
             <div class="form-group col-md-2 form-pool">
 
 
@@ -364,7 +365,7 @@
                     <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <label style="text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</label>
+                    <button  onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</button>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">
