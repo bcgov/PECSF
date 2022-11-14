@@ -41,16 +41,15 @@ COPY . /app
 COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 COPY ./start.sh /usr/local/bin/start
 
-RUN php artisan cache:clear
-
 RUN composer update --ignore-platform-reqs
-
+RUN php artisan config:clear
 
 EXPOSE 8000
 
 RUN chgrp -R 0 /app && \
     chmod +x /usr/local/bin/start && \
     chmod -R g=u /app
+USER 1001
 
 #CMD php artisan serve --host=0.0.0.0 --port=8000
 CMD ["/usr/local/bin/start"]
