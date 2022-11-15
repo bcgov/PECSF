@@ -15,10 +15,10 @@ class BusinessUnitSqlFileSeeder extends Seeder
     public function run()
     {
         //
-        $path = public_path('database/seeds/business_units.sql');
+        $path = base_path('database/seeds/business_units.sql');
         if (env('APP_ENV') == 'local') {
-            $path = public_path('..\database\seeds\business_units.sql');       
-        }       
+            $path = base_path('../database/seeds/business_units.sql');
+        }
         $sql = file_get_contents($path);
         DB::unprepared($sql);
 }

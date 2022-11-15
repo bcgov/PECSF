@@ -124,7 +124,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('special-campaign', SpecialCampaignController::class)->except(['show','edit','update','destroy']);
     Route::get('/special-campaign/thank-you', [SpecialCampaignController::class, 'thankYou'])->name('special-campaign.thank-you');
     Route::get('/special-campaign/{id}/summary', [SpecialCampaignController::class, 'summary'])->name('special-campaign.summary');
-    
+
 });
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
@@ -154,6 +154,7 @@ Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(funct
 
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
     Route::get('/preview', [ChallengeController::class, 'preview'])->name('preview');
+    Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
@@ -192,7 +193,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Business Units
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
-    // Special Campaign Setup 
+    // Special Campaign Setup
     Route::get('/special-campaigns/charities', [SpecialCampaignSetupController::class,'getCharities']);
     Route::resource('/special-campaigns', SpecialCampaignSetupController::class);
 
