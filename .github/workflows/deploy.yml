@@ -60,7 +60,7 @@ jobs:
           echo "BUILIDING ${APP} with tag: ${BUILD_TAG}"
                 oc -n ${BUILD_NAMESPACE} process -f docker-build.yml \
                 -p TAG=${BUILD_TAG} -p SOURCE_REPOSITORY_REF=${BRANCH} \
-                -p BASE_IMAGE_NAME="php" -p BASE_IMAGE_TAG="8" \
+                -p BASE_IMAGE_NAME="php" -p BASE_IMAGE_TAG="8.0-apache" \
                 -p BASE_IMAGE_REPO="aro.jfrog.io/performance-app/" \
                 -p GITHUB_AUTH_TOKEN=${{secrets.AUTH_TOKEN}} \
                 -p SOURCE_CONTEXT_DIR=. \
