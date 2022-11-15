@@ -103,7 +103,7 @@ EXPOSE 8000
 
 
 # Add a command to base-image entrypont script
-#CMD /usr/local/bin/apache2-foreground
+CMD /usr/local/bin/apache2-foreground
 
 #CMD /usr/local/bin/apache2-foreground
 
