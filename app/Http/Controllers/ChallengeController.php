@@ -144,10 +144,13 @@ class ChallengeController extends Controller
             ->join("business_units","business_units.id","=","employee_jobs.business_unit_id")
             ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
             ->where("elligible_employees.year","=",$year)
+            ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
+            ->where('employee_jobs.empl_status',"=","A")
             ->where('pledges.created_at',">",$date->copy()->startOfYear())
             ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+            ->whereNull('employee_jobs.date_deleted')
             ->groupBy('employee_jobs.business_unit_id')
-                ->limit(500)
+            ->limit(500)
             ->get();
 
         if($request->sort == "ASC"){
