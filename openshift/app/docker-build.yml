@@ -60,12 +60,11 @@ objects:
         type: Git
       strategy:
         dockerStrategy: 
-          from:
-            kind: ImageStreamTag
-            name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
           buildArgs: 
             - name: GITHUB_AUTH_TOKEN
               value: ${GITHUB_AUTH_TOKEN}
+          pullSecret:
+            name: jfrog-secret
         type: Docker
 parameters:
   - name: NAME
