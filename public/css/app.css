@@ -105934,3 +105934,7 @@ h4 {
 .view_details {
   padding: 8px;
 }
+
+[class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active, [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:hover, [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:focus {
+  background-color: #343a40;
+}
