@@ -152,6 +152,7 @@ class BankDepositFormController extends Controller
             'attachments.*' => 'required',
         ],[
             'organization_code' => 'The Organization Code is required.',
+            'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
          ]);
         $validator->after(function ($validator) use($request) {
 
