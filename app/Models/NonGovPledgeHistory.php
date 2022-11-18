@@ -18,7 +18,9 @@ class NonGovPledgeHistory extends Model
         'guid', 'vendor_id', 'additional_info','frequency',
         'per_pay_amt', 'pledge', 'percent', 'amount', 'deduction_code',
         'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor',
-        'deptid', 'city', 'created_date',
+        'deptid', 'city', 
+        'business_unit', 'event_descr', 'event_type', 'event_sub_type',
+        'created_date',
         'created_by_id', 'updated_by_id',       
 
 

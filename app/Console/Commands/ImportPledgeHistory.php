@@ -306,6 +306,12 @@ class ImportPledgeHistory extends Command
                                 'remit_vendor' => $row->remit_vendor,
                                 'deptid' => $row->DEPTID,
                                 'city' => $row->city,
+
+                                'business_unit' => $row->business_unit,
+                                'event_descr' => $row->act_descr,         // Event's description e.g. cheque#
+                                'event_type' => $row->deduction_code,     // For Event, is donation type 
+                                'event_sub_type'=> $row->sub_type,        // For Event, is donation sub type 
+
                                 'created_date' => $row->created,
 
                             ]);
