@@ -105,6 +105,8 @@ objects:
                   subPath: .env
                 - name: client-images
                   mountPath: /app/public/img/uploads
+                - name: web-app-storage
+                  mountPath: /var/www/html/storage
               resources:
                 limits:
                   memory: '${PERFORMANCE_MEMORY_LIMIT}'
@@ -183,6 +185,9 @@ objects:
             - name: client-images
               persistentVolumeClaim:
                 claimName: client-images
+            - name: web-app-storage
+              persistentVolumeClaim:
+                claimName: web-app-storage
       triggers:
         - type: ConfigChange
       revisionHistoryLimit: 10
