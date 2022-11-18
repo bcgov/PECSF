@@ -31,6 +31,22 @@ class Pledge extends Model
 
     ];
 
+    protected $appends = [
+        'frequency',  
+    ];
+
+    public function getFrequencyAttribute() {
+
+        $frequency = 'both'; 
+        if ($this->one_time_amount > 0 && $this->pay_period_amount == 0) {
+            $frequency = 'one-time';    
+        } if ($this->one_time_amount == 0 && $this->pay_period_amount > 0) {
+            $frequency = 'bi-weekly';    
+        } 
+        return $frequency;
+        
+    } 
+
     public function charities() {
         return $this->hasMany(PledgeCharity::class);
     }
@@ -80,10 +96,6 @@ class Pledge extends Model
             'name' => '',
         ]);
     }
-
-
-
-
 
     // public function scopeOnlyCampaignYear($query, $campaign_year) {
 

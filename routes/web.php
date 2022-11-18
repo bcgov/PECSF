@@ -15,24 +15,25 @@ use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\VolunteeringController;
 
 use App\Http\Controllers\PledgeCharityController;
+use App\Http\Controllers\AnnualCampaignController;
 use App\Http\Controllers\Auth\AzureLoginController;
+
+
 use App\Http\Controllers\BankDepositFormController;
-
-
 use App\Http\Controllers\SpecialCampaignController;
 use App\Http\Controllers\Admin\CRACharityController;
 use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
-use App\Http\Controllers\Admin\DonationDataController;
 
+use App\Http\Controllers\Admin\DonationDataController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
-use App\Http\Controllers\Admin\DonationUploadController;
 
+use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
@@ -105,6 +106,14 @@ Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group
     Route::get('/download-summary', [CharityController::class, 'savePDF'])->name('save.pdf');
 
     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
+});
+
+// Annual Campaign (usually Sep - Nov)
+Route::middleware(['auth'])->group(function () {
+    Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
+    Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
+    Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
+    Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
 });
 
 // Donate Now
