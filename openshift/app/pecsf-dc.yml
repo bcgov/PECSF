@@ -101,7 +101,7 @@ objects:
                 - containerPort: 8000
               volumeMounts:
                 - name: config-vol
-                  mountPath: /.env
+                  mountPath: /var/www/html/.env
                   subPath: .env
                 - name: client-images
                   mountPath: /app/public/img/uploads
