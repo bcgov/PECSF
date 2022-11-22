@@ -26,14 +26,25 @@
             fetch_data(1);
         });
 
+        $("#pool_filter").change(function(){
+            fetch_data(1);
+        });
+
         function fetch_data(page=1)
         {
             $("#charities").fadeTo("slow",0.2);
             $(".noresults").html("");
+
+            var selected_vendors = "";
+            $("input[name='vendor_id[]']").each(function(){
+                selected_vendors += $(this).val() != "undefined" ? $(this).val()+",":"";
+            });
+
             $.ajax({
-                url:"/donate-now/charities?page="+page+"&category="+$("#charity_category").val()+
-                            "&province="+$("#charity_province").val()+"&keyword="+$("#charity_keyword").val()+
-                            "&selected_charity_id="+$("input[name='charity_id']").val(),
+                url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#charity_category").val()
+                    +"&province="+$("#charity_province").val()+"&keyword="+$("#charity_keyword").val()
+                    +"&pool_filter="+$("#pool_filter").val()
+                    +"&selected_vendors="+selected_vendors,
                 success:function(data)
                 {
                     $("#charities").fadeTo("slow",1);
@@ -107,17 +118,24 @@
 
         $("#charity-selection-section").on("click",".remove",function(e){
             e.preventDefault();
-
             name = $('#selected_charity_name').html();
-
             if (!confirm('Are you sure you want to remove this charity "' + name + '" ?')) {
                     return;
             }
+            $("button[org_id='"+$(this).parents(".selected_charity").find("input[name='charity_id']").val() +"'").html("Select").removeClass("active").addClass("select");
+
             $(this).parents("tr").remove();
             $("#noselectedresults").html("You have not chosen any charities");
-
             Toast('Message', 'Charity "' + name +  '" was removed.', 'bg-danger' );
-
+                $(".next_button").attr("disabled",false);
+                $(".charity-error-hook").css("border","none")
+                $(".max-charities-error").hide();
+            if($(this).parents("tr").siblings().length < 1)
+            {
+                $("#noselectedresults").html("You have not chosen any charities");
+                $(".next_button").attr("disabled",true);
+            }
+            $(this).parents("tr").remove();
             resetCharitySelection();
         });
 
@@ -137,6 +155,85 @@
             $("#modal-postal_code").html($(this).attr("postal_code"));
             $("#modal-uri").html($(this).attr("website"));
 
+            $("#charityDetails").modal("show");
+        });
+
+        $("body").on("click",".select",function(e){
+            e.preventDefault();
+            $("#noselectedresults").html("");
+            if($(".selected_charity").length < 1){
+                text = $("#selected-charity-tmpl").html();
+                text = text.replace(/XXX/g, row_number + 1);
+                $('#selected_charity').append( text );
+                $('#selected_charity').css("display","block");
+                row_number++;
+                $('#selected_charity_name').html($(this).attr("name"));
+                $('#selected_charity').find('[name="charity_id"]').val($(this).attr('org_id'));
+                $(this).addClass("active");
+                $(this).html("Selected");
+                $(this).removeClass("select")
+                $(this).addClass("selected")
+                $(".next_button").attr("disabled",false);
+            }
+            else{
+                $(".max-charities-error").show();
+                $(".charity-error-hook").css("border","red 2px solid")
+            }
+        });
+        $("body").on("click",".selected",function(e) {
+            e.preventDefault();
+            $(":input[value='"+$(this).attr("org_id")+"']").parents("tr").remove();
+            $(this).html("Select").removeClass("active").addClass("select").removeClass("selected");
+            if($(".organization").length < 11){
+                $(".next_button").attr("disabled",false);
+
+                $(".charity-error-hook").css("border","none")
+                $(".max-charities-error").hide();
+                $("button[org_id='"+$(this).parents(".organization").find("input[name='vendor_id[]']").val() +"'").html("Select").removeClass("active").addClass("select");
+            }
+
+            if($(".organization").length < 1)
+            {
+                $("#noselectedresults").html("You have not chosen any charities");
+                $(".next_button").attr("disabled",true);
+
+            }
+
+
+        });
+
+        $("body").on("click",".remove",function(e){
+            if($(".organization").length < 11){
+                $(".next_button").attr("disabled",false);
+
+                $(".charity-error-hook").css("border","none")
+                $(".max-charities-error").hide();
+                $("[org_id='"+$(this).parents(".selected_charity").find("input[name='charity_id']").val() +"'").html("Select").removeClass("active").addClass("select");
+            }
+
+            if($(this).parents("tr").siblings().length < 1)
+            {
+                $("#noselectedresults").html("You have not chosen any charities");
+                $(".next_button").attr("disabled",true);
+
+            }
+            $(this).parents("tr").remove();
+
+        });
+
+        $("body").on("click",".view_details",function(){
+            $("#registration_number").html($(this).attr("registration_number"));
+            $("#charity_status").html($(this).attr("charity_status"));
+            $("#effective_date_of_status").html($(this).attr("effective_date_of_status"));
+            $("#sanction").html($(this).attr("sanction"));
+            $("#designation").html($(this).attr("designation"));
+            $("#modalcategory").html($(this).attr("category"));
+            $("#address").html($(this).attr("address"));
+            $("#city").html($(this).attr("city"));
+            $("#province").html($(this).attr("province"));
+            $("#country").html($(this).attr("country"));
+            $("#postal_code").html($(this).attr("postal_code"));
+            $("#uri").html($(this).attr("website"));
             $("#charityDetails").modal("show");
         });
 

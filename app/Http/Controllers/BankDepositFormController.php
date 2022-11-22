@@ -131,7 +131,11 @@ class BankDepositFormController extends Controller
             }
         }
 
-        return view('volunteering.forms',compact('organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
+
+        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
     public function store(Request $request) {

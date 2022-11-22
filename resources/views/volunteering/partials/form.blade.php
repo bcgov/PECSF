@@ -365,7 +365,7 @@
                     <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <button  onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</button>
+                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">

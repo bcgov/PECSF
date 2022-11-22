@@ -26,6 +26,17 @@
             @endforeach
         </select>
     </div>
+    @isset($fund_support_pool_list)
+        <div class="form-group col-md-4">
+            <label for="pool_selection_id">Search by Fund Support Pool</label>
+            <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
+                <option value="">Choose a Fund Support Pool</option>
+                @foreach($fund_support_pool_list as $pool)
+                    <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    @endisset
 
     <div class="charity-container form-group  col-md-12 bg-light">
 
@@ -166,4 +177,8 @@
     </div>
 </div>
 
+
+<script type="x-tmpl" id="organization-tmpl">
+    @include('volunteering.partials.add-organization', ['index' => 'XXX','charity' => "YYY"] )
+</script>
 

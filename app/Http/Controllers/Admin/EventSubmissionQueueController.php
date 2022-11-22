@@ -66,7 +66,17 @@ class EventSubmissionQueueController extends Controller
             }
             else{
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
-                $campaign_year = CampaignYear::where('calendar_year', ( intval(date("Y")) - 1))->first();
+                $year =  intval(date("Y")) + 1;
+                do{
+                    $campaign_year = CampaignYear::where('calendar_year', $year)->first();
+                    $year--;
+                }while(!$campaign_year->isActive());
+
+                if(!$campaign_year->isActive()){
+                    $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")) - 1)->first();
+
+                }
+
                 $gov_organization = Organization::where('code', 'GOV')->first();
                 $is_GOV = ($form->organization_code == $gov_organization->code);
 
