@@ -72,17 +72,19 @@
             @include('donations.partials.history')
         @else
         <div class="text-center text-primary">
-            <p>
-                <strong>No Campaign has been started yet.</strong>
-            </p>
-            <p>
-                You do not have any active campaigns right now. <br>
-                Click on one of the options below to get started!
-            </p>
-            <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
-            <p class="pt-3">
-                OR
-            </p>
+            @if  (!(\App\Models\CampaignYear::isAnnualCampaignOpenNow()) )
+                <p>
+                    <strong>No Campaign has been started yet.</strong>
+                </p>
+                <p>
+                    You do not have any active campaigns right now. <br>
+                    Click on one of the options below to get started!
+                </p>
+                <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
+                <p class="pt-3">
+                    OR
+                </p>
+            @endif
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
         </div>
         @endif

@@ -43,7 +43,7 @@
                     @method('PUT')
                     <input type="hidden" id="pledge_id" name="pledge_id" value="{{ $pledge->id }}">
                 @endisset
-                <input type="hidden" id="step" name="step" value="">
+                <input type="hidden" id="step" name="step" value="{{ $step }}">
                 <input type="hidden" id="campaign_year_id" name="campaign_year_id" value="{{ $campaign_year->id }}">
                 <input type="hidden" name="number_of_periods" value="{{ $campaign_year->number_of_periods }}">
                 
@@ -119,14 +119,14 @@
 
 
                 <div class="p-2 ">
-                    <button type="button" class="action cancel btn  btn-outline-secondary"
+                    <button type="button" class="action cancel btn-lg btn-outline-primary"
                         onclick="window.location='{{ route('donations.list') }}'"
                         >Cancel</button>
-                    <button type="button" class="action back btn  btn-outline-secondary"
+                    <button type="button" class="action back btn-lg  btn-outline-primary"
                         style="display: none">Back</button>
-                    <button type="button" class="action next btn  btn-primary float-right"
+                    <button type="button" class="action next btn-lg  btn-primary "
                         >Next</button>
-                    <button type="submit" class="action submit btn  btn-primary float-right"
+                    <button type="submit" class="action submit btn-lg  btn-primary "
                         style="display: none">Pledge</button>
                 </div>
 
@@ -264,38 +264,6 @@
         font-weight: bold;
     }
 
-  
-
-
-    /* */
-    /* .summary-card .form-control[disabled] {
-        border: 0;
-        background-color: rgb(252, 252, 252) ;
-    } 
-
-    .amount-selection input[type=radio] {
-        width: 18px;
-        height: 18px;
-    }
-
-    .amount-selection .form-check {
-        padding-top: 4px ;
-    }
-
-    .amount-selection .form-check-label {
-        padding-left: 8px;
-    }
-
-    .form-control:disabled, .form-control[readonly] {
-        border: none;
-        background-color: #f7f7f7;
-    }
-
-    .form-control.amount:disabled, .form-control.amount[readonly] {
-        text-align: right;
-    } */
-
-
 </style>
 
 @endpush
@@ -305,17 +273,12 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
-
-{{-- <script type="x-tmpl" id="charity-tmpl">
-    @include('admin-pledge.campaign.partials.charities', ['index' => 'XXX'] )
-</script> --}}
-
 <script>
 
 $(function () {
 
     // For keep tracking the current page in wizard, and also count for the signle submission only
-    var step = 1;
+    var step = {{ $step }};
     var submit_count = 0;
    
     $.ajaxSetup({
@@ -459,23 +422,6 @@ $(function () {
         // reset submission count 
         submit_count = 0;
         
-        // Step 2 -- specify checking on user side
-        if (step == 2 && pool_option == 'C') {
-            // make sure the user must specify at least one charities before submit
-            // count = $("input[name='charities[]']").length;
-            // if (count == 0) {
-            //     Swal.fire({
-            //     icon: 'error',
-            //     title: 'charity',
-            //     text: 'You must pick at least one charity!',
-            //     // footer: '<a href="">Why do I have this issue?</a>'
-            //     });
-            //     nextstep = false;
-            //     return nextstep;
-            // }
-        }
-        
-
         var valid = true;
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
@@ -606,5 +552,13 @@ $(function () {
 </script>
 
 @include('annual-campaign.partials.distribution-js')
+
+@if ($is_duplicate)
+    <script>
+    $(function () {
+        $(".next").trigger("click");
+    });
+    </script>    
+@endif
 
 @endpush

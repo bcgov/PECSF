@@ -49,6 +49,18 @@
                 }
             });
         }
+
+        function toggleSelectedCountArea() {
+            if($(".organization").length < 1) {
+                $("#noselectedresults").show();
+                $('#selectedcountresults').hide();
+            } else {
+                $("#noselectedresults").hide();
+                $('#selectedcountresults').show();
+            }
+        }
+
+
         $("body").on("click",".select",function(e){
             e.preventDefault();
             // $("#noselectedresults").html("");
@@ -80,11 +92,12 @@
             //     $(".charity-error-hook").css("border","red 2px solid")
             // }
 
-            if ($("input[name='charities[]']").length < 1) {
-                $('#selectedcountresults').hide();
-            } else {
-                $('#selectedcountresults').show();
-            }
+            toggleSelectedCountArea();
+            // if ($("input[name='charities[]']").length < 1) {
+            //     $('#selectedcountresults').hide();
+            // } else {
+            //     $('#selectedcountresults').show();
+            // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
         });
@@ -101,44 +114,48 @@
                 $("div[org_id='"+$(this).parents(".organization").find("input[name='vendor_id[]']").val() +"'").html("Select").removeClass("active").addClass("select");
             }
 
-            if($(".organization").length < 1)
-            {
-                $("#noselectedresults").html("You have not chosen any charities");
-                $(".next_button").attr("disabled",true);
+            toggleSelectedCountArea();
+            // if($(".organization").length < 1)
+            // {
+            //     $("#noselectedresults").html("You have not chosen any charities");
+            //     $(".next_button").attr("disabled",true);
 
-                $('#selectedcountresults').hide();
-            } else {
-                $('#selectedcountresults').show();
-            }
+            //     $('#selectedcountresults').hide();
+            // } else {
+            //     $('#selectedcountresults').show();
+            // }
 
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
         });
 
         $("body").on("click",".remove",function(e){
-            if($(".organization").length < 11){
+            // if($(".organization").length < 11){
                 $(".next_button").attr("disabled",false);
 
                 $(".charity-error-hook").css("border","none")
                 $(".max-charities-error").hide();
                 $("[org_id='"+$(this).parents(".organization").find("input[name='vendor_id[]']").val() +"'").html("Select").removeClass("active selected").addClass("select");
-            }
+            // }
 
-            if($(this).parents("tr").siblings().length < 1)
-            {
-                $("#noselectedresults").html("You have not chosen any charities");
-                $("#noselectedresults").show();
+            // if($(this).parents("tr").siblings().length < 1)
+            // {
+            //     $("#noselectedresults").html("You have not chosen any charities");
+            //     $("#noselectedresults").show();
 
-                // $(".next_button").attr("disabled",true);
+            //     // $(".next_button").attr("disabled",true);
 
-            } 
+            // } 
             $(this).parents("tr").remove();
 
-            if ($("input[name='charities[]']").length < 1) {
-                $('#selectedcountresults').hide();
-            } else {
-                $('#selectedcountresults').show();
-            }
+            // if ($("input[name='charities[]']").length < 1) {
+            //     $('#selectedcountresults').hide();
+            // } else {
+            //     $('#selectedcountresults').show();
+            // }
+
+            toggleSelectedCountArea();
+
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
         });
