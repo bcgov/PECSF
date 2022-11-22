@@ -59,10 +59,11 @@ class AnnualCampaignRequest extends FormRequest
 
                     'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount) && 
                                                         ($this->frequency == 'one-time' || $this->frequency == 'both'), 
-                                                        ['required','numeric','min:1']) ],
+                                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                                                        // ^(\d{1,5}\.?\d{1,2}|\d{1,5}\.?\d{1,2})$
                     'bi_weekly_amount_custom'  => [ Rule::when( $this->bi_weekly_amount =='' &&
                                                         ($this->frequency == 'bi-weekly' || $this->frequency == 'both'),                             
-                                                        ['required','numeric','min:1']) ],
+                                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -195,8 +196,10 @@ class AnnualCampaignRequest extends FormRequest
 
             'one_time_amount_custom.required' => 'The amount is required.',
             'one_time_amount_custom.min'      => 'The min amount is $ 1.0.',
+            'one_time_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
             'bi_weekly_amount_custom.required' => 'The amount is required.',
             'bi_weekly_amount_custom.min' => 'The min amount is $ 1.0.',
+            'bi_weekly_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
  
             'biWeeklyPercent.*.required' => 'The Percentage field is required.',
             'biWeeklyPercent.*.numeric' => 'The Percentage must be a number.',

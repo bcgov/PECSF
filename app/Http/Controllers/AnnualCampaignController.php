@@ -863,19 +863,23 @@ class AnnualCampaignController extends Controller
                                     ->where('user_id', Auth::id() )
                                     ->first();
         if ($current_pledge) {
-            return abort(409);       // Conflict (pledge already exists)
+            return redirect()->route('donations.list')->with('error','The Annual Campaign pledge have already created, no duplication allowed!');
+            // return abort(409);       // Conflict (pledge already exists)
         } 
-        
+      
+    
         // $history = pledge_history_view where id = 241832 ;
         $hist_pledge = ViewPledgeHistory::where('id', $request->pledge_id)->first();
         if (!$hist_pledge) {
-            return abort(404);      // 404 Not Found
+            return redirect()->route('donations.list')->with('error','The history record not found!');
         }    
         if (!($hist_pledge->user->id == Auth::id())) {
-            return abort(403);      // 403 Forbidden
+            return redirect()->route('donations.list')->with('error','This is not your history record!');
+            // return abort(403);      // 403 Forbidden
         }
         if (!($hist_pledge->is_annual_campaign)) {
-            return abort(404);      // 404 Not Found
+            return redirect()->route('donations.list')->with('error','The Annual Campaign period is not open yet');
+            // return abort(404);      // 404 Not Found
         }
 
         if(!empty($hist_pledge))

@@ -1,6 +1,11 @@
 @extends('adminlte::page')
 @section('content_header')
-
+@if ($message = Session::get('error'))
+<div class="alert alert-danger alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+        <strong>{{ $message }}</strong>
+</div>
+@endif
     {{-- Show when Campaign Year Open --}}
     <div class="d-flex justify-content-center pt-3">
         <div class="card border-warning text-center" style="background:#D9EAF7;max-width: 50em; border-radius: 1em;">

@@ -76,8 +76,8 @@
         <div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header bg-light">
-                        <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title" id="regionalPoolModalTitle">Charity Details
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>

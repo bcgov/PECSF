@@ -360,6 +360,7 @@ $(function () {
             $(".next").trigger("click");
         }
         hideButtons(step);
+        $(this).blur();
     });
 
     // Click on Wizard STEP icon to jump to visited  page 
