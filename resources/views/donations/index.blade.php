@@ -1,6 +1,11 @@
 @extends('adminlte::page')
 @section('content_header')
-
+@if ($message = Session::get('error'))
+<div class="alert alert-danger alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+        <strong>{{ $message }}</strong>
+</div>
+@endif
     {{-- Show when Campaign Year Open --}}
     <div class="d-flex justify-content-center pt-3">
         <div class="card border-warning text-center" style="background:#D9EAF7;max-width: 50em; border-radius: 1em;">
@@ -72,17 +77,19 @@
             @include('donations.partials.history')
         @else
         <div class="text-center text-primary">
-            <p>
-                <strong>No Campaign has been started yet.</strong>
-            </p>
-            <p>
-                You do not have any active campaigns right now. <br>
-                Click on one of the options below to get started!
-            </p>
-            <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
-            <p class="pt-3">
-                OR
-            </p>
+            @if  (!(\App\Models\CampaignYear::isAnnualCampaignOpenNow()) )
+                <p>
+                    <strong>No Campaign has been started yet.</strong>
+                </p>
+                <p>
+                    You do not have any active campaigns right now. <br>
+                    Click on one of the options below to get started!
+                </p>
+                <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
+                <p class="pt-3">
+                    OR
+                </p>
+            @endif
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
         </div>
         @endif

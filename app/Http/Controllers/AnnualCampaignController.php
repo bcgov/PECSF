@@ -1,0 +1,1130 @@
+<?php
+
+namespace App\Http\Controllers;
+
+
+use App\Models\User;
+use App\Models\FSPool;
+use App\Models\Pledge;
+use App\Models\Charity;
+use App\Models\CampaignYear;
+use App\Models\Organization;
+use Illuminate\Http\Request;
+use App\Models\PledgeCharity;
+use App\Models\PledgeHistory;
+use App\Models\ViewPledgeHistory;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Http\Requests\AnnualCampaignRequest;
+
+
+class AnnualCampaignController extends Controller
+{
+
+    /**
+     * create a new instance of the class
+     *
+     * @return void
+     */
+    function __construct()
+    {
+        
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        return redirect()->route('annual-campaign.create');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create( Pledge $duplicate_pledge = null )
+    {
+        // Only allow when the campaign pledge period is opened
+        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                            ->orderBy('calendar_year', 'desc')->first();
+        if ( !$campaign_year->isOpen() ) {
+            return redirect()->route('donations.list');
+        }
+
+        // 1) Initial the default values on the wizard 
+        $step = 1;
+        $pool_option = 'P'; 
+
+        // -- For Fund Support Pool page 
+        $fspools = FSPool::current()->where('status', 'A')->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
+        $regional_pool_id = $fspools->count() > 0 ? $fspools->first()->id : null;
+
+        // -- For charities page 
+        $designation_list = Charity::DESIGNATION_LIST;
+        $category_list = Charity::CATEGORY_LIST;
+        $province_list = Charity::PROVINCE_LIST;
+
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+                                    return $pool->region->name;
+                                  });
+        $selected_charities = [];
+
+        // Default Amount values
+        $frequency ='bi-weekly';
+        $preselectedAmountOneTime = 20;
+        $preselectedAmountBiWeekly = 20;
+
+        $preselectedData = [
+            'frequency' => 'bi-weekly',
+            'one-time-amount' => 20,
+            'bi-weekly-amount' => 50,
+        ];
+
+        // Distribution page -- Keep the last selected charities (to determine any changes)
+        $last_selected_charities = [];
+
+        $calculatedTotalPercentOneTime = 0;
+        $calculatedTotalAmountOneTime = 0;
+        $calculatedTotalPercentBiWeekly = 0;
+        $calculatedTotalAmountBiWeekly = 0;
+        $annualBiWeeklyAmount = 0; 
+        $annualOneTimeAmount = 0;
+        $grandTotal = 0; 
+        $oneTimeAmount = 0;
+
+
+        // 2) Check whether the existing record entered, then reloading the data  
+        $organization = Organization::where('code', 'GOV')->first();
+        $user = User::where('id', Auth::id())->first(); 
+
+        $pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id )
+                            ->where('user_id', Auth::id())
+                            ->where('campaign_year_id', $campaign_year->id)
+                            ->first();
+
+        $is_duplicate = ($duplicate_pledge && !($pledge)) ? true : false;
+
+        if ($pledge || $duplicate_pledge ) {
+
+            $step = 1;
+
+            if ($is_duplicate) {
+                $pledge = $duplicate_pledge;
+                $step = 3;
+            }
+            
+            $pool_option = $pledge->type;
+            $regional_pool_id = $pledge->type == 'P' ? $pledge->f_s_pool_id : $regional_pool_id;
+            $preselectedAmountOneTime = $pledge->one_time_amount > 0 ? $pledge->one_time_amount : $preselectedAmountOneTime; 
+            $preselectedAmountBiWeekly = $pledge->pay_period_amount > 0 ? $pledge->pay_period_amount : $preselectedAmountBiWeekly; 
+            
+            $frequency = 'both'; 
+            if ($pledge->one_time_amount > 0 && $pledge->pay_period_amount == 0) {
+                $frequency = 'one-time';    
+            } if ($pledge->one_time_amount == 0 && $pledge->pay_period_amount > 0) {
+                $frequency = 'bi-weekly';    
+            } 
+            
+            $preselectedData = [
+                'frequency' => $frequency,
+                'one-time-amount' => $preselectedAmountOneTime,
+                'bi-weekly-amount' => $preselectedAmountBiWeekly,
+            ];
+
+            // These fields for Distribution page 
+            $oneTimeAmount = $pledge->one_time_amount; 
+            $biWeeklyAmount =  $pledge->pay_period_amount; 
+    
+            $annualBiWeeklyAmount = $biWeeklyAmount * $campaign_year->number_of_periods;  // 26;
+            $annualOneTimeAmount = $oneTimeAmount;
+
+            $calculatedTotalPercentOneTime = 0;
+            $calculatedTotalAmountOneTime = 0;
+            $calculatedTotalPercentBiWeekly = 0;
+            $calculatedTotalAmountBiWeekly = 0;
+            $grandTotal = 0;
+
+            // $multiplier = $frequency == 'one-time' ? 1 : $campaign_year->number_of_periods; // 26;
+            $selected_charities = [];
+            $last_distribitions = [];
+
+
+            // reload charity if the  pool_option is charities
+            if ($pool_option == 'C') {
+                
+                if ($pledge && count($pledge->charities) > 0 )  {
+
+                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
+                    $last_selected_charities = $_ids;
+
+                    $_charities = Charity::whereIn('id', $_ids )
+                                    ->get(['id', 'charity_name as text']);
+
+                    foreach ($_charities as $charity) {
+                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
+
+                        $charity['additional'] = '';
+                        if ($pledge_charity) {
+                            $charity['additional'] = $pledge_charity->additional ?? '';
+                        }
+
+                        $charity['one-time-amount-distribution'] = 0;   
+                        $charity['one-time-percentage-distribution'] = 0;   
+                        $charity['bi-weekly-amount-distribution'] = 0;  
+                        $charity['bi-weekly-percentage-distribution'] = 0;   
+
+                        // Get One-Time Distribution if exists
+                        if ($pledge->one_time_amount > 0) {
+                            $pledge_one_time = $pledge->charities->where('charity_id', $charity->id)->where('frequency','one-time')
+                                            ->first();
+
+                            $charity['one-time-amount-distribution'] = $pledge_one_time->amount;   
+                            $charity['one-time-percentage-distribution'] = $pledge_one_time->percentage;   
+                        }
+                        
+                        // Get BiWeekly Distribution if exists
+                        if ($pledge->pay_period_amount > 0) {
+                            $pledge_biweekly = $pledge->charities->where('charity_id', $charity->id)->where('frequency','bi-weekly')
+                                            ->first();
+
+                            $charity['bi-weekly-amount-distribution'] = $pledge_biweekly->amount;  
+                            $charity['bi-weekly-percentage-distribution'] = $pledge_biweekly->percentage;   
+                        }
+
+                        // Keep for comparing purpose
+
+
+                        $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                        $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                        $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                        $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+        
+                        $grandTotal += $charity['one-time-amount-distribution'];
+                        $grandTotal += ($charity['bi-weekly-amount-distribution'] * $campaign_year->number_of_periods);  // 26
+                        
+                        array_push($selected_charities, $charity);
+                    }
+                }
+
+            }
+
+        }                          
+
+
+        // 3) Set the amount initial value 
+        $amounts = [
+            'bi-weekly' => [
+                [
+                    'amount' => 6,
+                    'text' => '$6',
+                    'selected' => ($preselectedAmountBiWeekly == 6) ? true : false,
+                ],
+                [
+                    'amount' => 12,
+                    'text' => '$12',
+                    'selected' => ($preselectedAmountBiWeekly == 12) ? true : false,
+                ],
+                [
+                    'amount' => 20,
+                    'text' => '$20',
+                    'selected' => ($preselectedAmountBiWeekly == 20) ? true : false,
+                ],
+                [
+                    'amount' => 50,
+                    'text' => '$50',
+                    'selected' => ($preselectedAmountBiWeekly == 50) ? true : false,
+                ],
+                [
+                    'amount' => '',
+                    'text' => 'Custom',
+                    'selected' => (!in_array($preselectedAmountBiWeekly, [6, 12, 20, 50])) ? true : false,
+                ],
+            ],
+            'one-time' => [
+                [
+                    'amount' => 6,
+                    'text' => '$6',
+                    'selected' => ($preselectedAmountOneTime == 6) ? true : false,
+                ],
+                [
+                    'amount' => 12,
+                    'text' => '$12',
+                    'selected' => ($preselectedAmountOneTime == 12) ? true : false,
+                ],
+                [
+                    'amount' => 20,
+                    'text' => '$20',
+                    'selected' => ($preselectedAmountOneTime == 20) ? true : false,
+                ],
+                [
+                    'amount' => 50,
+                    'text' => '$50',
+                    'selected' => ($preselectedAmountOneTime == 50) ? true : false,
+                ],
+                [
+                    'amount' => '',
+                    'text' => 'Custom',
+                    'selected' => (!in_array($preselectedAmountOneTime, [6, 12, 20, 50])) ? true : false,
+                ],
+            ],
+        ];
+
+        $isCustomAmountOneTime = (!in_array($preselectedAmountOneTime, [6, 12, 20, 50])) ? true : false;
+        $isCustomAmountBiWeekly = (!in_array($preselectedAmountBiWeekly, [6, 12, 20, 50])) ? true : false;
+
+        $multiple = true;
+        $organizations = [];
+
+        return view('annual-campaign.wizard', compact('step', 'pool_option', 
+                        'fspools', 'regional_pool_id', 
+                        'campaign_year',
+
+                        'organizations', 'multiple', 'selected_charities',
+                        'designation_list', 'category_list', 'province_list', 'fund_support_pool_list',
+                        'amounts', 'preselectedData', 'isCustomAmountOneTime', 'isCustomAmountBiWeekly',
+                                                
+                        'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+                         'frequency', // 'multiplier', 
+                         'last_selected_charities',
+                         'is_duplicate',
+                    ));
+    }
+   
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(AnnualCampaignRequest $request)
+    {
+        //
+        if ($request->ajax()) {
+                
+            // Generate Distribution page or Summary Page 
+            if ($request->step == 3 and $request->pool_option == 'C') {
+                return $this->distribution($request);
+            }
+            if (($request->step == 3 and $request->pool_option == 'P') or 
+                ($request->step == 4 and $request->pool_option == 'C')) {
+                return $this->summary($request);
+            }
+            
+            return response()->noContent();
+
+        }
+       
+        
+        /* Final submission -- form submission (non-ajax call) */
+        $input = $request->validated();
+
+        DB::beginTransaction();
+        $frequency = $input['frequency'];
+        $number_of_periods = $input['number_of_periods'];
+
+        // REMARK: always assign 'GOV' for the organization
+        $user = User::where('id', Auth::id() )->first();
+        $organization = Organization::where('code', 'GOV')->first();
+
+        $pledge = Pledge::updateOrCreate([
+            'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
+            'user_id' => Auth::id(),
+            'campaign_year_id' => $request->campaign_year_id,
+        ],[
+            'type' => $input['pool_option'],
+            'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
+            'one_time_amount' => $input['annualOneTimeAmount'],
+            'pay_period_amount' => $input['annualBiWeeklyAmount'] / $number_of_periods,
+            'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount']
+                                 : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ),
+        ]);
+
+        $pledge->charities()->delete();
+
+        if ($input['pool_option'] == 'C' ) {
+            foreach(['OneTime', 'BiWeekly'] as $frequency) {
+                if ($frequency === 'OneTime' && ($input['frequency'] !== 'one-time' && $input['frequency'] !== 'both')) {
+                    continue;
+                }
+                if ($frequency === 'BiWeekly' && ($input['frequency'] !== 'bi-weekly' && $input['frequency'] !== 'both')) {
+                    continue;
+                }
+
+                foreach ($input['charity'.$frequency.'Amount'] as $id => $amount) {
+                    if ($amount <= 0) {
+                        continue;
+                    }
+                    PledgeCharity::create([
+                        'charity_id' => $id,
+                        'pledge_id' => $pledge->id,
+                        'additional' => $input['charityAdditional'][$id],
+                        'percentage' => $input['charity'.$frequency.'Percentage'][$id],
+                        'amount' => $amount,
+                        'frequency' => $frequency === 'BiWeekly' ? 'bi-weekly' : 'one-time',
+                        'goal_amount' => $frequency === 'BiWeekly' ? $amount * $number_of_periods : $amount,
+                    ]);
+                }
+            }
+        }
+        DB::commit();
+
+        $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
+
+        Session::flash('pledge_id', $pledge->id ); 
+        return redirect()->route('annual-campaign.thank-you')
+                ->with('success', $message_text);
+        
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Pledge  $pledge
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
+    {
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Pledge  $pledge
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Request $request, $id)
+    // public function edit(Request $request, $id)
+    {
+        
+    
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Pledge  $pledge
+     * @return \Illuminate\Http\Response
+     */
+    public function update(AnnualCampaignRequest $request, $id)
+    {
+        
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Pledge  $pledge
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
+    {
+        
+    }
+
+    public function thankYou()
+    {
+        $pledge_id = session()->get('pledge_id');
+
+        if ($pledge_id) {
+            return view('annual-campaign.thankyou', compact('pledge_id') );
+        } else {
+            return abort(403);
+        }
+
+    }
+
+
+    public function distribution($request=[]) {
+
+        $last_selected_charities = json_decode($request->last_selected_charities) ?? [];
+
+        // charities change ?
+        $charities_changed = false;
+        if ( count(array_diff($last_selected_charities, $request->charities)) > 0 || 
+             count(array_diff( $request->charities, $last_selected_charities)) > 0 ) {
+         
+            $charities_changed = true;
+        }
+        $last_selected_charities = $request->charities;
+
+        // To recalculate the distributions
+        $selectedCharities = $request->charities; 
+        $frequency =  $request->frequency; 
+
+        $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?  
+                            ($request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom) : 0 ;
+        $biWeeklyAmount = ($frequency === 'bi-weekly' || $frequency === 'both') ?
+                            ($request->bi_weekly_amount ? $request->bi_weekly_amount : $request->bi_weekly_amount_custom) : 0 ;
+
+        $annualBiWeeklyAmount = $biWeeklyAmount * $request->number_of_periods; //  26;
+        $annualOneTimeAmount = $oneTimeAmount;
+
+        
+        $selected_charities = [];
+
+        $calculatedTotalPercentOneTime = 0;
+        $calculatedTotalAmountOneTime = 0;
+        $calculatedTotalPercentBiWeekly = 0;
+        $calculatedTotalAmountBiWeekly = 0;
+        $grandTotal = 0;
+
+        foreach ($selectedCharities as $index => $selected_charity) {
+
+            $charity = Charity::where('id', $selected_charity)
+                            ->select(['id', 'charity_name as text'])->first();
+
+            $charity['additional'] = $request->additional[$index] ?? '';
+
+            if ($index == count($selectedCharities) - 1 ) {
+
+                $charity['one-time-amount-distribution'] = $oneTimeAmount - $calculatedTotalAmountOneTime ;
+                $charity['one-time-percentage-distribution'] = 100 - $calculatedTotalPercentOneTime;
+
+                $charity['bi-weekly-amount-distribution'] =  $biWeeklyAmount - $calculatedTotalAmountBiWeekly ;
+                $charity['bi-weekly-percentage-distribution'] = 100 - $calculatedTotalPercentBiWeekly;
+
+                $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                $grandTotal += $charity['one-time-amount-distribution'];
+                $grandTotal += ($charity['bi-weekly-amount-distribution'] * $request->number_of_periods);  // 26
+                array_push($selected_charities, $charity);
+
+            } else {
+
+                // percentage or amount based on input 
+                $oneTimeAmountPerCharity = 0;
+                $oneTimePercentPerCharity = 0;
+                $biWeeklyAmountPerCharity = 0;
+                $biWeeklyPercentPerCharity =0;
+
+                if ($charities_changed) {
+
+                    $oneTimeAmountPerCharity = round($oneTimeAmount / count($selectedCharities), 2);
+                    $oneTimePercentPerCharity = round(100 / count($selectedCharities), 2);
+                    $biWeeklyAmountPerCharity = round($biWeeklyAmount / count($selectedCharities), 2);
+                    $biWeeklyPercentPerCharity = round(100 / count($selectedCharities), 2);
+
+                } else {
+                    
+                    if ($frequency === 'one-time' || $frequency === 'both') {
+                        if ($request->has('oneTimePercent')) {
+                            $oneTimeAmountPerCharity =  round(( $request->oneTimePercent[$selected_charity] * $oneTimeAmount) / 100 , 2);
+                            $oneTimePercentPerCharity = $request->oneTimePercent[$selected_charity];
+                        } else {
+                            $oneTimeAmountPerCharity = round($oneTimeAmount / count($selectedCharities), 2);
+                            $oneTimePercentPerCharity = round(100 / count($selectedCharities), 2);
+                        }
+                    }
+
+                    if ($frequency === 'bi-weekly' || $frequency === 'both') {
+                        if ($request->has('biWeeklyPercent')) {
+                            $biWeeklyAmountPerCharity = round(( $request->biWeeklyPercent[$selected_charity] * $biWeeklyAmount) / 100 , 2);
+                            $biWeeklyPercentPerCharity = $request->biWeeklyPercent[$selected_charity];
+                        } else {
+                            $biWeeklyAmountPerCharity = round($biWeeklyAmount / count($selectedCharities), 2);
+                            $biWeeklyPercentPerCharity = round(100 / count($selectedCharities), 2);
+                        }
+                    }
+
+                }
+                
+                $charity['one-time-amount-distribution'] = $oneTimeAmountPerCharity;
+                $charity['one-time-percentage-distribution'] = $oneTimePercentPerCharity;
+                $charity['bi-weekly-amount-distribution'] = $biWeeklyAmountPerCharity;
+                $charity['bi-weekly-percentage-distribution'] = $biWeeklyPercentPerCharity;
+
+                // accumulated total
+                $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                $grandTotal += $charity['one-time-amount-distribution'];
+                $grandTotal += ($charity['bi-weekly-amount-distribution'] * $request->number_of_periods); //26
+                array_push($selected_charities, $charity);
+            }
+
+        }
+            
+        $pool_option = $request->pool_option;
+        $regional_pool_id = $request->regional_pool_id;
+
+        $viewData = compact('selected_charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+             'frequency', 'pool_option', 'regional_pool_id',
+             'last_selected_charities',
+            );
+
+        return view('annual-campaign.partials.distribution', $viewData)->render();
+
+    }
+
+
+    public function summary($request=[], $id=null) {
+
+        $pool_option = $request->pool_option;
+        $frequency =  $request->frequency;
+        $number_of_periods = $request->number_of_periods;
+
+        $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?  
+                            ($request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom) : 0 ;
+        $biWeeklyAmount = ($frequency === 'bi-weekly' || $frequency === 'both') ?
+                            ($request->bi_weekly_amount ? $request->bi_weekly_amount : $request->bi_weekly_amount_custom) : 0 ;
+
+        if ($pool_option == 'C') {
+
+            $selectedCharities = $request->charities; 
+            $frequency =  $request->frequency; 
+
+            $annualBiWeeklyAmount = $biWeeklyAmount * $number_of_periods; // 26;
+            $annualOneTimeAmount = $oneTimeAmount;
+
+            $charities = [];
+
+            $calculatedTotalPercentOneTime = 0;
+            $calculatedTotalAmountOneTime = 0;
+            $calculatedTotalPercentBiWeekly = 0;
+            $calculatedTotalAmountBiWeekly = 0;
+            $grandTotal = 0;
+            // foreach ($charitiesDB as $charity) {
+            foreach ($selectedCharities as $index => $selected_charity) {
+
+                $charity = Charity::where('id', $selected_charity)
+                                ->select(['id', 'charity_name as text'])->first();
+
+                // $charity = $charity->toArray();
+                $charity['additional'] = $request->additional[$index] ?? '';
+
+                $charity['one-time-amount-distribution'] = ($frequency == 'one-time' || $frequency == 'both') ?  $request->oneTimeAmount[$selected_charity] : 0;
+                $charity['one-time-percentage-distribution'] = ($frequency == 'one-time' || $frequency == 'both') ?  $request->oneTimePercent[$selected_charity] : 0;
+                $charity['bi-weekly-amount-distribution'] = ($frequency == 'bi-weekly' || $frequency == 'both') ? $request->biWeeklyAmount[$selected_charity] : 0;
+                $charity['bi-weekly-percentage-distribution'] = ($frequency == 'bi-weekly' || $frequency == 'both') ?  $request->biWeeklyPercent[$selected_charity] : 0;
+
+                $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                $grandTotal += $charity['one-time-amount-distribution'];
+                $grandTotal += ($charity['bi-weekly-amount-distribution'] * $number_of_periods); //26
+                array_push($charities, $charity);
+
+            }
+
+        } else {
+
+            $pool_id = $request->regional_pool_id;
+            $pool = FSPool::where('id', $pool_id)->first();
+            $pool_charities = $pool ? $pool->charities : [];
+
+            $frequency = $request->frequency;
+
+            $annualBiWeeklyAmount = $biWeeklyAmount * $number_of_periods;  // 26
+            $annualOneTimeAmount = $oneTimeAmount;
+
+            $calculatedTotalPercentOneTime = 0;
+            $calculatedTotalAmountOneTime = 0;
+            $calculatedTotalPercentBiWeekly = 0;
+            $calculatedTotalAmountBiWeekly = 0;
+            $grandTotal = 0;
+
+            $charities = [];
+
+            foreach ($pool_charities as $key => $pool_charity) {
+                $charity = $pool_charity->charity->toArray();
+                $charity['text'] = $pool_charity->charity->charity_name;
+                $charity['additional'] = '';
+
+                $percentage = $pool_charity->percentage;
+
+                if ($key === count($pool_charities) - 1  ) {
+
+                    $charity['one-time-amount-distribution'] = $oneTimeAmount - $calculatedTotalAmountOneTime ;
+                    $charity['one-time-percentage-distribution'] = $pool_charity->percentage;
+
+                    $charity['bi-weekly-amount-distribution'] =  $biWeeklyAmount - $calculatedTotalAmountBiWeekly ;
+                    $charity['bi-weekly-percentage-distribution'] = $pool_charity->percentage;
+
+                    $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                    $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                    $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                    $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                    $grandTotal += $charity['one-time-amount-distribution'];
+                    $grandTotal += ($charity['bi-weekly-amount-distribution'] * $number_of_periods); //26
+                    // $grandTotal += ($charity['bi-weekly-amount-distribution'] );
+
+                    array_push($charities, $charity);
+
+                } else {
+
+                    $charity['one-time-amount-distribution'] = round(($pool_charity->percentage * $annualOneTimeAmount) / 100 , 2);
+                    $charity['one-time-percentage-distribution'] = $pool_charity->percentage;
+
+                    $charity['bi-weekly-amount-distribution'] = round(($pool_charity->percentage * $annualBiWeeklyAmount) / 100 / 26 , 2);
+                    $charity['bi-weekly-percentage-distribution'] = $pool_charity->percentage;
+
+                    $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                    $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                    $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                    $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                    $grandTotal += $charity['one-time-amount-distribution'];
+                    $grandTotal += ($charity['bi-weekly-amount-distribution'] * $number_of_periods);
+                    // $grandTotal += ($charity['bi-weekly-amount-distribution'] );
+                    array_push($charities, $charity);
+
+                };
+            }
+        }
+
+        $pool_option = $request->pool_option;
+        $regional_pool_id = $request->regional_pool_id;
+
+        $viewData = compact('charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+             'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id');
+      
+        return view('annual-campaign.partials.summary', $viewData)->render();
+
+    }
+
+
+    public function summaryPdf(Request $request, $id) {
+
+        $pledge = Pledge::where('id', $id)->first();
+
+        // Make sure this transaction is for the current logged user 
+        if (!$pledge) {
+            return abort(404);
+        } elseif  (!($pledge->user_id == Auth::id())) {
+            return abort(403);
+        }
+
+        $number_of_periods = $pledge->campaign_year->number_of_periods;
+        $frequency = $pledge->frequency;
+
+        if ($pledge->type == 'C') {
+
+            $selectedCharities = $pledge->distinct_charities; //Session::get('charities');
+
+            $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ? $pledge->one_time_amount : 0;
+            $biWeeklyAmount = ($frequency === 'bi-weekly' || $frequency === 'both') ? $pledge->pay_period_amount : 0;
+
+            $annualBiWeeklyAmount = $biWeeklyAmount * $number_of_periods; //26
+            $annualOneTimeAmount = $oneTimeAmount;
+
+            $charities = [];
+
+            // $charitiesDB = Charity::whereIn('id', $selectedCharities)
+            //     ->get(['id', 'charity_name as text']);
+
+            $calculatedTotalPercentOneTime = 0;
+            $calculatedTotalAmountOneTime = 0;
+            $calculatedTotalPercentBiWeekly = 0;
+            $calculatedTotalAmountBiWeekly = 0;
+            $grandTotal = 0;
+
+            foreach ($selectedCharities as $selected_charity) {
+
+                $charity = Charity::where('id', $selected_charity->id)
+                                 ->select(['id', 'charity_name as text'])->first();
+
+                $charity['additional'] = $selected_charity->additional;
+
+                $one_time_pledge = $pledge->charities->where('charity_id', $selected_charity->charity_id)->where('frequency', 'one-time')->first();
+                $biweekly_pledge = $pledge->charities->where('charity_id', $selected_charity->charity_id)->where('frequency', 'bi-weekly')->first();
+
+                $charity['one-time-amount-distribution'] = $one_time_pledge->amount;
+                $charity['one-time-percentage-distribution'] = $one_time_pledge->percentage;
+                $charity['bi-weekly-amount-distribution'] = $biweekly_pledge->amount;
+                $charity['bi-weekly-percentage-distribution'] = $biweekly_pledge->percentage;
+
+                $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                $grandTotal += $charity['one-time-amount-distribution'];
+                $grandTotal += ($charity['bi-weekly-amount-distribution'] * $number_of_periods); //26
+                array_push($charities, $charity);
+
+            }
+
+        } else {
+
+            $pool_id = $pledge->f_s_pool_id;
+            $pool = FSPool::where('id', $pool_id)->first();
+            $pool_charities = $pool ? $pool->charities : [];
+
+            $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ? $pledge->one_time_amount : 0;
+            $biWeeklyAmount = ($frequency === 'bi-weekly' || $frequency === 'both') ? $pledge->pay_period_amount : 0;
+
+            $annualBiWeeklyAmount = $biWeeklyAmount * $number_of_periods; //26
+            $annualOneTimeAmount = $oneTimeAmount;
+
+            $calculatedTotalPercentOneTime = 0;
+            $calculatedTotalAmountOneTime = 0;
+            $calculatedTotalPercentBiWeekly = 0;
+            $calculatedTotalAmountBiWeekly = 0;
+            $grandTotal = 0;
+
+            $charities = [];
+
+            foreach ($pool_charities as $key => $pool_charity) {
+                $charity = $pool_charity->charity->toArray();
+                $charity['text'] = $pool_charity->charity->charity_name;
+                $charity['additional'] = '';
+
+                $percentage = $pool_charity->percentage;
+
+                if ($key === count($pool_charities) - 1  ) {
+
+                    $charity['one-time-amount-distribution'] = $oneTimeAmount - $calculatedTotalAmountOneTime ;
+                    $charity['one-time-percentage-distribution'] = $pool_charity->percentage;
+
+                    $charity['bi-weekly-amount-distribution'] =  $biWeeklyAmount - $calculatedTotalAmountBiWeekly ;
+                    $charity['bi-weekly-percentage-distribution'] = $pool_charity->percentage;
+
+                    $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                    $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                    $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                    $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                    $grandTotal += $charity['one-time-amount-distribution'];
+                    $grandTotal += ($charity['bi-weekly-amount-distribution'] * $number_of_periods); //26
+                    // $grandTotal += ($charity['bi-weekly-amount-distribution'] );
+
+                    array_push($charities, $charity);
+
+                } else {
+
+                    $charity['one-time-amount-distribution'] = round(($pool_charity->percentage * $annualOneTimeAmount) / 100 , 2);
+                    $charity['one-time-percentage-distribution'] = $pool_charity->percentage;
+
+                    $charity['bi-weekly-amount-distribution'] = round(($pool_charity->percentage * $annualBiWeeklyAmount) / 100 / 26 , 2);
+                    $charity['bi-weekly-percentage-distribution'] = $pool_charity->percentage;
+
+                    $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                    $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                    $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
+                    $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
+
+                    $grandTotal += $charity['one-time-amount-distribution'];
+                    $grandTotal += ($charity['bi-weekly-amount-distribution'] * $number_of_periods); //26
+                    // $grandTotal += ($charity['bi-weekly-amount-distribution'] );
+                    array_push($charities, $charity);
+
+                };
+            }
+        }
+
+        $pool_option = $pledge->pool_option;
+        $regional_pool_id = $pledge->regional_pool_id;
+
+        if($request->download_pdf){
+
+            $date = date("Y-m-d");
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+                 'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
+            return $pdf->download('Donation Summary.pdf');
+        }
+
+    }
+    
+    public function regionalPoolDetail($id)
+    {
+        $pool = FSPool::where('id', $id)->first();
+        $charities = $pool ? $pool->charities : [];
+
+        return view('annual-campaign.partials.pool-detail', compact('charities') )->render();
+    }
+
+
+    public function duplicate(Request $request)
+    {
+     
+        // check whether the current annual campaign pledge exists or not  
+        $current_pledge = Pledge::join('campaign_years', 'campaign_years.id', 'campaign_year_id')
+                                    ->where('campaign_years.calendar_year',  today()->year + 1 ) 
+                                    ->where('user_id', Auth::id() )
+                                    ->first();
+        if ($current_pledge) {
+            return redirect()->route('donations.list')->with('error','The Annual Campaign pledge have already created, no duplication allowed!');
+            // return abort(409);       // Conflict (pledge already exists)
+        } 
+      
+    
+        // $history = pledge_history_view where id = 241832 ;
+        $hist_pledge = ViewPledgeHistory::where('id', $request->pledge_id)->first();
+        if (!$hist_pledge) {
+            return redirect()->route('donations.list')->with('error','The history record not found!');
+        }    
+        if (!($hist_pledge->user->id == Auth::id())) {
+            return redirect()->route('donations.list')->with('error','This is not your history record!');
+            // return abort(403);      // 403 Forbidden
+        }
+        if (!($hist_pledge->is_annual_campaign)) {
+            return redirect()->route('donations.list')->with('error','The Annual Campaign period is not open yet');
+            // return abort(404);      // 404 Not Found
+        }
+
+        if(!empty($hist_pledge))
+        {
+            $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                                ->orderBy('calendar_year', 'desc')->first();
+            $new_pledge = new Pledge();
+
+
+            // Clone the new pledge from the specify pledge history
+            if ($hist_pledge->source == 'GF') {
+                $pledge = Pledge::where('id', $request->pledge_id)->first();
+                
+                $new_pledge = $pledge->replicate()->fill([
+                    'campaign_year_id' => $campaignYear->id,
+                ]);
+
+            } else {
+
+                $user = User::where('id', Auth::id())->first();
+
+                $new_pledge->user_id = $user->id;
+                $new_pledge->organization_id = $user->organization_id;
+                $new_pledge->campaign_year_id = $campaignYear->id;
+                $new_pledge->type  = $hist_pledge->type;
+                $new_pledge->f_s_pool_id = $hist_pledge->type == 'P' ? $hist_pledge->fund_supported_pool()->id : 0;
+                $new_pledge->pay_period_amount = 0;
+                $new_pledge->one_time_amount = 0;
+                
+                // 'Bi-Weekly'
+                $bi_weekly_pledges = PledgeHistory::where('GUID', $hist_pledge->GUID)
+                                ->where('yearcd', $hist_pledge->yearcd)
+                                ->where('campaign_type', $hist_pledge->donation_type)
+                                ->where('frequency', 'Bi-Weekly')
+                                ->orderBy('source')
+                                ->get();
+                                       
+                // One-Time
+                $one_time_pledges = PledgeHistory::where('GUID', $hist_pledge->GUID)
+                                ->where('yearcd', $hist_pledge->yearcd)
+                                ->where('campaign_type', $hist_pledge->donation_type)
+                                ->where('frequency', 'One-Time')
+                                ->orderBy('source')
+                                ->get();
+
+                if ($hist_pledge->type == 'P') {
+                    // $new_pledge->bi_weekly_pledges
+                    if ( count($bi_weekly_pledges) ) {
+                        $new_pledge->pay_period_amount = $bi_weekly_pledges->first()->pledge / 26;
+                    }
+                    if ( count($one_time_pledges) ) {
+                        $new_pledge->one_time_amount = $one_time_pledges->first()->pledge;
+                    }
+
+                    $new_pledge->goal_amount = ($new_pledge->pay_period_amount * $campaignYear->number_of_periods) +
+                                                $new_pledge->one_time_amount;
+
+                } else {
+
+                    $row = 0;
+                    foreach( $bi_weekly_pledges as $index => $bi_weekly_pledge) {
+                        if ( $index == 0 ) {
+                            $new_pledge->pay_period_amount = $bi_weekly_pledge->pledge / 26;
+                        }
+
+                        if ($bi_weekly_pledge->charity) { 
+                            $new_pledge_charity = new PledgeCharity();
+
+                            $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
+                            $new_pledge_charity->additional = $bi_weekly_pledge->name2;
+                            $new_pledge_charity->percentage = $bi_weekly_pledge->percent;
+                            $new_pledge_charity->amount = $bi_weekly_pledge->amount;
+                            $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
+                            $new_pledge_charity->goal_amount = $new_pledge_charity->amount * $campaignYear->number_of_periods;
+                                                                
+                            $new_pledge->charities[$row] = $new_pledge_charity;
+                            $row += 1;
+    
+                        }
+
+                    }
+
+                    foreach( $one_time_pledges as $index => $one_time_pledge) {
+                        if ( $index == 0 ) {
+                            $new_pledge->one_time_amount = $one_time_pledge->pledge;
+                        }
+
+                        if ($one_time_pledge->charity) { 
+                            $new_pledge_charity = new PledgeCharity();
+
+                            $new_pledge_charity->charity_id = $one_time_pledge->charity->id;
+                            $new_pledge_charity->additional = $one_time_pledge->name2;
+                            $new_pledge_charity->percentage = $one_time_pledge->percent;
+                            $new_pledge_charity->amount = $one_time_pledge->amount;
+                            $new_pledge_charity->frequency = 'one-time'; 
+                            $new_pledge_charity->goal_amount =  $one_time_pledge->amount;
+                                                               
+
+                            $new_pledge->charities[$index] = $new_pledge_charity;
+                            $row += 1;
+                        }
+
+
+                    }
+
+                    $new_pledge->goal_amount = ($new_pledge->pay_period_amount * $campaignYear->number_of_periods) +
+                                                $new_pledge->one_time_amount;
+
+                }
+
+                // dd([ $bi_weekly_pledges, $one_time_pledges, $new_pledge ]);                                            
+
+            }
+
+
+            return $this->create($new_pledge);
+
+            // if(empty($pledge->f_s_pool_id))
+            // {
+            //     $fs_pool_option = "C";
+            //     if (!Session::has('charities')) {
+            //         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+            //             ->first();
+            //      /*   $pledge = Pledge::where('user_id', Auth::id())
+            //             ->whereHas('campaign_year', function($q){
+            //                 $q->where('calendar_year','=', today()->year + 1 );
+            //             })->first();*/
+            //         if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 ) {
+            //             $charities = $pledge->charities()->get();
+            //         }
+            //     }
+
+            //     $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
+
+            //    if($frequency == "bi-weekly")
+            //    {
+            //        session()->put('amount-step',  array (
+            //            'bi-weekly-amount' => $pledge->pay_period_amount,
+            //            'frequency' => $frequency,
+            //        ));
+            //    }
+            //    else if($frequency == "one-time"){
+            //        session()->put('amount-step',  array (
+            //            'one-time-amount' => $pledge->one_time_amount,
+            //            'frequency' => $frequency,
+            //        ));
+            //    }
+            //    else{
+            //        session()->put('amount-step',  array (
+            //            'one-time-amount' => $pledge->one_time_amount,
+            //            'bi-weekly-amount' => $pledge->pay_period_amount,
+            //            'frequency' => $frequency,
+            //        ));
+            //    }
+
+
+            //     $preselectedData = Session::get('amount-step');
+            //     $totalAmountOneTime = isset($preselectedData['one-time-amount']) ? $preselectedData['one-time-amount'] : 0;
+            //     $totalAmountBiWeekly = isset($preselectedData['bi-weekly-amount']) ? $preselectedData['bi-weekly-amount']: 0;
+            //     $frequency = $preselectedData['frequency'];
+
+            //     foreach($charities as $charity){
+            //         $selectedCharities['id'][] = $charity->id;
+            //         $selectedCharities['additional'][] = $charity->additional;
+            //     }
+
+            //     if ($frequency === 'one-time' || $frequency === 'both') {
+            //         $totalAmountOneTime= 0;
+            //         foreach($charities as $charity){
+            //             $totalAmountOneTime += $charity->amount;
+            //         }
+            //             // Correct $input['amount']
+            //             foreach($charities as $index => $a) {
+            //                 $input['oneTimeAmount'][$index] = $totalAmountOneTime * $a->amount / 100;
+            //             }
+            //             // Correct $input['percent']
+            //             foreach($charities as $index => $a) {
+            //                 $input['oneTimePercent'][$index] = round(100 * $a->amount / $totalAmountOneTime, 2);
+            //             }
+
+            //         //
+            //         foreach($input['oneTimePercent'] as $charityId => $percentageAmount) {
+            //             $selectedCharities['one-time-percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
+            //         }
+            //         foreach($input['oneTimeAmount'] as $charityId => $amount) {
+            //             $selectedCharities['one-time-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
+            //         }
+            //     }
+            //     if ($frequency === 'bi-weekly' || $frequency === 'both') {
+            //         $totalAmountBiWeekly = 0;
+            //         foreach($charities as $charity){
+            //             $totalAmountBiWeekly += $charity->amount;
+            //         }
+
+            //             // Correct $input['amount']
+            //             foreach($charities as $index => $a) {
+            //                 $input['biWeeklyAmount'][$a->id] = $a->amount;
+            //             }
+            //             // Correct $input['percent']
+            //             foreach($charities as $index => $a) {
+            //                 $input['biWeeklyPercent'][$a->id] = round(100 * ($a->amount / $totalAmountBiWeekly), 2);
+            //             }
+
+            //         foreach($input['biWeeklyPercent'] as $charityId => $percentageAmount) {
+            //             $selectedCharities['bi-weekly-percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
+            //         }
+            //         foreach($input['biWeeklyAmount'] as $charityId => $amount) {
+            //             $selectedCharities['bi-weekly-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
+            //         }
+            //     }
+            //   session()->put('charities', $selectedCharities);
+            // }
+            // else {
+            //     $fs_pool_option = "P";
+            //     session()->put('regional_pool_id', $pledge->f_s_pool_id);
+            // }
+            // $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
+
+            // if($frequency == "bi-weekly")
+            // {
+            //     session()->put('amount-step',  array (
+            //         'bi-weekly-amount' => $pledge->pay_period_amount,
+            //         'frequency' => $frequency,
+            //     ));
+            // }
+            // else if($frequency == "one-time"){
+            //     session()->put('amount-step',  array (
+            //         'one-time-amount' => $pledge->one_time_amount,
+            //         'frequency' => $frequency,
+            //     ));
+            // }
+            // else{
+            //     session()->put('amount-step',  array (
+            //         'one-time-amount' => $pledge->one_time_amount,
+            //         'bi-weekly-amount' => $pledge->pay_period_amount,
+            //         'frequency' => $frequency,
+            //     ));
+            // }
+
+            // session()->put('pool_option', $fs_pool_option);
+            // return redirect()->route('donate.summary');
+        }
+        else{
+            return redirect()->route('donate.list');
+        }
+    }
+
+}

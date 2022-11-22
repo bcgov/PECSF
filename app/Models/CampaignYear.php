@@ -29,7 +29,23 @@ class CampaignYear extends Model
         'end_date' => 'date:Y-m-d',
         'close_date' => 'date:Y-m-d',
     ];
- 
+
+    // Class Method 
+    public static function isAnnualCampaignOpenNow() {
+        $today = today();
+        $cy = self::where('start_date', '<=',  $today) 
+                ->where('end_date', '>=', $today)
+                ->first();
+
+        if ($cy && $cy->status == 'A') {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+    
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
