@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 
 use App\Http\Controllers\Admin\DonationUploadController;
+use App\Http\Controllers\Admin\DonateNowPledgeController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
@@ -114,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
+    Route::get('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
 });
 
 // Donate Now
@@ -240,6 +242,18 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::post('/status', [EventSubmissionQueueController::class,"status"])->name('status');
     Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
 });
+
+
+Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
+    // Pledge Administration -- Donate Now Pledges
+    Route::resource('/donate-now', DonateNowPledgeController::class);
+    Route::post('/donate-now/{id}/cancel', [DonateNowPledgeController::class,'cancel'])->name('donate-now.cancel');
+    // Route::get('/donate-now-users', [DonateNowPledgeController::class,'getUsers'])->name('administrators.users');
+    // Route::get('/donate-now-nongov-user', [DonateNowPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
+    // Route::get('/donate-now-pledgeid', [DonateNowPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
+
+});
+
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
     Route::get('/others', function() {
