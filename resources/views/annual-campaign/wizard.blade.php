@@ -119,14 +119,14 @@
 
 
                 <div class="p-2 ">
-                    <button type="button" class="action cancel btn-lg btn-outline-primary"
+                    <button type="button" class="action cancel btn btn-lg btn-outline-primary"
                         onclick="window.location='{{ route('donations.list') }}'"
                         >Cancel</button>
-                    <button type="button" class="action back btn-lg  btn-outline-primary"
+                    <button type="button" class="action back btn btn-lg  btn-outline-primary"
                         style="display: none">Back</button>
-                    <button type="button" class="action next btn-lg  btn-primary "
+                    <button type="button" class="action next btn btn-lg  btn-primary "
                         >Next</button>
-                    <button type="submit" class="action submit btn-lg  btn-primary "
+                    <button type="submit" class="action submit btn btn-lg  btn-primary "
                         style="display: none">Pledge</button>
                 </div>
 

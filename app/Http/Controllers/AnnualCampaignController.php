@@ -888,7 +888,6 @@ class AnnualCampaignController extends Controller
                                 ->orderBy('calendar_year', 'desc')->first();
             $new_pledge = new Pledge();
 
-
             // Clone the new pledge from the specify pledge history
             if ($hist_pledge->source == 'GF') {
                 $pledge = Pledge::where('id', $request->pledge_id)->first();
@@ -994,136 +993,11 @@ class AnnualCampaignController extends Controller
 
             }
 
-
             return $this->create($new_pledge);
 
-            // if(empty($pledge->f_s_pool_id))
-            // {
-            //     $fs_pool_option = "C";
-            //     if (!Session::has('charities')) {
-            //         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-            //             ->first();
-            //      /*   $pledge = Pledge::where('user_id', Auth::id())
-            //             ->whereHas('campaign_year', function($q){
-            //                 $q->where('calendar_year','=', today()->year + 1 );
-            //             })->first();*/
-            //         if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 ) {
-            //             $charities = $pledge->charities()->get();
-            //         }
-            //     }
-
-            //     $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
-
-            //    if($frequency == "bi-weekly")
-            //    {
-            //        session()->put('amount-step',  array (
-            //            'bi-weekly-amount' => $pledge->pay_period_amount,
-            //            'frequency' => $frequency,
-            //        ));
-            //    }
-            //    else if($frequency == "one-time"){
-            //        session()->put('amount-step',  array (
-            //            'one-time-amount' => $pledge->one_time_amount,
-            //            'frequency' => $frequency,
-            //        ));
-            //    }
-            //    else{
-            //        session()->put('amount-step',  array (
-            //            'one-time-amount' => $pledge->one_time_amount,
-            //            'bi-weekly-amount' => $pledge->pay_period_amount,
-            //            'frequency' => $frequency,
-            //        ));
-            //    }
-
-
-            //     $preselectedData = Session::get('amount-step');
-            //     $totalAmountOneTime = isset($preselectedData['one-time-amount']) ? $preselectedData['one-time-amount'] : 0;
-            //     $totalAmountBiWeekly = isset($preselectedData['bi-weekly-amount']) ? $preselectedData['bi-weekly-amount']: 0;
-            //     $frequency = $preselectedData['frequency'];
-
-            //     foreach($charities as $charity){
-            //         $selectedCharities['id'][] = $charity->id;
-            //         $selectedCharities['additional'][] = $charity->additional;
-            //     }
-
-            //     if ($frequency === 'one-time' || $frequency === 'both') {
-            //         $totalAmountOneTime= 0;
-            //         foreach($charities as $charity){
-            //             $totalAmountOneTime += $charity->amount;
-            //         }
-            //             // Correct $input['amount']
-            //             foreach($charities as $index => $a) {
-            //                 $input['oneTimeAmount'][$index] = $totalAmountOneTime * $a->amount / 100;
-            //             }
-            //             // Correct $input['percent']
-            //             foreach($charities as $index => $a) {
-            //                 $input['oneTimePercent'][$index] = round(100 * $a->amount / $totalAmountOneTime, 2);
-            //             }
-
-            //         //
-            //         foreach($input['oneTimePercent'] as $charityId => $percentageAmount) {
-            //             $selectedCharities['one-time-percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
-            //         }
-            //         foreach($input['oneTimeAmount'] as $charityId => $amount) {
-            //             $selectedCharities['one-time-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
-            //         }
-            //     }
-            //     if ($frequency === 'bi-weekly' || $frequency === 'both') {
-            //         $totalAmountBiWeekly = 0;
-            //         foreach($charities as $charity){
-            //             $totalAmountBiWeekly += $charity->amount;
-            //         }
-
-            //             // Correct $input['amount']
-            //             foreach($charities as $index => $a) {
-            //                 $input['biWeeklyAmount'][$a->id] = $a->amount;
-            //             }
-            //             // Correct $input['percent']
-            //             foreach($charities as $index => $a) {
-            //                 $input['biWeeklyPercent'][$a->id] = round(100 * ($a->amount / $totalAmountBiWeekly), 2);
-            //             }
-
-            //         foreach($input['biWeeklyPercent'] as $charityId => $percentageAmount) {
-            //             $selectedCharities['bi-weekly-percentage-distribution'][array_search($charityId, $selectedCharities['id'])] = $percentageAmount;
-            //         }
-            //         foreach($input['biWeeklyAmount'] as $charityId => $amount) {
-            //             $selectedCharities['bi-weekly-amount-distribution'][array_search($charityId, $selectedCharities['id'])] = $amount;
-            //         }
-            //     }
-            //   session()->put('charities', $selectedCharities);
-            // }
-            // else {
-            //     $fs_pool_option = "P";
-            //     session()->put('regional_pool_id', $pledge->f_s_pool_id);
-            // }
-            // $frequency = empty($pledge->one_time_amount)? "bi-weekly" : (empty($pledge->pay_period_amount) ? "one-time" : "both");
-
-            // if($frequency == "bi-weekly")
-            // {
-            //     session()->put('amount-step',  array (
-            //         'bi-weekly-amount' => $pledge->pay_period_amount,
-            //         'frequency' => $frequency,
-            //     ));
-            // }
-            // else if($frequency == "one-time"){
-            //     session()->put('amount-step',  array (
-            //         'one-time-amount' => $pledge->one_time_amount,
-            //         'frequency' => $frequency,
-            //     ));
-            // }
-            // else{
-            //     session()->put('amount-step',  array (
-            //         'one-time-amount' => $pledge->one_time_amount,
-            //         'bi-weekly-amount' => $pledge->pay_period_amount,
-            //         'frequency' => $frequency,
-            //     ));
-            // }
-
-            // session()->put('pool_option', $fs_pool_option);
-            // return redirect()->route('donate.summary');
         }
         else{
-            return redirect()->route('donate.list');
+            return abort(404);      // 404 Not Found
         }
     }
 

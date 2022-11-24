@@ -53,10 +53,7 @@
         @endforeach
     </div>
 
-    {{-- <div class="mt-5">
-        <a class="btn btn-lg btn-outline-primary" href="{{route('donate.start')}}">Previous</a>
-        <button class="btn btn-lg btn-primary" type="submit">Next</button>
-    </div> --}}
+
 
 </div>
 

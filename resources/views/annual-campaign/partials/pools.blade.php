@@ -55,6 +55,9 @@
     /* Region Pool Area */
     #step-regional-pools-area .card  {
         color: #1a5a96;
+        background-color: #f8fafc;
+        border: 1px solid #1a5a96;
+
     }
 
     #step-regional-pools-area input[name='regional_pool_id'] {
@@ -62,8 +65,14 @@
         height: 18px;
     }
 
+    #step-regional-pools-area .card label {
+        font-weight: 700;
+    }
+
     #step-regional-pools-area .card:hover {
-        background-color: darkgray;
+        /* background-color: darkgray; */
+        background-color: #1a5a96;
+        opacity: 0.7;
         color: white;
     }
     #step-regional-pools-area .card.active {
@@ -76,6 +85,8 @@
         bottom: 8px;
         right: 8px;
     }
+
+
 
 </style>
 @endpush
