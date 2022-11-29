@@ -14,7 +14,7 @@ class PledgeHistory extends Model
         'name1', 'name2', 'emplid', 'GUID', 'vendor_id', 'additional_info',
         'charity_bn', 'charity_id', 'per_pay_amt', 'pledge', 'percent', 'amount',
         'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor', 'deptid', 'city', 
-        'business_unit', 'event_descr', 'event_type', 'event_sub_type',
+        'business_unit', 'event_descr', 'event_type', 'event_sub_type', 'event_deposit_date',
         'created_date',
     ];
 

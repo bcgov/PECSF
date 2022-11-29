@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 
 use App\Http\Controllers\Admin\DonationUploadController;
+use App\Http\Controllers\Admin\DonateNowPledgeController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
@@ -80,33 +81,34 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
 Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
-Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
-    Route::get('/start', [CharityController::class, 'start'])->name('start');
-    Route::get('/select', [CharityController::class, 'select'])->name('select-charities');
-    Route::post('/remove', [CharityController::class, 'remove'])->name('select');
-    Route::get('/amount', [CharityController::class, 'amount'])->name('amount');
-    Route::get('/distribution', [CharityController::class, 'distribution'])->name('distribution');
-    Route::get('/summary', [CharityController::class, 'summary'])->name('summary');
-    Route::get('/thank-you', [CharityController::class, 'thankYou'])->name('save.thank-you');
-    Route::get('/charities/{charity_id}',[CharityController::class, 'show']);
-    Route::get('/duplicate/{pledge_id}',[CharityController::class, 'duplicate'])->name("duplicate");
 
-    Route::get('/regional-pool', [CharityController::class, 'regionalPool'])->name('regional-pool');
-    Route::get('/regional-pool-detail/{id}', [CharityController::class, 'regionalPoolDetail'])->name('regional-pool-detail');
+// Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
+//     Route::get('/start', [CharityController::class, 'start'])->name('start');
+//     Route::get('/select', [CharityController::class, 'select'])->name('select-charities');
+//     Route::post('/remove', [CharityController::class, 'remove'])->name('select');
+//     Route::get('/amount', [CharityController::class, 'amount'])->name('amount');
+//     Route::get('/distribution', [CharityController::class, 'distribution'])->name('distribution');
+//     Route::get('/summary', [CharityController::class, 'summary'])->name('summary');
+//     Route::get('/thank-you', [CharityController::class, 'thankYou'])->name('save.thank-you');
+//     Route::get('/charities/{charity_id}',[CharityController::class, 'show']);
+//     Route::get('/duplicate/{pledge_id}',[CharityController::class, 'duplicate'])->name("duplicate");
 
-    Route::post('/start', [CharityController::class, 'savePoolOption'])->name('save.pool-option');
-    Route::post('/select', [CharityController::class, 'saveCharities'])->name('save.select');
-    Route::post('/amount', [CharityController::class, 'saveAmount'])->name('save.amount');
-    Route::post('/distribution', [CharityController::class, 'saveDistribution'])->name('save.distribution');
-    Route::post('/summary', [CharityController::class, 'confirmDonation'])->name('save.summary');
+//     Route::get('/regional-pool', [CharityController::class, 'regionalPool'])->name('regional-pool');
+//     Route::get('/regional-pool-detail/{id}', [CharityController::class, 'regionalPoolDetail'])->name('regional-pool-detail');
 
-    Route::post('/regional-pool', [CharityController::class, 'saveRegionalPool'])->name('save.regional-pool');
+//     Route::post('/start', [CharityController::class, 'savePoolOption'])->name('save.pool-option');
+//     Route::post('/select', [CharityController::class, 'saveCharities'])->name('save.select');
+//     Route::post('/amount', [CharityController::class, 'saveAmount'])->name('save.amount');
+//     Route::post('/distribution', [CharityController::class, 'saveDistribution'])->name('save.distribution');
+//     Route::post('/summary', [CharityController::class, 'confirmDonation'])->name('save.summary');
+
+//     Route::post('/regional-pool', [CharityController::class, 'saveRegionalPool'])->name('save.regional-pool');
 
 
-    Route::get('/download-summary', [CharityController::class, 'savePDF'])->name('save.pdf');
+//     Route::get('/download-summary', [CharityController::class, 'savePDF'])->name('save.pdf');
 
-    Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
-});
+//     Route::get('/download/{file}', [PledgeController::class, 'download'])->name('download-charity');
+// });
 
 // Annual Campaign (usually Sep - Nov)
 Route::middleware(['auth'])->group(function () {
@@ -114,6 +116,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
+    Route::get('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
 });
 
 // Donate Now
@@ -240,6 +243,18 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::post('/status', [EventSubmissionQueueController::class,"status"])->name('status');
     Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
 });
+
+
+Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
+    // Pledge Administration -- Donate Now Pledges
+    Route::resource('/donate-now', DonateNowPledgeController::class);
+    Route::post('/donate-now/{id}/cancel', [DonateNowPledgeController::class,'cancel'])->name('donate-now.cancel');
+    // Route::get('/donate-now-users', [DonateNowPledgeController::class,'getUsers'])->name('administrators.users');
+    // Route::get('/donate-now-nongov-user', [DonateNowPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
+    // Route::get('/donate-now-pledgeid', [DonateNowPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
+
+});
+
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
     Route::get('/others', function() {

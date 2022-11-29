@@ -311,6 +311,7 @@ class ImportPledgeHistory extends Command
                                 'event_descr' => $row->act_descr,         // Event's description e.g. cheque#
                                 'event_type' => $row->deduction_code,     // For Event, is donation type 
                                 'event_sub_type'=> $row->sub_type,        // For Event, is donation sub type 
+                                'event_deposit_date' => $row->act_date,       // Event's deposit date  
 
                                 'created_date' => $row->created,
 
@@ -356,10 +357,11 @@ class ImportPledgeHistory extends Command
             insert into pledge_history_summaries
                 (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region)
                 select min(pledge_histories.id), GUID, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,  
-                    campaign_type, frequency, max(per_pay_amt),  max(pledge) as pledge, 
+                    campaign_type, frequency, 
+                    case when frequency = 'Bi-Weekly' then max(pledge / 26) else 0 end per_pay_amt, max(pledge) as pledge, 
                     case when max(source) = 'Pool' then (select regions.name from regions where max(pledge_histories.tgb_reg_district)  = regions.code) else '' end
                 from pledge_histories  
-                where campaign_type in ('Annual') 
+                where campaign_type in ('Annual', 'Event') 
                   and GUID <> ''
                 group by GUID, yearcd, campaign_type, frequency;
         SQL;
@@ -368,6 +370,7 @@ class ImportPledgeHistory extends Command
 
     private function getInsertNonAnnualSummarySQL(): string
     {
+        // Donate Now always Non-Pool and single charity
         return <<<SQL
             insert into pledge_history_summaries               
                 (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region)
@@ -375,7 +378,7 @@ class ImportPledgeHistory extends Command
                     campaign_type, frequency, per_pay_amt, pledge,    
                     case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end
                     from pledge_histories 
-                where `campaign_type` not in ('Annual') 
+                where campaign_type in ('Donate Today') 
                     and GUID <> '';
         SQL;
 

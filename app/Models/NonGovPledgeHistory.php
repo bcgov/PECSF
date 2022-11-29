@@ -19,7 +19,7 @@ class NonGovPledgeHistory extends Model
         'per_pay_amt', 'pledge', 'percent', 'amount', 'deduction_code',
         'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor',
         'deptid', 'city', 
-        'business_unit', 'event_descr', 'event_type', 'event_sub_type',
+        'business_unit', 'event_descr', 'event_type', 'event_sub_type', 'event_deposit_date',
         'created_date',
         'created_by_id', 'updated_by_id',       
 
