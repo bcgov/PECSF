@@ -152,6 +152,7 @@
                 <th>PECSF Identifier</th>
                 <th>Calendar Year</th>
                 <th>Event Type</th>
+                <th>Donation Amount</th>
                 <th>Sub Type</th>
                 <th></th>
             </tr>

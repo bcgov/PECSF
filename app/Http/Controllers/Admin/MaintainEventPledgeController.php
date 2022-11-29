@@ -113,6 +113,8 @@ class MaintainEventPledgeController extends Controller
             {
                 $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
             }
+
+            $event_pledges->where("approved","=",1);
                $event_pledges = $event_pledges->limit(30)->get();
         }
         $charities=Charity::when($request->has("title"),function($q)use($request){

@@ -172,6 +172,7 @@ class EventSubmissionQueueController extends Controller
     {
      $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id")
          ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
+         ->where("approved","!=",1)
          ->get();
         $pools = FSPool::where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
