@@ -105940,3 +105940,7 @@ h4 {
 [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active, [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:hover, [class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:focus {
   background-color: #343a40;
 }
+
+body {
+  overflow-x: hidden;
+}

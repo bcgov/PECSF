@@ -29,7 +29,7 @@
 
             <div class="row p-3">
                 <div class="card_hook col-md-3 p-2">
-                    <div class="card" style="height:220px" >
+                    <div class="card" style="height:auto" >
                         <a class="card-body text-center"  href="{{route('volunteering.index')}}">
                             <i class="x nav-icon fas fa-hands-helping fa-2x "></i>
                           <p class="text-primary "> <span style="font-size:20px;">Volunteering</span></p>
@@ -47,7 +47,7 @@
                     </div>
                 </div>
                 <div class="card_hook col-md-3 p-2">
-                    <div class="card" style="height:220px" >
+                    <div class="card" style="height:auto;" >
                         <a href="{{route('contact')}}" class="card-body text-center">
                             <i class="x nav-icon fas fa-question-circle fa-2x "></i>
                             <p class="text-primary ">  <span style="font-size:22px;">Contact </span></p>
