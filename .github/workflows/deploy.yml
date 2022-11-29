@@ -256,7 +256,7 @@ jobs:
           test -n "${BRANCH}"
           echo "Current namespace is ${NAMESPACE}"
           #oc -n ${BUILD_NAMESPACE} policy add-role-to-group system:image-puller system:serviceaccounts:${NAMESPACE}
-          oc -n ${NAMESPACE} process -f openshift/app/performance-dc.yml \
+          oc -n ${NAMESPACE} process -f openshift/app/pecsf-dc.yml \
                 -p APP_NAME=${APP} \
                 -p SITE_URL=${APP_HOST} \
                 -p DB_HOST=mysql-0.mysql \
