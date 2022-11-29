@@ -259,11 +259,11 @@ jobs:
           oc -n ${NAMESPACE} process -f openshift/app/pecsf-dc.yml \
                 -p APP_NAME=${APP} \
                 -p SITE_URL=${APP_HOST} \
-                -p DB_HOST=mysql-0.mysql \
+                -p DB_HOST=mysql-0.mysqlh \
                 -p PERFORMANCE_MEMORY_LIMIT=4Gi \
                 -p REPLICA_COUNT=2 \
                 -p PROJECT_NAMESPACE=1fd77b-prod \
-                -p DB_SERVICE_NAME=mysql-0.mysql \
+                -p DB_SERVICE_NAME=mysql-0.mysqlh \
                 -p PERFORMANCE_VOLUME_CAPACITY=10Gi \
                 -p DB_NAME=pecsf \
                 -p DB_USER=pecsf\
