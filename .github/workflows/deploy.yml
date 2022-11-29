@@ -228,7 +228,7 @@ jobs:
      NAMESPACE: 1fd77b-prod
      BUILD_NAMESPACE: 1fd77b-tools
      BRANCH: ${{ github.ref_name }}
-     APP: pecsf-new
+     APP: pecsf
      APP_HOST: pecsf.apps.silver.devops.gov.bc.ca
      DB_NAME: pecsf
     needs:
