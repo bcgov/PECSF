@@ -78,12 +78,17 @@ class GeneratePledgeFromHistory extends Command
             'status' => 'Processing',
         ]);
         
+        $this->LogMessage("The criteria for pledges to be generated: ");
+        $this->LogMessage("  Campaign Year       : " . $this->yearcd);
+        $this->LogMessage("  Up to creation date : " . $this->created_date);
+        $this->LogMessage("");
+
         $this->LogMessage( now() );
-        $this->LogMessage("Step - 1a : Verify Government History Data");
+        $this->LogMessage("Step - 1A : Verify Government History Data");
         $this->verifyHistoryData();
 
         $this->LogMessage( now() );
-        $this->LogMessage("Step - 1b : Verify Non-Government History Data");
+        $this->LogMessage("Step - 1B : Verify Non-Government History Data");
         $this->verifyNonGovHistoryData();
 
         if ($this->validation_pass) {
@@ -109,6 +114,9 @@ class GeneratePledgeFromHistory extends Command
             $this->LogMessage("Step - 3B : Generate Non-Gov Event Pledge");
             $this->generateNonGovEventPledge();
 
+        } else {
+
+            $this->LogMessage( 'Verificaton completed but exceptional found. No pledges were created!' ); 
         }
 
         // Update the Task Audit log
@@ -349,6 +357,11 @@ class GeneratePledgeFromHistory extends Command
 
                 }
 // echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
+
+                $old_pledge = Pledge::where('organization_id',  $user->organization_id)
+                                                ->where('user_id', $user->id)
+                                                ->where('campaign_year_id', $campaign_year->id)
+                                                ->first();       
                 
                 $pledge = Pledge::updateOrCreate([
                     'organization_id' => $user->organization_id,
