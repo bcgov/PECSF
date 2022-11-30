@@ -15,10 +15,7 @@ class OrganizationSqlFileSeeder extends Seeder
     public function run()
     {
         //
-        $path = base_path('database/seeds/organizations.sql');
-        if (env('APP_ENV') == 'local') {
-            $path = base_path('..\database\seeds\organizations.sql');
-        }
+        $path = database_path('seeds/organizations.sql');
         $sql = file_get_contents($path);
         DB::unprepared($sql);
 }
