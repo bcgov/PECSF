@@ -22,6 +22,10 @@ class PledgeHistory extends Model
         return $this->belongsTo(Region::class, 'tgb_reg_district', 'code');
     }
 
+    public function bu() {
+        return $this->belongsTo(BusinessUnit::class, 'business_unit', 'code');
+    }
+
     public function fund_supported_pool() {
 
         // return \App\Models\FSPool::where('region_id', $this->region->id)->first();
@@ -38,6 +42,12 @@ class PledgeHistory extends Model
         return $this->belongsTo(CampaignYear::class)->withDefault([
             'number_of_periods' => '26'
         ]);
+    }
+
+    public function user() {
+
+        // return \App\Models\FSPool::where('region_id', $this->region->id)->first();
+        return $this->belongsTo(User::class, 'guid', 'guid');
     }
 
 }

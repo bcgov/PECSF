@@ -28,7 +28,8 @@ class BankDepositForm extends Model
         'regional_pool_id',
         'bc_gov_id',
         'pecsf_id',
-        'business_unit'
+        'business_unit',
+        'approved',
     ];
 
     function attachments(){
