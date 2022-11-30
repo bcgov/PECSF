@@ -28,7 +28,8 @@ class OrganizationRequest extends FormRequest
             //
             'code'    => ['required','max:3','regex:/^[A-Z]+$/',
                             //'alpha_dash',
-                            Rule::when($this->getMethod() == 'POST', ['unique:App\Models\Organization,code']) 
+                            // Rule::when($this->getMethod() == 'POST', ['unique:App\Models\Organization,code']) 
+                            Rule::when($this->getMethod() == 'POST', [Rule::unique("organizations", "code")->whereNull("deleted_at")])
                          ],
             'name'    => 'required|max:50',
             'status'  => ['required', Rule::in(['A', 'I']) ],

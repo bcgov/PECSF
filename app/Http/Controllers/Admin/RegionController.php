@@ -137,7 +137,10 @@ class RegionController extends Controller
      */
     public function destroy($id)
     {
-        $region = Region::where('id', $id);
+        $region = Region::where('id', $id)->first();
+        $region->updated_by_id = Auth::Id();
+        $region->save();
+        
         $region->delete();
 
         return response()->noContent();
