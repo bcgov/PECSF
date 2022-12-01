@@ -13,11 +13,11 @@
 
             
             {{-- Main Content --}}
-            <div class="card pb-4">
+            {{-- <div class="card pb-4"> --}}
 
                 {{-- Wizard Progress bar (stepper) --}}
-                <div class="card-header border-0 py-2">
-                    <div class=" card-timeline px-2 border-0" style="display:none;">
+                {{-- <div class="card-header border-0 py-2"> --}}
+                    <div class=" card-timeline px-2 border-0" style="display:block;">
                         <ul class="bs4-step-tracking">
                             <li class="active">
                                 <div><i class="fas fa-random fa-2xl"></i></div>Pool or Non-Pool
@@ -33,9 +33,9 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                {{-- </div> --}}
             
-            <div id="error-message" class="m-4 p-3 alert alert-warning" style="display:none"></div>
+                {{-- <div id="error-message" class="m-4 p-3 alert alert-warning" style="display:none"></div> --}}
 
 
               <div class="card-body py-0">
@@ -101,20 +101,20 @@
             
             
                     <div class="p-2 ">
-                        <button type="button" class="action cancel btn  btn-outline-secondary"
+                        <button type="button" class="action cancel btn btn-lg btn-outline-primary"
                             onclick="window.location='{{ route('donations.list') }}'"
                         >Cancel</button>
-                        <button type="button" class="action back btn  btn-outline-secondary"
+                        <button type="button" class="action back btn btn-lg btn-outline-primary"
                             style="display: none">Back</button>
-                        <button type="button" class="action next btn  btn-outline-primary float-right"
+                        <button type="button" class="action next btn btn-lg btn-primary ml-1"
                             >Next</button>
-                        <button type="submit" class="action submit btn  btn-primary float-right"
+                        <button type="submit" class="action submit btn btn-lg btn-primary ml-1"
                             style="display: none">Pledge</button>
                     </div>
 
                 </form>
               </div>
-            </div>
+            {{-- </div> --}}
 
 
         </div>
@@ -133,11 +133,11 @@
 
 @push('css')
 
-{{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 <style>
-    /* .select2-selection--multiple{
+    .select2-selection--multiple{
         overflow: hidden !important;
         height: auto !important;
         min-height: 38px !important;
@@ -148,13 +148,13 @@
         }
     .select2-container--default .select2-selection--single .select2-selection__arrow {
         height: 38px !important;
-    } */
+    }
 
     /* tracking */
 .bs4-step-tracking {
     margin-bottom: 30px;
     overflow: hidden;
-    color: #878788;
+    color:  #b2b2b2;  /* #878788 ; */
     padding-left: 0px;
     margin-top: 30px;
 }
@@ -166,7 +166,7 @@
     float: left;
     position: relative;
     font-weight: 400;
-    color: #878788;
+    color:  #b2b2b2;  /* #878788 ; */
     text-align: center;
     z-index: 100; 
 }
@@ -190,7 +190,7 @@
     line-height: 38px;
     display: block;
     font-size: 18px;
-    background: #878788;
+    background: #b2b2b2;  /* #878788 ; */
     border-radius: 50%;
     margin: auto;
 }
@@ -199,7 +199,7 @@
     content: '';
     width: 150%;
     height: 2px;
-    background: #878788 ;
+    background: #dadada;  /* #878788 ; */
     position: absolute;
     left: 0%;
     right: 0%;
@@ -219,15 +219,15 @@
 
 .bs4-step-tracking li.active {
     font-weight: bold;
-    color: #007bff; /* #dc3545 */
+    color: #1a5a96; /* #dc3545 */
 }
 
 .bs4-step-tracking li.active>div {
-    background: #007bff;
+    background: #1a5a96;
 }
 
 .bs4-step-tracking li.active:after {
-    background: #007bff;
+    background: #1a5a96;
 }
 
     #nav-tab li:not(.active)  a{
@@ -282,7 +282,7 @@
 
 @push('js')
 
-{{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
 <script>
@@ -329,6 +329,7 @@ $(function () {
             $(".next").trigger("click");
         }
         hideButtons(step);
+        $(this).blur();
     });
 
     // CALCULATE PROGRESS BAR
@@ -406,8 +407,14 @@ $(function () {
                 $('#donate-now-pledge-form [name='+ field_name +']').removeClass('is-invalid');
             });
 
-            $('#error-message').html('');
-            $('#error-message').hide();
+            // charities -- required error message
+            $('.min-charities-error').html('');
+            $('.min-charities-error').removeClass('error');
+            $(".charity-error-hook").css("border","none");
+            $('#donate-now-pledge-form [name="charities[]"]').nextAll('span.text-danger').remove();
+
+            // $('#error-message').html('');
+            // $('#error-message').hide();
 
             var form = $('#donate-now-pledge-form');
             $('#donate-now-pledge-form input[name=step]').val( step );
@@ -433,12 +440,12 @@ $(function () {
                     if (response.status == 422) {   
                         
                         // $('#error-message').html( response.responseJSON.errors );
-                        $('#error-message').html('');
-                        $.each(response.responseJSON.errors, function( field_name, error){
-                            $('#error-message').append('<div class="text-strong text-danger">' + error + '</div>');
-                        })
-                        $('#error-message').show();
-                        $("html, body").animate({ scrollTop: 0 }, 500);
+                        // $('#error-message').html('');
+                        // $.each(response.responseJSON.errors, function( field_name, error){
+                        //     $('#error-message').append('<div class="text-strong text-danger">' + error + '</div>');
+                        // })
+                        // $('#error-message').show();
+                        // $("html, body").animate({ scrollTop: 0 }, 500);
                         // $.each(response.responseJSON.errors, function(field_name,error){
                         //     if ( field_name.includes('.') ) {   
                         //         items = field_name.split(".");
@@ -450,6 +457,26 @@ $(function () {
                         //         $(document).find('[name=' + field_name + ']').addClass('is-invalid');
                         //     }
                         // })
+
+                        $.each(response.responseJSON.errors, function(field_name,error){
+                            if ( field_name.includes('.') ) {   
+                                items = field_name.split(".");
+                                pos = Number(items[ items.length -1 ]);
+
+                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
+                            } else {
+
+                                if (field_name == 'charities') {
+                                    $('.min-charities-error').html("<i class='fas fa-exclamation-circle'></i> " + error );
+                                    $('.min-charities-error').addClass('error');
+                                    $(".charity-error-hook").css("border","red 2px solid")
+                                } else {
+                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                    $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                                }
+                            }
+                        })
                     }
                     console.log('Error');
                 }
@@ -485,6 +512,13 @@ $(function () {
 
 </script>
 
+
 @include('donate-now.partials.choose-charity-js')
+<script type="x-tmpl" id="organization-tmpl">
+    @include('donate-now.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
+</script>
+<script>
+    $(".org_hook").show();
+</script> 
 
 @endpush

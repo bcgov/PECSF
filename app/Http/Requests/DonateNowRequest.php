@@ -41,7 +41,10 @@ class DonateNowRequest extends FormRequest
                     'step' => ['required'],
                     'pool_option'  => ['required', Rule::in(['C', 'P']) ],
                     'pool_id'      => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
-                    'charity_id'   => ['required_if:pool_option,C', Rule::when( $this->pool_option == 'P', ['exists:charities,id']) ],
+                    // 'charity_id'   => ['required_if:pool_option,C', Rule::when( $this->pool_option == 'P', ['exists:charities,id']) ],
+                    'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1', 'max:1']) ], 
+                    'charities.*' =>  [ Rule::when( $this->pool_option == 'C', ['exists:charities,id']) ],
+
                 ]
             );
         }
@@ -49,12 +52,38 @@ class DonateNowRequest extends FormRequest
         if ($this->step >= 3) {
             $my_rules = array_merge($my_rules, 
                 [
-                    'one_time_amount_custom'  => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
+                    // 'one_time_amount_custom'  => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
+                    'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount),
+                                                    ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
 
         return $my_rules;
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator)  {
+
+            $step = $this->step;
+            $charities = $this->charities ?? [];
+            $biWeeklyPercents = $this->biWeeklyPercent;
+            $oneTimePercents = $this->oneTimePercent;
+
+            if ($charities && $this->pool_option == 'C' && $step >= 2) {
+
+                // check max number of charities
+                $max = 1;
+                if ( count($charities) > $max) {
+                    for ($i= ($max) ; $i < count($charities); $i++) {
+                        $validator->errors()->add('organization_name.' .$i, 'Exceeds maximum number of charities.');
+                    }
+                }
+            }
+
+            
+        });
     }
 
     /**
@@ -70,7 +99,16 @@ class DonateNowRequest extends FormRequest
             // 'user_id.required'       => 'The Employee field is required',
 
             'pool_id.required_if' => 'A Fund Supported Pool selection is required. Please choose a Fund Supported Pool.',
-            'charity_id.required_if' => 'A charity selection is required. Please choose a charity.',
+            // 'charity_id.required_if' => 'A charity selection is required. Please choose a charity.',
+            'charities.required' => 'At least one charity must be specified.',
+            'charities.min' => 'At least one charity must be specified.',
+            'charities.max' => 'More than one charity were specified.',
+            'charities.*.exists' =>  'The invalid charity entered.',
+
+            'one_time_amount_custom.required' => 'The amount is required.',
+            'one_time_amount_custom.min'      => 'The min amount is $ 1.0.',
+            'one_time_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
+
         ];
     }
 
