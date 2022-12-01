@@ -76,7 +76,7 @@ Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
 // Route::get('/login/microsoft/callback', [MicrosoftGraphLoginController::class, 'callback']);
 
 
-Route::get('/donate', [CharityController::class, 'start'])->name('donate');
+// Route::get('/donate', [CharityController::class, 'start'])->name('donate');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
