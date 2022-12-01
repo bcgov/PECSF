@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use stdClass;
+use Exception;
 use Carbon\Carbon;
+use App\Models\ExportAuditLog;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +69,9 @@ class ExportDatabaseToBI extends Command
         $this->message = '';
         $this->status = 'Completed';
 
+        $this->success = 0;
+        $this->failure = 0;
+
     }
 
     /**
@@ -76,8 +81,6 @@ class ExportDatabaseToBI extends Command
      */
     public function handle()
     {
-
-        $this->LogMessage( now() );
 
         // Main Loop
         foreach ($this->db_tables as $table) {
@@ -98,8 +101,7 @@ class ExportDatabaseToBI extends Command
      * @return int
      */
     private function sendTableDataToDataWarehouse($table_name, $delta_field, $hidden_fields) {
-        $this->LogMessage("Table '{$table_name}' Detail to BI (Datawarehouse) start");
-
+     
         $this->success = 0;
         $this->failure = 0;
         $this->message = '';
@@ -114,9 +116,8 @@ class ExportDatabaseToBI extends Command
             'status' => 'Processing',
         ]);
 
-        // Write to Message log
-        $this->message .= "Sending table '{$table_name}' " . PHP_EOL;
-
+        $this->task = $task;
+         
         // Get the latest success job 
         $last_job = ScheduleJobAudit::where('job_name', $job_name)
                       ->where('status','Completed')
@@ -125,16 +126,23 @@ class ExportDatabaseToBI extends Command
 
         $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
 
+        $this->LogMessage("Table '{$table_name}' Detail to BI (Datawarehouse) start on " . now() );
+        $this->Logmessage("");
+        $this->Logmessage("Table Name                   : '{$table_name}' ");
+        $this->LogMessage("The Last send completed time : " . $last_start_time);
+        $this->LogMessage("The schedule Job id          : " . $task->id);
+        $this->LogMessage("The command name             : " . $job_name);
+        
         // Main Process for each table 
         $sql = DB::table($table_name)
-            ->when( $last_job && $delta_field, function($q) use($last_start_time, $delta_field, $hidden_fields) {
+            ->when( $last_job && $delta_field, function($q) use($last_start_time, $delta_field, $hidden_fields ) {
                 return $q->where($delta_field, '>=', $last_start_time);
             })
             ->orderBy('id');
             
         // Chucking
         $row_count = 0;
-        $sql->chunk(5000, function($chuck) use($table_name, $hidden_fields, $last_job, &$row_count, &$n) {
+        $sql->chunk(5000, function($chuck) use($task, $table_name, $hidden_fields, $last_job, &$row_count, &$n) {
             $this->LogMessage( "Sending table '{$table_name}' batch (5000) - " . ++$n );
 
             //$chuck->makeHidden(['password', 'remember_token']);
@@ -144,28 +152,43 @@ class ExportDatabaseToBI extends Command
                         // unset($item->password);
                         unset($item->$hidden_field);
                     }
+
                 }
             }
-
-            $row_count += 1;
 
             $pushdata = new stdClass();
             $pushdata->table_name = $table_name;
             $pushdata->table_data = json_encode($chuck);
             $pushdata->delta_ind = $last_job ? "1" : "0";
+         
+            $result = $this->sendData( $pushdata );
+            if ($result) {
+                // Log to the table
+                foreach($chuck as $row)  {
+                    ExportAuditLog::create([
+                        'schedule_job_name' => $task->job_name,
+                        'schedule_job_id' => $task->id,
+                        'to_application' => 'BI',
+                        'table_name' => $table_name,
+                        'row_id' => $row->id,
+                        'row_values' => json_encode($row),
+                    ]);
 
-            $this->sendData( $pushdata );
+                    $row_count += 1;
+                }
+            }
             
             unset($pushdata);
         });
 
-        $this->LogMessage("Table '{$table_name}' data sent completed");
-        $this->LogMessage( now() );
-        $this->LogMessage("Success (Batch) - " . $this->success);
-        $this->LogMessage("Failure (Batch) - " . $this->failure);
-        $this->LogMessage( "" );
-        $this->LogMessage("No of row sent  - " . $row_count);
-        
+        $this->LogMessage("" );
+        $this->LogMessage("Success (No of Batch ) - " . $this->success);
+        $this->LogMessage("Failure (No of Batch)  - " . $this->failure);
+        $this->LogMessage("Total No of row sent   - " . $row_count);
+        $this->LogMessage("" );
+        $this->LogMessage("Table '{$table_name}' data to BI sent completed on " . now() );        
+        $this->LogMessage("=========================================================================" );
+
 
         // Update the Task Audit log
         $task->end_time = Carbon::now();
@@ -178,6 +201,8 @@ class ExportDatabaseToBI extends Command
     }
     
     protected function sendData($pushdata) {
+        $this->success += 1;
+return true;        
 
         try {
 
@@ -189,6 +214,7 @@ class ExportDatabaseToBI extends Command
 
             if ($response->successful()) {
                 $this->success += 1;
+                return true;
 
             } else {
 
@@ -197,6 +223,7 @@ class ExportDatabaseToBI extends Command
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
                 $this->failure += 1;
+                return false;
             }
         
         } catch (\Exception $ex) {
@@ -205,7 +232,7 @@ class ExportDatabaseToBI extends Command
             $this->status = 'Error';
             $this->LogMessage( $ex->getMessage() );
 
-            return 1;
+            throw new Exception($ex);
         }
 
     }
@@ -217,6 +244,10 @@ class ExportDatabaseToBI extends Command
 
         // write to log message 
         $this->message .= $text . PHP_EOL;
+
+        // 
+        $this->task->message = $this->message;
+        $this->task->save();
         
     }
 
