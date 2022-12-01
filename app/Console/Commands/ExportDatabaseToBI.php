@@ -201,8 +201,6 @@ class ExportDatabaseToBI extends Command
     }
     
     protected function sendData($pushdata) {
-        $this->success += 1;
-return true;        
 
         try {
 
