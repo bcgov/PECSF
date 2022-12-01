@@ -33,7 +33,7 @@ class BankDepositFormController extends Controller
      */
     function __construct()
     {
-        $this->doc_folder = "bank_deposit_form_attachments";
+        $this->doc_folder = "/uploads/bank_deposit_form_attachments";
     }
 
     public function index(Request $request)
