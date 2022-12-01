@@ -66,9 +66,9 @@ class CampaignPledgeController extends Controller
                                 $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
                             })
                             ->when( $request->name, function($query) use($request) {
-                                $query->where('first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('name', 'like', '%' . $request->name . '%');
+                                $query->where('pledges.first_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('pledges.first_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('users.name', 'like', '%' . $request->name . '%');
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
@@ -561,7 +561,12 @@ class CampaignPledgeController extends Controller
             return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . ', has donation transactions loaded.'], 422); 
         }       
         
-        // Delete the pledge
+        // Delete the pledge and pledge charities
+        if ($pledge->type == 'C' ) {
+            $pledge->charities()->delete();
+        }
+        $pledge->updated_by_id = Auth::Id();
+        $pledge->save();
         $pledge->delete();
 
         return response()->noContent();

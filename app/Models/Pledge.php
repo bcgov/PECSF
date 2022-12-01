@@ -6,9 +6,12 @@ use Carbon\Carbon;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pledge extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'organization_id',
         'user_id',
