@@ -28,7 +28,8 @@ class RegionRequest extends FormRequest
         return [
             //
             'code'    => ['required','numeric','regex:/[0-9][0-9][0-9]/',
-                            Rule::when($this->getMethod() == 'POST', ['unique:App\Models\Region,code']) 
+                            // Rule::when($this->getMethod() == 'POST', ['unique:App\Models\Region,code']) 
+                            Rule::when($this->getMethod() == 'POST', [Rule::unique("regions", "code")->whereNull("deleted_at")])
                          ],
             'name'    => 'required|max:30',
             'status'  => ['required', Rule::in(['A', 'I']) ],

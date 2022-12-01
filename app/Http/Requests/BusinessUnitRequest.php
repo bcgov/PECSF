@@ -26,7 +26,7 @@ class BusinessUnitRequest extends FormRequest
     {
         $rules = [
            'code'    => ['required','max:5',
-                            Rule::when($this->getMethod() == 'POST', ['unique:App\Models\BusinessUnit,code'])
+                            Rule::when($this->getMethod() == 'POST', [Rule::unique("business_units", "code")->whereNull("deleted_at")])
                          ],
             'name'    => 'required|max:60',
             'status'  => ['required', Rule::in(['A', 'I']) ],

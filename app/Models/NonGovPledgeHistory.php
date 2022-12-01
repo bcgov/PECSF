@@ -26,6 +26,30 @@ class NonGovPledgeHistory extends Model
 
     ];
 
+    public function region() {
+        return $this->belongsTo(Region::class, 'tgb_reg_district', 'code');
+    }
+
+    public function bu() {
+        return $this->belongsTo(BusinessUnit::class, 'business_unit', 'code')->withDefault([
+                'id' => 0,
+            ]);
+        }
+
+
+    public function charity() {
+        return $this->belongsTo(Charity::class)->withDefault([
+            'charity_name' => 'Unknown',
+        ]);
+    }
+
+    public function campaign_year() {
+        return $this->belongsTo(CampaignYear::class)->withDefault([
+            'number_of_periods' => '26'
+        ]);
+    }
+
+
     public function created_by() 
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');

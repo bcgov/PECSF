@@ -15,10 +15,7 @@ class RegionSqlFileSeeder extends Seeder
     public function run()
     {
         //
-        $path = base_path('database/seeds/regions.sql');
-        if (env('APP_ENV') == 'local') {
-            $path = base_path('..\database\seeds\regions.sql');
-        }
+        $path = database_path('seeds/regions.sql');
         $sql = file_get_contents($path);
         DB::unprepared($sql);
 }
