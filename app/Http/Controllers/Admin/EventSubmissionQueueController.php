@@ -65,16 +65,20 @@ class EventSubmissionQueueController extends Controller
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
             }
             else{
+
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
                 $year =  intval(date("Y")) + 1;
                 do{
                     $campaign_year = CampaignYear::where('calendar_year', $year)->first();
                     $year--;
-                }while(!$campaign_year->isActive());
 
-                if(!$campaign_year->isActive()){
-                    $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")) - 1)->first();
+                    if($year == 2005){
+                        break;
+                    }
+                }while(!$campaign_year->isOpen());
 
+                if(empty($campaign_year) || !$campaign_year->isOpen()){
+                    $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
 
                 $gov_organization = Organization::where('code', 'GOV')->first();
@@ -87,27 +91,27 @@ class EventSubmissionQueueController extends Controller
 
 
 
-                    // Create a new Pledge
+                // Create a new Pledge
                 $form_organization = Organization::where('code', $form->organization_code)->first();
                 $form_user = User::where('id', $form->form_submitter_id)->first();
-                    $pledge = Pledge::Create([
-                        'organization_id' => $form_organization->id,
-                        'user_id' =>    $form->form_submitter_id,
-                        "pecsf_id" =>   $form->pecsf_id,
-                        "first_name" => $form_user->name,
-                        "last_name" =>  "",
-                        "city" =>       $form->employment_city,
-                        'campaign_year_id' => $campaign_year->id,
-                        'type' => $form->regional_pool_id ? "P" : "C",
-                        'f_s_pool_id' => empty($form->regional_pool_id) ? 0 : $form->regional_pool_id,
-                        'one_time_amount' => $form->deposit_amount,
-                        'pay_period_amount' => 0,
-                        'goal_amount' => $form->deposit_amount,
-                        'created_by_id' => $form_user->id,
-                        'updated_by_id' => Auth::id(),
-                    ]);
+                $pledge = Pledge::Create([
+                    'organization_id' => $form_organization->id,
+                    'user_id' =>    $form->form_submitter_id,
+                    "pecsf_id" =>   $form->pecsf_id,
+                    "first_name" => $form_user->name,
+                    "last_name" =>  "",
+                    "city" =>       $form->employment_city,
+                    'campaign_year_id' => $campaign_year->id,
+                    'type' => $form->regional_pool_id ? "P" : "C",
+                    'f_s_pool_id' => empty($form->regional_pool_id) ? 0 : $form->regional_pool_id,
+                    'one_time_amount' => $form->deposit_amount,
+                    'pay_period_amount' => 0,
+                    'goal_amount' => $form->deposit_amount,
+                    'created_by_id' => $form_user->id,
+                    'updated_by_id' => Auth::id(),
+                ]);
 
-                    $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
+                $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
 
 
                 $pledge->charities()->delete();
@@ -156,10 +160,8 @@ class EventSubmissionQueueController extends Controller
                         }
                     }
                 }
-            }//kop
-        }
-        else{
-            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+
+            }
         }
     }
 
