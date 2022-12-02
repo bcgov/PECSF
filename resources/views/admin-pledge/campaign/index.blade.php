@@ -33,7 +33,7 @@
                 <label for="tran_id">
                     Tran ID
                 </label>
-                <input name="tran_id" id="tran_id"  class="form-control" />
+                <input type="number" name="tran_id" id="tran_id"  class="form-control" />
             </div>
 
             <div class="form-group col-md-3">
