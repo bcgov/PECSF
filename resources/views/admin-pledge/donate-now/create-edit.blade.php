@@ -354,8 +354,8 @@
 
         
         <div class="mt-3">
-            <input class="btn btn-primary" type="submit" value="Save">
             <button class="btn btn-outline-primary" onclick="location.href='{{ route('admin-pledge.donate-now.index') }}'">Cancel</button>
+            <input class="btn btn-primary ml-2" type="submit" value="Save">
         </div>
 
     </form>

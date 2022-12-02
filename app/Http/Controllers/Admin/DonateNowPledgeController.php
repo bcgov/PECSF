@@ -49,6 +49,9 @@ class DonateNowPledgeController extends Controller
                             'charity')
                             ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                            ->when($request->tran_id, function($query) use($request) {
+                                return $query->where('donate_now_pledges.id', 'like', $request->tran_id);
+                            })
                             ->when( $request->organization_id, function($query) use($request) {
                                 $query->where('donate_now_pledges.organization_id', $request->organization_id);
                             })
@@ -58,10 +61,13 @@ class DonateNowPledgeController extends Controller
                             ->when( $request->emplid, function($query) use($request) {
                                 $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
                             })
+                            ->when($request->seqno, function($query) use($request) {
+                                return $query->where('donate_now_pledges.seqno', $request->seqno);
+                            })
                             ->when( $request->name, function($query) use($request) {
-                                $query->where('first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('name', 'like', '%' . $request->name . '%');
+                                $query->where('donate_now_pledges.first_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('donate_now_pledges.first_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('users.name', 'like', '%' . $request->name . '%');
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
@@ -78,10 +84,10 @@ class DonateNowPledgeController extends Controller
                                 });
                             })
                             ->when( $request->cancelled == 'C', function($query) use($request) {
-                                $query->whereNotNull('cancelled');
+                                $query->whereNotNull('donate_now_pledges.cancelled');
                             })
                             ->when( $request->cancelled == 'N', function($query) use($request) {
-                                $query->whereNull('cancelled');
+                                $query->whereNull('donate_now_pledges.cancelled');
                             })
                             ->when( is_numeric($request->one_time_amt_from) || is_numeric($request->one_time_amt_to), function($query) use($request) {
                                 $from = is_numeric($request->one_time_amt_from) ? $request->one_time_amt_from : 0;
@@ -135,7 +141,7 @@ class DonateNowPledgeController extends Controller
         // get all the record 
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $campaign_years = CampaignYear::orderBy('calendar_year')->get();
+        $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
@@ -193,14 +199,15 @@ class DonateNowPledgeController extends Controller
 
         $seqno = $last_seqno ? ($last_seqno + 1) : 1;
         //  dd([$request, $seqno] );
+        $gov = Organization::where('code', 'GOV')->first();
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $request->organization_id,
-            'user_id' => $request->user_id,
-            'pecsf_id' => $request->pecsf_id,
-            'first_name' => $request->pecsf_first_name,
-            'last_name' => $request->pecsf_last_name,
-            'city' => $request->pecsf_city,
+            'user_id' => ($request->organization_id == $gov->id) ? $request->user_id : null,
+            'pecsf_id' => (!($request->organization_id == $gov->id)) ? $request->pecsf_id : null,
+            'first_name' => (!($request->organization_id == $gov->id)) ? $request->pecsf_first_name : null, 
+            'last_name' => (!($request->organization_id == $gov->id)) ? $request->pecsf_last_name : null,
+            'city' => (!($request->organization_id == $gov->id)) ? $request->pecsf_city : null,
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $request->pool_option,
@@ -351,6 +358,9 @@ class DonateNowPledgeController extends Controller
         }       
         
         // Delete the pledge
+        $pledge->updated_by_id = Auth::Id();
+        $pledge->save();
+
         $pledge->delete();
 
         return response()->noContent();
