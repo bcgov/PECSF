@@ -78,11 +78,20 @@
 
     <div class="top-message-bar p-3 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top">
         <span class="flex-fill"></span>
-        <span class="mx-2 h6 text-primary font-weight-bold">
+        <span class="mx-4 h6 text-primary font-weight-bold">
             {{-- <i class="icon fas fa-exclamation-circle"></i> --}}
-            <span class>{{ session()->get('special-campaign-banner-text') }}<span class="ml-2 ">|</span></span>
+            {{-- <span class>{{ session()->get('special-campaign-banner-text') }}<span class="ml-2 ">|</span></span> --}}
+
+            <div class="special-campaign-container">
+                <ul>
+                    @foreach ( session()->get('special-campaign-banner-text') as $text )
+                       <li>{{  $text }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            
         </span>
-        
+        <span class="h6 mx-2">|</span>
         <span class="h6 text-primary font-weight-bold special-campaign">
             <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
         </span>
@@ -136,18 +145,51 @@
     @yield('adminlte_js')
 
     @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+    <style>
+        .special-campaign-container ul, .special-campaign-container ul li {
+			padding: 0;
+			margin: 0;
+			list-style: none;
+			text-align: center;
+		}
+		.special-campaign-container {
+		    
+		    height: 30px;
+		    line-height: 30px;
+            overflow: Hidden;
+
+            /* width: 360px;
+		    border: 3px solid #E74C3C;
+			border-radius:5px;
+			background-color:#34495E;
+			color:#fff;
+			padding: 5px 0;
+			margin: 30px auto; */
+		}
+    </style>
+    <script type="text/javascript" src="{{ asset('js/jQuery.scrollText.js') }}"></script>
     <script>
         $(function() {
 
+            @if (count(session()->get('special-campaign-banner-text')) > 1 )
+			$(".special-campaign-container").scrollText({
+				'duration': 3000
+			});
+            @endif
+
             $('div.top-message-bar span.special-campaign').on('click', function(e) {
-                $('div.top-message-bar').removeClass('d-flex');
-                $('div.top-message-bar').fadeOut(1000);
+                // $('div.top-message-bar').removeClass('d-flex');
+                // $('div.top-message-bar').fadeOut(1000);
+                $('div.top-message-bar').fadeOut(1000,  function () {
+                    $('div.top-message-bar').remove();
+                });
             });
 
             $('div.top-message-bar .close').on('click', function(e) {
                 $(this).hide();
-                $('div.top-message-bar').removeClass('d-flex');
-                $('div.top-message-bar').fadeOut(1000);
+                $('div.top-message-bar').fadeOut(1000,  function () {
+                    $('div.top-message-bar').remove();
+                });
                 
                 $.ajax({
                     method: "POST",

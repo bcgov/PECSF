@@ -30,17 +30,11 @@ class SpecialCampaign extends Model
 
     public static function activeBannerText() {
 
-        $banner_text = null;
-
         $special_campaigns = self::where('start_date', '<=', today())
                                      ->where('end_date', '>=', today())
                                      ->orderBy('start_date')
-                                     ->get();
+                                     ->pluck('banner_text');
 
-        if ($special_campaigns->count() > 0) {
-            $banner_text = $special_campaigns->first()->banner_text;
-        }
-
-        return $banner_text;
+        return $special_campaigns->toArray();
     }
 }
