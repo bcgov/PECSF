@@ -76,14 +76,14 @@
 <body class="@yield('classes_body')" @yield('body_data')>
     @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
-    <div class="top-message-bar p-3 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top">
+    <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top">
         <span class="flex-fill"></span>
         <span class="mx-4 h6 text-primary font-weight-bold">
             {{-- <i class="icon fas fa-exclamation-circle"></i> --}}
             {{-- <span class>{{ session()->get('special-campaign-banner-text') }}<span class="ml-2 ">|</span></span> --}}
 
             <div class="special-campaign-container">
-                <ul>
+                <ul style="list-style: none;">
                     @foreach ( session()->get('special-campaign-banner-text') as $text )
                        <li>{{  $text }}</li>
                     @endforeach
@@ -166,6 +166,7 @@
 			padding: 5px 0;
 			margin: 30px auto; */
 		}
+
     </style>
     <script type="text/javascript" src="{{ asset('js/jQuery.scrollText.js') }}"></script>
     <script>
