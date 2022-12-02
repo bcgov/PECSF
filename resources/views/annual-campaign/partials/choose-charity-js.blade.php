@@ -100,6 +100,15 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
+            if ($(".organization").length == 11) {
+                    Swal.fire({
+                    icon: 'warning',
+                    title: 'A maximum of 10 charities are reached',
+                    text: 'Please be aware, maximum 10 charities are allowed for Annual pledge.',
+                    animation: false,
+                });
+            }
+
         });
 
         $("body").on("click",".selected",function(e) {

@@ -107,6 +107,15 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
+            if ($(".organization").length == 2) {
+                    Swal.fire({
+                    icon: 'warning',
+                    title: 'More than one charity were specified',
+                    text: 'Please be aware, only one charity is required for Donate Now pledge.',
+                    animation: false,
+                    });
+            }
+
         });
 
         $("body").on("click",".selected",function(e) {
