@@ -16,7 +16,7 @@ class DonateNowPledge extends Model
         'one_time_amount', 'deduct_pay_from',
         'first_name', 'last_name', 'city', 'cancelled', 'created_by_id', 'created_at',
         'ods_export_status', 'ods_export_at',
-        'created_by_id', 'updated_by_id',
+        'created_by_id', 'updated_by_id', 'created_at',
     ];
 
     protected $appends = [

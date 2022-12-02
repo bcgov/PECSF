@@ -11,7 +11,7 @@ class FSPool extends Model
     use HasFactory;
 
     protected $fillable =[
-        'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id' 
+        'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id', 'created_at'
     ];
     protected $appends = ['canDelete', 'effectiveType'];
 

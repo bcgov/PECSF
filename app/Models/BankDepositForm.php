@@ -30,6 +30,7 @@ class BankDepositForm extends Model
         'pecsf_id',
         'business_unit',
         'approved',
+        'created_at',
     ];
 
     function attachments(){
