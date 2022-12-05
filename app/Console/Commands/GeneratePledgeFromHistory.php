@@ -384,8 +384,8 @@ class GeneratePledgeFromHistory extends Command
                     'pay_period_amount' => $bi_pledge->pay_period_amount,
                     'goal_amount' => $bi_pledge->goal_amount,
 
-                    'ods_export_status' => null,
-                    'ods_export_at' => null,
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => now(),
 
                     'created_at' => $bi_pledge_detail->created_date,
                 ]); 
@@ -545,6 +545,9 @@ class GeneratePledgeFromHistory extends Command
                     'one_time_amount' => $bi_pledge->pledge,
                     'deduct_pay_from' => strtr(substr($bi_pledge->additional_info,18),'/','-'),
                     'special_program' => $bi_pledge->name2,
+
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => now(),
 
                     'created_at' => $bi_pledge->created_date,
                 ]);
@@ -858,8 +861,8 @@ class GeneratePledgeFromHistory extends Command
                     'pay_period_amount' => $bi_pledge->pay_period_amount,
                     'goal_amount' => $bi_pledge->goal_amount,
 
-                    'ods_export_status' => null,
-                    'ods_export_at' => null,
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => now(),
 
                     'created_at' => $bi_pledge_detail->created_date,
                 ]); 
