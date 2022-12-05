@@ -16,6 +16,11 @@ class SpecialCampaignPledge extends Model
         'ods_export_status', 'ods_export_at', 'created_by_id','updated_by_id',
     ];
 
+    protected $casts = [
+        'deduct_pay_from' => 'date',
+    ];
+
+
     public function organization() {
         return $this->belongsTo(Organization::class)->withDefault();
     }
@@ -28,5 +33,32 @@ class SpecialCampaignPledge extends Model
     {
         return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withDefault();
     }
+    
+
+    public function canSendToPSFT() {
+
+        if (!($this->cancelled == null and $this->ods_export_status == null)) {
+            return false;
+        }
+
+        // Found the previous Saturday
+        $dt = $this->deduct_pay_from;
+        for($i=0; $i <= 6; $i++) {
+            if ($dt->isSaturday()) {
+                break;
+            }
+            $dt->subDay(1) ;
+        }
+
+        // echo today() . ' - ' . $dt . PHP_EOL;
+        if ( today() >= $dt) {
+
+            return true;
+        }
+
+        return false;;
+
+    }
+
     
 }

@@ -19,6 +19,10 @@ class DonateNowPledge extends Model
         'created_by_id', 'updated_by_id', 'created_at',
     ];
 
+    protected $casts = [
+        'deduct_pay_from' => 'date',
+    ];
+
     protected $appends = [
         'in_support_of',
     ];
@@ -71,6 +75,31 @@ class DonateNowPledge extends Model
     public function cancelled_by()
     {
         return $this->hasOne(User::Class, 'id', 'cancelled_by_id')->withDefault();
+    }
+
+    public function canSendToPSFT() {
+
+        if (!($this->cancelled == null and $this->ods_export_status == null)) {
+            return false;
+        }
+
+        // Found the previous Saturday
+        $dt = $this->deduct_pay_from;
+        for($i=0; $i <= 6; $i++) {
+            if ($dt->isSaturday()) {
+                break;
+            }
+            $dt->subDay(1) ;
+        }
+
+        // echo today() . ' - ' . $dt . PHP_EOL;
+        if ( today() >= $dt) {
+
+            return true;
+        }
+
+        return false;;
+
     }
 
 
