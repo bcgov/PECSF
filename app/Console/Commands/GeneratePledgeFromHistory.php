@@ -385,7 +385,7 @@ class GeneratePledgeFromHistory extends Command
                     'goal_amount' => $bi_pledge->goal_amount,
 
                     'ods_export_status' => 'C',
-                    'ods_export_at' => now(),
+                    'ods_export_at' => $this->yearcd . '-12-31',
 
                     'created_at' => $bi_pledge_detail->created_date,
                 ]); 
@@ -547,7 +547,7 @@ class GeneratePledgeFromHistory extends Command
                     'special_program' => $bi_pledge->name2,
 
                     'ods_export_status' => 'C',
-                    'ods_export_at' => now(),
+                    'ods_export_at' => $this->yearcd . '-12-31',
 
                     'created_at' => $bi_pledge->created_date,
                 ]);
@@ -862,7 +862,7 @@ class GeneratePledgeFromHistory extends Command
                     'goal_amount' => $bi_pledge->goal_amount,
 
                     'ods_export_status' => 'C',
-                    'ods_export_at' => now(),
+                    'ods_export_at' => $this->yearcd . '-12-31',
 
                     'created_at' => $bi_pledge_detail->created_date,
                 ]); 
