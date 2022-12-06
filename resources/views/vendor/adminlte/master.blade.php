@@ -79,17 +79,18 @@
     <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top">
         <span class="flex-fill"></span>
         <span class="mx-4 h6 text-primary font-weight-bold">
-            {{-- <i class="icon fas fa-exclamation-circle"></i> --}}
-            {{-- <span class>{{ session()->get('special-campaign-banner-text') }}<span class="ml-2 ">|</span></span> --}}
-
             <div class="special-campaign-container">
-                <ul style="list-style: none;">
-                    @foreach ( session()->get('special-campaign-banner-text') as $text )
-                       <li>{{  $text }}</li>
-                    @endforeach
-                </ul>
+                <div class="row">
+                    <div class="v-slider-frame">
+                        <ul class="v-slides">
+                            {{-- @foreach (  session()->get('special-campaign-banner-text') as $text ) --}}
+                            @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
+                                <li class="v-slide">{{  $text }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
             </div>
-            
         </span>
         <span class="h6 mx-2">|</span>
         <span class="h6 text-primary font-weight-bold special-campaign">
@@ -145,65 +146,46 @@
     @yield('adminlte_js')
 
     @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
-    <style>
-        .special-campaign-container ul, .special-campaign-container ul li {
-			padding: 0;
-			margin: 0;
-			list-style: none;
-			text-align: center;
-		}
-		.special-campaign-container {
-		    
-		    height: 30px;
-		    line-height: 30px;
-            overflow: Hidden;
+        <style>
+            .v-slider-frame {
+                border: none;
+                height: 30px;
+                overflow: hidden;
+                text-align: center;
+            }
+            ul.v-slides {
+                list-style-type: none;
+                transform: translateY(30px);
+                padding:0;
+            }
+            .v-slide {
+                font-size: 1.0em;
+                line-height: 30px;
+                color: #1a5a96;
+            }
+        </style>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.14.2/TweenMax.min.js"></script>
+        <script>
+            var vsOpts = {
+                $slides: $('.v-slide'),
+                $list: $('.v-slides'),
+                duration: 10,
+                lineHeight: 30
+            }
 
-            /* width: 360px;
-		    border: 3px solid #E74C3C;
-			border-radius:5px;
-			background-color:#34495E;
-			color:#fff;
-			padding: 5px 0;
-			margin: 30px auto; */
-		}
+            var vSlide = new TimelineMax({
+                paused: true,
+                repeat: -1
+            })
 
-    </style>
-    <script type="text/javascript" src="{{ asset('js/jQuery.scrollText.js') }}"></script>
-    <script>
-        $(function() {
-
-            @if (count(session()->get('special-campaign-banner-text')) > 1 )
-			$(".special-campaign-container").scrollText({
-				'duration': 3000
-			});
-            @endif
-
-            $('div.top-message-bar span.special-campaign').on('click', function(e) {
-                // $('div.top-message-bar').removeClass('d-flex');
-                // $('div.top-message-bar').fadeOut(1000);
-                $('div.top-message-bar').fadeOut(1000,  function () {
-                    $('div.top-message-bar').remove();
-                });
-            });
-
-            $('div.top-message-bar .close').on('click', function(e) {
-                $(this).hide();
-                $('div.top-message-bar').fadeOut(1000,  function () {
-                    $('div.top-message-bar').remove();
-                });
-                
-                $.ajax({
-                    method: "POST",
-                    url:  "{{ route('special-campaign-banner.dismiss')  }}",
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                    },
-                });
-
-            });
-            
-        });
-    </script>
+            vsOpts.$slides.each(function(i) {
+                vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
+                    y: i * -1 * vsOpts.lineHeight,
+                    ease: Elastic.easeOut.config(1, 0.3)
+                })
+            })
+            vSlide.play();
+        </script>
     @endif
 </body>
 
