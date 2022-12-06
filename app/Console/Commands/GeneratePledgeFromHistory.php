@@ -143,7 +143,7 @@ class GeneratePledgeFromHistory extends Command
         $error_count = 0;
 
         $sql->chunk(100, function($chuck) use( &$row_count, &$error_count, &$n) {
-            $this->LogMessage( "Processing batch (100) - " . ++$n );
+            $this->LogMessage( "Validating batch (100) - " . ++$n );
 
             foreach($chuck as $bi_pledge) {
 
@@ -180,7 +180,9 @@ class GeneratePledgeFromHistory extends Command
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')
                                        ->first();
+
                     if (!$pool) {
                         $valid = false;
                         $this->LogMessage('   Exception -- FS Pool not found - ' . $bi_pledge->region . ' (id - ' . $bi_pledge->id . ')' );
@@ -218,7 +220,7 @@ class GeneratePledgeFromHistory extends Command
         $error_count = 0;
 
         $sql->chunk(100, function($chuck) use( &$row_count, &$error_count, &$n) {
-            $this->LogMessage( "Processing batch (100) - " . ++$n );
+            $this->LogMessage( "Validating batch (100) - " . ++$n );
 
             foreach($chuck as $bi_pledge) {
 
@@ -263,6 +265,7 @@ class GeneratePledgeFromHistory extends Command
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')
                                        ->first();
                     if (!$pool) {
                         $valid = false;
@@ -306,7 +309,8 @@ class GeneratePledgeFromHistory extends Command
                             DB::raw("case when source = 'P' then region else null end as region"),
                             DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
-                            DB::raw("sum(pledge) as goal_amount")
+                            DB::raw("sum(pledge) as goal_amount"),
+                            DB::raw("min(pledge_history_id) as pledge_history_id")
                         )
                         ->where('yearcd', $this->yearcd)
 // ->whereIn('GUID', ['0AB321049CB54AEEB12681E8F3FF6404', '0B4B78061F394658831DC2150C01AA70'])
@@ -346,23 +350,23 @@ class GeneratePledgeFromHistory extends Command
                 //     echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
                 //     $charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
                 // }
+                $bi_pledge_detail = $bi_pledge->details->first();
 
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')                                       
                                        ->first();
-
-
                 }
-// echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
+//  echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
 
                 $old_pledge = Pledge::where('organization_id',  $user->organization_id)
                                                 ->where('user_id', $user->id)
                                                 ->where('campaign_year_id', $campaign_year->id)
                                                 ->first();       
-                
+
                 $pledge = Pledge::updateOrCreate([
                     'organization_id' => $user->organization_id,
                     'user_id' => $user->id,
@@ -380,8 +384,10 @@ class GeneratePledgeFromHistory extends Command
                     'pay_period_amount' => $bi_pledge->pay_period_amount,
                     'goal_amount' => $bi_pledge->goal_amount,
 
-                    'ods_export_status' => null,
-                    'ods_export_at' => null,
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
+
+                    'created_at' => $bi_pledge_detail->created_date,
                 ]); 
 
                 if ($pledge->wasRecentlyCreated) {
@@ -407,6 +413,12 @@ class GeneratePledgeFromHistory extends Command
                     // No Action
                     $no_change_count += 1;
                 }
+
+                // Update the created_at to match with created_date when the record already created
+                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                    $pledge->created_at = $bi_pledge_detail->created_date;
+                    $pledge->save(['timestamps' => false]);
+                }  
 
                 // echo json_encode($pledge) . PHP_EOL;
                 
@@ -496,6 +508,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')
                                        ->first();
                 }
 
@@ -532,6 +545,11 @@ class GeneratePledgeFromHistory extends Command
                     'one_time_amount' => $bi_pledge->pledge,
                     'deduct_pay_from' => strtr(substr($bi_pledge->additional_info,18),'/','-'),
                     'special_program' => $bi_pledge->name2,
+
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
+
+                    'created_at' => $bi_pledge->created_date,
                 ]);
 
                 if ($pledge->wasRecentlyCreated) {
@@ -559,6 +577,11 @@ class GeneratePledgeFromHistory extends Command
                     $no_change_count += 1;
                 }
 
+                // Update the created_at to match with created_date when the record already created
+                if (!($pledge->created_at == $bi_pledge->created_date)) {
+                    $pledge->created_at = $bi_pledge->created_date;
+                    $pledge->save(['timestamps' => false]);
+                }  
 // echo json_encode($pledge) . PHP_EOL;
 
             }
@@ -629,6 +652,7 @@ class GeneratePledgeFromHistory extends Command
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')
                                        ->first();
 
                 }
@@ -670,6 +694,8 @@ class GeneratePledgeFromHistory extends Command
                         'address_postal_code' => $user->primary_job->postal,
 
                         'approved' => 1,            // Always approved
+
+                        'created_at' => $bi_pledge_detail->created_date,
                     ]);
 
 
@@ -699,6 +725,11 @@ class GeneratePledgeFromHistory extends Command
                 }
 
                 // echo json_encode($pledge) . PHP_EOL;
+                // Update the created_at to match with created_date when the record already created
+                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                    $pledge->created_at = $bi_pledge_detail->created_date;
+                    $pledge->save(['timestamps' => false]);
+                }  
                 
                 if ($bi_pledge->source == 'P') {
                     // No action required
@@ -799,9 +830,8 @@ class GeneratePledgeFromHistory extends Command
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')
                                        ->first();
-
-
                 }
 
                 $organization = Organization::where('code',$bi_pledge->org_code )->first();
@@ -831,8 +861,10 @@ class GeneratePledgeFromHistory extends Command
                     'pay_period_amount' => $bi_pledge->pay_period_amount,
                     'goal_amount' => $bi_pledge->goal_amount,
 
-                    'ods_export_status' => null,
-                    'ods_export_at' => null,
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
+
+                    'created_at' => $bi_pledge_detail->created_date,
                 ]); 
 
                 if ($pledge->wasRecentlyCreated) {
@@ -861,6 +893,11 @@ class GeneratePledgeFromHistory extends Command
                 }
 
                 // echo json_encode($pledge) . PHP_EOL;
+                // Update the created_at to match with created_date when the record already created
+                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                    $pledge->created_at = $bi_pledge_detail->created_date;
+                    $pledge->save(['timestamps' => false]);
+                }  
                 
                 if ($bi_pledge->source == 'P') {
                     // No action required
@@ -962,6 +999,7 @@ class GeneratePledgeFromHistory extends Command
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
+                                       ->select('f_s_pools.*')
                                        ->first();
 
                 }
@@ -1004,6 +1042,8 @@ class GeneratePledgeFromHistory extends Command
                         'address_postal_code' => 'Postal',
 
                         'approved' => 1,            // Always approved
+
+                        'created_at' => $bi_pledge_detail->created_date,
                     ]);
 
 
@@ -1033,6 +1073,11 @@ class GeneratePledgeFromHistory extends Command
                 }
 
                 // echo json_encode($pledge) . PHP_EOL;
+                // Update the created_at to match with created_date when the record already created
+                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                    $pledge->created_at = $bi_pledge_detail->created_date;
+                    $pledge->save(['timestamps' => false]);
+                }  
                 
                 if ($bi_pledge->source == 'P') {
                     // No action required

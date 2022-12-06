@@ -4,7 +4,7 @@
 
 
     <div class="d-flex mt-3">
-        <h4>Pledge Administration</h4>
+        <h2>Pledge Administration</h2>
         <div class="flex-fill"></div>
     </div>
 <br>
@@ -41,6 +41,12 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="tran_id">
+                    Tran ID
+                </label>
+                <input type="number" name="tran_id" id="tran_id"  class="form-control" />
+            </div>
             <div class="form-group col-md-3">
                 <label for="organization_id">
                     Organization
@@ -48,7 +54,7 @@
                 <select name="organization_id" id="organization_id" value="" class="form-control">
                     <option value="">All</option>
                     @foreach( $organizations as $organization)
-                    <option value="{{ $organization->id }}">{{ $organization->code }} ({{ $organization->name }})</option>
+                    <option value="{{ $organization->id }}">{{ $organization->name }} ({{ $organization->code }})</option>
                     @endforeach 
                 </select>
             </div>
@@ -64,7 +70,8 @@
                 <label for="pecsf_id">
                     PECSF ID
                 </label>
-                <input name="pecsf_id" id="pecsf_id"  class="form-control" />
+                <input type="number" name="pecsf_id" id="pecsf_id"  class="form-control" 
+                            onKeyPress="if(this.value.length==6) return false;"/>
             </div> 
 
             <div class="form-group col-md-2">
@@ -96,11 +103,18 @@
                 <select id="campaign_year_id" class="form-control" name="campaign_year_id">
                     <option value="">All</option>
                     @foreach ($campaign_years as $cy)
-                        <option value="{{ $cy->id }}">{{ $cy->calendar_year }}
+                        <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }}
                         </option>
                     @endforeach
                 </select>
             </div> 
+
+            <div class="form-group col-md-1">
+                <label for="seqno">
+                    Seq. No
+                </label>
+                <input type="number"  name="seqno" id="seqno"  class="form-control" />
+            </div>
 
             <div class="form-group col-md-2">
                 <label for="cancelled">
@@ -148,10 +162,11 @@
         <table class="table table-bordered" id="donate-now-table" style="width:100%">
 			<thead>
 				<tr>
-                    <th>ID</th>
+                    <th>Tran ID</th>
                     <th>Org</th>
 					<th>Empl ID</th>
                     <th>PECSF ID</th>
+                    <th>Seqno</th>
                     <th>Name</th>
                     <th>City</th>
                     <th>Calendar Year</th>
@@ -229,9 +244,11 @@
                 url: '{!! route('admin-pledge.donate-now.index') !!}',
                 type: "GET",
                 data: function (data) {
+                    data.tran_id  = $('#tran_id').val();
                     data.organization_id = $('#organization_id').val();
                     data.emplid = $('#emplid').val();
                     data.pecsf_id = $('#pecsf_id').val();
+                    data.seqno = $('#seqno').val();
                     data.name = $('#name').val();
                     data.city = $('#city').val();
                     data.campaign_year_id = $('#campaign_year_id').val();
@@ -247,6 +264,7 @@
                 {data: 'organization.code',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'user.primary_job.emplid', defaultContent: '' },
                 {data: 'pecsf_id', defaultContent: '' },
+                {data: 'seqno', defaultContent: '' },
                 {data: 'user.primary_job.name', defaultContent: '', className: "dt-nowrap",
                     render: function ( data, type, row, meta ) {
                         if(row.pecsf_id) {

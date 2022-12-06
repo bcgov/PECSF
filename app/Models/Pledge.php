@@ -29,8 +29,10 @@ class Pledge extends Model
         'one_time_amount',
         'pay_period_amount',
         'goal_amount',
+        'ods_export_status', 'ods_export_at',
         'created_by_id',
         'updated_by_id',
+
 
     ];
 

@@ -70,9 +70,9 @@ class CampaignYear extends Model
 
         $today = today();
         $from_date = $this->start_date;
-        $to_date =  $this->end_date->addDays(7);
+        $to_date =  $this->end_date->addDays(14);
 
-        return ( $this->status == 'I' && (!($today >= $from_date && $today <= $to_date)) );
+        return ( $this->status == 'I' && (!($today <= $to_date)) );
 
     }
 

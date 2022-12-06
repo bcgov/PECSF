@@ -380,13 +380,11 @@ class ImportPledgeHistory extends Command
             insert into pledge_history_summaries               
                 (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
                 select pledge_histories.id, GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,
-                    campaign_type, frequency, per_pay_amt, pledge,    
-                    case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end,
-
-                    case when campaign_type = 'Event' then max(event_type) else null end as event_type,
-                    case when campaign_type = 'Event' then max(event_sub_type) else null end as event_sub_type,
-                    case when campaign_type = 'Event' then max(event_deposit_date) else null end as event_deposit_date
-
+                        campaign_type, frequency, per_pay_amt, pledge,    
+                        case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end,
+                        null as event_type,
+                        null as event_sub_type,
+                        null as event_deposit_date
                     from pledge_histories 
                 where campaign_type in ('Donate Today') 
                     and GUID <> '';

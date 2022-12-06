@@ -113,8 +113,10 @@ class CampaignPledgeRequest extends FormRequest
             $my_rules = array_merge($my_rules, 
                 [
                     'step'          => ['required'],
-                    'pay_period_amount_other'    => [ Rule::when( $this->pay_period_amount =='', ['required','numeric']) ],
-                    'one_time_amount_other'    => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
+                    'pay_period_amount_other'    => [ Rule::when( $this->pay_period_amount =='', 
+                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                    'one_time_amount_other'    => [ Rule::when( $this->one_time_amount =='', 
+                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -198,6 +200,13 @@ class CampaignPledgeRequest extends FormRequest
             'pecsf_last_name.required'   => 'The Last Name field is required.',
             'pecsf_last_name.regex' => "The Last Name must only contain letters, hyphens, spaces.",
             'pecsf_city.required'   => 'The City field is required.',
+
+            'one_time_amount_other.required' => 'The amount is required.',
+            'one_time_amount_other.min'      => 'The min amount is $ 1.0.',
+            'one_time_amount_other.regex' => 'The invalid amount, max 2 decimal places.',
+            'pay_period_amount_other.required' => 'The amount is required.',
+            'pay_period_amount_other.min' => 'The min amount is $ 1.0.',
+            'pay_period_amount_other.regex' => 'The invalid amount, max 2 decimal places.',
 
             'charities.*.required_if' => 'The Charity field is required.',
 

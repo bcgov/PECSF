@@ -56,6 +56,9 @@ class CampaignPledgeController extends Controller
                             'distinct_charities', 'distinct_charities.charity')
                             ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                            ->when($request->tran_id, function($query) use($request) {
+                                return $query->where('pledges.id', 'like', $request->tran_id);
+                            })
                             ->when( $request->organization_id, function($query) use($request) {
                                 $query->where('pledges.organization_id', $request->organization_id);
                             })
@@ -121,7 +124,7 @@ class CampaignPledgeController extends Controller
         // get all the record 
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $campaign_years = CampaignYear::orderBy('calendar_year')->get();
+        $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
