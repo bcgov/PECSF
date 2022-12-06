@@ -44,7 +44,34 @@ class ChallengeController extends Controller
         $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->orderBy('yearcd')->get();
 
         $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
-->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+            ->join("donor_by_business_units", function($join){
+                // $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                $join->on("donor_by_business_units.business_unit_code", '=', 'business_units.code')
+                    ->where(DB::raw("business_units.name NOT IN ('Ministry of Attorney General','Ministry of Citizens’ Services','Ministry of Education and Child Care','Ministry of Transportation and Infrastructure')"))
+                    ->or(DB::raw("business_units.code = 'BC105' AND donor_by_business_units.business_unit_code='BC131'"))
+                    ->or(DB::raw("business_units.code = 'BC131' AND donor_by_business_units.business_unit_code='BC105'"))
+                    ->or(DB::raw("business_units.code = 'BC112' AND donor_by_business_units.business_unit_code='BC067'"))
+                    ->or(DB::raw("business_units.code = 'BC067' AND donor_by_business_units.business_unit_code='BC112'"))
+                    ->or(DB::raw("business_units.code = 'BC062' AND donor_by_business_units.business_unit_code='BC063'"))
+                    ->or(DB::raw("business_units.code = 'BC063' AND donor_by_business_units.business_unit_code='BC062'"))
+                    ->or(DB::raw("business_units.code = 'BC034' AND donor_by_business_units.business_unit_code='BC725'"))
+                    ->or(DB::raw("business_units.code = 'BC725' AND donor_by_business_units.business_unit_code='BC034'"))
+                    ->groupBy("business_units.name");
+            })
+            ->join("elligible_employees", function($join){
+                // $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                $join->on("elligible_employees.business_unit", '=', 'business_units.code')
+                    ->where(DB::raw("business_units.name NOT IN ('Ministry of Attorney General','Ministry of Citizens’ Services','Ministry of Education and Child Care','Ministry of Transportation and Infrastructure')"))
+                    ->or(DB::raw("business_units.code = 'BC105' AND elligible_employees.business_unit='BC131'"))
+                    ->or(DB::raw("business_units.code = 'BC131' AND elligible_employees.business_unit='BC105'"))
+                    ->or(DB::raw("business_units.code = 'BC112' AND elligible_employees.business_unit='BC067'"))
+                    ->or(DB::raw("business_units.code = 'BC067' AND elligible_employees.business_unit='BC112'"))
+                    ->or(DB::raw("business_units.code = 'BC062' AND elligible_employees.business_unit='BC063'"))
+                    ->or(DB::raw("business_units.code = 'BC063' AND elligible_employees.business_unit='BC062'"))
+                    ->or(DB::raw("business_units.code = 'BC034' AND elligible_employees.business_unit='BC725'"))
+                    ->or(DB::raw("business_units.code = 'BC725' AND elligible_employees.business_unit='BC034'"))
+                    ->groupBy("business_units.name");
+            })
             ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
             ->where('donor_by_business_units.yearcd',"=",$year)
             ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
