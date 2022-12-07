@@ -35,7 +35,7 @@
             <div class="custom-amount-bi-weekly mt-3" style="{{ $isCustomAmountBiWeekly ? '' : 'display:none '}}">
                 <label>
                     Custom amount
-                    <input type="number" name="bi_weekly_amount_custom" class="form-control" min="0" value="{{ $preselectedData['bi-weekly-amount'] }}">
+                    <input type="text" name="bi_weekly_amount_custom" class="form-control" value="{{ $preselectedData['bi-weekly-amount'] }}">
                 </label>
             </div>
         </div>
@@ -56,7 +56,7 @@
             <div class="custom-amount-one-time mt-3" style="{{ $isCustomAmountOneTime ? '' : 'display:none '}}">
                 <label>
                     Custom amount
-                    <input type="number" name="one_time_amount_custom" class="form-control" min="0" value="{{ $preselectedData['one-time-amount'] }}">
+                    <input type="text" name="one_time_amount_custom" class="form-control" value="{{ $preselectedData['one-time-amount'] }}">
                 </label>
             </div>
         </div>

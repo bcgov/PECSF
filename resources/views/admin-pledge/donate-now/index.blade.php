@@ -63,7 +63,8 @@
                 <label for="emplid">
                     Empl ID
                 </label>
-                <input name="emplid" id="emplid"  class="form-control" />
+                <input type="number" name="emplid" id="emplid"  class="form-control" 
+                            onKeyPress="if(this.value.length==6) return false;"/>
             </div> 
 
             <div class="form-group col-md-2">
