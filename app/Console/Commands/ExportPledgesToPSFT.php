@@ -121,13 +121,13 @@ class ExportPledgesToPSFT extends Command
             // validation -- GUID 
             $user = User::where('id', $pledge->user_id)->first();
             if (!$user->guid ) {
-                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $pledge_skip_count += 1;
                 continue;
             }
 
             if ($user->source_type == 'LCL') {
-                $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge ) );
+                $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $pledge_skip_count += 1;
                 continue;
             }
@@ -135,7 +135,7 @@ class ExportPledgesToPSFT extends Command
             // check whether the campaign is not open or active
             $campaign_year = CampaignYear::where('id',   $pledge->campaign_year_id )->first();
             if (!($campaign_year->canSendToPSFT() )) {
-                $this->LogMessage( "(SKIP) Campaign Year is not allow to send to PSFT in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->LogMessage( "(SKIP) Campaign Year is not allow to send to PSFT in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $pledge_skip_count += 1;
                 continue;
             }
@@ -287,7 +287,7 @@ class ExportPledgesToPSFT extends Command
             // validation -- GUID 
             $user = User::where('id', $pledge->user_id)->first();
             if (!$user->guid ) {
-                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at']) );
                 $this->skip += 1;
                 continue;
             }
@@ -332,7 +332,7 @@ class ExportPledgesToPSFT extends Command
                     $pledge->save();
 
                     // Log Message                 
-                    $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
+                    $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at']) );
                 }
             }
         }
@@ -368,7 +368,7 @@ class ExportPledgesToPSFT extends Command
             $this->row_count += 1;
 
             if (!($pledge->canSendToPSFT())) {
-                $this->LogMessage( "(SKIP) date to send is not reached - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );                $this->LogMessage( "(SKIP) today is not later than allow send date - " . $pledge->deduct_pay_from );
+                $this->LogMessage( "(SKIP) date to send is not reached - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
                 $this->skip += 1;
                 continue;
             }
@@ -376,7 +376,7 @@ class ExportPledgesToPSFT extends Command
             // validation -- GUID 
             $user = User::where('id', $pledge->user_id)->first();
             if (!$user->guid ) {
-                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge ) );
+                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
                 $this->skip += 1;
                 continue;
             }
@@ -421,7 +421,7 @@ class ExportPledgesToPSFT extends Command
                     $pledge->save();
 
                     // Log Message                 
-                    $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
+                    $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
                     
                 }
             }
