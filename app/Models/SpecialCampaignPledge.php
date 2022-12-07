@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Models\SpecialCampaign;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SpecialCampaignPledge extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     
     protected $fillable = [
         'organization_id', 'user_id', 'pecsf_id', 'yearcd', 'seqno',
