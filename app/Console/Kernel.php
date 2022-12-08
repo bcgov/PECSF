@@ -38,12 +38,13 @@ class Kernel extends ConsoleKernel
 
         if (App::environment('production') || App::environment('testing')) {
 
-            $schedule->command('command:ExportDatabaseToBI')
-                    ->weekdays()
-                    ->at('7:55');
-
             $schedule->command('command:ExportPledgesToPSFT')
                     ->dailyAt('0:15');
+                    
+            $schedule->command('command:ExportDatabaseToBI')
+                    ->weekdays()
+                    ->at('0:30');
+
 
         }
 
