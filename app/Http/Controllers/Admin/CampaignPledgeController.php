@@ -239,7 +239,7 @@ class CampaignPledgeController extends Controller
         $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
 
         // Pool
-        $pool = FSPool::where('id', $request->regional_pool_id)->first();
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         // Make sure that there is no pledge transaction setup yet 
         $message_text = '';
@@ -466,7 +466,7 @@ class CampaignPledgeController extends Controller
             $pledge->city       = $request->pecsf_city;
         }
 
-        $pool = FSPool::where('id', $request->regional_pool_id)->first();
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         $pledge->type = $request->pool_option;
         $pledge->region_id = $request->pool_option == 'P' ? $pool->region_id : null;
