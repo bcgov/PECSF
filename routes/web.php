@@ -42,6 +42,7 @@ use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
+use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 
 /*
@@ -249,10 +250,13 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     // Pledge Administration -- Donate Now Pledges
     Route::resource('/donate-now', DonateNowPledgeController::class);
     Route::post('/donate-now/{id}/cancel', [DonateNowPledgeController::class,'cancel'])->name('donate-now.cancel');
-    // Route::get('/donate-now-users', [DonateNowPledgeController::class,'getUsers'])->name('administrators.users');
-    // Route::get('/donate-now-nongov-user', [DonateNowPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
-    // Route::get('/donate-now-pledgeid', [DonateNowPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
+});
 
+// Special Campaign
+Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
+    // Pledge Administration -- Special  Pledges
+    Route::resource('/special-campaign', SpecialCampaignPledgeController::class);
+    Route::post('/special-campaign/{id}/cancel', [SpecialCampaignPledgeController::class,'cancel'])->name('special-campaign.cancel');
 });
 
 
@@ -260,7 +264,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/others', function() {
         return "to be developed";
     })->name('others');
-});
+}); 
 
 Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(function() {
 
