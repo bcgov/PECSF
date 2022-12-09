@@ -44,7 +44,7 @@ class AnnualCampaignRequest extends FormRequest
         if ($this->step >= 2) {
             $my_rules = array_merge($my_rules, 
                 [
-                    'regional_pool_id'    => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
+                    'regional_pool_id'    => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', [ Rule::exists("f_s_pools", "id")->whereNull("deleted_at"), ]) ],
                     'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1']) ], 
                     'charities.*' =>  [ Rule::when( $this->pool_option == 'C', ['exists:charities,id']) ],
 

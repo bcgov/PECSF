@@ -23,6 +23,7 @@ class Pledge extends Model
 
         'campaign_year_id',
         'type',
+        'region_id',
         'f_s_pool_id',
         // 'frequency',
         // 'amount',

@@ -63,7 +63,7 @@ class AnnualCampaignController extends Controller
         $pool_option = 'P'; 
 
         // -- For Fund Support Pool page 
-        $fspools = FSPool::current()->where('status', 'A')->get()->sortBy(function($pool, $key) {
+        $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
         $regional_pool_id = $fspools->count() > 0 ? $fspools->first()->id : null;
@@ -73,7 +73,7 @@ class AnnualCampaignController extends Controller
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->with('region')->get()->sortBy(function($pool, $key) {
                                     return $pool->region->name;
                                   });
         $selected_charities = [];
@@ -335,6 +335,7 @@ class AnnualCampaignController extends Controller
         // REMARK: always assign 'GOV' for the organization
         $user = User::where('id', Auth::id() )->first();
         $organization = Organization::where('code', 'GOV')->first();
+        $pool = FSPool::where('id', $request->regional_pool_id)->first();
 
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
@@ -342,6 +343,7 @@ class AnnualCampaignController extends Controller
             'campaign_year_id' => $request->campaign_year_id,
         ],[
             'type' => $input['pool_option'],
+            'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
             'one_time_amount' => $input['annualOneTimeAmount'],
             'pay_period_amount' => $input['annualBiWeeklyAmount'] / $number_of_periods,

@@ -40,7 +40,7 @@ class DonateNowRequest extends FormRequest
                 [
                     'step' => ['required'],
                     'pool_option'  => ['required', Rule::in(['C', 'P']) ],
-                    'pool_id'      => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
+                    'pool_id'      => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', [ Rule::exists("f_s_pools", "id")->whereNull("deleted_at"), ]) ],
                     // 'charity_id'   => ['required_if:pool_option,C', Rule::when( $this->pool_option == 'P', ['exists:charities,id']) ],
                     'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1', 'max:1']) ], 
                     'charities.*' =>  [ Rule::when( $this->pool_option == 'C', ['exists:charities,id']) ],

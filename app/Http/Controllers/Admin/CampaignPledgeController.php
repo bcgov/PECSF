@@ -55,7 +55,16 @@ class CampaignPledgeController extends Controller
             $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'distinct_charities', 'distinct_charities.charity')
                             ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
-                            ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                            // ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                            ->where( function($query) {
+                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                        $q->from('employee_jobs as J2') 
+                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            ->selectRaw('min(J2.empl_rcd)');
+                                    })
+                                    ->orWhereNull('employee_jobs.empl_rcd');
+                            })
                             ->when($request->tran_id, function($query) use($request) {
                                 return $query->where('pledges.id', 'like', $request->tran_id);
                             })
@@ -229,6 +238,8 @@ class CampaignPledgeController extends Controller
                     $request->one_time_amount : $request->one_time_amount_other;
         $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
 
+        // Pool
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         // Make sure that there is no pledge transaction setup yet 
         $message_text = '';
@@ -239,6 +250,7 @@ class CampaignPledgeController extends Controller
         if ($pledge) {
             // Update the esiting one 
             $pledge->type = $request->pool_option;
+            $pledge->region_id = $request->pool_option == 'P' ? $pool->region_id : null;
             $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
             $pledge->one_time_amount = $one_time_amount ?? 0;
             $pledge->pay_period_amount = $pay_period_amount ?? 0;
@@ -263,6 +275,7 @@ class CampaignPledgeController extends Controller
 
                 'campaign_year_id' => $request->campaign_year_id,
                 'type' => $request->pool_option,
+                'region_id' => $request->pool_option == 'P' ? $pool->region_id : null,
                 'f_s_pool_id' => $request->pool_option == 'P' ? $request->pool_id : 0,
                 'one_time_amount' => $one_time_amount ?? 0,
                 'pay_period_amount' => $pay_period_amount ?? 0,
@@ -453,7 +466,10 @@ class CampaignPledgeController extends Controller
             $pledge->city       = $request->pecsf_city;
         }
 
+        $pool = FSPool::where('id', $request->pool_id)->first();
+
         $pledge->type = $request->pool_option;
+        $pledge->region_id = $request->pool_option == 'P' ? $pool->region_id : null;
         $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
         $pledge->one_time_amount = $one_time_amount ?? 0;
         $pledge->pay_period_amount = $pay_period_amount ?? 0;
