@@ -34,7 +34,7 @@
                 <div class="h5"> Employee Information</div>
             </div>
             <div class="card-body ">
-            @if( $pledge->user )                        
+            @if( $pledge->user_id )                        
                 <div class="form-row">
                     <div class="col-md-3 mb-3">
                         <label for="">Organization</label>

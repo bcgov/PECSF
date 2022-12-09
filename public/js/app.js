@@ -2099,14 +2099,12 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
  */
 
 
-setTimeout(function () {
-  $(".content-wrapper").css("min-height", $(".main-sidebar").height() + "px");
-  $(".main-sidebar").css("min-height", $(".content-wrapper").height() + 40 + "px");
-}, 2000);
-setTimeout(function () {
-  $(".content-wrapper").css("min-height", $(".main-sidebar").height() + "px");
-  $(".main-sidebar").css("min-height", $(".content-wrapper").height() + 40 + "px");
-}, 500);
+setInterval(function () {
+  if ($(".main-sidebar").height() - $(".content-wrapper").height() > 40) {
+    $(".content-wrapper").css("min-height", $(".main-sidebar").height() + "px");
+    $(".main-sidebar").css("min-height", $(".content-wrapper").height() + 40 + "px");
+  }
+}, 100);
 
 /***/ }),
 

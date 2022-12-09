@@ -365,7 +365,7 @@
                     <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <button  onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</button>
+                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">
@@ -387,7 +387,7 @@
 
 <br>
     <br>
-    <input type="submit" style="margin-left:20px;" class="col-md-2 btn btn-primary" value="Submit" />
+    <input type="submit" style="margin-left:20px;" onclick="$('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');"  class="col-md-2 btn btn-primary" value="Submit" />
     <br>
     <br>
     <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are possible through eForm. Please contact pecsf@gov.bc.ca</p>

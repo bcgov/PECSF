@@ -6,9 +6,12 @@ use Carbon\Carbon;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pledge extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'organization_id',
         'user_id',
@@ -20,16 +23,35 @@ class Pledge extends Model
 
         'campaign_year_id',
         'type',
+        'region_id',
         'f_s_pool_id',
         // 'frequency',
         // 'amount',
         'one_time_amount',
         'pay_period_amount',
         'goal_amount',
+        'ods_export_status', 'ods_export_at',
         'created_by_id',
         'updated_by_id',
 
+
     ];
+
+    protected $appends = [
+        'frequency',  
+    ];
+
+    public function getFrequencyAttribute() {
+
+        $frequency = 'both'; 
+        if ($this->one_time_amount > 0 && $this->pay_period_amount == 0) {
+            $frequency = 'one-time';    
+        } if ($this->one_time_amount == 0 && $this->pay_period_amount > 0) {
+            $frequency = 'bi-weekly';    
+        } 
+        return $frequency;
+        
+    } 
 
     public function charities() {
         return $this->hasMany(PledgeCharity::class);
@@ -80,10 +102,6 @@ class Pledge extends Model
             'name' => '',
         ]);
     }
-
-
-
-
 
     // public function scopeOnlyCampaignYear($query, $campaign_year) {
 

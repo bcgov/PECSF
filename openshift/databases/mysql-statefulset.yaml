@@ -13,6 +13,8 @@ spec:
       labels:
         app: pecsf-mysql
     spec:
+      imagePullSecrets:
+        - name: jfrog-secret  
       initContainers:
       - name: init-mysql
         image: aro.jfrog.io/performance-app/mysql:dev

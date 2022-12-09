@@ -131,7 +131,7 @@ deduction plan.
                     <x-button href="#donateGuideCarousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Back</x-button>
                     <div class="flex-fill"></div>
                     <x-button href="#donateGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
-                    <x-button :href="route('donate')" role="button" class="ready-btn d-none">I'm ready to Donate!</x-button>
+                    <x-button :href="route('annual-campaign.index')" role="button" class="ready-btn d-none">I'm ready to Donate!</x-button>
                 </div>
             </div>
         </div>

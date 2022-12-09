@@ -11,15 +11,14 @@
     <br>
     <br>
     @include('admin-pledge.partials.tabs')
-
 @endsection
 @section('content')
-
+    <a href=/admin-pledge/maintain-event">Event Pledge List</a><span style="font-weight:bold;"> > Add New Event Pledge</span>
+    <br>
+    <br>
     <a href="/admin-pledge/maintain-event"><button class="btn btn-outline-primary" >Back</button></a>
-
 @include('volunteering.partials.form')
     <a href="/admin-pledge/maintain-event"><button class="btn btn-outline-primary" >Back</button></a>
-
 @endsection
 @push('css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

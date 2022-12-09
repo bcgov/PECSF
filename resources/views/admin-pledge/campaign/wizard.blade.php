@@ -5,7 +5,7 @@
 @include('admin-pledge.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Create a Campaign Pledge</h4>
+        <h4 class="pl-2 font-weight-bold">Create a Campaign Pledge</h4>
         <div class="flex-fill"></div>
     </div>
 @endsection
@@ -16,7 +16,7 @@
 <div class="card pb-4">
 
     {{-- Wizard Progress bar (stepper) --}}
-    <div class="card-header border-0 p-0">
+    <div class="card-header border-0 p-0" style="display: none;">
         <div class=" card-timeline px-2 border-0">
             <ul class="bs4-step-tracking">
                 <li class="active">
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-  <div class="card-body py-0">
+  <div class="card-body py-0 pt-4">
     <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}" 
             id="admin-pldege-campaign-form" method="POST">
         @csrf
@@ -110,9 +110,9 @@
                 >Cancel</button>
             <button type="button" class="action back btn  btn-outline-secondary"
                 style="display: none">Back</button>
-            <button type="button" class="action next btn  btn-outline-primary float-right"
+            <button type="button" class="action next btn  btn-primary ml-2"
                 >Next</button>
-            <button type="submit" class="action submit btn  btn-outline-primary float-right"
+            <button type="submit" class="action submit btn  btn-primary ml-2"
                 style="display: none">Submit</button>
         </div>
 

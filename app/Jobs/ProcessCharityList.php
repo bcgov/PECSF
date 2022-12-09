@@ -65,7 +65,6 @@ class ProcessCharityList implements ShouldQueue, ShouldBeUniqueUntilProcessing
      */
     public function handle()
     {
-        ini_set('memory_limit', '4096M');
 
         try {
             Excel::import(new CharitiesImport, $this->file_path);

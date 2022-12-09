@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PledgeCharity extends Pivot
 {
+
+    use SoftDeletes;
+
     protected $table = 'pledge_charities';
     protected $fillable = [
         'charity_id',

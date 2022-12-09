@@ -9,7 +9,7 @@
     @include('admin-pledge.partials.tabs')
 @endsection
 @section('content')
-    <p><button class="btn btn-primary" role="button"  onclick="window.history.back();">Back</button></p>
+    <p><a href="/admin-pledge/maintain-event"><button class="btn btn-primary" role="button"  >Back To List</button></a></p>
 
     <div style="clear:both;float:none;"></div>
     <br>
@@ -89,7 +89,7 @@
 @endsection
 @push('css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+    <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <style>
         #campaign-table_filter label {
@@ -123,6 +123,8 @@
 
 @endpush
 @push('js')
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script type="x-tmpl" id="organization-tmpl">
@@ -272,6 +274,11 @@
                 $('#lock-event-modal').modal("show");
             }
             else if($(this).val() == 1){
+                Swal.fire({
+                   title: 'Successfully Approved!',
+                    text: 'Approved!',
+                });
+                $(this).parents("tr").remove();
                 $.post("/admin-pledge/status",
                     {
                         submission_id: $("#submission_id").val(),

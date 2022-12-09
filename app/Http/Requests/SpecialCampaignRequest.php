@@ -39,7 +39,8 @@ class SpecialCampaignRequest extends FormRequest
         if ($this->step >= 2) {
             $my_rules = array_merge($my_rules, 
                 [
-                    'one_time_amount_custom'  => [ Rule::when( $this->one_time_amount =='', ['required','numeric', 'min:0.01']) ],
+                    'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount), 
+                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -58,7 +59,12 @@ class SpecialCampaignRequest extends FormRequest
 
             // 'campaign_year_id.unique' => 'The campaign year has already been taken',
             // 'user_id.required'       => 'The Employee field is required',
-            'one_time_amount_custom.min' => 'The custom amount must be at least 0.01.',
+            // 'one_time_amount_custom.min' => 'The custom amount must be at least 0.01.',
+
+            'one_time_amount_custom.required' => 'The amount is required.',
+            'one_time_amount_custom.min'      => 'The min amount is $ 1.0.',
+            'one_time_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
+
         ];
     }
 

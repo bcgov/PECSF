@@ -2,26 +2,26 @@
 
 @section('content_header')
 
-
-    <div class="d-flex mt-3">
-        <h4>Pledge Administration</h4>
+    <div class="d-flex mt-3 pb-1">
+        <h2>Pledge Administration</h2>
         <div class="flex-fill"></div>
+    </div>
+
+    @include('admin-pledge.partials.tabs')
+
+    <div class="d-flex mt-2">
+        <div class="flex-fill"><p><a href="/administrators/dashboard">Back</a></p></div>
 
         <div class="d-flex">
             <div class="mr-2">
-                <x-button class="btn-success" :href="route('admin-pledge.campaign.create')">Create New Pledge</x-button>
+                <x-button class="btn-primary" :href="route('admin-pledge.campaign.create')">Create New Pledge</x-button>
             </div>
         </div>
     </div>
-<br>
-    <br>
-    @include('admin-pledge.partials.tabs')
 
 @endsection
 @section('content')
 
-
-<p><a href="/administrators/dashboard">Back</a></p>
 
 <div class="card">
 <form class="filter">
@@ -29,6 +29,13 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="tran_id">
+                    Tran ID
+                </label>
+                <input type="number" name="tran_id" id="tran_id"  class="form-control" />
+            </div>
+
             <div class="form-group col-md-3">
                 <label for="organization_id">
                     Organization
@@ -36,7 +43,7 @@
                 <select name="organization_id" id="organization_id" value="" class="form-control">
                     <option value="">All</option>
                     @foreach( $organizations as $organization)
-                    <option value="{{ $organization->id }}">{{ $organization->code }} ({{ $organization->name }})</option>
+                    <option value="{{ $organization->id }}">{{ $organization->name }} ({{ $organization->code }})</option>
                     @endforeach 
                 </select>
             </div>
@@ -52,7 +59,8 @@
                 <label for="pecsf_id">
                     PECSF ID
                 </label>
-                <input name="pecsf_id" id="pecsf_id"  class="form-control" />
+                <input type="number" name="pecsf_id" id="pecsf_id"  class="form-control" 
+                        onKeyPress="if(this.value.length==6) return false;" />
             </div> 
 
             <div class="form-group col-md-2">
@@ -84,7 +92,7 @@
                 <select id="campaign_year_id" class="form-control" name="campaign_year_id">
                     <option value="">All</option>
                     @foreach ($campaign_years as $cy)
-                        <option value="{{ $cy->id }}">{{ $cy->calendar_year }}
+                        <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }}
                         </option>
                     @endforeach
                 </select>
@@ -144,7 +152,7 @@
 		<table class="table table-bordered" id="campaign-table" style="width:100%">
 			<thead>
 				<tr>
-                    <th>ID</th>
+                    <th>Tran ID</th>
                     <th>Org</th>
 					<th>Empl ID</th>
                     <th>PECSF ID</th>
@@ -218,10 +226,14 @@
             serverSide: true,
             select: true,
             'order': [[0, 'desc']],
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw();
+            },
             ajax: {
                 url: '{!! route('admin-pledge.campaign.index') !!}',
                 type: "GET",
                 data: function (data) {
+                    data.tran_id  = $('#tran_id').val();
                     data.organization_id = $('#organization_id').val();
                     data.emplid = $('#emplid').val();
                     data.pecsf_id = $('#pecsf_id').val();

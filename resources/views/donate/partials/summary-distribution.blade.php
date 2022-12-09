@@ -23,7 +23,7 @@
     </div>
     @endif
 
-    <div class="card mt-3">
+    <div class="card mt-3" style="width:fit-content;">
         <div class="card-body">
             <table class="table table-sm">
                 @foreach ($charities as $charity)
