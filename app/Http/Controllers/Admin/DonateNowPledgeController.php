@@ -334,6 +334,7 @@ class DonateNowPledgeController extends Controller
         $pledge->f_s_pool_id = ($request->pool_option == 'P' ? $request->pool_id : null);
         $pledge->charity_id  = ($request->pool_option == 'C' ? $request->charity_id : null);
         $pledge->one_time_amount = $request->one_time_amount ?? 0;
+        $pledge->special_program = $request->special_program;
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 

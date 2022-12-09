@@ -345,7 +345,7 @@
                     <label for="deduct_pay_from" class="col-sm-3 col-form-label">The One-time payroll deduct on :</label>
                     <div class="col-sm-2">
                         <input type="date" name="deduct_pay_from"  class="form-control" id="deduct_pay_from" 
-                                value="{{ $pledge->deduct_pay_from }}" disabled>
+                                value="{{ $pledge->deduct_pay_from->format('Y-m-d') }}" disabled>
                     </div>
                 </div>
 
