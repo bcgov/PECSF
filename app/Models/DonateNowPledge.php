@@ -14,13 +14,13 @@ class DonateNowPledge extends Model
         'organization_id', 'user_id', 'pecsf_id', 'yearcd', 'seqno',
         'type', 'f_s_pool_id', 'charity_id', 'special_program',
         'one_time_amount', 'deduct_pay_from',
-        'first_name', 'last_name', 'city', 'cancelled', 'created_by_id', 'created_at',
+        'first_name', 'last_name', 'city', 'cancelled', 'cancelled_by_id', 'cancelled_at',
         'ods_export_status', 'ods_export_at',
         'created_by_id', 'updated_by_id', 'created_at',
     ];
 
     protected $casts = [
-        'deduct_pay_from' => 'date',
+        'deduct_pay_from' => 'date:Y-m-d',
     ];
 
     protected $appends = [
