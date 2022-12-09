@@ -1,4 +1,4 @@
-<ul class="nav nav-pills mb-3" id="pills-tab" >
+<ul class="menu nav nav-pills mb-3" id="pills-tab" >
     <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'bank_deposit_form') ? 'active' : ''}}"
            {{-- id="pills-home-tab"  --}}

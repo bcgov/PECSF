@@ -2,12 +2,12 @@
 
 <div class="form-row">
 
-    <div class="form-group  col-md-4">
+    <div class="form-group org_hook col-md-4">
         <label for="charity_keyword">Search by Keyword</label>
         <input class="form-control" type="search" value="" id="charity_keyword" />
     </div>
 
-    <div class="form-group  col-md-4">
+    <div class="form-group org_hook col-md-4">
         <label for="charity_category">Search by Category</label>
         <select class="form-control"  style="width:100%;" type="text"  id="charity_category">
             <option value="">Choose a Category</option>
@@ -17,7 +17,7 @@
         </select>
     </div>
 
-    <div class="form-group  col-md-4">
+    <div class="form-group org_hook col-md-4">
         <label for="charity_province">Search by Province</label>
         <select class="form-control" style="width:100%;" type="text" id="charity_province">
             <option value="">Choose a Province</option>
@@ -26,8 +26,57 @@
             @endforeach
         </select>
     </div>
+    @isset($fund_support_pool_list)
+        <div class="form-group col-md-4">
+            <label for="pool_selection_id">Search by Fund Support Pool</label>
+            <select class="select2 form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
+                <option value="">Choose a Fund Support Pool</option>
+                @foreach($fund_support_pool_list as $pool)
+                    <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    @endisset
 
-    <div class="charity-container form-group  col-md-12 bg-light">
+    <div id="charities_select_area" class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook col-md-12 px-3">
+        {{-- <h4 class="blue" style="padding-left:8px;">Search Results</h4> --}}
+        @include("volunteering.partials.organizations")
+    </div>
+    <div class="col-md-3"></div>
+        <br>
+        <br>
+    
+
+    <div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+
+        <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
+    {{-- <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i>
+         Please select a maximum of 10 charities</div> --}}
+        <div class="min-charities-error mx-2"></div>
+
+
+        <div id="selectedcountresults" class="float-right mr-2 text-secondary font-weight-bold"
+            style="display:none;">0 item(s) selected
+        </div>
+        <h5 style="width:100%;text-align:center;" 
+            id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
+        <span class="charity_errors"></span>
+
+        {{-- @if(count($selected_charities) > 0) --}}
+        <table class="charity-container" id="organizations" style="width:100%">
+            {{-- @foreach($selected_charities as $index => $charity)
+                @include('annual-campaign.partials.add-charity', ['index' => $index,'charity' => $charity] )
+            @endforeach --}}
+        </table>
+        {{-- @else
+            <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
+            <span class="charity_errors"></span> --}}
+        {{-- @endif --}}
+
+    </div>
+
+
+    {{-- <div class="charity-container form-group  col-md-12 bg-light">
 
 
 
@@ -37,9 +86,9 @@
 
         </div>
 
-    </div>
+    </div> --}}
 
-    <div class="form-group  col-md-12 bg-light">
+    {{-- <div class="form-group  col-md-12 bg-light">
 
         <h4 class="blue pl-1 pb-2" >Your Charities</h4>
 
@@ -88,7 +137,7 @@
 
         </table>
 
-    </div>
+    </div> --}}
 </div>
 
 <div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-hidden="true">

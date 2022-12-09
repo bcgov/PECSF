@@ -14,10 +14,7 @@ class FSPoolsSqlFileSeeder extends Seeder
      */
     public function run()
     {
-        $path = public_path('database/seeds/fspools.sql');
-        if (env('APP_ENV') == 'local') {
-            $path = public_path('..\database\seeds\fspools.sql');
-        }
+        $path = database_path('seeds/fspools.sql');
         $sql = file_get_contents($path);
         DB::unprepared($sql);
     }

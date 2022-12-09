@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BankDepositForm extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable =[
         'organization_code',
@@ -28,7 +29,9 @@ class BankDepositForm extends Model
         'regional_pool_id',
         'bc_gov_id',
         'pecsf_id',
-        'business_unit'
+        'business_unit',
+        'approved',
+        'created_at',
     ];
 
     function attachments(){

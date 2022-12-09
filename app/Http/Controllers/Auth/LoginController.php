@@ -51,9 +51,9 @@ class LoginController extends Controller
     {
 
         // Set Special Campaign Banner when activated special campaign
-        $banner_text = \App\Models\SpecialCampaign::activeBannerText();
-        if ($banner_text) {
-            session()->put('special-campaign-banner-text', $banner_text );
+        $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
+        if (count($banner_texts) > 0 ) {
+            session()->put('special-campaign-banner-text', $banner_texts );
         }
 
         // Update the last signon datetime

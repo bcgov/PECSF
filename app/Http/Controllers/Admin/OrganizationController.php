@@ -133,7 +133,10 @@ class OrganizationController extends Controller
      */
     public function destroy($id)
     {
-        $org = Organization::where('id', $id);
+        $org = Organization::where('id', $id)->first();
+        $org->updated_by_id = Auth::Id();
+        $org->save();
+        
         $org->delete();
 
         return response()->noContent();

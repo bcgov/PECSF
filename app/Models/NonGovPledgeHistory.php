@@ -18,11 +18,37 @@ class NonGovPledgeHistory extends Model
         'guid', 'vendor_id', 'additional_info','frequency',
         'per_pay_amt', 'pledge', 'percent', 'amount', 'deduction_code',
         'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor',
-        'deptid', 'city', 'created_date',
+        'deptid', 'city', 
+        'business_unit', 'event_descr', 'event_type', 'event_sub_type', 'event_deposit_date',
+        'created_date',
         'created_by_id', 'updated_by_id',       
 
 
     ];
+
+    public function region() {
+        return $this->belongsTo(Region::class, 'tgb_reg_district', 'code');
+    }
+
+    public function bu() {
+        return $this->belongsTo(BusinessUnit::class, 'business_unit', 'code')->withDefault([
+                'id' => 0,
+            ]);
+        }
+
+
+    public function charity() {
+        return $this->belongsTo(Charity::class)->withDefault([
+            'charity_name' => 'Unknown',
+        ]);
+    }
+
+    public function campaign_year() {
+        return $this->belongsTo(CampaignYear::class)->withDefault([
+            'number_of_periods' => '26'
+        ]);
+    }
+
 
     public function created_by() 
     {

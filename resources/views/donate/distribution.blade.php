@@ -160,10 +160,10 @@
                 $.each(rows, function(i) {
                     if (i == (rows.length -1 ) ) {
                         newValue = expectedTotal - sum;
-                        $(this).val( newValue );
+                        $(this).val( newValue.toFixed(2) );
                     } else {
                         newValue = Math.round(( expectedTotal / rows.length) * 100) / 100;
-                        $( this).val( newValue );
+                        $( this).val( newValue.toFixed(2) );
                         sum += newValue
                     }
                 });
@@ -200,5 +200,7 @@
             // });
         });
 
+
+        $(".distribute-evenly").click();
     </script>
 @endpush

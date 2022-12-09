@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -35,10 +36,27 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        $schedule->command('command:ExportDatabaseToBI')
-                 ->weekdays()
-                 ->at('0:30');
+        if (App::environment('production') || App::environment('testing')) {
 
+            $schedule->command('command:ExportPledgesToPSFT')
+                    ->dailyAt('0:15');
+                    
+            $schedule->command('command:ExportDatabaseToBI')
+                    ->weekdays()
+                    ->at('0:30');
+
+
+        }
+
+        // Foundation table
+        $schedule->command('command:ImportPayCalendar')
+                 ->weekdays()
+                 ->at('2:00');
+
+        $schedule->command('command:ImportCities')
+                 ->yearlyOn(9, 1, '02:30');
+
+        // Demography data and user profiles
         $schedule->command('command:ImportEmployeeJob')
                  ->weekdays()
                  ->at('4:00');
@@ -48,21 +66,13 @@ class Kernel extends ConsoleKernel
                  ->at('4:15');
 
         // Donor statitsics for challenge pages                  
-        $schedule->command('command:DonorHistoryDataFromBI')
-                 ->weekdays()
-                 ->at('5:00');      
+        // $schedule->command('command:DonorHistoryDataFromBI')
+        //          ->weekdays()
+        //          ->at('5:00');      
                  
-        $schedule->command('command:ImportEligibleEmployees')
-                 ->weekdays()
-                 ->at('5:10');      
-
-        // Foundation table
-        $schedule->command('command:ImportPayCalendar')
-                 ->weekdays()
-                 ->at('6:30');
-
-        $schedule->command('command:ImportCities')
-                 ->yearlyOn(9, 1, '02:00');
+        // $schedule->command('command:ImportEligibleEmployees')
+        //          ->weekdays()
+        //          ->at('5:10');      
                  
     }
 

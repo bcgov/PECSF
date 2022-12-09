@@ -46,7 +46,8 @@
             <table class="table table-bordered" id="region-table" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Region</th>
+                        <th>Code</th>
+                        <th>Name</th>
                         <th>Start Date</th>
                         <th>Status</th>
                         <th>Effective Type</th>
@@ -129,6 +130,7 @@
                     d.effectiveTypeFilter = $('#effectiveTypeFilter').val();                }
             },
             columns: [
+                {data: 'region.code', name: 'region.code', className: "dt-nowrap" },
                 {data: 'region.name', name: 'region.name', className: "dt-nowrap" },
                 {data: 'start_date', name: 'start_date', className: "dt-nowrap" },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
@@ -145,7 +147,7 @@
                                 return 'Inactive';
                             }
                         },
-                        targets: 2
+                        targets: 3
                     },
                     {
                         render: function (data, type, full, meta) {
@@ -157,17 +159,17 @@
                                 return 'Current';
                             }
                         },
-                        targets: 3
+                        targets: 4
                     },
                     {
                         render: function (data, type, full, meta) {
                             return data.length;
                         },
-                        targets: 4
+                        targets: 5
                     },
                     {
                         width: '5em',
-                        targets: [0],
+                        targets: [1],
                     },
             ]
         });
