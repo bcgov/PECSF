@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\FSPoolCharity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FSPool extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable =[
-        'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id' 
+        'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id', 'created_at'
     ];
     protected $appends = ['canDelete', 'effectiveType'];
 

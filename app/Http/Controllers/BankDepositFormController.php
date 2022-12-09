@@ -33,7 +33,7 @@ class BankDepositFormController extends Controller
      */
     function __construct()
     {
-        $this->doc_folder = "bank_deposit_form_attachments";
+        $this->doc_folder = "/uploads/bank_deposit_form_attachments";
     }
 
     public function index(Request $request)
@@ -131,7 +131,11 @@ class BankDepositFormController extends Controller
             }
         }
 
-        return view('volunteering.forms',compact('organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
+
+        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
     public function store(Request $request) {
@@ -152,6 +156,7 @@ class BankDepositFormController extends Controller
             'attachments.*' => 'required',
         ],[
             'organization_code' => 'The Organization Code is required.',
+            'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
          ]);
         $validator->after(function ($validator) use($request) {
 

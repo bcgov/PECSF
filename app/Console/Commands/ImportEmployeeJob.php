@@ -219,9 +219,12 @@ class ImportEmployeeJob extends Command
                                 'office_country' => $row->office_country,
                                 'office_postal' => $row->office_postal,
 
+                                'address1' => $row->address1,
+                                'address2' => $row->address2,
                                 'city' => $row->city,
                                 'stateprovince' => $row->stateprovince,
                                 'country' => $row->country,
+                                'postal' => $row->postal,
 
                                 'organization' => trim($row->Organization),
                                 'level1_program' => trim($row->level1_program),

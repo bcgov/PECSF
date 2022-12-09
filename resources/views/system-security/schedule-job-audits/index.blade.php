@@ -19,6 +19,13 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
+            <div class="form-group col-md-1">
+                <label for="tran_id">
+                    Tran Id
+                </label>
+                <input name="tran_id" id="tran_id"  class="form-control" />
+            </div>
+
             <div class="form-group col-md-3">
                 <label for="job_name">
                     Job Name
@@ -193,6 +200,7 @@
                 url: '{!! route('system.schedule-job-audits.index') !!}',
                 data: function (data) {
                     // data.term = $('#user').val();
+                    data.tran_id  = $('#tran_id').val();
                     data.job_name = $('#job_name').val();
                     data.status = $('#status').val();
                     data.start_time = $('#start_time').val();
@@ -202,12 +210,12 @@
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
-                {data: 'job_name', name: 'job_name', className: "dt-nowrap" },
+                {data: 'job_name', name: 'job_name',  },
                 {data: 'start_time', name: 'start_time', className: "dt-nowrap" },
                 {data: 'end_time',  name: 'end_time',  className: "dt-nowrap" },
                 {data: 'status',  name: 'status',  className: "dt-nowrap" },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
-                {data: 'message_text', name: 'message_text', className: "dt-nowrap"},
+                {data: 'message_text', name: 'message_text', },
                 {data: 'deleted_by', name: 'delete_by', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'deleted_at', name: 'delete_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 

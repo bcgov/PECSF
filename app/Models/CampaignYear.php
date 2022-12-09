@@ -29,7 +29,23 @@ class CampaignYear extends Model
         'end_date' => 'date:Y-m-d',
         'close_date' => 'date:Y-m-d',
     ];
- 
+
+    // Class Method 
+    public static function isAnnualCampaignOpenNow() {
+        $today = today();
+        $cy = self::where('start_date', '<=',  $today) 
+                ->where('end_date', '>=', $today)
+                ->first();
+
+        if ($cy && $cy->status == 'A') {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+    
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
@@ -43,7 +59,7 @@ class CampaignYear extends Model
     public function isOpen() {
 
         $today = today();
-        return ($this->status == 'A' && ($today >= $this->start_date && $today < $this->end_date));
+        return ($this->status == 'A' && ($today >= $this->start_date && $today <= $this->end_date));
     }
 
     public function isActive() {
@@ -54,9 +70,9 @@ class CampaignYear extends Model
 
         $today = today();
         $from_date = $this->start_date;
-        $to_date =  $this->end_date->addDays(7);
+        $to_date =  $this->end_date->addDays(14);
 
-        return ( $this->status == 'I' && (!($today >= $from_date && $today <= $to_date)) );
+        return ( $this->status == 'I' && (!($today <= $to_date)) );
 
     }
 

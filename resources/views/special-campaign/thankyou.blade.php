@@ -1,4 +1,8 @@
-@extends('donate.layout.main')
+@extends('adminlte::page')
+
+@section('content_header')
+
+@endsection
 
 @section('content')
 <div class="container">

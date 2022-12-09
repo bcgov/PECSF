@@ -164,7 +164,7 @@ class SyncUserProfile extends Command
             
                 if ($user) {
 
-                    $acctlock = $employee->date_deleted ? true : false;
+                    $acctlock = $employee->date_deleted ? 1 : 0;
 
                     if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) and
                          (trim($user->email) == $target_email ) and 
@@ -213,7 +213,7 @@ class SyncUserProfile extends Command
                             'idir' => $employee->idir,
                             'source_type' => self::SOURCE_TYPE,    
                             'password' => $password,
-                            'acctlock' => false,
+                            'acctlock' => 0,
                             'last_sync_at' => $new_sync_at,
                             'organization_id' => $organization->id,
                             'employee_job_id' => $employee->id,
@@ -268,7 +268,7 @@ class SyncUserProfile extends Command
                                 ->first();
 
             if (!($unlocked_user)) {
-                $user->acctlock = true;
+                $user->acctlock = 1;
                 $user->last_sync_at = $new_sync_at;
                 $user->save();
 

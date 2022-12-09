@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BankDepositFormOrganizations extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable =[
         'organization_name',
         'vendor_id',
