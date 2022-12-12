@@ -105,7 +105,7 @@ class DownloadImageFiles extends Command
 
             $client = new GuzzleHttp\Client();
             $res = $client->request('GET',  $baseUrl . $filename, 
-                ['sink' => 'public/img/uploads/' . $filename ]
+                ['sink' => 'public/img/uploads/fspools' . $filename ]
             );
         }
 
