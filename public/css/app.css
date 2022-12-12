@@ -106424,7 +106424,7 @@ body {
   overflow-x: hidden;
 }
 
-div.card.active .h5 {
+div.card.active .h5, .bg-primary h5 {
   color: #FFF !important;
 }
 
