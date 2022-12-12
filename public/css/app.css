@@ -58288,7 +58288,7 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .show > .btn-outline-primary.dropdown-toggle {
-  color: #fff;
+  color: #fff !important;
   background-color: #1a5a96;
   border-color: #1a5a96;
 }
@@ -106422,4 +106422,12 @@ h4 {
 
 body {
   overflow-x: hidden;
+}
+
+div.card.active .h5 {
+  color: #FFF !important;
+}
+
+div.card:hover .h5 {
+  color: #FFF !important;
 }
