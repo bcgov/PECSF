@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CampaignYearSeeder::class);
         $this->call(RegionSqlFileSeeder::class);        // Based on TEST export on Sep 17, 2022
         $this->call(OrganizationSqlFileSeeder::class);  // Based on TEST export on Sep 17, 2022
-        
+
+        $this->call(FSPoolsJSONSeeder::class);
         
         // To switch Charity Seed from XL to Limited 20 Records, toggle below comments
         //$this->call(CharitySeeder::class);

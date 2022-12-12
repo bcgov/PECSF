@@ -104,9 +104,22 @@ class DownloadImageFiles extends Command
             echo $filename . PHP_EOL;
 
             $client = new GuzzleHttp\Client();
-            $res = $client->request('GET',  $baseUrl . $filename, 
-                ['sink' => 'public/img/uploads/fspools' . $filename ]
-            );
+            
+            // check the file exists or not 
+            try {
+                $res = $client->request('GET',  $baseUrl . $filename);
+
+                if ($res->getStatusCode() == 200 ) {
+                    $res = $client->request('GET',  $baseUrl . $filename, 
+                        ['sink' => 'public/img/uploads/fspools/' . $filename ]
+                    );
+                }
+    
+            } catch (GuzzleHttp\Exception\RequestException $e) {
+                echo 'Uh oh! ' . $e->getMessage();
+            }
+            
+
         }
 
 
