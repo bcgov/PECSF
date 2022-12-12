@@ -43,7 +43,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="pool_option" id="pool2" value="P"
                         {{ $pool_option == "P" ? 'checked' : '' }}>
-                    <label class="form-check-label h5" for="pool2">
+                    <label class="form-check-label" for="pool2">
                         Select a Regional Fund Supported Pool
                     </label>
                 </div>
