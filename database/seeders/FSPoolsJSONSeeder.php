@@ -33,8 +33,6 @@ class FSPoolsJSONSeeder extends Seeder
                             'notes' => $in_pool->region->notes, 
                             "created_by_id" => $in_pool->region->created_by_id, 
                             "updated_by_id" => $in_pool->region->updated_by_id, 
-                            "created_at" => $in_pool->region->created_at, 
-                            "updated_at" => $in_pool->region->updated_at, 
                             "deleted_at" => $in_pool->region->deleted_at, 
                         ]);
 
@@ -45,8 +43,6 @@ class FSPoolsJSONSeeder extends Seeder
                             "status"     =>  $in_pool->status,
                             "created_by_id" => $in_pool->created_by_id,
                             "updated_by_id" => $in_pool->updated_by_id,
-                            "created_at" => $in_pool->created_at,
-                            "updated_at" => $in_pool->updated_at,
                             "deleted_at" => $in_pool->deleted_at,
                         ]);
 
@@ -67,8 +63,6 @@ class FSPoolsJSONSeeder extends Seeder
                         'contact_email' => $in_pool_charity->contact_email,
                         'notes'         => $in_pool_charity->notes,
                         'image'         => $in_pool_charity->image,
-                        'created_at'    => $in_pool_charity->created_at,
-                        'updated_at'    => $in_pool_charity->updated_at,
                         'deleted_at'    => $in_pool_charity->deleted_at,
                     ]);
 
