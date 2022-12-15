@@ -298,6 +298,14 @@
             ]
         });
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                oTable.ajax.reload();
+                return false;
+            }
+        });
+        
         $('#refresh-btn').on('click', function() {
             // oTable.ajax.reload(null, true);
             oTable.draw();

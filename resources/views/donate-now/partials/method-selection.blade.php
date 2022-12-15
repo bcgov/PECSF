@@ -27,7 +27,7 @@
                         </select>
                     </div>
                 </div>
-        
+
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
     <div class="card m-0">
         <div class="card-header  bg-light">
             <div class="custom-control custom-radio">
-                <input data-toggle="collapse" data-target="#method-selection-2" type="radio" 
+                <input data-toggle="collapse" data-target="#method-selection-2" type="radio"
                     name="pool_option" id="pool-option-2" value="C" class="custom-control-input"  {{ $pool_option == "C" ? 'checked' : '' }} />
                 <label class="custom-control-label" for="pool-option-2">Select up to 10 charities from the CRA list</label>
             </div>
@@ -52,7 +52,7 @@
                 </div>
                 <div class="row justify-content-end">
                     <div class="col-md-5">
-                        <h6 class='font-weight-bold'>One-time Deduction Amount</h6> 
+                        <h6 class='font-weight-bold'>One-time Deduction Amount</h6>
                     </div>
                     <div class="col-md-1">
                         <span class='font-weight-bold' id="one_time_figure"></span>
@@ -60,12 +60,12 @@
                 </div>
                 <table class="table" id="charity-table">
                     <tbody>
-                       
+
                         @php $charities = ($pool_option == "C" and isset($pledge)) ? $pledge->distinct_charities->pluck('id') : [''] @endphp
                         @foreach ( $charities as $index => $oldCharity)
                         <tr id="charity{{ $index }}">
-                            @php  $pledge_charity = ($pool_option == "C" && isset($pledge)) ? $pledge->distinct_charities[$index] : new \App\Models\PledgeCharity  @endphp 
-                            @include('admin-pledge.campaign.partials.charities', ['index' => $index, 'pledge_charity' => $pledge_charity]) 
+                            @php  $pledge_charity = ($pool_option == "C" && isset($pledge)) ? $pledge->distinct_charities[$index] : new \App\Models\PledgeCharity  @endphp
+                            @include('admin-pledge.campaign.partials.charities', ['index' => $index, 'pledge_charity' => $pledge_charity])
                         </tr>
                         @endforeach
                         <tr id="charity{{ isset($pledge) ? $pledge->distinct_charities->count() + 1 : 1 }}"></tr>

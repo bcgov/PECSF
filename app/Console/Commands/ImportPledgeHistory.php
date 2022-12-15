@@ -256,9 +256,9 @@ class ImportPledgeHistory extends Command
                         foreach ($batch as $row) {
 
                             // Skip if the GUID is blank
-                            if (empty($row->GUID)) {
-                                continue;
-                            }
+                            // if (empty($row->GUID)) {
+                            //     continue;
+                            // }
 
                             // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 

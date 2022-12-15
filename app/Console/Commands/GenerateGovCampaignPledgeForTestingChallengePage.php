@@ -150,9 +150,12 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
                 $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
 
-                if (!($user->acctlock == 0)) {
-                    continue;
+                if(!empty($user)){
+                    if (!($user->acctlock == 0)) {
+                        continue;
+                    }
                 }
+
 
                 $row_count += 1;
                 $message = '';

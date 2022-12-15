@@ -1,0 +1,108 @@
+APP_NAME=Laravel
+APP_ENV=dev
+APP_KEY=base64:9UStHk8FWHsPTcJOxtDACa97Uyb/T1/fgLMIqMwW8GI=
+APP_DEBUG=true
+APP_URL=https://pecsf.apps.silver.devops.gov.bc.ca
+
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=pecsf-mysql-srv
+DB_PORT=3306
+DB_DATABASE=pecsf
+DB_USERNAME=pecsf
+DB_PASSWORD=mysecret
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+QUEUE_CONNECTION=database
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+SESSION_DOMAIN=pecsf.apps.silver.devops.gov.bc.ca
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=null
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=mt1
+
+MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+
+# BC Govt Keycloak -- https://socialiteproviders.com/Keycloak/
+KEYCLOAK_CLIENT_ID=pecsf-greenfield-3936
+KEYCLOAK_CLIENT_SECRET=80f5bab1-7495-4295-a652-854d797f3756
+KEYCLOAK_REDIRECT_URI='https://pecsf.apps.silver.devops.gov.bc.ca/login/keycloak/callback'
+KEYCLOAK_BASE_URL='https://dev.loginproxy.gov.bc.ca/auth'
+KEYCLOAK_REALM=standard
+
+# AZURE_CLIENT_ID=6175cf83-3942-4d19-aead-f8d6f5e8acf9
+# AZURE_CLIENT_SECRET=zJ2O..irL5I5MhpL_UgZ3-n0M4P9WPW~aB
+# AZURE_TENANT_ID=824035d8-8b80-46e0-9baf-2a9afc5a178b
+# AZURE_REDIRECT_URI=https://pecsf.apps.silver.devops.gov.bc.ca/login/microsoft/callback
+
+# Azure -- Test 
+# OAUTH_APP_ID=ecc00827-8b4c-48d9-a7b2-d4f4fa7574fe
+# OAUTH_APP_PASSWORD=mJt7Q~fD2iqORPomchN4-U4rJWkvtRcOy~3V6
+# OAUTH_REDIRECT_URI=https://pecsf.apps.silver.devops.gov.bc.ca/login/microsoft/callback
+# OAUTH_SCOPES='openid offline_access User.Read User.ReadBasic.All' 
+# OAUTH_AUTHORITY=https://login.microsoftonline.com/824035d8-8b80-46e0-9baf-2a9afc5a178b
+# OAUTH_AUTHORIZE_ENDPOINT=/oauth2/v2.0/authorize
+# OAUTH_TOKEN_ENDPOINT=/oauth2/v2.0/token
+
+ODS_USERNAME=bcpecsf
+ODS_TOKEN=9r5S6b3o6R0q6n5J8u9t
+ODS_HOST=https://analytics-testapi.psa.gov.bc.ca/apiserver/api.rsc
+# outbound endpoint 
+ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT="${ODS_HOST}/Datamart_PECSF_dbo_employee_info"
+#ODS_OUTBOUND_PLEDGE_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_app_pledge_info"
+# ODS_OUTBOUND_CHARITY_BI_ENDPOINT=https://analytics-testapi.psa.gov.bc.ca/apiserver/api.rsc/Datamart_PECSF_app_charity_info/
+#ODS_OUTBOUND_CHARITY_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_test_bulk_app_charity_info"
+ODS_OUTBOUND_BULK_UPLOAD_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_bulk_upload/"
+
+# inbound endpoint 
+#ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_employee_demo"
+ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_peoplesoft_employee_demographic"
+
+ODS_INBOUND_REPORT_DON_DOL_BY_ORG_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_don_dol_by_org"
+ODS_INBOUND_REPORT_BUSINESS_UNITS_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_business_units"
+ODS_INBOUND_REPORT_DON_DOL_BY_ORG_TRUNCATE_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_don_dol_by_org_truncate"
+
+ODS_INBOUND_REPORT_DON_DOL_BY_REG_DIST_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_don_dol_by_reg_dist"
+ODS_INBOUND_REPORT_REGIONAL_DISTRICTS_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_regional_districts"
+ODS_INBOUND_REPORT_DON_DOL_BY_REG_DIST_TRUNCATE_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_don_dol_by_reg_dist_truncate"
+
+ODS_INBOUND_REPORT_DONORS_BY_DEPT_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_donors_by_dept"
+ODS_INBOUND_REPORT_DEPARTMENTS_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_departments"
+ODS_INBOUND_REPORT_DONORS_BY_DEPT_TRUNCATE_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_donors_by_dept_truncate"
+
+ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_pledge_history"
+ODS_INBOUND_REPORT_PLEDGE_HISTORY_VNDR_BI_ENDPOINT="${ODS_HOST}/Datamart_PECSF_report_vendors"
+ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT="${ODS_HOST}/Datamart_BCPECSF_report_ps_pledge_history_nongov"
+
+ODS_INBOUND_PS_TGB_CITY_TBL_ENDPOINT = "${ODS_HOST}/Datamart_PECSF_PeopleSoft_PS_TGB_CITY_TBL/"
+ODS_INBOUND_REPORT_PECSF_ELIGIBLE_EMPLOYEE_ENDPOINT = "${ODS_HOST}/Datamart_PECSF_report_eligible_employee_cnt"
+
+SYNC_USER_PROFILE_SECRET=watchD0g!
+
+WHITELIST=10.97.6.1,10.97.8.1,10.97.82.1,10.97.84.1,10.97.86.1

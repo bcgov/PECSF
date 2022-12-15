@@ -380,8 +380,15 @@ class CampaignPledgeController extends Controller
                 ;
 
         $pledges_charities = $sql->get();
+
+        $pool_charities= null;
+        if ($pledge->type =='P') {
+            $pool_charities = FSPool::asOfDate($pledge->created_at)->where('region_id', $pledge->region_id)->first()->charities;
+        }
+
+    
         
-        return view('admin-pledge.campaign.show', compact('pledge', 'pledges_charities'));
+        return view('admin-pledge.campaign.show', compact('pledge', 'pledges_charities', 'pool_charities'));
 
     }
 

@@ -50,6 +50,27 @@
         </div>
     </div>
     <br>
+
+    @if(!empty($totals))
+    <table class="table table-bordered rounded" id="myTable3">
+        <thead>
+        <tr class="bg-light">
+            <th>Date</th>
+            <th>Donors</th>
+            <th>Dollars</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{$date}}</td>
+            <td>{{$totals[0]->donors}}</td>
+            <td>${{number_format($totals[0]->dollars,2)}}</td>
+        </tr>
+        </tbody>
+    </table>
+    @endif
+
+    <br>
 <table class="table table-bordered rounded" id="myTable2">
     <thead>
     <tr class="bg-light">

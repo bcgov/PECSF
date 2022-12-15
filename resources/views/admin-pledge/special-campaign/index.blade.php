@@ -117,6 +117,24 @@
                 <input type="number"  name="seqno" id="seqno"  class="form-control" />
             </div>
 
+            <div class="form-group col-md-4">
+                <label for="special_campaign_name">
+                    Special Campaign Name 
+                </label>
+                <input type="text"  name="special_campaign_name" id="special_campaign_name"  class="form-control" />
+            </div>
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group col-md-2">
+                <label for="deduct_pay_from">
+                    Pay Date
+                </label>
+                <input type="date"  name="deduct_pay_from" id="deduct_pay_from"  class="form-control" />
+            </div>
+
             <div class="form-group col-md-2">
                 <label for="cancelled">
                     Cancel Status
@@ -142,7 +160,7 @@
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
+                <button type="submit" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
             </div>
             <div class="form-group col-md-1">
                 <label for="search">
@@ -255,9 +273,9 @@
                     data.campaign_year_id = $('#campaign_year_id').val();
                     data.one_time_amt_from = $('#one_time_amt_from').val();
                     data.one_time_amt_to = $('#one_time_amt_to').val();
-                    data.pay_period_amt_from = $('#pay_period_amt_from').val();
-                    data.pay_period_amt_to = $('#pay_period_amt_to').val();
                     data.cancelled = $('#cancelled').val();
+                    data.special_campaign_name = $('#special_campaign_name').val();
+                    data.deduct_pay_from = $('#deduct_pay_from').val();
                 }
             },
             columns: [
@@ -322,6 +340,13 @@
             ]
         });
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                oTable.ajax.reload();
+                return false;
+            }
+        });
     
         $('#refresh-btn').on('click', function() {
             // oTable.ajax.reload(null, true);

@@ -85,16 +85,16 @@ class DonateNowPledge extends Model
 
         // Found the previous Saturday
         $dt = $this->deduct_pay_from;
-        for($i=0; $i <= 6; $i++) {
-            if ($dt->isSaturday()) {
-                break;
-            }
-            $dt->subDay(1) ;
-        }
+        $dt->subDay(7);
+        // for($i=0; $i <= 6; $i++) {
+        //     if ($dt->isFriday()) {
+        //         break;
+        //     }
+        //     $dt->subDay(1) ;
+        // }
 
         // echo today() . ' - ' . $dt . PHP_EOL;
         if ( today() >= $dt) {
-
             return true;
         }
 
