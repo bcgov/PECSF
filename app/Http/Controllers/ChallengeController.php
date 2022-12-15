@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Department;
 use App\Models\Region;
+use App\Models\Pledge;
+
 use App\Models\BusinessUnit;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -34,7 +36,12 @@ class ChallengeController extends Controller
             $year = $date->format("Y");
         }
 
-        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->orderBy('yearcd')->get();
+        if($year == Carbon::now()->format("Y"))
+        {
+            return redirect()->route('challege.current');
+        }
+
+        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
 
         $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
@@ -123,8 +130,128 @@ class ChallengeController extends Controller
                 $charities = $charities->sortByDesc("previous_participation_rate");
             }
         }
+        $date = gmdate("Y-m-d H:i:s");
 
-        return view('challenge.index', compact('charities','year','request','count','years'));
+        return view('challenge.index', compact('date','charities','year','request','count','years'));
+    }
+
+    public function current(Request $request) {
+            $date = Carbon::now();
+        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
+            $year = $date->format("Y");
+        $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
+            ->join("users","pledges.user_id","users.id")
+            ->join("employee_jobs","employee_jobs.emplid","users.emplid")
+            ->join("business_units","business_units.code","=","employee_jobs.business_unit")
+            ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
+            ->where("elligible_employees.year","=",$year)
+            ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
+            ->where('employee_jobs.empl_status',"=","A")
+            ->where('pledges.created_at',">",$date->copy()->startOfYear())
+            ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+            ->where('business_units.status',"=","A")
+            ->whereNull('employee_jobs.date_deleted')
+            ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
+            ->groupBy('business_units.name')
+            ->limit(500)
+            ->get();
+
+        $totals = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors'))
+            ->join("users","pledges.user_id","users.id")
+            ->join("employee_jobs","employee_jobs.emplid","users.emplid")
+            ->join("business_units","business_units.id","=","employee_jobs.business_unit_id")
+            ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
+            ->where("elligible_employees.year","=",$year)
+            ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
+            ->where('employee_jobs.empl_status',"=","A")
+            ->where('pledges.created_at',">",$date->copy()->startOfYear())
+            ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+            ->where('business_units.status',"=","A")
+            ->whereNull('employee_jobs.date_deleted')
+            ->groupBy('business_units.status')
+            ->limit(500)
+            ->get();
+
+        if($request->sort == "ASC"){
+            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
+                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+                ->join("elligible_employees", function($join){
+                    // $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                    $join->on("business_units.code", '=', 'elligible_employees.business_unit');
+                })
+                ->where('donor_by_business_units.yearcd',"=",$year)
+                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
+                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
+
+            if(strlen($request->organization_name) > 0){
+                $count = $count->where("business_units.name","LIKE",$request->organization_name."%");
+            }
+            $count = $count->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+                ->count();
+        }
+        else{
+            $count = 1 ;
+        }
+        $donorsTotal =  0;
+        $dollarsTotal =  0;
+        foreach($charities as $index => $charity){
+            $previousYear = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
+                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
+                ->join("elligible_employees", function($join){
+                    //$join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
+                    $join->on("business_units.code", '=', 'elligible_employees.business_unit');
+                })
+                ->where('donor_by_business_units.yearcd',"=",($year-1))
+                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
+                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
+                ->where('business_units.id',"=",$charity->id)
+                ->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+                ->first();
+
+            if(!empty($previousYear))
+            {
+                $charities[$index]->previous_participation_rate = $previousYear->participation_rate;
+                $charities[$index]->previous_donors = $previousYear->donors;
+                $charities[$index]->change = ($charity->participation_rate*100) - ($previousYear->participation_rate*100);
+            }
+            else
+            {
+                $charities[$index]->previous_participation_rate = 0;
+                $charities[$index]->previous_donors = 0;
+                $charities[$index]->change = 0;
+            }
+
+            $donorsTotal +=  $charities[$index]->donors;
+            $dollarsTotal +=  $charities[$index]->dollars;
+        }
+
+        if($request->field == "change")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("change");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("change");
+            }
+        }
+
+        if($request->field == "previous_participation_rate")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("previous_participation_rate");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("previous_participation_rate");
+            }
+        }
+
+        $date = gmdate("Y-m-d H:i:s");
+
+        return view('challenge.index', compact('date','totals','charities','year','request','count','years'));
     }
 
     /**

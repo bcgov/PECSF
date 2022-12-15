@@ -32,6 +32,9 @@ class ScheduleJobAuditController extends Controller
         if($request->ajax()) {
 
             $audits = ScheduleJobAudit::select('schedule_job_audits.*')
+                        ->when($request->tran_id, function($query) use($request) {
+                            return $query->where('id', 'like', $request->tran_id);
+                        })
                         ->when($request->job_name, function($query) use($request) {
                             return $query->where('job_name', 'like', '%'.$request->job_name.'%');
                         })

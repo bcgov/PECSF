@@ -13,11 +13,17 @@ class PledgeHistory extends Model
         'campaign_type', 'source', 'frequency', 'yearcd', 'campaign_year_id', 'tgb_reg_district', 'region_id', 
         'name1', 'name2', 'emplid', 'GUID', 'vendor_id', 'additional_info',
         'charity_bn', 'charity_id', 'per_pay_amt', 'pledge', 'percent', 'amount',
-        'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor', 'deptid', 'city', 'created_date',
+        'vendor_name1', 'vendor_name2', 'vendor_bn', 'remit_vendor', 'deptid', 'city', 
+        'business_unit', 'event_descr', 'event_type', 'event_sub_type', 'event_deposit_date',
+        'created_date',
     ];
 
     public function region() {
         return $this->belongsTo(Region::class, 'tgb_reg_district', 'code');
+    }
+
+    public function bu() {
+        return $this->belongsTo(BusinessUnit::class, 'business_unit', 'code');
     }
 
     public function fund_supported_pool() {
@@ -36,6 +42,12 @@ class PledgeHistory extends Model
         return $this->belongsTo(CampaignYear::class)->withDefault([
             'number_of_periods' => '26'
         ]);
+    }
+
+    public function user() {
+
+        // return \App\Models\FSPool::where('region_id', $this->region->id)->first();
+        return $this->belongsTo(User::class, 'guid', 'guid');
     }
 
 }

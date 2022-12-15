@@ -30,27 +30,40 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
     public function collection(Collection $rows)
     {
-        echo '-- Importing charity ' . now() . PHP_EOL;   
+        echo '-- Importing charity ' . now() . PHP_EOL;
+
+        $index = [];
 
         foreach ($rows as $row) {
 
-            Charity::UpdateOrInsert([
-                'registration_number' => $row[0],
-            ], [
-                Str::snake("Charity Name") => $row[1],
-                Str::snake("Charity Status") => $row[2],
-                Str::snake("Effective Date of Status") => $this->transformDate($row[3]),
-                Str::snake("Sanction") => $row[4],
-                Str::snake("Designation Code") => $row[5],
-                Str::snake("Category Code") => $row[6],
-                Str::snake("Address") => $row[7],
-                Str::snake("City") => $row[8],
-                Str::snake("Province") => $row[9],
-                Str::snake("Country") => $row[10],
-                Str::snake("Postal Code") => $row[11],
-            ]);
+            if(empty($row[4]))
+            {
+                continue;
+            }
+
+            try{
+                Charity::UpdateOrInsert([
+                    'registration_number' => $row[0],
+                ], [
+                    Str::snake("Charity Name") => $row[1],
+                    Str::snake("Charity Status") =>  $row[2],
+                    Str::snake("Effective Date of Status") => $this->transformDate($row[4]),
+                    Str::snake("Sanction") => $row[5],
+                    Str::snake("Designation Code") => $row[6],
+                    Str::snake("Category Code") => $row[8],
+                    Str::snake("Address") => $row[9],
+                    Str::snake("City") => $row[10],
+                    Str::snake("Province") => $row[11],
+                    Str::snake("Country") => $row[12],
+                    Str::snake("Postal Code") => $row[13],
+                ]);
+            }
+            catch(Exception $e){
+                continue;
+            }
+
         }
-        
+
     }
 
     public function transformDate($value, $format = 'Y-m-d')
@@ -65,6 +78,13 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
     public function chunkSize(): int
     {
         return 1000;
+    }
+
+    public function validateDate($date, $format = 'Y-m-d')
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+        return $d && $d->format($format) === $date;
     }
 
 

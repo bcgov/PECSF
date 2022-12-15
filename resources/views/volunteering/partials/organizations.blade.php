@@ -38,13 +38,13 @@
 </table>
 
 
-
-
-<br>
-<div>
+<div class="col-md-12">
     @if($organizations)
         {{$organizations->links()}}
     @else
 
     @endif
 </div>
+
+<br>
+

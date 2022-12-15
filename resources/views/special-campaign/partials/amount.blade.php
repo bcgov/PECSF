@@ -22,7 +22,7 @@
         <div class="custom-amount-one-time mt-3" style="{{ (!in_array($one_time_amount, [6, 12, 20, 50])) ? '' : 'display:none '}}">
             <label>
                 Custom amount
-                <input type="number" name="one_time_amount_custom" class="form-control" min="1" value="{{ $one_time_amount_custom }}">
+                <input type="text" name="one_time_amount_custom" class="form-control"  value="{{ $one_time_amount_custom }}">
             </label>
         </div>
     </div>

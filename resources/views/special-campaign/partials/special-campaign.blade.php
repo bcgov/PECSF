@@ -47,20 +47,36 @@
 <style>
     #special-campaign-area .card {
         /* color: #1a5a96; */
-        color: #313132 ; 
+        /* color: #313132 ;  */
+        color: #1a5a96;
+        background-color:  #f8fafc;
+        border: 1px solid #1a5a96;
     }
 
     #special-campaign-area .card:hover {
-        background-color: #ddeaee ;
-        
+        /* background-color: #ddeaee ; */
         /* color: white; */
+        background-color: #1a5a96;
+        opacity: 0.7;
+        color: white;
+        mix-blend-mode: multiply;
     }
+
+    #special-campaign-area .card:hover img {
+        /* background-color: #ddeaee ; */
+        /* color: white; */
+        mix-blend-mode: multiply;
+    }
+
     #special-campaign-area .card.active {
         /* background-color: #a9c8e5; */
-        background-color: #fcfcfc;
-        border: 1px solid red;
-
+        /* background-color: #fcfcfc;
+        border: 1px solid red; */
+        background-color: #1a5a96;
+        color: white;
     }
+
+
 
 </style>
 @endpush

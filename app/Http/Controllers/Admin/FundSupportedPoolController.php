@@ -30,7 +30,7 @@ class FundSupportedPoolController extends Controller
     {
          $this->middleware('permission:setting');
 
-         $this->image_folder = "img/uploads/";
+         $this->image_folder = "img/uploads/fspools/";
     }
 
     /**
@@ -150,7 +150,8 @@ class FundSupportedPoolController extends Controller
             'start_date'        => ['required',
                 Rule::unique('f_s_pools')->where(function ($query) use($request) {
                     return $query->where('region_id', $request->input('region_id'))
-                                 ->where('start_date', $request->input('start_date'));
+                                 ->where('start_date', $request->input('start_date'))
+                                 ->whereNull('deleted_at');;
                 })
             ],
             'charities.*'       => ['required'],
@@ -382,7 +383,8 @@ class FundSupportedPoolController extends Controller
             'start_date'        => ['required','date', 'after:today',
                 Rule::unique('f_s_pools')->where(function ($query) use($request) {
                     return $query->where('region_id', $request->input('region_id'))
-                                    ->where('start_date', $request->input('start_date'));
+                                    ->where('start_date', $request->input('start_date'))
+                                    ->whereNull('deleted_at');;
                 })->ignore($id),
             ],
             'pool_status'       => ['required', Rule::in(['A', 'I']) ],
@@ -548,7 +550,7 @@ class FundSupportedPoolController extends Controller
                 }
             }
         }
-
+// dd([ $charities, $pool->charities->pluck('charity_id'), $dels ]);
         FSPoolCharity::whereIn('id', $dels)->delete();
 
         // Step 3 -- Update the header
@@ -605,6 +607,9 @@ class FundSupportedPoolController extends Controller
 
         // TODO: delete file and subrecord
         $pool->charities()->delete();
+
+        $pool->updated_by_id = Auth::Id();
+        $pool->save();
         $pool->delete();
 
         return response()->noContent();
@@ -631,7 +636,8 @@ class FundSupportedPoolController extends Controller
                 'start_date'        => ['required', 'after:yesterday',
                 Rule::unique('f_s_pools')->where(function ($query) use($request, $pool) {
                     return $query->where('region_id', $pool->region_id)
-                                 ->where('start_date', $request->start_date);
+                                 ->where('start_date', $request->start_date)
+                                 ->whereNull('deleted_at');
                 })
             ]
         ],[

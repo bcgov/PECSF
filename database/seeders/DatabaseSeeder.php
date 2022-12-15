@@ -20,11 +20,12 @@ class DatabaseSeeder extends Seeder
         
         // Core tables
         //$this->call(BusinessunitSeeder::class);   // Based on TEST export on Sep 13, 2022
-        $this->call(BusinessUnitSqlFileSeeder::class);   // Based on TEST export on Sep 13, 2022
+        $this->call(BusinessUnitJSONSeeder::class);   // Based on TEST export on Sep 13, 2022
         $this->call(CampaignYearSeeder::class);
-        $this->call(RegionSqlFileSeeder::class);        // Based on TEST export on Sep 17, 2022
-        $this->call(OrganizationSqlFileSeeder::class);  // Based on TEST export on Sep 17, 2022
-        
+        // $this->call(RegionSqlFileSeeder::class);        // Based on TEST export on Sep 17, 2022
+        $this->call(OrganizationJSONSeeder::class);  // Based on TEST export on Sep 17, 2022
+
+        $this->call(FSPoolsJSONSeeder::class);
         
         // To switch Charity Seed from XL to Limited 20 Records, toggle below comments
         //$this->call(CharitySeeder::class);

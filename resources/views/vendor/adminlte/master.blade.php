@@ -76,23 +76,39 @@
 <body class="@yield('classes_body')" @yield('body_data')>
     @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
-    <div class="top-message-bar p-3 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top">
-        <span class="flex-fill"></span>
-        <span class="mx-2 h6 text-primary font-weight-bold">
-            {{-- <i class="icon fas fa-exclamation-circle"></i> --}}
-            <span class>{{ session()->get('special-campaign-banner-text') }}<span class="ml-2 ">|</span></span>
-        </span>
-        
-        <span class="h6 text-primary font-weight-bold special-campaign">
-            <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
-        </span>
-        <span class="flex-fill"></span>
-
-        <div class="form-inline" style="position:absolute; right:20px">
-            {{-- <x-button :href="route('home')" size="sm" style="light" class="mx-2">Return to my profile</x-button> --}}
-            <button type="submit" class="close">
-                <span aria-hidden="true" class="h2 font-weight-bold">×</span>
-            </button>
+    {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
+    <div class="top-message-bar p-2  bg-warning   XXsticky-top">
+        <div class="row  justify-content-center ">
+            <div class="col-sm-12 col-md-8">
+                <div class="float-right">
+                    {{-- <span class="h6">One of three columns</span> --}}
+                    <div class="special-campaign-container">
+                        <div class="row px-3">
+                            <div class="v-slider-frame">
+                                <ul class="v-slides">
+                                    
+                                    @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
+                                        <li class="v-slide">{{  $text }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="float-left">
+                    <span class="h6 mx-2">|</span>
+                    <span class="h6 text-primary font-weight-bold special-campaign">
+                        <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
+                    </span>
+                </div>
+                <div class="form-inline float-right align-middle pr-2">
+                    <button type="submit" class="close">
+                        <span aria-hidden="true" class="h6 font-weight-bold">X</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     @endif
@@ -136,31 +152,69 @@
     @yield('adminlte_js')
 
     @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
-    <script>
-        $(function() {
+        <style>
+            .v-slider-frame {
+                border: none;
+                height: 30px;
+                overflow: hidden;
+                text-align: right;
+            }
+            ul.v-slides {
+                list-style-type: none;
+                transform: translateY(30px);
+                padding:0;
+            }
+            .v-slide {
+                font-size: 1.0em;
+                line-height: 30px;
+                color: #1a5a96;
+            }
+        </style>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.14.2/TweenMax.min.js"></script>
+        <script>
+            var vsOpts = {
+                $slides: $('.v-slide'),
+                $list: $('.v-slides'),
+                duration: 10,
+                lineHeight: 30
+            }
 
-            $('div.top-message-bar span.special-campaign').on('click', function(e) {
-                $('div.top-message-bar').removeClass('d-flex');
-                $('div.top-message-bar').fadeOut(1000);
-            });
+            var vSlide = new TimelineMax({
+                paused: true,
+                repeat: -1
+            })
 
-            $('div.top-message-bar .close').on('click', function(e) {
-                $(this).hide();
-                $('div.top-message-bar').removeClass('d-flex');
-                $('div.top-message-bar').fadeOut(1000);
-                
-                $.ajax({
-                    method: "POST",
-                    url:  "{{ route('special-campaign-banner.dismiss')  }}",
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                    },
+            vsOpts.$slides.each(function(i) {
+                vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
+                    y: i * -1 * vsOpts.lineHeight,
+                    ease: Elastic.easeOut.config(1, 0.3)
+                })
+            })
+            vSlide.play();
+        </script>
+        <script>
+            $(function() {
+                $('div.top-message-bar span.special-campaign').on('click', function(e) {
+                    $('div.top-message-bar').removeClass('d-flex');
+                    $('div.top-message-bar').fadeOut(1000);
                 });
 
+                $('div.top-message-bar .close').on('click', function(e) {
+                    $(this).hide();
+                    $('div.top-message-bar').removeClass('d-flex');
+                    $('div.top-message-bar').fadeOut(1000);
+                    
+                    $.ajax({
+                        method: "POST",
+                        url:  "{{ route('special-campaign-banner.dismiss')  }}",
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                        },
+                    });
+                });
+                
             });
-            
-        });
-    </script>
+        </script>
     @endif
 </body>
 

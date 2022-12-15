@@ -140,7 +140,10 @@ class BusinessUnitController extends Controller
      */
     public function destroy($id)
     {
-        $business_unit = BusinessUnit::where('id', $id);
+        $business_unit = BusinessUnit::where('id', $id)->first();
+        $business_unit->updated_by_id = Auth::Id();
+        $business_unit->save();
+        
         $business_unit->delete();
 
         return response()->noContent();

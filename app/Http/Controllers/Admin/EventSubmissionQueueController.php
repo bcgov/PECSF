@@ -15,6 +15,7 @@ use App\Models\City;
 use App\Models\Charity;
 use App\Models\CampaignYear;
 use App\Models\Organization;
+
 use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
 use Illuminate\Support\Facades\Session;
@@ -64,12 +65,103 @@ class EventSubmissionQueueController extends Controller
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
             }
             else{
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
-            }
 
-        }
-        else{
-            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+                $year =  intval(date("Y")) + 1;
+                do{
+                    $campaign_year = CampaignYear::where('calendar_year', $year)->first();
+                    $year--;
+
+                    if($year == 2005){
+                        break;
+                    }
+                }while(!$campaign_year->isOpen());
+
+                if(empty($campaign_year) || !$campaign_year->isOpen()){
+                    $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
+                }
+
+                $gov_organization = Organization::where('code', 'GOV')->first();
+                $is_GOV = ($form->organization_code == $gov_organization->code);
+
+                $pay_period_amount = $form->deposit_amount;
+                $one_time_amount =  $form->deposit_amount;
+                $pay_period_annual_amt = $form->deposit_amount;
+
+
+
+
+                // Create a new Pledge
+                $form_organization = Organization::where('code', $form->organization_code)->first();
+                $form_user = User::where('id', $form->form_submitter_id)->first();
+                $pledge = Pledge::Create([
+                    'organization_id' => $form_organization->id,
+                    'user_id' =>    $form->form_submitter_id,
+                    "pecsf_id" =>   $form->pecsf_id,
+                    "first_name" => $form_user->name,
+                    "last_name" =>  "",
+                    "city" =>       $form->employment_city,
+                    'campaign_year_id' => $campaign_year->id,
+                    'type' => $form->regional_pool_id ? "P" : "C",
+                    'f_s_pool_id' => empty($form->regional_pool_id) ? 0 : $form->regional_pool_id,
+                    'one_time_amount' => $form->deposit_amount,
+                    'pay_period_amount' => 0,
+                    'goal_amount' => $form->deposit_amount,
+                    'created_by_id' => $form_user->id,
+                    'updated_by_id' => Auth::id(),
+                ]);
+
+                $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
+
+
+                $pledge->charities()->delete();
+
+                $pledgeCharities = BankDepositFormOrganizations::where("bank_deposit_form_id" , $form->id)->get();
+
+                if ( empty($form->regional_pool_id) )
+                {
+                    foreach( ['one-time'] as $frequency) {
+
+                        $one_time_sum = 0;
+                        $one_time_goal_sum = 0;
+                        $pay_period_sum = 0;
+                        $pay_period_goal_sum = 0;
+
+                        $last_key = array_key_last($pledgeCharities->toArray());
+                        foreach($pledgeCharities as $key => $charity) {
+                            $percent = $charity->donation_percent;
+                            $charity = Charity::where("id",$charity->vendor_id)->first();
+
+
+                            $new_one_time = round( $percent * $one_time_amount /100, 2);
+                            $new_one_time_goal = round( $percent * $one_time_amount /100, 2);
+                            $new_pay_period = round( $percent * $pay_period_amount /100, 2);
+                            $new_pay_period_goal = round( $percent * $pay_period_annual_amt /100, 2);
+
+                            if ($key == $last_key) {
+                                $new_one_time = round($one_time_amount - $one_time_sum, 2);
+                                $new_one_time_goal = round($one_time_amount - $one_time_goal_sum, 2);
+                                $new_pay_period = round($pay_period_amount - $pay_period_sum, 2);
+                                $new_pay_period_goal = round($pay_period_annual_amt - $pay_period_goal_sum, 2);
+                            }
+
+                            // One-Time
+                            if ($frequency == 'one-time' && $one_time_amount) {
+                                PledgeCharity::create([
+                                    'charity_id' => $charity->id,
+                                    'pledge_id' => $pledge->id,
+                                    'frequency' => 'one-time',
+                                    'additional' => $charity->specific_community_or_initiative,
+                                    'percentage' => $percent,
+                                    'amount' => round($form->deposit_amount * ($charity->donation_percent / 100)),
+                                    'goal_amount' => round($form->deposit_amount * ($charity->donation_percent / 100)),
+                                ]);
+                            }
+                        }
+                    }
+                }
+
+            }
         }
     }
 
@@ -82,6 +174,7 @@ class EventSubmissionQueueController extends Controller
     {
      $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id")
          ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
+         ->where("approved","!=",1)
          ->get();
         $pools = FSPool::where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')

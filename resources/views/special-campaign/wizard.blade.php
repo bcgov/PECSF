@@ -13,13 +13,13 @@
 
             
             {{-- Main Content --}}
-            <div class="card pb-4">
+            <div class="pb-4">
 
                 {{-- Wizard Progress bar (stepper) --}}
-                <div class="card-header border-0 py-2">
-                    <div class=" card-timeline px-2 border-0" style="display:none;">
+                <div class="card-header border-0 py-0 ml-5">
+                    <div class=" card-timeline px-2 border-0" style="display:block;">
                         <ul class="bs4-step-tracking">
-                            <li class="">
+                            <li class="active">
                                 <div><i class="fas fa-bars fa-2xl"></i></div>In Support Of
                             </li>
                             <li class="">
@@ -83,14 +83,14 @@
             
             
                     <div class="p-2 ">
-                        <button type="button" class="action cancel btn  btn-outline-secondary"
+                        <button type="button" class="action cancel btn btn-lg btn-outline-secondary"
                             onclick="window.location='{{ route('donations.list') }}'"
                         >Cancel</button>
-                        <button type="button" class="action back btn  btn-outline-secondary"
+                        <button type="button" class="action back btn btn-lg btn-outline-secondary"
                             style="display: none">Back</button>
-                        <button type="button" class="action next btn  btn-outline-primary float-right"
+                        <button type="button" class="ml-2 action next btn btn-lg btn-primary"
                             >Next</button>
-                        <button type="submit" class="action submit btn  btn-primary float-right"
+                        <button type="submit" class="ml-2 action submit btn btn-lg btn-primary"
                             style="display: none">Pledge</button>
                     </div>
 
@@ -136,7 +136,7 @@
 .bs4-step-tracking {
     margin-bottom: 30px;
     overflow: hidden;
-    color: #878788;
+    color: #b2b2b2;
     padding-left: 0px;
     margin-top: 30px;
 }
@@ -148,7 +148,7 @@
     float: left;
     position: relative;
     font-weight: 400;
-    color: #878788;
+    color: #b2b2b2;
     text-align: center;
     z-index: 100; 
 }
@@ -172,7 +172,7 @@
     line-height: 38px;
     display: block;
     font-size: 18px;
-    background: #878788;
+    background: #b2b2b2;
     border-radius: 50%;
     margin: auto;
 }
@@ -181,7 +181,7 @@
     content: '';
     width: 150%;
     height: 2px;
-    background: #878788 ;
+    background: #dadada;
     position: absolute;
     left: 0%;
     right: 0%;
@@ -201,15 +201,15 @@
 
 .bs4-step-tracking li.active {
     font-weight: bold;
-    color: #007bff; /* #dc3545 */
+    color: #1a5a96; /* #dc3545 */
 }
 
 .bs4-step-tracking li.active>div {
-    background: #007bff;
+    background: #1a5a96;
 }
 
 .bs4-step-tracking li.active:after {
-    background: #007bff;
+    background: #1a5a96;
 }
 
     #nav-tab li:not(.active)  a{
@@ -412,23 +412,23 @@ $(function () {
                     if (response.status == 422) {   
                         
                         // $('#error-message').html( response.responseJSON.errors );
-                        $('#error-message').html('');
-                        $.each(response.responseJSON.errors, function( field_name, error){
-                            $('#error-message').append('<div class="text-strong text-danger">' + error + '</div>');
-                        })
-                        $('#error-message').show();
-                        $("html, body").animate({ scrollTop: 0 }, 500);
-                        // $.each(response.responseJSON.errors, function(field_name,error){
-                        //     if ( field_name.includes('.') ) {   
-                        //         items = field_name.split(".");
-                        //         pos = Number(items[ items.length -1 ]);
-                        //         $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
-                        //         $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
-                        //     } else {s
-                        //         $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
-                        //         $(document).find('[name=' + field_name + ']').addClass('is-invalid');
-                        //     }
+                        // $('#error-message').html('');
+                        // $.each(response.responseJSON.errors, function( field_name, error){
+                        //     $('#error-message').append('<div class="text-strong text-danger">' + error + '</div>');
                         // })
+                        // $('#error-message').show();
+                        // $("html, body").animate({ scrollTop: 0 }, 500);
+                        $.each(response.responseJSON.errors, function(field_name,error){
+                            if ( field_name.includes('.') ) {   
+                                items = field_name.split(".");
+                                pos = Number(items[ items.length -1 ]);
+                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
+                            } else {
+                                $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                            }
+                        })
                     }
                     console.log('Error');
                 }

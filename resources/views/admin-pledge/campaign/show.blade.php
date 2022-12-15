@@ -34,7 +34,7 @@
                 <div class="h5"> Employee Information</div>
             </div>
             <div class="card-body ">
-            @if( $pledge->user )                        
+            @if( $pledge->user_id )                        
                 <div class="form-row">
                     <div class="col-md-3 mb-3">
                         <label for="">Organization</label>
@@ -143,7 +143,7 @@
                     <tbody>
                         @php $pay_period_sum = 0; $one_time_sum = 0; @endphp
                         @if ($pledge->type  == 'P')
-                            @foreach($pledge->fund_supported_pool->charities as $pool_charity)
+                            @foreach($pool_charities as $pool_charity)
                                 <tr>
                                     <td scope="row">{{ $loop->index +1 }}</td>
                                     <td>

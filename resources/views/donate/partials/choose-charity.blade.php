@@ -36,10 +36,11 @@
 
 
     <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
-
         @include("volunteering.partials.organizations")
     </div>
-    <div class="col-md-3"></div>
+
+
+
         <br>
         <br>
 

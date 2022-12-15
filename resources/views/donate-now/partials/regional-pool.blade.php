@@ -2,9 +2,9 @@
 <h3 class="mt-1">2. Select your regional charity pool</h3>
 <div>
     <p class="p-1"></p>
-    <div class="card mx-1 pl-1 bg-primary">
+    <div class="card mx-3 p-0 pl-2 bg-primary">
         <div class="card-body bg-light">
-          By choosing this oprion your donation will support the designated programs of the regional 
+          By choosing this oprion your donation will support the designated programs of the regional
           Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
           {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
         </div>
@@ -29,7 +29,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pool_id" id="regional_pool{{ $pool->id }}"
                             value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
-                        <label class="form-check-label h5 pl-3" for="xxxpool{{ $pool->id }}">
+                        <label class="form-check-label  pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
                     </div>
@@ -53,10 +53,7 @@
         @endforeach
     </div>
 
-    {{-- <div class="mt-5">
-        <a class="btn btn-lg btn-outline-primary" href="{{route('donate.start')}}">Previous</a>
-        <button class="btn btn-lg btn-primary" type="submit">Next</button>
-    </div> --}}
+
 
 </div>
 
@@ -86,6 +83,8 @@
 <style>
     #regional-pool-area .card  {
         color: #1a5a96;
+        background-color:  #f8fafc;
+        border: 1px solid #1a5a96;
     }
 
     input[name='regional_pool_id'] {
@@ -94,7 +93,9 @@
     }
 
     #regional-pool-area .card:hover {
-        background-color: darkgray;
+        /* background-color: darkgray; */
+        background-color: #1a5a96;
+        opacity: 0.7;
         color: white;
     }
     #regional-pool-area .card.active {
