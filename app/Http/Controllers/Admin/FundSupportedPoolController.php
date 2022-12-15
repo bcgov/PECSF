@@ -30,7 +30,7 @@ class FundSupportedPoolController extends Controller
     {
          $this->middleware('permission:setting');
 
-         $this->image_folder = "img/uploads/";
+         $this->image_folder = "img/uploads/fspools/";
     }
 
     /**

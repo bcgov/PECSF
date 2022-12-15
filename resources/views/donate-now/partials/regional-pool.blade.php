@@ -4,7 +4,7 @@
     <p class="p-1"></p>
     <div class="card mx-3 p-0 pl-2 bg-primary">
         <div class="card-body bg-light">
-          By choosing this oprion your donation will support the designated programs of the regional 
+          By choosing this oprion your donation will support the designated programs of the regional
           Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
           {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
         </div>
@@ -29,7 +29,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pool_id" id="regional_pool{{ $pool->id }}"
                             value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
-                        <label class="form-check-label h5 pl-3" for="xxxpool{{ $pool->id }}">
+                        <label class="form-check-label  pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
                     </div>

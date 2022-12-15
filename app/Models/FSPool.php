@@ -27,6 +27,15 @@ class FSPool extends Model
         });
     }
 
+    public function scopeAsOfDate($query, $specifyDate) {
+        $query->where('start_date', function($query) use($specifyDate) {
+            return $query->selectRaw('max(start_date)')
+                    ->from('f_s_pools as A')
+                    ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                    ->where('A.start_date', '<=', $specifyDate);
+        });
+    }
+
     public function region() 
     {
         return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();

@@ -31,7 +31,7 @@ class SpecialCampaignSetupRequest extends FormRequest
                 'start_date'    => 'required|date|before_or_equal:end_date',
                 'end_date'      => 'required|date|after_or_equal:start_date',
                 'description'   => 'required|max:2048',
-                'banner_text'   => 'required|max:255',
+                'banner_text'   => 'required|max:150',
         ];
 
 
