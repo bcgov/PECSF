@@ -94,6 +94,19 @@ class SpecialCampaignPledgeController extends Controller
                             ->when( $request->cancelled == 'N', function($query) use($request) {
                                 $query->whereNull('special_campaign_pledges.cancelled');
                             })
+                            ->when( $request->cancelled == 'N', function($query) use($request) {
+                                $query->whereNull('special_campaign_pledges.cancelled');
+                            })
+                            ->when( $request->deduct_pay_from, function($query) use($request) {
+                                $query->where('special_campaign_pledges.deduct_pay_from', $request->deduct_pay_from);
+                            })
+                            ->when( $request->special_campaign_name, function($query) use($request) {
+                                $query->whereIn('special_campaign_pledges.special_campaign_id', function($q) use($request) {
+                                    $q->select('id')
+                                            ->from('special_campaigns')
+                                            ->whereRaw("LOWER(special_campaigns.name) LIKE '%" . strtolower($request->special_campaign_name) . "%'");
+                                });
+                            })
                             ->when( is_numeric($request->one_time_amt_from) || is_numeric($request->one_time_amt_to), function($query) use($request) {
                                 $from = is_numeric($request->one_time_amt_from) ? $request->one_time_amt_from : 0;
                                 $to = is_numeric($request->one_time_amt_to) ? $request->one_time_amt_to : 9999999;
