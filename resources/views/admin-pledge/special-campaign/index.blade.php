@@ -160,7 +160,7 @@
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
+                <button type="submit" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
             </div>
             <div class="form-group col-md-1">
                 <label for="search">
@@ -340,6 +340,13 @@
             ]
         });
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                oTable.ajax.reload();
+                return false;
+            }
+        });
     
         $('#refresh-btn').on('click', function() {
             // oTable.ajax.reload(null, true);
