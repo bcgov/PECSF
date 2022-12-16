@@ -41,7 +41,7 @@ class ChallengeController extends Controller
             return redirect()->route('challege.current');
         }
 
-        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->orderBy('yearcd')->get();
+        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
 
         $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
@@ -137,7 +137,7 @@ class ChallengeController extends Controller
 
     public function current(Request $request) {
             $date = Carbon::now();
-        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->orderBy('yearcd',"desc")->get();
+        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
             $year = $date->format("Y");
         $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
             ->join("users","pledges.user_id","users.id")
