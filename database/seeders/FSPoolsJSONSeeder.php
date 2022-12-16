@@ -52,7 +52,7 @@ class FSPoolsJSONSeeder extends Seeder
             foreach ($in_pool->charities as $in_pool_charity)  {
     
                     $pool_charity = FSPoolCharity::create([
-                        'f_s_pool_id'   => $in_pool_charity->f_s_pool_id,
+                        'f_s_pool_id'   => $pool->id,
                         'charity_id'    => $in_pool_charity->charity_id,
                         'percentage'    => $in_pool_charity->percentage,
                         'status'        => $in_pool_charity->status,
