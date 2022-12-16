@@ -104,7 +104,7 @@ objects:
                   mountPath: /var/www/html/.env
                   subPath: .env
                 - name: client-images
-                  mountPath: /var/www/html/app/public/uploads
+                  mountPath: /var/www/html/public/img/uploads
                 - name: web-app-storage
                   mountPath: /var/www/html/storage
               resources:
