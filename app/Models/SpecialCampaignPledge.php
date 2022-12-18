@@ -12,7 +12,10 @@ class SpecialCampaignPledge extends Model
     use HasFactory, SoftDeletes;
     
     protected $fillable = [
-        'organization_id', 'user_id', 'pecsf_id', 'yearcd', 'seqno',
+        'organization_id', 
+        'emplid',       // Use for checking unique pledge per campaign year
+        'user_id',      // Not in use in the near future due to multiple GUID to emplid issue
+        'pecsf_id', 'yearcd', 'seqno',
         'special_campaign_id', 'one_time_amount', 'deduct_pay_from',
         'first_name', 'last_name', 'city', 'cancelled', 'cancelled_by_id', 'cancelled_at',
         'ods_export_status', 'ods_export_at', 'created_by_id','updated_by_id',

@@ -22,17 +22,19 @@ use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
 use App\Http\Controllers\SpecialCampaignController;
 use App\Http\Controllers\Admin\CRACharityController;
+
 use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\Admin\PayCalendarController;
+use App\Http\Controllers\System\UploadFileController;
+
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
-
 use App\Http\Controllers\Admin\DonationDataController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
+
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
-
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
 use App\Http\Controllers\System\UserMaintenanceController;
@@ -286,5 +288,10 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::get('/access-logs', [AccessLogController::class, 'index'])->name('access-logs');
     Route::get('/access-logs-user', [AccessLogController::class, 'getUsers'])->name('access-logs.users');
     Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
+
+    // Upload and download file (seed)
+    Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
+    
+
 
 });

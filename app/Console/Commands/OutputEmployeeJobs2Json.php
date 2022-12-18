@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Models\FSPool;
 use Illuminate\Console\Command;
+use App\Models\EmployeeJob;
 
-class OutputFSPools2Json extends Command
+class OutputEmployeeJobs2Json extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:OutputFSPools2Json';
+    protected $signature = 'command:OutputEmployeeJobs2Json';
 
     /**
      * The console command description.
@@ -38,17 +38,15 @@ class OutputFSPools2Json extends Command
      */
     public function handle()
     {
-        // Fund Support Pools 
-        $pools = FSPool::with('region', 'charities', 'charities.charity')
-                ->orderBy('start_date')
-                ->get()->sortBy(function($pool) { 
-                    return $pool->region->name;
-               });
 
-        $path = storage_path('app/uploads/f_s_pools.json');
-        $sql = file_put_contents($path, json_encode($pools, JSON_PRETTY_PRINT) );
+         // Jobs
+         $jobs = EmployeeJob::orderBy('id')->get();
+               
+        //  $path = database_path('seeds/employee_jobs.json');
+         $path = storage_path('app/uploads/employee_jobs.json');
+         $sql = file_put_contents($path, json_encode($jobs, JSON_PRETTY_PRINT) );
+
 
         return 0;
-
     }
 }
