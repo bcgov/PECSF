@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Models\FSPool;
+use App\Models\Region;
 use Illuminate\Console\Command;
 
-class OutputFSPools2Json extends Command
+class OutputRegions2Json extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:OutputFSPools2Json';
+    protected $signature = 'command:OutputRegions2Json';
 
     /**
      * The console command description.
@@ -38,17 +38,13 @@ class OutputFSPools2Json extends Command
      */
     public function handle()
     {
-        // Fund Support Pools 
-        $pools = FSPool::with('region', 'charities', 'charities.charity')
-                ->orderBy('start_date')
-                ->get()->sortBy(function($pool) { 
-                    return $pool->region->name;
-               });
 
-        $path = storage_path('app/uploads/f_s_pools.json');
-        $sql = file_put_contents($path, json_encode($pools, JSON_PRETTY_PRINT) );
+        // Regions
+        $regions = Region::orderBy('code')->get();
+               
+        $path = storage_path('app/uploads/regions.json');
+        $sql = file_put_contents($path, json_encode($regions, JSON_PRETTY_PRINT) );
 
         return 0;
-
     }
 }

@@ -93,6 +93,7 @@ class GeneratePledgeFromHistory extends Command
 
         if ($this->validation_pass) {
             // Steps -- Gov pledges History
+
             $this->LogMessage( now() );    
             $this->LogMessage("Step - 2A : Generate Gov Annual Campaign Pledge");
             $this->generateAnnualCampaign();
@@ -135,7 +136,7 @@ class GeneratePledgeFromHistory extends Command
 
         $sql = PledgeHistorySummary::where('yearcd', $this->yearcd)
                         // ->DonateTodayType()
-                        ->orderBy('GUID')
+                        ->orderBy('emplid')
                         ->orderBy('pledge_history_id');        
 
         // Chucking
@@ -156,11 +157,13 @@ class GeneratePledgeFromHistory extends Command
                     $this->LogMessage('   Exception -- Campaign Year not defined in the system - ' . $bi_pledge->yearcd . ' (id - ' . $bi_pledge->id . ')');
                 }
 
-                $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+
+                $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
                 if (!$user) {
-                    $valid = false;
-                    $this->LogMessage('   Exception -- User not found    - ' . $bi_pledge->GUID . ' (id - ' . $bi_pledge->id . ')');
-                   
+                    if (!$bi_pledge->campaign_type == 'Event' && $bi_pledge->emplid == 0) {
+                        $valid = false;
+                        $this->LogMessage('   Exception -- User not found    - ' . $bi_pledge->emplid . ' (id - ' . $bi_pledge->id . ')');
+                    }
                 }
 
                 $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
@@ -305,7 +308,7 @@ class GeneratePledgeFromHistory extends Command
         */
         $created_date = $this->created_date;
 
-        $sql = PledgeHistorySummary::select('GUID', 'yearcd', 'source', 'campaign_type', 
+        $sql = PledgeHistorySummary::select('emplid', 'yearcd', 'source', 'campaign_type', 
                             DB::raw("case when source = 'P' then region else null end as region"),
                             DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
@@ -321,8 +324,8 @@ class GeneratePledgeFromHistory extends Command
                                             ->where('pledge_histories.created_date', '<=', $created_date);
                         })
                         ->where('campaign_type','Annual')
-                        ->groupBy('GUID', 'yearcd', 'source', 'campaign_type')
-                        ->orderBy('GUID');
+                        ->groupBy('emplid', 'yearcd', 'source', 'campaign_type')
+                        ->orderBy('emplid');
         
         $campaign_year = CampaignYear::where('calendar_year', $this->yearcd)->first();
         
@@ -342,7 +345,8 @@ class GeneratePledgeFromHistory extends Command
 
                 $row_count += 1;
 
-                $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+                $user = User::where('source_type', 'HCM')
+                        ->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
           
                 // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
 
@@ -363,19 +367,21 @@ class GeneratePledgeFromHistory extends Command
 //  echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
 
                 $old_pledge = Pledge::where('organization_id',  $user->organization_id)
-                                                ->where('user_id', $user->id)
+                                                ->where('emplid', $user->emplid)
                                                 ->where('campaign_year_id', $campaign_year->id)
                                                 ->first();       
 
                 $pledge = Pledge::updateOrCreate([
                     'organization_id' => $user->organization_id,
-                    'user_id' => $user->id,
+                    'emplid' => $user->emplid,
+                    // 'user_id' => $user->id,
                     // 'pecsf_id' => 
                     'campaign_year_id' => $campaign_year->id,
                 ],[
                     // 'first_name',
                     // 'last_name',
                     // 'city',
+                    'user_id' => $user->id,
                     'type' => $bi_pledge->source,
 
                     'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
@@ -394,13 +400,13 @@ class GeneratePledgeFromHistory extends Command
 
                     $created_count += 1;
 
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->campaign_year_id );
+                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->campaign_year_id );
 
                 } elseif ($pledge->wasChanged() ) {
 
                     $updated_count += 1;
 
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->campaign_year_id );
+                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->campaign_year_id );
                     $changes = $pledge->getChanges();
                     unset($changes["updated_at"]);
 
@@ -426,7 +432,7 @@ class GeneratePledgeFromHistory extends Command
                     // No action required
                 } else {
 
-                    $bi_pledge_charites = PledgeHistory::where('GUID', $bi_pledge->GUID)
+                    $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
                                                 ->where('yearcd', $bi_pledge->yearcd)
                                                 ->where('source', 'Non-Pool')
                                                 ->where('campaign_type', $bi_pledge->campaign_type)
@@ -473,7 +479,7 @@ class GeneratePledgeFromHistory extends Command
 // ->whereIn('GUID', ['846BA510E5724268A34FE8A33CDCA67C', '8DA0BC025EF2499FB07E5A92D8BBDC59'])
                         ->where('campaign_type','Donate Today')
                         ->where('created_date', '<=', $this->created_date)
-                        ->orderByRaw('GUID, yearcd, campaign_type, source, vendor_id, additional_info');
+                        ->orderByRaw('emplid, yearcd, campaign_type, source, vendor_id, additional_info');
         
         $campaign_year = CampaignYear::where('calendar_year', $this->yearcd)->first();
         
@@ -485,17 +491,18 @@ class GeneratePledgeFromHistory extends Command
         $row_count = 0;
         $error_count = 0;
         $no_change_count = 0; 
-        $last_guid = '';
+        $last_emplid = '';
         $seqno = 1;
 
-        $sql->chunk(100, function($chuck) use( $campaign_year, &$created_count, &$updated_count, &$no_change_count, &$row_count, &$error_count, &$n, &$last_guid, &$seqno) {
+        $sql->chunk(100, function($chuck) use( $campaign_year, &$created_count, &$updated_count, &$no_change_count, &$row_count, &$error_count, &$n, &$last_emplid, &$seqno) {
             $this->LogMessage( "Processing batch (100) - " . ++$n );
 
             foreach($chuck as $bi_pledge) {
 
                 $row_count += 1;
 
-                $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+                $user = User::where('source_type', 'HCM')
+                            ->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
           
                 // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
 
@@ -516,18 +523,18 @@ class GeneratePledgeFromHistory extends Command
 
 //  echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
 
-                // Increase the seqno for the same employee (GUID)
-                if ($last_guid == $bi_pledge->GUID) {
+                // Increase the seqno for the same employee (emplid)
+                if ($last_emplid == $bi_pledge->emplid) {
                     $seqno += 1;
                 } else {
                     $seqno = 1;
-                    $last_guid = $bi_pledge->GUID;
+                    $last_emplid = $bi_pledge->emplid;
                 }
 
 // echo json_encode([ $bi_pledge->GUID, $last_guid, $seqno ]);
 
                 $old_pledge = DonateNowPledge::where('organization_id',  $user->organization_id)
-                                    ->where('user_id', $user->id)
+                                    ->where('emplid', $user->emplid)
                                     ->where('yearcd', $bi_pledge->yearcd)
                                     ->where('seqno', $seqno)
                                     ->first();         
@@ -535,10 +542,11 @@ class GeneratePledgeFromHistory extends Command
 
                 $pledge = DonateNowPledge::updateOrCreate([
                     'organization_id' => $user->organization_id,
-                    'user_id' => $user->id,
+                    'emplid'  => $user->emplid,
                     'yearcd'  => $bi_pledge->yearcd,
                     'seqno'   => $seqno,
                 ],[
+                    'user_id' => $user->id,
                     'type'    => $bi_pledge->source == 'Pool' ? 'P' : 'C', 
                     'f_s_pool_id' => $bi_pledge->source == 'Pool' ? $pool->id : null,
                     'charity_id' =>  $bi_pledge->source == 'Non-Pool' ? $charity->id : null,
@@ -556,14 +564,14 @@ class GeneratePledgeFromHistory extends Command
 
                     $created_count += 1;
 
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
+                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
                     
 
                 } elseif ($pledge->wasChanged() ) {
 
                     $updated_count += 1;
 
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
+                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
                     $changes = $pledge->getChanges();
                     unset($changes["updated_at"]);
 
@@ -602,7 +610,7 @@ class GeneratePledgeFromHistory extends Command
 
         $created_date = $this->created_date;
 
-        $sql = PledgeHistorySummary::select('pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 
+        $sql = PledgeHistorySummary::select('pledge_history_id', 'emplid', 'yearcd', 'source', 'campaign_type', 
                         'event_type', 'event_sub_type', 'event_deposit_date',
                             DB::raw("sum(pledge) as goal_amount")
                         )
@@ -615,9 +623,10 @@ class GeneratePledgeFromHistory extends Command
                                             ->where('pledge_histories.created_date', '<=', $created_date);
                         })
                         ->where('campaign_type','Event')
-                        ->groupBy('pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type',
+                        ->where('emplid', '<>', 0)
+                        ->groupBy('pledge_history_id', 'emplid', 'yearcd', 'source', 'campaign_type',
                                     'event_type', 'event_sub_type', 'event_deposit_date')
-                        ->orderBy('GUID');
+                        ->orderBy('emplid');
         
         $campaign_year = CampaignYear::where('calendar_year', $this->yearcd)->first();
         
@@ -638,7 +647,7 @@ class GeneratePledgeFromHistory extends Command
                 $row_count += 1;
                 $message = '';
 
-                $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+                // $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
           
                 // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
 
@@ -664,7 +673,7 @@ class GeneratePledgeFromHistory extends Command
 
                 $old_pledge = BankDepositForm::where('organization_code',  'GOV')
                                     ->where('form_submitter_id', 999)
-                                    ->where('bc_gov_id', $user->emplid)
+                                    ->where('bc_gov_id', $bi_pledge->emplid)
                                     ->where('pecsf_id', null)
                                     ->where('event_type', $event_type)
                                     ->where('sub_type', $sub_type)
@@ -674,7 +683,7 @@ class GeneratePledgeFromHistory extends Command
                 $pledge = BankDepositForm::updateOrCreate([
                         'organization_code' => 'GOV',
                         'form_submitter_id' => 999,
-                        'bc_gov_id' => $user->emplid,
+                        'bc_gov_id' => $bi_pledge->emplid,
                         'pecsf_id' => null,
                         'event_type' => $event_type, 
                         'sub_type' => $sub_type,
@@ -684,14 +693,14 @@ class GeneratePledgeFromHistory extends Command
                         'deposit_amount' => $bi_pledge->goal_amount,
                         'description' => $bi_pledge_detail->event_descr,
 
-                        'employment_city' => $user->primary_job->office_city,
+                        'employment_city' => $bi_pledge_detail->city, // $user->primary_job->office_city,
                         'region_id' => $bi_pledge_detail->region->id,
                         'regional_pool_id' =>  $bi_pledge->source == 'P' ? $bi_pledge_detail->fund_supported_pool->id : null,
-                        'address_line_1' => $user->primary_job->address1,
-                        'address_line_2' => $user->primary_job->address2,
-                        'address_city' => $user->primary_job->city,
-                        'address_province' => $user->primary_job->stateprovince,
-                        'address_postal_code' => $user->primary_job->postal,
+                        'address_line_1' => 'Address 1',
+                        'address_line_2' => 'Address 2',
+                        'address_city' => 'City',
+                        'address_province' => 'BC',
+                        'address_postal_code' => 'Postal',
 
                         'approved' => 1,            // Always approved
 
@@ -984,15 +993,6 @@ class GeneratePledgeFromHistory extends Command
             foreach($chuck as $bi_pledge) {
 
                 $row_count += 1;
-
-                // $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
-          
-                // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
-
-                // if (!$charity) {
-                //     echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                //     $charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
-                // }
 
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
