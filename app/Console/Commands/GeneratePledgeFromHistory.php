@@ -166,18 +166,18 @@ class GeneratePledgeFromHistory extends Command
                     }
                 }
 
-                $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
+                // $charity = Charity::where('registration_number', $bi_pledge->first_detail->charity_bn)->first();
 
-                if (!$charity) {
+                // if (!$charity) {
 
-                    $vendor_charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
+                //     $vendor_charity = Charity::where('registration_number', $bi_pledge->first_detail->vendor_bn)->first();
 
-                    if (!$vendor_charity) {
-                        $valid = false;
-                        // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 'frequency', 'region'])) );
-                        $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge->details->first()->charity_bn . ' (id - ' . $bi_pledge->id . ')' );
-                    }
-                }
+                //     if (!$vendor_charity) {
+                //         $valid = false;
+                //         // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 'frequency', 'region'])) );
+                //         $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge->first_detail->charity_bn . ' (id - ' . $bi_pledge->id . ')' );
+                //     }
+                // }
 
                 if ( $bi_pledge->source == 'P') {
 
@@ -189,6 +189,33 @@ class GeneratePledgeFromHistory extends Command
                     if (!$pool) {
                         $valid = false;
                         $this->LogMessage('   Exception -- FS Pool not found - ' . $bi_pledge->region . ' (id - ' . $bi_pledge->id . ')' );
+                    }
+
+                } else {
+
+                    $bi_pledge_charities = PledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                ->where('yearcd', $bi_pledge->yearcd)
+                                                ->where('source', 'Non-Pool')
+                                                ->where('campaign_type', $bi_pledge->campaign_type)
+                                                ->where('event_type', $bi_pledge->event_type)
+                                                ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                                ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                                ->orderBy('frequency')
+                                                ->get();
+
+                    foreach($bi_pledge_charities as  $bi_pledge_charity)  {
+
+                        $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+                        // $charity = Charity::where('registration_number', $bi_pledge_charity->charity_bn)->first();
+
+                        if (!$charity) {
+        
+                            $valid = false;
+                            // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 'frequency', 'region'])) );
+                            $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge_charity->charity_bn . ' (id - ' . $bi_pledge_charity->id . ')' );
+
+                        }
+
                     }
 
                 }
@@ -251,18 +278,18 @@ class GeneratePledgeFromHistory extends Command
                 }
                 
 
-                $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
-                if (!$charity) {
+                // $charity = Charity::where('registration_number', $bi_pledge->first_detail->charity_bn)->first();
+                // if (!$charity) {
 
-                    // echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                    $vendor_charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
+                //     // echo $bi_pledge->first_detail->vendor_bn . PHP_EOL;
+                //     $vendor_charity = Charity::where('registration_number', $bi_pledge->first_detail->vendor_bn)->first();
 
-                    if (!$vendor_charity) {
-                        $valid = false;
-                        // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'org_code','emplid','pecsf_id', 'yearcd', 'source', 'pledge_type', 'frequency', 'region'])) );
-                        $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge->details->first()->charity_bn . ' (id - ' . $bi_pledge->id . ')' );
-                    }
-                }
+                //     if (!$vendor_charity) {
+                //         $valid = false;
+                //         // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'org_code','emplid','pecsf_id', 'yearcd', 'source', 'pledge_type', 'frequency', 'region'])) );
+                //         $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge->first_detail->charity_bn . ' (id - ' . $bi_pledge->id . ')' );
+                //     }
+                // }
 
                 if ( $bi_pledge->source == 'P') {
 
@@ -273,6 +300,34 @@ class GeneratePledgeFromHistory extends Command
                     if (!$pool) {
                         $valid = false;
                         $this->LogMessage('   Exception -- FS Pool not found - ' . $bi_pledge->region . ' (id - ' . $bi_pledge->id . ')' );
+                    }
+
+                } else {
+
+                    $bi_pledge_charities = NonGovPledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                ->where('pecsf_id', $bi_pledge->pecsf_id)
+                                                ->where('yearcd', $bi_pledge->yearcd)
+                                                ->where('source', 'Non-Pool')
+                                                ->where('pledge_type', $bi_pledge->pledge_type)
+                                                ->where('event_type', $bi_pledge->event_type)
+                                                ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                                ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                                ->orderBy('frequency')
+                                                ->get();
+
+                    foreach($bi_pledge_charities as  $bi_pledge_charity)  {
+
+                        $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+                        // $charity = Charity::where('registration_number', $bi_pledge_charity->charity_bn)->first();
+
+                        if (!$charity) {
+        
+                            $valid = false;
+                            // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 'frequency', 'region'])) );
+                            $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge_charity->charity_bn . ' (id - ' . $bi_pledge_charity->id . ')' );
+
+                        }
+
                     }
 
                 }
@@ -348,13 +403,13 @@ class GeneratePledgeFromHistory extends Command
                 $user = User::where('source_type', 'HCM')
                         ->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
           
-                // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
+                // $charity = Charity::where('registration_number', $bi_pledge->first_detail->charity_bn)->first();
 
                 // if (!$charity) {
-                //     echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                //     $charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
+                //     echo $bi_pledge->first_detail->vendor_bn . PHP_EOL;
+                //     $charity = Charity::where('registration_number', $bi_pledge->first_detail->vendor_bn)->first();
                 // }
-                $bi_pledge_detail = $bi_pledge->details->first();
+                $bi_pledge_detail = $bi_pledge->first_detail;
 
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
@@ -383,7 +438,7 @@ class GeneratePledgeFromHistory extends Command
                     // 'city',
                     'user_id' => $user->id,
                     'type' => $bi_pledge->source,
-
+                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : null,
                     'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
 
                     'one_time_amount' => $bi_pledge->one_time_amount,
@@ -504,11 +559,11 @@ class GeneratePledgeFromHistory extends Command
                 $user = User::where('source_type', 'HCM')
                             ->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
           
-                // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
+                // $charity = Charity::where('registration_number', $bi_pledge->first_detail->charity_bn)->first();
 
                 // if (!$charity) {
-                //     echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                //     $charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
+                //     echo $bi_pledge->first_detail->vendor_bn . PHP_EOL;
+                //     $charity = Charity::where('registration_number', $bi_pledge->first_detail->vendor_bn)->first();
                 // }
 
                 $pool = null;
@@ -548,6 +603,7 @@ class GeneratePledgeFromHistory extends Command
                 ],[
                     'user_id' => $user->id,
                     'type'    => $bi_pledge->source == 'Pool' ? 'P' : 'C', 
+                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
                     'f_s_pool_id' => $bi_pledge->source == 'Pool' ? $pool->id : null,
                     'charity_id' =>  $bi_pledge->source == 'Non-Pool' ? $charity->id : null,
                     'one_time_amount' => $bi_pledge->pledge,
@@ -610,9 +666,10 @@ class GeneratePledgeFromHistory extends Command
 
         $created_date = $this->created_date;
 
-        $sql = PledgeHistorySummary::select('pledge_history_id', 'emplid', 'yearcd', 'source', 'campaign_type', 
+        $sql = PledgeHistorySummary::select('emplid', 'yearcd', 'source', 'campaign_type', 
                         'event_type', 'event_sub_type', 'event_deposit_date',
-                            DB::raw("sum(pledge) as goal_amount")
+                            DB::raw("sum(pledge) as goal_amount"),
+                            DB::raw("min(pledge_history_id) as pledge_history_id")
                         )
                         ->where('yearcd', $this->yearcd)
 // ->whereIn('GUID', ['0AB321049CB54AEEB12681E8F3FF6404', '0B4B78061F394658831DC2150C01AA70'])
@@ -624,7 +681,7 @@ class GeneratePledgeFromHistory extends Command
                         })
                         ->where('campaign_type','Event')
                         ->where('emplid', '<>', 0)
-                        ->groupBy('pledge_history_id', 'emplid', 'yearcd', 'source', 'campaign_type',
+                        ->groupBy( 'emplid', 'yearcd', 'source', 'campaign_type',
                                     'event_type', 'event_sub_type', 'event_deposit_date')
                         ->orderBy('emplid');
         
@@ -649,11 +706,11 @@ class GeneratePledgeFromHistory extends Command
 
                 // $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
           
-                // $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
+                // $charity = Charity::where('registration_number', $bi_pledge->first_detail->charity_bn)->first();
 
                 // if (!$charity) {
-                //     echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                //     $charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
+                //     echo $bi_pledge->first_detail->vendor_bn . PHP_EOL;
+                //     $charity = Charity::where('registration_number', $bi_pledge->first_detail->vendor_bn)->first();
                 // }
 
                 $pool = null;
@@ -666,7 +723,7 @@ class GeneratePledgeFromHistory extends Command
 
                 }
 
-                $bi_pledge_detail = $bi_pledge->details->first();
+                $bi_pledge_detail = $bi_pledge->first_detail;
 // echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
 
                 [$event_type,  $sub_type] = $this->convertEventAndSubType($bi_pledge->event_type, $bi_pledge->event_sub_type);
@@ -744,13 +801,16 @@ class GeneratePledgeFromHistory extends Command
                     // No action required
                 } else {
 
-                    $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
-                    // PledgeHistory::where('GUID', $bi_pledge->GUID)
-                    //                             ->where('yearcd', $bi_pledge->yearcd)
-                    //                             ->where('source', 'Non-Pool')
-                    //                             ->where('campaign_type', $bi_pledge->campaign_type)
-                    //                             ->orderBy('frequency')
-                    //                             ->get();
+                    // $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
+                    $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                ->where('yearcd', $bi_pledge->yearcd)
+                                                ->where('source', 'Non-Pool')
+                                                ->where('campaign_type', $bi_pledge->campaign_type)
+                                                ->where('event_type', $bi_pledge->event_type)
+                                                ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                                ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                                ->orderBy('frequency')
+                                                ->get();
 
                     BankDepositFormOrganizations::where("bank_deposit_form_id",$pledge->id)->delete();
 
@@ -832,7 +892,7 @@ class GeneratePledgeFromHistory extends Command
 
                 $row_count += 1;
 
-                $bi_pledge_detail = $bi_pledge->details->first();
+                $bi_pledge_detail = $bi_pledge->first_detail;
                
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
@@ -863,7 +923,7 @@ class GeneratePledgeFromHistory extends Command
                     'last_name' => $bi_pledge_detail->last_name,
                     'city' => $bi_pledge_detail->city,
                     'type' => $bi_pledge->source,
-
+                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
                     'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
 
                     'one_time_amount' => $bi_pledge->one_time_amount,
@@ -960,6 +1020,7 @@ class GeneratePledgeFromHistory extends Command
         $created_date = $this->created_date;
 
         $sql = NonGovPledgeHistorySummary::select('pledge_history_id', 'org_code', 'emplid', 'pecsf_id', 'yearcd', 'source', 'pledge_type', 
+                            'region',
                            'event_type', 'event_sub_type', 'event_deposit_date',
                             DB::raw("sum(pledge) as goal_amount")
                         )
@@ -996,15 +1057,13 @@ class GeneratePledgeFromHistory extends Command
 
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
-
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
                                        ->where('regions.name', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
-
                 }
 
-                $bi_pledge_detail = $bi_pledge->details->first();
+                $bi_pledge_detail = $bi_pledge->first_detail;
 // echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
 
                 [$event_type,  $sub_type] = $this->convertEventAndSubType($bi_pledge->event_type, $bi_pledge->event_sub_type);
@@ -1083,17 +1142,27 @@ class GeneratePledgeFromHistory extends Command
                     // No action required
                 } else {
 
-                    $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
+                    // $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
                     // PledgeHistory::where('GUID', $bi_pledge->GUID)
                     //                             ->where('yearcd', $bi_pledge->yearcd)
                     //                             ->where('source', 'Non-Pool')
                     //                             ->where('campaign_type', $bi_pledge->campaign_type)
                     //                             ->orderBy('frequency')
                     //                             ->get();
+                    $bi_pledge_charities = NonGovPledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                ->where('pecsf_id', $bi_pledge->pecsf_id)
+                                                ->where('yearcd', $bi_pledge->yearcd)
+                                                ->where('source', 'Non-Pool')
+                                                ->where('pledge_type', $bi_pledge->pledge_type)
+                                                ->where('event_type', $bi_pledge->event_type)
+                                                ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                                ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                                ->orderBy('frequency')
+                                                ->get();
 
                     BankDepositFormOrganizations::where("bank_deposit_form_id",$pledge->id)->delete();
 
-                    foreach ($bi_pledge_charites as $bi_pledge_charity) {
+                    foreach ($bi_pledge_charities as $bi_pledge_charity) {
                         
                         $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
 

@@ -23,7 +23,7 @@
                         <th>Donation Type</th>
                         <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th>Amount</th>
+                        <th class="text-right">Amount</th>
                         <th></th>
                     </tr>
                     @php $total = 0; $ignore = true; @endphp

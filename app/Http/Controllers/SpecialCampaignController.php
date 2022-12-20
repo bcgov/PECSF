@@ -126,7 +126,8 @@ class SpecialCampaignController extends Controller
 
         // Create a new Pledge
         $last_seqno = SpecialCampaignPledge::where('organization_id', $organization_id)
-                        ->where('user_id', $user->id)
+                        // ->where('user_id', $user->id)
+                        ->where('emplid', $user->emplid)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
 
@@ -135,6 +136,7 @@ class SpecialCampaignController extends Controller
 
         $pledge = SpecialCampaignPledge::Create([
             'organization_id' => $organization_id,
+            'emplid'  => $user->emplid,
             'user_id' => $user->id,
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
@@ -228,16 +230,16 @@ class SpecialCampaignController extends Controller
         //
         $pledge = SpecialCampaignPledge::where('id', $id)->first();
 
-        // Make sure this transaction is for the current logged user 
-        if (!$pledge) {
-            return abort(404);
-        } elseif  (!($pledge->user_id == Auth::id())) {
-            return abort(403);
-        }
-
         // Common data for summary and final submission
         $user = User::where('id', Auth::Id() )->first();
 
+
+        // Make sure this transaction is for the current logged user 
+        if (!$pledge) {
+            return abort(404);
+        } elseif  (!($pledge->emplid == $user->emplid)) {
+            return abort(403);
+        }
 
         $one_time_amount = $request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom ;
 
@@ -311,14 +313,14 @@ class SpecialCampaignController extends Controller
 
         $pledge = SpecialCampaignPledge::where('id', $id)->first();
 
+        $user = User::where('id', $pledge->user_id )->first();
+
         // Make sure this transaction is for the current logged user 
         if (!$pledge) {
             return abort(404);
-        } elseif  (!($pledge->user_id == Auth::id())) {
+        } elseif  (!($pledge->emplid == $user->emplid)) {
             return abort(403);
         }
-
-        $user = User::where('id', $pledge->user_id )->first();
 
         $one_time_amount = $pledge->one_time_amount;
 
