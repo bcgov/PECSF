@@ -9,8 +9,9 @@ class NonGovPledgeHistorySummary extends Model
 {
     use HasFactory;
     
-    public function details() 
+    public function first_detail() 
     {
-        return $this->hasMany(NonGovPledgeHistory::class, 'id', 'pledge_history_id');
+        // return $this->hasMany(NonGovPledgeHistory::class, 'id', 'pledge_history_id');
+        return $this->belongsTo(NonGovPledgeHistory::class, 'pledge_history_id', 'id');
     }
 }

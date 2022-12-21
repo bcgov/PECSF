@@ -39,9 +39,11 @@ class DonationController extends Controller {
         $user = User::where('id', Auth::id() )->first();
                         
         // NOTE: Must use the raw select statement in Laravel for querying this custom SQL view due to the performance issue
-        $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid . 
-                                                "' and GUID <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
- 
+        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid . 
+        //                                         "' and GUID <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
+        $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (emplid = '" . $user->emplid . 
+                                                "' and emplid <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
+
         $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->groupBy('yearcd');
 
         $totalPledgedDataTillNow = 0;
@@ -72,7 +74,7 @@ class DonationController extends Controller {
             $user = User::where('id', Auth::id() )->first();
 
             $donate_today_pledge = PledgeHistory::where('id', $request->id)->first();
-            $old_pledges = PledgeHistory::where('GUID', $user->guid)
+            $old_pledges = PledgeHistory::where('emplid', $user->emplid)
                             ->where('campaign_type', $request->donation_type)
                             ->where('yearcd', $request->yearcd)
                             ->where('frequency', $request->frequency)
@@ -134,7 +136,7 @@ class DonationController extends Controller {
                 // Special Campaign - Detail
 
                 $pledge = SpecialCampaignPledge::where('id', $request->id)->first();
-              
+                
                 $year = $request->yearcd;
                 $frequency = $request->frequency;
                 $pledge_amt = $pledge->one_time_amount;

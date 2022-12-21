@@ -116,7 +116,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
         $to_year = $this->to_campaign_year + 1;
         $from_year = $this->created_date->year + 1;   
 
-        $sql = PledgeHistorySummary::select('GUID', 'yearcd', 'source', 'campaign_type', 
+        $sql = PledgeHistorySummary::select('emplid', 'yearcd', 'source', 'campaign_type', 
                             DB::raw("case when source = 'P' then region else null end as region"),
                             DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
@@ -132,8 +132,8 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                                             ->whereColumn('pledge_histories.id', 'pledge_history_summaries.pledge_history_id')
                                             ->where('pledge_histories.created_date', $created_date);
                         })
-                        ->groupBy('GUID', 'yearcd', 'source', 'campaign_type')
-                        ->orderBy('GUID');
+                        ->groupBy('emplid', 'yearcd', 'source', 'campaign_type')
+                        ->orderBy('emplid');
 
         $campaign_year = CampaignYear::where('calendar_year', $to_year )->first();
 
@@ -148,7 +148,8 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
             foreach($chuck as $bi_pledge) {
 
-                $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+                // $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+                $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
 
                 if(!empty($user)){
                     if (!($user->acctlock == 0)) {
@@ -182,12 +183,14 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
                 $pledge = Pledge::updateOrCreate([
                     'organization_id' => $user->organization_id,
-                    'user_id' => $user->id,
+                    'emplid' => $user->emplid,
+                    // 'user_id' => $user->id,
                     'campaign_year_id' => $campaign_year->id,
                 ],[
                     // 'first_name',
                     // 'last_name',
                     // 'city',
+                    'user_id' => $user->id,
                     'type' => $bi_pledge->source,
 
                     'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
@@ -231,7 +234,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                     // No action required
                 } else {
 
-                    $bi_pledge_charites = PledgeHistory::where('GUID', $bi_pledge->GUID)
+                    $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
                                                 ->where('yearcd', $bi_pledge->yearcd)
                                                 ->where('source', 'Non-Pool')
                                                 ->where('campaign_type', $bi_pledge->campaign_type)
@@ -275,7 +278,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
         $valid = true;
 
-        $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
+        $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->first();
         if (!$user) {
             $valid = false;
         }
@@ -291,20 +294,36 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
         } else {
 
-            $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
-            if (!$charity) {
-                echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                $vendor_charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
-    
-                if (!$vendor_charity) {
+            $bi_pledge_charities = PledgeHistory::where('emplid', $bi_pledge->emplid)
+                                            ->where('yearcd', $bi_pledge->yearcd)
+                                            ->where('source', 'Non-Pool')
+                                            ->where('campaign_type', $bi_pledge->campaign_type)
+                                            ->where('event_type', $bi_pledge->event_type)
+                                            ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                            ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                            ->orderBy('frequency')
+                                            ->get();
+
+            foreach($bi_pledge_charities as  $bi_pledge_charity)  {
+
+                $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+                // $charity = Charity::where('registration_number', $bi_pledge_charity->charity_bn)->first();
+
+                if (!$charity) {
+
                     $valid = false;
+                    // $this->LogMessage('Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 'frequency', 'region'])) );
+                    $this->LogMessage('   Exception -- Charity not found - ' . $bi_pledge_charity->charity_bn . ' (id - ' . $bi_pledge_charity->id . ')' );
+
                 }
+
             }
 
+           
         }
         
         if (!($valid)) {
-            echo 'Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'GUID', 'yearcd', 'source', 'campaign_type', 'frequency', 'region']) ) . PHP_EOL;
+            echo 'Record: ' . json_encode( $bi_pledge->only(['id', 'pledge_history_id', 'emplid', 'yearcd', 'source', 'campaign_type', 'frequency', 'region']) ) . PHP_EOL;
         }
 
         return $valid;

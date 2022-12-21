@@ -38,10 +38,10 @@ class OutputOrganizations2Json extends Command
      */
     public function handle()
     {
-        // Fund Support Pools 
+        // Organization
         $orgs = Organization::orderBy('code')->get();
                
-        $path = database_path('seeds/organizations.json');
+        $path = storage_path('app/uploads/organizations.json');
         $sql = file_put_contents($path, json_encode($orgs, JSON_PRETTY_PRINT) );
 
         return 0;

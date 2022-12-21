@@ -139,7 +139,8 @@ class DonateNowController extends Controller
 
         // Create a new Pledge
         $last_seqno = DonateNowPledge::where('organization_id', $organization_id)
-                        ->where('user_id', $user->id)
+                        // ->where('user_id', $user->id)
+                        ->where('emplid', $user->emplid)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
 
@@ -148,6 +149,7 @@ class DonateNowController extends Controller
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $organization_id,
+            'emplid'  => $user->emplid,
             'user_id' => $user->id,
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
