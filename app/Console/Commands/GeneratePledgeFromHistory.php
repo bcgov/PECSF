@@ -160,7 +160,7 @@ class GeneratePledgeFromHistory extends Command
 
                 $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
                 if (!$user) {
-                    if (!$bi_pledge->campaign_type == 'Event' && $bi_pledge->emplid == 0) {
+                    if (!$bi_pledge->campaign_type == 'Event') {
                         $valid = false;
                         $this->LogMessage('   Exception -- User not found    - ' . $bi_pledge->emplid . ' (id - ' . $bi_pledge->id . ')');
                     }
