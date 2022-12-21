@@ -72,7 +72,7 @@
 <div class="modal fade" id="regionalPoolModal" tabindex="-1" role="dialog" aria-labelledby="regionalPoolModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-        <div class="modal-header bg-light">
+        <div class="modal-header bg-primary">
             <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Regional Charity Pool -
                     <span class="text-dark font-weight-bold"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
