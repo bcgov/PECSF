@@ -49376,3 +49376,22 @@ div.border-primary a {
   color: #fff;
   opacity: 1;
 }
+
+.menu .nav-link.active {
+  color: #1a5a96;
+  font-weight: normal !important;
+  text-decoration: none;
+  background: none;
+  border-bottom: #1a5a96 2px solid;
+  font-family: "BCSans";
+  border-radius: 0;
+}
+
+.menu .nav-link {
+  color: #313132;
+  border-bottom: #cfcfcf 2px solid;
+  padding-left: 45px;
+  padding-right: 45px;
+  border-radius: 0;
+  margin-right: 5px;
+}
