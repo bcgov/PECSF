@@ -82,6 +82,15 @@
     @if ($old_pledges->first()->campaign_type == 'Event')
       <div class="row">
         <div class="col-4 text-right">
+        <p class="font-weight-bold">Deposit Date</p> 
+          </div>
+          <div class="col-6">
+            <p>{{ $old_pledges->first()->event_deposit_date }}</p>
+          </div>
+      </div>    
+
+      <div class="row">
+        <div class="col-4 text-right">
         <p class="font-weight-bold">Event Type</p> 
           </div>
           <div class="col-6">

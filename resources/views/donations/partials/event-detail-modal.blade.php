@@ -30,6 +30,14 @@
 </div>
 <div class="row">
   <div class="col-4 text-right">
+  <p class="font-weight-bold">Deposit Date</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->deposit_date->format('Y-m-d') }}</p>
+    </div>
+</div>    
+<div class="row">
+  <div class="col-4 text-right">
   <p class="font-weight-bold">Event Type</p> 
     </div>
     <div class="col-6">
