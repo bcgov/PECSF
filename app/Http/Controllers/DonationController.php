@@ -8,8 +8,10 @@ use App\Models\Pledge;
 use App\Models\CampaignYear;
 use Illuminate\Http\Request;
 use App\Models\PledgeHistory;
+use App\Models\BankDepositForm;
 use App\Models\DonateNowPledge;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\ViewPledgeHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -39,9 +41,18 @@ class DonationController extends Controller {
         $user = User::where('id', Auth::id() )->first();
                         
         // NOTE: Must use the raw select statement in Laravel for querying this custom SQL view due to the performance issue
-        $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid . 
-                                                "' and GUID <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
- 
+        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid . 
+        //                                         "' and GUID <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
+        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (emplid = '" . $user->emplid . 
+        //                                         "' and emplid <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
+
+        $all_pledges = ViewPledgeHistory::where( function($q) use($user) {
+                $q->where('emplid', $user->emplid)
+                  ->where('emplid', '<>', '');
+        })
+        ->orderBy('yearcd', 'desc')
+        ->orderBy('donation_type')->get();
+
         $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->groupBy('yearcd');
 
         $totalPledgedDataTillNow = 0;
@@ -72,7 +83,7 @@ class DonationController extends Controller {
             $user = User::where('id', Auth::id() )->first();
 
             $donate_today_pledge = PledgeHistory::where('id', $request->id)->first();
-            $old_pledges = PledgeHistory::where('GUID', $user->guid)
+            $old_pledges = PledgeHistory::where('emplid', $user->emplid)
                             ->where('campaign_type', $request->donation_type)
                             ->where('yearcd', $request->yearcd)
                             ->where('frequency', $request->frequency)
@@ -134,7 +145,7 @@ class DonationController extends Controller {
                 // Special Campaign - Detail
 
                 $pledge = SpecialCampaignPledge::where('id', $request->id)->first();
-              
+                
                 $year = $request->yearcd;
                 $frequency = $request->frequency;
                 $pledge_amt = $pledge->one_time_amount;
@@ -149,8 +160,21 @@ class DonationController extends Controller {
                         compact('year', 'frequency', 'pledge_amt', 
                                  'in_support_of', 'special_campaign_name', 'check_dt',
                                     'total_amount', 'pledge') )->render();
+                                    
+            } elseif ($request->donation_type == 'Event') {
+                // Event - Detail
 
+                $pledge = BankDepositForm::where('id', $request->id)->first();
 
+                $year = $pledge->created_at->format('Y');
+                $frequency = $request->frequency;
+                $pledge_amt = $pledge->deposit_amount;
+                $total_amount = $pledge->deposit_amount;
+                
+                return view('donations.partials.event-detail-modal',
+                        compact('year', 'frequency', 'pledge_amt', 'total_amount', 'pledge') )->render();
+
+                return 'to be developed'                    ;
             }
 
         }

@@ -14,7 +14,8 @@ class Pledge extends Model
 
     protected $fillable = [
         'organization_id',
-        'user_id',
+        'emplid',       // Use for checking unique pledge per campaign year
+        'user_id',      // Not in use in the near future due to multiple GUID to emplid issue
 
         "pecsf_id",
         "first_name",

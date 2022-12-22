@@ -9,8 +9,12 @@ class PledgeHistorySummary extends Model
 {
     use HasFactory;
     
-    public function details() 
+    public function first_detail() 
     {
-        return $this->hasMany(PledgeHistory::class, 'id', 'pledge_history_id');
+        // return $this->hasMany(PledgeHistory::class, 'id', 'pledge_history_id');
+        return $this->belongsTo(PledgeHistory::class,  'pledge_history_id', 'id');
     }
+
+
+
 }

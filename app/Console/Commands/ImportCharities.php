@@ -43,7 +43,7 @@ class ImportCharities extends Command
     {
         echo now() . PHP_EOL;   
         try {
-            Excel::import(new CharitiesImport, 'database/seeds/Charities_results_2022-04-14-10-30-58.txt');
+            Excel::import(new CharitiesImport, 'database/seeds/Charities_results_2022-12-18-17-21-02.txt');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             

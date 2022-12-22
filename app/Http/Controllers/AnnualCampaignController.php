@@ -107,7 +107,8 @@ class AnnualCampaignController extends Controller
         $user = User::where('id', Auth::id())->first(); 
 
         $pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id )
-                            ->where('user_id', Auth::id())
+                            // ->where('user_id', Auth::id())
+                            ->where('emplid', $user->emplid)
                             ->where('campaign_year_id', $campaign_year->id)
                             ->first();
 
@@ -339,9 +340,11 @@ class AnnualCampaignController extends Controller
 
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
-            'user_id' => Auth::id(),
+            // 'user_id' => Auth::id(),
+            'emplid' => $user->emplid,
             'campaign_year_id' => $request->campaign_year_id,
         ],[
+            'user_id' => Auth::id(),
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
@@ -858,11 +861,13 @@ class AnnualCampaignController extends Controller
 
     public function duplicate(Request $request)
     {
+        $user = User::where('id', Auth::id() )->first();        
      
         // check whether the current annual campaign pledge exists or not  
         $current_pledge = Pledge::join('campaign_years', 'campaign_years.id', 'campaign_year_id')
                                     ->where('campaign_years.calendar_year',  today()->year + 1 ) 
-                                    ->where('user_id', Auth::id() )
+                                    // ->where('user_id', Auth::id() )
+                                    ->where('emplid', $user->emplid )
                                     ->first();
         if ($current_pledge) {
             return redirect()->route('donations.list')->with('error','The Annual Campaign pledge have already created, no duplication allowed!');

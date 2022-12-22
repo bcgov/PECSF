@@ -23,29 +23,47 @@
                         <th>Donation Type</th>
                         <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th>Amount</th>
+                        <th class="text-right">Amount</th>
                         <th></th>
                     </tr>
                     @php $total = 0; $ignore = true; @endphp
                     @foreach($pledges as $pledge)
                         <tr class="">
-                            <td>{{ $pledge->donation_type }}</td>
+                            <td style="width: 15%">{{ $pledge->donation_type }}</td>
                             @if ($pledge->type == 'P')
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
-                                @if ($pledge->donation_type == 'Special Campaign')
+                                <td>
+                                @if ($pledge->source == 'GF')
+                                    @switch($pledge->donation_type)
+                                        @case('Special Campaign')
+                                            {{ $pledge->region }} 
+                                            @break
+                                        @case('Donate Now')
+                                            {{ $pledge->region }} 
+                                            @break
+                                        @default
+                                            {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                    @endswitch
+                                @else
+                                    {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                @endif
+                                </td>
+
+                                {{-- @if ($pledge->donation_type == 'Special Campaign')
                                     <td>{{ $pledge->region }} </td>
                                 @else 
-                                    <td>{{ '' }} </td>
-                                @endif
+                                    <td></td>
+                                @endif --}}
+
                             @endif
-                            <td>{{ $pledge->frequency }} </td>
+                            <td style="width: 10%">{{ $pledge->frequency }} </td>
                             @php
 
                             @endphp
-                            <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
-                            <td class="text-right">
+                            <td class="text-right" style="width: 15%">$ {{ number_format($pledge->pledge,2) }} </td>
+                            <td class="text-right" style="width: 10%">
                                 {{-- @if ($pledge->campaign_type == 'Annual')  --}}
                                 <button type="button" class="more-info btn btn-sm btn-outline-primary"
                                             data-source="{{ $pledge->source  }}"
