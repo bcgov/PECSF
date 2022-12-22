@@ -160,7 +160,7 @@ class DonateNowController extends Controller
             'one_time_amount' => $one_time_amount ?? 0,
             'deduct_pay_from' => $check_dt,
             // 'special_program' => $request->special_program,
-            'special_program' => $request->additional[0],
+            'special_program' => ($pool_option == 'C' ? $request->additional[0] : null),
 
             'created_by_id' => $user->id,
             'updated_by_id' => $user->id,
