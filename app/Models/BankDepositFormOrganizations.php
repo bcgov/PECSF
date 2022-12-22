@@ -21,4 +21,7 @@ class BankDepositFormOrganizations extends Model
         $this->belongsTo(BankDepositForm::class);
     }
 
+    public function charity() {
+        return $this->belongsTo(Charity::class, 'vendor_id', 'id');
+    }
 }

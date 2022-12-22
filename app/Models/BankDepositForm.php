@@ -39,7 +39,13 @@ class BankDepositForm extends Model
     }
 
     function organizations(){
-        $this->hasMany(BankDepositFormOrganizations::class);
+        return $this->hasMany(BankDepositFormOrganizations::class,'bank_deposit_form_id','id');
     }
+
+    public function fund_supported_pool() {
+       
+        return $this->belongsTo(FSPool::class, 'regional_pool_id', 'id')->withDefault();
+        
+    } 
 
 }
