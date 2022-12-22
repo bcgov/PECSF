@@ -44,10 +44,25 @@
                                             {{ $pledge->region }} 
                                             @break
                                         @default
+                                        <a type="button" class="more-info"
+                                            data-source="{{ $pledge->source }}"
+                                            data-type="{{ $pledge->donation_type }}"
+                                            data-id="{{ $pledge->id }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->yearcd }}">
                                             {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                        </a>
+                                   
                                     @endswitch
                                 @else
-                                    {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                    <a type="button" class="more-info "
+                                        data-source="{{ $pledge->source  }}"
+                                        data-type="{{ $pledge->donation_type }}"
+                                        data-id="{{ $pledge->id }}"
+                                        data-frequency="{{ $pledge->frequency }}"
+                                        data-yearcd="{{ $pledge->yearcd }}">
+                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                    </a>
                                 @endif
                                 </td>
 
