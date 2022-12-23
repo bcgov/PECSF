@@ -49411,3 +49411,10 @@ div.border-primary a {
 .Lockedcolor {
   color: red;
 }
+
+.card {
+  padding: 10px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
