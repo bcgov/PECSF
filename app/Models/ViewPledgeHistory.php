@@ -63,19 +63,21 @@ class ViewPledgeHistory extends Model
         if ($this->type == 'C') {
             if ($this->donation_type == 'Annual') {
 
-                return $this->belongsTo('Pledge','id', 'id');
+                return $this->belongsTo(Pledge::class,'id', 'id');
 
             } else if ($this->donation_type == 'Donate Now') {
 
-                return $this->belongsTo('DonateNowPledge','id', 'id')->with('charity');
+
+                return $this->belongsTo(DonateNowPledge::class,'id', 'id')->with('charity');
+
 
             } else if ($this->donation_type == 'Special Campaign') {
 
-                return $this->belongsTo('SpecialCampaignPledge','id', 'id');
+                return $this->belongsTo(SpecialCampaignPledge::class,'id', 'id');
 
             } else if ($this->donation_type == 'Event') {
 
-                return $this->belongsTo('BankDepositForm','id', 'id');
+                return $this->belongsTo(BankDepositForm::class,'id', 'id');
             }
 
         }
