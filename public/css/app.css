@@ -49399,3 +49399,15 @@ div.border-primary a {
 .modal-header .bg-light .close, .modal-header .bg-light .mailbox-attachment-close {
   color: #000 !important;
 }
+
+.Pendingcolor {
+  color: yellow;
+}
+
+.Approvedcolor {
+  color: green;
+}
+
+.Lockedcolor {
+  color: red;
+}
