@@ -107,7 +107,13 @@ class DownloadImageFiles extends Command
             
             // check the file exists or not 
             try {
-                $res = $client->request('GET',  $baseUrl . $filename);
+                $res = $client->request('GET',  $baseUrl . $filename,
+                    [
+                        'headers' => [
+                            'Accept-Encoding' => 'gzip, deflate, br', //add encoding technique
+                        ],
+                    ]
+                );
 
                 if ($res->getStatusCode() == 200 ) {
                     $res = $client->request('GET',  $baseUrl . $filename, 
