@@ -34,6 +34,10 @@ class BankDepositForm extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'deposit_date' => 'date:Y-m-d',
+    ];
+    
     function attachments(){
         $this->hasMany(BankDepositFormAttachments::class);
     }
