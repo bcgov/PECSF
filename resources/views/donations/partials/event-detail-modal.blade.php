@@ -27,6 +27,30 @@
       <div class="col-1">
         <p>${{ number_format($total_amount,2) }}</p>
       </div>
+</div>
+<div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Deposit Date</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->deposit_date->format('Y-m-d') }}</p>
+    </div>
+</div>    
+<div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Event Type</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->event_type }}</p>
+    </div>
+</div>    
+<div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Event Sub-type</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->sub_type }}</p>
+    </div>
 </div>    
 @if ($pledge->type == 'P')
 <div class="row">
