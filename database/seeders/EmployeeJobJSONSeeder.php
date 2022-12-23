@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\EmployeeJob;
+use \JsonMachine\Items;
 use Illuminate\Database\Seeder;
 
 class EmployeeJobJSONSeeder extends Seeder
@@ -16,9 +17,11 @@ class EmployeeJobJSONSeeder extends Seeder
     {
         //
         $path = storage_path('app/uploads/employee_jobs.json');
-        $json = file_get_contents($path);
+        // $json = file_get_contents($path);
 
-        $in_jobs = json_decode( $json );
+        // $in_jobs = json_decode( $json );
+
+        $in_jobs = Items::fromFile( $path );
 
         // Missing Employees
         $organization = \App\Models\Organization::where('code', 'GOV')->first();
@@ -30,6 +33,7 @@ class EmployeeJobJSONSeeder extends Seeder
         $updated_count = 0;
 
         foreach ($in_jobs as $job) {
+
             $total_count += 1;
 
             $new_job = EmployeeJob::updateOrCreate([

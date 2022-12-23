@@ -47,9 +47,11 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 ], [
                     Str::snake("Charity Name") => $row[1],
                     Str::snake("Charity Status") =>  $row[2],
+                    Str::snake("Type of qualified donee") =>  $row[3],
                     Str::snake("Effective Date of Status") => $this->transformDate($row[4]),
                     Str::snake("Sanction") => $row[5],
                     Str::snake("Designation Code") => $row[6],
+                    Str::snake("Charity Type") => $row[7],
                     Str::snake("Category Code") => $row[8],
                     Str::snake("Address") => $row[9],
                     Str::snake("City") => $row[10],
