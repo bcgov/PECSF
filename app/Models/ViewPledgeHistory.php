@@ -6,19 +6,20 @@ use App\Models\FSPool;
 use App\Models\Region;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Pledge;
 
 class ViewPledgeHistory extends Model
 {
-    
+
     protected $table = 'pledge_history_view';
     public $timestamps = false;
 
     protected $appends = [
-        'is_annual_campaign', 
+        'is_annual_campaign',
         'number_of_charities'
     ];
 
-    // public const CAMPAIGN_TYPE = 
+    // public const CAMPAIGN_TYPE =
     // [
     //     "Annual" => "Annual Campaign",
     //     "Event" => "Event",
@@ -65,7 +66,7 @@ class ViewPledgeHistory extends Model
                 return $this->belongsTo('Pledge','id', 'id');
 
             } else if ($this->donation_type == 'Donate Now') {
-                
+
                 return $this->belongsTo('DonateNowPledge','id', 'id')->with('charity');
 
             } else if ($this->donation_type == 'Special Campaign') {
@@ -76,13 +77,13 @@ class ViewPledgeHistory extends Model
 
                 return $this->belongsTo('BankDepositForm','id', 'id');
             }
-                
-        } 
-        
+
+        }
+
         return null;
 
     }
-    
+
 
     public function getIsAnnualCampaignAttribute()
     {
@@ -93,7 +94,7 @@ class ViewPledgeHistory extends Model
     {
         $count = null;
         if ($this->source == 'GF') {
-           
+
             if ($this->donation_type == 'Annual') {
                 $pledge = $this->pledge_data;
                 return $pledge->charities->count();
@@ -107,7 +108,7 @@ class ViewPledgeHistory extends Model
             }
 
         } else {
-            
+
             $count = PledgeHistory::where('emplid', $this->emplid)
                                     ->where('yearcd', $this->yearcd)
                                     ->where('source', $this->type == 'P' ? 'Pool' : 'Non-Pool' )
@@ -120,6 +121,6 @@ class ViewPledgeHistory extends Model
         return $count;
     }
 
-    
+
 
 }
