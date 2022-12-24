@@ -9,8 +9,10 @@
     @include('admin-pledge.partials.tabs')
 @endsection
 @section('content')
+    <a href="/admin-pledge/maintain-event">Event Pledge List ></a> <span><strong>Event Submission Queue</strong></span>
+    <br>
+    <br>
     <p><a href="/admin-pledge/maintain-event"><button class="btn btn-primary" role="button"  >Back To List</button></a></p>
-
     <div style="clear:both;float:none;"></div>
     <br>
     <br>
@@ -274,20 +276,60 @@
                 $('#lock-event-modal').modal("show");
             }
             else if($(this).val() == 1){
-                Swal.fire({
-                   title: 'Successfully Approved!',
-                    text: 'Approved!',
-                });
-                $(this).parents("tr").remove();
-                $.post("/admin-pledge/status",
-                    {
-                        submission_id: $("#submission_id").val(),
-                        status: 1
-                    },
-                    function (data, status) {
-                    });
-            }
-            else{
+             Swal.fire({
+                   title: 'Approved?',
+                    text: 'Should We Approved This Event?',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText:
+                        '<i class="fa fa-thumbs-up"></i> Approve!',
+                    confirmButtonAriaLabel: 'Approved!',
+                    cancelButtonText:
+                        '<i class="fa fa-thumbs-down"></i>',
+                    cancelButtonAriaLabel: 'Thumbs down'
+                }).then((result) => {
+                 if (result.isConfirmed) {
+                     $(this).parents("tr").remove();
+                     $.post("/admin-pledge/status",
+                         {
+                             submission_id: $("#submission_id").val(),
+                             status: 1
+                         },
+                         function (data, status) {
+
+                             Swal.fire({
+                                 title: '<strong>Success!</strong>',
+                                 icon: 'info',
+                                 html:
+                                     'The Event was successfully approved and can be viewed in the main list',
+                                 showCloseButton: true,
+                                 showCancelButton: true,
+                                 focusConfirm: false,
+                                 confirmButtonText:
+                                     '<i class="fa fa-thumbs-up"></i> Go To list',
+                                 confirmButtonAriaLabel: 'Go To list',
+                                 cancelButtonText:
+                                     'Close',
+                                 cancelButtonAriaLabel: 'Close'
+                             }).then((result) => {
+                                 if (result.isConfirmed) {
+                                     window.location.href = "/admin-pledge/maintain-event";
+                                 }
+                             });
+                         });
+                 } else {
+
+
+                     $(".status").val(0).trigger("change");
+
+                 }
+             });
+
+               }
+
+               else{
+
                 $.post("/admin-pledge/status",
                     {
                         submission_id: $("#submission_id").val(),
@@ -295,7 +337,7 @@
                     },
                     function (data, status) {
                     });
-            }
+        }
         });
 
         $(".lock-submission").click(function(){
