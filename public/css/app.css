@@ -49395,3 +49395,26 @@ div.border-primary a {
   border-radius: 0;
   margin-right: 5px;
 }
+
+.modal-header .bg-light .close, .modal-header .bg-light .mailbox-attachment-close {
+  color: #000 !important;
+}
+
+.Pendingcolor {
+  color: yellow;
+}
+
+.Approvedcolor {
+  color: green;
+}
+
+.Lockedcolor {
+  color: red;
+}
+
+.card {
+  padding: 10px;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}

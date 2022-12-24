@@ -67,7 +67,7 @@
             <div class="modal-header bg-light">
                 <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" style="color:#000;" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
