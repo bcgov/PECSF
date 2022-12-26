@@ -52,7 +52,7 @@
       <p>{{ $pledge->sub_type }}</p>
     </div>
 </div>    
-@if ($pledge->type == 'P')
+@if ($pledge->regional_pool_id)
 <div class="row">
     <div class="col-4 text-right">
      <p class="font-weight-bold">Fund Supported Pool</p> 
@@ -73,7 +73,7 @@
       </tr>
     </thead>
     <tbody>
-        @if ($pledge->type == 'P')
+        @if ($pledge->regional_pool_id)
             @foreach($pledge->fund_supported_pool->charities as $pool_charity)
                 <tr>
                     <td scope="row">{{ $loop->index +1 }}</td>
