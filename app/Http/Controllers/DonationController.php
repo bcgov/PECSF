@@ -11,7 +11,7 @@ use App\Models\PledgeHistory;
 use App\Models\BankDepositForm;
 use App\Models\DonateNowPledge;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\ViewPledgeHistory;
+// use App\Models\ViewPledgeHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -46,14 +46,86 @@ class DonationController extends Controller {
         // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (emplid = '" . $user->emplid . 
         //                                         "' and emplid <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
 
-        $all_pledges = ViewPledgeHistory::where( function($q) use($user) {
-                $q->where('emplid', $user->emplid)
-                  ->where('emplid', '<>', '');
-        })
-        ->orderBy('yearcd', 'desc')
-        ->orderBy('donation_type')->get();
+        $annual_pay_period_pledges = DB::table('pledges')
+                ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
+                ->where('pledges.pay_period_amount', '<>', 0)
+                ->whereNull('pledges.deleted_at')
+                ->where('pledges.emplid', $user->emplid)
+                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
+                            'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount * campaign_years.number_of_periods,
+                            (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
+                                case when type = 'P' then 0 else (select count(*) from pledge_charities 
+                                            where pledge_charities.pledge_id = pledges.id) end");
+                                            
+        $annual_one_time_pledges = DB::table('pledges')
+                ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
+                ->where('pledges.one_time_amount', '<>', 0)
+                ->whereNull('pledges.deleted_at')
+                ->where('pledges.emplid', $user->emplid)
+                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
+                          'Annual' , 'Bi-Weekly', pledges.one_time_amount, pledges.one_time_amount,
+                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
+                            case when type = 'P' then 0 else (select count(*) from pledge_charities 
+                                        where pledge_charities.pledge_id = pledges.id) end");
 
-        $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->groupBy('yearcd');
+        $donate_now_pledges = DB::table('donate_now_pledges')
+                ->whereNull('donate_now_pledges.deleted_at')
+                ->where('donate_now_pledges.emplid', $user->emplid)
+                ->selectRaw("'GF', donate_now_pledges.user_id, donate_now_pledges.id, donate_now_pledges.emplid, yearcd, type,
+                            'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount, 
+                            case when type = 'P' then 
+                                (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = donate_now_pledges.f_s_pool_id)
+                            else 
+                                (select charities.charity_name from charities where donate_now_pledges.charity_id = charities.id )
+                            end, 1"); 
+
+        $special_campaign_pledges = DB::table('special_campaign_pledges')
+                ->whereNull('special_campaign_pledges.deleted_at')
+                ->where('special_campaign_pledges.emplid', $user->emplid)
+                ->selectRaw("'GF', special_campaign_pledges.user_id, special_campaign_pledges.id, special_campaign_pledges.emplid, yearcd, 'C',
+                            'Special Campaign', 'One-Time', special_campaign_pledges.one_time_amount, special_campaign_pledges.one_time_amount, 
+                            (select special_campaigns.name from special_campaigns where special_campaign_pledges.special_campaign_id = special_campaigns.id)
+                            , 1");
+
+        $event_pledges = DB::table('bank_deposit_forms')
+                ->where('bank_deposit_forms.organization_code', 'GOV')
+                ->whereIn('bank_deposit_forms.event_type', ['Cash One-Time Donation','Cheque One-Time Donation'])
+                ->where('bank_deposit_forms.approved', 1)
+                ->whereNull('bank_deposit_forms.deleted_at') 
+                ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
+                ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, year(created_at), 
+                            case when regional_pool_id is null then 'C' else 'P' end,
+                            'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount, 
+                            (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
+                            case when regional_pool_id is null then (select count(*) from bank_deposit_form_organizations 
+                                where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id) else 0 end");
+
+        $all_pledges = DB::table('pledge_history_summaries')
+                            ->where('emplid', $user->emplid)
+                            ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type, 
+                                         campaign_type as donation_type, frequency, per_pay_amt as amount, pledge, 
+                                         region, 
+                                         case when source = 'P' then 0 else (select count(*) from pledge_histories where emplid = pledge_history_summaries.emplid
+                                    				    and yearcd = pledge_history_summaries.yearcd
+                                    				    and source = 'Non-Pool'
+                                    					and campaign_type = pledge_history_summaries.campaign_type 
+                                    					and frequency = pledge_history_summaries.frequency)
+                                        end as number_of_charities")
+                            ->unionAll($annual_pay_period_pledges)
+                            ->unionAll($annual_one_time_pledges)
+                            ->unionAll($donate_now_pledges)
+                            ->unionAll($special_campaign_pledges)
+                            ->unionAll($event_pledges)
+                            ->get();
+
+        // $all_pledges = ViewPledgeHistory::where( function($q) use($user) {
+        //         $q->where('emplid', $user->emplid)
+        //           ->where('emplid', '<>', '');
+        // })
+        // ->orderBy('yearcd', 'desc')
+        // ->orderBy('donation_type')->get();
+
+        $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->sortBy('donation_type')->groupBy('yearcd');
 
         $totalPledgedDataTillNow = 0;
         foreach ($all_pledges as $pledge) {
