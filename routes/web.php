@@ -46,6 +46,7 @@ use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
+use App\Http\Controllers\Admin\EligibleEmployeeReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,11 +116,12 @@ Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'
 
 // Annual Campaign (usually Sep - Nov)
 Route::middleware(['auth'])->group(function () {
-    Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
+
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
-    Route::get('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
+    Route::post('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
+    Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
 });
 
 // Donate Now
@@ -272,6 +274,8 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
+
+    
 
 });
 

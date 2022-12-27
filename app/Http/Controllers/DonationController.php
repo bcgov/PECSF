@@ -11,7 +11,6 @@ use App\Models\PledgeHistory;
 use App\Models\BankDepositForm;
 use App\Models\DonateNowPledge;
 use Barryvdh\DomPDF\Facade\Pdf;
-// use App\Models\ViewPledgeHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -55,7 +54,7 @@ class DonationController extends Controller {
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount * campaign_years.number_of_periods,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                                 case when type = 'P' then 0 else (select count(*) from pledge_charities 
-                                            where pledge_charities.pledge_id = pledges.id) end");
+                                            where pledge_charities.pledge_id = pledges.id and pledge_charities.deleted_at is null) end");
                                             
         $annual_one_time_pledges = DB::table('pledges')
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
@@ -63,10 +62,10 @@ class DonationController extends Controller {
                 ->whereNull('pledges.deleted_at')
                 ->where('pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
-                          'Annual' , 'Bi-Weekly', pledges.one_time_amount, pledges.one_time_amount,
+                          'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                             case when type = 'P' then 0 else (select count(*) from pledge_charities 
-                                        where pledge_charities.pledge_id = pledges.id) end");
+                                        where pledge_charities.pledge_id = pledges.id and pledge_charities.deleted_at is null) end");
 
         $donate_now_pledges = DB::table('donate_now_pledges')
                 ->whereNull('donate_now_pledges.deleted_at')
@@ -98,7 +97,8 @@ class DonationController extends Controller {
                             'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount, 
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
                             case when regional_pool_id is null then (select count(*) from bank_deposit_form_organizations 
-                                where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id) else 0 end");
+                                where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id 
+                                        and bank_deposit_form_organizations.deleted_at is null) else 0 end");
 
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
@@ -118,14 +118,7 @@ class DonationController extends Controller {
                             ->unionAll($event_pledges)
                             ->get();
 
-        // $all_pledges = ViewPledgeHistory::where( function($q) use($user) {
-        //         $q->where('emplid', $user->emplid)
-        //           ->where('emplid', '<>', '');
-        // })
-        // ->orderBy('yearcd', 'desc')
-        // ->orderBy('donation_type')->get();
-
-        $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->sortBy('donation_type')->groupBy('yearcd');
+        $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->sortByDesc('source')->sortBy('donation_type')->groupBy('yearcd');
 
         $totalPledgedDataTillNow = 0;
         foreach ($all_pledges as $pledge) {
