@@ -275,7 +275,9 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
-    
+    // // Eligible Employee Reporting
+    Route::get('/eligible-employee/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employee.export2csv');
+    Route::resource('/eligible-employee', EligibleEmployeeReportController::class)->only(['index']);
 
 });
 
