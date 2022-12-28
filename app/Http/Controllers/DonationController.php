@@ -54,7 +54,9 @@ class DonationController extends Controller {
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount * campaign_years.number_of_periods,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                                 case when type = 'P' then 0 else (select count(*) from pledge_charities 
-                                            where pledge_charities.pledge_id = pledges.id and pledge_charities.deleted_at is null) end");
+                                            where pledge_charities.pledge_id = pledges.id 
+                                              and pledge_charities.frequency = 'bi-weekly'
+                                              and pledge_charities.deleted_at is null) end");
                                             
         $annual_one_time_pledges = DB::table('pledges')
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
@@ -65,7 +67,9 @@ class DonationController extends Controller {
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                             case when type = 'P' then 0 else (select count(*) from pledge_charities 
-                                        where pledge_charities.pledge_id = pledges.id and pledge_charities.deleted_at is null) end");
+                                        where pledge_charities.pledge_id = pledges.id 
+                                          and pledge_charities.frequency = 'one-time'
+                                          and pledge_charities.deleted_at is null) end");
 
         $donate_now_pledges = DB::table('donate_now_pledges')
                 ->whereNull('donate_now_pledges.deleted_at')
