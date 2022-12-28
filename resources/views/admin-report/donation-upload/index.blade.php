@@ -19,6 +19,8 @@
             </div>
         @endif --}}
 
+<p><a href="/administrators/dashboard">Back</a></p>        
+
     <h6>Select the relevant organization, upload PECSF Donation files for non BC Gov entities below, then click "Submit" to send reports to PECSF administration.</h6>
     <div class="card">
         <div class="card-body">
