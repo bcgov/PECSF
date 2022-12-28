@@ -129,7 +129,7 @@
                 </button>
                 </a> --}}
                     <form id="duplicate-form-{{ $pledge->id }}" action="{{ route('annual-campaign.duplicate', $pledge->id) }}" method="POST" style="display: none;">
-                        <input type="hidden" name="_token" value="xCKpsdfPXubkUv8ucCslZObQaBH85OUTcMWS3mPS">
+                        @csrf
                         <input type="hidden" name="source" value="{{ $pledge->source }}">
                         <input type="hidden" name="type" value="{{ $pledge->donation_type }}">
                         <input type="hidden" name="id" value="{{ $pledge->id }}">
