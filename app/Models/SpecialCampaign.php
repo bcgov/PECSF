@@ -37,4 +37,14 @@ class SpecialCampaign extends Model
 
         return $special_campaigns->toArray();
     }
+
+    public static function hasActiveSpecialCampaign() {
+
+        if ( count(self::activeBannerText()) > 0 ) {
+            return true;
+        } 
+
+        return false;
+
+    }
 }
