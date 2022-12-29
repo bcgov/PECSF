@@ -113,7 +113,6 @@ class EmployeeJobMissing255JSON extends Seeder
                 'acctlock' => 0,
                 'last_sync_at' => $new_sync_at,
                 'organization_id' => $organization->id,
-                'employee_job_id' => $new_job->id,
                 'emplid' => $new_job->emplid,
             ]);
 

@@ -32,7 +32,6 @@ class User extends Authenticatable
         'last_signon_at',
         'last_sync_at',
         'organization_id',
-        'employee_job_id',
         'emplid',
 
     ];
@@ -80,7 +79,14 @@ class User extends Authenticatable
 
     public function primary_job() 
     {
-        return $this->belongsTo(EmployeeJob::Class, 'employee_job_id', 'id')->withDefault();
+        return $this->belongsTo(EmployeeJob::Class, 'emplid', 'emplid')
+                            ->where( function($query) {
+                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                        $q->from('employee_jobs as J2') 
+                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            ->selectRaw('min(J2.empl_rcd)');
+                                    });
+                            })->withDefault();
     }
 
     public function active_employee_jobs() {
