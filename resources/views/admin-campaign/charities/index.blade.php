@@ -21,6 +21,105 @@
 @section('content')
 
 <p><a href="/administrators/dashboard">Back</a></p>
+
+<form id="charity-form" method="post">
+    <div class="card search-filter">
+    
+        <div class="card-body pb-0 ">
+            <h2>Search Criteria</h2>
+
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="registration_number">
+                        Registration No
+                    </label>
+                    <input name="registration_number"  class="form-control" />
+                </div>
+    
+                <div class="form-group col-md-2">
+                    <label for="name">
+                        Charity Name
+                    </label>
+                    <input name="charity_name"   class="form-control" />
+                </div>
+    
+                <div class="form-group col-md-2">
+                    <label for="empl_status">
+                        Status
+                    </label>
+                    <select name="charity_status" value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach( $charity_status_list as $key => $value)
+                            <option value="{{ $value }}">{{ $value }}</option>
+                        @endforeach 
+                    </select>
+                </div>
+                
+                <div class="form-group col-md-2">
+                    <label for="effdt">
+                        Effective Date 
+                    </label>
+                    <input type="date" name="effdt"  class="form-control" />
+                </div>
+                
+            </div>    
+    
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="designation_code">
+                        Designation
+                    </label>
+                    <select name="designation_code" value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach( $designation_list as $key => $value)
+                            <option value="{{ $key  }}">{{ $value }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label for="category_code">
+                        Category
+                    </label>
+                    <select name="category_code"  value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach( $category_list as $key => $value)
+                            <option value="{{ $key }}">{{ $value }} </option>
+                        @endforeach 
+                    </select>
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label for="province">
+                        Province
+                    </label>
+                    <select name="province"  value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach( $province_list as $key => $value)
+                            <option value="{{ $key }}">{{ $value }} </option>
+                        @endforeach 
+                    </select>
+                </div>
+    
+    
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />Search</button>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary">Reset</button>
+                </div>
+            </div>
+    
+        </div>    
+    </div>
+    </form>
+    
 <div class="card">
 	<div class="card-body">
 
@@ -33,6 +132,10 @@
             </div>
         @endif
     
+        <div id="export-section" class="px-3 float-right">
+            <button type="button" id="export-btn" value="export" class="btn btn-primary">Export</button>
+        </div>
+
 		<table class="table table-bordered" id="charity-table" style="width:100%">
 			<thead>
 				<tr>
@@ -67,6 +170,9 @@
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
     
 	<style>
+    #charity-table_filter label {
+        display:none;
+    }
 	#charity-table_filter label {
 		text-align: right !important;
         padding-right: 10px;
@@ -125,11 +231,22 @@
             // "deferRender": true,
             // "bSortClasses": false,
             select: true,
-                        fixedHeader: true,
+            fixedHeader: true,
             // 'order': [[0, 'asc']],
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw();
+            },
             ajax: {
                 url: '{!! route('settings.charities.index') !!}',
-                data: function (d) {
+                data: function (data) {
+                    // data.term = $('#user').val();
+                    data.registration_number = $("input[name='registration_number']").val();
+                    data.charity_name = $("input[name='charity_name']").val();
+                    data.charity_status = $("select[name='charity_status']").val();
+                    data.effdt = $("input[name='effdt']").val();
+                    data.designation_code = $("select[name='designation_code']").val();
+                    data.category_code  = $("select[name='category_code']").val();
+                    data.province = $("select[name='province']").val();
                 }
             },
             columns: [
@@ -137,8 +254,8 @@
                 {data: 'charity_name',  },
                 {data: 'charity_status',  },
                 {data: 'effdt', },
-                {data: 'designation_code',  },
-                {data: 'category_code',  },
+                {data: 'designation_name',  },
+                {data: 'category_name',      },
                 {data: 'province',   },
                 {data: 'country', },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
@@ -149,6 +266,43 @@
                     },
             ]
         });
+
+        // Move the export button to the filter area
+        $('#charity-table_filter').parent().append( $('#export-section') );
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                oTable.ajax.reload();
+                return false;
+            }
+        });
+
+        $('#refresh-btn').on('click', function() {
+            // oTable.ajax.reload(null, true);
+            oTable.draw();
+        });
+
+        $('#reset-btn').on('click', function() {
+
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
+
+            oTable.search( '' ).columns().search( '' ).draw();
+        });
+
+
+        $('#export-btn').on('click', function() {
+            
+            if (confirm("Are you sure to export the selected data ?")) {
+                
+                var export_url = '{{ route('settings.charities.export2csv') }}';
+                filter = $('#charity-form').serialize();
+                let _url = export_url + '?export=1&' + filter;
+                window.location.href = _url;
+            }
+        })
+
 
         function delay(callback, ms) {
           var timer = 0;
@@ -353,6 +507,8 @@
                 }
             });
     	});
+
+        
 
     });
     </script>

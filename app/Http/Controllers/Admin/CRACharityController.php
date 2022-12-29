@@ -8,6 +8,7 @@ use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CRACharityRequest;
+use Illuminate\Support\Facades\Storage;
 
 class CRACharityController extends Controller
 {
@@ -32,7 +33,30 @@ class CRACharityController extends Controller
 
         if($request->ajax()) {
 
-            $charities = Charity::orderBy('charity_name');
+            $charities = $this->getCharityQuery($request);
+
+            // $charities = Charity::when( $request->registration_number, function($query) use($request) {
+            //                         $query->where('charities.registration_number', 'like', '%'. $request->registration_number .'%');
+            // })
+            // ->when( $request->charity_name, function($query) use($request) {
+            //     $query->where('charities.charity_name', 'like', '%'. $request->charity_name .'%');
+            // })
+            // ->when( $request->charity_status, function($query) use($request) {
+            //     $query->where('charities.charity_status', 'like', '%'. $request->charity_status .'%');
+            // })
+            // ->when( $request->effdt, function($query) use($request) {
+            //     $query->where('charities.effective_date_of_status', '>=', $request->effdt);
+            // })
+            // ->when( $request->designation_code, function($query) use($request) {
+            //     $query->where('charities.designation_code', $request->designation_code);
+            // })
+            // ->when( $request->category_code, function($query) use($request) {
+            //     $query->where('charities.category_code', $request->category_code );
+            // })
+            // ->when( $request->province, function($query) use($request) {
+            //     $query->where('charities.province', $request->province);
+            // })
+            // ->orderBy('charity_name');
 
             return Datatables::of($charities)
                 ->addColumn('effdt', function ($charity) {
@@ -46,7 +70,12 @@ class CRACharityController extends Controller
             ->make(true);
         }
 
-        return view('admin-campaign.charities.index');
+        $charity_status_list = Charity::charity_status_list();
+        $designation_list = Charity::DESIGNATION_LIST;
+        $category_list = Charity::CATEGORY_LIST;
+        $province_list = Charity::PROVINCE_LIST;
+
+        return view('admin-campaign.charities.index', compact('charity_status_list', 'designation_list', 'category_list', 'province_list'));
 
     }
 
@@ -140,5 +169,92 @@ class CRACharityController extends Controller
 
         // return response()->noContent();
     }
+
+
+    public function export2csv(Request $request) {
+
+        $filename = 'export_charities_'.date("Y-m-d").".csv";
+        $handle = fopen( storage_path('app/public/'.$filename), 'w');
+
+        $header = ['BN', 'Name', 'Status', 'Type of Donee', 'Effective Date', 
+                    'Designation', 'Type', 'Category', 'Address', 'City', 'Province', 'Country', 'Postal', 
+                    'Use Alt Address', 'Alt Address 1', 'Alt Address 2','Alt City', 'Alt Province', 'Alt Country', 'Alt Postal',
+                    'Financial Contact Name','Financial Contact Title','Financial Contact Email'
+                  ];
+
+        $fields = ['registration_number','charity_name','charity_status','type_of_qualified_donee','effdt',
+                   'designation_name','charity_type','category_name','address','city','province','country','postal_code',
+                   'use_alt_address','alt_address1','alt_address2','alt_city','alt_province','alt_country','alt_postal_code',
+                   'financial_contact_name','financial_contact_title','financial_contact_email'
+                ];
+    
+
+        // Export header
+        fputcsv($handle, ['Report Title     :  Eligible Employee Report'] );
+        fputcsv($handle, ['Report Run on    : ' . now() ] );
+        fputcsv($handle, [''] );
+        fputcsv($handle, $header );
+        // export the data with filter selection
+        $sql = $this->getCharityQuery($request); 
+
+        set_time_limit(240);
+
+        $sql->chunk(2000, function($charities) use ($handle, $fields) {
+
+                // additional data 
+                foreach( $charities as $charity) {
+                    // $charity->business_unit_name = $charity->bus_unit->name;
+                    // $charity->region_name = $charity->region->name;
+                    $charity->effdt = $charity->effective_date_of_status ?  $charity->effective_date_of_status->format('m-d-Y') : null;
+                }
+
+                $subset = $charities->map->only( $fields );
+//  dd( $subset);
+                // output to csv
+                foreach($subset as $charity) {
+                    fputcsv($handle, $charity, ',', '"' );
+                }
+        });
+
+        fclose($handle);
+
+        $headers = [
+            'Content-Description' => 'File Transfer',
+            'Content-Type' => 'application/csv',
+            "Content-Transfer-Encoding: UTF-8",
+        ];
+
+        return Storage::disk('public')->download($filename, $filename, $headers); 
+
+    }
+
+    function getCharityQuery(Request $request) {
+
+        $sql = Charity::when( $request->registration_number, function($query) use($request) {
+                    $query->where('charities.registration_number', 'like', '%'. $request->registration_number .'%');
+                })
+                ->when( $request->charity_name, function($query) use($request) {
+                    $query->where('charities.charity_name', 'like', '%'. $request->charity_name .'%');
+                })
+                ->when( $request->charity_status, function($query) use($request) {
+                    $query->where('charities.charity_status', 'like', '%'. $request->charity_status .'%');
+                })
+                ->when( $request->effdt, function($query) use($request) {
+                    $query->where('charities.effective_date_of_status', '>=', $request->effdt);
+                })
+                ->when( $request->designation_code, function($query) use($request) {
+                    $query->where('charities.designation_code', $request->designation_code);
+                })
+                ->when( $request->category_code, function($query) use($request) {
+                    $query->where('charities.category_code', $request->category_code );
+                })
+                ->when( $request->province, function($query) use($request) {
+                    $query->where('charities.province', $request->province);
+                })
+                ->orderBy('charity_name');
+
+        return $sql;
+    }
+
 
 }
