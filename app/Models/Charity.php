@@ -36,7 +36,7 @@ class Charity extends Model
     ];
 
     protected $casts = [
-        'effective_date_of_status' => 'date'
+        'effective_date_of_status' => 'date:m-d-Y',
     ];
 
     protected $appends = [
@@ -103,6 +103,22 @@ class Charity extends Model
         "0010"	=>	"Teaching Institutions",
         "0155"	=>	"Upholding Human Rights",
     ];
+
+    public static function charity_status_list()
+    {
+        return self::where('charity_status', '<>', '')
+                    ->orderBy('charity_status')
+                    ->distinct()
+                    ->pluck('charity_status');
+    }
+
+    public static function office_city_list()
+    {
+        return EmployeeJob::where('office_city', '<>', '')
+                    ->orderBy('office_city')
+                    ->distinct()
+                    ->pluck('office_city');
+    }
 
     public function pledges() {
         return $this->belongsToMany('App\Models\Pledge', 'pledge_charities', 'charity_id', 'pledge_id')

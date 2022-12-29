@@ -207,7 +207,8 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Pay Calendars
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
-    // Business Units
+    // CRA Charity 
+    Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
     // Special Campaign Setup
