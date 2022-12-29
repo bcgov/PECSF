@@ -61,7 +61,7 @@ class EligibleEmployeeReportController extends Controller
 
     public function export2csv(Request $request) {
 
-        $filename = 'export_'.date("Y-m-d").".csv";
+        $filename = 'eligible_employee_'.date("Y-m-d").".csv";
         $handle = fopen( storage_path('app/public/'.$filename), 'w');
 
         $header = ['Emplid', 'Name', 'Status', 'Address1', 'Address2', 
