@@ -41,9 +41,44 @@ class EmployeeJob extends Model
         'organization_name',        // Organization under the Org Chart 
     ];
 
+    public const EMPL_STATUS_LIST = 
+    [
+        'A' => 'Active',
+        'D' => 'Deceased',
+        'L' => 'Leave',
+        'P' => 'Leave W/Py',
+        'Q' => 'Ret w/Pay',
+        'R' => 'Retired',
+        'S' => 'Laid Off',
+        'S' => 'Suspended',
+        'T' => 'Terminated',
+        'U' => 'Term w/Pay',
+        'U' => 'Term w/Pay',
+        'V' => 'Term w/Pen',
+        'W' => 'Work Break',
+        'X' => 'Ret - PAdm',
+    ];
+
+    public static function organization_list()
+    {
+        return EmployeeJob::where('organization', '<>', '')
+                    ->orderBy('organization')
+                    ->distinct()
+                    ->pluck('organization');
+    }
+
+    public static function office_city_list()
+    {
+        return EmployeeJob::where('office_city', '<>', '')
+                    ->orderBy('office_city')
+                    ->distinct()
+                    ->pluck('office_city');
+    }
+
+
     public function region() 
     {
-        return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();
+        return $this->belongsTo(Region::Class, 'tgb_reg_district', 'code')->withDefault();
     }
 
     public function bus_unit() 
