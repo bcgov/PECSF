@@ -54,6 +54,15 @@ class ImportNonGovPledgeHistory extends Command
      */
     public function handle()
     {
+        // Determine the start year
+        $last_task = ScheduleJobAudit::where('job_name', $this->signature)
+                            ->where('status', 'Completed')
+                            ->first();
+
+        if ($last_task) {
+            $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
+        }
+
 
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
@@ -63,7 +72,9 @@ class ImportNonGovPledgeHistory extends Command
         
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 1 : Create - Non-Gov Pledge History");
-        $this->UpdateNonGovPledgeHistory();
+        for ($yr = $start_year; $yr <= now()->year; $yr++) {
+            $this->UpdateNonGovPledgeHistory($yr);
+        }
 
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 2 : Create - Non-Gov Pledge History Summary");
@@ -81,16 +92,19 @@ class ImportNonGovPledgeHistory extends Command
     
     }
 
-    protected function UpdateNonGovPledgeHistory() 
+    protected function UpdateNonGovPledgeHistory($in_year) 
     {
 
-        // Truncate Pledge History table
-        NonGovPledgeHistory::truncate();
+        // Clear Up Pledge History table
+        NonGovPledgeHistory::where('yearcd', $in_year)->delete();
+
+        $this->LogMessage( 'Loading pledge history data for '. $in_year);
+        $filter = '(yearcd eq '. $in_year .')';
                 
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1');
+                ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
 
             $row_count = json_decode($response->body())->{'@odata.count'};
             
@@ -102,9 +116,9 @@ class ImportNonGovPledgeHistory extends Command
                 // Loading pledge history data
                 $response = Http::withHeaders(['Content-Type' => 'application/json'])
                     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                    ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip) ;
+                    ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.'&$filter='.$filter) ;
 
-                $this->LogMessage( 'Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip '. $skip);
+                $this->LogMessage( '  Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip '. $skip .' $filter ='. $filter);
                 // Loading pledge history data
                 // $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
