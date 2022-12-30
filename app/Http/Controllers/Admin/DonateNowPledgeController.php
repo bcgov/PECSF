@@ -208,6 +208,7 @@ class DonateNowPledgeController extends Controller
         $seqno = $last_seqno ? ($last_seqno + 1) : 1;
         //  dd([$request, $seqno] );
         $gov = Organization::where('code', 'GOV')->first();
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $request->organization_id,
@@ -219,6 +220,7 @@ class DonateNowPledgeController extends Controller
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $request->pool_option,
+            'region_id' => ($request->pool_option == 'P' ? $pool->region_id : null),
             'f_s_pool_id' => ($request->pool_option == 'P' ? $request->pool_id : null),
             'charity_id' =>  ($request->pool_option == 'C' ? $request->charity_id : null),
             'one_time_amount' => $request->one_time_amount,
@@ -314,6 +316,7 @@ class DonateNowPledgeController extends Controller
 
         $gov_organization = Organization::where('code', 'GOV')->first();
         $is_GOV = ($request->organization_id == $gov_organization->id);
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         // $pay_period_amount = $request->pay_period_amount ? 
         //             $request->pay_period_amount : $request->pay_period_amount_other ;
@@ -330,6 +333,7 @@ class DonateNowPledgeController extends Controller
         }
 
         $pledge->type = $request->pool_option;
+        $pledge->region_id = ($request->pool_option == 'P' ? $pool->region_id : null);
         $pledge->f_s_pool_id = ($request->pool_option == 'P' ? $request->pool_id : null);
         $pledge->charity_id  = ($request->pool_option == 'C' ? $request->charity_id : null);
         $pledge->one_time_amount = $request->one_time_amount ?? 0;
