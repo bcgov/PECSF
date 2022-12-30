@@ -15,7 +15,7 @@ class DonateNowPledge extends Model
         'emplid',
         'user_id',  // Not in use in the near future due to multiple GUID to emplid issue
         'pecsf_id', 'yearcd', 'seqno',
-        'type', 'f_s_pool_id', 'charity_id', 'special_program',
+        'type', 'region_id', 'f_s_pool_id', 'charity_id', 'special_program',
         'one_time_amount', 'deduct_pay_from',
         'first_name', 'last_name', 'city', 'cancelled', 'cancelled_by_id', 'cancelled_at',
         'ods_export_status', 'ods_export_at',

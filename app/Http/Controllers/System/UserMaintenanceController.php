@@ -32,7 +32,15 @@ class UserMaintenanceController extends Controller
         if($request->ajax()) {
 
             $users = User::select('users.*')
-                        ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                        ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                        ->where( function($query) {
+                            $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                    $q->from('employee_jobs as J2') 
+                                        ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                        ->selectRaw('min(J2.empl_rcd)');
+                                })
+                                ->orWhereNull('employee_jobs.empl_rcd');
+                        })
                         ->leftJoin('regions', 'employee_jobs.region_id', '=', 'regions.id')
                         ->when($request->source_type, function($query) use($request) {
                             return $query->where('users.source_type',  $request->source_type);

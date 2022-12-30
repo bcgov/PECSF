@@ -182,13 +182,22 @@
         });
 
         function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 8000,
-                            body: toast_body
-            });
+            // $(document).Toasts('create', {
+            //                 class: toast_class,
+            //                 title: toast_title,
+            //                 autohide: true,
+            //                 delay: 8000,
+            //                 body: toast_body
+            // });
+            Swal.fire({
+                    position: 'top-end',
+                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
+                    title: toast_title,
+                    text: toast_body,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 8000
+            })
         }
 
         // Datatables
@@ -526,16 +535,24 @@
                     $.ajax({
                         method: "DELETE",
                         url:  '/settings/special-campaigns/' + id,
+                        dataType: 'json',
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Special Campagin "' + name +  '" was successfully deleted.', 'bg-success' );
                         },
-                        error: function(response) {
-                            console.log('Error');
+                        // error: function(response) {
+                            error: function (data) {
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: data.responseJSON.title, // data.responseJSON.title,
+                                        text: data.responseJSON.message,
+                                });
+
+                                console.log(data.responseJSON.message);
                         }
                     });
-                } else if (result.isCancelledDenied) {
+                } else if (result.isDismissed) {
                     // Swal.fire('Changes are not saved', '', '')
                 }
             })

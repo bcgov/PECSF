@@ -44,7 +44,6 @@ class SpecialCampaignPledgeController extends Controller
             $pledges = SpecialCampaignPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 
                             'special_campaign')
                             ->leftJoin('users', 'users.id', '=', 'special_campaign_pledges.user_id')
-                            // ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {

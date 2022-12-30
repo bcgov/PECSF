@@ -138,6 +138,8 @@ class DonateNowController extends Controller
         $message_text = '';
 
         // Create a new Pledge
+        $pool = FSPool::where('id', $request->pool_id)->first();
+
         $last_seqno = DonateNowPledge::where('organization_id', $organization_id)
                         // ->where('user_id', $user->id)
                         ->where('emplid', $user->emplid)
@@ -154,6 +156,7 @@ class DonateNowController extends Controller
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $pool_option,
+            'region_id' => ($pool_option == 'P' ? $pool->region_id : null),
             'f_s_pool_id' => ($pool_option == 'P' ? $request->pool_id : null),
             // 'charity_id' =>  ($pool_option == 'C' ? $request->charity_id : null),
             'charity_id' =>  ($pool_option == 'C' ? $request->charities[0] : null),
