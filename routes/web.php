@@ -209,6 +209,8 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // CRA Charity 
     Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
+    Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
+    Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
     // Special Campaign Setup

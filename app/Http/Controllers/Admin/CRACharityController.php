@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Charity;
 use Illuminate\Http\Request;
+use App\Models\ProcessHistory;
+use App\Jobs\CharitiesExportJob;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\Bus;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\CRACharityRequest;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\CRACharityRequest;
 
 class CRACharityController extends Controller
 {
@@ -170,8 +174,109 @@ class CRACharityController extends Controller
         // return response()->noContent();
     }
 
+    public function exportProgress(Request $request, $id) {
+
+// storage batch id in session
+// get status 
+        $history = ProcessHistory::where('id', $id)->first();
+
+        if ($history) {
+
+            // $batch_id = session()->get('charities-export-batch-id');
+
+
+            // $batch = Bus::findBatch($batch_id);
+
+            $finished = false;
+            $message = 'Procsssing..., please wait.' . now();
+
+            if ($history->status == 'Completed') {
+                $finished = true;
+                $link = route('settings.charities.download-export-file', $history->id);
+                $message = 'Done. Download file <a class="" href="'.$link.'">here</a>';
+            } else if ($history->status == 'Queued') {
+                $message = 'Queued, please wait.';
+            } else if ($history->status == 'Processing') {
+                $progress = round(($history->done_count / $history->total_count) * 100,0);
+                $message = 'Procsssing... ('. $progress .'%) , please wait.';
+            } else {
+                // others
+            }
+
+            return response()->json([
+                'finished' => $finished,
+                'message' => $message,
+            ], 200);
+        }   
+
+    }
+
+    public function downloadExportFile(Request $request, $id) {
+
+        $history = ProcessHistory::where('id', $id)->first();
+        // $path = Student::where("id", $id)->value("file_path");
+    
+        $filepath = $history->filename; 
+
+        $headers = [
+            'Content-Description' => 'File Transfer',
+            'Content-Type' => 'application/csv',
+            "Content-Transfer-Encoding: UTF-8",
+        ];
+
+        // return Storage::download($path);
+        return Storage::disk('public')->download($filepath, $filepath, $headers); 
+
+    }        
+
+
 
     public function export2csv(Request $request) {
+
+
+        if($request->ajax()) {
+
+            $filters = $request->all(); 
+
+            // Submit a Job
+            $history = \App\Models\ProcessHistory::create([
+                'batch_id' => 0,
+                'process_name' => 'CharitiesExportJob',
+                'parameters' => json_encode( $filters ),
+                'status'  => 'Queued',
+                'submitted_at' => now(),
+                'original_filename' => '',
+                'filename' => '',
+                'total_count' => 0,
+                'done_count' => 0,
+                'created_by_id' => Auth::Id(),
+                'updated_by_id' => Auth::Id(),
+            ]);
+
+            // $filename = 'export_charities_'.now()->format("Y-m-d-hmsu").".csv";
+            // $filePath = storage_path('app/public/'.$filename);
+        
+
+            $batch = Bus::batch([
+                new CharitiesExportJob($history->id, $filters ),
+            ])->dispatch();
+
+            // dd ($batch->id);
+            $history->batch_id = $batch->id;
+            $history->save();
+
+
+            session()->put('charities-export-batch-id', $batch->id );
+// TODO 
+// storage batch id in session
+
+            return response()->json([
+                    'batch_id' => $history->id,
+            ], 200);
+            
+
+        }
+        
 
         $filename = 'export_charities_'.date("Y-m-d").".csv";
         $handle = fopen( storage_path('app/public/'.$filename), 'w');
@@ -250,6 +355,15 @@ class CRACharityController extends Controller
                 })
                 ->when( $request->province, function($query) use($request) {
                     $query->where('charities.province', $request->province);
+                })
+                ->when( $request->use_alt_address == 'Y', function($query) use($request) {
+                    $query->where('use_alt_address', '1');
+                })
+                ->when( $request->use_alt_address == 'N', function($query) use($request) {
+                    $query->where(function($q) {
+                        $q->where('use_alt_address', '0')
+                          ->orWhereNull('use_alt_address');
+                    });
                 })
                 ->orderBy('charity_name');
 
