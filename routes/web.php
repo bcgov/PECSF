@@ -279,8 +279,10 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
     // // Eligible Employee Reporting
-    Route::get('/eligible-employee/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employee.export2csv');
-    Route::resource('/eligible-employee', EligibleEmployeeReportController::class)->only(['index']);
+    Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
+    Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
+    Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
+    Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
 
 });
 
