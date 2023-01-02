@@ -15,9 +15,9 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link {{ str_contains( Route::current()->getName(), 'reporting.eligible-employee') ? 'active' : ''}}"
+      <a class="nav-link {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
         {{-- id="pills-home-tab"  --}}
-        href="{{ route('reporting.eligible-employee.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
+        href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
     </li>
 
 </ul>
