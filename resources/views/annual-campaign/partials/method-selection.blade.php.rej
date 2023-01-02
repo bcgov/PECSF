@@ -1,0 +1,10 @@
+diff a/resources/views/annual-campaign/partials/method-selection.blade.php b/resources/views/annual-campaign/partials/method-selection.blade.php	(rejected hunks)
+@@ -64,7 +64,7 @@
+ 
+     // Initial the wizard page when 1st loaded
+     update_wizard_step_based_on_pool_option();
+-    
++
+ });
+ 
+ </script>

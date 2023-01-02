@@ -126,17 +126,17 @@ a:hover {
 
 
 // styling the active menu items on  Tab bar
-a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ), 
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ),
 a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):hover,
 a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):active,
-a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):visited 
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):visited
 {
   color: #003366 !important;
 }
 
 a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):hover,
 a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):active,
-a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):visited 
+a.btn:not(.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark, .btn-link ):visited
 {
   font-weight:bold !important;
 }
@@ -161,11 +161,11 @@ div.border-primary a {
 }
 
 .modal-header .close {
-    color: #fff; 
+    color: #fff;
     opacity: 1;
 }
 
-// link on the tab 
+// link on the tab
 .menu .nav-link.active {
     color: #1a5a96;
     font-weight: normal !important;
@@ -175,7 +175,7 @@ div.border-primary a {
     font-family: "BCSans";
     border-radius: 0;
   }
-  
+
 .menu .nav-link {
     color: #313132;
     border-bottom: #cfcfcf 2px solid;
@@ -184,5 +184,22 @@ div.border-primary a {
     border-radius: 0;
     margin-right: 5px;
   }
-  
 
+.modal-header .bg-light .close{
+    color:#000!important;
+}
+
+.Pendingcolor{
+    color:yellow;
+}
+.Approvedcolor{
+    color:green;
+}
+.Lockedcolor{
+    color:red;
+}
+
+.card{
+    padding:10px;
+    height: fit-content;
+}
