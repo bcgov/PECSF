@@ -174,15 +174,53 @@ class CRACharityController extends Controller
         // return response()->noContent();
     }
 
+
+    public function export2csv(Request $request) {
+
+        if($request->ajax()) {
+
+            $filters = $request->all(); 
+
+            // Submit a Job
+            $history = \App\Models\ProcessHistory::create([
+                'batch_id' => 0,
+                'process_name' => 'CharitiesExportJob',
+                'parameters' => json_encode( $filters ),
+                'status'  => 'Queued',
+                'submitted_at' => now(),
+                'original_filename' => '',
+                'filename' => '',
+                'total_count' => 0,
+                'done_count' => 0,
+                'created_by_id' => Auth::Id(),
+                'updated_by_id' => Auth::Id(),
+            ]);
+
+            // Submit the the export Job
+            $batch = Bus::batch([
+                new CharitiesExportJob($history->id, $filters ),
+            ])->dispatch();
+
+            // dd ($batch->id);
+            $history->batch_id = $batch->id;
+            $history->save();
+
+            // 
+            return response()->json([
+                    'batch_id' => $history->id,
+            ], 200);
+
+        }
+
+    }
+
     public function exportProgress(Request $request, $id) {
 
-// storage batch id in session
-// get status 
+        // storage batch id in session
+        // get status 
         $history = ProcessHistory::where('id', $id)->first();
 
         if ($history) {
-
-            // $batch_id = session()->get('charities-export-batch-id');
 
             $batch = Bus::findBatch($history->batch_id);
             // TODO -- how to check failed
@@ -236,111 +274,8 @@ class CRACharityController extends Controller
         // return Storage::download($path);
         return Storage::disk('public')->download($filepath, $filepath, $headers); 
 
-    }        
+    }  
 
-
-
-    public function export2csv(Request $request) {
-
-
-        if($request->ajax()) {
-
-            $filters = $request->all(); 
-
-            // Submit a Job
-            $history = \App\Models\ProcessHistory::create([
-                'batch_id' => 0,
-                'process_name' => 'CharitiesExportJob',
-                'parameters' => json_encode( $filters ),
-                'status'  => 'Queued',
-                'submitted_at' => now(),
-                'original_filename' => '',
-                'filename' => '',
-                'total_count' => 0,
-                'done_count' => 0,
-                'created_by_id' => Auth::Id(),
-                'updated_by_id' => Auth::Id(),
-            ]);
-
-            // $filename = 'export_charities_'.now()->format("Y-m-d-hmsu").".csv";
-            // $filePath = storage_path('app/public/'.$filename);
-        
-
-            $batch = Bus::batch([
-                new CharitiesExportJob($history->id, $filters ),
-            ])->dispatch();
-
-            // dd ($batch->id);
-            $history->batch_id = $batch->id;
-            $history->save();
-
-
-            session()->put('charities-export-batch-id', $batch->id );
-// TODO 
-// storage batch id in session
-
-            return response()->json([
-                    'batch_id' => $history->id,
-            ], 200);
-            
-
-        }
-        
-
-        $filename = 'export_charities_'.date("Y-m-d").".csv";
-        $handle = fopen( storage_path('app/public/'.$filename), 'w');
-
-        $header = ['BN', 'Name', 'Status', 'Type of Donee', 'Effective Date', 
-                    'Designation', 'Type', 'Category', 'Address', 'City', 'Province', 'Country', 'Postal', 
-                    'Use Alt Address', 'Alt Address 1', 'Alt Address 2','Alt City', 'Alt Province', 'Alt Country', 'Alt Postal',
-                    'Financial Contact Name','Financial Contact Title','Financial Contact Email'
-                  ];
-
-        $fields = ['registration_number','charity_name','charity_status','type_of_qualified_donee','effdt',
-                   'designation_name','charity_type','category_name','address','city','province','country','postal_code',
-                   'use_alt_address','alt_address1','alt_address2','alt_city','alt_province','alt_country','alt_postal_code',
-                   'financial_contact_name','financial_contact_title','financial_contact_email'
-                ];
-    
-
-        // Export header
-        fputcsv($handle, ['Report Title     :  Eligible Employee Report'] );
-        fputcsv($handle, ['Report Run on    : ' . now() ] );
-        fputcsv($handle, [''] );
-        fputcsv($handle, $header );
-        // export the data with filter selection
-        $sql = $this->getCharityQuery($request); 
-
-        set_time_limit(240);
-
-        $sql->chunk(2000, function($charities) use ($handle, $fields) {
-
-                // additional data 
-                foreach( $charities as $charity) {
-                    // $charity->business_unit_name = $charity->bus_unit->name;
-                    // $charity->region_name = $charity->region->name;
-                    $charity->effdt = $charity->effective_date_of_status ?  $charity->effective_date_of_status->format('m-d-Y') : null;
-                }
-
-                $subset = $charities->map->only( $fields );
-//  dd( $subset);
-                // output to csv
-                foreach($subset as $charity) {
-                    fputcsv($handle, $charity, ',', '"' );
-                }
-        });
-
-        fclose($handle);
-
-        $headers = [
-            'Content-Description' => 'File Transfer',
-            'Content-Type' => 'application/csv',
-            "Content-Transfer-Encoding: UTF-8",
-        ];
-
-        return Storage::disk('public')->download($filename, $filename, $headers); 
-
-    }
 
     function getCharityQuery(Request $request) {
 
