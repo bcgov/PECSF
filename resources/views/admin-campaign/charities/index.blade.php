@@ -341,7 +341,7 @@
                         data: form.serialize(), // serializes the form's elements.
                         success: function(data) {
                             batch_id = data.batch_id;
-                            console.log('submit');
+                            console.log('export job submit');
                             intervalID = setInterval(exportProgress, 2000);
                         },
                         error: function(response) {
@@ -370,11 +370,24 @@
                     $('#export-section-result').html(data.message);
                 },
                 error: function(response) {
-                    console.log('Error');
+                    if (response.status == 422) {
+                        $('#export-btn').prop('disabled', false);
+                        $('#export-section-result').html('');
+
+                        Swal.fire({
+                            title: 'Export failed!',
+                            text: response.responseJSON.message,
+                            icon: 'error',
+                        })
+                        clearInterval(intervalID);
+                    }
+                    console.log('export job error');
                 }
+                
             });
-       
-        }       
+
+        }
+           
             
 
         // Model for creating new charity

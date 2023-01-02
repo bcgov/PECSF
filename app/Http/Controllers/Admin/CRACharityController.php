@@ -184,8 +184,17 @@ class CRACharityController extends Controller
 
             // $batch_id = session()->get('charities-export-batch-id');
 
+            $batch = Bus::findBatch($history->batch_id);
+            // TODO -- how to check failed
+            if ($batch->failedJobs) {
+                return response()->json([
+                    'finished' => false,
+                    'message' => 'Job failed, please contact system administrtator.',
+                ], 422);
+                
+            }
 
-            // $batch = Bus::findBatch($batch_id);
+
 
             $finished = false;
             $message = 'Procsssing..., please wait.' . now();

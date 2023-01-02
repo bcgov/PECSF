@@ -89,10 +89,10 @@ class CharitiesExportJob implements ShouldQueue
                     ->when( $filters['province'], function($query) use($filters) {
                         $query->where('charities.province', $filters['province']);
                     })
-                    ->when( $request->use_alt_address == 'Y', function($query) use($request) {
+                    ->when( $filters['use_alt_address'] == 'Y', function($query) use($filters) {
                         $query->where('use_alt_address', '1');
                     })
-                    ->when( $request->use_alt_address == 'N', function($query) use($request) {
+                    ->when( $filters['use_alt_address'] == 'N', function($query) use($filters) {
                         $query->where(function($q) {
                             $q->where('use_alt_address', '0')
                               ->orWhereNull('use_alt_address');
