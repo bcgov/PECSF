@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Models\City;
 use App\Models\EmployeeJob;
 use Illuminate\Http\Request;
+use App\Models\ProcessHistory;
 use App\Models\ScheduleJobAudit;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\EligibleEmployeesExportJob;
 
 class EligibleEmployeeReportController extends Controller
 {
@@ -58,53 +62,93 @@ class EligibleEmployeeReportController extends Controller
 
     }
 
-
     public function export2csv(Request $request) {
 
-        $filename = 'eligible_employee_'.date("Y-m-d").".csv";
-        $handle = fopen( storage_path('app/public/'.$filename), 'w');
+        if($request->ajax()) {
 
-        $header = ['Emplid', 'Name', 'Status', 'Address1', 'Address2', 
-                    'City', 'Province', 'Postal', 'organization_name', 'business_unit',
-                    'Business Unit Name', 'Dept ID', 'Dept Name', 'Region', 'Region Name',
-                  ];
+            $filters = $request->all(); 
 
-        $fields = ['emplid', 'name', 'empl_status', 'office_address1', 'office_address2', 
-                   'office_city', 'office_stateprovince', 'office_postal', 'organization_name', 'business_unit',
-                   'business_unit_name', 'deptid', 'dept_name', 'tgb_reg_district', 'region_name'
-                ];
+            // Submit a Job
+            $history = \App\Models\ProcessHistory::create([
+                'batch_id' => 0,
+                'process_name' => 'EligibleEmployeesExportJob',
+                'parameters' => json_encode( $filters ),
+                'status'  => 'Queued',
+                'submitted_at' => now(),
+                'original_filename' => '',
+                'filename' => '',
+                'total_count' => 0,
+                'done_count' => 0,
+                'created_by_id' => Auth::Id(),
+                'updated_by_id' => Auth::Id(),
+            ]);
+       
+            // Submit a job 
+            $batch = Bus::batch([
+                new EligibleEmployeesExportJob($history->id, $filters ),
+            ])->dispatch();
 
-        $last_job = ScheduleJobAudit::where('job_name', 'command:ImportEmployeeJob')
-                        ->where('status','Completed')
-                        ->orderBy('end_time', 'desc')->first();        
+            // dd ($batch->id);
+            $history->batch_id = $batch->id;
+            $history->save();
 
-        // Export header
-        fputcsv($handle, ['Report Title     :  Eligible Employee Report'] );
-        fputcsv($handle, ['Report Run on    : ' . now() ] );
-        fputcsv($handle, ['Status update on : ' . ($last_job ? $last_job->start_time : '') ] );
-        fputcsv($handle, [''] );
-        fputcsv($handle, $header );
+            return response()->json([
+                    'batch_id' => $history->id,
+            ], 200);
 
-        // export the data with filter selection
-        $sql = $this->getEmployeeJobQuery($request); 
+        }
 
-        $sql->chunk(2000, function($employees) use ($handle, $fields) {
+    }
 
-                // additional data 
-                foreach( $employees as $employee) {
-                    $employee->business_unit_name = $employee->bus_unit->name;
-                    $employee->region_name = $employee->region->name;
-                }
+    public function exportProgress(Request $request, $id) {
 
-                $subset = $employees->map->only( $fields );
+        // storage batch id in session
+        $history = ProcessHistory::where('id', $id)->first();
 
-                // output to csv
-                foreach($subset as $employee) {
-                    fputcsv($handle, $employee, ',', '"' );
-                }
-        });
+        if ($history) {
 
-        fclose($handle);
+            // $batch_id = session()->get('charities-export-batch-id');
+
+            $batch = Bus::findBatch($history->batch_id);
+            // TODO -- how to check failed
+            if ($batch->failedJobs) {
+                return response()->json([
+                    'finished' => false,
+                    'message' => 'Job failed, please contact system administrtator.',
+                ], 422);
+                
+            }
+
+            $finished = false;
+            $message = 'Procsssing..., please wait.' . now();
+
+            if ($history->status == 'Completed') {
+                $finished = true;
+                $link = route('reporting.eligible-employees.download-export-file', $history->id);
+                $message = 'Done. Download file <a class="" href="'.$link.'">here</a>';
+            } else if ($history->status == 'Queued') {
+                $message = 'Queued, please wait.';
+            } else if ($history->status == 'Processing') {
+                $progress = round(($history->done_count / $history->total_count) * 100,0);
+                $message = 'Procsssing... ('. $progress .'%) , please wait.';
+            } else {
+                // others
+            }
+
+            return response()->json([
+                'finished' => $finished,
+                'message' => $message,
+            ], 200);
+        }   
+
+    }
+
+    public function downloadExportFile(Request $request, $id) {
+
+        $history = ProcessHistory::where('id', $id)->first();
+        // $path = Student::where("id", $id)->value("file_path");
+    
+        $filepath = $history->filename; 
 
         $headers = [
             'Content-Description' => 'File Transfer',
@@ -112,9 +156,10 @@ class EligibleEmployeeReportController extends Controller
             "Content-Transfer-Encoding: UTF-8",
         ];
 
-        return Storage::disk('public')->download($filename, $filename, $headers); 
+        // return Storage::download($path);
+        return Storage::disk('public')->download($filepath, $filepath, $headers); 
 
-    }
+    }        
 
     function getEmployeeJobQuery(Request $request) {
 

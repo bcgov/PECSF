@@ -122,6 +122,7 @@
 
         <div id="export-section" class="px-3 float-right">
             <button type="button" id="export-btn" value="export" class="btn btn-primary">Export</button>
+            <span id="export-section-result"></span>
         </div>
 
         <table class="table table-bordered" id="employee-table" style="width:100%">
@@ -206,7 +207,7 @@
                     oTable.columns.adjust().draw();
             },
             ajax: {
-                url: '{!! route('reporting.eligible-employee.index') !!}',
+                url: '{!! route('reporting.eligible-employees.index') !!}',
                 data: function (data) {
                     // data.term = $('#user').val();
                     data.emplid = $("input[name='emplid']").val();
@@ -228,13 +229,13 @@
                 {data: 'office_city',  className: "dt-nowrap" },
                 {data: 'office_stateprovince' },
                 {data: 'office_postal' },
-                {data: 'organization_name',  className: "dt-nowrap"  },
+                {data: 'organization_name', defaultContent: '', className: "dt-nowrap"  },
                 // {data: 'organization.name' },
-                {data: 'bus_unit.code', className: "dt-nowrap"  },
-                {data: 'bus_unit.name',  className: "dt-nowrap"  },
-                {data: 'deptid', className: "dt-nowrap"  },
-                {data: 'dept_name',  className: "dt-nowrap"  },
-                {data: 'tgb_reg_district', 'type':'string' },
+                {data: 'bus_unit.code', defaultContent: '', className: "dt-nowrap"  },
+                {data: 'bus_unit.name', defaultContent: '', className: "dt-nowrap"  },
+                {data: 'deptid', defaultContent: '', className: "dt-nowrap"  },
+                {data: 'dept_name', defaultContent: '', className: "dt-nowrap"  },
+                {data: 'tgb_reg_district', defaultContent: '', 'type':'string' },
 
             ],
             columnDefs: [
@@ -269,17 +270,93 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
+        // For auto-refresh 
+        var intervalID = null;
+        var batch_id = null;
 
         $('#export-btn').on('click', function() {
             
-            if (confirm("Are you sure to export the selected data ?")) {
+            // if (confirm("Are you sure to export the selected data ?")) {
                 
-                var export_url = '{{ route('reporting.eligible-employee.export2csv') }}';
-                filter = $('#eligible-employee-form').serialize();
-                let _url = export_url + '?export=1&' + filter;
-                window.location.href = _url;
-            }
+            //     var export_url = '{{ route('reporting.eligible-employees.export2csv') }}';
+            //     filter = $('#eligible-employee-form').serialize();
+            //     let _url = export_url + '?export=1&' + filter;
+            //     window.location.href = _url;
+            // }
+
+            Swal.fire({
+                text: 'Are you sure to export the selected data ?'  ,
+                // icon: 'question',
+                //showDenyButton: true,
+                confirmButtonText: 'Export',
+                showCancelButton: true,
+            }).then((result) => {
+
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    // refresh data tables first
+                    oTable.draw();
+                    $('#export-btn').prop('disabled', true);
+                    $('#export-section-result').html('Queued. Please wait.');
+
+                    var form = $('#eligible-employee-form');
+
+                    // Use ajax call to submit
+                    $.ajax({
+                        method: "GET",
+                        dataType: 'json',
+                        url: '{!! route('reporting.eligible-employees.export2csv') !!}',
+                        data: form.serialize(), // serializes the form's elements.
+                        success: function(data) {
+                            batch_id = data.batch_id;
+                            console.log('export job submit');
+                            intervalID = setInterval(exportProgress, 2000);
+                        },
+                        error: function(response) {
+                            $('#export-btn').prop('disabled', false);
+                            console.log('Error');
+                        }
+                    });
+                }
+
+            })
+
         })
+
+        
+        function exportProgress() {
+
+            $.ajax({
+                method: "GET",
+                dataType: 'json',
+                url:  '/reporting/eligible-employees/export-progress/' + batch_id,
+                success: function(data)
+                {
+                    if (data.finished) {
+                        clearInterval(intervalID);
+                        $('#export-btn').prop('disabled', false);
+                    }
+                    $('#export-section-result').html(data.message);
+                },
+                error: function(response) {
+                    if (response.status == 422) {
+                        $('#export-btn').prop('disabled', false);
+                        $('#export-section-result').html('');
+
+                        Swal.fire({
+                            title: 'Export failed!',
+                            text: response.responseJSON.message,
+                            icon: 'error',
+                        })
+                        clearInterval(intervalID);
+                    }
+                    console.log('export job error');
+                }
+                
+            });
+
+        }
 
     });
     </script>

@@ -22,7 +22,7 @@
 
 <p><a href="/administrators/dashboard">Back</a></p>
 
-<form id="charity-form" method="post">
+<form id="charity-filter-form" method="post">
     <div class="card search-filter">
     
         <div class="card-body pb-0 ">
@@ -60,6 +60,17 @@
                         Effective Date 
                     </label>
                     <input type="date" name="effdt"  class="form-control" />
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="use_alt_address">
+                        Use Alternate Address
+                    </label>
+                    <select name="use_alt_address" value="" class="form-control">
+                        <option value="">All</option>
+                        <option value="Y">Yes</option>
+                        <option value="N">No</option>
+                    </select>
                 </div>
                 
             </div>    
@@ -133,12 +144,14 @@
         @endif
     
         <div id="export-section" class="px-3 float-right">
-            <button type="button" id="export-btn" value="export" class="btn btn-primary">Export</button>
+            <button type="button" id="export-btn" value="export" class="btn btn-primary px-4 mb-2">Export</button>
+            <span id="export-section-result"></span>
         </div>
 
 		<table class="table table-bordered" id="charity-table" style="width:100%">
 			<thead>
 				<tr>
+                    <th></th>
                     <th>Registration No</th>
 					<th>Charity Name</th>
                     <th>Status</th>
@@ -232,7 +245,7 @@
             // "bSortClasses": false,
             select: true,
             fixedHeader: true,
-            // 'order': [[0, 'asc']],
+            'order': [[1, 'asc']],
             "initComplete": function(settings, json) {
                     oTable.columns.adjust().draw();
             },
@@ -247,9 +260,15 @@
                     data.designation_code = $("select[name='designation_code']").val();
                     data.category_code  = $("select[name='category_code']").val();
                     data.province = $("select[name='province']").val();
+                    data.use_alt_address = $("select[name='use_alt_address']").val();
                 }
             },
             columns: [
+                {data: 'id', orderable: false, searchable: false, 
+                        render: function (data, type, row, meta) {
+                                       return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                },
                 {data: 'registration_number', className: "dt-nowrap" },
                 {data: 'charity_name',  },
                 {data: 'charity_status',  },
@@ -262,10 +281,9 @@
 
             ],
             columnDefs: [
-                    {
-                    },
             ]
         });
+
 
         // Move the export button to the filter area
         $('#charity-table_filter').parent().append( $('#export-section') );
@@ -291,45 +309,85 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
+        // For auto-refresh 
+        var intervalID = null;
+        var batch_id = null;
 
         $('#export-btn').on('click', function() {
             
-            if (confirm("Are you sure to export the selected data ?")) {
-                
-                var export_url = '{{ route('settings.charities.export2csv') }}';
-                filter = $('#charity-form').serialize();
-                let _url = export_url + '?export=1&' + filter;
-                window.location.href = _url;
-            }
+            Swal.fire({
+                text: 'Are you sure to export the selected data ?'  ,
+                // icon: 'question',
+                //showDenyButton: true,
+                confirmButtonText: 'Export',
+                showCancelButton: true,
+            }).then((result) => {
+
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+
+                    // refresh data tables first
+                    oTable.draw();
+                    $('#export-btn').prop('disabled', true);
+                    $('#export-section-result').html('Queued. Please wait.');
+
+                    var form = $('#charity-filter-form');
+
+                    // Use ajax call to submit
+                    $.ajax({
+                        method: "GET",
+                        dataType: 'json',
+                        url: '{!! route('settings.charities.export2csv') !!}',
+                        data: form.serialize(), // serializes the form's elements.
+                        success: function(data) {
+                            batch_id = data.batch_id;
+                            console.log('export job submit');
+                            intervalID = setInterval(exportProgress, 2000);
+                        },
+                        error: function(response) {
+                            $('#export-btn').prop('disabled', false);
+                            console.log('Error');
+                        }
+                    });
+                }
+
+            })
+
         })
 
+        function exportProgress() {
 
-        function delay(callback, ms) {
-          var timer = 0;
-          return function() {
-            var context = this, args = arguments;
-            clearTimeout(timer);
-            timer = setTimeout(function () {
-              callback.apply(context, args);
-            }, ms || 0);
-          };
-        }
+            $.ajax({
+                method: "GET",
+                dataType: 'json',
+                url:  '/settings/charities/export-progress/' + batch_id,
+                success: function(data)
+                {
+                    if (data.finished) {
+                        clearInterval(intervalID);
+                        $('#export-btn').prop('disabled', false);
+                    }
+                    $('#export-section-result').html(data.message);
+                },
+                error: function(response) {
+                    if (response.status == 422) {
+                        $('#export-btn').prop('disabled', false);
+                        $('#export-section-result').html('');
 
-        // Grab the datatables filter input box and alter how it is bound to events
-        $("#charity-table_filter input")
-            .unbind() // Unbind previous default bindings
-            .bind("keyup", delay(function(e) { // Bind our desired behavior
-                if ($(this).val().length > 0 ) {
-                    oTable.search(this.value).draw();
-                } else {
-                    oTable.search("").draw();
+                        Swal.fire({
+                            title: 'Export failed!',
+                            text: response.responseJSON.message,
+                            icon: 'error',
+                        })
+                        clearInterval(intervalID);
+                    }
+                    console.log('export job error');
                 }
-                return;
-            },500))
-            .bind("search", delay(function(e) { // Bind our desired behavior
-                    oTable.search(this.value).draw();
-                return;
-            },500));
+                
+            });
+
+        }
+           
             
 
         // Model for creating new charity

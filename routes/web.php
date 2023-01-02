@@ -209,6 +209,8 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // CRA Charity 
     Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
+    Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
+    Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
     // Special Campaign Setup
@@ -277,8 +279,10 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
     // // Eligible Employee Reporting
-    Route::get('/eligible-employee/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employee.export2csv');
-    Route::resource('/eligible-employee', EligibleEmployeeReportController::class)->only(['index']);
+    Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
+    Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
+    Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
+    Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
 
 });
 
