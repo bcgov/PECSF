@@ -122,7 +122,9 @@ class DonationController extends Controller {
                             ->unionAll($event_pledges)
                             ->get();
 
-        $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')->sortByDesc('source')->sortBy('donation_type')->groupBy('yearcd');
+        $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')
+                                    ->sortByDesc('source')->sortBy('donation_type')
+                                    ->groupBy('yearcd')->sortKeysDesc();
 
         $totalPledgedDataTillNow = 0;
         foreach ($all_pledges as $pledge) {
