@@ -14,8 +14,14 @@ class FSPool extends Model
     protected $fillable =[
         'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id', 'created_at'
     ];
-    protected $appends = ['canDelete', 'effectiveType'];
 
+    protected $casts = [
+        'start_date' => 'date:Y-m-d',
+    ];
+
+    protected $appends = [
+        'canEdit', 'canDelete', 'effectiveType', 'hasPledge'];
+        
     // Scope 
     public function scopeCurrent($query)
     {
@@ -23,6 +29,7 @@ class FSPool extends Model
                 return $query->selectRaw('max(start_date)')
                         ->from('f_s_pools as A')
                         ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                        ->whereNull('deleted_at')
                         ->where('A.start_date', '<=', today());
         });
     }
@@ -32,6 +39,7 @@ class FSPool extends Model
             return $query->selectRaw('max(start_date)')
                     ->from('f_s_pools as A')
                     ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                    ->whereNull('deleted_at')
                     ->where('A.start_date', '<=', $specifyDate);
         });
     }
@@ -46,9 +54,28 @@ class FSPool extends Model
         return $this->hasMany(FSPoolCharity::class);
     }
 
+    public function getCanEditAttribute()
+    {
+
+        if ($this->start_date <= today()) {
+            return false;
+        };
+
+        return true;
+    }
+
     public function getCanDeleteAttribute()
     {
-        return ( $this->start_date >= today() );
+
+        if ($this->start_date < today()) {
+            return false;
+        };
+
+        // if ( $this->transactionExists ) {
+        //     return false;
+        // }
+
+        return true;
     }
 
     public function getEffectiveTypeAttribute()
@@ -62,6 +89,32 @@ class FSPool extends Model
         } else {
             return 'F';
         }
+
+    }
+
+    public function getHasPledgeAttribute()
+    {
+        if ( $this->annual_campaign_pledges()->exists() ) {
+            return true;
+        }
+
+        if ( $this->donate_now_pledges()->exists() ) {
+            return true;
+        }
+
+        return false;
+        
+    }
+
+    public function annual_campaign_pledges() {
+
+        return $this->hasMany(Pledge::class, 'region_id', 'region_id')
+                    ->whereRaw("Date(pledges.created_at) >= '" . $this->start_date . "'");
+    }
+
+    public function donate_now_pledges() {
+        return $this->hasMany(DonateNowPledge::class, 'region_id', 'region_id')
+                    ->whereRaw("Date(donate_now_pledges.created_at) >= '" . $this->start_date . "'");
 
     }
 
