@@ -17,6 +17,7 @@ class SpecialCampaign extends Model
 
     protected $appends = [
         'status',  
+        'hasPledge',
     ];
 
     public function getStatusAttribute() {
@@ -37,4 +38,31 @@ class SpecialCampaign extends Model
 
         return $special_campaigns->toArray();
     }
+
+   
+    public static function hasActiveSpecialCampaign() {
+
+        if ( count(self::activeBannerText()) > 0 ) {
+            return true;
+        } 
+
+        return false;
+
+    }
+
+    public function getHasPledgeAttribute()
+    {
+        if ( $this->special_campaign_pledges()->exists() ) {
+            return true;
+        }
+
+        return false;
+        
+    }
+
+    public function special_campaign_pledges() {
+        return $this->hasMany(SpecialCampaignPledge::class, 'special_campaign_id', 'id');
+    }
+
+
 }

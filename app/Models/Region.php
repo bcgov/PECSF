@@ -16,6 +16,10 @@ class Region extends Model
         'code', 'name', 'status', 'effdt', 'notes', 'created_by_id', 'updated_by_id'
     ];
 
+    protected $appends = [
+        'hasFSPool',
+    ];
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
@@ -34,5 +38,17 @@ class Region extends Model
 
     }
 
+    public function getHasFSPoolAttribute()
+    {
+        if ( $this->f_s_pools()->exists() ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function f_s_pools() {
+        return $this->hasMany(FSPool::class, 'region_id', 'id');
+    }
 
 }

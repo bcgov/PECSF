@@ -34,12 +34,22 @@ class BankDepositForm extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'deposit_date' => 'date:Y-m-d',
+    ];
+    
     function attachments(){
         $this->hasMany(BankDepositFormAttachments::class);
     }
 
     function organizations(){
-        $this->hasMany(BankDepositFormOrganizations::class);
+        return $this->hasMany(BankDepositFormOrganizations::class,'bank_deposit_form_id','id');
     }
+
+    public function fund_supported_pool() {
+       
+        return $this->belongsTo(FSPool::class, 'regional_pool_id', 'id')->withDefault();
+        
+    } 
 
 }

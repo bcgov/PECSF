@@ -31,6 +31,7 @@ class ImportPledgeHistory extends Command
     /* Variable for logging */
     protected $message;
     protected $status;
+    protected $reload_start_year;
     
 
     /**
@@ -44,6 +45,7 @@ class ImportPledgeHistory extends Command
         
         $this->message = '';
         $this->status = 'Completed';
+   
     }
 
     /**
@@ -54,12 +56,21 @@ class ImportPledgeHistory extends Command
     public function handle()
     {
 
+        // Determine the start year
+        $last_task = ScheduleJobAudit::where('job_name', $this->signature)
+                            ->where('status', 'Completed')
+                            ->first();
+
+        if ($last_task) {
+            $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
+        }
+
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
             'status' => 'Processing',
         ]);
-        
+
         $this->LogMessage( now() );
         $this->LogMessage("Step - 1 : Update/Create - Region District");
         $this->UpdateRegionalDistrict();
@@ -70,8 +81,9 @@ class ImportPledgeHistory extends Command
 
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 3 : Create - Pledge History");
-        $this->UpdatePledgeHistory();
-
+        for ($yr = $start_year; $yr <= now()->year; $yr++) {
+            $this->UpdatePledgeHistory($yr);
+        }
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 4 : Create - Pledge History Summary");
         $this->UpdatePledgeHistorySummary();
@@ -219,15 +231,18 @@ class ImportPledgeHistory extends Command
     }
 
 
-    protected function UpdatePledgeHistory() 
+    protected function UpdatePledgeHistory($in_year) 
     {
-        // Truncate Pledge History table
-        PledgeHistory::truncate();
-        
+        // Clear Up Pledge History table
+        PledgeHistory::where('yearcd', $in_year)->delete();
+
+        $this->LogMessage( 'Loading pledge history data for '. $in_year);
+        $filter = '(yearcd eq '. $in_year .')';
+
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1');
+                ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
 
             $row_count = json_decode($response->body())->{'@odata.count'};
             
@@ -239,9 +254,9 @@ class ImportPledgeHistory extends Command
                 // Loading pledge history data
                 $response = Http::withHeaders(['Content-Type' => 'application/json'])
                     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                    ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip) ;
+                    ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.'&$filter='.$filter) ;
 
-                $this->LogMessage( 'Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip '. $skip);
+                $this->LogMessage( '  Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip ='. $skip .' $filter ='. $filter);
                 // Loading pledge history data
                 // $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
@@ -347,7 +362,8 @@ class ImportPledgeHistory extends Command
         PledgeHistorySummary::truncate();
 
         DB::statement( $this->getInsertAnnualSummarySQL() );
-        DB::statement( $this->getInsertNonAnnualSummarySQL() );
+        DB::statement( $this->getInsertEventSummarySQL() );
+        DB::statement( $this->getInsertDonateNowSummarySQL() );
 
     }
 
@@ -355,39 +371,58 @@ class ImportPledgeHistory extends Command
     {
         return <<<SQL
             insert into pledge_history_summaries
-                (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
-                select min(pledge_histories.id), GUID, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,  
+                (pledge_history_id,emplid,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
+                select min(pledge_histories.id), emplid, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,  
                     campaign_type, frequency, 
                     case when frequency = 'Bi-Weekly' then max(pledge / 26) else 0 end per_pay_amt, max(pledge) as pledge, 
                     case when max(source) = 'Pool' then (select regions.name from regions where max(pledge_histories.tgb_reg_district)  = regions.code) else '' end,
 
-                    case when campaign_type = 'Event' then max(event_type) else null end as event_type,
-                    case when campaign_type = 'Event' then max(event_sub_type) else null end as event_sub_type,
-                    case when campaign_type = 'Event' then max(event_deposit_date) else null end as event_deposit_date
+                    null as event_type,
+                    null as event_sub_type,
+                    null as event_deposit_date
 
                 from pledge_histories  
-                where campaign_type in ('Annual', 'Event') 
-                  and GUID <> ''
-                group by GUID, yearcd, campaign_type, frequency;
+                where campaign_type in ('Annual') 
+                group by emplid, yearcd, campaign_type, frequency;
         SQL;
 
     }
 
-    private function getInsertNonAnnualSummarySQL(): string
+    private function getInsertEventSummarySQL(): string
+    {
+        // Donate Now always Non-Pool and single charity
+        return <<<SQL
+
+            insert into pledge_history_summaries               
+                (pledge_history_id,emplid,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
+                select min(pledge_histories.id), emplid, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,
+                        campaign_type, frequency, max(per_pay_amt), max(pledge),    
+                        case when max(source) = 'Pool' then (select regions.name from regions where max(pledge_histories.tgb_reg_district)  = regions.code) else '' end,
+                        max(event_type) as event_type,
+                        max(event_sub_type) as event_sub_type,
+                        max(event_deposit_date) as event_deposit_date
+                    from pledge_histories 
+                where campaign_type in ('Event')
+                group by emplid, yearcd, campaign_type, frequency;
+
+        SQL;
+
+    }
+
+    private function getInsertDonateNowSummarySQL(): string
     {
         // Donate Now always Non-Pool and single charity
         return <<<SQL
             insert into pledge_history_summaries               
-                (pledge_history_id,GUID,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
-                select pledge_histories.id, GUID, yearcd, case when source = 'Pool' then 'P' else 'C' end,
+                (pledge_history_id,emplid,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
+                select pledge_histories.id, emplid, yearcd, case when source = 'Pool' then 'P' else 'C' end,
                         campaign_type, frequency, per_pay_amt, pledge,    
                         case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end,
                         null as event_type,
                         null as event_sub_type,
                         null as event_deposit_date
                     from pledge_histories 
-                where campaign_type in ('Donate Today') 
-                    and GUID <> '';
+                where campaign_type in ('Donate Today');
         SQL;
 
     }

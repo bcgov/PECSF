@@ -39,13 +39,13 @@ class OutputFSPools2Json extends Command
     public function handle()
     {
         // Fund Support Pools 
-        $pools = FSPool::with('region', 'charities')
+        $pools = FSPool::with('region', 'charities', 'charities.charity')
                 ->orderBy('start_date')
                 ->get()->sortBy(function($pool) { 
                     return $pool->region->name;
                });
 
-        $path = database_path('seeds/f_s_pools.json');
+        $path = storage_path('app/uploads/f_s_pools.json');
         $sql = file_put_contents($path, json_encode($pools, JSON_PRETTY_PRINT) );
 
         return 0;

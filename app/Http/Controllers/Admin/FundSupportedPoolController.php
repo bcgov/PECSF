@@ -42,22 +42,34 @@ class FundSupportedPoolController extends Controller
     {
         if($request->ajax()) {
             $pools = FSPool::with('region', 'charities', 'charities.charity')
+                    ->when( $request->region_id, function ($query)  use($request) {
+                        $query->where('f_s_pools.region_id',$request->region_id);
+                    })
+                    ->when( $request->start_date, function ($query)  use($request) {
+                        $query->where('f_s_pools.start_date', '>=', $request->start_date);
+                    })
+                    ->when( $request->status, function ($query)  use($request) {
+                        $query->where('f_s_pools.status', $request->status);
+                    })
                     ->when( $request->effectiveTypeFilter == 'F', function ($q)  {
-                        return $q->where('start_date', '>', today() );
+                        return $q->where('f_s_pools.start_date', '>', today() )
+                                 ->whereNull('deleted_at');
                     })
                     ->when( $request->effectiveTypeFilter == 'H', function ($q)  {
-                        return $q->where('start_date', '<', function ($query) {
+                        return $q->where('f_s_pools.start_date', '<', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                                            ->whereNull('deleted_at')
                                             ->where('A.start_date', '<=', today());
                                     });
                     })
                     ->when( $request->effectiveTypeFilter == 'C', function ($q)  {
-                        return $q->where('start_date', '=', function ($query) {
+                        return $q->where('f_s_pools.start_date', '=', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                                            ->whereNull('deleted_at')
                                             ->where('A.start_date', '<=', today());
                                     });
                     })
@@ -67,38 +79,21 @@ class FundSupportedPoolController extends Controller
 
             return Datatables::of($pools)
                 ->addColumn('action', function ($pool) {
-                    // $html = '<a href="'. route('settings.fund-supported-pools.show', $pool->id) .
-                    //         '"class="btn btn-info btn-sm  show-pool" data-id="'. $pool->id .'" >Show</a>' ;
-                    // if ($pool->canDelete) {
-                    //     $html .= '<a href="'. route('settings.fund-supported-pools.edit', $pool->id) .
-                    //         '"class="btn btn-primary btn-sm ml-2 edit-pool" data-id="'. $pool->id .'" >Edit</a>';
-                    //     // $html .= '<button type="button" class="btn btn-danger btn-sm ml-2 delete-pool" data-toggle="modal" ' .
-                    //     //     ' "data-target="#pool-delete-modal" data-id="'. $pool->id .
-                    //     //     ' "data-region="' . $pool->region->name . '">Delete</button>';
-                    // }
-                    // if ($pool->EffectiveType == 'C') {
-                    //     $html .= '<a class="btn btn-success btn-sm ml-2 duplicate-pool" data-id="'. $pool->id .
-                    //         '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Duplicate</a>';
-                    // }
-                    // if ($pool->canDelete) {
-                    //     $html .= '<a class="btn btn-danger btn-sm ml-2 delete-pool" data-id="'. $pool->id .
-                    //         '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Delete</a>';
-                    // }
                     $html = '<form action="'. route('settings.fund-supported-pools.show', $pool->id) . '" style="display:inline">' .
                                 '<input class="btn btn-info btn-sm show-pool" type="submit" value="Show">' .               
                             '</form>';
-                    if ($pool->canDelete) {
+                    if ($pool->canEdit) {
                         $html .= '<form action="'. route('settings.fund-supported-pools.edit', $pool->id) . '" style="display:inline">' .
                                     '<input class="btn  btn-primary btn-sm ml-2 edit-pool" type="submit" value="Edit">' .               
                                   '</form>';
                     }
                     if ($pool->EffectiveType == 'C') {
                         $html .= '<button class="btn btn-success btn-sm ml-2 duplicate-pool" data-id="'. $pool->id .
-                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Duplicate</button>';
+                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date->format('Y-m-d') . '">Duplicate</button>';
                     }
                     if ($pool->canDelete) {
                         $html .= '<button class="btn btn-danger btn-sm ml-2 delete-pool" data-id="'. $pool->id .
-                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date . '">Delete</button>';
+                            '" data-region="'. $pool->region->name . '" data-start-date="' . $pool->start_date->format('Y-m-d') . '">Delete</button>';
                     }
                     return $html;
             })
@@ -106,7 +101,9 @@ class FundSupportedPoolController extends Controller
             ->make(true);
         }
 
-        return view('admin-campaign.fund-supported-pools.index');
+        $regions = Region::orderBy('name')->get();
+
+        return view('admin-campaign.fund-supported-pools.index', compact('regions'));
     }
 
     /**
@@ -285,7 +282,7 @@ class FundSupportedPoolController extends Controller
                     if (array_key_exists($i, $upload_images)) {
                         // dd ( $request->file('images') );
                         $file= $upload_images[$i];
-                        $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+                        $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
 
                         $file->move(public_path( $this->image_folder ), $filename);
                     }
@@ -519,7 +516,7 @@ class FundSupportedPoolController extends Controller
                     if (array_key_exists($i, $upload_images)) {
                         // dd ( $request->file('images') );
                         $file= $upload_images[$i];
-                        $new_filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+                        $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                         $file->move(public_path( $this->image_folder ), $new_filename);
 
                         // Clean up old file
@@ -579,40 +576,52 @@ class FundSupportedPoolController extends Controller
     {
         // TODO: check any transactions created for this pool yet based on the start_date
 
-        $pool = FSPool::where('id', $id)->first();
+        if($request->ajax()) {
+            
+            $pool = FSPool::where('id', $id)->first();
 
-        $validator = Validator::make(request()->all(), [
-        ]);
-
-        $validator->after(function ($validator) use($pool) {
-
-            if (!($pool->canDelete)) {
-                $validator->errors()->add('region', 'This is not allowed to delete this Fund Supported Pool since the transcations already exists!');
+            if ($pool->hasPledge) {
+                return response()->json([
+                    'title'  => "Invalid delete!",
+                    'message' => 'The Fund Support Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);
             }
-        });
 
-        //run validation which will redirect on failure
-        $validator->validate();
+            // $validator = Validator::make(request()->all(), [
+            // ]);
 
-        // Delete Process
-        foreach ($pool->charities as $pool_charity) {
-            // Clean up old file
-            if ($pool_charity->image) {
-                $old_filename = public_path( $this->image_folder ).$pool_charity->image;
-                if (File::exists( $old_filename )) {
-                    File::delete( $old_filename );
+            // $validator->after(function ($validator) use($pool) {
+
+            //     if (!($pool->canDelete)) {
+            //         $validator->errors()->add('region', 'This is not allowed to delete this Fund Supported Pool since the transcations already exists!');
+            //     }
+            // });
+
+            //run validation which will redirect on failure
+            // $validator->validate();
+
+            // Delete Process -- Clean up old file
+            foreach ($pool->charities as $pool_charity) {
+                // Clean up old file
+                if ($pool_charity->image) {
+                    $old_filename = public_path( $this->image_folder ).$pool_charity->image;
+                    if (File::exists( $old_filename )) {
+                        File::delete( $old_filename );
+                    }
                 }
             }
+
+            // TODO: delete file and subrecord
+            $pool->charities()->delete();
+
+            $pool->updated_by_id = Auth::Id();
+            $pool->save();
+            $pool->delete();
+
+            return response()->noContent();
+
+        } else {
+            abort(404);
         }
-
-        // TODO: delete file and subrecord
-        $pool->charities()->delete();
-
-        $pool->updated_by_id = Auth::Id();
-        $pool->save();
-        $pool->delete();
-
-        return response()->noContent();
 
     }
 
@@ -667,7 +676,7 @@ class FundSupportedPoolController extends Controller
         foreach($pool->charities as $charity)
         {
            $old_image = $charity->image;
-           $new_image = date('YmdHis'). substr($charity->image, 12);
+           $new_image = now()->format('YmdHisu'). substr($charity->image, 12);
 
            $old_filename = public_path( $this->image_folder ).$old_image;
            $new_filename = public_path( $this->image_folder ).$new_image;

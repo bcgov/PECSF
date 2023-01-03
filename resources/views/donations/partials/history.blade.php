@@ -23,29 +23,62 @@
                         <th>Donation Type</th>
                         <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th>Amount</th>
+                        <th class="text-right">Amount</th>
                         <th></th>
                     </tr>
                     @php $total = 0; $ignore = true; @endphp
                     @foreach($pledges as $pledge)
                         <tr class="">
-                            <td>{{ $pledge->donation_type }}</td>
+                            <td style="width: 15%">{{ $pledge->donation_type }}</td>
                             @if ($pledge->type == 'P')
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
-                                @if ($pledge->donation_type == 'Special Campaign')
+                                <td>
+                                @if ($pledge->source == 'GF')
+                                    @switch($pledge->donation_type)
+                                        @case('Special Campaign')
+                                            {{ $pledge->region }} 
+                                            @break
+                                        @case('Donate Now')
+                                            {{ $pledge->region }} 
+                                            @break
+                                        @default
+                                        <a type="button" class="more-info"
+                                            data-source="{{ $pledge->source }}"
+                                            data-type="{{ $pledge->donation_type }}"
+                                            data-id="{{ $pledge->id }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->yearcd }}">
+                                            {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                        </a>
+                                   
+                                    @endswitch
+                                @else
+                                    <a type="button" class="more-info "
+                                        data-source="{{ $pledge->source  }}"
+                                        data-type="{{ $pledge->donation_type }}"
+                                        data-id="{{ $pledge->id }}"
+                                        data-frequency="{{ $pledge->frequency }}"
+                                        data-yearcd="{{ $pledge->yearcd }}">
+                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                    </a>
+                                @endif
+                                </td>
+
+                                {{-- @if ($pledge->donation_type == 'Special Campaign')
                                     <td>{{ $pledge->region }} </td>
                                 @else 
-                                    <td>{{ '' }} </td>
-                                @endif
+                                    <td></td>
+                                @endif --}}
+
                             @endif
-                            <td>{{ $pledge->frequency }} </td>
+                            <td style="width: 10%">{{ $pledge->frequency }} </td>
                             @php
 
                             @endphp
-                            <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
-                            <td class="text-right">
+                            <td class="text-right" style="width: 15%">$ {{ number_format($pledge->pledge,2) }} </td>
+                            <td class="text-right" style="width: 10%">
                                 {{-- @if ($pledge->campaign_type == 'Annual')  --}}
                                 <button type="button" class="more-info btn btn-sm btn-outline-primary"
                                             data-source="{{ $pledge->source  }}"
@@ -78,10 +111,15 @@
                     @endphp
                 @else
 
-                <a style="margin-left: auto;
+                    <a class="btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;" 
+                                href="#" onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();">
+                                {{$ignore}}Duplicate this pledge
+                    </a>
+
+                {{-- <a style="margin-left: auto;
     margin-right: auto;
     width: fit-content;
-    display: block;" href="/donate/duplicate/{{$pledge->id}}">
+    display: block;" href="{{ route('annual-campaign.duplicate', $pledge->id) }}"> 
                 <button type="button" class="pl-5 pr-5 duplicate align-content-center btn-lg btn-primary"
                         data-source="{{ $pledge->source  }}"
                         data-type="{{ $pledge->donation_type }}"
@@ -89,7 +127,15 @@
                         data-frequency="{{ $pledge->frequency }}"
                         data-yearcd="{{ $pledge->yearcd }}">{{$ignore}}Duplicate this pledge
                 </button>
-                </a>
+                </a> --}}
+                    <form id="duplicate-form-{{ $pledge->id }}" action="{{ route('annual-campaign.duplicate', $pledge->id) }}" method="POST" style="display: none;">
+                        @csrf
+                        <input type="hidden" name="source" value="{{ $pledge->source }}">
+                        <input type="hidden" name="type" value="{{ $pledge->donation_type }}">
+                        <input type="hidden" name="id" value="{{ $pledge->id }}">
+                        <input type="hidden" name="frequency" value="{{ $pledge->frequency }}">
+                        <input type="hidden" name="yearcd" value="{{ $pledge->yearcd }}">
+                    </form>
                 @endif
 
             </div>

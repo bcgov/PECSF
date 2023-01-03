@@ -321,8 +321,14 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Organization code ' + code +  ' was successfully deleted.', 'bg-success' );
                         },
-                        error: function(response) {
-                            console.log('Error');
+                        error: function (data) {
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: data.responseJSON.title, // data.responseJSON.title,
+                                        text: data.responseJSON.message,
+                                });
+
+                                console.log(data.responseJSON.message);
                         }
                     });
                 } else if (result.isCancelledDenied) {

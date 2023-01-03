@@ -12,9 +12,9 @@ use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
 use App\Models\PledgeHistory;
-use App\Models\ViewPledgeHistory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\PledgeHistorySummary;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\AnnualCampaignRequest;
@@ -107,7 +107,8 @@ class AnnualCampaignController extends Controller
         $user = User::where('id', Auth::id())->first(); 
 
         $pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id )
-                            ->where('user_id', Auth::id())
+                            // ->where('user_id', Auth::id())
+                            ->where('emplid', $user->emplid)
                             ->where('campaign_year_id', $campaign_year->id)
                             ->first();
 
@@ -339,9 +340,11 @@ class AnnualCampaignController extends Controller
 
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
-            'user_id' => Auth::id(),
+            // 'user_id' => Auth::id(),
+            'emplid' => $user->emplid,
             'campaign_year_id' => $request->campaign_year_id,
         ],[
+            'user_id' => Auth::id(),
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
@@ -858,29 +861,39 @@ class AnnualCampaignController extends Controller
 
     public function duplicate(Request $request)
     {
+
+        $user = User::where('id', Auth::id() )->first();        
      
         // check whether the current annual campaign pledge exists or not  
         $current_pledge = Pledge::join('campaign_years', 'campaign_years.id', 'campaign_year_id')
                                     ->where('campaign_years.calendar_year',  today()->year + 1 ) 
-                                    ->where('user_id', Auth::id() )
+                                    // ->where('user_id', Auth::id() )
+                                    ->where('emplid', $user->emplid )
                                     ->first();
         if ($current_pledge) {
             return redirect()->route('donations.list')->with('error','The Annual Campaign pledge have already created, no duplication allowed!');
             // return abort(409);       // Conflict (pledge already exists)
         } 
-      
-    
-        // $history = pledge_history_view where id = 241832 ;
-        $hist_pledge = ViewPledgeHistory::where('id', $request->pledge_id)->first();
+
+        // Find the pledge 
+        $hist_pledge = null;
+        if ($request->source == 'GF') {
+            $hist_pledge = Pledge::where('id', $request->id)->first();
+        } else {
+            $hist_pledge = PledgeHistorySummary::where('pledge_history_id', $request->id)
+                        ->first();
+        }
+
+// dd([$hist_pledge, $request]);        
         if (!$hist_pledge) {
             return redirect()->route('donations.list')->with('error','The history record not found!');
         }    
-        if (!($hist_pledge->user->id == Auth::id())) {
+        if (!($hist_pledge->emplid == $user->emplid)) {
             return redirect()->route('donations.list')->with('error','This is not your history record!');
             // return abort(403);      // 403 Forbidden
         }
-        if (!($hist_pledge->is_annual_campaign)) {
-            return redirect()->route('donations.list')->with('error','The Annual Campaign period is not open yet');
+        if (!($hist_pledge->is_annual_campaign) && ($request->source == 'BI')) {
+            return redirect()->route('donations.list')->with('error','The is not an Annual Campaign pledge!');
             // return abort(404);      // 404 Not Found
         }
 
@@ -891,12 +904,29 @@ class AnnualCampaignController extends Controller
             $new_pledge = new Pledge();
 
             // Clone the new pledge from the specify pledge history
-            if ($hist_pledge->source == 'GF') {
-                $pledge = Pledge::where('id', $request->pledge_id)->first();
-                
+            if ($request->source == 'GF') {
+                $pledge = Pledge::where('id', $request->id)->first();
+               
                 $new_pledge = $pledge->replicate()->fill([
                     'campaign_year_id' => $campaignYear->id,
                 ]);
+
+                // replicate the relationship 
+                $row = 0;
+                foreach($pledge->charities as $index => $old_charity)
+                {
+                    $new_pledge_charity = new PledgeCharity();
+
+                    $new_pledge_charity->charity_id =  $old_charity->charity_id;
+                    $new_pledge_charity->additional =  $old_charity->additional;
+                    $new_pledge_charity->percentage =  $old_charity->percentage;
+                    $new_pledge_charity->amount =      $old_charity->amount;
+                    $new_pledge_charity->frequency =   $old_charity->frequency;
+                    $new_pledge_charity->goal_amount = $old_charity->goal_amount;
+                                                        
+                    $new_pledge->charities[$row] = $new_pledge_charity;
+                    $row += 1;
+                }
 
             } else {
 
@@ -905,23 +935,23 @@ class AnnualCampaignController extends Controller
                 $new_pledge->user_id = $user->id;
                 $new_pledge->organization_id = $user->organization_id;
                 $new_pledge->campaign_year_id = $campaignYear->id;
-                $new_pledge->type  = $hist_pledge->type;
-                $new_pledge->f_s_pool_id = $hist_pledge->type == 'P' ? $hist_pledge->fund_supported_pool()->id : 0;
+                $new_pledge->type  = $hist_pledge->source;
+                $new_pledge->f_s_pool_id = $hist_pledge->source == 'P' ? $hist_pledge->fund_supported_pool()->id : 0;
                 $new_pledge->pay_period_amount = 0;
                 $new_pledge->one_time_amount = 0;
                 
                 // 'Bi-Weekly'
-                $bi_weekly_pledges = PledgeHistory::where('GUID', $hist_pledge->GUID)
+                $bi_weekly_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
                                 ->where('yearcd', $hist_pledge->yearcd)
-                                ->where('campaign_type', $hist_pledge->donation_type)
+                                ->where('campaign_type', $hist_pledge->campaign_type)
                                 ->where('frequency', 'Bi-Weekly')
                                 ->orderBy('source')
                                 ->get();
                                        
                 // One-Time
-                $one_time_pledges = PledgeHistory::where('GUID', $hist_pledge->GUID)
+                $one_time_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
                                 ->where('yearcd', $hist_pledge->yearcd)
-                                ->where('campaign_type', $hist_pledge->donation_type)
+                                ->where('campaign_type', $hist_pledge->campaign_type)
                                 ->where('frequency', 'One-Time')
                                 ->orderBy('source')
                                 ->get();

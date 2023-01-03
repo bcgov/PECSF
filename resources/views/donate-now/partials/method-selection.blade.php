@@ -2,8 +2,8 @@
     <div class="card m-0">
         <div class="card-header bg-light">
             <div class="custom-control custom-radio">
-                <input data-toggle="collapse" data-target="#method-selection-1" type="radio" 
-                  name="pool_option" id="pool-option-1" value="P" class="custom-control-input" 
+                <input data-toggle="collapse" data-target="#method-selection-1" type="radio"
+                  name="pool_option" id="pool-option-1" value="P" class="custom-control-input"
                       {{ $pool_option == "P" ? 'checked' : '' }}/>
                 <label class="custom-control-label" for="pool-option-1">Select a regional Fund Supported Pool</label>
             </div>
@@ -17,7 +17,7 @@
                         <label for="pool_id">Fund Supported Pool</label>
                         <select class="form-control" name="pool_id" id="pool_id">
                             <option value="" selected>Choose a pool</option>
-                            @foreach ($fspools as $fspool) 
+                            @foreach ($fspools as $fspool)
                                 <option value="{{ $fspool->id }}"
                                     @if (isset($pledge) && $pool_option == "P")
                                         {{  $pledge->fund_supported_pool->id == $fspool->id ? 'selected' : ''  }}
@@ -123,7 +123,7 @@
                 <input class="form-check-input" type="radio" name="pool_option" id="pool2" value="P"
                     {{ $pool_option == "P" ? 'checked' : '' }}>
                 <label class="form-check-label h5" for="pool2">
-                    Select a Regional Fund Supported Pool
+                    Select a regional Fund Supported Pool
                 </label>
             </div>
         </div>

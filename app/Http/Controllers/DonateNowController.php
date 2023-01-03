@@ -138,8 +138,11 @@ class DonateNowController extends Controller
         $message_text = '';
 
         // Create a new Pledge
+        $pool = FSPool::where('id', $request->pool_id)->first();
+
         $last_seqno = DonateNowPledge::where('organization_id', $organization_id)
-                        ->where('user_id', $user->id)
+                        // ->where('user_id', $user->id)
+                        ->where('emplid', $user->emplid)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
 
@@ -148,17 +151,19 @@ class DonateNowController extends Controller
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $organization_id,
+            'emplid'  => $user->emplid,
             'user_id' => $user->id,
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $pool_option,
+            'region_id' => ($pool_option == 'P' ? $pool->region_id : null),
             'f_s_pool_id' => ($pool_option == 'P' ? $request->pool_id : null),
             // 'charity_id' =>  ($pool_option == 'C' ? $request->charity_id : null),
             'charity_id' =>  ($pool_option == 'C' ? $request->charities[0] : null),
             'one_time_amount' => $one_time_amount ?? 0,
             'deduct_pay_from' => $check_dt,
             // 'special_program' => $request->special_program,
-            'special_program' => $request->additional[0],
+            'special_program' => ($pool_option == 'C' ? $request->additional[0] : null),
 
             'created_by_id' => $user->id,
             'updated_by_id' => $user->id,
