@@ -16,6 +16,10 @@ class BusinessUnit extends Model
         'code', 'name', 'status', 'effdt', 'notes', 'created_by_id', 'updated_by_id'
     ];
 
+    protected $appends = [
+        'hasPledge',
+    ];
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
@@ -35,6 +39,27 @@ class BusinessUnit extends Model
                     ->join("donor_by_business_units", "donor_by_business_units.business_unit_id", "=", "business_units.id")
                     ->orderBy("donor_by_business_units.dollars","desc")
                     ->where('donor_by_business_units.yearcd', "=", $request->start_date);
+    }
+
+    public function getHasPledgeAttribute()
+    {
+        if ( $this->pledge_histories()->exists() ) {
+            return true;
+        }
+
+        if ( $this->non_gov_pledge_histories()->exists() ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function pledge_histories() {
+        return $this->hasMany(PledgeHistory::class, 'business_unit', 'code');
+    }
+
+    public function non_gov_pledge_histories() {
+        return $this->hasMany(NonGovPledgeHistory::class, 'business_unit', 'code');
     }
 
 }

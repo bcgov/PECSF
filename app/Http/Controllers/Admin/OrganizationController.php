@@ -131,15 +131,28 @@ class OrganizationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $org = Organization::where('id', $id)->first();
-        $org->updated_by_id = Auth::Id();
-        $org->save();
-        
-        $org->delete();
+        if($request->ajax()) {
+            $org = Organization::where('id', $id)->first();
 
-        return response()->noContent();
+            if ($org->hasPledge) {
+                return response()->json([
+                    'title'  => "Invalid delete!",
+                    'message' => 'The Business unit "' .$org->code . ' - '. $org->name . '" cannot be deleted, it is being referenced on the pledge(s).'], 403);
+            }
+
+            // Delete the specified organization
+            $org->updated_by_id = Auth::Id();
+            $org->save();
+            
+            $org->delete();
+
+            return response()->noContent();
+        
+        } else {
+            abort(404);
+        }
     }
 
 }
