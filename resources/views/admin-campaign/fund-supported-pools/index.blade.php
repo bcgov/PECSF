@@ -20,6 +20,79 @@
 @endsection
 @section('content')
 
+<p><a href="/administrators/dashboard">Back</a></p>
+
+<form id="fspool-filter-form" method="post">
+    <div class="card search-filter">
+    
+        <div class="card-body pb-0 ">
+            <h2 class="text-primary">Search Criteria</h2>
+            <p>Enter any informartion you have and click Search. Leave fields blank for a list of all values.</p>
+
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="region_id">
+                        Region
+                    </label> 
+                    <select name="region_id" value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach ($regions as $region)
+                            <option value="{{ $region->id }}">{{ $region->code }} - {{ $region->name }} </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="start">
+                        Start Date (>=)
+                    </label>
+                    <input type="date" name="start_date"  class="form-control" />
+                </div>
+    
+                <div class="form-group col-md-2">
+                    <label for="status">
+                        Status
+                    </label>
+                    <select name="status" value="" class="form-control">
+                        <option value="">All</option>
+                        <option value="A">Active</option>
+                        <option value="I">Inactive</option>
+                    </select>
+                </div>
+    
+                <div class="form-group col-md-2">
+                    <label for="effective_type">
+                        Effective Type
+                    </label>
+                    <select name="effective_type" class="form-control ">
+                        <option value="" selected>Show All</option>
+                        <option value="C">Current</option>
+                        <option value="F">Future</option>
+                        <option value="H">History</option>
+                    </select>
+                </div>
+                
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />Search</button>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary">Reset</button>
+                </div>
+                
+            </div>    
+    
+        </div>    
+    </div>
+</form>
+
+
+
 <div class="card">
 	<div class="card-body">
 
@@ -32,30 +105,28 @@
             </div>
         @endif
     
-    
+        {{-- <div class="category-filter">
+            <select id="effectiveTypeFilter" class="form-control form-control-sm ml-1">
+                <option value="" selected>Show All</option>
+                <option value="C">Current</option>
+                <option value="F">Future</option>
+                <option value="H">History</option>
+            </select>
+        </div> --}}
 
-            <div class="category-filter">
-                <select id="effectiveTypeFilter" class="form-control form-control-sm ml-1">
-                    <option value="" selected>Show All</option>
-                    <option value="C">Current</option>
-                    <option value="F">Future</option>
-                    <option value="H">History</option>
-                </select>
-            </div>
-
-            <table class="table table-bordered" id="region-table" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Start Date</th>
-                        <th>Status</th>
-                        <th>Effective Type</th>
-                        <th>Number of Charity</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-            </table>
+        <table class="table table-bordered" id="fspool-table" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Region Code</th>
+                    <th>Region Name</th>
+                    <th>Start Date</th>
+                    <th>Status</th>
+                    <th>Effective Type</th>
+                    <th>Number of Charity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
 
         
 
@@ -74,7 +145,11 @@
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 	<style>
-	#region-table_filter label {
+
+    #fspool-table_filter {
+        display: none;
+    }
+	#fspool-table_filter label {
 		text-align: right !important;
         padding-right: 10px;
 	} 
@@ -82,11 +157,11 @@
         margin-bottom: 10px;
     }
 
-    select.form-control{
+    /* select.form-control{
      display: inline;
         width: 200px;
         margin-left: 25px;
-    }
+    } */
 
 </style>
 @endpush
@@ -115,26 +190,29 @@
         }); 
 
         // Datatables
-        var oTable = $('#region-table').DataTable({
+        var oTable = $('#fspool-table').DataTable({
             "scrollX": true,
             retrieve: true,
             "searching": true,
             processing: true,
             serverSide: true,
             select: true,
-            'order': [[0, 'asc'], [2, 'desc']],
+            'order': [[0, 'asc'], [2, 'asc']],
             ajax: {
                 url: '{!! route('settings.fund-supported-pools.index') !!}',
                 data: function (d) {
-                    d.effectiveTypeFilter = $('#effectiveTypeFilter').val();                }
+                    d.region_id = $("select[name='region_id']").val();
+                    d.start_date = $("input[name='start_date']").val();
+                    d.status = $("select[name='status']").val();
+                    d.effectiveTypeFilter = $("select[name='effective_type']").val();                }
             },
             columns: [
-                {data: 'region.code', name: 'region.code', className: "dt-nowrap" },
-                {data: 'region.name', name: 'region.name', className: "dt-nowrap" },
-                {data: 'start_date', name: 'start_date', className: "dt-nowrap",    orderData: [0, 2], },
-                {data: 'status', name: 'status', className: "dt-nowrap" },
+                {data: 'region.code', name: 'region.code', className: "dt-nowrap", orderData: [0, 2], },
+                {data: 'region.name', name: 'region.name', className: "dt-nowrap", orderData: [1, 2], },
+                {data: 'start_date', name: 'start_date', className: "dt-nowrap",  orderData: [0, 2], },
+                {data: 'status', name: 'status', className: "dt-nowrap", orderData: [3, 2], },
                 {data: 'effectiveType', name: 'effectiveType', className: "dt-nowrap", orderable: false, searchable: false, "visible": true },
-                {data: 'charities', orderable: false, searchable: false },
+                {data: 'charities', orderable: false, searchable: false, },
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
             columnDefs: [
@@ -173,12 +251,34 @@
             ]
         });
 
+        // 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                oTable.ajax.reload();
+                return false;
+            }
+        });
 
-        $('#region-table_filter.dataTables_filter').append($("#effectiveTypeFilter"));
+        $('#refresh-btn').on('click', function() {
+            oTable.draw();
+        });
 
-        $('#effectiveTypeFilter').on('change', function () {
-            oTable.order( [[0, 'asc'], [1, 'desc']] ).draw();
-        } );
+        $('#reset-btn').on('click', function() {
+
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
+
+            oTable.search( '' ).columns().search( '' ).draw();
+        });
+
+
+
+        // $('#fspool-table_filter.dataTables_filter').append($("#effectiveTypeFilter"));
+
+        // $('#effectiveTypeFilter').on('change', function () {
+        //     oTable.order( [[0, 'asc'], [1, 'desc']] ).draw();
+        // } );
 
         // Model -- Delete
         var delete_id = '';

@@ -26,7 +26,8 @@
     <div class="card search-filter">
     
         <div class="card-body pb-0 ">
-            <h2>Search Criteria</h2>
+            <h2 class="text-primary">Search Criteria</h2>
+            <p>Enter any informartion you have and click Search. Leave fields blank for a list of all values.</p>
 
             <div class="form-row">
                 <div class="form-group col-md-2">

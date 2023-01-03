@@ -42,12 +42,21 @@ class FundSupportedPoolController extends Controller
     {
         if($request->ajax()) {
             $pools = FSPool::with('region', 'charities', 'charities.charity')
+                    ->when( $request->region_id, function ($query)  use($request) {
+                        $query->where('f_s_pools.region_id',$request->region_id);
+                    })
+                    ->when( $request->start_date, function ($query)  use($request) {
+                        $query->where('f_s_pools.start_date', '>=', $request->start_date);
+                    })
+                    ->when( $request->status, function ($query)  use($request) {
+                        $query->where('f_s_pools.status', $request->status);
+                    })
                     ->when( $request->effectiveTypeFilter == 'F', function ($q)  {
-                        return $q->where('start_date', '>', today() )
+                        return $q->where('f_s_pools.start_date', '>', today() )
                                  ->whereNull('deleted_at');
                     })
                     ->when( $request->effectiveTypeFilter == 'H', function ($q)  {
-                        return $q->where('start_date', '<', function ($query) {
+                        return $q->where('f_s_pools.start_date', '<', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
@@ -56,7 +65,7 @@ class FundSupportedPoolController extends Controller
                                     });
                     })
                     ->when( $request->effectiveTypeFilter == 'C', function ($q)  {
-                        return $q->where('start_date', '=', function ($query) {
+                        return $q->where('f_s_pools.start_date', '=', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
@@ -92,7 +101,9 @@ class FundSupportedPoolController extends Controller
             ->make(true);
         }
 
-        return view('admin-campaign.fund-supported-pools.index');
+        $regions = Region::orderBy('name')->get();
+
+        return view('admin-campaign.fund-supported-pools.index', compact('regions'));
     }
 
     /**
