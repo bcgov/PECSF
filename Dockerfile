@@ -72,7 +72,7 @@ RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 
 RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
-RUN docker-php-ext-install pdo pdo_mysql opcache
+RUN docker-php-ext-install pdo pdo_mysql opcache gd
 
 RUN apt-get install -y \
         libzip-dev \
