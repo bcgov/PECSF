@@ -47,9 +47,10 @@ class KeycloakLoginController extends Controller
                 ]);
 
                 // Set Special Campaign Banner when activated special campaign
-                $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
-                if (count($banner_texts) > 0 ) {
-                    session()->put('special-campaign-banner-text', $banner_texts );
+                // $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
+                // if (count($banner_texts) > 0 ) {
+                if ( \App\Models\SpecialCampaign::hasActiveSpecialCampaign() ) {
+                    session()->put('has-active-special-campaign', 'YES' );
                 }
 
                 Auth::loginUsingId($isUser->id);

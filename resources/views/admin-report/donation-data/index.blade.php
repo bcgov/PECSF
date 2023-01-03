@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h2>Reporting</h2>
+    {{-- <h2>Reporting</h2> --}}
     @include('admin-report.partials.tabs')
     <div class="d-flex mt-3">
         <h4>PECSF - Donation Data</h4>

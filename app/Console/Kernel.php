@@ -45,13 +45,19 @@ class Kernel extends ConsoleKernel
                     ->weekdays()
                     ->at('0:30');
 
-
         }
 
         // Foundation table
         $schedule->command('command:ImportPayCalendar')
                  ->weekdays()
                  ->at('2:00');
+
+        // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
+        $schedule->command('command:ImportNonGovPledgeHistory')
+                ->dailyAt('2:05');
+ 
+        $schedule->command('command:ImportPledgeHistory')
+                ->dailyAt('2:15');                 
 
         $schedule->command('command:ImportCities')
                  ->yearlyOn(9, 1, '02:30');
@@ -64,6 +70,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('command:SyncUserProfile')
                  ->weekdays()
                  ->at('4:15');
+
+
+
 
         // Donor statitsics for challenge pages                  
         // $schedule->command('command:DonorHistoryDataFromBI')

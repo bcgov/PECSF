@@ -31,6 +31,7 @@ class ImportPledgeHistory extends Command
     /* Variable for logging */
     protected $message;
     protected $status;
+    protected $reload_start_year;
     
 
     /**
@@ -44,6 +45,7 @@ class ImportPledgeHistory extends Command
         
         $this->message = '';
         $this->status = 'Completed';
+   
     }
 
     /**
@@ -54,12 +56,21 @@ class ImportPledgeHistory extends Command
     public function handle()
     {
 
+        // Determine the start year
+        $last_task = ScheduleJobAudit::where('job_name', $this->signature)
+                            ->where('status', 'Completed')
+                            ->first();
+
+        if ($last_task) {
+            $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
+        }
+
         $this->task = ScheduleJobAudit::Create([
             'job_name' => $this->signature,
             'start_time' => Carbon::now(),
             'status' => 'Processing',
         ]);
-        
+
         $this->LogMessage( now() );
         $this->LogMessage("Step - 1 : Update/Create - Region District");
         $this->UpdateRegionalDistrict();
@@ -70,8 +81,9 @@ class ImportPledgeHistory extends Command
 
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 3 : Create - Pledge History");
-        $this->UpdatePledgeHistory();
-
+        for ($yr = $start_year; $yr <= now()->year; $yr++) {
+            $this->UpdatePledgeHistory($yr);
+        }
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 4 : Create - Pledge History Summary");
         $this->UpdatePledgeHistorySummary();
@@ -219,15 +231,18 @@ class ImportPledgeHistory extends Command
     }
 
 
-    protected function UpdatePledgeHistory() 
+    protected function UpdatePledgeHistory($in_year) 
     {
-        // Truncate Pledge History table
-        PledgeHistory::truncate();
-        
+        // Clear Up Pledge History table
+        PledgeHistory::where('yearcd', $in_year)->delete();
+
+        $this->LogMessage( 'Loading pledge history data for '. $in_year);
+        $filter = '(yearcd eq '. $in_year .')';
+
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1');
+                ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
 
             $row_count = json_decode($response->body())->{'@odata.count'};
             
@@ -239,9 +254,9 @@ class ImportPledgeHistory extends Command
                 // Loading pledge history data
                 $response = Http::withHeaders(['Content-Type' => 'application/json'])
                     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                    ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip) ;
+                    ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.'&$filter='.$filter) ;
 
-                $this->LogMessage( 'Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip '. $skip);
+                $this->LogMessage( '  Total Count ='. $row_count .' $i ='. $i .' $top ='. $top .' $skip ='. $skip .' $filter ='. $filter);
                 // Loading pledge history data
                 // $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 //     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))

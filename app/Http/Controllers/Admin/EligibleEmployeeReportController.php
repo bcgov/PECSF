@@ -1,0 +1,225 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Models\City;
+use App\Models\EmployeeJob;
+use Illuminate\Http\Request;
+use App\Models\ProcessHistory;
+use App\Models\ScheduleJobAudit;
+use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Jobs\EligibleEmployeesExportJob;
+
+class EligibleEmployeeReportController extends Controller
+{
+    /**
+     * create a new instance of the class
+     *
+     * @return void
+     */
+    function __construct()
+    {
+         $this->middleware('permission:setting');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+
+        //
+        if($request->ajax()) {
+
+            $employees = $this->getEmployeeJobQuery($request); 
+           
+            return Datatables::of($employees)
+                // ->editColumn('created_at', function ($donation) {
+                //     return $donation->process_history->created_at->format('Y-m-d H:m:s'); // human readable format
+                // })
+                // ->editColumn('updated_at', function ($donation) {
+                //     return $donation->process_history->updated_at->format('Y-m-d H:m:s'); // human readable format
+                // })                        
+                // ->rawColumns(['action','description'])
+                ->make(true);
+
+        }
+
+        // get all the record for select options 
+        $empl_status_List = EmployeeJob::EMPL_STATUS_LIST;
+        $office_cities = EmployeeJob::office_city_list();
+        $organizations = EmployeeJob::organization_list();
+
+        // load the view and pass data
+        return view('admin-report.eligible-employee.index', compact('empl_status_List','office_cities','organizations'));
+
+    }
+
+    public function export2csv(Request $request) {
+
+        if($request->ajax()) {
+
+            $filters = $request->all(); 
+
+            // Submit a Job
+            $history = \App\Models\ProcessHistory::create([
+                'batch_id' => 0,
+                'process_name' => 'EligibleEmployeesExportJob',
+                'parameters' => json_encode( $filters ),
+                'status'  => 'Queued',
+                'submitted_at' => now(),
+                'original_filename' => '',
+                'filename' => '',
+                'total_count' => 0,
+                'done_count' => 0,
+                'created_by_id' => Auth::Id(),
+                'updated_by_id' => Auth::Id(),
+            ]);
+       
+            // Submit a job 
+            $batch = Bus::batch([
+                new EligibleEmployeesExportJob($history->id, $filters ),
+            ])->dispatch();
+
+            // dd ($batch->id);
+            $history->batch_id = $batch->id;
+            $history->save();
+
+            return response()->json([
+                    'batch_id' => $history->id,
+            ], 200);
+
+        }
+
+    }
+
+    public function exportProgress(Request $request, $id) {
+
+        // storage batch id in session
+        $history = ProcessHistory::where('id', $id)->first();
+
+        if ($history) {
+
+            // $batch_id = session()->get('charities-export-batch-id');
+
+            $batch = Bus::findBatch($history->batch_id);
+            // TODO -- how to check failed
+            if ($batch->failedJobs) {
+                return response()->json([
+                    'finished' => false,
+                    'message' => 'Job failed, please contact system administrtator.',
+                ], 422);
+                
+            }
+
+            $finished = false;
+            $message = 'Procsssing..., please wait.' . now();
+
+            if ($history->status == 'Completed') {
+                $finished = true;
+                $link = route('reporting.eligible-employees.download-export-file', $history->id);
+                $message = 'Done. Download file <a class="" href="'.$link.'">here</a>';
+            } else if ($history->status == 'Queued') {
+                $message = 'Queued, please wait.';
+            } else if ($history->status == 'Processing') {
+                $progress = round(($history->done_count / $history->total_count) * 100,0);
+                $message = 'Procsssing... ('. $progress .'%) , please wait.';
+            } else {
+                // others
+            }
+
+            return response()->json([
+                'finished' => $finished,
+                'message' => $message,
+            ], 200);
+        }   
+
+    }
+
+    public function downloadExportFile(Request $request, $id) {
+
+        $history = ProcessHistory::where('id', $id)->first();
+        // $path = Student::where("id", $id)->value("file_path");
+    
+        $filepath = $history->filename; 
+
+        $headers = [
+            'Content-Description' => 'File Transfer',
+            'Content-Type' => 'application/csv',
+            "Content-Transfer-Encoding: UTF-8",
+        ];
+
+        // return Storage::download($path);
+        return Storage::disk('public')->download($filepath, $filepath, $headers); 
+
+    }        
+
+    function getEmployeeJobQuery(Request $request) {
+
+        $sql = EmployeeJob::with('organization','bus_unit','region')
+                            ->where( function($query) {
+                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                        $q->from('employee_jobs as J2') 
+                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            // ->where('J2.empl_status', 'A')
+                                            ->selectRaw('min(J2.empl_rcd)');
+                                    })
+                                    ->orWhereNull('employee_jobs.empl_rcd');
+                            })
+                            ->when( $request->emplid, function($query) use($request) {
+                                $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
+                            })
+                            ->when( $request->name, function($query) use($request) {
+                                $query->where('employee_jobs.name', 'like', '%'. $request->name .'%');
+                            })
+                            ->when( $request->empl_status, function($query) use($request) {
+                                $query->where('employee_jobs.empl_status', $request->empl_status);
+                            })
+                            ->when( $request->office_city, function($query) use($request) {
+                                $query->where('employee_jobs.office_city', $request->office_city);
+                            })
+                            ->when( $request->organization, function($query) use($request) {
+                                $query->where('employee_jobs.organization', $request->organization);
+                            })
+                            ->when( $request->business_unit, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    $q->where('employee_jobs.business_unit', $request->business_unit)
+                                      ->orWhereExists(function ($q) use($request) {
+                                          $q->select(DB::raw(1))
+                                            ->from('business_units')
+                                            ->whereColumn('business_units.code', 'employee_jobs.business_unit')
+                                            ->where('business_units.name', 'like', '%'. $request->business_unit .'%');
+                                        });
+                                });
+                            })
+                            ->when( $request->department, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('employee_jobs.deptid', 'like', '%'. $request->department .'%')
+                                             ->orWhere('employee_jobs.dept_name', 'like', '%'. $request->department .'%');
+                                });
+                            })
+                            ->when( $request->tgb_reg_district, function($query) use($request) {
+                                // $query->where('employee_jobs.tgb_reg_district', $request->tgb_reg_district);
+                                $query->where( function($q) use($request) {
+                                    $q->where('employee_jobs.tgb_reg_district', $request->tgb_reg_district)
+                                      ->orWhereExists(function ($q) use($request) {
+                                          $q->select(DB::raw(1))
+                                            ->from('regions')
+                                            ->whereColumn('regions.code', 'employee_jobs.tgb_reg_district')
+                                            ->where('regions.name', 'like', '%'. $request->tgb_reg_district .'%');
+                                        });
+                                });
+                            })
+                            ->select('employee_jobs.*');
+
+        return $sql;
+    }
+
+}

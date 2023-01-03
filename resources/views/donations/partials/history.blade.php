@@ -111,10 +111,15 @@
                     @endphp
                 @else
 
-                <a style="margin-left: auto;
+                    <a class="btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;" 
+                                href="#" onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();">
+                                {{$ignore}}Duplicate this pledge
+                    </a>
+
+                {{-- <a style="margin-left: auto;
     margin-right: auto;
     width: fit-content;
-    display: block;" href="/donate/duplicate/{{$pledge->id}}">
+    display: block;" href="{{ route('annual-campaign.duplicate', $pledge->id) }}"> 
                 <button type="button" class="pl-5 pr-5 duplicate align-content-center btn-lg btn-primary"
                         data-source="{{ $pledge->source  }}"
                         data-type="{{ $pledge->donation_type }}"
@@ -122,7 +127,15 @@
                         data-frequency="{{ $pledge->frequency }}"
                         data-yearcd="{{ $pledge->yearcd }}">{{$ignore}}Duplicate this pledge
                 </button>
-                </a>
+                </a> --}}
+                    <form id="duplicate-form-{{ $pledge->id }}" action="{{ route('annual-campaign.duplicate', $pledge->id) }}" method="POST" style="display: none;">
+                        @csrf
+                        <input type="hidden" name="source" value="{{ $pledge->source }}">
+                        <input type="hidden" name="type" value="{{ $pledge->donation_type }}">
+                        <input type="hidden" name="id" value="{{ $pledge->id }}">
+                        <input type="hidden" name="frequency" value="{{ $pledge->frequency }}">
+                        <input type="hidden" name="yearcd" value="{{ $pledge->yearcd }}">
+                    </form>
                 @endif
 
             </div>

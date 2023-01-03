@@ -46,6 +46,7 @@ use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
+use App\Http\Controllers\Admin\EligibleEmployeeReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,11 +116,12 @@ Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'
 
 // Annual Campaign (usually Sep - Nov)
 Route::middleware(['auth'])->group(function () {
-    Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
+
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
-    Route::get('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
+    Route::post('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
+    Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
 });
 
 // Donate Now
@@ -205,7 +207,10 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Pay Calendars
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
-    // Business Units
+    // CRA Charity 
+    Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
+    Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
+    Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
     // Special Campaign Setup
@@ -272,6 +277,12 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
+
+    // // Eligible Employee Reporting
+    Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
+    Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
+    Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
+    Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
 
 });
 
