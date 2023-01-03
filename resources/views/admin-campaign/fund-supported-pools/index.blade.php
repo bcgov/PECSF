@@ -62,7 +62,6 @@
 	</div>    
 </div>   
 
-@include('admin-campaign.fund-supported-pools.partials.modal-delete')
 @include('admin-campaign.fund-supported-pools.partials.modal-duplicate')
 
 @endsection
@@ -123,7 +122,7 @@
             processing: true,
             serverSide: true,
             select: true,
-            'order': [[0, 'asc'], [1, 'desc']],
+            'order': [[0, 'asc'], [2, 'desc']],
             ajax: {
                 url: '{!! route('settings.fund-supported-pools.index') !!}',
                 data: function (d) {
@@ -132,7 +131,7 @@
             columns: [
                 {data: 'region.code', name: 'region.code', className: "dt-nowrap" },
                 {data: 'region.name', name: 'region.name', className: "dt-nowrap" },
-                {data: 'start_date', name: 'start_date', className: "dt-nowrap" },
+                {data: 'start_date', name: 'start_date', className: "dt-nowrap",    orderData: [0, 2], },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
                 {data: 'effectiveType', name: 'effectiveType', className: "dt-nowrap", orderable: false, searchable: false, "visible": true },
                 {data: 'charities', orderable: false, searchable: false },
@@ -193,52 +192,52 @@
             delete_region = $(this).attr('data-region');
             delete_start_date = $(this).attr('data-start-date');
 
-            $('#pool-delete-modal input[name="region"]').val( delete_region );
-            $('#pool-delete-modal input[name="start_date"]').val( delete_start_date );
-            
-            // $('#pool-delete-modal-form').attr('action', '/settings/fund-supported-pools/' + id); 
-            $('#pool-delete-modal-button').attr('data-id', delete_id);
-
-            // Clean up a previous error message if exists
-            $('#pool-delete-modal-form .alert.alert-danger').text('');
-            $('#pool-delete-modal-form .alert.alert-danger').hide();
-
-            // Show modal window
-            $('#pool-delete-modal').modal('show');
-
-        });
-
-        $(document).on("click", "#pool-delete-modal-button" , function(e) {
-
-            $.ajax({
-                method: "DELETE",
-                url:  '/settings/fund-supported-pools/' + $(this).attr('data-id'), 
-                success: function(data)
-                {
-                    oTable.ajax.reload(null, false);	// reload datatables
-                    // Hide modal window
-                    $('#pool-delete-modal').modal('hide');
-
-                    // Display a message
-                    Toast('Success', 'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
-                          '" was successfully deleted.', 'bg-success m-3');
-                    
-                },
-                error: function(response) {
-                    if (response.status == 422) {
-
-                        //$('#pool-delete-modal-form .message').html(response.responseJSON.message);
-                        $.each(response.responseJSON.errors, function(field_name,error){
-                            $('#pool-delete-modal-form .alert.alert-danger').text( error );
-                        });
-                        $('#pool-delete-modal-form .alert.alert-danger').show();
-                    } else {
-                        console.log('Error');
-                    }
+            Swal.fire( {
+                title: 'Are you sure you want to delete fund support pool "' + delete_region + '" with start date "' + delete_start_date + '" ?',
+                text: 'This action cannot be undone.',
+                // icon: 'question',
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-danger', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
                 }
-            });
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // Swal.fire('Saved!', '', '')
+                    $.ajax({
+                        method: "DELETE",
+                        url:  '/settings/fund-supported-pools/' + delete_id,
+                        dataType: 'json',
+                        success: function(data)
+                        {
+                            oTable.ajax.reload(null, false);	// reload datatables
+                            Toast('Success',  'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
+                                            '" was successfully deleted.', 'bg-success' );
+                        },
+                        // error: function(response) {
+                            error: function (data) {
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: data.responseJSON.title, // data.responseJSON.title,
+                                        text: data.responseJSON.message,
+                                });
+
+                                console.log(data.responseJSON.message);
+                        }
+                    });
+                } else if (result.isDismissed) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
 
         });
+
 
         // Model -- Duplicate
         var duplicate_id = '';
@@ -255,7 +254,6 @@
             $('#pool-duplicate-modal input[name="region"]').val( duplicate_region );
             $('#pool-duplicate-modal input[name="old_start_date"]').val( duplicate_start_date );
             
-            // $('#pool-delete-modal-form').attr('action', '/settings/fund-supported-pools/' + id); 
             $('#pool-duplicate-modal-button').attr('data-id', duplicate_id);
 
             // Clean up a previous error message if exists
@@ -306,11 +304,6 @@
                 },
                 error: function(response) {
                     if (response.status == 422) {
-
-                        //$('#pool-delete-modal-form .message').html(response.responseJSON.message);
-                        // $.each(response.responseJSON.errors, function(field_name,error){
-                        //     $('#pool-duplicate-modal-form .alert.alert-danger').text( error );
-                        // });
                         $.each(response.responseJSON.errors, function(field_name,error){
                                 $('#pool-duplicate-modal-form').find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
                         })
@@ -325,14 +318,23 @@
 
 
         function Toast( toast_title, toast_body, toast_class) { 
-            $(document).Toasts('create', {
-                icon: 'fas fa-solid fa-check',
-                class: toast_class,
-                title: toast_title,
-                autohide: true,
-                delay: 8000,
-                body: toast_body
-            });
+            // $(document).Toasts('create', {
+            //     icon: 'fas fa-solid fa-check',
+            //     class: toast_class,
+            //     title: toast_title,
+            //     autohide: true,
+            //     delay: 8000,
+            //     body: toast_body
+            // });
+            Swal.fire({
+                    position: 'top-end',
+                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
+                    title: toast_title,
+                    text: toast_body,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 8000
+            })
         }
 
     });
