@@ -145,7 +145,7 @@ class SpecialCampaignPledgeController extends Controller
 
         // get all the record 
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
-        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
+        $organizations = Organization::orderBy('name')->get();
         $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
@@ -368,33 +368,40 @@ class SpecialCampaignPledgeController extends Controller
      * @param  \App\Models\Pledge  $pledge
      * @return \Illuminate\Http\Response
      */
-    public function cancel(SpecialCampaignPledgeRequest $request, $id)
+    public function cancel(Request $request, $id)
     {
 
         //
-        $pledge = SpecialCampaignPledge::where('id', $id)
-                                    ->whereNull('cancelled')
-                                    ->whereNull('ods_export_status')
-                                    ->first();
+        if($request->ajax()) {
+            $pledge = SpecialCampaignPledge::where('id', $id)
+                                        ->whereNull('cancelled')
+                                        ->whereNull('ods_export_status')
+                                        ->first();
 
-        if (!($pledge)) {
-            return abort(404);      // 404 Not Found
+            if (!($pledge)) {
+                return response()->json([
+                    'title'  => "Invalid cancel!",
+                    'message' => 'The special campaign pledge  "' . $id . '" cannot be cancelled, it has transferred to Peoplesoft System.'], 403);
+            }
+
+            // $gov = Organization::where('code', 'GOV')->first();
+
+            // if ($pledge->organization_id == $gov->id) {
+            //     return response()->json(['error' => "You are not allowed to cancel this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422); 
+            // }       
+
+            // Delete the pledge
+            $pledge->cancelled = 'Y';
+            $pledge->cancelled_by_id = Auth::Id();
+            $pledge->cancelled_at = now();
+            $pledge->save();
+
+            Session::flash('success', 'Pledge with Transaction ID ' . $pledge->id . ' have been cancelled successfully' ); 
+            return response()->noContent();
+
+        } else {
+            abort(404);
         }
-
-        // $gov = Organization::where('code', 'GOV')->first();
-
-        // if ($pledge->organization_id == $gov->id) {
-        //     return response()->json(['error' => "You are not allowed to cancel this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422); 
-        // }       
-
-        // Delete the pledge
-        $pledge->cancelled = 'Y';
-        $pledge->cancelled_by_id = Auth::Id();
-        $pledge->cancelled_at = now();
-        $pledge->save();
-
-        Session::flash('success', 'Pledge with Transaction ID ' . $pledge->id . ' have been cancelled successfully' ); 
-        return response()->noContent();
 
     }
 
