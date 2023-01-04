@@ -79,6 +79,9 @@ RUN apt-get install -y \
         zip \
     && docker-php-ext-install zip
 
+RUN docker-php-ext-configure gd
+RUN docker-php-ext-install gd
+
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 
 
@@ -103,8 +106,6 @@ RUN chown -R www-data:www-data /var/www/html/storage/app /var/www/html/storage/f
 RUN chmod 4111 /usr/bin/sudo
 
 COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
-
-RUN apt-get install php7.4-gd/stable -y
 
 
 
