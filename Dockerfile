@@ -36,7 +36,7 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y \
     vim \
 	sudo
 
-RUN apt-get install php7.3-gd/stable -y
+RUN apt-get install php7.4-gd/stable -y
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
     ln -sf /proc/self/fd/1 /var/log/apache2/error.log && \
 	apt-get update -y && \
