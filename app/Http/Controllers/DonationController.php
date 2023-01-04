@@ -109,11 +109,15 @@ class DonationController extends Controller {
                             ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type, 
                                          campaign_type as donation_type, frequency, per_pay_amt as amount, pledge, 
                                          region, 
-                                         case when source = 'P' then 0 else (select count(*) from pledge_histories where emplid = pledge_history_summaries.emplid
-                                    				    and yearcd = pledge_history_summaries.yearcd
-                                    				    and source = 'Non-Pool'
-                                    					and campaign_type = pledge_history_summaries.campaign_type 
-                                    					and frequency = pledge_history_summaries.frequency)
+                                         case when source = 'P' then 0 else 
+                                            case when campaign_type = 'Donate Today' 
+                                                then (select charity_name from charities a, pledge_histories b where a.registration_number = b.charity_bn and b.id = pledge_history_summaries.pledge_history_id)
+                                                else (select count(*) from pledge_histories where emplid = pledge_history_summaries.emplid
+                                                    and yearcd = pledge_history_summaries.yearcd
+                                                    and source = 'Non-Pool'
+                                                    and campaign_type = pledge_history_summaries.campaign_type 
+                                                    and frequency = pledge_history_summaries.frequency)
+                                            end 
                                         end as number_of_charities")
                             ->unionAll($annual_pay_period_pledges)
                             ->unionAll($annual_one_time_pledges)
