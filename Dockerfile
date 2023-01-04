@@ -79,9 +79,6 @@ RUN apt-get install -y \
         zip \
     && docker-php-ext-install zip
 
-RUN docker-php-ext-configure gd
-RUN docker-php-ext-install gd
-
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 
 
