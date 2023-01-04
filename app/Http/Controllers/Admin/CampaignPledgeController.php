@@ -629,9 +629,9 @@ class CampaignPledgeController extends Controller
                     'emplid' => $user->emplid,  
                     'first_name' =>  $user->primary_job->first_name ?? '', 
                     'last_name' =>  $user->primary_job->last_name ?? '', 
-                    'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
-                    'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
-                    'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',                    
+                    'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',               
+                    'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',                                        
+                    'region' => $user->primary_job->region->name ? $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')' : '',                    
                     'organization' => $user->primary_job->organization_name ?? '',
             ];
         }

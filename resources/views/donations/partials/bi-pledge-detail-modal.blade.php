@@ -45,12 +45,34 @@
         </div>
     </div>
 
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">Benefitting Charity</th>
+          <th scope="col">Percent</th>
+          <th scope="col">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+              <tr>
+                  <td scope="row">1</td>
+                  <td>
+                      <p>{{ $donate_today_pledge->charity->charity_name ?? 'N/A' }}</p>
+                      <p>{{ $donate_today_pledge->name2 ?? 'N/A' }}</p>
+                  </td>
+                  <td class="text-center">{{ number_format($donate_today_pledge->percent,2) }}%</td>
+                  <td class="text-center">${{ number_format($donate_today_pledge->amount,2) }}</td>
+              </tr>
+      </tbody>
+    </table>
+
 
   </div>
 
 @else
 
-    <div class="container">
+  <div class="container">
     <div class="row">
         <div class="col-4 text-right">
             <p class="font-weight-bold">Year</p>
@@ -119,7 +141,7 @@
     @endif
 
 
-  <table class="table">
+    <table class="table">
       <thead class="thead-light">
         <tr>
           <th scope="col"></th>

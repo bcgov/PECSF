@@ -734,13 +734,14 @@ $(function () {
                             window.location = '{{ route("admin-pledge.special-campaign.index") }}';
 
                         },
-                        error: function(response) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: response.responseJSON.error,
-                            })
-                            console.log(response.responseJSON.error);
+                        error: function (data) {
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: data.responseJSON.title, // data.responseJSON.title,
+                                        text: data.responseJSON.message,
+                                });
+
+                                console.log(data.responseJSON.message);
                         }
                     });
                 } else if (result.isCancelledDenied) {
