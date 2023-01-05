@@ -79,6 +79,8 @@ RUN apt-get install -y \
         zip \
     && docker-php-ext-install zip
 
+RUN apt-get install php-imagick/stable -y
+
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 
 
