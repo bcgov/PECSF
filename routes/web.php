@@ -262,8 +262,9 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
 // Special Campaign
 Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
     // Pledge Administration -- Special  Pledges
-    Route::resource('/special-campaign', SpecialCampaignPledgeController::class);
     Route::post('/special-campaign/{id}/cancel', [SpecialCampaignPledgeController::class,'cancel'])->name('special-campaign.cancel');
+    Route::resource('/special-campaign', SpecialCampaignPledgeController::class);
+
 });
 
 

@@ -80,11 +80,11 @@ class FundSupportedPoolController extends Controller
             return Datatables::of($pools)
                 ->addColumn('action', function ($pool) {
                     $html = '<form action="'. route('settings.fund-supported-pools.show', $pool->id) . '" style="display:inline">' .
-                                '<input class="btn btn-info btn-sm show-pool" type="submit" value="Show">' .               
+                                '<input class="btn btn-info btn-sm show-pool" type="submit" value="Show">' .
                             '</form>';
                     if ($pool->canEdit) {
                         $html .= '<form action="'. route('settings.fund-supported-pools.edit', $pool->id) . '" style="display:inline">' .
-                                    '<input class="btn  btn-primary btn-sm ml-2 edit-pool" type="submit" value="Edit">' .               
+                                    '<input class="btn  btn-primary btn-sm ml-2 edit-pool" type="submit" value="Edit">' .
                                   '</form>';
                     }
                     if ($pool->EffectiveType == 'C') {
@@ -158,7 +158,7 @@ class FundSupportedPoolController extends Controller
             'percentages.*'     => 'required|numeric|min:0.01|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/',
             'contact_names.*'   => 'required',
             'contact_emails.*'  => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix',
-            'images.*'          => 'required|mimes:jpg,jpeg,png,bmp|max:2048',
+            'images.*'          => 'required|mimes:jpg,jpeg,png,bmp,svg|max:2048',
         ],[
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.*.required' => 'The charity field is required.',
@@ -180,7 +180,7 @@ class FundSupportedPoolController extends Controller
             'images.*.required' => 'Please upload an image',
             'images.*.max' => 'Sorry! Maximum allowed size for an image is 2MB',
             'images.*.mimes' => 'The image must be a file of type: jpg, jpeg, png, bmp.',
-            
+
         ]);
 
         //hook to add additional rules by calling the ->after method
@@ -233,7 +233,7 @@ class FundSupportedPoolController extends Controller
                             $validator->errors()->add('images.' .$i, 'The file name ' .$filename . ' is invalid .');
                         }
 
-                        if(!in_array(strtolower($extension),["png","jpg","jpeg","bmp"]))
+                        if(!in_array(strtolower($extension),["png","jpg","jpeg","bmp","svg"]))
                         {
                             $validator->errors()->add('images.' .$i, 'The file type ' .$extension . ' is invalid .');
                         }
@@ -577,7 +577,7 @@ class FundSupportedPoolController extends Controller
         // TODO: check any transactions created for this pool yet based on the start_date
 
         if($request->ajax()) {
-            
+
             $pool = FSPool::where('id', $id)->first();
 
             if ($pool->hasPledge) {

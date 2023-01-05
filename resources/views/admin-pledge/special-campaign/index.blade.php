@@ -39,6 +39,7 @@
 <form class="filter">
     <div class="card-body pb-0 search-filter">
         <h2>Search Criteria</h2>
+        <p>Enter any informartion you have and click Search. Leave fields blank for a list of all values.</p>
 
         <div class="form-row">
             <div class="form-group col-md-1">
@@ -160,7 +161,7 @@
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="submit" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
+                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
             </div>
             <div class="form-group col-md-1">
                 <label for="search">
