@@ -79,7 +79,8 @@ RUN apt-get install -y \
         libzip-dev \
         zip \
     && docker-php-ext-install zip
-RUN apt-get install apt-transport-https lsb-release ca-certificates wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN apt-get install apt-transport-https lsb-release ca-certificates 
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
