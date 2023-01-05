@@ -34,7 +34,8 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y \
     zip \
     unzip \
     vim \
-	sudo
+	sudo \
+	wget
 
 
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
