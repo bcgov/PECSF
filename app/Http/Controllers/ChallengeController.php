@@ -518,7 +518,7 @@ else if($request->sort == "department"){
     $file = fopen('test.csv', 'w');
     fputcsv($file, $row);
     foreach ($charities as $index => $charity) {
-        fputcsv($file, [($index + 1),$charity->department_name,$charity->bi_department_id, $charity->donors, "$".number_format($charity->dollars,2)]);
+        fputcsv($file, [($index + 1),$charity->name,$charity->bi_department_id, $charity->donors, "$".number_format($charity->dollars,2)]);
     }
     $date = new Carbon($_GET['start_date']);
     $year = $date->format("Y");

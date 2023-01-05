@@ -59,6 +59,7 @@ class ImportNonGovPledgeHistory extends Command
                             ->where('status', 'Completed')
                             ->first();
 
+        $start_year = 2005;
         if ($last_task) {
             $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
         }
