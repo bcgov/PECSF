@@ -53,6 +53,8 @@
                 <input class="form-control" type="date" id="start_date" name="start_date" />
             </div>
             <div class="form-group col-md-1">
+                <input type="hidden" name="excel" value = '1' />
+
                 <input type="submit" style="margin-top:30px;" class="btn btn-primary" value="Download Report" />
             </div>
         </div>

@@ -93,7 +93,7 @@ class DownloadImageFiles extends Command
         // ];
 
         // Based on the FS Pool Charity''s image listing
-        $filenames = FSPoolCharity::select('image')->pluck('image');
+        $filenames = FSPoolCharity::select('image')->distinct()->pluck('image');
 
         $baseUrl = env('IMAGES_SOURCE_URL');
 
