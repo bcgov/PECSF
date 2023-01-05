@@ -15,13 +15,18 @@ class SpecialCampaign extends Model
         'image', 'created_by_id', 'updated_by_id'
     ];
 
+    protected $casts = [
+        'start_date' => 'date:Y-m-d',
+        'end_date' => 'date:Y-m-d',
+    ];
+
     protected $appends = [
         'status',  
         'hasPledge',
     ];
 
     public function getStatusAttribute() {
-        return ( $this->start_date <= today() and $this->end_date >= today() ) ? 'Open' : 'Close';
+        return ( $this->start_date <= today() and $this->end_date >= today() ) ? 'Active' : 'Inactive';
     } 
 
     public function charity() 

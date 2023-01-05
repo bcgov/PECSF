@@ -327,50 +327,67 @@
             var formData = new FormData( document.getElementById("bu-create-model-form") );
             var id = e.target.value;
 
-            info = 'Are you sure to create this record?';
-            if (confirm(info))
-            {
+            Swal.fire( {
+                title: 'Are you sure you want to create this special campaign ?',
+                // text: 'This action cannot be undone.',
+                icon: 'question',
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Create',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-primary', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
 
-                var fields = ['name', 'charity_id', 'registration_number', 'start_date', 'end_date', 'description', 'banner_text'];
-                $.each( fields, function( index, field_name ) {
-                    $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
-                });
-                $('.logo-image-file-error').find('.text-danger').remove();
+                    var fields = ['name', 'charity_id', 'registration_number', 'start_date', 'end_date', 'description', 'banner_text'];
+                    $.each( fields, function( index, field_name ) {
+                        $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
+                    });
+                    $('.logo-image-file-error').find('.text-danger').remove();
 
-                $.ajax({
-                    method: "POST",
-                    url:  '{{ route('settings.special-campaigns.store')  }}',
-                    //data: form.serialize(), // serializes the form's elements.
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(data)
-                    {
-                        // oTable.ajax.reload(null, false);	// reload datatables
-                        oTable.draw();   // reload datatables
-                        $('#bu-create-modal').modal('hide');
+                    $.ajax({
+                        method: "POST",
+                        url:  '{{ route('settings.special-campaigns.store')  }}',
+                        //data: form.serialize(), // serializes the form's elements.
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data)
+                        {
+                            // oTable.ajax.reload(null, false);	// reload datatables
+                            oTable.draw();   // reload datatables
+                            $('#bu-create-modal').modal('hide');
 
-                        var name = $("#bu-create-model-form [name='name']").val();
-                        Toast('Success', 'Special Campaign "' + name +  '" was successfully created.', 'bg-success' );
-                    },
-                    error: function(response) {
-                        if (response.status == 422) {
+                            var name = $("#bu-create-model-form [name='name']").val();
+                            Toast('Success', 'Special Campaign "' + name +  '" was successfully created.', 'bg-success' );
+                        },
+                        error: function(response) {
+                            if (response.status == 422) {
 
-                            $.each(response.responseJSON.errors, function(field_name,error){
-                                if (field_name == 'charity_id') {
-                                    $('#bu-create-model-form .charity_id_errors').after('<span class="text-strong text-danger">' +error+ '</span>');
-                                } else if (field_name == 'logo_image_file') {
-                                    $('#bu-create-model-form .logo-image-file-error').html('<span class="text-strong text-danger">' +error+ '</span>');
-                                } else {
-                                    $(document).find('#bu-create-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>');
-                                }
-                            })
+                                $.each(response.responseJSON.errors, function(field_name,error){
+                                    if (field_name == 'charity_id') {
+                                        $('#bu-create-model-form .charity_id_errors').after('<span class="text-strong text-danger">' +error+ '</span>');
+                                    } else if (field_name == 'logo_image_file') {
+                                        $('#bu-create-model-form .logo-image-file-error').html('<span class="text-strong text-danger">' +error+ '</span>');
+                                    } else {
+                                        $(document).find('#bu-create-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>');
+                                    }
+                                })
+                            }
+                            console.log('Error');
                         }
-                        console.log('Error');
-                    }
-                });
+                    });
+                } else if (result.isDismissed) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
 
-            };
         });
 
         // Model -- Edit
@@ -433,48 +450,65 @@
             var id = $("#bu-edit-model-form [name='id']").val();
 
             info = 'Confirm to update this record?';
-            if (confirm(info))
-            {
-                var fields = ['name', 'charity_id', 'registration_number', 'start_date', 'end_date', 'description', 'banner_text'];
-                $.each( fields, function( index, field_name ) {
-                    $('#bu-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
-                });
-                $('.logo-image-file-error').find('.text-danger').remove();
+            // if (confirm(info))
+            Swal.fire( {
+                title: 'Are you sure you want to update the special campaign "' + name + '" ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-primary', //insert class here
+                    cancelButton: 'btn btn-secondary ml-2', //insert class here
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    var fields = ['name', 'charity_id', 'registration_number', 'start_date', 'end_date', 'description', 'banner_text'];
+                    $.each( fields, function( index, field_name ) {
+                        $('#bu-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
+                    });
+                    $('.logo-image-file-error').find('.text-danger').remove();
 
-                $.ajax({
-                    method: "POST",
-                    url:  '/settings/special-campaigns/' + id,
-                    data: formData,     // Must use formData for uploading the file // data: form.serialize(), 
-                    processData: false,
-                    contentType: false,
-                    success: function(data)
-                    {
-                        oTable.ajax.reload(null, false);	// reload datatables
-                        $('#bu-edit-modal').modal('hide');
+                    $.ajax({
+                        method: "POST",
+                        url:  '/settings/special-campaigns/' + id,
+                        data: formData,     // Must use formData for uploading the file // data: form.serialize(), 
+                        processData: false,
+                        contentType: false,
+                        success: function(data)
+                        {
+                            oTable.ajax.reload(null, false);	// reload datatables
+                            $('#bu-edit-modal').modal('hide');
 
-                        var name = $("#bu-edit-model-form [name='name']").val();
-                        Toast('Success', 'Special Campaign "' + name +  '"" was successfully updated.', 'bg-success' );
+                            var name = $("#bu-edit-model-form [name='name']").val();
+                            Toast('Success', 'Special Campaign "' + name +  '"" was successfully updated.', 'bg-success' );
 
-                    },
-                    error: function(response) {
-                        if (response.status == 422) {
+                        },
+                        error: function(response) {
+                            if (response.status == 422) {
 
-                            $.each(response.responseJSON.errors, function(field_name,error){
-                                if (field_name == 'charity_id') {
-                                    $('#bu-edit-model-form .charity_id_errors').after('<span class="text-strong text-danger">' +error+ '</span>');
-                                } else if (field_name == 'logo_image_file') {
-                                    $('#bu-edit-model-form .logo-image-file-error').html('<span class="text-strong text-danger">' +error+ '</span>');
-                                } else {
-                                    $(document).find('#bu-edit-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>');
-                                }
-                            })
+                                $.each(response.responseJSON.errors, function(field_name,error){
+                                    if (field_name == 'charity_id') {
+                                        $('#bu-edit-model-form .charity_id_errors').after('<span class="text-strong text-danger">' +error+ '</span>');
+                                    } else if (field_name == 'logo_image_file') {
+                                        $('#bu-edit-model-form .logo-image-file-error').html('<span class="text-strong text-danger">' +error+ '</span>');
+                                    } else {
+                                        $(document).find('#bu-edit-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>');
+                                    }
+                                })
 
+                            }
+                            console.log('Error');
                         }
-                        console.log('Error');
-                    }
-                });
+                    });
+                } else if (result.isDismissed) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
 
-            };
         });
 
         // Model -- Show
