@@ -33,7 +33,8 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y \
     zip \
     unzip \
     vim \
-	sudo
+	sudo \
+	wget
 
 
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
@@ -77,6 +78,16 @@ RUN apt-get install -y \
         libzip-dev \
         zip \
     && docker-php-ext-install zip
+
+RUN apt-get install -y apt-transport-https lsb-release ca-certificates 
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
     
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 
