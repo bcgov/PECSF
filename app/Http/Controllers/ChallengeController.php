@@ -10,6 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Department;
 use App\Models\Region;
 use App\Models\Pledge;
+use App\Models\CampaignYear;
 
 use App\Models\BusinessUnit;
 use Illuminate\Support\Facades\DB;
@@ -136,9 +137,12 @@ class ChallengeController extends Controller
     }
 
     public function current(Request $request) {
-            $date = Carbon::now();
+            $date = new Carbon("first day of january " .CampaignYear::where("status","A")->limit(1)->get()[0]->calendar_year);
         $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
             $year = $date->format("Y");
+
+
+
         $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
             ->join("users","pledges.user_id","users.id")
             ->join("employee_jobs","employee_jobs.emplid","users.emplid")
