@@ -57,11 +57,15 @@ class Kernel extends ConsoleKernel
                 ->dailyAt('2:05');
  
         $schedule->command('command:ImportPledgeHistory')
-                ->dailyAt('2:15');                 
+                ->dailyAt('2:15');    
 
         $schedule->command('command:ImportCities')
                  ->yearlyOn(9, 1, '02:30');
 
+        // For testing purpose: to generate 2022 pledges based on the BI pledge history
+        // $schedule->command('command:GeneratePledgeFromHistory')
+        //         ->dailyAt('3:00');                    
+        
         // Demography data and user profiles
         $schedule->command('command:ImportEmployeeJob')
                  ->weekdays()
