@@ -79,13 +79,8 @@ class SpecialCampaignPledgeController extends Controller
                                              ->orWhere('special_campaign_pledges.city', 'like', '%'. $request->city .'%');
                                 });
                             })
-                            ->when( $request->campaign_year_id, function($query) use($request) {
-                                // $query->where('campaign_year_id', $request->campaign_year_id);
-                                $query->where('yearcd', function($q) use($request){
-                                            $q->select('calendar_year')
-                                                    ->from('campaign_years')
-                                                    ->where('campaign_years.id', $request->campaign_year_id);
-                                });
+                            ->when( $request->yearcd, function($query) use($request) {
+                                $query->where('yearcd', $request->yearcd);
                             })
                             ->when( $request->cancelled == 'C', function($query) use($request) {
                                 $query->whereNotNull('special_campaign_pledges.cancelled');
@@ -144,13 +139,12 @@ class SpecialCampaignPledgeController extends Controller
         }
 
         // get all the record 
-        //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
         $organizations = Organization::orderBy('name')->get();
-        $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
+        $years = SpecialCampaignPledge::distinct('yearcd')->orderBy('yearcd', 'desc')->pluck('yearcd');
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
-        return view('admin-pledge.special-campaign.index', compact('organizations', 'campaign_years','cities'));
+        return view('admin-pledge.special-campaign.index', compact('organizations', 'years','cities'));
 
     }
 
@@ -176,12 +170,16 @@ class SpecialCampaignPledgeController extends Controller
         // default the first special campaign
         $pledge->special_campaign_id = $special_campaigns->first()->id;
 
+        $current_year = today()->year; 
+        $years = range($current_year, $current_year - 2);
         $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
         $cities = City::orderBy('city')->get();
 
         $is_new_pledge = true;
 
-        return view('admin-pledge.special-campaign.create-edit', compact('pledge', 'organizations', 'special_campaigns', 'campaignYears','cities',
+        return view('admin-pledge.special-campaign.create-edit', compact('pledge', 'organizations', 'special_campaigns', 
+        'years', //'campaignYears',
+                        'cities',
                     'is_new_pledge',
                     //  'deduct_pay_from', 'one_time_amount'
                     ));

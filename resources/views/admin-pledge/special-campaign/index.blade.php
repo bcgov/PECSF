@@ -99,13 +99,13 @@
 
         <div class="form-row">
             <div class="form-group col-md-2">
-                <label for="campaign_year">
-                    Campaign Year
+                <label for="yearcd">
+                    Calendar Year
                 </label>
-                <select id="campaign_year_id" class="form-control" name="campaign_year_id">
+                <select id="yearcd" class="form-control" name="yearcd">
                     <option value="">All</option>
-                    @foreach ($campaign_years as $cy)
-                        <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }}
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}" {{ ($year == date('Y')) ? 'selected' : '' }}>{{ $year }}
                         </option>
                     @endforeach
                 </select>
@@ -157,17 +157,17 @@
                 <input class="form-control " type="number" id="one_time_amt_to" name="one_time_amt_to">
             </div>
 
-            <div class="form-group col-md-1">
+            <div class="form-group col-md-1" style="min-width: 100px;">
                 <label for="search">
                     &nbsp;
                 </label>
                 <button type="button" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
             </div>
-            <div class="form-group col-md-1">
+            <div class="form-group col-md-1" style="min-width: 100px;">
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Reset</button>
+                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary " >Reset</button>
             </div>
 
         </div>
@@ -271,7 +271,7 @@
                     data.seqno = $('#seqno').val();
                     data.name = $('#name').val();
                     data.city = $('#city').val();
-                    data.campaign_year_id = $('#campaign_year_id').val();
+                    data.yearcd = $('#yearcd').val();
                     data.one_time_amt_from = $('#one_time_amt_from').val();
                     data.one_time_amt_to = $('#one_time_amt_to').val();
                     data.cancelled = $('#cancelled').val();
