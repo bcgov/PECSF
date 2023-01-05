@@ -93,7 +93,7 @@ class SpecialCampaignSetupController extends Controller
 
             // file handling
             $file = $request->file('logo_image_file');
-            $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+            $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
             $file->move(public_path( $this->image_folder ), $filename);
             
             $special_campaign = SpecialCampaign::Create([
@@ -170,7 +170,7 @@ class SpecialCampaignSetupController extends Controller
             $new_filename = '';
             if ($request->file('logo_image_file')) {
                 $file = $request->file('logo_image_file');
-                $new_filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+                $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                 $file->move(public_path( $this->image_folder ), $new_filename);
             }
 

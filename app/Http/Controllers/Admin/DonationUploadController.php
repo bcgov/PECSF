@@ -133,7 +133,7 @@ class DonationUploadController extends Controller
         $upload_file = $request->file('donation_file') ?? null;
         //  $filesize = $upload_file->getSize();
         $original_filename = $upload_file->getClientOriginalName();
-        $filename=date('YmdHis').'_'. str_replace(' ', '_', $original_filename );
+        $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $original_filename );
         $filePath = $upload_file->storeAs(  $this->donation_file_folder , $filename);
 
         $parameters = [
