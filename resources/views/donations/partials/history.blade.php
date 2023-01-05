@@ -55,14 +55,18 @@
                                    
                                     @endswitch
                                 @else
-                                    <a type="button" class="more-info "
-                                        data-source="{{ $pledge->source  }}"
-                                        data-type="{{ $pledge->donation_type }}"
-                                        data-id="{{ $pledge->id }}"
-                                        data-frequency="{{ $pledge->frequency }}"
-                                        data-yearcd="{{ $pledge->yearcd }}">
-                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
-                                    </a>
+                                    @if ($pledge->donation_type == 'Donate Today')
+                                        {{ $pledge->number_of_charities }}  
+                                    @else 
+                                        <a type="button" class="more-info "
+                                            data-source="{{ $pledge->source  }}"
+                                            data-type="{{ $pledge->donation_type }}"
+                                            data-id="{{ $pledge->id }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->yearcd }}">
+                                                {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                        </a>
+                                    @endif
                                 @endif
                                 </td>
 
