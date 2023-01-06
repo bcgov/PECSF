@@ -166,7 +166,7 @@
                     $("#business_unit").val(data[0].business_unit).select2();
                     $("[name='event_type']").trigger("change");
                     $("#deposit_amount").val(data[0].deposit_amount);
-                    $("#deposit_date").val(data[0].deposit_date.substring(0,data[0].deposit_date.indexOf(" ")));
+                    $("#deposit_date").val(data[0].deposit_date);
 
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
                       $("#sub_type").attr("disabled",false);
@@ -179,7 +179,7 @@
                         $("#postal_code").val(data[0].address_postal_code);
                         $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
-                        $("#bcgov_id").val(data[0].bcgov_id);
+                        $("#bc_gov_id").val(data[0].bc_gov_id);
 
                         if(data[0].organization_code == "GOV"){
                             $("#pecsfid").find("label").hide();

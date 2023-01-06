@@ -35,7 +35,7 @@
                 <div class="form-group col-md-3">
                     <label for="startd_date">Start Date</label>
                     <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" 
-                            id="start_date" value="{{ old('start_date', $pool->start_date) }}">
+                            id="start_date" value="{{ old('start_date', ($pool->start_date ? $pool->start_date->format('Y-m-d') : null) ) }}">
                     @error('start_date')
                         <span class="invalid-feedback">{{  $message  }}</span>
                     @enderror
