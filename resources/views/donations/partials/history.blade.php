@@ -29,7 +29,18 @@
                     @php $total = 0; $ignore = true; @endphp
                     @foreach($pledges as $pledge)
                         <tr class="">
-                            <td style="width: 15%">{{ $pledge->donation_type }}</td>
+                            <td style="width: 15%">
+                                @switch($pledge->donation_type)
+                                    @case('Donate Now') 
+                                        {{ 'Donate Today' }} 
+                                        @break
+                                    @case('Event') 
+                                        {{ 'Annual' }} 
+                                        @break
+                                    @default
+                                        {{ $pledge->donation_type }}
+                                @endswitch
+                            </td>
                             @if ($pledge->type == 'P')
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>

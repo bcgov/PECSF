@@ -20,12 +20,7 @@ $("#pool_filter").parents(".form-group").hide();
 }
 });
 $("#pool_filter").parents(".form-group").hide();
-$("[name='organization_code']").change(function(){
-});
-    $("#pecsfid").find("label").hide();
-    $("#pecsfid").find("input").hide();
-    $("#bcgovid").find("label").hide();
-    $("#bcgovid").find("input").hide();
+
 $("[name='event_type']").change(function(){
 $("#sub_type").attr("disabled",false);
 
