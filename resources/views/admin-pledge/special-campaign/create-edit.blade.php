@@ -55,10 +55,10 @@
                             <label for="yearcd">Calendar Year</label>
                             @if ($is_new_pledge)
                                 <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;">
-                                    @foreach ($campaignYears as $cy)
-                                        <option value="{{ $cy->calendar_year }}"
-                                            {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>
-                                            {{ $cy->calendar_year }}
+                                    @foreach ($years as $year)
+                                        <option value="{{ $year }}"
+                                            {{ ($year == date('Y')) ? 'selected' : '' }}>
+                                            {{ $year }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -213,14 +213,25 @@
                 <div class="h5">Donate To Charity</div>
             </div>
 
+            <div class="form-group row justify-content-end pt-2">
+                <label for="inputEmail3" class="col-sm-2 col-form-label text-right">Status</label>
+                <div class="col-sm-2">
+                    <select class="form-control" id="status_filter">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+
             {{-- <div class="card-body "> --}}
                 <div id="special-campaign-area">
                     <h6 class="pt3">&nbsp;</h6>
                     <div class="row justify-content-around">
-                        @foreach ($special_campaigns as $special_campaign)  
+                        @foreach ($special_campaigns->sortBy('status') as $special_campaign)  
                             <div class="col-sm-12 col-md-5">
                                 <div class="card {{ $special_campaign->id == $pledge->special_campaign_id ? 'active' : '' }}" 
-                                    data-id="{{ $special_campaign->id }}">
+                                    data-id="{{ $special_campaign->id }}" data-status="{{ $special_campaign->status }}">
                                     <div class="card-body">
                                         <figure class="logo_image">
                                             <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="80">
@@ -550,6 +561,26 @@ $(function () {
         }
     })
 
+    // 
+    $( "#status_filter" ).change(function(e) {
+        // Check input( $( this ).val() ) for validity here
+        select_val = this.value;
+
+        $('#special-campaign-area').find('.card').each( function() {
+            data_val = $(this).data('status');
+console.log(data_val);            
+            if (select_val == '') {
+                $(this).css("display", "block");
+            } else {
+                if (select_val == data_val) {
+                    $(this).css("display", "block");               
+                } else {
+                    $(this).css("display", "none");               
+                }
+            }
+        })
+
+    });
 
     // 
     $('#special-campaign-area .card').click( function(event) {

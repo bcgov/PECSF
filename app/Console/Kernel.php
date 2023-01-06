@@ -63,8 +63,8 @@ class Kernel extends ConsoleKernel
                  ->yearlyOn(9, 1, '02:30');
 
         // For testing purpose: to generate 2022 pledges based on the BI pledge history
-        // $schedule->command('command:GeneratePledgeFromHistory')
-        //         ->dailyAt('3:00');                    
+        $schedule->command('command:GeneratePledgeFromHistory')
+                ->dailyAt('3:00');                    
         
         // Demography data and user profiles
         $schedule->command('command:ImportEmployeeJob')
