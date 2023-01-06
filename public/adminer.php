@@ -29,7 +29,8 @@
 
 	// Not allow to use in production envrionment
 	$app_env = getValueWithKey( 'APP_ENV');
-	if (str_starts_with( strtolower($app_env) , 'prod')) {
+	$adminer_env = getValueWithKey( 'ADMINER_ENABLE');
+	if (str_starts_with( strtolower($app_env) , 'prod') && ($adminer_env <> 'on') ) {
 			http_response_code(403);
 		die;
 	}

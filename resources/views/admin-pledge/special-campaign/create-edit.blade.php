@@ -213,25 +213,18 @@
                 <div class="h5">Donate To Charity</div>
             </div>
 
-            <div class="form-group row justify-content-end pt-2">
-                <label for="inputEmail3" class="col-sm-2 col-form-label text-right">Status</label>
-                <div class="col-sm-2">
-                    <select class="form-control" id="status_filter">
-                        <option value="">All</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-            </div>
-
             {{-- <div class="card-body "> --}}
                 <div id="special-campaign-area">
                     <h6 class="pt3">&nbsp;</h6>
-                    <div class="row justify-content-around">
+                    {{-- <div class="row justify-content-around"> --}}
+                    <div class="d-flex justify-content-around flex-wrap">
                         @foreach ($special_campaigns->sortBy('status') as $special_campaign)  
-                            <div class="col-sm-12 col-md-5">
+                            {{-- <div class="col-sm-12 col-md-5"> --}}
                                 <div class="card {{ $special_campaign->id == $pledge->special_campaign_id ? 'active' : '' }}" 
-                                    data-id="{{ $special_campaign->id }}" data-status="{{ $special_campaign->status }}">
+                                    data-id="{{ $special_campaign->id }}" 
+                                        data-status="{{ $special_campaign->status }}"
+                                        data-start_year="{{ $special_campaign->start_date->format('Y') }}"    
+                                        data-end_year="{{ $special_campaign->end_date->format('Y') }}">
                                     <div class="card-body">
                                         <figure class="logo_image">
                                             <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="80">
@@ -249,7 +242,7 @@
                                     <a href="#" class="btn btn-primary">Go somewhere</a> --}}
                                     </div>
                                 </div>
-                            </div>
+                            {{-- </div> --}}
                         @endforeach     
                     </div>
                     <h6 class="pb-3"></h6>
@@ -302,6 +295,12 @@
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 <style>
+
+    #special-campaign-area .card {
+        width: 49%;
+        min-width: 30em;
+    }
+
     .select2-selection--multiple{
         overflow: hidden !important;
         height: auto !important;
@@ -562,25 +561,25 @@ $(function () {
     })
 
     // 
-    $( "#status_filter" ).change(function(e) {
+    $("select[name='yearcd']").change(function(e) {
         // Check input( $( this ).val() ) for validity here
-        select_val = this.value;
+        select_year = $("select[name='yearcd']").val();
 
         $('#special-campaign-area').find('.card').each( function() {
-            data_val = $(this).data('status');
-console.log(data_val);            
-            if (select_val == '') {
-                $(this).css("display", "block");
+            status = $(this).data('status');
+            start_year = $(this).data('start_year');
+            end_year = $(this).data('end_year');
+console.log( select_year + ' ' + start_year + ' '  + end_year);            
+
+            if (select_year >= start_year && select_year <= end_year) {
+                $(this).css("display", "block");               
             } else {
-                if (select_val == data_val) {
-                    $(this).css("display", "block");               
-                } else {
-                    $(this).css("display", "none");               
-                }
+                $(this).css("display", "none");               
             }
         })
-
     });
+    
+    $("select[name='yearcd']").trigger("change");
 
     // 
     $('#special-campaign-area .card').click( function(event) {
