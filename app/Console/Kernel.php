@@ -49,8 +49,11 @@ class Kernel extends ConsoleKernel
 
         // Foundation table
         $schedule->command('command:ImportPayCalendar')
-                 ->weekdays()
-                 ->at('2:00');
+                //  ->weekdays()
+                //  ->at('2:00')
+                 ->everyFifteenMinutes()
+                 ->appendOutputTo(storage_path('logs/ImportPayCalendar.log'));
+                 
 
         // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
         $schedule->command('command:ImportNonGovPledgeHistory')
