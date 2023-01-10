@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DonorByBusinessUnit;
+use App\Models\HistoricalChallengePage;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -45,15 +46,11 @@ class ChallengeController extends Controller
 
         $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
 
-        $charities = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
-->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-            ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-            ->where('donor_by_business_units.yearcd',"=",$year)
-            ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
-            ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
+
+        $charities = HistoricalChallengePage::where("year","=",$year);
 
         if(strlen($request->organization_name) > 0){
-            $charities = $charities->where("business_units.name","LIKE",$request->organization_name."%");
+            $charities = $charities->where("organization_name","LIKE",$request->organization_name."%");
         }
 
         $charities = $charities->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
@@ -61,52 +58,10 @@ class ChallengeController extends Controller
             ->get();
 
         if($request->sort == "ASC"){
-            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
-                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-                ->join("elligible_employees", function($join){
-                   // $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                        $join->on("business_units.code", '=', 'elligible_employees.business_unit');
-                })
-                ->where('donor_by_business_units.yearcd',"=",$year)
-                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
-                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
-
-            if(strlen($request->organization_name) > 0){
-                $count = $count->where("business_units.name","LIKE",$request->organization_name."%");
-            }
-                $count = $count->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
-                    ->count();
+            $count = count($charities);
         }
         else{
             $count = 1 ;
-        }
-
-        foreach($charities as $index => $charity){
-            $previousYear = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
-                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-                ->join("elligible_employees", function($join){
-                    //$join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                        $join->on("business_units.code", '=', 'elligible_employees.business_unit');
-                })
-                ->where('donor_by_business_units.yearcd',"=",($year-1))
-                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
-                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
-                ->where('business_units.id',"=",$charity->id)
-                ->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
-                ->first();
-
-            if(!empty($previousYear))
-            {
-                $charities[$index]->previous_participation_rate = $previousYear->participation_rate;
-                $charities[$index]->previous_donors = $previousYear->donors;
-                $charities[$index]->change = ($charity->participation_rate*100) - ($previousYear->participation_rate*100);
-            }
-            else
-            {
-                $charities[$index]->previous_participation_rate = 0;
-                $charities[$index]->previous_donors = 0;
-                $charities[$index]->change = 0;
-            }
         }
 
         if($request->field == "change")
@@ -326,7 +281,7 @@ class ChallengeController extends Controller
     public function download(Request $request)
     {
         if ($request->sort == "organization") {
-            $fileName = 'Stats By Region.csv';
+            $fileName = 'Stats By Organization.csv';
             $headers = array(
                 "Content-type" => "text/csv",
                 "Content-Disposition" => "attachment; filename=$fileName",
@@ -415,53 +370,24 @@ class ChallengeController extends Controller
             );
             $date = new Carbon($_GET['start_date']);
             $year = $date->format("Y");
-            $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, regions.name as region_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-                ->join("regions","pledges.region_id","regions.id")
-                ->join("users","pledges.user_id","users.id")
-                ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-                ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-                ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-                ->where("elligible_employees.year","=",$year)
-                ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-                ->where('employee_jobs.empl_status',"=","A")
-                ->where('pledges.created_at',">",$date->copy()->startOfYear())
-                ->where('pledges.created_at',"<",$date->copy()->endOfYear())
-                ->where('business_units.status',"=","A")
-                ->whereNull('employee_jobs.date_deleted')
-                ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
-                ->groupBy('regions.id')
+            $charities = Region::join("donor_by_regional_districts","regions.id","donor_by_regional_districts.regional_district_id")
+                ->where('yearcd',"=",$year)
                 ->limit(500)
                 ->get();
-
 
             $row = ["","Regional District Name", "Donors", "Dollars"];
 
                 $file = fopen('test.csv', 'w');
                 fputcsv($file, $row);
                 foreach ($charities as $index => $charity) {
-                    fputcsv($file, [($index + 1),$charity->region_name, $charity->donors, "$".number_format($charity->dollars,2)]);
+                    fputcsv($file, [($index + 1),$charity->name, $charity->donors, "$".number_format($charity->dollars,2)]);
                 }
                 $date = new Carbon($_GET['start_date']);
                 $year = $date->format("Y");
-                $totals  = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-                    ->join("regions","pledges.region_id","regions.id")
-                    ->join("users","pledges.user_id","users.id")
-                    ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-                    ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-                    ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-                    ->where("elligible_employees.year","=",$year)
-                    ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-                    ->where('employee_jobs.empl_status',"=","A")
-                    ->where('pledges.created_at',">",$date->copy()->startOfYear())
-                    ->where('pledges.created_at',"<",$date->copy()->endOfYear())
-                    ->where('business_units.status',"=","A")
-                    ->whereNull('employee_jobs.date_deleted')
-                    ->groupBy('regions.id')
-                    ->limit(500)
-                    ->get();
+
                 $totalDonors = 0;
                 $totalDollars = 0;
-                foreach($totals as $line){
+                foreach($charities as $line){
                     $totalDonors += $line->donors;
                     $totalDollars += $line->dollars;
                 }
@@ -484,7 +410,7 @@ class ChallengeController extends Controller
 
         }
 else if($request->sort == "department"){
-    $fileName = 'Stats By Region.csv';
+    $fileName = 'Stats By Department.csv';
     $headers = array(
         "Content-type" => "text/csv",
         "Content-Disposition" => "attachment; filename=$fileName",
@@ -518,7 +444,7 @@ else if($request->sort == "department"){
     $file = fopen('test.csv', 'w');
     fputcsv($file, $row);
     foreach ($charities as $index => $charity) {
-        fputcsv($file, [($index + 1),$charity->name,$charity->bi_department_id, $charity->donors, "$".number_format($charity->dollars,2)]);
+        fputcsv($file, [($index + 1),$charity->department_name,$charity->bi_department_id, $charity->donors, "$".number_format($charity->dollars,2)]);
     }
     $date = new Carbon($_GET['start_date']);
     $year = $date->format("Y");
