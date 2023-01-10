@@ -84,6 +84,18 @@ class EventSubmissionQueueController extends Controller
                 $gov_organization = Organization::where('code', 'GOV')->first();
                 $is_GOV = ($form->organization_code == $gov_organization->code);
 
+                if($is_GOV){
+                    $existing = BankDepositForm::where("organization_code","=","GOV")
+                        ->where("event-type","=","Cash One-time Donation")
+                        ->where("form_submitter_id","=",$form->form_submitter_id)
+                        ->get();
+
+                    if(!empty($existing))
+                    {
+                        BankDepositForm::where("id",$request->submission_id)->update(['bc_gov_id' => "S".$form->bc_gov_id]);
+                    }
+                }
+
                 $pay_period_amount = $form->deposit_amount;
                 $one_time_amount =  $form->deposit_amount;
                 $pay_period_annual_amt = $form->deposit_amount;
@@ -212,6 +224,70 @@ class EventSubmissionQueueController extends Controller
             $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id","=",$request->form_id)->get();
             $submissions[$index]["attachments"] = BankDepositFormAttachments::where("bank_deposit_form_id","=",$request->form_id)->get();
         }
+
+        $existing = [];
+        if($submissions[0]->organization_code == "GOV"){
+            $existing = BankDepositForm::where("organization_code","=","GOV")
+                ->where("event_type","=","Cash One-time Donation")
+                ->where("form_submitter_id","=",$submissions[0]->form_submitter_id)
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->bc_gov_id = "S".$submissions[0]->bc_gov_id;
+            }
+        }
+        $existing = [];
+
+        if($submissions[0]->organization_code == "RET"){
+            $existing = BankDepositForm::where("organization_code","=","RET")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->pecsf_id = "R".intval(str_replace("R","",$existing[0]->bc_gov_id)) +1;
+            }
+            else{
+                $submissions[0]->pecsf_id = "R000001";
+
+            }
+        }
+        $existing = [];
+
+        if($submissions[0]->event_type == "Gaming")
+        {
+            $existing = BankDepositForm::where("event_type","=","Gaming")
+                ->where("pecsf_id","LIKE","G%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->pecsf_id = "G".date("Y").intval(str_replace("G","",$existing[0]->pecsf_id)) + 1;
+            }
+            else{
+                $submissions[0]->pecsf_id = "G".date("Y")."0001";
+            }
+        }
+        $existing = [];
+
+        if($submissions[0]->event_type == "Fundraiser")
+        {
+            $existing = BankDepositForm::where("event_type","=","Fundraiser")
+                ->where("pecsf_id","LIKE","F%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->pecsf_id = "F".date("Y").intval(str_replace("F","",$existing[0]->pecsf_id)) + 1;
+            }
+            else{
+                $submissions[0]->pecsf_id = "F".date("Y")."0001";
+            }
+        }
+
         echo json_encode($submissions);
     }
 

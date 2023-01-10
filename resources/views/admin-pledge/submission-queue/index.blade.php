@@ -171,6 +171,14 @@
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
                       $("#sub_type").attr("disabled",false);
                       $("#sub_type").val(data[0].sub_type).select2();
+                        $("#pecsf_id").val(data[0].pecsf_id);
+                        $("#bc_gov_id").val(data[0].bc_gov_id);
+                        $("#pecsfid").find("label").show();
+                        $("#pecsfid").find("input").show();
+                        $("#bcgovid").find("label").hide();
+                        $("#bcgovid").find("input").hide();
+                        $("#pecsfid").show();
+                        $("#bcgovid").hide();
                     }
                     else{
                         $("#address_1").val(data[0].address_line_1);
