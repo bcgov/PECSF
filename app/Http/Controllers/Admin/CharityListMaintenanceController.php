@@ -76,11 +76,11 @@ class CharityListMaintenanceController extends Controller
         $upload_file = $request->file('charity_list') ? $request->file('charity_list') : [];
         $filesize = $upload_file->getSize();
         $filename=date('YmdHis').'_'. str_replace(' ', '_', $upload_file->getClientOriginalName() );
-        $upload_file->move(public_path( $this->charity_file_folder ), $filename);
-        ProcessCharityList::dispatch(public_path( $this->charity_file_folder)."/".$filename,$filename,$filesize);
+        $upload_file->move(storage_path( $this->charity_file_folder ), $filename);
+        ProcessCharityList::dispatch(storage_path( $this->charity_file_folder)."/".$filename,$filename,$filesize);
 
         return redirect()->route('settings.charity-list-maintenance.index')
-            ->with('success','File ' . public_path( $this->charity_file_folder).$filename . ' was assigned added to the process queue.');
+            ->with('success','File ' . storage_path( $this->charity_file_folder).$filename . ' was assigned added to the process queue.');
 
     }
 
