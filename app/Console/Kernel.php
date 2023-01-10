@@ -39,18 +39,23 @@ class Kernel extends ConsoleKernel
         if (App::environment('production') || App::environment('testing')) {
 
             $schedule->command('command:ExportPledgesToPSFT')
-                    ->dailyAt('0:15');
+                    ->dailyAt('0:15')
+                    ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
                     
             $schedule->command('command:ExportDatabaseToBI')
                     ->weekdays()
-                    ->at('0:30');
+                    ->at('0:30')
+                    ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
 
         }
 
         // Foundation table
         $schedule->command('command:ImportPayCalendar')
-                 ->weekdays()
-                 ->at('2:00');
+                ->weekdays()
+                ->at('2:00')
+                //  ->everyFifteenMinutes()
+                ->appendOutputTo(storage_path('logs/ImportPayCalendar.log'));
+                 
 
         // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
         $schedule->command('command:ImportNonGovPledgeHistory')
@@ -86,6 +91,11 @@ class Kernel extends ConsoleKernel
         // $schedule->command('command:ImportEligibleEmployees')
         //          ->weekdays()
         //          ->at('5:10');      
+
+        $schedule->command('notify:daily')
+        ->dailyAt('08:30')
+        ->appendOutputTo(storage_path('logs/daily.log'));
+
                  
     }
 

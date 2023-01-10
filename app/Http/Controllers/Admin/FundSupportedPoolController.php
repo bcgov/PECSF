@@ -53,14 +53,14 @@ class FundSupportedPoolController extends Controller
                     })
                     ->when( $request->effectiveTypeFilter == 'F', function ($q)  {
                         return $q->where('f_s_pools.start_date', '>', today() )
-                                 ->whereNull('deleted_at');
+                                 ->whereNull('f_s_pools.deleted_at');
                     })
                     ->when( $request->effectiveTypeFilter == 'H', function ($q)  {
                         return $q->where('f_s_pools.start_date', '<', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                                            ->whereNull('deleted_at')
+                                            ->whereNull('f_s_pools.deleted_at')
                                             ->where('A.start_date', '<=', today());
                                     });
                     })
@@ -69,7 +69,7 @@ class FundSupportedPoolController extends Controller
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                                            ->whereNull('deleted_at')
+                                            ->whereNull('f_s_pools.deleted_at')
                                             ->where('A.start_date', '<=', today());
                                     });
                     })

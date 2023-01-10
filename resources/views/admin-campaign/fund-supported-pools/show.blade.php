@@ -30,7 +30,7 @@
                 <div class="form-group col-md-3">
                     <label for="startd_date">Start Date</label>
                     <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" 
-                            id="start_date" value="{{ $pool->start_date }}" disabled>
+                            id="start_date" value="{{ $pool->start_date->format('Y-m-d') }}" disabled>
                 </div>
                 <div class="form-group col-md-2">
                     <label for="pool_status">Status</label>

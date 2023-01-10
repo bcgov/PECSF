@@ -57,7 +57,7 @@ class FSPool extends Model
     public function getCanEditAttribute()
     {
 
-        if ($this->start_date <= today()) {
+        if ($this->start_date < today()) {
             return false;
         };
 
