@@ -99,7 +99,7 @@ class ChallengeController extends Controller
 
 
 
-        $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
+        $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
             ->join("users","pledges.user_id","users.id")
             ->join("employee_jobs","employee_jobs.emplid","users.emplid")
             ->join("business_units","business_units.code","=","employee_jobs.business_unit")
@@ -301,7 +301,7 @@ class ChallengeController extends Controller
                 ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
                 ->where('employee_jobs.empl_status',"=","A")
                 ->where('pledges.created_at',">",$date->copy()->startOfYear())
-                ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+                ->where('pledges.created_at',"<",$date->copy())
                 ->where('business_units.status',"=","A")
                 ->whereNull('employee_jobs.date_deleted')
                 ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
@@ -329,11 +329,10 @@ class ChallengeController extends Controller
                 ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
                 ->where('employee_jobs.empl_status',"=","A")
                 ->where('pledges.created_at',">",$date->copy()->startOfYear())
-                ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+                ->where('pledges.created_at',"<",$date->copy())
                 ->where('business_units.status',"=","A")
                 ->whereNull('employee_jobs.date_deleted')
                 ->havingRaw('participation_rate < ? ', [101])
-
                 ->groupBy('pledges.organization_id')
                 ->limit(500)
                 ->get();
@@ -343,7 +342,7 @@ class ChallengeController extends Controller
                 $totalDonors += $line->donors;
                 $totalDollars += $line->dollars;
             }
-            fputcsv($file,["totals","",number_format($totalDonors,2),number_format($totalDollars,2)]);
+            fputcsv($file,["totals","",number_format($totalDonors,2),"$".number_format($totalDollars,2)]);
             $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
             $objPHPExcel = $reader->load("test.csv");
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');
@@ -370,8 +369,22 @@ class ChallengeController extends Controller
             );
             $date = new Carbon($_GET['start_date']);
             $year = $date->format("Y");
-            $charities = Region::join("donor_by_regional_districts","regions.id","donor_by_regional_districts.regional_district_id")
-                ->where('yearcd',"=",$year)
+            $charities = Pledge::select(DB::raw('business_units.status,regions.name as name, departments.department_name, departments.bi_department_id, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
+                ->join("users","pledges.user_id","users.id")
+                ->join("employee_jobs","employee_jobs.emplid","users.emplid")
+                ->join("regions","employee_jobs.region_id","regions.id")
+                ->join("business_units","business_units.code","=","employee_jobs.business_unit")
+                ->join("departments","employee_jobs.deptid","departments.bi_department_id")
+                ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
+                ->where("elligible_employees.year","=",$year)
+                ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
+                ->where('employee_jobs.empl_status',"=","A")
+                ->where('pledges.created_at',">",$date->copy()->startOfYear())
+                ->where('pledges.created_at',"<",$date->copy())
+                ->where('business_units.status',"=","A")
+                ->whereNull('employee_jobs.date_deleted')
+                ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
+                ->groupBy('employee_jobs.region_id')
                 ->limit(500)
                 ->get();
 
@@ -391,7 +404,7 @@ class ChallengeController extends Controller
                     $totalDonors += $line->donors;
                     $totalDollars += $line->dollars;
                 }
-                fputcsv($file,["totals","",$totalDonors,$totalDollars]);
+                fputcsv($file,["totals","",$totalDonors,"$".number_format($totalDollars)]);
             $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
             $objPHPExcel = $reader->load("test.csv");
             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');
@@ -430,7 +443,7 @@ else if($request->sort == "department"){
         ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
         ->where('employee_jobs.empl_status',"=","A")
         ->where('pledges.created_at',">",$date->copy()->startOfYear())
-        ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+        ->where('pledges.created_at',"<",$date->copy())
         ->where('business_units.status',"=","A")
         ->whereNull('employee_jobs.date_deleted')
         ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
@@ -458,7 +471,7 @@ else if($request->sort == "department"){
         ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
         ->where('employee_jobs.empl_status',"=","A")
         ->where('pledges.created_at',">",$date->copy()->startOfYear())
-        ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+        ->where('pledges.created_at',"<",$date->copy())
         ->where('business_units.status',"=","A")
         ->whereNull('employee_jobs.date_deleted')
         ->groupBy('employee_jobs.deptid')
@@ -470,7 +483,7 @@ else if($request->sort == "department"){
         $totalDonors += $line->donors;
         $totalDollars += $line->dollars;
     }
-    fputcsv($file,["totals","","",$totalDonors,$totalDollars]);
+    fputcsv($file,["totals","","",$totalDonors,"$".number_format($totalDollars)]);
     $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
     $objPHPExcel = $reader->load("test.csv");
     $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');
