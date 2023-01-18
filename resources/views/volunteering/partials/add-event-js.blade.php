@@ -60,8 +60,15 @@ else{
         $("#pecsfid").find("input").hide();
         $("#bcgovid").find("label").hide();
         $("#bcgovid").find("input").hide();
+
+        if($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser")
+        {
+            alert("Invalid Event Type for Retiree. We selected a default option on your behalf.");
+            $("#event_type").val("Cash One-Time Donation").trigger("change");
+        }
         $("#event_type>option[value='Fundraiser']").prop('disabled',true);
         $("#event_type>option[value='Gaming']").prop('disabled',true);
+
 
     }
     else{
