@@ -21,7 +21,7 @@ $("#pool_filter").parents(".form-group").hide();
 });
 $("#pool_filter").parents(".form-group").hide();
 
-$("[name='event_type']").change(function(){
+$("[name='event_type'],[name='organization_code']").change(function(){
 $("#sub_type").attr("disabled",false);
 
 
@@ -52,6 +52,17 @@ else{
         $("#bcgovid").find("input").show();
         $("#pecsfid").hide();
         $("#bcgovid").show();
+        $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+        $("#event_type>option[value='Gaming']").prop('disabled',false);
+    }
+    else if($("[name='organization_code']").val() == "RET"){
+        $("#pecsfid").find("label").hide();
+        $("#pecsfid").find("input").hide();
+        $("#bcgovid").find("label").hide();
+        $("#bcgovid").find("input").hide();
+        $("#event_type>option[value='Fundraiser']").prop('disabled',true);
+        $("#event_type>option[value='Gaming']").prop('disabled',true);
+
     }
     else{
         $("#pecsfid").find("label").show();
@@ -60,6 +71,8 @@ else{
         $("#bcgovid").find("input").hide();
         $("#pecsfid").show();
         $("#bcgovid").hide();
+        $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+        $("#event_type>option[value='Gaming']").prop('disabled',false);
     }
 
 $(".address_hook").show();

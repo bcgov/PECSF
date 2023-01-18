@@ -97,13 +97,12 @@ class ChallengeController extends Controller
         $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
             $year = $date->format("Y");
 
-
-
-        $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
+            $charities = Pledge::select(DB::raw('business_units.status,departments.group, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
             ->join("users","pledges.user_id","users.id")
             ->join("employee_jobs","employee_jobs.emplid","users.emplid")
             ->join("business_units","business_units.code","=","employee_jobs.business_unit")
             ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
+            ->join("departments","departments.business_unit_id","employee_jobs.business_unit_id")
             ->where("elligible_employees.year","=",$year)
             ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
             ->where('employee_jobs.empl_status',"=","A")
@@ -116,10 +115,18 @@ class ChallengeController extends Controller
             ->limit(500)
             ->get();
 
+        foreach($charities as $charity){
+            if($charity->group != null){
+                $gcpeTotal += $charity->total;
+                $gcpeDonors += $charity->donors;
+            }
+        }
+
         $totals = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors'))
             ->join("users","pledges.user_id","users.id")
             ->join("employee_jobs","employee_jobs.emplid","users.emplid")
             ->join("business_units","business_units.id","=","employee_jobs.business_unit_id")
+
             ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
             ->where("elligible_employees.year","=",$year)
             ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
@@ -154,6 +161,11 @@ class ChallengeController extends Controller
         }
         $donorsTotal =  0;
         $dollarsTotal =  0;
+
+
+
+
+
         foreach($charities as $index => $charity){
             $previousYear = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
                 ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
