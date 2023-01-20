@@ -98,7 +98,7 @@
                         }
                     @endphp
                     <td>{{$charity['organization_name']}}</td>
-                    <td>{{ $charity['participation_rate']? $charity['participation_rate'] : "No Data"}}</td>
+                    <td>{{ $charity['participation_rate'] ? $charity['participation_rate'] : ($charity->participation_rate ? $charity->participation_rate : "No Data" )}}</td>
                     <td>{{$charity['previous_participation_rate'] ? $charity['previous_participation_rate'] : "No Data"}}</td>
                     <td>{{$charity['change'] ? $charity['change'] : "No Data"}}</td>
                     <td>{{$charity['donors']}}</td>

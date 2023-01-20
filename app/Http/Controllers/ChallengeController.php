@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\Region;
 use App\Models\Pledge;
 use App\Models\CampaignYear;
+use App\Models\EmployeeJob;
 
 use App\Models\BusinessUnit;
 use Illuminate\Support\Facades\DB;
@@ -97,12 +98,11 @@ class ChallengeController extends Controller
         $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
             $year = $date->format("Y");
 
-            $charities = Pledge::select(DB::raw('business_units.status,departments.group, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
+            $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate, elligible_employees.ee_count'))
             ->join("users","pledges.user_id","users.id")
             ->join("employee_jobs","employee_jobs.emplid","users.emplid")
             ->join("business_units","business_units.code","=","employee_jobs.business_unit")
             ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-            ->join("departments","departments.business_unit_id","employee_jobs.business_unit_id")
             ->where("elligible_employees.year","=",$year)
             ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
             ->where('employee_jobs.empl_status',"=","A")
@@ -110,23 +110,47 @@ class ChallengeController extends Controller
             ->where('pledges.created_at',"<",$date->copy()->endOfYear())
             ->where('business_units.status',"=","A")
             ->whereNull('employee_jobs.date_deleted')
-            ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
+           /* ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])*/
             ->groupBy('business_units.name')
             ->limit(500)
             ->get();
 
-        foreach($charities as $charity){
-            if($charity->group != null){
-                $gcpeTotal += $charity->total;
-                $gcpeDonors += $charity->donors;
+        $gcpe = Pledge::select(DB::raw('business_units.status,employee_jobs.emplid,departments.group,pledges.goal_amount,business_units.id,business_units.name as organization_name'))
+            ->join("users","pledges.user_id","users.id")
+            ->join("employee_jobs","employee_jobs.emplid","users.emplid")
+            ->join("business_units","business_units.code","=","employee_jobs.business_unit")
+            ->join("departments","departments.bi_department_id","employee_jobs.deptid")
+
+            ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
+            ->where('employee_jobs.empl_status',"=","A")
+            ->where('pledges.created_at',">",$date->copy()->startOfYear())
+            ->where('pledges.created_at',"<",$date->copy()->endOfYear())
+            ->where('business_units.status',"=","A")
+            ->whereNull('employee_jobs.date_deleted')
+            ->get();
+
+
+        $gcpeTotal = 0 ;
+            $gcpeDonors = [];
+            $embcTotal = 0;
+            $embcDonors = [];
+        foreach($gcpe as $charity){
+            if($charity->group == "GCPE"){
+                $gcpeTotal += $charity->goal_amount;
+                $gcpeDonors[$charity->emplid] = 1;
+            }
+            if($charity->group == "EMBC"){
+                $embcTotal += $charity->goal_amount;
+                $embcDonors[$charity->emplid] = 1;
             }
         }
+        $embcDonors = count($embcDonors);
+        $gcpeDonors = count($gcpeDonors);
 
         $totals = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors'))
             ->join("users","pledges.user_id","users.id")
             ->join("employee_jobs","employee_jobs.emplid","users.emplid")
             ->join("business_units","business_units.id","=","employee_jobs.business_unit_id")
-
             ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
             ->where("elligible_employees.year","=",$year)
             ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
@@ -165,26 +189,110 @@ class ChallengeController extends Controller
 
 
 
+        $gcpe = Pledge::select(DB::raw('business_units.status,employee_jobs.emplid,departments.group,pledges.goal_amount,business_units.id,business_units.name as organization_name'))
+            ->join("users","pledges.user_id","users.id")
+            ->join("employee_jobs","employee_jobs.emplid","users.emplid")
+            ->join("business_units","business_units.code","=","employee_jobs.business_unit")
+            ->join("departments","departments.bi_department_id","employee_jobs.deptid")
+
+            ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
+            ->where('employee_jobs.empl_status',"=","A")
+            ->where('pledges.created_at',">",$date->copy()->startOfYear()->subYear())
+            ->where('pledges.created_at',"<",$date->copy()->endOfYear()->subYear())
+            ->where('business_units.status',"=","A")
+            ->whereNull('employee_jobs.date_deleted')
+            ->get();
+
+
+        $curGcpeTotal = $gcpeTotal;
+        $curGcpeDonors = $gcpeDonors;
+        $curEmbcTotal = $embcTotal;
+        $curEmbcDonors = $embcDonors;
+        $gcpeTotal = 0 ;
+        $gcpeDonors = [];
+        $embcTotal = 0;
+        $embcDonors = [];
+        foreach($gcpe as $charity){
+            if($charity->group == "GCPE"){
+                $gcpeTotal += $charity->goal_amount;
+                $gcpeDonors[$charity->emplid] = 1;
+            }
+            if($charity->group == "EMBC"){
+                $embcTotal += $charity->goal_amount;
+                $embcDonors[$charity->emplid] = 1;
+            }
+        }
+        $embcDonors = count($embcDonors);
+        $gcpeDonors = count($gcpeDonors);
+
+        $departments = EmployeeJob::select(DB::raw("deptid, dept_name, count(*) as ee_count"))
+            ->where("empl_status","=","A")
+            ->groupBy("dept_name")
+            ->get();
+
+        $gcpeEeCount = 0;
+        $embcEeCount = 0;
+        foreach($departments as $department){
+            if((strpos($department->dept_name,"GCPE") > -1))
+            {
+                $gcpeEeCount += $department->ee_count;
+            }
+            if((strpos($department->dept_name,"EMBC") > -1))
+            {
+                $embcEeCount += $department->ee_count;
+            }
+        }
+        $mofEeCount = 0;
+        $mpssgEeCount = 0;
+        foreach($charities as $charity){
+            if($charity->organization_name == "Ministry of Finance")
+            {
+                $mofEeCount += $charity->ee_count;
+            }
+            if($charity->organization_name == "Ministry of Public Safety and Solicitor General")
+            {
+                $mpssgEeCount += $charity->ee_count;
+            }
+        }
+
+        foreach($charities as $charity){
+            if($charity->organization_name == "Ministry of Finance"){
+                $charity->donors += $charity->donors - $gcpeDonors;
+                $charity->dollars += $charity->dollars - $gcpeTotal;
+                $charity->participation_rate = ($charity->donors / $mofEeCount);
+            }
+            if($charity->organization_name == "Government Communications and Public Engagement"){
+                    $charity->dollars += $gcpeTotal;
+                    $charity->donors += $gcpeDonors;
+                    $charity->participation_rate += ($charity->donors / $gcpeEeCount);
+            }
+
+            if($charity->organization_name == "Ministry of Public Safety and Solicitor General"){
+                $charity->donors += $charity->donors - $embcDonors;
+                $charity->dollars += $charity->dollars - $embcTotal;
+                $charity->participation_rate = ($charity->donors / $mpssgEeCount);
+            }
+
+            if($charity->organization_name == "Emergency Management BC"){
+                $charity->dollars += $embcTotal;
+                $charity->donors += $embcDonors;
+                $charity->participation_rate += ($charity->donors / $embcEeCount);
+            }
+        }
+
+
 
         foreach($charities as $index => $charity){
-            $previousYear = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
-                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-                ->join("elligible_employees", function($join){
-                    //$join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                    $join->on("business_units.code", '=', 'elligible_employees.business_unit');
-                })
-                ->where('donor_by_business_units.yearcd',"=",($year-1))
-                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".($year-1)))
-                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".($year-1)))
-                ->where('business_units.id',"=",$charity->id)
-                ->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort == "asc" ? $request->sort : "desc"))
+            $previousYear = HistoricalChallengePage::select("*")->where("year","=",($year-1))->where("organization_name","=",($charity->organization_name == "Office of the Auditor General" ? "Office of the Auditor General of BC": (($charity->organization_name == "Ministry of Transportation and Infrastructure")?"Ministry of Transportation and Infrastructure and Transportation Investment Corporation":($charity->organization_name =="Ministry of Attorney General"? "Ministry of Attorney General and Housing": ($charity->organization_name =="Ministry of Forests"?"Ministry of Forests, Lands, Natural Resource Operations and Rural Dev.":($charity->organization_name == "Ministry of Agriculture and Food" ? "Ministry of Agriculture, Food and Fisheries":($charity->organization_name=="Ministry of Land, Water and Resource Stewardship"?"Ministry of Forests, Lands, Natural Resource Operations and Rural Dev.":$charity->organization_name)))))))
                 ->first();
+
+            $charities[$index]->participation_rate = number_format($charities[$index]->participation_rate * 100,2);
 
             if(!empty($previousYear))
             {
-                $charities[$index]->previous_participation_rate = $previousYear->participation_rate;
-                $charities[$index]->previous_donors = $previousYear->donors;
-                $charities[$index]->change = ($charity->participation_rate*100) - ($previousYear->participation_rate*100);
+                $charities[$index]->previous_participation_rate = str_replace("%","",$previousYear->participation_rate);
+                $charities[$index]->previous_donors = str_replace("%","",$previousYear->donors);
+                $charities[$index]->change = number_format((str_replace("%","",$charities[$index]->participation_rate)) - (str_replace("%","",$previousYear->participation_rate)),2);
             }
             else
             {
