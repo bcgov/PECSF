@@ -242,6 +242,7 @@ class EventSubmissionQueueController extends Controller
         if($submissions[0]->organization_code == "RET"){
             $existing = BankDepositForm::where("organization_code","=","RET")
                 ->orderBy("pecsf_id","desc")
+                ->whereNotNull("pecsf_id")
                 ->get();
 
             if(count($existing) > 0)
@@ -249,7 +250,7 @@ class EventSubmissionQueueController extends Controller
                 $submissions[0]->pecsf_id = "R".intval(str_replace("R","",$existing[0]->bc_gov_id)) +1;
             }
             else{
-                $submissions[0]->pecsf_id = "R000001";
+                $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2)."001";
 
             }
         }

@@ -170,7 +170,7 @@ class BankDepositFormController extends Controller
 
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
-            if($request->organization_code != "GOV")
+            if($request->organization_code != "GOV" && $request->organization_code != "RET")
             {
 
                     if(empty($request->pecsf_id))
