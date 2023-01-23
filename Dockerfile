@@ -118,9 +118,6 @@ COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 
 EXPOSE 8000
 
-# Queue 
-RUN php artisan queue:work --tries=3 --timeout=0 > /var/www/html/storage/logs/queue-work.log
-
 # Add a command to base-image entrypont script
 CMD /usr/local/bin/apache2-foreground
 
