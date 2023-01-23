@@ -102,7 +102,7 @@
                     <td>{{$charity['previous_participation_rate'] ? $charity['previous_participation_rate'] : "No Data"}}</td>
                     <td>{{$charity['change'] ? $charity['change'] : "No Data"}}</td>
                     <td>{{$charity['donors']}}</td>
-                    <td>${{number_format(floatval($charity['dollars']))}}</td>
+                    <td>${{number_format(floatval(str_replace("$","",$charity['dollars'])),2)}}</td>
                 </tr>
             @endforeach
 </tbody>
