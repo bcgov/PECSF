@@ -247,7 +247,7 @@ class EventSubmissionQueueController extends Controller
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "R".intval(str_replace("R","",$existing[0]->bc_gov_id)) +1;
+                $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2).(intval(str_replace("R","",$existing[0]->bc_gov_id)) +1);
             }
             else{
                 $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2)."001";
