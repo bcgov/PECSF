@@ -51,7 +51,7 @@
     </div>
     <br>
 
-    @if(!empty($totals))
+    @if(!empty($totals[0]))
     <table class="table table-bordered rounded" id="myTable3">
         <thead>
         <tr class="bg-light">
@@ -68,6 +68,8 @@
         </tr>
         </tbody>
     </table>
+    @else
+        <p>We could not calculate totals for the currently selected active year ({{$year}})</p>
     @endif
 
     <br>
