@@ -253,11 +253,6 @@ return [
                     'url'  => '/profile',
                 ],
                 [
-                    'text' => 'Training',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
-                    'url'  => '/training',
-                ],
-                [
                     'text' => 'Forms',
                     'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/bank_deposit_form',
