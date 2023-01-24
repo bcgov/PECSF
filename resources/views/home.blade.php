@@ -105,35 +105,9 @@
         <div class="col-12 col-xl-8 offset-xl-2">
             <h1 class="text-center">Check out our leaderboard</h1>
 
-            <div class="row p-3">
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-bordered rounded" id="myTable2">
-                            <tr class="bg-light">
-                                <th onclick="sortTable(0)" style="cursor: pointer;">Rank</th>
-                                <th onclick="sortTable(1)" style="cursor: pointer;">Organization Name</th>
-                                <th onclick="sortTable(2)" style="cursor: pointer;">Participation Rate (%)</th>
-                                <th onclick="sortTable(2)" style="cursor: pointer;">Previous Participation Rate (%)</th>
-                                <th onclick="sortTable(5)" style="cursor: pointer;">Donors</th>
-                                <th onclick="sortTable(6)" style="cursor: pointer;">Dollar Donated</th>
-                            </tr>
-                            @foreach($charities as $index => $charity)
-                            <tr>
-                                <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
-                                <td>{{$charity['name']}}</td>
-                                <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
-                                <td>{{round(($charity['previous_participation_rate'] * 100),2)}}%</td>
-
-                                <td>{{$charity['donors']}}</td>
-                                <td>${{$charity['dollars']}}</td>
-                            </tr>
-                            @endforeach
-                        </table>
-                        <p></p>
-                        <div class="text-center">
-                            <a class="btn btn-primary" href="/challenge" role="button">Go to challenge page</a>
-                        </div>
-                    </div>
+            <div class="row justify-content-center">
+                <div class="text-center">
+                    <a class="btn btn-primary" href="/challenge" role="button">Go to challenge page</a>
                 </div>
             </div>
 
