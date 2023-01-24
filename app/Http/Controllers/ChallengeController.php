@@ -54,7 +54,7 @@ class ChallengeController extends Controller
             $charities = $charities->where("organization_name","LIKE",$request->organization_name."%");
         }
 
-        $charities = $charities->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
+        $charities = $charities->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? (($request->field == "name") ? 'organization_name' : $request->field) : "participation_rate"),($request->sort ? $request->sort : "desc"))
             ->limit(500)
             ->get();
 
