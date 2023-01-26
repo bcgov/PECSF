@@ -156,7 +156,9 @@ $("input[name='organization_name'],input[name='business_number']").keyup(functio
         });
 
         setInterval(function(){
-            window.location.reload();
+            if(document.getElementById("charity_list").files.length < 1){
+                window.location.reload();
+            }
         },30000);
     </script>
 @endpush

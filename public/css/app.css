@@ -49418,3 +49418,8 @@ div.border-primary a {
   height: -moz-fit-content;
   height: fit-content;
 }
+
+.form-pool:hover .card {
+  color: #fff;
+  background: #1a5a96;
+}
