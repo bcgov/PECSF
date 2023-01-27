@@ -1,11 +1,33 @@
 @extends('adminlte::page')
 @section('content_header')
     <div class="d-flex mt-3">
-        <h1>PECSF Volunteering</h1>
+        <h1>Dashboard</h1>
         <div class="flex-fill"></div>
     </div>
 @endsection
 @section('content')
+
+    @if($is_registered)
+<div class="row">
+    <div class="col-md-12 justify-content-center pt-3 mb-5">
+        <div class="card justify-content-center border-warning text-center" style="background:#D9EAF7;border-radius: 1em;">
+            <div class=" justify-content-center card-body" style="color:#1a5a96;">
+                <h5 class="card-title"></h5>
+                <p class="card-text text-center">It's time for you to renew your volunteer registration</p>
+                <p class="card-text text-center">
+                    Click below to make any necessary updates to your information
+                </p>
+                <p>
+                    <button class="btn btn-primary">Renew volunteer Registration</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    @endif
+
     @include('volunteering.partials.statistics')
 @include('volunteering.partials.overall-graph')
 

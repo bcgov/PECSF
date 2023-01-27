@@ -343,7 +343,8 @@ class BankDepositFormController extends Controller
 
 
                 $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
-                $file->move(storage_path( $this->doc_folder ), $filename);
+
+                $filePath = $file->storeAs(  "/uploads/bank_deposit_form_attachments" , $filename);
                 BankDepositFormAttachments::create([
                 'local_path' => storage_path( $this->doc_folder )."/".$filename,
                 'bank_deposit_form_id' => $form->id
