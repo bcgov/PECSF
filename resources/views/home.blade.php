@@ -100,7 +100,7 @@
   </div>
 </div>
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-12 col-xl-8 offset-xl-2">
             <h1 class="text-center">Check out our leaderboard</h1>
