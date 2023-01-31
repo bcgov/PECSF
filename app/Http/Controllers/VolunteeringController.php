@@ -37,8 +37,8 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? true : false;
-        $global_address = "";
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+        $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
 
         return view('volunteering.index', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
