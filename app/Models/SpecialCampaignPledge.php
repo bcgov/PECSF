@@ -51,7 +51,7 @@ class SpecialCampaignPledge extends Model
 
     public function special_campaign() 
     {
-        return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withDefault();
+        return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withTrashed()->withDefault();
     }
 
     public function campaign_year() {
