@@ -250,8 +250,8 @@
                                             </div>
                                         </div>
                                         <div class="row mt-5">
-                                            <a onclick="$('#2').show();$('#3').hide()"><button  style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="btn cancel-btn">Back</button></a>
-                                              &nbsp;  <a onclick="$('#4').show();$('#3').hide();$('[data-value-for=organization]').html($('#organization option:selected').text());$('#no_of_years').html($('[name=no_of_years] option:selected').text());$('[data-value-for=preferred_role]').html($('#preferred_role option:selected').text());$('[data-value-for=address_type]').html($('[name=new_address]').val() + ',' + $('[name=city]').val() + ','+ $('[name=province]').val() + ',' + $('[name=postal_code]')).val();" class="btn btn-primary">Save All Changes</a>
+                                            <a  onclick="$('#2').show();$('#3').hide()" style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="btn">Back</a>
+                                              &nbsp;  <a onclick="$('[data-value-for=organization]').html($('#organization option:selected').text());$('#no_of_years').html($('[name=no_of_years] option:selected').first().text());$('#preferred_role').html($('[name=preferred_role] option:selected').first().text()); (($('[name=address_type]:checked').val() =='New') ? $('[data-value-for=address_type]').html($('[name=new_address]').val() + ',' + $('[name=city]').val() + ','+ $('[name=province]').val() + ',' + $('[name=postal_code]').val()) : $('[name=address_type]:checked').val() =='Global' ? $('[data-value-for=address_type]').html('Global') : $('[data-value-for=address_type]').html('Opt-Out'));if($('[name=address_type]:checked').val() == 'New'){($('[name=new_address]').val().length < 1 ? $('.new_address_error').html('The street address field is required').css('color','red') :$('.new_address_error').html(''));($('[name=postal_code]').val().length < 1 ? $('.postal_code_error').html('The postal code field is required').css('color','red') :($('.postal_code_error').html('')));} if($('[name=postal_code]').val().length > 0 && $('[name=new_address]').val().length > 1 || $('[name=address_type]:checked').val() != 'New' ){$('#4').show();$('#3').hide();}" class="btn btn-primary">Save All Changes</a>
                                         </div>
                                     </section>
                                     <section id="4" style="display:none;">
@@ -310,7 +310,7 @@
                                             <p>Personal information collected through this registration process is collected by the BC Public Service Agency for the purpose of facilitating PECSF volunteering recognition activities and program improvements under section 26 (c) and (e) of the Freedom of Information and Protection of Privacy Act</p>
                                             <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services fund at 250 356-1736 or <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a></p>
                                         </div>
-                                        <a onclick="$('#3').show();$('#4').hide()"><button  style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="btn cancel-btn">Back</button></a>
+                                       <a  onclick="$('#3').show();$('#4').hide()" style="color:#1a5a96;border:#1a5a96 1px solid;background:white;border-radius:3px;" class="btn ">Back</a>
                                         <a class="save-btn btn btn-primary">Renew Registration</a>
                                     </section>
 
@@ -324,7 +324,7 @@
 <i class="fa fas fa-check-circle fa-10x" style="color:green;"></i>
                                         </div>
                                         <div class="row justify-content-center mt-5">
-                                            <a class="btn btn-primary">Return Home</a>
+                                            <a type="button" class="btn btn-primary" data-dismiss="modal" >Return Home</a>
                                         </div>
                                     </section>
                                 </div>

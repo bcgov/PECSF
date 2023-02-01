@@ -16,6 +16,7 @@ use App\Models\Volunteer;
 use App\Models\City;
 use App\Models\EmployeeJob;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 
 use Illuminate\Support\Facades\Validator;
@@ -39,6 +40,8 @@ class VolunteeringController extends Controller
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
+
+        $updated = Carbon::parse($is_registered->updated_at) ;
 
         return view('volunteering.index', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
