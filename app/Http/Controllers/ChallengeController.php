@@ -59,6 +59,7 @@ class ChallengeController extends Controller
             ->get();
 
         if($request->sort == "ASC"){
+
             $count = count($charities);
         }
         else{
@@ -88,6 +89,7 @@ class ChallengeController extends Controller
                 $charities = $charities->sortByDesc("previous_participation_rate");
             }
         }
+
         $date = gmdate("Y-m-d H:i:s");
 
         return view('challenge.index', compact('date','charities','year','request','count','years'));
@@ -164,21 +166,7 @@ class ChallengeController extends Controller
             ->get();
 
         if($request->sort == "ASC"){
-            $count = BusinessUnit::select(DB::raw('business_units.id,business_units.name, donor_by_business_units.donors,donor_by_business_units.dollars,(donor_by_business_units.donors / elligible_employees.ee_count) as participation_rate'))
-                ->join("donor_by_business_units","donor_by_business_units.business_unit_id","=","business_units.id")
-                ->join("elligible_employees", function($join){
-                    // $join->on("business_units.name", '=', 'elligible_employees.business_unit_name')
-                    $join->on("business_units.code", '=', 'elligible_employees.business_unit');
-                })
-                ->where('donor_by_business_units.yearcd',"=",$year)
-                ->where('elligible_employees.as_of_date',">",Carbon::parse("January 1st ".$year))
-                ->where('elligible_employees.as_of_date',"<",Carbon::parse("December 31st ".$year));
-
-            if(strlen($request->organization_name) > 0){
-                $count = $count->where("business_units.name","LIKE",$request->organization_name."%");
-            }
-            $count = $count->orderBy((($request->field && $request->field != 'change' && $request->field != 'previous_participation_rate') ? $request->field : "participation_rate"),($request->sort ? $request->sort : "desc"))
-                ->count();
+            $count = count($charities);
         }
         else{
             $count = 1 ;
@@ -326,6 +314,54 @@ class ChallengeController extends Controller
             else
             {
                 $charities = $charities->sortByDesc("previous_participation_rate");
+            }
+        }
+
+        if($request->field == "participation_rate")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("participation_rate");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("participation_rate");
+            }
+        }
+
+        if($request->field == "dollars")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("dollars");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("dollars");
+            }
+        }
+
+        if($request->field == "donors")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("donors");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("donors");
+            }
+        }
+
+        if($request->field == "name")
+        {
+            if($request->sort == "ASC")
+            {
+                $charities = $charities->sortBy("organization_name");
+            }
+            else
+            {
+                $charities = $charities->sortByDesc("organization_name");
             }
         }
 

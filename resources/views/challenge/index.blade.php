@@ -100,9 +100,9 @@
                         }
                     @endphp
                     <td>{{$charity['organization_name']}}</td>
-                    <td>{{ $charity['participation_rate'] ? $charity['participation_rate'] : ($charity->participation_rate ? $charity->participation_rate : "No Data" )}}</td>
-                    <td>{{$charity['previous_participation_rate'] ? $charity['previous_participation_rate'] : "No Data"}}</td>
-                    <td>{{$charity['change'] ? $charity['change'] : "No Data"}}</td>
+                    <td>{{ number_format($charity['participation_rate'] ? $charity['participation_rate'] : ($charity->participation_rate ? $charity->participation_rate : 0 ),2)}}%</td>
+                    <td>{{number_format($charity['previous_participation_rate'] ? $charity['previous_participation_rate'] : 0,2)}}%</td>
+                    <td>{{number_format($charity['change'] ? $charity['change'] : 0,2)}}%</td>
                     <td>{{$charity['donors']}}</td>
                     <td>${{number_format(floatval(str_replace("$","",$charity['dollars'])),2)}}</td>
                 </tr>
@@ -144,15 +144,27 @@
     });
 
     $("select[name='year']").change(function(){
-        window.location = "/challenge?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
+        if($('#year').val() > 2021)
+        {
+            window.location = "/challenge/currentyear?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
+        }
+        else{
+            window.location = "/challenge?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
+        }
     });
 
     var new_sort = '{{ $request->sort == "ASC" ? "DESC" : "ASC" }}';
 
     function sortTable(field='participation_rate')
     {
-        window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
+        @if($year > 2021)
+            window.location = "/challenge/currentyear?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
         $(".sort-hook").attr("src",);
+            @else
+                window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
+        $(".sort-hook").attr("src",);
+            @endif
+
     }
 </script>
 @endpush
