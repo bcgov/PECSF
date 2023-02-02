@@ -256,8 +256,8 @@
                         text = text.replace(/XXX/g, attachment_number + 1);
                         $('#attachments').append( text );
                         attachment_number++;
-                        $('.attachment').last().find(".filename").html(data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
-                        $('.attachment').last().find(".view_attachment").attr("href",data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
+                     $('.attachment').last().find(".filename").html("/challenge/download/"+data[0].attachments[i].id);
+                        $('.attachment').last().find(".view_attachment").attr("href","/challenge/download/"+data[0].attachments[i].id);
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);

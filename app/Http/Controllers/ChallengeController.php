@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BankDepositFormAttachments;
 use App\Models\DonorByBusinessUnit;
 use App\Models\HistoricalChallengePage;
+use App\Models\ProcessHistory;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -18,6 +20,7 @@ use App\Models\BusinessUnit;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Excel;
 
 class ChallengeController extends Controller
@@ -374,6 +377,20 @@ class ChallengeController extends Controller
             return view('challenge.index', compact('date','totals','charities','year','request','count','years'));
         }
     }
+
+    public function downloadFile(Request $request, $id) {
+
+        $history = BankDepositFormAttachments::where('id', $id)->first();
+        // $path = Student::where("id", $id)->value("file_path");
+
+
+
+       header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: attachment; filename=\"" . basename($history->local_path) . "\"");
+        readfile($history->local_path);
+    }
+
 
     /**
      * The attributes that are mass assignable.

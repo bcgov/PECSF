@@ -207,7 +207,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Pay Calendars
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
-    // CRA Charity 
+    // CRA Charity
     Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
     Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
     Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
@@ -272,7 +272,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/others', function() {
         return "to be developed";
     })->name('others');
-}); 
+});
 
 Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(function() {
 
@@ -303,7 +303,9 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
 
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
-    
+
 
 
 });
+
+Route::get('/challenge/download/{id}', [ChallengeController::class,'downloadFile'])->name('challenge.download');
