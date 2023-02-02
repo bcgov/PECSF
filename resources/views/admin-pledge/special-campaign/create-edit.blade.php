@@ -64,7 +64,7 @@
                                 </select>
                             @else
                                 <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;" {{ $is_new_pledge ? '' : 'readonly' }}>
-                                <option value="{{ $pledge->calendar_year }}" selected>{{ $pledge->yearcd }}</option>
+                                <option value="{{ $pledge->yearcd }}" selected>{{ $pledge->yearcd }}</option>
                                 </select>
                             @endif
                         </div>
@@ -215,7 +215,9 @@
 
             {{-- <div class="card-body "> --}}
                 <div id="special-campaign-area">
-                    <h6 class="pt3">&nbsp;</h6>
+                    <div class="special_campaign_id_error p-3">
+                    </div>
+                    {{-- <h6 class="pt3">&nbsp;</h6> --}}
                     {{-- <div class="row justify-content-around"> --}}
                     <div class="d-flex justify-content-around flex-wrap">
                         @foreach ($special_campaigns->sortBy('status') as $special_campaign)  
@@ -563,16 +565,26 @@ $(function () {
     // 
     $("select[name='yearcd']").change(function(e) {
         // Check input( $( this ).val() ) for validity here
-        select_year = $("select[name='yearcd']").val();
+        // select_year = $("select[name='yearcd']").val();
+        select_year = $(this).val();
 
-        $('#special-campaign-area').find('.card').each( function() {
+        first = 0;
+        $('input[name="special_campaign_id"]').prop('checked', false);
+        $('#special-campaign-area').find('.card').each( function(index) {
             status = $(this).data('status');
             start_year = $(this).data('start_year');
             end_year = $(this).data('end_year');
-console.log( select_year + ' ' + start_year + ' '  + end_year);            
+console.log( index + ' - ' + select_year + ' - ' + start_year + ' - '  + end_year);            
 
             if (select_year >= start_year && select_year <= end_year) {
                 $(this).css("display", "block");               
+                @if ($is_new_pledge)                
+                    if (first == 0) {
+                        $(this).find('input[name="special_campaign_id"]').prop('checked',true);
+                        $(this).addClass('active');
+                        first = 1;
+                    }
+                @endif
             } else {
                 $(this).css("display", "none");               
             }
@@ -656,6 +668,8 @@ console.log( select_year + ' ' + start_year + ' '  + end_year);
                 $('#admin-pldege-special-campaign-form [name='+ field_name +']').nextAll('span.text-danger').remove();
                 $('#admin-pldege-special-campaign-form [name='+ field_name +']').removeClass('is-invalid');
             });
+            $('.special_campaign_id_error').html('');
+            $('.special_campaign_id_error').parent().parent().removeClass('border border-danger');
             // $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
             // $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
 
@@ -693,6 +707,11 @@ console.log( select_year + ' ' + start_year + ' '  + end_year);
                                 pos = Number(items[ items.length -1 ]);
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
+                            } else if (field_name == 'special_campaign_id') {
+                                console.log('error found');
+                                $('.special_campaign_id_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                // $('.special_campaign_id_error').addClass('is-invalid');
+                                $('.special_campaign_id_error').parent().parent().addClass('border border-danger');
                             } else {
                                 $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name=' + field_name + ']').addClass('is-invalid');
