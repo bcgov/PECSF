@@ -41,10 +41,9 @@ class SpecialCampaignPledgeController extends Controller
 
         if($request->ajax()) {
 
-            $pledges = SpecialCampaignPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 
-                            'special_campaign')
-                            ->leftJoin('users', 'users.id', '=', 'special_campaign_pledges.user_id')
-                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+            $pledges = SpecialCampaignPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'special_campaign')
+                            // ->leftJoin('users', 'users.id', '=', 'special_campaign_pledges.user_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'special_campaign_pledges.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
@@ -193,9 +192,12 @@ class SpecialCampaignPledgeController extends Controller
      */
     public function store(SpecialCampaignPledgeRequest $request)
     {
+
+        $user = User::where('id', $request->user_id )->first();
         
         // Create a new Pledge
         $last_seqno = SpecialCampaignPledge::where('organization_id', $request->organization_id)
+                        ->where('emplid', $user->emplid)
                         ->where('user_id', $request->user_id)
                         ->where('pecsf_id', $request->pecsf_id)
                         ->where('yearcd', $request->yearcd)
@@ -207,6 +209,7 @@ class SpecialCampaignPledgeController extends Controller
 
         $pledge = SpecialCampaignPledge::Create([
             'organization_id' => $request->organization_id,
+            'emplid' => ($request->organization_id == $gov->id) ? $user->emplid : null,
             'user_id' => ($request->organization_id == $gov->id) ? $request->user_id : null,
             'pecsf_id' => (!($request->organization_id == $gov->id)) ? $request->pecsf_id : null,
             'first_name' => (!($request->organization_id == $gov->id)) ? $request->pecsf_first_name : null, 

@@ -87,7 +87,7 @@
         <div class="form-row">
             <div class="form-group col-md-2">
                 <label for="campaign_year">
-                    Campaign Year
+                    Calendar Year
                 </label>
                 <select id="campaign_year_id" class="form-control" name="campaign_year_id">
                     <option value="">All</option>
@@ -158,7 +158,7 @@
                     <th>PECSF ID</th>
                     <th>Name</th>
                     <th>City</th>
-                    <th>Campaign Year</th>
+                    <th>Calendar Year</th>
                     <th>FS Pool / Charities</th>
                     <th>One Time Amount</th>
                     <th>Bi Weekly Amount</th>
