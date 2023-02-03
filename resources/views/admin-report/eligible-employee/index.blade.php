@@ -171,6 +171,36 @@
         margin-bottom: 10px;
     }
 
+    /* Blink */
+    .blink {
+        animation: blinker 0.6s linear infinite;
+        /* color: #1c87c9;
+        font-size: 30px;
+        font-weight: bold;
+        font-family: sans-serif; */
+    }
+    @keyframes blinker {
+        50% {
+            opacity: 0;
+        }
+    }
+    .blink-one {
+      animation: blinker-one 1s linear infinite;
+    }
+    @keyframes blinker-one {
+        0% {
+            opacity: 0;
+        }
+    }
+    .blink-two {
+      animation: blinker-two 1.4s linear infinite;
+    }
+    @keyframes blinker-two {
+        100% {
+            opacity: 0;
+        }
+    }
+
 </style>
 @endpush
 
@@ -311,7 +341,7 @@
                         success: function(data) {
                             batch_id = data.batch_id;
                             console.log('export job submit');
-                            intervalID = setInterval(exportProgress, 2000);
+                            intervalID = setInterval(exportProgress, 3000);
                         },
                         error: function(response) {
                             $('#export-btn').prop('disabled', false);
