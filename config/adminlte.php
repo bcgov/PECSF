@@ -290,7 +290,7 @@ return [
                 [
                     'text' => 'Training, Communications and Engagement',
                     'icon' => 'nav-icon fa fa-graduation-cap',
-                    'url'  => '/settings/others',
+                    'url'  => '/settings',
                 ],
                 [
                     'text' => 'Reporting',

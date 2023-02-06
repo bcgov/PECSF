@@ -194,4 +194,11 @@ class VolunteeringController extends Controller
         }
     }
 
+    public function supply_order_form(Request $request)
+    {
+        $r = true;
+        return view('volunteering.supply',compact('r'));
+
+    }
+
 }
