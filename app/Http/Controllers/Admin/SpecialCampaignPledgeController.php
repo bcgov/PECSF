@@ -167,10 +167,10 @@ class SpecialCampaignPledgeController extends Controller
         $special_campaigns = SpecialCampaign::orderBy('name')->get();
 
         // default the first special campaign
-        $pledge->special_campaign_id = $special_campaigns->first()->id;
+        // $pledge->special_campaign_id = $special_campaigns->first()->id;
 
         $current_year = today()->year; 
-        $years = range($current_year, $current_year - 2);
+        $years = range($current_year, $current_year - 3);
         $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
         $cities = City::orderBy('city')->get();
 
