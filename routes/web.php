@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
+    Route::get('/annual-campaign/valid-duplicate/{pledge_id}',[AnnualCampaignController::class, 'validDuplicate'])->name("annual-campaign.valid-duplicate");    
     Route::post('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
     Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
 });

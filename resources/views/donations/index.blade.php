@@ -122,7 +122,17 @@
 @include('donations.partials.learn-more-modal')
 
 
+@push('css')
+    
+<link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
+@endpush    
+    
+
 @push('js')
+
+<script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+
 <script>
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
         if(e.to == 0) {
