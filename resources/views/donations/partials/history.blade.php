@@ -31,8 +31,11 @@
                         <tr class="">
                             <td style="width: 15%">
                                 @switch($pledge->donation_type)
+                                    @case('Donate Today') 
+                                        {{ 'Donate Now' }} 
+                                    @break
                                     @case('Donate Now') 
-                                        {{ 'Donate Today' }} 
+                                        {{ 'Donate Now' }} 
                                         @break
                                     @case('Event') 
                                         {{ 'Annual' }} 
