@@ -1,4 +1,3 @@
-Supply Here
 <div class="card" style="padding:50px;">
     <div class="row">
         <div class="col-md-12">
@@ -27,7 +26,7 @@ Supply Here
         </label>
     </div>
 
-
+<br><br>
     <div style="background:#e6edf2;padding:25px;">
         <div class="col-md-12">
             <label class="text-primary">50-50 Gaming Supplies</label>
@@ -53,7 +52,7 @@ Supply Here
         </div>
     </div>
 
-
+<br><br>
     <div class="row">
         <div class="col-md-12">
             <label class="text-primary">Mailing Information</label>
@@ -74,18 +73,39 @@ Supply Here
             <input name="stickers" class=" form-control" />
         </label>
     </div>
-
+<br><br>
     <div style="background:#e6edf2;padding:25px;">
-    Would you like to b recognized as an Office contact PECSF volunteer? *
+    Would you like to be recognized as an Office contact PECSF volunteer? *
 
         As a PECSF volunteer for your organization you will receive a certificate and small gift after the campaign
     </div>
 
 
+<div class="row p-3">
+    <div class="col-md-12 p-3">
+        <input type="radio" name="include_name" value="yes" class="input-control" /> Yes - Include my name as a volunteer
+    </div>
+    <div class="col-md-12 p-3">
+        <input type="radio" name="include_name" checked value="no" class="input-control" /> No - Do not Include my name as a volunteer
+    </div>
+</div>
+
 
     <div class="row" style="padding:25px;">
         <h2>Please select a mailing option below:</h2>
     </div>
+
+    <div class="row" style="padding:25px;padding-left:0;padding-right:0;">
+    <div class="col-md-8">
+        <h3>Open <a target="_blank" style="text-decoration:underline" class="text-primary" href="https://www.canadapost-postescanada.ca/info/mc/personal/postalcode/fpc.jsf">Canada Post Address Finder</a></h3>
+    </div>
+        <div class="col-md-4 justify-content-end" style="text-align:right;">
+            <label for="address_type_physical">
+                <input id="address_Type_physical" type="radio" name="address_type" value="physical" />
+                Mail to My Physical Address
+            </label>
+        </div>
+        </div>
 
 
     <div class="row" style="position:relative;background:#f7f7f7;border-radius:5px;padding:25px;">
@@ -113,7 +133,16 @@ Supply Here
             <input name="postal_code" class="form-control" />
         </label>
     </div>
+    <div class="row" style="padding:25px;padding-left:0;padding-right:0;">
 
+        <div style="text-align:right;" class="col-md-12 justify-content-end">
+
+            <label for="address_type_po" style="text-align:right;">
+                <input id="address_Type_po" type="radio" name="address_type" value="po" />
+                Mail to My PO Box Address
+            </label>
+        </div>
+    </div>
     <div class="row" style="position:relative;background:#f7f7f7;border-radius:5px;padding:25px;">
         <label style="left:0px;top:-25px;position:absolute;padding:8px;border-top-left-radius: 5px;border-top-right-radius: 5px;" class="col-md-12 bg-blue">
             PO Box Address
@@ -136,6 +165,7 @@ Supply Here
         </label>
     </div>
 
+    <br><br>
     <div class="row">
         <div class="col-md-12">
             <label class="text-primary">Additional Information</label>
@@ -151,6 +181,9 @@ Supply Here
             <input name="comments" class=" form-control" />
         </label>
     </div>
+    <br><br>
+    <input type="submit" value="Submit" class="col-md-1 btn btn-primary"  />
+
 </div>
 
 <div  style="border:black 1px solid;" class="border-dark card">
