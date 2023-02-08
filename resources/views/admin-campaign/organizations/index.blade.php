@@ -40,6 +40,7 @@
 					<th>Name</th>
                     <th>Status</th>
                     <th>Effective Date</th>
+                    <th>Business Unit</th>
                     <th>Action</th>
 				</tr>
 			</thead>
@@ -114,6 +115,7 @@
                 {data: 'name', name: 'name', className: "dt-nowrap" },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
                 {data: 'effdt', name: 'effdt', className: "dt-nowrap"},
+                {data: 'bu_code', name: 'bu_code', className: "dt-nowrap"},
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
             columnDefs: [
@@ -134,10 +136,25 @@
             ]
         });
 
+        // Switching the Oagnizaton Change
+        $('#organization-create-modal input[name="code"], #organization-edit-modal input[name="code"]').on('change', function (e) {
+            code = $(this).val();
+            if (code.toUpperCase() == 'GOV') {
+                $(this).parents('form').find('.bu_code_area').hide();
+                $(this).parents('form').find('select[name="bu_code"]').val('');
+            } else {
+                $(this).parents('form').find('.bu_code_area').show();
+            }
+        });
+        $('#organization-create-modal input[name="code"]').trigger( "change" );
+        $('#organization-edit-modal input[name="code"]').trigger( "change" );
+        
+        
+
         // Model for creating new organization
         $('#organization-create-modal').on('show.bs.modal', function (e) {
             // do something...
-            var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'bu_code'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 $(document).find('[name='+field_name+']').val('');
@@ -155,7 +172,7 @@
             if (confirm(info))
             {
                     
-                var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+                var fields = ['code', 'name', 'status', 'effdt', 'notes', 'bu_code'];
                 $.each( fields, function( index, field_name ) {
                     $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -192,6 +209,11 @@
 
             id = $(this).attr('data-id');
 
+            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'bu_code'];
+            $.each( fields, function( index, field_name ) {
+                    $('#organization-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
+            });
+
             $.ajax({
                 method: "GET",
                 url:  '/settings/organizations/' + id  + '/edit',
@@ -201,6 +223,7 @@
                     $.each(data, function(field_name,field_value ){
                         $(document).find('#organization-edit-model-form [name='+field_name+']').val(field_value);
                     });
+
                     $('#organization-edit-modal').modal('show');
                 },
                 error: function(response) {
@@ -233,7 +256,7 @@
             info = 'Confirm to update this record?';
             if (confirm(info))
             {
-                var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+                var fields = ['code', 'name', 'status', 'effdt', 'notes', 'bu_code'];
                 $.each( fields, function( index, field_name ) {
                     $('#organization-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -280,6 +303,15 @@
                         // console.log(field_name);
                         $(document).find('#organization-show-model-form [name='+field_name+']').val(field_value);
                     });
+
+                    code = $('#organization-show-modal input[name="code"]').val();
+                    if (code.toUpperCase() == 'GOV') {
+                        $('#organization-show-model-form').find('.bu_code_area').hide();
+                        $('#organization-show-model-form').find('select[name="bu_code"]').val('');
+                    } else {
+                        $('#organization-show-model-form').find('.bu_code_area').show();
+                    }
+
                     $('#organization-show-modal').modal('show');
                 },
                 error: function(response) {
