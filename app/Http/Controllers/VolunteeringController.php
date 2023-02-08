@@ -16,6 +16,7 @@ use App\Models\Volunteer;
 use App\Models\City;
 use App\Models\EmployeeJob;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 
 use Illuminate\Support\Facades\Validator;
@@ -37,8 +38,10 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? true : false;
-        $global_address = "";
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+        $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
+
+
 
         return view('volunteering.index', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
@@ -189,6 +192,13 @@ class VolunteeringController extends Controller
 
             return view('volunteering.forms',compact('campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
         }
+    }
+
+    public function supply_order_form(Request $request)
+    {
+        $r = true;
+        return view('volunteering.supply',compact('r'));
+
     }
 
 }

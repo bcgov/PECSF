@@ -48,6 +48,14 @@ class DonateNowController extends Controller
      */
     public function create()
     {
+    
+        // Make sure the Annual camplaign is not started
+        if (\App\Models\CampaignYear::isAnnualCampaignOpenNow() ) {
+            return response("<h4>Invalid operation. Donate Now is not available during Annual Campaign Period. Click <a href='".
+                         route('donations.list') ."'>here</a> to go back.</h4>");
+            // abort(404);
+        }
+
         //
         $pool_option = 'P';
         $pools = FSPool::current()->get()->sortBy(function($pool, $key) {

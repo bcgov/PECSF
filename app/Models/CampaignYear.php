@@ -35,6 +35,7 @@ class CampaignYear extends Model
         $today = today();
         $cy = self::where('start_date', '<=',  $today) 
                 ->where('end_date', '>=', $today)
+                ->where('calendar_year', $today->year + 1)
                 ->first();
 
         if ($cy && $cy->status == 'A') {

@@ -171,6 +171,14 @@
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
                       $("#sub_type").attr("disabled",false);
                       $("#sub_type").val(data[0].sub_type).select2();
+                        $("#pecsf_id").val(data[0].pecsf_id);
+                        $("#bc_gov_id").val(data[0].bc_gov_id);
+                        $("#pecsfid").find("label").show();
+                        $("#pecsfid").find("input").show();
+                        $("#bcgovid").find("label").hide();
+                        $("#bcgovid").find("input").hide();
+                        $("#pecsfid").show();
+                        $("#bcgovid").hide();
                     }
                     else{
                         $("#address_1").val(data[0].address_line_1);
@@ -248,8 +256,8 @@
                         text = text.replace(/XXX/g, attachment_number + 1);
                         $('#attachments').append( text );
                         attachment_number++;
-                        $('.attachment').last().find(".filename").html(data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
-                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form_attachments"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
+                     $('.attachment').last().find(".filename").html("/challenge/download/"+data[0].attachments[i].id);
+                        $('.attachment').last().find(".view_attachment").attr("href","/challenge/download/"+data[0].attachments[i].id);
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);

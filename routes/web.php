@@ -47,7 +47,7 @@ use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
-
+use App\Http\Controllers\SettingsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
+    Route::get('/annual-campaign/valid-duplicate/{pledge_id}',[AnnualCampaignController::class, 'validDuplicate'])->name("annual-campaign.valid-duplicate");    
     Route::post('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
     Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
 });
@@ -147,7 +148,7 @@ Route::middleware(['auth'])->group(function () {
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
-    Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_deposit_form');
+    Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_order_form');
     Route::get('/edit', [VolunteeringController::class, 'edit'])->name('edit');
     Route::post('/update', [VolunteeringController::class, 'update'])->name('update');
 
@@ -207,7 +208,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Pay Calendars
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
-    // CRA Charity 
+    // CRA Charity
     Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
     Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
     Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
@@ -236,6 +237,10 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
+    Route::get('/', [SettingsController::class,'index'])->name('others');
+    Route::get('/challenge', [SettingsController::class,'challenge'])->name('challenge');
+    Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
+    Route::post('/update/setting', [SettingsController::class,'updateSetting'])->name('update');
 
 });
 
@@ -268,11 +273,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
 });
 
 
-Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
-    Route::get('/others', function() {
-        return "to be developed";
-    })->name('others');
-}); 
+
 
 Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(function() {
 
@@ -303,7 +304,9 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
 
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
-    
+
 
 
 });
+
+Route::get('/challenge/download/{id}', [ChallengeController::class,'downloadFile'])->name('challenge.download');

@@ -199,9 +199,9 @@ class DonationController extends Controller {
 
                 $year = $pledge->campaign_year->calendar_year;
                 $frequency = $request->frequency;
-                $pledge_amt = $request->frequency == 'One-Time' ? $pledge->one_time_amount : ($pledge->pay_period_amount / $campaign_year->number_of_periods);
+                $pledge_amt = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount;
                 $number_of_periods = $pledge->campaign_year->number_of_periods;
-                $total_amount = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
+                $total_amount = $request->frequency == 'One-Time' ? $pledge->one_time_amount : ($pledge->pay_period_amount * $campaign_year->number_of_periods) ;
 
                 return view('donations.partials.pledge-detail-modal',
                         compact('year', 'frequency', 'pledge_amt', 'number_of_periods', 'total_amount', 'pledge') )->render();

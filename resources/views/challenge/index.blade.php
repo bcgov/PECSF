@@ -22,8 +22,8 @@
                href="<?php echo e(route('challege.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
         </li>
     </ul>
-<h5 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-    If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h5>
+<h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
+    If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
 @section('content')
@@ -51,7 +51,7 @@
     </div>
     <br>
 
-    @if(!empty($totals))
+    @if(!empty($totals[0]))
     <table class="table table-bordered rounded" id="myTable3">
         <thead>
         <tr class="bg-light">
@@ -68,6 +68,8 @@
         </tr>
         </tbody>
     </table>
+    @else
+        <p>We could not calculate totals for the currently selected active year ({{$year}})</p>
     @endif
 
     <br>
@@ -97,12 +99,12 @@
                             $count++;
                         }
                     @endphp
-                    <td>{{$charity['name']}}</td>
-                    <td>{{is_numeric($charity['participation_rate'])? round($charity['participation_rate'] * 100) : "No Data"}}%</td>
-                    <td>{{is_numeric($charity['previous_participation_rate']) ? round($charity['previous_participation_rate'] * 100): "No Data"}}%</td>
-                    <td>{{is_numeric($charity['change']) ? round($charity['change']) : "No Data"}}%</td>
+                    <td>{{$charity['organization_name']}}</td>
+                    <td>{{ number_format($charity['participation_rate'] ? $charity['participation_rate'] : ($charity->participation_rate ? $charity->participation_rate : 0 ),2)}}%</td>
+                    <td>{{number_format($charity['previous_participation_rate'] ? $charity['previous_participation_rate'] : 0,2)}}%</td>
+                    <td>{{number_format($charity['change'] ? $charity['change'] : 0,2)}}%</td>
                     <td>{{$charity['donors']}}</td>
-                    <td>${{number_format($charity['dollars'])}}</td>
+                    <td>${{number_format(floatval(str_replace("$","",$charity['dollars'])),2)}}</td>
                 </tr>
             @endforeach
 </tbody>
@@ -142,15 +144,27 @@
     });
 
     $("select[name='year']").change(function(){
-        window.location = "/challenge?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
+        if($('#year').val() > 2021)
+        {
+            window.location = "/challenge/currentyear?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
+        }
+        else{
+            window.location = "/challenge?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
+        }
     });
 
     var new_sort = '{{ $request->sort == "ASC" ? "DESC" : "ASC" }}';
 
     function sortTable(field='participation_rate')
     {
-        window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
+        @if($year > 2021)
+            window.location = "/challenge/currentyear?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
         $(".sort-hook").attr("src",);
+            @else
+                window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
+        $(".sort-hook").attr("src",);
+            @endif
+
     }
 </script>
 @endpush

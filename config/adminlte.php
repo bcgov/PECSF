@@ -253,11 +253,6 @@ return [
                     'url'  => '/profile',
                 ],
                 [
-                    'text' => 'Training',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
-                    'url'  => '/training',
-                ],
-                [
                     'text' => 'Forms',
                     'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/bank_deposit_form',
@@ -295,7 +290,7 @@ return [
                 [
                     'text' => 'Training, Communications and Engagement',
                     'icon' => 'nav-icon fa fa-graduation-cap',
-                    'url'  => '/settings/others',
+                    'url'  => '/settings',
                 ],
                 [
                     'text' => 'Reporting',

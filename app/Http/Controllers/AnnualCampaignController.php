@@ -120,11 +120,39 @@ class AnnualCampaignController extends Controller
 
             if ($is_duplicate) {
                 $pledge = $duplicate_pledge;
-                $step = 3;
+
+                $step = 3;  // Display summary page as a default if no error found
+
+                // Validate Pool 
+                if ($pledge->type == 'P') {
+                    // Find the default selected FS Pool ID
+                    $pos = $fspools->search(function ($item, $key) use($pledge){
+                        return $item->region_id ==  $pledge->region_id;
+                    });
+                    if ($pos) {
+                        $regional_pool_id = $fspools[$pos]->id;
+                        $step = 3;
+                    } else {
+                        $regional_pool_id = null;
+                        $step = 1;
+                    }
+                } else {
+                    // Find any inactive charity 
+                    $charity_ids = $pledge->charities->pluck('charity_id');
+                    $count = Charity::whereIn('id', $charity_ids)->where('charity_status', 'Registered')->count();
+    
+                    if ($count < $charity_ids->count()) {
+                        $step = 1;
+                    }
+                }
+                // dd( [ $fspools, $pledge->region_id,  $pledge->f_s_pool_id, $regional_pool_id , $pos, $fspools[$pos]] );             
+                                
+            } else {
+                $regional_pool_id = $pledge->type == 'P' ? $pledge->f_s_pool_id : $regional_pool_id;
             }
-            
+
             $pool_option = $pledge->type;
-            $regional_pool_id = $pledge->type == 'P' ? $pledge->f_s_pool_id : $regional_pool_id;
+            // $regional_pool_id = $pledge->type == 'P' ? $pledge->f_s_pool_id : $regional_pool_id;
             $preselectedAmountOneTime = $pledge->one_time_amount > 0 ? $pledge->one_time_amount : $preselectedAmountOneTime; 
             $preselectedAmountBiWeekly = $pledge->pay_period_amount > 0 ? $pledge->pay_period_amount : $preselectedAmountBiWeekly; 
             
@@ -285,6 +313,7 @@ class AnnualCampaignController extends Controller
         $multiple = true;
         $organizations = [];
 
+// dd([ $is_duplicate, $duplicate_pledge, $pool_option, $pledge, $fspools, $regional_pool_id, $campaign_year ]);             
         return view('annual-campaign.wizard', compact('step', 'pool_option', 
                         'fspools', 'regional_pool_id', 
                         'campaign_year',
@@ -352,7 +381,13 @@ class AnnualCampaignController extends Controller
             'pay_period_amount' => $input['annualBiWeeklyAmount'] / $number_of_periods,
             'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount']
                                  : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ),
+            'updated_by_id' => Auth::id(), 
         ]);
+
+        if (!$pledge->created_by_id) {
+            $pledge->created_by_id = Auth::id();
+            $pledge->save();
+        }
 
         $pledge->charities()->delete();
 
@@ -858,6 +893,108 @@ class AnnualCampaignController extends Controller
         return view('annual-campaign.partials.pool-detail', compact('charities') )->render();
     }
 
+    public function validDuplicate(Request $request, $id)
+    {
+
+        $msg = '';
+
+        if ($request->source == 'GF') {
+
+            $pledge = Pledge::where('id', $id)->first();
+
+            // checking -- fund support pool
+            if ($pledge->type == 'P') {
+        
+                // -- For Fund Support Pool page 
+                $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
+                    return $pool->region->name;
+                });
+                
+                // Find the default selected FS Pool ID
+                $pos = $fspools->search(function ($item, $key) use($pledge){
+                    return $item->region_id ==  $pledge->region_id;
+                });
+                if (!$pos) {
+                    $msg = "The Regional Pool you've selected is not available in the current campaign. Click here to see available regional pools, or alternatively you can select a different years choices from your donor history";
+                }
+
+            } else {
+                // check charity 
+                $charity_ids = $pledge->charities->pluck('charity_id');
+
+                $count = Charity::whereIn('id', $charity_ids)->where('charity_status', 'Registered')->count();
+
+                if ($count < $charity_ids->count()) {
+                    $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click here to see available charities, or alternatively you can select a different years choices from your donor history";
+                }
+
+            }
+
+        } else {
+
+            $hist_pledge = PledgeHistorySummary::where('pledge_history_id', $id)
+                                ->first();  
+
+            if ($hist_pledge->source == 'P') {
+                $hist_region = $hist_pledge->region(); 
+
+                // -- For Fund Support Pool page 
+                $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
+                    return $pool->region->name;
+                });
+                
+                // Find the default selected FS Pool ID
+                $pos = $fspools->search(function ($item, $key) use($hist_region){
+                    return $item->region_id ==  $hist_region->id;
+                });
+                if (!$pos) {
+                    $msg = "The Regional Pool you've selected is not available in the current campaign. Click here to see available regional pools, or alternatively you can select a different years choices from your donor history";
+                }
+
+            } else {
+
+                // 'Bi-Weekly'
+                $bi_weekly_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
+                                ->where('yearcd', $hist_pledge->yearcd)
+                                ->where('campaign_type', $hist_pledge->campaign_type)
+                                ->where('frequency', 'Bi-Weekly')
+                                ->orderBy('source')
+                                ->get();
+                                       
+                // One-Time
+                $one_time_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
+                                ->where('yearcd', $hist_pledge->yearcd)
+                                ->where('campaign_type', $hist_pledge->campaign_type)
+                                ->where('frequency', 'One-Time')
+                                ->orderBy('source')
+                                ->get();
+
+                foreach( $bi_weekly_pledges as $index => $bi_weekly_pledge) {
+                    $charity = Charity::where('id', $bi_weekly_pledge->charity->id)->where('charity_status', 'Registered')->first();
+                    if (!$charity) {
+                        $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click here to see available charities, or alternatively you can select a different years choices from your donor history";
+                        break;
+                    }
+                }
+
+                foreach( $one_time_pledges as $index => $one_time_pledge) {
+                    $charity = Charity::where('id', $one_time_pledge->charity->id)->where('charity_status', 'Registered')->first();
+                    if (!$charity) {
+                        $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click here to see available charities, or alternatively you can select a different years choices from your donor history";
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        return response()->json([
+            'message' => $msg,
+        ], 200);
+
+    }
+
 
     public function duplicate(Request $request)
     {
@@ -880,8 +1017,7 @@ class AnnualCampaignController extends Controller
         if ($request->source == 'GF') {
             $hist_pledge = Pledge::where('id', $request->id)->first();
         } else {
-            $hist_pledge = PledgeHistorySummary::where('pledge_history_id', $request->id)
-                        ->first();
+            $hist_pledge = PledgeHistorySummary::where('pledge_history_id', $request->id)->first();
         }
 
 // dd([$hist_pledge, $request]);        
@@ -931,11 +1067,12 @@ class AnnualCampaignController extends Controller
             } else {
 
                 $user = User::where('id', Auth::id())->first();
-
+// dd([$hist_pledge, $hist_pledge->fund_supported_pool()->id ]);
                 $new_pledge->user_id = $user->id;
                 $new_pledge->organization_id = $user->organization_id;
                 $new_pledge->campaign_year_id = $campaignYear->id;
                 $new_pledge->type  = $hist_pledge->source;
+                $new_pledge->region_id = $hist_pledge->source == 'P' ? $hist_pledge->region()->id : 0;
                 $new_pledge->f_s_pool_id = $hist_pledge->source == 'P' ? $hist_pledge->fund_supported_pool()->id : 0;
                 $new_pledge->pay_period_amount = 0;
                 $new_pledge->one_time_amount = 0;
