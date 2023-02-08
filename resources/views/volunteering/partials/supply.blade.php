@@ -27,6 +27,33 @@ Supply Here
         </label>
     </div>
 
+
+    <div style="background:#e6edf2;padding:25px;">
+        <div class="col-md-12">
+            <label class="text-primary">50-50 Gaming Supplies</label>
+        </div>
+        <div class="col-md-12">
+            <label class=" text-md">ONLY the following price points ar permitted with the PRCSF gaming license:</label>
+        </div>
+        <div class="col-md-12">
+         <ul>
+             <li>1 ticket for $2.00</li>
+             <li>3 ticket for $5.00</li>
+             <li>7 ticket for $10.00</li>
+         </ul>
+        </div>
+        <div class="col-md-12">
+            <label class="text-md">Note:</label>
+        </div>
+        <div class="col-md-12">
+            <label class=" text-md">Different coloured tickets for each price point are required by BC Gaming Policy and Enforcement. If you plan to offer all three price points you will need min . 3 rolls or 1 for each price point. <br><br>
+
+
+            Pleace ensure you habe read and understand gaming requirements befor ehosting any events. If you have any questions contact the PECSF HQ team (<a href="mailto:pecsf@gov.bc.ca">pecsf@gov.gc.ca</a>) in advance of your event</label>
+        </div>
+    </div>
+
+
     <div class="row">
         <div class="col-md-12">
             <label class="text-primary">Mailing Information</label>
@@ -47,6 +74,14 @@ Supply Here
             <input name="stickers" class=" form-control" />
         </label>
     </div>
+
+    <div style="background:#e6edf2;padding:25px;">
+    Would you like to b recognized as an Office contact PECSF volunteer? *
+
+        As a PECSF volunteer for your organization you will receive a certificate and small gift after the campaign
+    </div>
+
+
 
     <div class="row" style="padding:25px;">
         <h2>Please select a mailing option below:</h2>
@@ -118,8 +153,12 @@ Supply Here
     </div>
 </div>
 
-<div class="card">
-    
+<div  style="border:black 1px solid;" class="border-dark card">
+    Personal information on this form is collected by the BC Public Service Agency for the purpose of sending you PECSF campaign supplies under section 26(c) of the Freedom of Information and Protection of Privacy Act.<br><br>
+
+    By clicking Submit button you hereby consent to the user by the BC Public Service Agency of the address you provided for this purpose.<br><br>
+
+    Questions about the collection of your personal information can be directed to the Campaign Manager Provincial Employees Community Services fund at 250 356-1736 PECSF@gov.bc.ca or PO Box 9564 Stn Prov Govt Victoria BC V8W9C5
 </div>
 
 
