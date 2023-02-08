@@ -54,8 +54,8 @@ class CampaignPledgeController extends Controller
 
             $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'distinct_charities', 'distinct_charities.charity')
-                            ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
-                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                            // ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
@@ -225,7 +225,7 @@ class CampaignPledgeController extends Controller
        
         
         /* Final submission -- form submission (non-ajax call) */
-
+        $user = User::where('id', $request->user_id)->first();
 
         $campaign_year = CampaignYear::where('id', $request->campaign_year_id)->first();
         $gov_organization = Organization::where('code', 'GOV')->first();
@@ -243,6 +243,7 @@ class CampaignPledgeController extends Controller
         // Make sure that there is no pledge transaction setup yet 
         $message_text = '';
         $pledge = Pledge::where('organization_id', $request->organization_id)
+                            ->where('emplid', $user->emplid)
                             ->where('user_id', $request->user_id)
                             ->where('campaign_year_id', $request->campaign_year_id)
                             ->first();
@@ -264,7 +265,7 @@ class CampaignPledgeController extends Controller
 
             $pledge = Pledge::Create([
                 'organization_id' => $request->organization_id,
-
+                'emplid' =>     $is_GOV ? $user->emplid : null,
                 'user_id' =>    $is_GOV ? $request->user_id : 0,
 
                 "pecsf_id" =>   $is_GOV ? null : $request->pecsf_id,

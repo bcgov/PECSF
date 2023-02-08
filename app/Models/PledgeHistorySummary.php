@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\FSPool;
+use App\Models\Region;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PledgeHistorySummary extends Model
 {
@@ -15,13 +17,17 @@ class PledgeHistorySummary extends Model
 
     public function fund_supported_pool() {
 
-        if ($this->type == 'P') {
+        if ($this->source == 'P') {
             $region = Region::where('name', $this->region)->first();
             return FSPool::current()->where('region_id', $region->id)->first();
         } else {
             return null;
         }
 
+    }
+
+    public function region() {
+        return Region::where('name', $this->region)->first();
     }
 
     public function getIsAnnualCampaignAttribute()

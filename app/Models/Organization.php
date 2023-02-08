@@ -10,12 +10,17 @@ class Organization extends Model
     use SoftDeletes;
 
     protected $fillable =[
-        'code', 'name',  'status', 'effdt', 'created_by_id', 'updated_by_id' 
+        'code', 'name',  'status', 'effdt', 'bu_code', 'created_by_id', 'updated_by_id' 
     ];
 
     protected $appends = [
         'hasPledge',
     ];
+
+    public function business_unit() 
+    {
+        return $this->belongsTo(BusinessUnit::class, 'bu_code', 'code');   
+    }
 
     public function created_by() 
     {
