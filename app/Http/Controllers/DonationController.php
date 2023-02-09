@@ -21,21 +21,21 @@ class DonationController extends Controller {
 
     public function index(Request $request) {
         $currentYear = Carbon::now()->format('Y');
-        $pledges = Pledge::with('charities')
-            ->with('charities.charity')
-            ->where('user_id', Auth::id())
-            ->whereYear('created_at', $currentYear)
-            ->get();
-        $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
+        // $pledges = Pledge::with('charities')
+        //     ->with('charities.charity')
+        //     ->where('user_id', Auth::id())
+        //     ->whereYear('created_at', $currentYear)
+        //     ->get();
+        // $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
 
         // Campaign Year
         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
                             ->orderBy('calendar_year', 'desc')
                             ->first();
-        $current_pledge = Pledge::where('user_id', Auth::id())
-                         ->whereHas('campaign_year', function($q){
-                             $q->where('calendar_year','=', today()->year + 1 );
-                         })->first();
+        // $current_pledge = Pledge::where('user_id', Auth::id())
+        //                  ->whereHas('campaign_year', function($q){
+        //                      $q->where('calendar_year','=', today()->year + 1 );
+        //                  })->first();
 
         $user = User::where('id', Auth::id() )->first();
                         
@@ -49,6 +49,7 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.pay_period_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount,
@@ -62,6 +63,7 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.one_time_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
@@ -139,13 +141,17 @@ class DonationController extends Controller {
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
-            $pdf = PDF::loadView('donations.partials.pdf', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
-                'current_pledge', 'pledges_by_yearcd'));
+            $pdf = PDF::loadView('donations.partials.pdf', compact(//'pledges',
+                'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
+                //'current_pledge',
+                'pledges_by_yearcd'));
             return $pdf->download('Donation Summary.pdf');
         }
         else{
-            return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
-                'current_pledge', 'pledges_by_yearcd'));
+            return view('donations.index', compact(//'pledges', 
+                'currentYear',  'totalPledgedDataTillNow','campaignYear',
+                //'current_pledge', 
+                'pledges_by_yearcd'));
         }
 
     }

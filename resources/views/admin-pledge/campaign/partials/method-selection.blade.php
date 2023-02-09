@@ -20,7 +20,7 @@
                             @foreach ($fspools as $fspool) 
                                 <option value="{{ $fspool->id }}"
                                     @if (isset($pledge) && $pool_option == "P")
-                                        {{  $pledge->fund_supported_pool->id == $fspool->id ? 'selected' : ''  }}
+                                        {{  $pledge->current_fund_supported_pool_by_region()->id == $fspool->id ? 'selected' : ''  }}
                                     @endif
                                     >{{ $fspool->region->name }}</option>
                             @endforeach

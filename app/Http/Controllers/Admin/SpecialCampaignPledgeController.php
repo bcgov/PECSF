@@ -198,7 +198,7 @@ class SpecialCampaignPledgeController extends Controller
         // Create a new Pledge
         $last_seqno = SpecialCampaignPledge::where('organization_id', $request->organization_id)
                         ->where('emplid', $user->emplid)
-                        ->where('user_id', $request->user_id)
+                        // ->where('user_id', $request->user_id)
                         ->where('pecsf_id', $request->pecsf_id)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
