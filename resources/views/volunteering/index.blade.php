@@ -209,7 +209,13 @@
                                                 <select name="city" class="form-control">
                                                     <option value="">Select a City</option>
                                                     @foreach($cities as $city)
+
+                                                    @if(count($is_registered) > 1)
                                                         <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
+                                                   @else
+                                                            <option value="{{$city->city}}">{{$city->city}}</option>
+
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                                 <span class="city_error" class="text-danger"></span>
