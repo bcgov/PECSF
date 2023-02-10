@@ -70,7 +70,10 @@
         </label>
         <label class="col-md-4">
             Organization
-            <input name="stickers" class=" form-control" />
+            <select type="text" class="form-control " name="organization_code" id="organization_code" placeholder="">
+                <option value="" selected="selected">Choose and Org Code</option>
+
+            </select>
         </label>
     </div>
 <br><br>
