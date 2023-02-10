@@ -210,7 +210,7 @@
                                                     <option value="">Select a City</option>
                                                     @foreach($cities as $city)
 
-                                                    @if(count($is_registered) > 0)
+                                                    @if(count($is_registered) > 1)
                                                         <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
                                                    @else
                                                             <option value="{{$city->city}}">{{$city->city}}</option>
