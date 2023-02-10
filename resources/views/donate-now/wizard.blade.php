@@ -289,6 +289,14 @@
 
 $(function () {
 
+    $('#donate-now-pledge-form').on('keyup keypress', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) { 
+            e.preventDefault();
+            return false;
+        }
+    });
+
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
     var submit_count = 0;
@@ -518,7 +526,7 @@ $(function () {
     @include('donate-now.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
 </script>
 <script>
-    $(".org_hook").show();
+    $(".org_hook").show(); 
 </script> 
 
 @endpush

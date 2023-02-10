@@ -92,6 +92,21 @@ class Pledge extends Model
         ]);
     }
 
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_id', 'id');
+    }
+
+    public function current_fund_supported_pool_by_region() {
+
+        if ($this->type == 'P') {
+            $region = Region::where('id', $this->region_id)->first();
+            return FSPool::current()->where('region_id', $region->id)->first();
+        } else {
+            return null;
+        }
+    }
+
+
     public function fund_supported_pool() {
        
             return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id')->withDefault();
