@@ -18,6 +18,7 @@ use App\Models\EmployeeJob;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\SupplyOrderform;
+use App\Models\Setting;
 
 
 use Illuminate\Support\Facades\Validator;
@@ -39,7 +40,10 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+
+        $settings = Setting::first();
+
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
 

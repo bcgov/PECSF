@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Setting;
+use Carbon\Carbon;
 
 class SettingsController extends Controller
 {
@@ -35,13 +36,13 @@ class SettingsController extends Controller
         return view('settings.challenge',compact('settings'));
     }
 
-    public function updateSetting(Request $request){
+    public function changeSetting(Request $request){
 
-        $settings = Setting::update([
+        Setting::updateOrCreate([
             'id' => 1,
         ],[
-            $request->name => $request->value,
+            $request->name => Carbon::parse($request->value),
         ]);
-
+        return json_encode([true]);
     }
 }

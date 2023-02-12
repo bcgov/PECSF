@@ -243,7 +243,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [SettingsController::class,'challenge'])->name('challenge');
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
-    Route::post('/update/setting', [SettingsController::class,'updateSetting'])->name('update');
+    Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
 
 });
 

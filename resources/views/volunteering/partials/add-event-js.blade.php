@@ -158,12 +158,30 @@ var formData = new FormData();
             contentType: false,
             dataType: 'json',
             success:function(response){
+                window.locationredirect = response[0];
+                console.log(response);
+                Swal.fire({
+                    title: '<strong>Success!</strong>',
+                    icon: 'info',
+                    html:
+                        'The Supply Order Form was successfully submitted',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
 
+                    confirmButtonAriaLabel: 'Start New Form!',
+                    cancelButtonText:
+                        'Close',
+                    cancelButtonAriaLabel: 'Close'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = window.locationredirect;
+                    }
+                });
                 $("#supply_order_form").fadeTo("slow",1);
                 $('.errors').html("");
 
-                window.location = response[0];
-                console.log(response);
+
             },
             error: function(response) {
                 $('.invalid-feedback').html("");

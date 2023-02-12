@@ -109,12 +109,18 @@
             background:#fff;
         }
     </style>
+    <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 @endpush
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
     <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
+            }
+        });
         var now = new Date('{{substr($settings->volunteer_end_date,0,strpos($settings->volunteer_end_date," "))}}');
 
         var day = ("0" + now.getDate()).slice(-2);
@@ -132,6 +138,30 @@
         var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
 
         $('[name=volunteer_start_date]').val(today);
+
+        $("input").change(function(){
+
+            $.post("{{ route("settings.change") }}",
+                {
+                    name: $(this).attr("name"),
+                    value: $(this).val()
+                },
+                function (data) {
+
+                    Swal.fire({
+                        title: '<strong>Success!</strong>',
+                        icon: 'success',
+                        html:
+                            'Setting was changed',
+                        showCloseButton: false,
+                        showCancelButton: true,
+                        focusConfirm: false,
+                    }).then((result) => {
+
+                    });
+                },'json');
+
+        });
 </script>
 
 
