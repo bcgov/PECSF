@@ -156,7 +156,8 @@ class VolunteeringController extends Controller
             'address_type'         => $request->address_type,
             'organization_id' => $request->organization_id,
             'no_of_years' => $request->no_of_years,
-            'preferred_role' =>  $request->preferred_role
+            'preferred_role' =>  $request->preferred_role,
+            'updated_at' => Carbon::now()
         ]
         );
 

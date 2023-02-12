@@ -77,7 +77,7 @@
 
                                        <div class="d-flex">
                                            <div data-value-for="address_type">
-                                               {{$is_registered->address_type == "Opt-out" ? $is_registered->address_type : $is_registered->new_address}}
+                                               {{$is_registered->address_type == "Opt-out" ? "Opt-out" : $is_registered->new_address}}
                                            </div>
                                        </div>
                                    </div>
@@ -339,7 +339,7 @@
 <i class="fa fas fa-check-circle fa-10x" style="color:green;"></i>
                                         </div>
                                         <div class="row justify-content-center mt-5">
-                                            <a type="button" class="btn btn-primary" data-dismiss="modal" >Return Home</a>
+                                            <a type="button" class="btn btn-primary" onclick="window.location.reload();" data-dismiss="modal" >Return Home</a>
                                         </div>
                                     </section>
                                 </div>
@@ -391,6 +391,11 @@
                $("#4").hide();
                $("#5").show();
                $('.modal-footer').hide();
+               setTimeout(function()
+               {
+                   window.location.reload();
+                   }
+                   ,5000);
             },
             error: function (response) {
                 if(response.responseJSON.errors) {
