@@ -110,6 +110,83 @@ e.preventDefault();
 
 
 var formData = new FormData();
+    $("#supply_order_form").submit(function(e)
+    {
+        e.preventDefault();
+        var form = document.getElementById("create_supply_order_form");
+
+
+
+        $("select").each(function(){
+            if($(this).val()){
+                if($(this).val().length > 0){
+                    formData.append($(this).attr("name"), $(this).val());
+                }
+            }
+
+        });
+        $("input").each(function(){
+            if($(this).attr('type') != "submit"){
+                if($(this).attr('type') == "radio"){
+                    if($(this).is(':checked')){
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                }
+                else if($(this).attr('type') == "file"){
+//formData.append('attachments[]',  $(this)[0].files[0]);
+                }
+                else{
+                    formData.append($(this).attr("name"), $(this).val());
+                }
+            }
+        });
+        $("textarea").each(function(){
+            if($(this).val().length > 0) {
+                formData.append($(this).attr("name"), $(this).val());
+            }
+        });
+
+
+        $(this).fadeTo("slow",0.2);
+        $.ajax({
+            url: $("#supply_order_form").attr("action"),
+            type:"POST",
+            data: formData,
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+
+                $("#supply_order_form").fadeTo("slow",1);
+                $('.errors').html("");
+
+                window.location = response[0];
+                console.log(response);
+            },
+            error: function(response) {
+                $('.invalid-feedback').html("");
+                $("#supply_order_form").fadeTo("slow",1);
+
+                if(response.responseJSON.errors){
+                    errors = response.responseJSON.errors;
+                    for(const prop in response.responseJSON.errors){
+
+                        tag = prop;
+                        error = errors[prop][0].split(".");
+                        error = error[0];
+                        error = error.replace("_"," ");
+
+                        $("[name="+tag+"]").after('<span class="invalid-feedback">'+error.replace("field"," field ")+'</span>');
+                    }
+                }
+                $(".invalid-feedback").css("display","block");
+                $("#bank_deposit_form").fadeTo("slow",1);
+            },
+        });
+
+    });
 $("#bank_deposit_form").submit(function(e)
 {
 e.preventDefault();
