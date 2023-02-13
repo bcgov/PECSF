@@ -26,8 +26,9 @@ class PledgeHistorySummary extends Model
 
     }
 
-    public function region() {
+    public function region_by_name() {
         return Region::where('name', $this->region)->first();
+        // return $this->belongsTo(Region::class, 'region', 'name');
     }
 
     public function getIsAnnualCampaignAttribute()
