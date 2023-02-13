@@ -936,7 +936,7 @@ class AnnualCampaignController extends Controller
                                 ->first();  
 
             if ($hist_pledge->source == 'P') {
-                $hist_region = $hist_pledge->region(); 
+                $hist_region = $hist_pledge->region_by_name(); 
 
                 // -- For Fund Support Pool page 
                 $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
@@ -1072,7 +1072,7 @@ class AnnualCampaignController extends Controller
                 $new_pledge->organization_id = $user->organization_id;
                 $new_pledge->campaign_year_id = $campaignYear->id;
                 $new_pledge->type  = $hist_pledge->source;
-                $new_pledge->region_id = $hist_pledge->source == 'P' ? $hist_pledge->region()->id : 0;
+                $new_pledge->region_id = $hist_pledge->source == 'P' ? $hist_pledge->region_by_name()->id : 0;
                 $new_pledge->f_s_pool_id = $hist_pledge->source == 'P' ? $hist_pledge->fund_supported_pool()->id : 0;
                 $new_pledge->pay_period_amount = 0;
                 $new_pledge->one_time_amount = 0;
