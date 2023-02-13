@@ -19,18 +19,23 @@
                     <div class="modal-body">
                         <div id="edit-event-modal-body">
                            <section id="1" >
-                               <div class="row justify-content-end">
-                                   <div class="">
-                                       <button onclick="$('#2').show();$('#volunteer_registration_form').show();$('#1').hide();" class="btn btn-primary edit justify-content-end">Edit</button>
-                                   </div>
-                               </div>
+
                                <br>
                                <div class="row">
                                    <div style="background:#d9e9f6;" class="col-md-12 alert alert-info text-grey-dark text-bold" role="alert">
                                        <i  class="text-gray-dark fas fa-info-circle fa-1x bottom-right" ></i> Please take a moment to review the information below. To update your details, Click 'Edit'
                                    </div>
                                </div>
-
+                               <div class="row justify-content-start">
+                                   <div class="">
+                                       <button onclick="$('#2').show();$('#volunteer_registration_form').show();$('#1').hide();" class="btn btn-primary edit justify-content-end">Edit</button>
+                                   </div>
+                                   &nbsp;
+                                   <div class="">
+                                       <button onclick="$('#3').hide();$('#2').hide();$('#1').hide();$('#4').show();$('#volunteer_registration_form').show();" class="btn btn-primary save-btn  justify-content-end">If the information is correct, click “Renew Registration"</button>
+                                   </div>
+                               </div>
+                               <br>
                                <div class="row">
                                    <div class="card p-3 mt-1 col-md-12 justify-content-center" style="background:#f2f2f2;">
                                        <h1 class="text-primary">Your Details</h1>
@@ -72,7 +77,7 @@
 
                                        <div class="d-flex">
                                            <div data-value-for="address_type">
-                                               {{$is_registered->address_type == "Opt-out" ? $is_registered->address_type : $is_registered->new_address}}
+                                               {{$is_registered->address_type == "Opt-out" ? "Opt-out" : $is_registered->new_address}}
                                            </div>
                                        </div>
                                    </div>
@@ -210,7 +215,7 @@
                                                     <option value="">Select a City</option>
                                                     @foreach($cities as $city)
 
-                                                    @if(count($is_registered) > 1)
+                                                    @if(!empty($is_registered))
                                                         <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
                                                    @else
                                                             <option value="{{$city->city}}">{{$city->city}}</option>
@@ -264,7 +269,11 @@
 
 
                                   <h1>Confirmation</h1>
-
+                                        <div class="row">
+                                            <div style="background:#d9e9f6;" class="col-md-12 alert alert-info text-grey-dark text-bold" role="alert">
+                                                <i  class="text-gray-dark fas fa-info-circle fa-1x bottom-right" ></i> Confirm your information is correct below and click  “Renew Registration” to complete.  If it is not correct, use the “back” button to make corrections.
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="card p-3 mt-1 col-md-12 justify-content-center" style="background:#f2f2f2;">
                                                 <h1 class="text-primary">Your Details</h1>
@@ -330,16 +339,14 @@
 <i class="fa fas fa-check-circle fa-10x" style="color:green;"></i>
                                         </div>
                                         <div class="row justify-content-center mt-5">
-                                            <a type="button" class="btn btn-primary" data-dismiss="modal" >Return Home</a>
+                                            <a type="button" class="btn btn-primary" onclick="window.location.reload();" data-dismiss="modal" >Return Home</a>
                                         </div>
                                     </section>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -384,6 +391,11 @@
                $("#4").hide();
                $("#5").show();
                $('.modal-footer').hide();
+               setTimeout(function()
+               {
+                   window.location.reload();
+                   }
+                   ,5000);
             },
             error: function (response) {
                 if(response.responseJSON.errors) {

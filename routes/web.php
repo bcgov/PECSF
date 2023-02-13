@@ -120,7 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/annual-campaign/thank-you', [AnnualCampaignController::class, 'thankYou'])->name('annual-campaign.thank-you');
     Route::get('/annual-campaign/{id}/summary', [AnnualCampaignController::class, 'summaryPdf'])->name('annual-campaign.summary-pdf');
     Route::get('/annual-campaign/regional-pool-detail/{id}', [AnnualCampaignController::class, 'regionalPoolDetail'])->name('annual-campaign.regional-pool-detail');
-    Route::get('/annual-campaign/valid-duplicate/{pledge_id}',[AnnualCampaignController::class, 'validDuplicate'])->name("annual-campaign.valid-duplicate");    
+    Route::get('/annual-campaign/valid-duplicate/{pledge_id}',[AnnualCampaignController::class, 'validDuplicate'])->name("annual-campaign.valid-duplicate");
     Route::post('/annual-campaign/duplicate/{pledge_id}',[AnnualCampaignController::class, 'duplicate'])->name("annual-campaign.duplicate");
     Route::resource('/annual-campaign', AnnualCampaignController::class)->only(['index', 'create', 'store']);
 });
@@ -149,6 +149,8 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
     Route::post('/', [VolunteeringController::class, 'store'])->name('store');
     Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_order_form');
+
+    Route::post('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_order_form');
     Route::get('/edit', [VolunteeringController::class, 'edit'])->name('edit');
     Route::post('/update', [VolunteeringController::class, 'update'])->name('update');
 
@@ -190,6 +192,7 @@ Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(fun
     // Route::get('/users', [AdministratorController::class,'getUsers']);
 });
 
+Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
 
@@ -240,7 +243,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [SettingsController::class,'challenge'])->name('challenge');
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
-    Route::post('/update/setting', [SettingsController::class,'updateSetting'])->name('update');
+    Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
 
 });
 
