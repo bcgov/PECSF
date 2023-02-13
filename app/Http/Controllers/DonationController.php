@@ -21,12 +21,12 @@ class DonationController extends Controller {
 
     public function index(Request $request) {
         $currentYear = Carbon::now()->format('Y');
-        $pledges = Pledge::with('charities')
-            ->with('charities.charity')
-            ->where('user_id', Auth::id())
-            ->whereYear('created_at', $currentYear)
-            ->get();
-        $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
+        // $pledges = Pledge::with('charities')
+        //     ->with('charities.charity')
+        //     ->where('user_id', Auth::id())
+        //     ->whereYear('created_at', $currentYear)
+        //     ->get();
+        // $totalPledgedDataTillNow = "$".Pledge::where('user_id', Auth::id())->sum('goal_amount');
 
         // Campaign Year
         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
@@ -49,6 +49,7 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.pay_period_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount,
@@ -62,6 +63,7 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.one_time_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
@@ -139,13 +141,15 @@ class DonationController extends Controller {
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
-            $pdf = PDF::loadView('donations.partials.pdf', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
-                'current_pledge', 'pledges_by_yearcd'));
+            $pdf = PDF::loadView('donations.partials.pdf', compact(//'pledges',
+                'currentYear', 'totalPledgedDataTillNow', 'campaignYear', 'current_pledge',
+                'pledges_by_yearcd'));
             return $pdf->download('Donation Summary.pdf');
         }
         else{
-            return view('donations.index', compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
-                'current_pledge', 'pledges_by_yearcd'));
+            return view('donations.index', compact(//'pledges', 
+                'currentYear',  'totalPledgedDataTillNow','campaignYear', 'current_pledge', 
+                'pledges_by_yearcd'));
         }
 
     }
@@ -199,9 +203,9 @@ class DonationController extends Controller {
 
                 $year = $pledge->campaign_year->calendar_year;
                 $frequency = $request->frequency;
-                $pledge_amt = $request->frequency == 'One-Time' ? $pledge->one_time_amount : ($pledge->pay_period_amount / $campaign_year->number_of_periods);
+                $pledge_amt = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount;
                 $number_of_periods = $pledge->campaign_year->number_of_periods;
-                $total_amount = $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
+                $total_amount = $request->frequency == 'One-Time' ? $pledge->one_time_amount : ($pledge->pay_period_amount * $campaign_year->number_of_periods) ;
 
                 return view('donations.partials.pledge-detail-modal',
                         compact('year', 'frequency', 'pledge_amt', 'number_of_periods', 'total_amount', 'pledge') )->render();

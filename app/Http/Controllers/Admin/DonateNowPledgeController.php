@@ -47,8 +47,8 @@ class DonateNowPledgeController extends Controller
 
             $pledges = DonateNowPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'charity')
-                            ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
-                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                            // ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'donate_now_pledges.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
@@ -197,10 +197,12 @@ class DonateNowPledgeController extends Controller
      */
     public function store(DonateNowPledgeRequest $request)
     {
-        
+        $user = User::where('id', $request->user_id )->first();
+
         // Create a new Pledge
         $last_seqno = DonateNowPledge::where('organization_id', $request->organization_id)
-                        ->where('user_id', $request->user_id)
+                        ->where('emplid', $user->emplid)
+                        // ->where('user_id', $request->user_id)
                         ->where('pecsf_id', $request->pecsf_id)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
@@ -212,6 +214,7 @@ class DonateNowPledgeController extends Controller
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $request->organization_id,
+            'emplid' => ($request->organization_id == $gov->id) ? $user->emplid : null,
             'user_id' => ($request->organization_id == $gov->id) ? $request->user_id : null,
             'pecsf_id' => (!($request->organization_id == $gov->id)) ? $request->pecsf_id : null,
             'first_name' => (!($request->organization_id == $gov->id)) ? $request->pecsf_first_name : null, 

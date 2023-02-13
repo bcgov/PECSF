@@ -104,7 +104,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header bg-primary">
-            <h5 class="modal-title" id="pledgeDetailModalTitle">Pledge Detail
+            <h5 class="modal-title" id="pledgeDetailModalTitle">Donation Detail
                     <span class="text-dark font-weight-bold"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -122,7 +122,17 @@
 @include('donations.partials.learn-more-modal')
 
 
+@push('css')
+    
+<link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
+@endpush    
+    
+
 @push('js')
+
+<script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+
 <script>
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
         if(e.to == 0) {

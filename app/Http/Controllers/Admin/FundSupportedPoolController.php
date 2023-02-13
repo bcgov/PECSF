@@ -395,7 +395,7 @@ class FundSupportedPoolController extends Controller
             'contact_titles.*'  => 'nullable',
             'contact_emails.*'  => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix',
             'notes.*'           => 'nullable',
-            'images.*'          => 'required|mimes:jpg,jpeg,png,bmp.gif|max:2048',
+            'images.*'          => 'required|mimes:svg,jpg,jpeg,png,bmp.gif|max:2048',
         ],[
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.*.required' => 'The charity field is required.',
@@ -498,9 +498,7 @@ class FundSupportedPoolController extends Controller
             for ($i=0; $i < count($charities); $i++) {
                 if ($charities[$i] != '') {
 
-                    $pool_charity = $pool->charities()->updateOrCreate([
-                        'charity_id'    => $charities[$i],
-                    ],[
+                    $payload =  [
                         'percentage'    => $percentages[$i],
                         'status'        => $status[$i],
                         'name'          => array_key_exists($i, $names) ? $names[$i] : null,
@@ -509,8 +507,15 @@ class FundSupportedPoolController extends Controller
                         'contact_name'  => array_key_exists($i, $contact_names) ? $contact_names[$i] : null,
                         'contact_email' => array_key_exists($i, $contact_emails) ? $contact_emails[$i] : null,
                         'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null,
-                        // 'image'         => $filename,
-                    ]);
+                    ];
+
+                    if(!empty($upload_images[$i])){
+                        $payload['image'] = $upload_images[$i]->getClientOriginalName();
+                    }
+
+                    $pool_charity = $pool->charities()->updateOrCreate([
+                        'charity_id'    => $charities[$i],
+                    ],$payload);
 
                     // copy and delete the file in folder
                     if (array_key_exists($i, $upload_images)) {

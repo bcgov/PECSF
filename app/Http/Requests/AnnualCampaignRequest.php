@@ -46,7 +46,10 @@ class AnnualCampaignRequest extends FormRequest
                 [
                     'regional_pool_id'    => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', [ Rule::exists("f_s_pools", "id")->whereNull("deleted_at"), ]) ],
                     'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1']) ], 
-                    'charities.*' =>  [ Rule::when( $this->pool_option == 'C', ['exists:charities,id']) ],
+                    'charities.*' =>  [ Rule::when( $this->pool_option == 'C', [
+                        // 'exists:charities,id'
+                        Rule::exists("charities", "id")->where('charity_status','Registered')
+                        ]) ],
 
                 ]
             );

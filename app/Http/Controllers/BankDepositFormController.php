@@ -33,7 +33,7 @@ class BankDepositFormController extends Controller
      */
     function __construct()
     {
-        $this->doc_folder = "/uploads/bank_deposit_form_attachments";
+        $this->doc_folder = "app/uploads/bank_deposit_form_attachments";
     }
 
     public function index(Request $request)
@@ -170,7 +170,7 @@ class BankDepositFormController extends Controller
 
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
-            if($request->organization_code != "GOV")
+            if($request->organization_code != "GOV" && $request->organization_code != "RET")
             {
 
                     if(empty($request->pecsf_id))
@@ -343,9 +343,10 @@ class BankDepositFormController extends Controller
 
 
                 $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
-                $file->move(public_path( $this->doc_folder ), $filename);
+
+                $filePath = $file->storeAs(  "/uploads/bank_deposit_form_attachments" , $filename);
                 BankDepositFormAttachments::create([
-                'local_path' => public_path( $this->doc_folder )."/".$filename,
+                'local_path' => storage_path( $this->doc_folder )."/".$filename,
                 'bank_deposit_form_id' => $form->id
             ]);
         }

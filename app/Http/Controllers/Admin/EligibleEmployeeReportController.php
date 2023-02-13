@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\EligibleEmployeesExportJob;
 
+use App\Exports\EligibleEmployeesExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class EligibleEmployeeReportController extends Controller
 {
     /**
@@ -68,6 +71,8 @@ class EligibleEmployeeReportController extends Controller
 
             $filters = $request->all(); 
 
+            $filename = 'export_eligible_employees_'.now()->format("Y-m-d-his").".xlsx";
+
             // Submit a Job
             $history = \App\Models\ProcessHistory::create([
                 'batch_id' => 0,
@@ -75,8 +80,8 @@ class EligibleEmployeeReportController extends Controller
                 'parameters' => json_encode( $filters ),
                 'status'  => 'Queued',
                 'submitted_at' => now(),
-                'original_filename' => '',
-                'filename' => '',
+                'original_filename' => $filename,
+                'filename' => $filename,
                 'total_count' => 0,
                 'done_count' => 0,
                 'created_by_id' => Auth::Id(),
@@ -85,7 +90,7 @@ class EligibleEmployeeReportController extends Controller
        
             // Submit a job 
             $batch = Bus::batch([
-                new EligibleEmployeesExportJob($history->id, $filters ),
+                new EligibleEmployeesExportJob($history->id, $filename, $filters),
             ])->dispatch();
 
             // dd ($batch->id);
@@ -122,15 +127,24 @@ class EligibleEmployeeReportController extends Controller
             $finished = false;
             $message = 'Procsssing..., please wait.' . now();
 
-            if ($history->status == 'Completed') {
+            if ($batch->finished() ) {
                 $finished = true;
+
+                // Update 
+                $history->status = 'Completed';
+                $history->message = 'Exported completed';
+                $history->end_at = now();
+                $history->save();
+                
                 $link = route('reporting.eligible-employees.download-export-file', $history->id);
                 $message = 'Done. Download file <a class="" href="'.$link.'">here</a>';
+                
             } else if ($history->status == 'Queued') {
                 $message = 'Queued, please wait.';
             } else if ($history->status == 'Processing') {
-                $progress = round(($history->done_count / $history->total_count) * 100,0);
-                $message = 'Procsssing... ('. $progress .'%) , please wait.';
+                // $progress = round(($history->done_count / $history->total_count) * 100,0);
+                // $message = 'Processing... ('. $progress .'%) , please wait.';
+                $message = '<span class="blink-two">Processing... , please wait.</span>';
             } else {
                 // others
             }

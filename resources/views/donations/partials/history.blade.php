@@ -31,8 +31,11 @@
                         <tr class="">
                             <td style="width: 15%">
                                 @switch($pledge->donation_type)
+                                    @case('Donate Today') 
+                                        {{ 'Donate Now' }} 
+                                    @break
                                     @case('Donate Now') 
-                                        {{ 'Donate Today' }} 
+                                        {{ 'Donate Now' }} 
                                         @break
                                     @case('Event') 
                                         {{ 'Annual' }} 
@@ -126,9 +129,13 @@
                     @endphp
                 @else
 
-                    <a class="btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;" 
-                                href="#" onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();">
-                                {{$ignore}}Duplicate this pledge
+                    <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;" 
+                                {{-- href="#"  --}}
+                                data-id="{{ $pledge->id }}"
+                                data-source="{{ $pledge->source }}"
+                                {{-- onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();" --}}
+                                >
+                                {{$ignore}}Duplicate this Annual Campaign pledge
                     </a>
 
                 {{-- <a style="margin-left: auto;
@@ -161,3 +168,49 @@
 
 
 </div>
+
+
+@push('js')
+<script>
+$('a.duplicate-pledge').on('click', function(event){ 
+
+    pledge_id = $(this).data("id");
+
+    $.ajax({
+        url: '/annual-campaign/valid-duplicate/' + pledge_id,
+        data: 'source='+ $(this).data("source") ,
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+            // $('.modal-title span').html(name);
+            if (result.message) {
+                Swal.fire({
+                    text: result.message,
+                    // icon: 'question',
+                    //showDenyButton: true,
+                    confirmButtonText: 'Continue',
+                    showCancelButton: true,
+                }).then((result) => {
+
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $("#duplicate-form-"+ pledge_id ).submit();
+                    }
+                })
+            } else {
+                // submit form 
+                $("#duplicate-form-"+ pledge_id ).submit();
+            }
+        },
+        complete: function() {
+        },
+        error: function () {
+            alert("error");
+            $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+        }
+    })
+
+});
+
+</script>
+@endpush
