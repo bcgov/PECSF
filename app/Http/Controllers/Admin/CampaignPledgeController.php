@@ -243,8 +243,13 @@ class CampaignPledgeController extends Controller
         // Make sure that there is no pledge transaction setup yet 
         $message_text = '';
         $pledge = Pledge::where('organization_id', $request->organization_id)
-                            ->where('emplid', $user->emplid)
-                            ->where('user_id', $request->user_id)
+                            ->when( $is_GOV, function($query) use($user) {
+                                // ->where('user_id', $request->user_id)
+                                $query->where('emplid', $user->emplid);                                
+                            })
+                            ->when( !($is_GOV), function($query) use($request) {
+                                $query->where('pecsf_id', $request->pecsf_id);                                
+                            })
                             ->where('campaign_year_id', $request->campaign_year_id)
                             ->first();
         if ($pledge) {

@@ -57,14 +57,24 @@ class EventSubmissionQueueController extends Controller
             {
                 $count = BankDepositForm::where("event_type","Fundraiser")->count() + 1;
                 $zeroes = 3 - strlen($count);
-                $id = "G".date("y");
+                $id = "F".date("y");
                 for($i = 0; $i<$zeroes;$i++){
                     $id.= "0";
                 }
                 $id .= $count;
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
             }
-            else{
+            else if($form->organization_code == "RET"){
+                $count = BankDepositForm::where("organization_code","RET")->count() + 1;
+                $zeroes = 3 - strlen($count);
+                $id = "R".date("y");
+                for($i = 0; $i<$zeroes;$i++){
+                    $id.= "0";
+                }
+                $id .= $count;
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+            }
+
 
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
                 $year =  intval(date("Y")) + 1;
@@ -101,6 +111,7 @@ class EventSubmissionQueueController extends Controller
                 $pay_period_annual_amt = $form->deposit_amount;
 
 
+                $form = BankDepositForm::where("id",$request->submission_id)->first();
 
 
                 // Create a new Pledge
@@ -173,7 +184,7 @@ class EventSubmissionQueueController extends Controller
                     }
                 }
 
-            }
+
         }
     }
 

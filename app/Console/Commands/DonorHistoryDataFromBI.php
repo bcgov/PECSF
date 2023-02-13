@@ -66,21 +66,21 @@ class DonorHistoryDataFromBI extends Command
         // $this->UpdateBusinessUnit();
         // $this->info("Update/Create - Region District");
         // $this->UpdateRegionalDistrict();
-        $this->LogMessage( now() );
-        $this->LogMessage("Task-- Update/Create - Department");
-        $this->UpdateDepartment();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Task-- Update/Create - Department");
+        // $this->UpdateDepartment();
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Task-- Create - Donor By Business Unit");
-        $this->UpdateDonorByBusinessUnit();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Task-- Create - Donor By Business Unit");
+        // $this->UpdateDonorByBusinessUnit();
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Task-- Create - Donor By Regioinal District");
-        $this->UpdateDonorByRegionalDistrict();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Task-- Create - Donor By Regioinal District");
+        // $this->UpdateDonorByRegionalDistrict();
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Task-- Create - Donor By Department");
-        $this->UpdateDonorByDepartment();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Task-- Create - Donor By Department");
+        // $this->UpdateDonorByDepartment();
 
         $this->LogMessage( now() );
 

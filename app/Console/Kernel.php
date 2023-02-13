@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        if (App::environment('production') || App::environment('testing')) {
+        if (App::environment('production') || App::environment('test')) {
 
             $schedule->command('command:ExportPledgesToPSFT')
                     ->dailyAt('0:15')
@@ -65,11 +65,15 @@ class Kernel extends ConsoleKernel
                 ->dailyAt('2:15');    
 
         $schedule->command('command:ImportCities')
-                 ->yearlyOn(9, 1, '02:30');
+                //  ->yearlyOn(9, 1, '02:30')
+                ->dailyAt('2:30'); 
+
+        $schedule->command('command:Importdepartments')
+                ->dailyAt('2:35'); 
 
         // For testing purpose: to generate 2022 pledges based on the BI pledge history
-        $schedule->command('command:GeneratePledgeFromHistory')
-                ->dailyAt('3:00');                    
+        // $schedule->command('command:GeneratePledgeFromHistory')
+        //         ->dailyAt('3:00');                    
         
         // Demography data and user profiles
         $schedule->command('command:ImportEmployeeJob')

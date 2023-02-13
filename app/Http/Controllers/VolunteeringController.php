@@ -17,6 +17,8 @@ use App\Models\City;
 use App\Models\EmployeeJob;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\SupplyOrderform;
+use App\Models\Setting;
 
 
 use Illuminate\Support\Facades\Validator;
@@ -38,12 +40,14 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+
+        $settings = Setting::first();
+
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
+        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
 
-
-
-        return view('volunteering.index', compact('global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
+        return view('volunteering.index', compact('business_units','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
 
     public function training(){
@@ -152,7 +156,8 @@ class VolunteeringController extends Controller
             'address_type'         => $request->address_type,
             'organization_id' => $request->organization_id,
             'no_of_years' => $request->no_of_years,
-            'preferred_role' =>  $request->preferred_role
+            'preferred_role' =>  $request->preferred_role,
+            'updated_at' => Carbon::now()
         ]
         );
 
@@ -196,9 +201,90 @@ class VolunteeringController extends Controller
 
     public function supply_order_form(Request $request)
     {
-        $r = true;
-        return view('volunteering.supply',compact('r'));
 
+        if($request->wantsJson()){
+            $validator = Validator::make(request()->all(), [
+                'calendars'         => 'required|numeric',
+                'posters'         => 'required|numeric',
+                'stickers'         => 'required|numeric',
+                'first_name'         => 'required',
+                'last_name'         => 'required',
+                'business_unit_id'         => 'required',
+                'include_name'         => 'required',
+
+                'comments' => 'required',
+                'address_type' => 'required',
+                'date_required' => 'required|after:today',
+             ],[
+                'business_unit_id' => 'The Organization Code is required.',
+                'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
+            ]);
+
+            $validator->after(function ($validator) use($request) {
+                if($request->address_type == "po")
+                {
+                    if(empty($request->po)){
+                        $validator->errors()->add('po','Enter a Po Box');
+                    }
+                    if(empty($request->po_city)) {
+                        $validator->errors()->add('po_city', 'Enter a City');
+                    }
+                    if(empty($request->po_postal_code)) {
+                        $validator->errors()->add('po_postal_code', 'Enter a Postal Code');
+                    }
+                    if(empty($request->po_province)) {
+                        $validator->errors()->add('po_province','Enter a Province');
+                    }
+                }
+                else{
+                    if(empty($request->unit_suite_floor)) {
+                        $validator->errors()->add('unit_suite_floor', 'Unit Suite Floor is Required');
+                    }
+                        if(empty($request->physical_address)) {
+                            $validator->errors()->add('physical_address', 'Physical Address is required');
+                        }
+                    if(empty($request->city)) {
+                        $validator->errors()->add('city', 'City is required');
+                    }
+
+                    if(empty($request->province)) {
+                        $validator->errors()->add('province', 'Province is required');
+                    }
+                    if(empty($request->postal_code)){
+                        $validator->errors()->add('postal_code', 'Postal Code is required');
+                    }
+                }
+
+            });
+
+            $validator->validate();
+            $form = SupplyOrderform::Create(
+                [
+                    'calendar'         => $request->calendars,
+                    'posters'         => $request->posters,
+                    'stickers'         => $request->stickers,
+                    'first_name'         => $request->first_name,
+                    'last_name'         => $request->last_name,
+                    'business_unit_id'         => $request->business_unit_id,
+                    'include_name'         => $request->include_name,
+                    'unit_suite_floor'         => $request->address_type == "po" ? "" : $request->unit_suite_floor,
+                    'physical_address'         =>  $request->address_type == "po" ? "" : $request->physical_address,
+                    'city'         => $request->address_type == "po" ? $request->po_city : $request->city,
+                    'province'         => $request->address_type == "po" ? $request->po_province : $request->province,
+                    'postal_code' => $request->address_type == "po" ? $request->po_postal_code : $request->postal_code,
+                    'po_box' => $request->po ? $request->po : "",
+                    'comments' => $request->comments,
+                    'address_type' => $request->address_type,
+                ]
+            );
+            return json_encode(array(route('supply_order_form')));
+            }
+
+        $r = true;
+        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+
+
+        return view('volunteering.supply',compact('business_units'));
     }
 
 }
