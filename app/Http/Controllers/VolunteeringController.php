@@ -40,13 +40,19 @@ class VolunteeringController extends Controller
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-
         $settings = Setting::first();
-
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
+        if(is_array($is_registered->new_address))
+        {
+            $is_registered->province = $is_registered->new_address[2];
+            $is_registered->city = $is_registered->new_address[1];
+        }
+        else{
+            $is_registered->province = "";
+            $is_registered->city = "";
+        }
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-
         return view('volunteering.index', compact('business_units','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
 
