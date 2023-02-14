@@ -138,9 +138,9 @@ class AnnualCampaignController extends Controller
                     }
                 } else {
                     // Find any inactive charity 
-                    $charity_ids = $pledge->charities->pluck('charity_id');
+                    // $charity_ids = $pledge->charities->pluck('charity_id');
+                    $charity_ids = $pledge->charities->unique('charity_id')->pluck('charity_id');
                     $count = Charity::whereIn('id', $charity_ids)->where('charity_status', 'Registered')->count();
-    
                     if ($count < $charity_ids->count()) {
                         $step = 1;
                     }
@@ -219,7 +219,7 @@ class AnnualCampaignController extends Controller
                             $charity['one-time-amount-distribution'] = $pledge_one_time->amount;   
                             $charity['one-time-percentage-distribution'] = $pledge_one_time->percentage;   
                         }
-                        
+
                         // Get BiWeekly Distribution if exists
                         if ($pledge->pay_period_amount > 0) {
                             $pledge_biweekly = $pledge->charities->where('charity_id', $charity->id)->where('frequency','bi-weekly')
@@ -920,12 +920,13 @@ class AnnualCampaignController extends Controller
 
             } else {
                 // check charity 
-                $charity_ids = $pledge->charities->pluck('charity_id');
+                // $charity_ids = $pledge->charities->pluck('charity_id');
+                $charity_ids = $pledge->charities->unique('charity_id')->pluck('charity_id');
 
                 $count = Charity::whereIn('id', $charity_ids)->where('charity_status', 'Registered')->count();
 
                 if ($count < $charity_ids->count()) {
-                    $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click here to see available charities, or alternatively you can select a different years choices from your donor history";
+                    $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click 'continue' to see available charities, or alternatively you can select a different years choices from your donor history";
                 }
 
             }
@@ -948,7 +949,7 @@ class AnnualCampaignController extends Controller
                     return $item->region_id ==  $hist_region->id;
                 });
                 if (!$pos) {
-                    $msg = "The Regional Pool you've selected is not available in the current campaign. Click here to see available regional pools, or alternatively you can select a different years choices from your donor history";
+                    $msg = "The Regional Pool you've selected is not available in the current campaign. Click 'Continue' to see available regional pools, or alternatively you can select a different years choices from your donor history";
                 }
 
             } else {
@@ -1146,7 +1147,7 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity->goal_amount =  $one_time_pledge->amount;
                                                                
 
-                            $new_pledge->charities[$index] = $new_pledge_charity;
+                            $new_pledge->charities[$row] = $new_pledge_charity;
                             $row += 1;
                         }
 
