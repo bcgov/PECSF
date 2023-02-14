@@ -203,9 +203,18 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <label>Street address</label>
-                                                <input name="new_address" type="text" value="{{explode(",",$is_registered->new_address)[0]}}" class="form-control" placeholder="">
+                                                <input name="new_address" type="text" value="
+                                                 @if(is_array(explode(",",$is_registered->new_address)))
+                                                    @php
+                                                        echo explode(",",$is_registered->new_address)[0];
+                                                    @endphp
+                                                   @else
+                                                   @php
+                                                        echo $is_registered->new_address;
+                                                @endphp
+                                                @endif
+                                                " class="form-control" placeholder="">
                                                 <span class="new_address_error" class="text-danger"></span>
-
                                             </div>
                                         </div>
                                         <div class="row mt-2">
@@ -214,12 +223,14 @@
                                                 <select name="city" class="form-control">
                                                     <option value="">Select a City</option>
                                                     @foreach($cities as $city)
-
-                                                    @if(!empty($is_registered))
-                                                        <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
-                                                   @else
+                                                        @if(!empty($is_registered))
+                                                            @if(is_array($is_registered->new_address))
+                                                                <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",(array_key_exists(1,$is_registered->new_address) ? $is_registered->new_address[1] : "")))) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
+                                                            @else
+                                                                <option value="{{$city->city}}" >{{$city->city}}</option>
+                                                            @endif
+                                                        @else
                                                             <option value="{{$city->city}}">{{$city->city}}</option>
-
                                                         @endif
                                                     @endforeach
                                                 </select>
@@ -231,9 +242,10 @@
                                                 <label>Province</label>
                                                 <select class="form-control" name="province">
                                                     <option  value="">Select a Province</option>
-                                                    <option  {{ str_replace(" ", "",explode(",",$is_registered->new_address)[2]) == "Alberta" ? "selected":""}} value="Alberta">Alberta</option>
+
+                                                    <option  {{$is_registered->province == "Alberta" ? "selected":""}} value="Alberta">Alberta</option>
                                                     <option  {{$is_registered->province == "British Columbia" ? "selected":""}} value="British Columbia">British columbia</option>
-                                                    <option   {{$is_registered->province == "Manitoba" ? "selected":""}} value="Manitoba">Manitoba</option>
+                                                    <option  {{$is_registered->province == "Manitoba" ? "selected":""}} value="Manitoba">Manitoba</option>
                                                     <option  {{$is_registered->province == "New Brunswick" ? "selected":""}} value="New Brunswick">New brunswick</option>
                                                     <option  {{$is_registered->province == "Newfoundland and Labrador" ? "selected":""}} value="Newfoundland and Labrador">Newfoundland and labrador</option>
                                                     <option  {{$is_registered->province == "Nova Scotia" ? "selected":""}} value="Nova Scotia">Nova scotia</option>
@@ -242,13 +254,13 @@
                                                     <option  {{$is_registered->province == "Quebec" ? "selected":""}} value="Quebec">Quebec</option>
                                                     <option  {{$is_registered->province == "Saskatchewan" ? "selected":""}} value="Saskatchewan">Saskatchewan</option>
                                                     <option  {{$is_registered->province == "Yukon" ? "selected":""}} value="Yukon">Yukon</option>
-                                                    <option  {{str_replace(" ", "",explode(",",$is_registered->new_address)[2]) == "Ontario" ? "selected":""}} value="Ontario">Ontario</option>
+                                                    <option  {{$is_registered->province == "Ontario" ? "selected":""}} value="Ontario">Ontario</option>
                                                 </select>
                                                 <span class="province_error" class="text-danger"></span>
                                             </div>
                                             <div class="col-md-4">
                                                 <label>Postal Code</label>
-                                                <input name="postal_code" value="{{$is_registered->address_type == "New" ? explode(",",$is_registered->new_address)[3] : ""}}" type="text" class="form-control" placeholder="">
+                                                <input name="postal_code" value="{{$is_registered->city}}" type="text" class="form-control" placeholder="">
                                                 <span class="postal_code_error" class="text-danger"></span>
                                             </div>
                                         </div>
