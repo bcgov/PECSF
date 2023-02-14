@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
-use App\Models\RegionalDistrict;
+// use App\Models\RegionalDistrict;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\DB;
 use App\Models\PledgeHistoryVendor;
@@ -72,21 +72,21 @@ class ImportPledgeHistory extends Command
             'status' => 'Processing',
         ]);
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Step - 1 : Update/Create - Region District");
-        $this->UpdateRegionalDistrict();
+        // $this->LogMessage( now() );
+        // $this->LogMessage("Step - 1 : Update/Create - Region District");
+        // $this->UpdateRegionalDistrict();
         
         $this->LogMessage( now() );
-        $this->LogMessage("Step - 2 : Create - Pledge History Vendor");
+        $this->LogMessage("Step - 1 : Reload - Pledge History Vendor");
         $this->UpdatePledgeHistoryVendor();
 
         $this->LogMessage( now() );    
-        $this->LogMessage("Step - 3 : Create - Pledge History");
+        $this->LogMessage("Step - 2 : Reload - Pledge History");
         for ($yr = $start_year; $yr <= now()->year; $yr++) {
             $this->UpdatePledgeHistory($yr);
         }
         $this->LogMessage( now() );    
-        $this->LogMessage("Step - 4 : Create - Pledge History Summary");
+        $this->LogMessage("Step - 3 : Reload - Pledge History Summary");
         $this->UpdatePledgeHistorySummary();
 
         $this->LogMessage( now() );    
@@ -102,57 +102,57 @@ class ImportPledgeHistory extends Command
     }
 
 
-    protected function UpdateRegionalDistrict()
-    {
+    // protected function UpdateRegionalDistrict()
+    // {
 
-        $count = 0;
+    //     $count = 0;
 
-        try {
+    //     try {
 
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_REGIONAL_DISTRICTS_BI_ENDPOINT'));
+    //         $response = Http::withHeaders(['Content-Type' => 'application/json'])
+    //             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+    //             ->get(env('ODS_INBOUND_REPORT_REGIONAL_DISTRICTS_BI_ENDPOINT'));
 
-            if ($response->successful()) {
-                $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+    //         if ($response->successful()) {
+    //             $data = json_decode($response->body())->value;
+    //             $batches = array_chunk($data, 1000);
 
-                foreach ($batches as $batch) {
+    //             foreach ($batches as $batch) {
 
-                    foreach ($batch as $row) {
+    //                 foreach ($batch as $row) {
 
-                        RegionalDistrict::updateOrCreate([
-                            'tgb_reg_district' => $row->tgb_reg_district,
+    //                     RegionalDistrict::updateOrCreate([
+    //                         'tgb_reg_district' => $row->tgb_reg_district,
 
-                        ], [
-                            'reg_district_desc' => $row->reg_district_desc,
-                            'development_region' => $row->development_region,
-                            'provincial_quadrant' => $row->provincial_quadrant,
-                        ]);
+    //                     ], [
+    //                         'reg_district_desc' => $row->reg_district_desc,
+    //                         'development_region' => $row->development_region,
+    //                         'provincial_quadrant' => $row->provincial_quadrant,
+    //                     ]);
 
-                        $count += 1;
-                    }
-                }
+    //                     $count += 1;
+    //                 }
+    //             }
 
-                $this->LogMessage ('Total rows : ' . $count );
+    //             $this->LogMessage ('Total rows : ' . $count );
 
-            } else {
+    //         } else {
 
-                $this->status = 'Error';
-                $this->LogMessage( $response->status() . ' - ' . $response->body() );
+    //             $this->status = 'Error';
+    //             $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
-            }
+    //         }
 
-        } catch (\Exception $ex) {
+    //     } catch (\Exception $ex) {
 
-            $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+    //         $this->status = 'Error';
+    //         $this->LogMessage( $ex->getMessage() );
 
-            return 1;
+    //         return 1;
 
-        }
+    //     }
         
-    }
+    // }
 
     protected function UpdatePledgeHistoryVendor() 
     {
