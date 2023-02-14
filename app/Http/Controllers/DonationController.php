@@ -182,7 +182,8 @@ class DonationController extends Controller {
             if ($request->frequency == 'One-Time') {
                 $pledge_amt = $old_pledges->first()->pledge;    // Note: Donate Today -- per_pay_amt is always zero
             } else {                
-                $pledge_amt = $old_pledges->first()->per_pay_amt;
+                // $pledge_amt = $old_pledges->first()->per_pay_amt;                
+                $pledge_amt = round($old_pledges->sum('per_pay_amt'),0);
             } 
             //  $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
             $number_of_periods = $request->frequency == 'One-Time' ? 1 : $campaign_year->number_of_periods;
