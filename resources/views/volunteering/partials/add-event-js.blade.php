@@ -164,18 +164,18 @@ var formData = new FormData();
                     title: '<strong>Success!</strong>',
                     icon: 'info',
                     html:
-                        'The Supply Order Form was successfully submitted',
+                        'The form was submitted successfully. Your items will be sent in the mail within 3-5 business days. For assistance, please email pecsf@gov.bc.ca. For information and resources, please visit the PECSF website (gov.bc.ca). ',
                     showCloseButton: true,
                     showCancelButton: true,
                     focusConfirm: false,
 
-                    confirmButtonAriaLabel: 'Start New Form!',
+                    confirmButtonAriaLabel: 'Volunteers!',
                     cancelButtonText:
                         'Close',
                     cancelButtonAriaLabel: 'Close'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = window.locationredirect;
+                        window.location.href = "/volunteering";
                     }
                 });
                 $("#supply_order_form").fadeTo("slow",1);
@@ -196,7 +196,7 @@ var formData = new FormData();
                         error = error[0];
                         error = error.replace("_"," ");
 
-                        $("[name="+tag+"]").after('<span class="invalid-feedback">'+error.replace("field"," field ")+'</span>');
+                        $("[name="+tag+"]").parents("label").append('<span class="invalid-feedback">'+error.replace("field"," field ")+'</span>');
                     }
                 }
                 $(".invalid-feedback").css("display","block");
