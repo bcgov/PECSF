@@ -147,10 +147,10 @@
 
         <div class="form-group col-md-4">
             <label for="event_type">Employment city</label>
-            <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
+            <select onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');" class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
                 <option value="">Select a city</option>
                 @foreach($cities as $city)
-                    <option value="{{$city->city}}">{{$city->city}}</option>
+                    <option region="{{$city->TGB_REG_DISTRICT}}" value="{{$city->city}}">{{$city->city}}</option>
                     @endforeach
             </select>
 
@@ -166,7 +166,7 @@
             <select class="form-control search_icon" id="region" name="region">
                 <option value="">Select a region</option>
             @foreach($regions as $region)
-                    <option value="{{$region->id}}">{{$region->name}}</option>
+                    <option  code="{{$region->code}}" value="{{$region->id}}">{{$region->name}}</option>
                 @endforeach
             </select>
             <span class="region_errors errors">
