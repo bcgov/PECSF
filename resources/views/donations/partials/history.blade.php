@@ -185,6 +185,7 @@ $('a.duplicate-pledge').on('click', function(event){
             // $('.modal-title span').html(name);
             if (result.message) {
                 Swal.fire({
+                    title: 'Are you sure ?',
                     text: result.message,
                     // icon: 'question',
                     //showDenyButton: true,
