@@ -59,17 +59,21 @@ class Kernel extends ConsoleKernel
 
         // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
         $schedule->command('command:ImportNonGovPledgeHistory')
-                ->dailyAt('2:05');
+                ->dailyAt('2:05')
+                ->sendOutputTo(storage_path('logs/ImportNonPledgeHistory.log'));
  
         $schedule->command('command:ImportPledgeHistory')
-                ->dailyAt('2:15');    
+                ->dailyAt('2:15')
+                ->appendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
 
         $schedule->command('command:ImportCities')
                 //  ->yearlyOn(9, 1, '02:30')
-                ->dailyAt('2:30'); 
+                ->dailyAt('2:30')
+                ->sendOutputTo(storage_path('logs/ImportCities.log')); 
 
-        $schedule->command('command:Importdepartments')
-                ->dailyAt('2:35'); 
+        $schedule->command('command:ImportDepartments')
+                ->dailyAt('2:35')
+                ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
 
         // For testing purpose: to generate 2022 pledges based on the BI pledge history
         // $schedule->command('command:GeneratePledgeFromHistory')
@@ -77,15 +81,14 @@ class Kernel extends ConsoleKernel
         
         // Demography data and user profiles
         $schedule->command('command:ImportEmployeeJob')
-                 ->weekdays()
-                 ->at('4:00');
+                ->weekdays()
+                ->at('4:00')
+                ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
 
         $schedule->command('command:SyncUserProfile')
-                 ->weekdays()
-                 ->at('4:15');
-
-
-
+                ->weekdays()
+                ->at('4:15')
+                ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
 
         // Donor statitsics for challenge pages                  
         // $schedule->command('command:DonorHistoryDataFromBI')

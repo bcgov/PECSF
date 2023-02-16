@@ -210,15 +210,13 @@ class VolunteeringController extends Controller
 
         if($request->wantsJson()){
             $validator = Validator::make(request()->all(), [
-                'calendars'         => 'required|numeric',
-                'posters'         => 'required|numeric',
-                'stickers'         => 'required|numeric',
+                'calendars'         => 'required|integer',
+                'posters'         => 'required|integer',
+                'stickers'         => 'required|integer',
                 'first_name'         => 'required',
                 'last_name'         => 'required',
                 'business_unit_id'         => 'required',
                 'include_name'         => 'required',
-
-                'comments' => 'required',
                 'address_type' => 'required',
                 'date_required' => 'required|after:today',
              ],[
@@ -227,6 +225,7 @@ class VolunteeringController extends Controller
             ]);
 
             $validator->after(function ($validator) use($request) {
+                $expression = '/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/';
                 if($request->address_type == "po")
                 {
                     if(empty($request->po)){
@@ -240,6 +239,9 @@ class VolunteeringController extends Controller
                     }
                     if(empty($request->po_province)) {
                         $validator->errors()->add('po_province','Enter a Province');
+                    }
+                    if(!preg_match($expression, $request->po_postal_code)){
+                        $validator->errors()->add('po_postal_code', 'Invalid Postal Code | Try L1L 1L1');
                     }
                 }
                 else{
@@ -258,6 +260,9 @@ class VolunteeringController extends Controller
                     }
                     if(empty($request->postal_code)){
                         $validator->errors()->add('postal_code', 'Postal Code is required');
+                    }
+                    if(!preg_match($expression, $request->postal_code)){
+                        $validator->errors()->add('postal_code', 'Invalid Postal Code | Try L1L 1L1');
                     }
                 }
 
@@ -279,7 +284,7 @@ class VolunteeringController extends Controller
                     'province'         => $request->address_type == "po" ? $request->po_province : $request->province,
                     'postal_code' => $request->address_type == "po" ? $request->po_postal_code : $request->postal_code,
                     'po_box' => $request->po ? $request->po : "",
-                    'comments' => $request->comments,
+                    'comments' => empty($request->comments) ? "" : $request->comments,
                     'address_type' => $request->address_type,
                 ]
             );

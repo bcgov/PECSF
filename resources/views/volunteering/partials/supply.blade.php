@@ -92,10 +92,10 @@
 
 <div class="row p-3">
     <div class="col-md-12 p-3">
-        <input type="radio" name="include_name" value="1" class="input-control" /> Yes - Include my name as a volunteer
+        <input type="radio" name="include_name" checked value="1" class="input-control" /> Yes - Include my name as a volunteer
     </div>
     <div class="col-md-12 p-3">
-        <input type="radio" name="include_name" checked value="0" class="input-control" /> No - Do not Include my name as a volunteer
+        <input type="radio" name="include_name"  value="0" class="input-control" /> No - Do not Include my name as a volunteer
     </div>
 </div>
 
@@ -106,7 +106,7 @@
 
     <div class="row" style="padding:25px;padding-left:0;padding-right:0;">
     <div class="col-md-8">
-        <h3>Open <a target="_blank" style="text-decoration:underline" class="text-primary" href="https://www.canadapost-postescanada.ca/info/mc/personal/postalcode/fpc.jsf">Canada Post Address Finder</a></h3>
+        <h3><a target="_blank" style="text-decoration:underline" class="text-primary" href="https://www.canadapost-postescanada.ca/info/mc/personal/postalcode/fpc.jsf">Open Canada Post Find a Postal Code</a></h3>
     </div>
         <div class="col-md-4 justify-content-end" style="text-align:right;">
             <label for="address_type_physical">
