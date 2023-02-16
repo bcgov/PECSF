@@ -157,9 +157,6 @@ class ImportPledgeHistory extends Command
     protected function UpdatePledgeHistoryVendor() 
     {
 
-        // Truncate Pledge History table
-        PledgeHistoryVendor::truncate();
-
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
             ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
@@ -167,6 +164,11 @@ class ImportPledgeHistory extends Command
 
             $row_count = json_decode($response->body())->{'@odata.count'};
            
+            if ($row_count > 0) {
+                // Truncate Pledge History table when records returned from BI
+                PledgeHistoryVendor::truncate();
+            }
+
             $size = 10000;
             for ($i = 0; $i <= $row_count / $size ; $i++) {
 
