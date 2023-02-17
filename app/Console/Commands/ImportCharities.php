@@ -4,8 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Imports\CharitiesImport;
-use App\Imports\CharityURLsImport;
-use App\Imports\CharityOngoingProgramsImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImportCharities extends Command
