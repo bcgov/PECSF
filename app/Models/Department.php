@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\DonorByDepartment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
@@ -18,10 +17,6 @@ class Department extends Model
 
   public function business_unit() {
     return $this->belongsTo('App\Models\BusinessUnit');
-  }
-
-  public function donorHistory() {
-    return $this->hasMany(DonorByDepartment::class);
   }
 
   public function report($request){
