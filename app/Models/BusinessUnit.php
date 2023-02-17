@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\DonorByBusinessUnit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
@@ -28,10 +27,6 @@ class BusinessUnit extends Model
     public function updated_by()
     {
         return $this->hasOne(User::Class, 'id', 'updated_by_id');
-    }
-
-    public function donorHistory() {
-        return $this->hasMany(DonorByBusinessUnit::class);
     }
 
     public static function report($request){

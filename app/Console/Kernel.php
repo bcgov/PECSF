@@ -18,8 +18,6 @@ class Kernel extends ConsoleKernel
         Commands\ImportEmployeeJob::class,
         Commands\SyncUserProfile::class,
         Commands\ExportDatabaseToBI::class,
-        Commands\DonorHistoryDataFromBI::class,
-        Commands\ImportEligibleEmployee::class,
         Commands\ImportPayCalendar::class,
         Commands\ImportCities::class,
         
@@ -89,15 +87,6 @@ class Kernel extends ConsoleKernel
                 ->weekdays()
                 ->at('4:15')
                 ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
-
-        // Donor statitsics for challenge pages                  
-        // $schedule->command('command:DonorHistoryDataFromBI')
-        //          ->weekdays()
-        //          ->at('5:00');      
-                 
-        // $schedule->command('command:ImportEligibleEmployees')
-        //          ->weekdays()
-        //          ->at('5:10');      
 
         $schedule->command('notify:daily')
         ->dailyAt('08:30')
