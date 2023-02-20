@@ -36,7 +36,7 @@
                 Campaign Year
                 <select name="year" id="year" style="min-width:250px;" class="form-control ">
                     @foreach($years as $annum)
-                        <option {{$year==$annum->yearcd?"selected":""}} value="{{$annum->yearcd}}">{{$annum->yearcd}}</option>
+                        <option {{$year==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
                     @endforeach
                 </select>
             </label>
