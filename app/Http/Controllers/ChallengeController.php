@@ -48,7 +48,7 @@ class ChallengeController extends Controller
             return redirect()->route('challege.current');
         }
 
-        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
+        $years = [2022,2021,2020,2019,2018];
 
 
         $charities = HistoricalChallengePage::where("year","=",$year);
@@ -100,7 +100,7 @@ class ChallengeController extends Controller
 
     public function current(Request $request) {
             $date = new Carbon("first day of january " .CampaignYear::where("status","A")->limit(1)->get()[0]->calendar_year);
-        $years = DonorByBusinessUnit::select(DB::raw('DISTINCT yearcd'))->where("yearcd",">","2017")->orderBy('yearcd',"desc")->get();
+        $years = [2022,2021,2020,2019,2018];
             $year = $date->format("Y");
 
             $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate, elligible_employees.ee_count'))

@@ -51,6 +51,21 @@
         </div>
     </div>
 <br><br>
+    <div class="row" style="background:#f7f7f7;border-radius:5px;padding:25px;">
+        <label class="col-md-4">
+            Calendars
+            <input name="calendars" class=" form-control" />
+        </label>
+        <label class="col-md-4">
+            Campaign Posters
+            <input name="posters" class=" form-control" />
+        </label>
+        <label class="col-md-4">
+            Stickers
+            <input name="stickers" class=" form-control" />
+        </label>
+    </div>
+    <br><br>
     <div class="row">
         <div class="col-md-12">
             <label class="text-primary">Mailing Information</label>
