@@ -28,7 +28,7 @@ class BusinessUnit extends Model
     {
         return $this->hasOne(User::Class, 'id', 'updated_by_id');
     }
-    
+
     public function getHasPledgeAttribute()
     {
         if ( $this->pledge_histories()->exists() ) {
