@@ -30,11 +30,13 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
                                             ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            ->whereNull('date_deleted')
                                             // ->where('J2.empl_status', 'A')
                                             ->selectRaw('min(J2.empl_rcd)');
                                     })
                                     ->orWhereNull('employee_jobs.empl_rcd');
                             })
+                            ->whereNull('date_deleted')
                             ->when( $filters['emplid'], function($query) use($filters) {
                                 $query->where('employee_jobs.emplid', 'like', '%'. $filters['emplid'] .'%');
                             })
