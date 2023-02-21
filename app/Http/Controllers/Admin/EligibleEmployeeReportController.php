@@ -182,11 +182,13 @@ class EligibleEmployeeReportController extends Controller
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
                                             ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            ->whereNull('date_deleted')
                                             // ->where('J2.empl_status', 'A')
                                             ->selectRaw('min(J2.empl_rcd)');
                                     })
                                     ->orWhereNull('employee_jobs.empl_rcd');
                             })
+                            ->whereNull('date_deleted')
                             ->when( $request->emplid, function($query) use($request) {
                                 $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
                             })
