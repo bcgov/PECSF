@@ -90,7 +90,7 @@ class VolunteeringController extends Controller
     }
 
     public function edit(){
-        $organizations = Organization::where('status' ,"=", "A")->get();
+        $organizations = BusinessUnit::where('status' ,"=", "A")->get();
         $user = User::find(Auth::id());
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
@@ -133,6 +133,8 @@ class VolunteeringController extends Controller
             'address_type' => 'required'
         ]);
         $validator->after(function ($validator) use($request) {
+            $expression = '/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/';
+
             if ($request->address_type == "New") {
                 if (empty($request->city)) {
                     $validator->errors()->add('city', 'A City is required.');
@@ -145,6 +147,9 @@ class VolunteeringController extends Controller
                 }
                 if (empty($request->new_address)) {
                     $validator->errors()->add('new_address', 'A Street Address is required.');
+                }
+                if(!preg_match($expression, $request->postal_code)){
+                    $validator->errors()->add('postal_code', 'Invalid Postal Code | Try L1L 1L1');
                 }
             }
         });
