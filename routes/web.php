@@ -171,9 +171,7 @@ Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'upd
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
-
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
-    Route::get('/preview', [ChallengeController::class, 'preview'])->name('preview');
     Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
 });
 
