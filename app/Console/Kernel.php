@@ -92,6 +92,10 @@ class Kernel extends ConsoleKernel
         ->dailyAt('08:30')
         ->appendOutputTo(storage_path('logs/daily.log'));
 
+        $schedule->command('notify:daily')
+        ->hourlyAt(17)
+        ->appendOutputTo(storage_path('logs/hourly_at_17.log'));
+
                  
     }
 
