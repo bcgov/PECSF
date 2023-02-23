@@ -6,7 +6,7 @@
     </div>
 @endsection
 @section('content')
-    @if($is_registered)
+    @if($is_registered && $show)
         <div class="modal fade" id="edit-event-modal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -32,7 +32,7 @@
                                    </div>
                                    &nbsp;
                                    <div class="">
-                                       <button onclick="$('#3').hide();$('#2').hide();$('#1').hide();$('#4').show();$('#volunteer_registration_form').show();" class="btn btn-primary save-btn  justify-content-end">If the information is correct, click “Renew Registration"</button>
+                                       <button onclick="$('#address_type').html($('[data-value-for=address_type]').first().text());$('#preferred_role').html($('[data-value-for=preferred_role]').first().text());$('#no_of_years').html($('[data-value-for=no_of_years]').first().text());$('#organization_final').html($('[data-value-for=organization]').first().text());$('#3').hide();$('#2').hide();$('#1').hide();$('#4').show();$('#volunteer_registration_form').show();" class="btn btn-primary justify-content-end">If the information is correct, click “Renew Registration"</button>
                                    </div>
                                </div>
                                <br>
@@ -187,7 +187,7 @@
                                                            @endphp
 
                                                            {{$is_registered->address_type == "Global" ? "checked":""}} id="globalOption" name="address_type" value="Global">
-                                                    <input type="hidden"  name="global_address" value="{{$global_address}}" />
+                                                    <input type="hidden"  name="global_address" value="{{$global_address->address1.", ".$global_address->city.", ".$global_address->stateprovince.", ".$global_address->country.", ".$global_address->postal}}" />
                                                     Use my Global Address Listing
                                                 </label>
                                             </div>
@@ -295,7 +295,7 @@
                                                     </strong>
                                                 </div>
                                                 <div class="d-flex">
-                                                    <div data-value-for="organization">
+                                                    <div id="organization_final" data-value-for="organization">
 
                                                     </div>
                                                 </div>
@@ -326,7 +326,7 @@
                                                 <h1 class="text-primary mt-4">Mailing Address</h1>
 
                                                 <div class="d-flex">
-                                                    <div data-value-for="address_type">
+                                                    <div id="address_type" data-value-for="address_type">
 
                                                     </div>
                                                 </div>

@@ -53,16 +53,16 @@
 <br><br>
     <div class="row" style="background:#f7f7f7;border-radius:5px;padding:25px;">
         <label class="col-md-4">
-            Calendars
-            <input name="calendars" class=" form-control" />
+            1 ticket for $2.00
+            <input name="two_rolls" class=" form-control" />
         </label>
         <label class="col-md-4">
-            Campaign Posters
-            <input name="posters" class=" form-control" />
+            3 tickets for $5.00
+            <input name="five_rolls" class=" form-control" />
         </label>
         <label class="col-md-4">
-            Stickers
-            <input name="stickers" class=" form-control" />
+            7 tickets for $10.00
+            <input name="ten_rolls" class=" form-control" />
         </label>
     </div>
     <br><br>
