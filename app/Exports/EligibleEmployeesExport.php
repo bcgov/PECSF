@@ -2,13 +2,14 @@
 
 namespace App\Exports;
 
-use App\Models\EmployeeJob;
+// use App\Models\EmployeeJob;
 use App\Models\ProcessHistory;
+use App\Models\EligibleEmployeeDetail;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\BeforeExport;
 
+use Maatwebsite\Excel\Events\BeforeExport;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -25,63 +26,50 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
         $this->history_id = $history_id;
         $this->filters = $filters;
 
-        $this->sql = EmployeeJob::with('organization','bus_unit','region')
-                            ->where( function($query) {
-                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                                        $q->from('employee_jobs as J2') 
-                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-                                            ->whereNull('date_deleted')
-                                            // ->where('J2.empl_status', 'A')
-                                            ->selectRaw('min(J2.empl_rcd)');
-                                    })
-                                    ->orWhereNull('employee_jobs.empl_rcd');
+        $this->sql = EligibleEmployeeDetail::with('related_region')
+                            ->when( $filters['year'], function($query) use($filters) {
+                                $query->where('eligible_employee_details.year', $filters['year']);
                             })
-                            ->whereNull('date_deleted')
                             ->when( $filters['emplid'], function($query) use($filters) {
-                                $query->where('employee_jobs.emplid', 'like', '%'. $filters['emplid'] .'%');
+                                $query->where('eligible_employee_details.emplid', 'like', '%'. $filters['emplid'] .'%');
                             })
                             ->when( $filters['name'], function($query) use($filters) {
-                                $query->where('employee_jobs.name', 'like', '%'. $filters['name'] .'%');
+                                $query->where('eligible_employee_details.name', 'like', '%'. $filters['name'] .'%');
                             })
-                            ->when( $filters['empl_status'], function($query) use($filters) {
-                                $query->where('employee_jobs.empl_status', $filters['empl_status']);
-                            })
+                            // ->when( $filters['empl_status'], function($query) use($filters) {
+                            //     $query->where('eligible_employee_details.empl_status', $filters['empl_status']);
+                            // })
                             ->when( $filters['office_city'], function($query) use($filters) {
-                                $query->where('employee_jobs.office_city', $filters['office_city']);
+                                $query->where('eligible_employee_details.office_city', $filters['office_city']);
                             })
                             ->when( $filters['organization'], function($query) use($filters) {
-                                $query->where('employee_jobs.organization', $filters['organization']);
+                                $query->where('eligible_employee_details.organization_name', $filters['organization']);
                             })
                             ->when( $filters['business_unit'], function($query) use($filters) {
-                                $query->where( function($q) use($request) {
-                                    $q->where('employee_jobs.business_unit', $filters['business_unit'])
-                                      ->orWhereExists(function ($q) use($filters) {
-                                          $q->select(DB::raw(1))
-                                            ->from('business_units')
-                                            ->whereColumn('business_units.code', 'employee_jobs.business_unit')
-                                            ->where('business_units.name', 'like', '%'. $filters['business_unit'] .'%');
-                                        });
+                                $query->where( function($q) use($filters) {
+                                    $q->where('eligible_employee_details.business_unit', 'like', '%'. $filters['business_unit'] .'%')
+                                      ->orWhere('eligible_employee_details.business_unit_name', 'like', '%'. $filters['business_unit'] .'%');
                                 });
                             })
                             ->when( $filters['department'], function($query) use($filters) {
-                                $query->where( function($q) use($request) {
-                                    return $q->where('employee_jobs.deptid', 'like', '%'. $filters['department'] .'%')
-                                             ->orWhere('employee_jobs.dept_name', 'like', '%'. $filters['department'] .'%');
+                                $query->where( function($q) use($filters) {
+                                    return $q->where('eligible_employee_details.deptid', 'like', '%'. $filters['department'] .'%')
+                                             ->orWhere('eligible_employee_details.dept_name', 'like', '%'. $filters['department'] .'%');
                                 });
                             })
                             ->when( $filters['tgb_reg_district'], function($query) use($filters) {
                                 // $query->where('employee_jobs.tgb_reg_district', $request->tgb_reg_district);
-                                $query->where( function($q) use($request) {
-                                    $q->where('employee_jobs.tgb_reg_district', $filters['tgb_reg_district'])
+                                $query->where( function($q) use($filters) {
+                                    $q->where('eligible_employee_details.tgb_reg_district', $filters['tgb_reg_district'])
                                       ->orWhereExists(function ($q) use($filters) {
                                           $q->select(DB::raw(1))
                                             ->from('regions')
-                                            ->whereColumn('regions.code', 'employee_jobs.tgb_reg_district')
+                                            ->whereColumn('regions.code', 'eligible_employee_details.tgb_reg_district')
                                             ->where('regions.name', 'like', '%'. $filters['tgb_reg_district'] .'%');
                                         });
                                 });
                             })
-                            ->select('employee_jobs.*');
+                            ->select('eligible_employee_details.*');
 
         $this->total_count = $this->sql->count();
 
@@ -115,11 +103,11 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
             $employee->office_postal,
             $employee->organization_name,
             $employee->business_unit,
-            $employee->bus_unit->name,
+            $employee->business_unit_name,
             $employee->deptid,
             $employee->dept_name,
             $employee->tgb_reg_district,
-            $employee->region->name,
+            $employee->related_region ? $employee->related_region->name : null,
         ];
     }
 
