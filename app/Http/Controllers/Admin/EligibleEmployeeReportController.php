@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\City;
-use App\Models\EmployeeJob;
+// use App\Models\EmployeeJob;
 use Illuminate\Http\Request;
 use App\Models\ProcessHistory;
 use App\Models\ScheduleJobAudit;
@@ -12,11 +12,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Bus;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Jobs\EligibleEmployeesExportJob;
-
-use App\Exports\EligibleEmployeesExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\EligibleEmployeeDetail;
+
+use Illuminate\Support\Facades\Storage;
+use App\Exports\EligibleEmployeesExport;
+use App\Jobs\EligibleEmployeesExportJob;
 
 class EligibleEmployeeReportController extends Controller
 {
@@ -56,12 +57,14 @@ class EligibleEmployeeReportController extends Controller
         }
 
         // get all the record for select options 
-        $empl_status_List = EmployeeJob::EMPL_STATUS_LIST;
-        $office_cities = EmployeeJob::office_city_list();
-        $organizations = EmployeeJob::organization_list();
+        // $empl_status_List = EligibleEmployeeDetail::EMPL_STATUS_LIST;
+        $office_cities = EligibleEmployeeDetail::office_city_list();
+        $organizations = EligibleEmployeeDetail::organization_list();
+        $years = EligibleEmployeeDetail::distinct('year','as_of_date')->orderBy('year')->pluck('as_of_date','year');
+
 
         // load the view and pass data
-        return view('admin-report.eligible-employee.index', compact('empl_status_List','office_cities','organizations'));
+        return view('admin-report.eligible-employee.index', compact('office_cities','organizations', 'years'));
 
     }
 
@@ -177,63 +180,49 @@ class EligibleEmployeeReportController extends Controller
 
     function getEmployeeJobQuery(Request $request) {
 
-        $sql = EmployeeJob::with('organization','bus_unit','region')
-                            ->where( function($query) {
-                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                                        $q->from('employee_jobs as J2') 
-                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-                                            ->whereNull('date_deleted')
-                                            // ->where('J2.empl_status', 'A')
-                                            ->selectRaw('min(J2.empl_rcd)');
-                                    })
-                                    ->orWhereNull('employee_jobs.empl_rcd');
+        $sql = EligibleEmployeeDetail::when( $request->year, function($query) use($request) {
+                                $query->where('eligible_employee_details.year', $request->year);
                             })
-                            ->whereNull('date_deleted')
                             ->when( $request->emplid, function($query) use($request) {
-                                $query->where('employee_jobs.emplid', 'like', '%'. $request->emplid .'%');
+                                $query->where('eligible_employee_details.emplid', 'like', '%'. $request->emplid .'%');
                             })
                             ->when( $request->name, function($query) use($request) {
-                                $query->where('employee_jobs.name', 'like', '%'. $request->name .'%');
+                                $query->where('eligible_employee_details.name', 'like', '%'. $request->name .'%');
                             })
                             ->when( $request->empl_status, function($query) use($request) {
-                                $query->where('employee_jobs.empl_status', $request->empl_status);
+                                $query->where('eligible_employee_details.empl_status', $request->empl_status);
                             })
                             ->when( $request->office_city, function($query) use($request) {
-                                $query->where('employee_jobs.office_city', $request->office_city);
+                                $query->where('eligible_employee_details.office_city', $request->office_city);
                             })
                             ->when( $request->organization, function($query) use($request) {
-                                $query->where('employee_jobs.organization', $request->organization);
+                                $query->where('eligible_employee_details.organization_name', $request->organization);
                             })
                             ->when( $request->business_unit, function($query) use($request) {
                                 $query->where( function($q) use($request) {
-                                    $q->where('employee_jobs.business_unit', $request->business_unit)
-                                      ->orWhereExists(function ($q) use($request) {
-                                          $q->select(DB::raw(1))
-                                            ->from('business_units')
-                                            ->whereColumn('business_units.code', 'employee_jobs.business_unit')
-                                            ->where('business_units.name', 'like', '%'. $request->business_unit .'%');
-                                        });
+                                    $q->where('eligible_employee_details.business_unit', 'like', '%'. $request->business_unit .'%')
+                                      ->orWhere('eligible_employee_details.business_unit_name', 'like', '%'. $request->business_unit .'%');
                                 });
                             })
                             ->when( $request->department, function($query) use($request) {
                                 $query->where( function($q) use($request) {
-                                    return $q->where('employee_jobs.deptid', 'like', '%'. $request->department .'%')
-                                             ->orWhere('employee_jobs.dept_name', 'like', '%'. $request->department .'%');
+                                    return $q->where('eligible_employee_details.deptid', 'like', '%'. $request->department .'%')
+                                             ->orWhere('eligible_employee_details.dept_name', 'like', '%'. $request->department .'%');
                                 });
                             })
                             ->when( $request->tgb_reg_district, function($query) use($request) {
                                 // $query->where('employee_jobs.tgb_reg_district', $request->tgb_reg_district);
                                 $query->where( function($q) use($request) {
-                                    $q->where('employee_jobs.tgb_reg_district', $request->tgb_reg_district)
+                                    $q->where('eligible_employee_details.tgb_reg_district', $request->tgb_reg_district)
                                       ->orWhereExists(function ($q) use($request) {
                                           $q->select(DB::raw(1))
                                             ->from('regions')
-                                            ->whereColumn('regions.code', 'employee_jobs.tgb_reg_district')
+                                            ->whereColumn('regions.code', 'eligible_employee_details.tgb_reg_district')
                                             ->where('regions.name', 'like', '%'. $request->tgb_reg_district .'%');
                                         });
                                 });
                             })
-                            ->select('employee_jobs.*');
+                            ->select('eligible_employee_details.*');
 
         return $sql;
     }

@@ -19,6 +19,17 @@ class BusinessUnit extends Model
         'hasPledge',
     ];
 
+    public function scopeCurrent($query)
+    {
+        $query->where('effdt', function($query) {
+                return $query->selectRaw('max(effdt)')
+                        ->from('business_units as A')
+                        ->whereColumn('A.code', 'business_units.code')
+                        ->whereNull('deleted_at')
+                        ->where('A.effdt', '<=', today());
+        });
+    }
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');
