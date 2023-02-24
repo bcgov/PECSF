@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use App\Models\ElligibleEmployee;
 use Illuminate\Support\Facades\DB;
+use App\Models\EligibleEmployeeDetail;
 
 class SetEligibleEmployeeBUCount extends Command
 {
@@ -55,6 +56,7 @@ class SetEligibleEmployeeBUCount extends Command
 
         $this->LogMessage( now() );
         $this->LogMessage("Task -- Capture a snapshot of Eligible Employee BU count");
+        $this->storeEligibleEmployee();
         $this->SetEligibleEmployeeBUCount();
         $this->LogMessage( now() );
 
@@ -67,10 +69,84 @@ class SetEligibleEmployeeBUCount extends Command
         return 0;
     }
 
+
+    protected function StoreEligibleEmployee() 
+    {
+
+        $as_of_date = today()->format('Y-m-d');
+        $year = today()->year;
+
+        $sql = EmployeeJob::where( function($query) {
+                            $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                    $q->from('employee_jobs as J2') 
+                                        ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                        ->whereNull('date_deleted')
+                                        ->where('J2.empl_status', 'A')
+                                        ->selectRaw('min(J2.empl_rcd)');
+                                })
+                                ->orWhereNull('employee_jobs.empl_rcd');
+                        })
+                        ->where('employee_jobs.empl_status', 'A')
+                        ->whereNull('date_deleted');
+              
+        $n = 0;
+        $row_count = 0;
+
+        $all_bus = BusinessUnit::current()->orderBy('name')->pluck('name','code');
+
+        $sql->chunk(1000, function($chuck) use($as_of_date, $year, $all_bus, &$row_count, &$n) {
+            $this->LogMessage( "Capture snapshot of eligible employees batch (1000) - " . ++$n );
+
+            if ($n == 1) {
+                EligibleEmployeeDetail::where('year', $year)->delete();   
+            }
+
+            foreach($chuck as $row)  {
+
+                // $bu = BusinessUnit::where('code', $row->business_unit)->where('effdt','<=', $as_of_date)->orderBy('effdt', 'desc')->first();
+                $row_count++;
+
+                EligibleEmployeeDetail::create([
+                    'year' => today()->year,
+                    'as_of_date' => today(),
+
+                    'organization_code' => 'GOV',
+                    'emplid' => $row->emplid,
+                    'empl_status' => $row->empl_status,
+                    'name' => $row->name, 
+
+                    'business_unit' => $row->business_unit,
+                    'business_unit_name' => $all_bus->has($row->business_unit) ? $all_bus[$row->business_unit] : null,
+
+                    'deptid' => $row->deptid,
+                    'dept_name' => $row->dept_name,
+
+                    'tgb_reg_district' => $row->tgb_reg_district,
+                    
+                    'office_address1' => $row->office_address1,
+                    'office_address2' => $row->office_address2,
+                    'office_city' => $row->office_city,
+                    'office_stateprovince' => $row->office_stateprovince,
+                    'office_postal' => $row->office_postal,
+                    'office_country' => $row->office_country,
+
+                    'organization_name' => $row->organization_name,
+
+                    'employee_job_id' => $row->id,
+
+                ]);
+            }
+
+        });  
+        
+        $this->LogMessage('');
+        $this->LogMessage('Total detail row created count : ' . $row_count  );
+
+    }
+
     protected function SetEligibleEmployeeBUCount()
     {
 
-        
         $total_count = 0;
         $created_count = 0;
         $updated_count = 0;
@@ -78,46 +154,36 @@ class SetEligibleEmployeeBUCount extends Command
         $as_of_date = today()->format('Y-m-d');
         $year = today()->year;
 
-        $bu_groups = EmployeeJob::where( function($query) {
-                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                                        $q->from('employee_jobs as J2') 
-                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-                                            ->whereNull('date_deleted')
-                                            // ->where('J2.empl_status', 'A')
-                                            ->selectRaw('min(J2.empl_rcd)');
-                                    })
-                                    ->orWhereNull('employee_jobs.empl_rcd');
-                            })
-                            ->where('employee_jobs.empl_status', 'A')
-                            ->whereNull('date_deleted')
-                    ->select('business_unit', 'organization_id', DB::raw('count(*) as ee_cnt'))
-                    ->groupBy('business_unit', 'organization_id')
+        $bu_groups = EligibleEmployeeDetail::select('business_unit', 'business_unit_name', 'organization_code', 
+                        'year', DB::raw('count(*) as ee_cnt'))
+                    ->where('year',$year)
+                    ->groupBy('business_unit', 'business_unit_name', 'organization_code', 'year')
                     ->get();
 
         if ($bu_groups->count() > 0) {
             // clean up the old data before insert if exists
-            ElligibleEmployee::where('as_of_date', $as_of_date)->delete();   
+            ElligibleEmployee::where('year', $year)->delete();   
         }
+
+        $this->LogMessage('');
+        $this->LogMessage('Summarize eligible employees by business unit');
 
         foreach($bu_groups as $row) {
             $total_count++;
-
-            $org = Organization::where('id', $row->organization_id)->where('effdt','<=', $as_of_date)->orderBy('effdt', 'desc')->first();
-            $bu = BusinessUnit::where('code', $row->business_unit)->where('effdt','<=', $as_of_date)->orderBy('effdt', 'desc')->first();
 
             $ee = ElligibleEmployee::create([
                 'as_of_date' => $as_of_date,
                 'ee_count' => $row->ee_cnt,
                 'business_unit' => $row->business_unit,
-                'business_unit_name' => $bu ? $bu->name : null,
-                'cde' => $org->code,
-                'year' => $year
+                'business_unit_name' => $row->business_unit_name,
+                'cde' => $row->organization_code,
+                'year' => $row->year,
             ]);
 
             $created_count++;
             $this->LogMessage('   (CREATED) => ' . $ee->toJson() );
 
-            if (!$bu) {
+            if (!$row->business_unit_name) {
                 $this->LogMessage('** Warning ** -- Business Unit ' . $row->business_unit . ' not found.');
             }
 

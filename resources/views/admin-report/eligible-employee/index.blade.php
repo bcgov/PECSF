@@ -19,6 +19,18 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="year">
+                    Year
+                </label>
+                <select name="year" value="" class="form-control">
+                    {{-- <option value="">All</option> --}}
+                    @foreach( $years as $year => $as_of_date)
+                        <option value="{{ $year }}" {{ today()->year == $year ? 'selected' : '' }}>{{ $year }} [Snapshot on : {{ $as_of_date }}]</option>
+                    @endforeach 
+                </select>
+            </div>
+
             <div class="form-group col-md-1">
                 <label for="emplid">
                     Emplid
@@ -33,7 +45,7 @@
                 <input name="name"   class="form-control" />
             </div>
 
-            <div class="form-group col-md-2">
+            {{-- <div class="form-group col-md-2">
                 <label for="empl_status">
                     Status
                 </label>
@@ -43,7 +55,7 @@
                         <option value="{{ $key }}">{{ $value }} ({{ $key }})</option>
                     @endforeach 
                 </select>
-            </div>
+            </div> --}}
 
             <div class="form-group col-md-2">
                 <label for="office_city">
@@ -240,9 +252,10 @@
                 url: '{!! route('reporting.eligible-employees.index') !!}',
                 data: function (data) {
                     // data.term = $('#user').val();
+                    data.year = $("select[name='year']").val();
                     data.emplid = $("input[name='emplid']").val();
                     data.name = $("input[name='name']").val();
-                    data.empl_status = $("select[name='empl_status']").val();
+                    // data.empl_status = $("select[name='empl_status']").val();
                     data.office_city = $("select[name='office_city']").val();
                     data.organization = $("select[name='organization']").val();
                     data.business_unit  = $("input[name='business_unit']").val();
@@ -261,8 +274,8 @@
                 {data: 'office_postal' },
                 {data: 'organization_name', defaultContent: '', className: "dt-nowrap"  },
                 // {data: 'organization.name' },
-                {data: 'bus_unit.code', defaultContent: '', className: "dt-nowrap"  },
-                {data: 'bus_unit.name', defaultContent: '', className: "dt-nowrap"  },
+                {data: 'business_unit', defaultContent: '', className: "dt-nowrap"  },
+                {data: 'business_unit_name', defaultContent: '', className: "dt-nowrap"  },
                 {data: 'deptid', defaultContent: '', className: "dt-nowrap"  },
                 {data: 'dept_name', defaultContent: '', className: "dt-nowrap"  },
                 {data: 'tgb_reg_district', defaultContent: '', 'type':'string' },
