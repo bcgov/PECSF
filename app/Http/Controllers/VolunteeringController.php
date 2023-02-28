@@ -284,6 +284,7 @@ class VolunteeringController extends Controller
                     'po_box' => $request->po ? $request->po : "",
                     'comments' => empty($request->comments) ? "" : $request->comments,
                     'address_type' => $request->address_type,
+                    'date_required' => $request->date_required
                 ]
             );
             return json_encode(array(route('supply_order_form')));
