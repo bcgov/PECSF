@@ -31,7 +31,7 @@
                                         <div class="error organization_id_error">
 
                                         </div>
-                                        <select error_message="The organization field is required" name="organization_id" id="" class="form-control" required>
+                                        <select error_message="The organization field is required" name="business_unit_id" id="" class="form-control" required>
                                             <option value="">Select your organization</option>
                                             @foreach($organizations as $org)
                                                 <option value="{{$org->id}}">{{$org->name}}</option>

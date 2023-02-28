@@ -36,12 +36,13 @@ use Yajra\Datatables\Datatables;
 class VolunteeringController extends Controller
 {
     public function index() {
-        $organizations = Organization::where('status' ,"=", "A")->get();
+        $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
         $settings = Setting::first();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("business_units","volunteers.business_unit_id","business_units.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
+      $show = false;
         if(!empty($is_registered)){
             if(is_array($is_registered->new_address))
             {
@@ -52,15 +53,16 @@ class VolunteeringController extends Controller
                 $is_registered->province = "";
                 $is_registered->city = "";
             }
+            $show = ($settings->volunteer_start_date > $is_registered->updated_at) && (Carbon::now() > $settings->volunteer_start_date);
+
         }
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        $show = ($settings->volunteer_start_date > $is_registered->updated_at) && (Carbon::now() > $settings->volunteer_start_date);
         return view('volunteering.index', compact('business_units','show','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
 
     public function training(){
-        $organizations = Organization::where('status' ,"=", "A")->get();
+        $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
@@ -74,11 +76,11 @@ class VolunteeringController extends Controller
     }
 
     public function profile(){
-        $organizations = Organization::where('status' ,"=", "A")->get();
+        $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
         $user = User::find(Auth::id());
         $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("business_units","volunteers.business_unit_id","business_units.id")->first() : false;
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
         if($global_address){
             $global_address =  $global_address->office_address1." ".$global_address->office_address2." ,".$global_address->office_city." ,".$global_address->stateprovince." ,".$global_address->country." ,".$global_address->postal;
@@ -90,7 +92,7 @@ class VolunteeringController extends Controller
     }
 
     public function edit(){
-        $organizations = BusinessUnit::where('status' ,"=", "A")->get();
+        $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
         $user = User::find(Auth::id());
         $cities = City::all();
         $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
@@ -119,7 +121,7 @@ class VolunteeringController extends Controller
                 'new_address' =>  ($request->address_type=="Global") ? $request->global_address : $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
                 'no_of_years' => $request->no_of_years,
                 'preferred_role' => $request->preferred_role,
-                'organization_id' => $request->organization_id,
+                'business_unit_id' => $request->business_unit_id,
             ]
         );
         return redirect()->route('profile');
@@ -127,7 +129,6 @@ class VolunteeringController extends Controller
 
     public function update(Request $request){
         $validator = Validator::make(request()->all(), [
-            'organization_id' => 'required',
             'no_of_years' => 'required',
             'preferred_role' => 'required',
             'address_type' => 'required'
@@ -159,7 +160,7 @@ class VolunteeringController extends Controller
         [
             'new_address'         => ($request->address_type=="Global") ? $request->global_address : $request->new_address.", ".$request->city.", ".$request->province.", ".$request->postal_code,
             'address_type'         => $request->address_type,
-            'organization_id' => $request->organization_id,
+            'business_unit_id' => $request->organization_id,
             'no_of_years' => $request->no_of_years,
             'preferred_role' =>  $request->preferred_role,
             'updated_at' => Carbon::now()
