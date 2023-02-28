@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        if (App::environment('production') || App::environment('test')) {
+        if (App::environment('prod') || App::environment('TEST')) {
 
             $schedule->command('command:ExportPledgesToPSFT')
                     ->dailyAt('0:15')
@@ -91,8 +91,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('notify:daily')
         ->dailyAt('08:30')
         ->appendOutputTo(storage_path('logs/daily.log'));
-
-                 
+                         
     }
 
     /**
