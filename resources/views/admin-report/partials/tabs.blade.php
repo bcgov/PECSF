@@ -2,7 +2,7 @@
 
     <li class="nav-item dropdown">
       @php $active =  ( str_contains(Route::current()->getName(), 'reporting.donation-upload') ||
-                        str_contains(Route::current()->getName(), 'reporting.donation-data') 
+                        str_contains(Route::current()->getName(), 'reporting.donation-data')
                       ) ? 'active' : ''
       @endphp
       <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Pay Period Report</a>
@@ -20,6 +20,11 @@
         href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link {{ str_contains( Route::current()->getName(), 'reporting.supply-report') ? 'active' : ''}}"
+           {{-- id="pills-home-tab"  --}}
+           href="{{ route('reporting.supply-report.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Supply Order Report</a>
+    </li>
 </ul>
 
 

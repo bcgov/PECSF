@@ -30,7 +30,7 @@
     <br>
     <div class="card">
         <div class="card-body">
-{{var_dump($settings)}}
+
         </div>
     </div>
 

@@ -22,7 +22,6 @@ class SpecialCampaign extends Model
 
     protected $appends = [
         'status',  
-        'hasPledge',
     ];
 
     public function getStatusAttribute() {
@@ -55,7 +54,7 @@ class SpecialCampaign extends Model
 
     }
 
-    public function getHasPledgeAttribute()
+    public function hasPledge()
     {
         if ( $this->special_campaign_pledges()->exists() ) {
             return true;
