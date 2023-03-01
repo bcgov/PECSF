@@ -118,6 +118,13 @@ class Kernel extends ConsoleKernel
                         ->dailyAt('08:30')
                         ->appendOutputTo(storage_path('logs/daily.log'));
 
+
+                $schedule->command('command:ImportEmployeeJob')
+                        ->weekdays()
+                        ->at('16:00')
+                        ->sendOutputTo(storage_path('logs/ImportEmployeeJob_16.log'));                        
+
+
         }
 
     }
