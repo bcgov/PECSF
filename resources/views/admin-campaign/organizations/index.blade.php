@@ -224,6 +224,14 @@
                         $(document).find('#organization-edit-model-form [name='+field_name+']').val(field_value);
                     });
 
+                    code = $('#organization-edit-modal input[name="code"]').val();
+                    if (code.toUpperCase() == 'GOV') {
+                        $('#organization-edit-model-form').find('.bu_code_area').hide();
+                        $('#organization-edit-model-form').find('select[name="bu_code"]').val('');
+                    } else {
+                        $('#organization-edit-model-form').find('.bu_code_area').show();
+                    }
+
                     $('#organization-edit-modal').modal('show');
                 },
                 error: function(response) {

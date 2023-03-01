@@ -20,7 +20,7 @@ class FSPool extends Model
     ];
 
     protected $appends = [
-        'canEdit', 'canDelete', 'effectiveType', 'hasPledge'];
+        'canEdit', 'canDelete', 'effectiveType'];
         
     // Scope 
     public function scopeCurrent($query)
@@ -92,7 +92,7 @@ class FSPool extends Model
 
     }
 
-    public function getHasPledgeAttribute()
+    public function hasPledge()
     {
         if ( $this->annual_campaign_pledges()->exists() ) {
             return true;

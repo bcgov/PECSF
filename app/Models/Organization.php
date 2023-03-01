@@ -13,10 +13,6 @@ class Organization extends Model
         'code', 'name',  'status', 'effdt', 'bu_code', 'created_by_id', 'updated_by_id' 
     ];
 
-    protected $appends = [
-        'hasPledge',
-    ];
-
     public function business_unit() 
     {
         return $this->belongsTo(BusinessUnit::class, 'bu_code', 'code');   
@@ -32,7 +28,7 @@ class Organization extends Model
         return $this->hasOne(User::Class, 'id', 'updated_by_id');
     }
 
-    public function getHasPledgeAttribute()
+    public function hasPledge()
     {
         if ( $this->pledges()->exists() ) {
             return true;

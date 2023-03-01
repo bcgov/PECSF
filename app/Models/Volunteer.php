@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Volunteer extends Model
 {
     protected $fillable = [
-        'user_id', 'no_of_years', 'new_address', 'address_type', 'preferred_role', 'organization_id'
+        'user_id', 'no_of_years', 'new_address', 'address_type', 'preferred_role', 'organization_id','business_unit_id'
     ];
-    
+
     public function user() {
         return $this->belongsTo(User::class);
     }
