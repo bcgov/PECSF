@@ -24,7 +24,7 @@ class VolunteerRegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'organization_id' => 'required|exists:organizations,id',
+            'business_unit_id' => 'required|exists:business_units,id',
             'address_type' => 'nullable|in:Global,New,Opt-out',
             'new_address' => 'required_if:address_type,new',
             'no_of_years' => 'nullable|required_if:no_of_years_opt_out,0|integer',

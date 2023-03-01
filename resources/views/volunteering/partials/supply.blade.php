@@ -206,7 +206,8 @@
         </label>
     </div>
     <br><br>
-    <input type="submit" value="Submit" class="col-md-1 btn btn-primary"  />
+    <input type="hidden" name="supply_order_form_id" />
+    <input type="submit" value="Submit" id="submit_hook" class="col-md-1 btn btn-primary"  />
 
 </div>
 
