@@ -585,7 +585,7 @@ class FundSupportedPoolController extends Controller
 
             $pool = FSPool::where('id', $id)->first();
 
-            if ($pool->hasPledge) {
+            if ($pool->hasPledge() ) {
                 return response()->json([
                     'title'  => "Invalid delete!",
                     'message' => 'The Fund Support Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);

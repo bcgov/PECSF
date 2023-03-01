@@ -143,7 +143,7 @@ class OrganizationController extends Controller
         if($request->ajax()) {
             $org = Organization::where('id', $id)->first();
 
-            if ($org->hasPledge) {
+            if ($org->hasPledge() ) {
                 return response()->json([
                     'title'  => "Invalid delete!",
                     'message' => 'The Business unit "' .$org->code . ' - '. $org->name . '" cannot be deleted, it is being referenced on the pledge(s).'], 403);

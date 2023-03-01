@@ -15,10 +15,6 @@ class BusinessUnit extends Model
         'code', 'name', 'status', 'effdt', 'notes', 'created_by_id', 'updated_by_id'
     ];
 
-    protected $appends = [
-        'hasPledge',
-    ];
-
     public function scopeCurrent($query)
     {
         $query->where('effdt', function($query) {
@@ -40,7 +36,7 @@ class BusinessUnit extends Model
         return $this->hasOne(User::Class, 'id', 'updated_by_id');
     }
 
-    public function getHasPledgeAttribute()
+    public function hasPledge()
     {
         if ( $this->pledge_histories()->exists() ) {
             return true;

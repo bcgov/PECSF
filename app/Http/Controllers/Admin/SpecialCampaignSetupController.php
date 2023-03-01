@@ -208,7 +208,7 @@ class SpecialCampaignSetupController extends Controller
 
             $special_campaign = SpecialCampaign::where('id', $id)->first();
 
-            if ($special_campaign->hasPledge) {
+            if ($special_campaign->hasPledge() ) {
                 return response()->json([
                     'title'  => "Invalid delete!",
                     'message' => 'The Special Campaign "' . $special_campaign->name . '" cannot be deleted, it is being referenced on special campaign pledge(s).'], 403);
