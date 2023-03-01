@@ -144,7 +144,7 @@ class BusinessUnitController extends Controller
         if($request->ajax()) {
             $business_unit = BusinessUnit::where('id', $id)->first();
 
-            if ($business_unit->hasPledge) {
+            if ($business_unit->hasPledge() ) {
                 return response()->json([
                     'title'  => "Invalid delete!",
                     'message' => 'The Business Unit "' . $business_unit->code . ' - ' . $business_unit->name . '" cannot be deleted, it is being referenced on the pledge(s).'], 403);
