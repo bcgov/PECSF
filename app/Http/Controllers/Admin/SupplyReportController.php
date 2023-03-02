@@ -8,16 +8,76 @@ use App\Models\SupplyOrderForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SupplyReportController extends Controller
 {
     public function index(Request $request) {
-        $forms = SupplyOrderForm::select(DB::raw("*,supply_order_forms.id as id"))->join("business_units","business_units.id","business_unit_id")->get();
+        $forms = SupplyOrderForm::select(DB::raw("*,supply_order_forms.id as id"))->join("business_units","business_units.id","business_unit_id");
+        if(strlen($request->employee_name) > 2){
+            $forms = $forms->where("first_name","LIKE",$request->employee_name."%");
+            $forms = $forms->orWhere("last_name","LIKE",$request->employee_name."%");
+        }
+        if(strlen($request->organization_code) > 2){
+            $forms = $forms->where("business_units.name","LIKE",$request->organization_code."%");
+        }
+        if(!empty($request->month) && !empty($request->year)){
+            $forms = $forms->where("supply_order_forms.created_at",">=",Carbon::parse($request->month." ".$request->year));
+            $forms = $forms->where("supply_order_forms.created_at","<",Carbon::parse($request->month." ".($request->year+1)));
+
+        }
+
+        $months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        $years = [2023,2022,2021,2020,2019,2018];
+
+        $forms = $forms->get();
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        return view('admin-report.supply-order-form.index', compact('forms','business_units'));
+        return view('admin-report.supply-order-form.index', compact('forms','business_units','request','months','years'));
     }
 
-    public function store(Request $request){
+    public function delete(Request $request)
+    {
+        SupplyOrderForm::find($request->ids)->delete();
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'tasks.csv';
+        $tasks = Task::all();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('Title', 'Assign', 'Description', 'Start Date', 'Due Date');
+
+        $callback = function() use($tasks, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($tasks as $task) {
+                $row['Title']  = $task->title;
+                $row['Assign']    = $task->assign->name;
+                $row['Description']    = $task->description;
+                $row['Start Date']  = $task->start_at;
+                $row['Due Date']  = $task->end_at;
+
+                fputcsv($file, array($row['Title'], $row['Assign'], $row['Description'], $row['Start Date'], $row['Due Date']));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+
+
+        public function store(Request $request){
         if($request->wantsJson()) {
             $validator = Validator::make(request()->all(), [
                 'calendars' => 'required|integer',
