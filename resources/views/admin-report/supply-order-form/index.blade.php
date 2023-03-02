@@ -51,7 +51,7 @@
 
                 <label>
 Employee Name</label>
-                    <input class="form-control" name="employee_name" id="employee_name"/>
+                    <input class="form-control" name="employee_name" id="employee_name" value="{{$request->employee_name}}"/>
 
 
             </div>
@@ -59,23 +59,28 @@ Employee Name</label>
             <div class="col-md-4">
                 <label>
               Organization Code </label>
-                <input class="form-control" name="organization_code" id="organization_code"/>
+                <input class="form-control" value="{{$request->organization_code}}" name="organization_code" id="organization_code"/>
 
             </div>
             <div class="col-md-2">
                 <label>
                    Date Received </label>
-                    <select class="form-control" name="month">
-                   <option>Month</option>
-
+                    <select id="month" class="form-control" name="month">
+                        <option value="">Select a Month</option>
+                    @foreach($months as $month)
+                   <option {{$request->month == $month ? "selected" : "" }} value="{{$month}}">{{$month}}</option>
+                  @endforeach
                     </select>
 
             </div>
             <div class="col-md-2">
                 <label>
                    Select a Year </label>
-                <select class="form-control" name="month">
-                    <option>Year</option>
+                <select id="year" class="form-control" name="year">
+                    <option value="">Select a Year</option>
+                    @foreach($years as $year)
+                        <option {{$request->year == $year ? "selected" : "" }} value="{{$year}}">{{$year}}</option>
+                    @endforeach
 
                 </select>
             </div>
@@ -84,10 +89,10 @@ Employee Name</label>
         <div class="row mt-4">
 
             <div class="col-md-2">
-                <button class="form-control btn btn-primary">Search</button>
+                <button class="form-control search btn btn-primary">Search</button>
             </div>
             <div class="col-md-2">
-                <button class="form-control btn btn-outline-primary">Clear</button>
+                <button class="form-control clear btn btn-outline-primary">Clear</button>
             </div>
         </div>
 
@@ -103,14 +108,14 @@ Employee Name</label>
 
         <div class="row">
             <div class="col-md-2 justify-content-start">
-                <button class="form-control btn btn-danger">Delete (<span id="delete_count">0</span>)</button>
+                <button class="form-control delete btn btn-danger">Delete (<span id="delete_count">0</span>)</button>
             </div>
             <div class="col-md-2 justify-content-start">
-                <button class="form-control btn btn-primary">Export Data Set (<span id="export_count">0</span>)</button>
+                <button class="form-control export btn btn-primary">Export Data Set (<span id="export_count">0</span>)</button>
             </div>
         </div>
 
-        <div class="row">
+        <div class="mt-5 row">
             <div class="col-md-12 justify-content-center">
                 <table class="table">
 
@@ -125,7 +130,7 @@ Employee Name</label>
 
                     @foreach($forms as $form)
                         <tbody>
-                        <td><input class="form-control" type="checkbox" value="{{$form->id}}" name="supply_order_form_selection" /></td>
+                        <td><input class="form-control select" type="checkbox" value="{{$form->id}}" name="supply_order_form_selection[]" /></td>
                         <td>{{$form->first_name." ".$form->last_name}}</td>
                         <td>{{gmdate("Y-m-d H:i:s",strtotime($form->created_at))}}</td>
                         <td>{{$form->name}}</td>
@@ -210,6 +215,51 @@ Employee Name</label>
 
     <script>
 
+        $(".select").click(function(){
+          $("#delete_count").html($("[name='supply_order_form_selection[]']:checked").length);  ;
+          $("#export_count").html($("[name='supply_order_form_selection[]']:checked").length);  ;
+        });
+
+
+        $(".export").click(function(){
+            var formData = new FormData();
+            formData.append("supply_order_form_selection[]", $.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+            return +e.value;
+            }));
+
+            window.open("/reporting/supply-report/export?supply_order_form_selection="+$.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+                return +e.value;
+            }).join("-"));
+
+
+
+        });
+
+        $(".delete").click(function(){
+            var formData = new FormData();
+            formData.append("supply_order_form_selection[]", $.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+                return +e.value;
+            }));
+
+            window.location.href = "/reporting/supply-report/delete?supply_order_form_selection="+$.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+                return +e.value;
+            }).join("-");
+
+setTimeout(function(){window.location.reload();},3000);
+
+        });
+
+        $(".search").click(function(){
+
+            window.location = "/reporting/supply-report/?year="+$("#year").val()+"&month="+$("#month").val()+"&employee_name="+$("#employee_name").val()+"&organization_code="+$("#organization_code").val();
+
+        });
+
+        $(".clear").click(function(){
+
+            window.location = "/reporting/supply-report/";
+
+        });
 
         $("#supply_order_form").attr("action","/reporting/supply-report");
         $("#supply_order_form").attr("method","UPDATE");
