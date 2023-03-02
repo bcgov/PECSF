@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        if (App::environment('TASK_SCHEDULING_ENABLED')) 
+        if (env('TASK_SCHEDULING_ENABLED')) 
         { 
 
                 // **************************
@@ -121,7 +121,7 @@ class Kernel extends ConsoleKernel
 
                 $schedule->command('command:ImportEmployeeJob')
                         ->weekdays()
-                        ->at('16:00')
+                        ->at('17:00')
                         ->sendOutputTo(storage_path('logs/ImportEmployeeJob_16.log'));                        
 
 
