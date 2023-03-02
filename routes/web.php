@@ -289,6 +289,9 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
     Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
+    Route::get('/supply-report/delete', [SupplyReportController::class,"delete"])->name('delete');
+    Route::get('/supply-report/export', [SupplyReportController::class,"export"])->name('export');
+
 
 });
 
