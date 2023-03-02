@@ -8,16 +8,59 @@ use App\Models\SupplyOrderForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class SupplyReportController extends Controller
 {
     public function index(Request $request) {
-        $forms = SupplyOrderForm::select(DB::raw("*,supply_order_forms.id as id"))->join("business_units","business_units.id","business_unit_id")->get();
+        $forms = SupplyOrderForm::select(DB::raw("*,supply_order_forms.id as id"))->join("business_units","business_units.id","business_unit_id");
+        if(strlen($request->employee_name) > 2){
+            $forms = $forms->where("first_name","LIKE",$request->employee_name."%");
+            $forms = $forms->orWhere("last_name","LIKE",$request->employee_name."%");
+        }
+        if(strlen($request->organization_code) > 2){
+            $forms = $forms->where("business_units.name","LIKE",$request->organization_code."%");
+        }
+        if(!empty($request->month) && !empty($request->year)){
+            $forms = $forms->where("supply_order_forms.created_at",">=",Carbon::parse($request->month." ".$request->year));
+            $forms = $forms->where("supply_order_forms.created_at","<",Carbon::parse($request->month." ".($request->year+1)));
+
+        }
+
+        $months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        $years = [2023,2022,2021,2020,2019,2018];
+
+        $forms = $forms->get();
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        return view('admin-report.supply-order-form.index', compact('forms','business_units'));
+        return view('admin-report.supply-order-form.index', compact('forms','business_units','request','months','years'));
     }
 
-    public function store(Request $request){
+    public function delete(Request $request)
+    {
+        SupplyOrderForm::whereIn("id",explode("-",$_GET['supply_order_form_selection']))->delete();
+        return redirect("/reporting/supply-report");
+    }
+
+    public function export(Request $request)
+    {
+        $fileName = 'supply-report-details.csv';
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: attachment; filename=\"" . $fileName . "\"");
+
+        $tasks = SupplyOrderForm::whereIn("id",explode("-",$_GET['supply_order_form_selection']))->get();
+
+            $file = fopen($fileName, 'w');
+            foreach ($tasks as $task) {
+                fputcsv($file, json_decode(json_encode($task),true));
+            }
+
+             readfile($fileName);
+    }
+
+
+
+        public function store(Request $request){
         if($request->wantsJson()) {
             $validator = Validator::make(request()->all(), [
                 'calendars' => 'required|integer',
