@@ -95,7 +95,7 @@ class VolunteeringController extends Controller
         $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
         $user = User::find(Auth::id());
         $cities = City::all();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("organizations","volunteers.organization_id","organizations.id")->first() : false;
+        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("business_units","volunteers.business_unit_id","business_units.id")->first() : false;
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
         if($global_address){
             $province = "";

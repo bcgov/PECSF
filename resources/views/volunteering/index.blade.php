@@ -112,7 +112,7 @@
                                                 <select name="business_unit_id" id="organization" class="form-control" required>
                                                     <option value="">Please select</option>
                                                     @foreach($organizations as $org)
-                                                        <option {{$is_registered->organization_id == $org->id? "selected":""}} value="{{$org->id}}">{{$org->name}}</option>
+                                                        <option {{$is_registered->business_unit_id == $org->id? "selected":""}} value="{{$org->id}}">{{$org->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
