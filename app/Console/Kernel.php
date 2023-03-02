@@ -34,64 +34,99 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        if (App::environment('prod') || App::environment('TEST')) {
+        if (env('TASK_SCHEDULING_ENABLED')) 
+        { 
 
-            $schedule->command('command:ExportPledgesToPSFT')
-                    ->dailyAt('0:15')
-                    ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
-                    
-            $schedule->command('command:ExportDatabaseToBI')
-                    ->weekdays()
-                    ->at('0:30')
-                    ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
+                // **************************
+                // *** Outbound Processes ***
+                // **************************
+
+                // Note: The export processes are only execute in TEST and Production  
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->dailyAt('0:15')
+                        ->environments(['TEST', 'prod'])
+                        ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        
+                $schedule->command('command:ExportDatabaseToBI')
+                        ->weekdays()
+                        ->at('0:30')
+                        ->environments(['TEST', 'prod'])
+                        ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
+
+
+                // **************************
+                // *** Inbound  Processes ***
+                // **************************
+
+                // Foundation table
+                $schedule->command('command:ImportPayCalendar')
+                        ->weekdays()
+                        ->at('2:00')
+                        //  ->everyFifteenMinutes()
+                        ->appendOutputTo(storage_path('logs/ImportPayCalendar.log'));
+                        
+
+                // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
+                $schedule->command('command:ImportNonGovPledgeHistory')
+                        ->dailyAt('2:05')
+                        ->sendOutputTo(storage_path('logs/ImportNonPledgeHistory.log'));
+
+                $schedule->command('command:ImportPledgeHistory')
+                        ->dailyAt('2:15')
+                        ->appendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
+
+                $schedule->command('command:ImportCities')
+                        //  ->yearlyOn(9, 1, '02:30')
+                        ->dailyAt('2:30')
+                        ->sendOutputTo(storage_path('logs/ImportCities.log')); 
+
+                $schedule->command('command:ImportDepartments')
+                        ->dailyAt('2:35')
+                        ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+
+                // For testing purpose: to generate 2022 pledges based on the BI pledge history
+                // $schedule->command('command:GeneratePledgeFromHistory')
+                //         ->dailyAt('3:00');                    
+                
+                // Demography data and user profiles
+                $schedule->command('command:ImportEmployeeJob')
+                        ->weekdays()
+                        ->at('4:00')
+                        ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
+
+                $schedule->command('command:SyncUserProfile')
+                        ->weekdays()
+                        ->at('4:15')
+                        ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
+
+                // Snapshot of eligible employees 
+                $schedule->command('command:SetEligibleEmployeeBUCount')
+                        ->yearlyOn(8, 31, '5:00')
+                        ->sendOutputTo(storage_path('logs/SetEligibleEmployeeBUCount_Aug.log'));
+
+                $schedule->command('command:SetEligibleEmployeeBUCount')
+                        ->yearlyOn(9, 1, '5:00')
+                        ->sendOutputTo(storage_path('logs/SetEligibleEmployeeBUCount_Sept.log'));
+
+                $schedule->command('command:SetEligibleEmployeeBUCount')
+                        ->yearlyOn(10, 15, '5:00')
+                        ->sendOutputTo(storage_path('logs/SetEligibleEmployeeBUCount_Oct.log'));
+
+                
+                // Daily Testing 
+                $schedule->command('notify:daily')
+                        ->dailyAt('08:30')
+                        ->appendOutputTo(storage_path('logs/daily.log'));
+
+
+                $schedule->command('command:ImportEmployeeJob')
+                        ->weekdays()
+                        ->at('17:00')
+                        ->sendOutputTo(storage_path('logs/ImportEmployeeJob_16.log'));                        
+
 
         }
 
-        // Foundation table
-        $schedule->command('command:ImportPayCalendar')
-                ->weekdays()
-                ->at('2:00')
-                //  ->everyFifteenMinutes()
-                ->appendOutputTo(storage_path('logs/ImportPayCalendar.log'));
-                 
-
-        // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
-        $schedule->command('command:ImportNonGovPledgeHistory')
-                ->dailyAt('2:05')
-                ->sendOutputTo(storage_path('logs/ImportNonPledgeHistory.log'));
- 
-        $schedule->command('command:ImportPledgeHistory')
-                ->dailyAt('2:15')
-                ->appendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
-
-        $schedule->command('command:ImportCities')
-                //  ->yearlyOn(9, 1, '02:30')
-                ->dailyAt('2:30')
-                ->sendOutputTo(storage_path('logs/ImportCities.log')); 
-
-        $schedule->command('command:ImportDepartments')
-                ->dailyAt('2:35')
-                ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
-
-        // For testing purpose: to generate 2022 pledges based on the BI pledge history
-        // $schedule->command('command:GeneratePledgeFromHistory')
-        //         ->dailyAt('3:00');                    
-        
-        // Demography data and user profiles
-        $schedule->command('command:ImportEmployeeJob')
-                ->weekdays()
-                ->at('4:00')
-                ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
-
-        $schedule->command('command:SyncUserProfile')
-                ->weekdays()
-                ->at('4:15')
-                ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
-
-        $schedule->command('notify:daily')
-        ->dailyAt('08:30')
-        ->appendOutputTo(storage_path('logs/daily.log'));
-                         
     }
 
     /**
