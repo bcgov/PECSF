@@ -220,6 +220,35 @@ Employee Name</label>
           $("#export_count").html($("[name='supply_order_form_selection[]']:checked").length);  ;
         });
 
+
+        $(".export").click(function(){
+            var formData = new FormData();
+            formData.append("supply_order_form_selection[]", $.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+            return +e.value;
+            }));
+
+            window.open("/reporting/supply-report/export?supply_order_form_selection="+$.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+                return +e.value;
+            }).join("-"));
+
+
+
+        });
+
+        $(".delete").click(function(){
+            var formData = new FormData();
+            formData.append("supply_order_form_selection[]", $.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+                return +e.value;
+            }));
+
+            window.location.href = "/reporting/supply-report/delete?supply_order_form_selection="+$.map($("[name='supply_order_form_selection[]']:checked"), function(e,i) {
+                return +e.value;
+            }).join("-");
+
+setTimeout(function(){window.location.reload();},3000);
+
+        });
+
         $(".search").click(function(){
 
             window.location = "/reporting/supply-report/?year="+$("#year").val()+"&month="+$("#month").val()+"&employee_name="+$("#employee_name").val()+"&organization_code="+$("#organization_code").val();

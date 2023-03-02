@@ -37,42 +37,25 @@ class SupplyReportController extends Controller
 
     public function delete(Request $request)
     {
-        SupplyOrderForm::find($request->ids)->delete();
+        SupplyOrderForm::whereIn("id",explode("-",$_GET['supply_order_form_selection']))->delete();
+        return redirect("/reporting/supply-report");
     }
 
     public function export(Request $request)
     {
-        $fileName = 'tasks.csv';
-        $tasks = Task::all();
+        $fileName = 'supply-report-details.csv';
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: attachment; filename=\"" . $fileName . "\"");
 
-        $headers = array(
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        );
+        $tasks = SupplyOrderForm::whereIn("id",explode("-",$_GET['supply_order_form_selection']))->get();
 
-        $columns = array('Title', 'Assign', 'Description', 'Start Date', 'Due Date');
-
-        $callback = function() use($tasks, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
+            $file = fopen($fileName, 'w');
             foreach ($tasks as $task) {
-                $row['Title']  = $task->title;
-                $row['Assign']    = $task->assign->name;
-                $row['Description']    = $task->description;
-                $row['Start Date']  = $task->start_at;
-                $row['Due Date']  = $task->end_at;
-
-                fputcsv($file, array($row['Title'], $row['Assign'], $row['Description'], $row['Start Date'], $row['Due Date']));
+                fputcsv($file, json_decode(json_encode($task),true));
             }
 
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+             readfile($fileName);
     }
 
 
