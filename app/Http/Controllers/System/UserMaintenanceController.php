@@ -120,4 +120,37 @@ class UserMaintenanceController extends Controller
 
     }
 
+    public function lockUser(Request $request, $id) {
+    
+        if($request->ajax()) {
+            $user = User::where('id', $id)->first();
+
+            $user->acctlock = 1;
+            $user->save();
+            
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
+
+    }
+
+    public function unlockUser(Request $request, $id) {
+    
+        if($request->ajax()) {
+            $user = User::where('id', $id)->first();
+
+            $user->acctlock = 0;
+            $user->save();
+            
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
+
+    }
+
+
 }
