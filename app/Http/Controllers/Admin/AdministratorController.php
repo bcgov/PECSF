@@ -36,11 +36,14 @@ class AdministratorController extends Controller
         //
         if($request->ajax()) {
 
-            $administrators = User::role('admin')->get();
+            $administrators = User::with('organization')->role('admin')->get();
         
             return Datatables::of($administrators)
                 ->addColumn('rolename', function ($administrator) {
                     return $administrator->getRoleNames()->contains('admin') ? 'admin' : '' ;    
+                })
+                ->addColumn('employee_email', function ($administrator) {
+                    return $administrator->source_type == 'HCM' ? ($administrator->primary_job ? $administrator->primary_job->email : '') : $administrator->email ;    
                 })
                 ->addColumn('action', function ($administrator) {
                     return '<a class="btn btn-danger btn-sm ml-2 delete-administrator" data-id="'. $administrator->id .
@@ -96,10 +99,12 @@ class AdministratorController extends Controller
         $term = trim($request->q);
 
         if($term == ''){
-            $users = User::orderby('name','asc')->select('id','name','email','emplid')->limit(50)->get();
+            $users = User::orderBy('source_type')->orderby('name','asc')
+                        ->whereNotNull('source_type')
+                        ->select('id','source_type','name','email','emplid')->limit(50)->get();
          }else{
-            $users = user::orderby('name','asc')
-                ->select('id','name','email','emplid')
+            $users = user::orderBy('source_type')->orderby('name','asc')
+                ->select('id','source_type', 'name','email','emplid')
                 ->where( function($query) use($term) {
                      return $query->where('name', 'like', '%' .$term . '%')
                             ->orWhere('emplid', 'like', '%' .$term . '%');
@@ -109,7 +114,8 @@ class AdministratorController extends Controller
    
          $formatted_users = [];
          foreach ($users as $user) {
-            $text = $user->name;
+            $text = '['. $user->source_type . '] ';
+            $text .= $user->name;
             $text .= $user->emplid ? ' (' . $user->emplid . ')' : '';
             $formatted_users[] = ['id' => $user->id, 'text' => $text];
         }
