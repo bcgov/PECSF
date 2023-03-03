@@ -28,6 +28,8 @@ class BusinessUnitsVolunteers extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('volunteers', function (Blueprint $table) {
+            $table->dropColumn("business_unit_id");
+        });
     }
 }

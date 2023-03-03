@@ -40,6 +40,16 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function credentials(Request $request)
+    {
+        return [
+            'email' => request()->email,
+            'password' => request()->password,
+            'acctlock' => 0,                        //  check additional field during login 
+            'source_type' => 'LCL',                 //  check additional field during login 
+        ];
+    } 
+
     /**
      * The user has been authenticated.
      *
