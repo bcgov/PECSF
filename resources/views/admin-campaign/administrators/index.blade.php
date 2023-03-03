@@ -60,8 +60,12 @@
                 <table class="table table-bordered" id="administrator-table" style="width:100%">
                     <thead>
                         <tr>
+                            <th>Type</th>
                             <th>User Name</th>
-                            <th>User Email</th>
+                            <th>Email</th>
+                            <th>IDIR</th>
+                            <th>Organization</th>
+                            <th>Employee ID</th>
                             <th>Role Name</th>
                             <th>Delete</th>
                         </tr>
@@ -137,22 +141,24 @@
             processing: true,
             serverSide: true,
             select: true,
-            //'order': [[0, 'desc']],
+            'order': [[1, 'asc']],
             ajax: {
                 url: '{!! route('settings.administrators.store') !!}',
                 data: function (d) {
                 }
             },
             columns: [
-                {data: 'name', name: 'name'},
-                {data: 'email', name: 'email'},
+                {data: 'source_type', name: 'source_type', className: 'dt-nowrap'},
+                {data: 'name', name: 'name', className: 'dt-nowrap'},
+                {data: 'employee_email', className: 'dt-nowrap', orderable: false, searchable: false },
+                {data: 'idir', className: 'dt-nowrap'},
+                {data: 'organization.name', name: 'organization.name', className: 'dt-nowrap'},
+                {data: 'emplid', name: 'emplid', className: 'dt-nowrap'},
                 {data: 'rolename', name: 'rolename'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
             columnDefs: [
                 {
-                    className: "dt-nowrap",
-                    targets: [0,1,2]
                 },
             ]
         });
