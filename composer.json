@@ -23,6 +23,7 @@
         "league/oauth2-client": "^2.6",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.52",
+        "owen-it/laravel-auditing": "^13.1",
         "socialiteproviders/keycloak": "^5.1",
         "socialiteproviders/microsoft-azure": "^4.2",
         "spatie/laravel-permission": "^4.2",
