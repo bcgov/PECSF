@@ -189,8 +189,6 @@ class UserTableSeeder extends Seeder
       ]
     ];
 
-        User::whereBetween('id', [1, 999])->delete();
-
         $organization = Organization::where('code','GOV')->first();
 
         foreach ($users as $user) {
