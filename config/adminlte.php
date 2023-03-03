@@ -317,6 +317,11 @@ return [
                     'url'  => '/system/users',
                 ],
                 [
+                    'text' => 'Auditing',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '/system/auditing',
+                ],
+                [
                     'text' => 'Access Logs',
                     'icon' => 'nav-icon far fa-circle',
                     'url'  => '/system/access-logs',

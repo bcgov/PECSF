@@ -10,6 +10,11 @@
     </li>
 
     <li class="nav-item">
+      <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.auditing') ? 'active' : ''}}"
+        href="{{ route('system.auditing.index') }}">Auditing</a>
+    </li>
+
+    <li class="nav-item">
       <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.access-logs') ? 'active' : ''}}"
         href="{{ route('system.access-logs') }}">Access Logs</a>
     </li>

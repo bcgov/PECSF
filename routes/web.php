@@ -7,34 +7,36 @@ use App\Http\Controllers\PledgeController;
 
 use App\Http\Controllers\CharityController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DonateNowController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
-use App\Http\Controllers\VolunteeringController;
 
+use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\AnnualCampaignController;
+
+
 use App\Http\Controllers\Auth\AzureLoginController;
-
-
 use App\Http\Controllers\BankDepositFormController;
 use App\Http\Controllers\SpecialCampaignController;
-use App\Http\Controllers\Admin\CRACharityController;
 
+use App\Http\Controllers\System\AuditingController;
+use App\Http\Controllers\Admin\CRACharityController;
 use App\Http\Controllers\System\AccessLogController;
+
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\System\UploadFileController;
-
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\DonationDataController;
 use App\Http\Controllers\Admin\OrganizationController;
-use App\Http\Controllers\Auth\KeycloakLoginController;
+
+
 use App\Http\Controllers\Admin\SupplyReportController;
-
-
+use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
@@ -49,7 +51,6 @@ use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
-use App\Http\Controllers\SettingsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -311,6 +312,9 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::get('/access-logs-user', [AccessLogController::class, 'getUsers'])->name('access-logs.users');
     Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
+    // Auditing 
+    Route::resource('/auditing', AuditingController::class)->only(['index']);
+    
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
 
