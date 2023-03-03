@@ -48,8 +48,7 @@ class UserTableSeeder extends Seeder
         'email' => 'employee11@example.com',
         'name' => 'K Dunn',
         'password' => 'employee11@123',
-        'emplid' => '000422
-        ',   
+        'emplid' => '000422',   
       ],
       [
         'id' => 12,
