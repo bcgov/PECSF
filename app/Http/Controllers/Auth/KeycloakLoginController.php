@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class KeycloakLoginController extends Controller
 {
@@ -59,6 +60,13 @@ class KeycloakLoginController extends Controller
                 return redirect('/');
 
             } else {
+
+
+                $guid = $keycloak_user->user['idir_user_guid'];
+                $idir  = $keycloak_user->user['idir_username'];
+                $email = $keycloak_user->user['email'];
+
+                Log::error("Keycloak signon failed (No user profile) : {$idir} - {$guid} - {$email}");
 
                 return redirect('/login')
                     ->with('error-psft', 'You do not have active PeopleSoft HCM account.');
