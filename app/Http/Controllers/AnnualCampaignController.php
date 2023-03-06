@@ -389,7 +389,10 @@ class AnnualCampaignController extends Controller
             $pledge->save();
         }
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach ($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ($input['pool_option'] == 'C' ) {
             foreach(['OneTime', 'BiWeekly'] as $frequency) {
@@ -404,6 +407,7 @@ class AnnualCampaignController extends Controller
                     if ($amount <= 0) {
                         continue;
                     }
+                
                     PledgeCharity::create([
                         'charity_id' => $id,
                         'pledge_id' => $pledge->id,

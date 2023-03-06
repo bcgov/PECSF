@@ -93,9 +93,11 @@
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
         </div>
         @endif
-        <div class="justify-content-center">
-            <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a>
-        </div>
+        @if ($pledges_by_yearcd->count() > 0)
+            <div class="justify-content-center">
+                <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a>
+            </div>
+        @endif
     </div>
 </div>
 
