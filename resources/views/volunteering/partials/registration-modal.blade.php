@@ -28,7 +28,7 @@
                                         <p class="text-muted">
                                             Your Organization
                                         </p>
-                                        <div class="error organization_id_error">
+                                        <div class="error business_unit_id_error">
 
                                         </div>
                                         <select error_message="The organization field is required" name="business_unit_id" id="" class="form-control" required>

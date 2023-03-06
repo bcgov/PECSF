@@ -459,9 +459,9 @@
         }*/
 var stop = false;
         requiredQuestion.each((index,e) => {
-            if(this.val() == "")
+            if(e.value == "")
             {
-                $("."+this.name+"_error").val(this.error);
+                $("."+e.name+"_error").html("Required Field");
                 stop = true;
             }
         });
@@ -506,7 +506,7 @@ var stop = false;
 
 
 
-        $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=organization_id] option:selected").text());
+        $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=business_unit_id] option:selected").text());
         $("#summary-table").find('[data-value-for="no_of_years"]').html(no_of_years);
         $("#summary-table").find('[data-value-for="address_type"]').html(address_type);
         $("#summary-table").find('[data-value-for="preferred_role"]').html($("#volunteer-registration").find("[name=preferred_role] option:selected").text());
@@ -538,6 +538,8 @@ var stop = false;
             }
         });
     });
+
+    $(".register").click(function(){$("#volunteer-registration").modal("show");});
 
 </script>
 @endpush
