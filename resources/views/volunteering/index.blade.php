@@ -539,7 +539,14 @@ var stop = false;
         });
     });
 
+    @if($is_registered && $show)
+    $(".register").click(function(){$("#edit-event-modal").modal("show");});
+    @elseif($is_registered)
+    $(".register").click(function(){window.location = "/volunteering/edit";});
+    @else
     $(".register").click(function(){$("#volunteer-registration").modal("show");});
+
+    @endif
 
 </script>
 @endpush

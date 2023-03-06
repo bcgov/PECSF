@@ -161,6 +161,7 @@
                             $(this).find(".finish-btn").removeClass("d-none");
                             $(this).find(".signup-btn").addClass("d-none");
                             $(this).find(".next-btn").addClass("d-none");
+
                         }
                     }  else if (e.to == 3) {
                         if($(".signup-btn").hasClass("d-none")){
@@ -176,7 +177,7 @@
 
                     const no_of_years =  $("#volunteer-registration").find("[name=no_of_years]").val();
                     const address_type = ($("#volunteer-registration").find("[type=radio][name=address_type]:checked").val() == "Opt-out")? "Opt-out" : $("[type=radio][name=address_type]:checked").val() == "Global" ? $("#global_address").val() : $("[name=street_address]").val() + ", " + $("[name=city]").val() + ", " + $("[name=province]").val()+", "+$("[name=postal_code]").val();
-                    $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=organization_id] option:selected").text());
+                    $("#summary-table").find('[data-value-for="business_unit_id"]').html($("#volunteer-registration").find("[name=business_unit_id] option:selected").text());
                     $("#summary-table").find('[data-value-for="no_of_years"]').html(no_of_years);
                     $("#summary-table").find('[data-value-for="address_type"]').html(address_type);
                     $("#summary-table").find('[data-value-for="preferred_role"]').html($("#volunteer-registration").find("[name=preferred_role] option:selected").text());
@@ -185,11 +186,9 @@
                 $('.signup-btn').on('click', function () {
                     window.location.reload();
                 });
-                let registrationUnderProcess = false;
-                $('.finish-btn').on('click', function () {
-                    if (registrationUnderProcess) {
-                        return;
-                    }
+
+               $('.finish-btn').on('click', function () {
+
                     const form = $('#volunteer_registration_form').get(0);
                     registrationUnderProcess = true;
                     $.ajax({

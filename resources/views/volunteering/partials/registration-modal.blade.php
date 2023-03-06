@@ -211,8 +211,8 @@
                                             </strong>
                                             </div>
                                             <div class="d-flex">
-                                                <div data-value-for="organization">
-                                                    Value
+                                                <div data-value-for="business_unit_id">
+
                                                 </div>
                                             </div>
 
