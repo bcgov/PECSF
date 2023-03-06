@@ -145,7 +145,7 @@
                     <th>IDIR</th>
                     <th>Organization</th>                    
                     <th>Emplid</th>
-                    <th>Locked </th>
+                    <th>Status</th>
                     <th>Sign On Count</th>
                     <th>Active Job Count</th>
 
