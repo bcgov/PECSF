@@ -51,6 +51,7 @@ use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
+use App\Http\Controllers\Admin\ChallengeSettingsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -242,7 +243,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
     Route::get('/', [SettingsController::class,'index'])->name('others');
-    Route::get('/challenge', [SettingsController::class,'challenge'])->name('challenge');
+    Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
+    Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
+
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
 
@@ -303,8 +306,8 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
 
     // Users Maintenance
-    Route::post('/users/{id}/lock', [UserMaintenanceController::class,'lockUser'])->name('users.lock');    
-    Route::post('/users/{id}/unlock', [UserMaintenanceController::class,'unlockUser'])->name('users.unlock');    
+    Route::post('/users/{id}/lock', [UserMaintenanceController::class,'lockUser'])->name('users.lock');
+    Route::post('/users/{id}/unlock', [UserMaintenanceController::class,'unlockUser'])->name('users.unlock');
     Route::resource('/users', UserMaintenanceController::class)->only(['index','show', 'edit', 'update']);
 
     // Access Log
@@ -312,9 +315,9 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::get('/access-logs-user', [AccessLogController::class, 'getUsers'])->name('access-logs.users');
     Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
-    // Auditing 
+    // Auditing
     Route::resource('/auditing', AuditingController::class)->only(['index']);
-    
+
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
 
