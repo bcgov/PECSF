@@ -214,6 +214,10 @@ class UserTableSeeder extends Seeder
         } elseif (str_contains($user->email, 'supervisor')) {
             //$role = Role::where('name', 'admin')->first();
             $user->assignRole('admin');
+
+            // Note: is_admin field is used for triggering auditing, have to sync with model_has_roles table
+            $user->is_admin = 1;
+            $user->save();
         }
 
       }

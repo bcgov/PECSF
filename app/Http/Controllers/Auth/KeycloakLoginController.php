@@ -65,8 +65,9 @@ class KeycloakLoginController extends Controller
                 $guid = $keycloak_user->user['idir_user_guid'];
                 $idir  = $keycloak_user->user['idir_username'];
                 $email = $keycloak_user->user['email'];
+                $name = $keycloak_user->user['name'];
 
-                Log::error("Keycloak signon failed (No user profile) : {$idir} - {$guid} - {$email}");
+                Log::error("Keycloak signon failed (No user profile) : {$idir} - {$guid} - {$email} - {$name}");
 
                 return redirect('/login')
                     ->with('error-psft', 'You do not have active PeopleSoft HCM account.');
