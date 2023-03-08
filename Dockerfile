@@ -119,7 +119,7 @@ COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 EXPOSE 8000
 
 # Add a command to base-image entrypont script
-CMD /usr/local/bin/apache2-foreground
+#CMD /usr/local/bin/apache2-foreground
 
-#CMD ["./entrypoint.sh"]
+CMD ["/var//www/html/entrypoint.sh"]
 
