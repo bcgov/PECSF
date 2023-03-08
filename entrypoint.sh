@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -euo pipefail
-
 /usr/local/bin/apache2-foreground
 
 cd /var/www/html
