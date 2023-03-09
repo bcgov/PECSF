@@ -14,11 +14,24 @@
       </div>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
-        {{-- id="pills-home-tab"  --}}
-        href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
+    <li class="nav-item dropdown">
+      @php $active =  ( str_contains(Route::current()->getName(), 'reporting.eligible-employee-count') ||
+                        str_contains(Route::current()->getName(), 'reporting.eligible-employees')
+                      ) ? 'active' : ''
+      @endphp
+      <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Pay Period Report</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.eligible-employee-count') ? 'active' : ''}}"
+              href="{{ route('reporting.eligible-employee-count.index') }}">Eligible Employee Summary</a>
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
+              href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
+      </div>
     </li>
+
+    {{-- <li class="nav-item">
+      <a class="nav-link {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
+        href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
+    </li> --}}
 
     <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'reporting.supply-report') ? 'active' : ''}}"
