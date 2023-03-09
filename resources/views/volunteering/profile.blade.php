@@ -103,6 +103,13 @@
                     const isRequired = $("#volunteer-registration").find("[type=radio][name=address_type]:checked").val() === 'new';
                     $("#volunteer-registration").find("[name=new_address]").prop('required', isRequired);
 
+                    if($(this).val() == "New"){
+                        $(".toggle").attr("disabled", false);
+                    }
+                    else{
+                        $(".toggle").attr("disabled", true);
+                    }
+
                 });
                 $('#volunteer-registration').on('slide.bs.carousel', function (e) {
                     const activeStep = Number.parseInt($(e.relatedTarget).data('step')) - 1;
