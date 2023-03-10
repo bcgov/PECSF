@@ -252,7 +252,12 @@
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
                 // {data: 'schedule_job_name', name: 'schedule_job_name', className: "dt-nowrap" },
-                {data: 'schedule_job_id', name: 'schedule_job_id',},
+                {data: 'schedule_job_id', name: 'schedule_job_id',
+                    render: function (data, type, row) {
+                                return '<a href="{{ route('system.schedule-job-audits.index') }}?tran_id=' + 
+                                        data + '">' + data  + '</a>';
+                    }
+                },
                 {data: 'to_application', name: 'to_application',  },
                 {data: 'table_name',  name: 'table_name', },
                 {data: 'audit_timestamp', name: 'audit_timestamp', orderable: false, searchable: false},
