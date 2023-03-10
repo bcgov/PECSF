@@ -5,7 +5,7 @@
 @include('system-security.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Table Audit Log</h4>
+        <h4>Export Audit Log</h4>
         <div class="flex-fill"></div>
 
     </div>
@@ -18,26 +18,38 @@
         <h2>Search Criteria</h2>
 
         <div class="form-row">
-            <div class="form-group col-md-2">
-                <label for="audit_user">
-                    Audit User 
+            <div class="form-group col-md-1">
+                <label for="schedule_job_id">
+                    Job ID
                 </label>
-                <input name="audit_user" placeholder="Name, Employee ID, iDir"  class="form-control" />
+                <input name="schedule_job_id" placeholder=""  class="form-control" />
             </div>
 
             <div class="form-group col-md-2">
-                <label for="event_type">
-                    Event Type
+                <label for="to_application">
+                    To Application
                 </label>
-                <select name="event_type"  value="" class="form-control">
-                    <option value="">Select a event</option>
-                    @foreach( $event_types as $key => $value)
-                        <option value="{{ $key }}">{{ $value }}</option>
+                <select name="to_application"  value="" class="form-control">
+                    <option value="">All</option>
+                    @foreach( $to_application_options as $to_application)
+                        <option value="{{ $to_application }}">{{ $to_application }}</option>
                     @endforeach 
                 </select>
             </div>
 
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
+                <label for="table_name">
+                    Table Name
+                </label>
+                <select name="table_name"  value="" class="form-control">
+                    <option value="">All</option>
+                    @foreach( $table_name_options as $table_name)
+                        <option value="{{ $table_name }}">{{ $table_name }}</option>
+                    @endforeach 
+                </select>
+            </div>
+
+            {{-- <div class="form-group col-md-2">
                 <label for="auditable_type">
                     Audit Type
                 </label>
@@ -47,22 +59,22 @@
                         <option value="{{ $value }}">{{ $value }}</option>
                     @endforeach 
                 </select>
-            </div>
+            </div> --}}
 
-            <div class="form-group col-md-2">
-                <label for="auditable_id">
-                    Audit ID
+            <div class="form-group col-md-1">
+                <label for="row_id">
+                    Row ID
                 </label>
-                <input name="auditable_id" class="form-control" />
+                <input name="row_id" class="form-control" />
             </div>
 
             <div class="form-group col-md-2">
-                <label for="start_time">Start Time</label>
+                <label for="start_time">Date From</label>
                 <input class="form-control datetime-range-filter" type="datetime-local"  name="start_time">
             </div>
 
             <div class="form-group col-md-2">
-                <label for="end_time">End Time</label>
+                <label for="end_time">Date To </label>
                 <input class="form-control datetime-range-filter" type="datetime-local"  name="end_time">
             </div>
 
@@ -84,15 +96,9 @@
 
             <div class="form-group col-md-4">
                 <label for="old_values">
-                    Old Values 
+                    Values 
                 </label>
-                <input name="old_values"   class="form-control" />
-            </div>
-            <div class="form-group col-md-4">
-                <label for="new_values">
-                    New Values 
-                </label>
-                <input name="new_values"  class="form-control" />
+                <input name="row_values"   class="form-control" />
             </div>
 
             <div class="form-group col-md-1">
@@ -120,16 +126,18 @@
 			<thead>
 				<tr>
                     <th>Tran ID </th>
-                    <th>Audit User</th>
-                    <th>Audit Time</th>
-                    <th>Event Type</th>
-                    <th>Audit Type</th>
-                    <th>Audit ID</th>
-                    <th>Old Values / New Values</th>
+                    {{-- <th>Job</th> --}}
+                    <th>Job ID</th>
+                    <th>To Application</th>
+                    <th>Table Name</th>
+                    <th>Audit Timestamp</th>
+                    <th>Row ID</th>
+                    <th>Row Value</th>
+
                     {{-- <th>New Value </th> --}}
-                    <th>Url</th>
+                    {{-- <th>Url</th>
                     <th>IP Address</th>
-                    <th>User Agent</th>
+                    <th>User Agent</th> --}}
                     
 				</tr>
 			</thead>
@@ -230,45 +238,51 @@
             fixedHeader: true,   
             fixedColumn: true,         
             ajax: {
-                url: '{!! route('system.auditing.index') !!}',
+                url: '{!! route('system.export-audits.index') !!}',
                 data: function (data) {
-                    // data.term = $('#user').val();
-                    data.audit_user = $("input[name='audit_user']").val();
-                    data.event_type = $("select[name='event_type']").val();
-                    data.auditable_type = $("select[name='auditable_type']").val();
-                    data.auditable_id = $("input[name='auditable_id']").val();
+                    data.schedule_job_id = $("input[name='schedule_job_id']").val();
+                    data.to_application = $("select[name='to_application']").val();
+                    data.table_name = $("select[name='table_name']").val();
+                    data.row_id = $("input[name='row_id']").val();
                     data.start_time = $("input[name='start_time']").val();
                     data.end_time  = $("input[name='end_time']").val();
-                    data.old_values  = $("input[name='old_values']").val();
-                    data.new_values  = $("input[name='new_values']").val();
+                    data.row_values  = $("input[name='row_values']").val();
                 }
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
-                {data: 'audit_user.name', name: 'audit_user.name', className: "dt-nowrap" },
-                {data: 'audit_timestamp', name: 'created_at', className: "dt-nowrap" },
-                {data: 'event', name: 'event', className: "dt-nowrap" },
-                {data: 'auditable_type_name',  name: 'auditable_type_name',  className: "dt-nowrap" },
-                {data: 'auditable_id',  name: 'auditable_id'},
-                {data: 'old_values', name: 'old_values', orderable: false, searchable: false},
-                // {data: 'new_values', name: 'new_values', orderable: false, searchable: false},
-                {data: 'url', name: 'url',},
-                {data: 'ip_address', name: 'ip_address', className: "dt-nowrap"},
-                {data: 'user_agent', name: 'user_agent', render: function (data, type, row) {
-                                return "<div style='width: 20em;'>" + data  + '</div>';
+                // {data: 'schedule_job_name', name: 'schedule_job_name', className: "dt-nowrap" },
+                {data: 'schedule_job_id', name: 'schedule_job_id',},
+                {data: 'to_application', name: 'to_application',  },
+                {data: 'table_name',  name: 'table_name', },
+                {data: 'audit_timestamp', name: 'audit_timestamp', orderable: false, searchable: false},
+                {data: 'row_id',  name: 'row_id'},
+                // {data: 'row_values', name: 'row_values', orderable: false, searchable: false},
+                {data: 'row_values', name: 'row_values', render: function (data, type, row) {
+                                return "<div style='max-width: 35em;'>" + data  + '</div>';
                     }
                 },
+
+
+                
+                // {data: 'new_values', name: 'new_values', orderable: false, searchable: false},
+                // {data: 'url', name: 'url',},
+                // {data: 'ip_address', name: 'ip_address', className: "dt-nowrap"},
+                // {data: 'user_agent', name: 'user_agent', render: function (data, type, row) {
+                //                 return "<div style='width: 20em;'>" + data  + '</div>';
+                //     }
+                // },
                 // {data: 'deleted_by', name: 'delete_by', orderable: false, searchable: false, className: "dt-nowrap"},
                 // {data: 'deleted_at', name: 'delete_at', orderable: false, searchable: false, className: "dt-nowrap"},
             ],
             columnDefs: [
                     {
-                            render: function (data, type, row) {
-                                // return "<div style='max-width: 40em;'>" + data  + '</div>';
-                                return "<div style='min-width: 20em; max-width: 40em;'><p class='text-success'>" + row.old_values + "</p><hr/>" +
-                                    "<p class='text-primary'>" + row.new_values + "</p></div>";
-                            },
-                            targets: [6]
+                            // render: function (data, type, row) {
+                            //     // return "<div style='max-width: 40em;'>" + data  + '</div>';
+                            //     return "<div style='min-width: 20em; max-width: 40em;'><p class='text-success'>" + row.old_values + "</p><hr/>" +
+                            //         "<p class='text-primary'>" + row.new_values + "</p></div>";
+                            // },
+                            // targets: [6]
                     },
                  
             ],
