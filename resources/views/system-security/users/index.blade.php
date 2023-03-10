@@ -346,6 +346,17 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
+        function Toast( toast_title, toast_body, toast_class) {
+            Swal.fire({
+                    position: 'top-end',
+                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
+                    title: toast_title,
+                    text: toast_body,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 5000
+            })
+        }
 
         $('body').on('click', 'span.toggle_user', function(e) {
             e.preventDefault();
@@ -365,7 +376,7 @@
 
             Swal.fire( {
                     title: title,
-                    text: 'This action cannot be undone.',
+                    text: '',
                     // icon: 'question',
                     //showDenyButton: true,
                     showCancelButton: true,
@@ -387,7 +398,11 @@
                             success: function(data)
                             {
                                 oTable.ajax.reload(null, false);	// reload datatables
-                                Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
+                                text = 'locked';
+                                if (locked == 1) {
+                                    text = 'unlocked';
+                                }
+                                Toast('Success', 'User  "' + name +  '" was successfully ' + text + '.', 'bg-success' );
                             },
                             error: function (data) {
                                     Swal.fire({
