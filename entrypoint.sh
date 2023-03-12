@@ -4,6 +4,8 @@
 
 wait
 
+echo "Apache started" >> /var/www/html/storage/logs/apache-dummy.log
+
 cd /var/www/html
 
 
