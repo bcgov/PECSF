@@ -98,7 +98,8 @@ objects:
               lifecycle:
                 postStart:
                   exec:
-                    command: ["/bin/sh", "-c", "echo Apache started >> /var/www/html/storage/logs/apache-dummy.log"]
+                    command: ["/bin/sh", "-c", "nohup php artisan queue:work --tries=3 --timeout=0 --memory=512 > ./storage/logs/queue-work-1.log &
+"]
               restartPolicy: Always
               imagePullPolicy: Always
               ports:
