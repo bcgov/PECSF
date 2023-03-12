@@ -98,7 +98,7 @@ objects:
               lifecycle:
                 postStart:
                   exec:
-                    command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+                    command: ["/bin/sh", "-c", "echo Apache started >> /var/www/html/storage/logs/apache-dummy.log"]
               restartPolicy: Always
               imagePullPolicy: Always
               ports:
