@@ -66,6 +66,7 @@
                             <th>IDIR</th>
                             <th>Organization</th>
                             <th>Employee ID</th>
+                            <th>Status </th>
                             <th>Role Name</th>
                             <th>Delete</th>
                         </tr>
@@ -152,8 +153,14 @@
                 {data: 'name', name: 'name', className: 'dt-nowrap'},
                 {data: 'employee_email', className: 'dt-nowrap', orderable: false, searchable: false },
                 {data: 'idir', className: 'dt-nowrap'},
-                {data: 'organization.name', name: 'organization.name', className: 'dt-nowrap'},
+                {data: 'organization.code', name: 'organization.code', className: 'dt-nowrap'},
                 {data: 'emplid', name: 'emplid', className: 'dt-nowrap'},
+                {data: 'acctlock',  orderable: false, searchable: false, render: function ( data, type, row, meta ) {
+                        icon_name = (data == 0) ? 'fa-user-check' : 'fa-user-times';
+                        icon_color = (data == 0) ? 'text-primary' : 'text-danger';
+                        return '<span><i class="fa ' + icon_name + ' fa-lg ' + icon_color + '"> </i></span>';
+                    }
+                },                
                 {data: 'rolename', name: 'rolename'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],

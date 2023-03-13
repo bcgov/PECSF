@@ -292,7 +292,10 @@ class CampaignPledgeController extends Controller
             $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
         }
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' ) 
         {
@@ -489,7 +492,10 @@ class CampaignPledgeController extends Controller
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' ) 
         {
@@ -594,7 +600,10 @@ class CampaignPledgeController extends Controller
         
         // Delete the pledge and pledge charities
         if ($pledge->type == 'C' ) {
-            $pledge->charities()->delete();
+            // $pledge->charities()->delete();
+            foreach($pledge->charities as $pledge_charity) {
+                $pledge_charity->delete();
+            }
         }
         $pledge->updated_by_id = Auth::Id();
         $pledge->save();

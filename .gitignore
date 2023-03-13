@@ -5,6 +5,10 @@
 /public/charities/*
 /public/bank_deposit_form_attachments/*
 /storage/*.key
+/storage/app/*
+/storage/charities/*
+/storage/framework/laravel-excel/*
+/storage/framework/views/*
 /vendor
 .env
 .env.backup

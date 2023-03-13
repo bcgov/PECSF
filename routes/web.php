@@ -41,13 +41,16 @@ use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
+use App\Http\Controllers\System\ExportAuditLogController;
 use App\Http\Controllers\System\UserMaintenanceController;
+use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
+use App\Http\Controllers\Admin\EligibleEmployeeCountController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
@@ -242,7 +245,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
     Route::get('/', [SettingsController::class,'index'])->name('others');
-    Route::get('/challenge', [SettingsController::class,'challenge'])->name('challenge');
+    Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
+    Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
+
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
 
@@ -284,6 +289,9 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
+    // // Eligible Employee Count 
+    Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
+
     // // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
@@ -303,8 +311,8 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
 
     // Users Maintenance
-    Route::post('/users/{id}/lock', [UserMaintenanceController::class,'lockUser'])->name('users.lock');    
-    Route::post('/users/{id}/unlock', [UserMaintenanceController::class,'unlockUser'])->name('users.unlock');    
+    Route::post('/users/{id}/lock', [UserMaintenanceController::class,'lockUser'])->name('users.lock');
+    Route::post('/users/{id}/unlock', [UserMaintenanceController::class,'unlockUser'])->name('users.unlock');
     Route::resource('/users', UserMaintenanceController::class)->only(['index','show', 'edit', 'update']);
 
     // Access Log
@@ -312,9 +320,12 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::get('/access-logs-user', [AccessLogController::class, 'getUsers'])->name('access-logs.users');
     Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
-    // Auditing 
+    // Auditing
     Route::resource('/auditing', AuditingController::class)->only(['index']);
-    
+
+    // Export Audit Log
+    Route::resource('/export-audits', ExportAuditLogController::class)->only(['index']);
+
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
 

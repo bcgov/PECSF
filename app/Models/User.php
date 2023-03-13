@@ -62,6 +62,7 @@ class User extends Authenticatable implements Auditable
 
         return self::select('source_type')
                 ->distinct()
+                ->whereNotNull('source_type')
                 ->orderBy('source_type')
                 ->pluck('source_type');
     }

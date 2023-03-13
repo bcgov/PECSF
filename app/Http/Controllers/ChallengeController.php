@@ -100,7 +100,7 @@ class ChallengeController extends Controller
 
     public function current(Request $request) {
             $date = new Carbon("first day of january " .CampaignYear::where("status","A")->limit(1)->get()[0]->calendar_year);
-        $years = [2022,2021,2020,2019,2018];
+        $years = [2023,2022,2021,2020,2019,2018];
             $year = $date->format("Y");
 
             $charities = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name as organization_name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate, elligible_employees.ee_count'))

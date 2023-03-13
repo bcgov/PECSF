@@ -331,7 +331,10 @@ class MaintainEventPledgeController extends Controller
             'updated_by_id' => Auth::id(),
         ]);
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {
@@ -494,7 +497,10 @@ class MaintainEventPledgeController extends Controller
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {
