@@ -104,6 +104,7 @@ COPY --chown=www-data:www-data server_files/mods-enabled/rewrite.load /etc/apach
 COPY --chown=www-data:www-data server_files/start.sh /usr/local/bin/start
 
 RUN chmod +x /usr/local/bin/start
+RUN chmod +x /var/www/html/entrypoint.sh
 
 # Create cache and session storage structure
 RUN bash -c 'mkdir -p /var/www/html/storage{app,framework,logs}'
@@ -120,8 +121,5 @@ EXPOSE 8000
 
 
 # Add a command to base-image entrypont script
-CMD /usr/local/bin/apache2-foreground
-
 #CMD /usr/local/bin/apache2-foreground
-
-#RUN /usr/local/bin/apache2-foreground
+CMD ["/var/www/html/entrypoint.sh"]
