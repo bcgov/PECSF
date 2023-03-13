@@ -592,6 +592,9 @@ console.log( index + ' - ' + select_year + ' - ' + start_year + ' - '  + end_yea
     });
     
     $("select[name='yearcd']").trigger("change");
+    @if (!($is_new_pledge))
+        $('#special_campaign_{{$pledge->special_campaign_id}}').prop('checked',true);
+    @endif
 
     // 
     $('#special-campaign-area .card').click( function(event) {

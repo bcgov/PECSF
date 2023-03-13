@@ -23,7 +23,7 @@
                 <label for="tran_id">
                     Tran Id
                 </label>
-                <input name="tran_id" id="tran_id"  class="form-control" />
+                <input name="tran_id" id="tran_id" value="{{ $request->tran_id ? $request->tran_id : '' }}" class="form-control" />
             </div>
 
             <div class="form-group col-md-3">

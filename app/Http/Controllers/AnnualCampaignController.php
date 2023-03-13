@@ -389,7 +389,10 @@ class AnnualCampaignController extends Controller
             $pledge->save();
         }
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach ($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ($input['pool_option'] == 'C' ) {
             foreach(['OneTime', 'BiWeekly'] as $frequency) {
@@ -404,6 +407,7 @@ class AnnualCampaignController extends Controller
                     if ($amount <= 0) {
                         continue;
                     }
+                
                     PledgeCharity::create([
                         'charity_id' => $id,
                         'pledge_id' => $pledge->id,
@@ -780,18 +784,17 @@ class AnnualCampaignController extends Controller
 
             foreach ($selectedCharities as $selected_charity) {
 
-                $charity = Charity::where('id', $selected_charity->id)
+                $charity = Charity::where('id', $selected_charity->charity->id)
                                  ->select(['id', 'charity_name as text'])->first();
-
                 $charity['additional'] = $selected_charity->additional;
 
                 $one_time_pledge = $pledge->charities->where('charity_id', $selected_charity->charity_id)->where('frequency', 'one-time')->first();
                 $biweekly_pledge = $pledge->charities->where('charity_id', $selected_charity->charity_id)->where('frequency', 'bi-weekly')->first();
 
-                $charity['one-time-amount-distribution'] = $one_time_pledge->amount;
-                $charity['one-time-percentage-distribution'] = $one_time_pledge->percentage;
-                $charity['bi-weekly-amount-distribution'] = $biweekly_pledge->amount;
-                $charity['bi-weekly-percentage-distribution'] = $biweekly_pledge->percentage;
+                $charity['one-time-amount-distribution'] = $one_time_pledge ? $one_time_pledge->amount : 0;
+                $charity['one-time-percentage-distribution'] = $one_time_pledge ? $one_time_pledge->percentage : 0;
+                $charity['bi-weekly-amount-distribution'] = $biweekly_pledge ? $biweekly_pledge->amount : 0;
+                $charity['bi-weekly-percentage-distribution'] = $biweekly_pledge ? $biweekly_pledge->percentage : 0;
 
                 $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
                 $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
@@ -876,7 +879,6 @@ class AnnualCampaignController extends Controller
         $regional_pool_id = $pledge->regional_pool_id;
 
         if($request->download_pdf){
-
             $date = date("Y-m-d");
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
                  'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
