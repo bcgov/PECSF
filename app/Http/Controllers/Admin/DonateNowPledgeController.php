@@ -312,7 +312,7 @@ class DonateNowPledgeController extends Controller
      * @param  \App\Models\Pledge  $pledge
      * @return \Illuminate\Http\Response
      */
-    public function update(CampaignPledgeRequest $request, $id)
+    public function update(DonateNowPledgeRequest $request, $id)
     {
         
         $pledge = DonateNowPledge::where('id', $id)->first();

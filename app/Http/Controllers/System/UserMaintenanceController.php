@@ -104,10 +104,10 @@ class UserMaintenanceController extends Controller
                         //     return $user->deleted_at ? $user->updated_by->name : '';       
                         // })
                         ->editColumn('created_at', function ($user) {
-                            return $user->created_at->format('Y-m-d H:m:s'); // human readable format
+                            return $user->created_at ? $user->created_at->format('Y-m-d H:m:s') : null; // human readable format
                         })
                         ->editColumn('updated_at', function ($user) {
-                            return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
+                            return $user->updated_at ? $user->updated_at->format('Y-m-d H:m:s') : null; // human readable format
                         })
                         ->rawColumns(['action'])
                         ->make(true);

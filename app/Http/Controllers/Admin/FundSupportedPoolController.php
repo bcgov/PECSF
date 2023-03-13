@@ -616,7 +616,9 @@ class FundSupportedPoolController extends Controller
             }
 
             // TODO: delete file and subrecord
-            $pool->charities()->delete();
+            foreach ($pool->charities as $pool_charity) {
+                $pool_charity->delete();
+            }
 
             $pool->updated_by_id = Auth::Id();
             $pool->save();

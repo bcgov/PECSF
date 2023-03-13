@@ -28,7 +28,7 @@
                                         <p class="text-muted">
                                             Your Organization
                                         </p>
-                                        <div class="error organization_id_error">
+                                        <div class="error business_unit_id_error">
 
                                         </div>
                                         <select error_message="The organization field is required" name="business_unit_id" id="" class="form-control" required>
@@ -132,7 +132,7 @@
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <label>Street address</label>
-                                                            <input name="street_address" type="text" class="form-control" placeholder="">
+                                                            <input name="street_address" type="text" class="toggle form-control" placeholder="">
                                                             <span id="street_address_error" class="text-danger"></span>
 
                                                         </div>
@@ -140,7 +140,7 @@
                                                     <div class="row mt-2">
                                                         <div class="col-md-4">
                                                             <label>City</label>
-                                                            <select name="city" class="form-control">
+                                                            <select name="city" class="form-control toggle">
                                                                 <option value="">Select a City</option>
                                                                 @foreach($cities as $city)
                                                                     <option value="{{$city->city}}">{{$city->city}}</option>
@@ -152,7 +152,7 @@
 
                                                         <div class="col-md-4">
                                                             <label>Province</label>
-                                                            <select class="form-control" name="province">
+                                                            <select class="form-control toggle" name="province">
                                                                 <option value="">Select a Province</option>
                                                                 <option value="Alberta">Alberta</option>
                                                                 <option value="British Columbia">British columbia</option>
@@ -174,7 +174,7 @@
 
                                                         <div class="col-md-4">
                                                             <label>Postal Code</label>
-                                                            <input name="postal_code" type="text" class="form-control" placeholder="">
+                                                            <input name="postal_code" type="text" class="form-control toggle" placeholder="">
                                                             <span id="postal_code_error" class="text-danger"></span>
                                                         </div>
                                                     </div>
@@ -211,8 +211,8 @@
                                             </strong>
                                             </div>
                                             <div class="d-flex">
-                                                <div data-value-for="organization">
-                                                    Value
+                                                <div data-value-for="business_unit_id">
+
                                                 </div>
                                             </div>
 
@@ -283,7 +283,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <x-button href="/training" role="button" class="center signup-btn d-none">Begin Volunteer Training</x-button>
+                                <button href="/training" role="button" class="center btn signup-btn ">Begin Volunteer Training</button>
                             </div>
                         </div>
                     </div>

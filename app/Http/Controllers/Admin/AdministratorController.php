@@ -87,6 +87,10 @@ class AdministratorController extends Controller
         }
 
         $user->assignRole('admin');
+
+        // Note: is_admin field is used for triggering auditing
+        $user->is_admin = 1;
+        $user->save();
         
         return redirect()->route('settings.administrators.index')
             ->with('success','User ' . $user->name . ' was assigned to Administrator role.');
@@ -148,6 +152,10 @@ class AdministratorController extends Controller
         }
 
         $user->removeRole('admin');
+
+        // Note: is_admin field is used for triggering auditing
+        $user->is_admin = 0;
+        $user->save();
 
         return redirect()->route('settings.administrators.index')
           ->with('success','User ' . $user->name . '  was removed from Administrator role.');
