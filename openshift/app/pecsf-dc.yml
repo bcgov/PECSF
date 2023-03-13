@@ -95,6 +95,11 @@ objects:
           containers:
             - image: '${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}'
               name: '${APP_NAME}'
+              lifecycle:
+                postStart:
+                  exec:
+                    command: ["/bin/sh", "-c", "php /var/www/html/artisan queue:work --tries=3 --timeout=0 --memory=512 > /var/www/html/storage/logs/queue-work-2.log &
+"]
               restartPolicy: Always
               imagePullPolicy: Always
               ports:
