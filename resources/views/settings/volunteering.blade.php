@@ -43,7 +43,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <label>Language</label><br>
-                    <input type="text" class="form-control" name="language" value="" /><br>
+                    <textarea  class="form-control" name="volunteer_language" value="{{$settings->volunteer_language}}"></textarea><br>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
 
         $('[name=volunteer_start_date]').val(today);
 
-        $("input").change(function(){
+        $("input,textarea").change(function(){
 
             $.post("{{ route("settings.change") }}",
                 {
