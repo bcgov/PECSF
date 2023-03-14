@@ -41,6 +41,7 @@ use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
+use App\Http\Controllers\System\ExportAuditLogController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
@@ -321,6 +322,9 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
 
     // Auditing
     Route::resource('/auditing', AuditingController::class)->only(['index']);
+
+    // Export Audit Log
+    Route::resource('/export-audits', ExportAuditLogController::class)->only(['index']);
 
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
