@@ -32,12 +32,18 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12"> <label>Start Date</label><br>
-                    <input type="date" class="input-control" name="volunteer_start_date" value="" /><br></div>
+                    <input type="date" class="form-control" name="volunteer_start_date" value="" /><br></div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                 <label>End Date</label><br>
-                <input type="date" class="input-control" name="volunteer_end_date" value="" /><br>
+                <input type="date" class="form-control" name="volunteer_end_date" value="" /><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Language</label><br>
+                    <input type="text" class="form-control" name="language" value="" /><br>
                 </div>
             </div>
         </div>
