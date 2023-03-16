@@ -32,12 +32,18 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12"> <label>Start Date</label><br>
-                    <input type="date" class="input-control" name="volunteer_start_date" value="" /><br></div>
+                    <input type="date" class="form-control" name="volunteer_start_date" value="" /><br></div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                 <label>End Date</label><br>
-                <input type="date" class="input-control" name="volunteer_end_date" value="" /><br>
+                <input type="date" class="form-control" name="volunteer_end_date" value="" /><br>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Language</label><br>
+                    <textarea  class="form-control" name="volunteer_language" value="{{$settings->volunteer_language}}"></textarea><br>
                 </div>
             </div>
         </div>
@@ -139,7 +145,7 @@
 
         $('[name=volunteer_start_date]').val(today);
 
-        $("input").change(function(){
+        $("input,textarea").change(function(){
 
             $.post("{{ route("settings.change") }}",
                 {

@@ -58,7 +58,7 @@ class VolunteeringController extends Controller
         }
         $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        return view('volunteering.index', compact('business_units','show','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
+        return view('volunteering.index', compact('settings','business_units','show','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
     }
 
     public function training(){
