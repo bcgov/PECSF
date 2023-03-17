@@ -366,11 +366,19 @@
     <div class="col-md-12 justify-content-center pt-3 mb-5">
         <div class="card justify-content-center border-warning text-center" style="background:#D9EAF7;border-radius: 1em;">
             <div class=" justify-content-center card-body" style="color:#1a5a96;">
+
+                @if(empty($settings->volunteer_language))
                 <h5 class="card-title"></h5>
                 <p class="card-text text-center">It's time for you to renew your volunteer registration</p>
                 <p class="card-text text-center">
                     Click below to make any necessary updates to your information
                 </p>
+                @else
+                    @php
+                        echo $settings->volunteer_language ;
+
+                    @endphp
+                    @endif
                 <p>
                     <button class="btn btn-primary" onclick="$('#edit-event-modal').modal('show');">Renew volunteer Registration</button>
                 </p>

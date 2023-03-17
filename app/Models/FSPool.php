@@ -23,8 +23,8 @@ class FSPool extends Model implements Auditable
 
     protected $appends = [
         'canEdit', 'canDelete', 'effectiveType'];
-        
-    // Scope 
+
+    // Scope
     public function scopeCurrent($query)
     {
         $query->where('start_date', function($query) {
@@ -46,12 +46,12 @@ class FSPool extends Model implements Auditable
         });
     }
 
-    public function region() 
+    public function region()
     {
         return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();
     }
 
-    public function charities() 
+    public function charities()
     {
         return $this->hasMany(FSPoolCharity::class);
     }
@@ -105,7 +105,7 @@ class FSPool extends Model implements Auditable
         }
 
         return false;
-        
+
     }
 
     public function annual_campaign_pledges() {
