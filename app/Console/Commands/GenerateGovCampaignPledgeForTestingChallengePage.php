@@ -101,7 +101,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
         $this->LogMessage( now() );    
         $this->LogMessage("Step - 1 : Generate Gov Annual Campaigm Pledges from History Data");
-        // $this->generateGovAnnualCampaign();
+        $this->generateGovAnnualCampaign();
 
         $this->LogMessage( '' );  
         $this->LogMessage( now() );    
@@ -136,7 +136,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
 
         $sql = PledgeHistorySummary::select('emplid', 'yearcd', 'source', 'campaign_type', 
                             DB::raw("case when source = 'P' then region else null end as region"),
-                            DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
+                            DB::raw("sum(case when frequency = 'Bi-Weekly' then per_pay_amt else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
                             DB::raw("sum(pledge) as goal_amount"),
                             DB::raw("min(pledge_history_id) as pledge_history_id")
@@ -543,7 +543,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                                             ->where('event_type', $bi_pledge->event_type)
                                             ->where('event_sub_type', $bi_pledge->event_sub_type)
                                             // ->where('event_deposit_date', $bi_pledge->event_deposit_date)
-                                            ->where('event_deposit_date', $new_event_deposit_date)
+                                            // ->where('event_deposit_date', $new_event_deposit_date)
                                             ->orderBy('frequency')
                                             ->get();
 

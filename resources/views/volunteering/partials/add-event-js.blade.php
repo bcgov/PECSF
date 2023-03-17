@@ -19,7 +19,7 @@ $(".org_hook").hide();
 $("#pool_filter").parents(".form-group").hide();
 }
 });
-$("#pool_filter").parents(".form-group").hide();
+
 
 $("[name='event_type'],[name='organization_code']").change(function(){
 $("#sub_type").attr("disabled",false);
