@@ -365,7 +365,7 @@ class GeneratePledgeFromHistory extends Command
 
         $sql = PledgeHistorySummary::select('emplid', 'yearcd', 'source', 'campaign_type', 
                             DB::raw("case when source = 'P' then region else null end as region"),
-                            DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
+                            DB::raw("sum(case when frequency = 'Bi-Weekly' then per_pay_amt else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
                             DB::raw("sum(pledge) as goal_amount"),
                             DB::raw("min(pledge_history_id) as pledge_history_id")
@@ -431,7 +431,9 @@ class GeneratePledgeFromHistory extends Command
 //                 , $old_pledge->created_at->toDateString()
 //                 , $old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date]);
 
-                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))) {
+                if ((!$old_pledge) 
+                            || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))
+                            || (!($old_pledge->pay_period_amount == $bi_pledge->pay_period_amount))) {
 
                     $pledge = Pledge::updateOrCreate([
                         'organization_id' => $user->organization_id,
@@ -885,7 +887,7 @@ class GeneratePledgeFromHistory extends Command
 
         $sql = NonGovPledgeHistorySummary::select('org_code', 'emplid', 'pecsf_id', 'yearcd', 'source', 'pledge_type', 
                     DB::raw("case when source = 'P' then region else null end as region"),
-                    DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
+                    DB::raw("sum(case when frequency = 'Bi-Weekly' then per_pay_amt else 0 end) as pay_period_amount"),
                     DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
                     DB::raw("sum(pledge) as goal_amount"),
                     DB::raw("min(pledge_history_id) as pledge_history_id")
@@ -947,7 +949,8 @@ class GeneratePledgeFromHistory extends Command
 //                 , $old_pledge->created_at->toDateString()
 //                 , $old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date]);
 
-                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))) {                    
+                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))
+                                || (!($old_pledge->pay_period_amount == $bi_pledge->pay_period_amount)))  {                    
 
                     $pledge = Pledge::updateOrCreate([
                         'organization_id' => $organization->id,
