@@ -52,7 +52,7 @@ class DonationController extends Controller {
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
-                            'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount,
+                            'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                                 case when type = 'P' then 0 else (select count(*) from pledge_charities 
                                             where pledge_charities.pledge_id = pledges.id 
