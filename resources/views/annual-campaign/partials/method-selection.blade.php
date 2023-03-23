@@ -7,7 +7,9 @@
                 <input class="form-check-input" type="radio" name="pool_option" id="pool1" value="C"
                     {{ $pool_option == "C" ? 'checked' : '' }}>
                 <label class="form-check-label h5" for="pool1">
-                    Select up to 10 charities from the CRA List
+                    <strong>Select up to 10 charities from the CRA List</strong><br>
+                    Explore keywords by keyword, category, province, or view charities, and their associated programs, which are part of the fund supported pools.
+
                 </label>
             </div>
         </div>
