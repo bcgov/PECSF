@@ -259,12 +259,12 @@ return [
                 ],
                 ]
         ],
-        [
+      /*  [
             'text' => 'Challenge',
             'url' => '/challenge',
             'icon' => 'nav-icon fa fa-chart-bar', // 'challenge',
             'active' => ['challenge/*']
-        ],
+        ],*/
         [
             'text' => 'FAQs',
             'url' => '/contact',
