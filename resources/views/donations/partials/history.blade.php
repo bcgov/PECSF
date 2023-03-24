@@ -2,6 +2,7 @@
     @php
         $ignore = false;
     @endphp
+    
     @foreach($pledges_by_yearcd as $key => $pledges)
     <div class="card">
         <div class="card-header" id="heading0{{ $loop->index }}">
@@ -31,14 +32,14 @@
                         <tr class="">
                             <td style="width: 15%">
                                 @switch($pledge->donation_type)
-                                    @case('Donate Today') 
-                                        {{ 'Donate Now' }} 
+                                    @case('Donate Today')
+                                        {{ 'Donate Now' }}
                                     @break
-                                    @case('Donate Now') 
-                                        {{ 'Donate Now' }} 
+                                    @case('Donate Now')
+                                        {{ 'Donate Now' }}
                                         @break
-                                    @case('Event') 
-                                        {{ 'Annual' }} 
+                                    @case('Event')
+                                        {{ 'Annual' }}
                                         @break
                                     @default
                                         {{ $pledge->donation_type }}
@@ -52,10 +53,10 @@
                                 @if ($pledge->source == 'GF')
                                     @switch($pledge->donation_type)
                                         @case('Special Campaign')
-                                            {{ $pledge->region }} 
+                                            {{ $pledge->region }}
                                             @break
                                         @case('Donate Now')
-                                            {{ $pledge->region }} 
+                                            {{ $pledge->region }}
                                             @break
                                         @default
                                         <a type="button" class="more-info"
@@ -64,21 +65,21 @@
                                             data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">
-                                            {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                            {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
                                         </a>
-                                   
+
                                     @endswitch
                                 @else
                                     @if ($pledge->donation_type == 'Donate Today')
-                                        {{ $pledge->number_of_charities }}  
-                                    @else 
+                                        {{ $pledge->number_of_charities }}
+                                    @else
                                         <a type="button" class="more-info "
                                             data-source="{{ $pledge->source  }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">
-                                                {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }} 
+                                                {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
                                         </a>
                                     @endif
                                 @endif
@@ -86,7 +87,7 @@
 
                                 {{-- @if ($pledge->donation_type == 'Special Campaign')
                                     <td>{{ $pledge->region }} </td>
-                                @else 
+                                @else
                                     <td></td>
                                 @endif --}}
 
@@ -129,7 +130,7 @@
                     @endphp
                 @else
 
-                    <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;" 
+                    <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;"
                                 {{-- href="#"  --}}
                                 data-id="{{ $pledge->id }}"
                                 data-source="{{ $pledge->source }}"
@@ -141,7 +142,7 @@
                 {{-- <a style="margin-left: auto;
     margin-right: auto;
     width: fit-content;
-    display: block;" href="{{ route('annual-campaign.duplicate', $pledge->id) }}"> 
+    display: block;" href="{{ route('annual-campaign.duplicate', $pledge->id) }}">
                 <button type="button" class="pl-5 pr-5 duplicate align-content-center btn-lg btn-primary"
                         data-source="{{ $pledge->source  }}"
                         data-type="{{ $pledge->donation_type }}"
@@ -172,7 +173,7 @@
 
 @push('js')
 <script>
-$('a.duplicate-pledge').on('click', function(event){ 
+$('a.duplicate-pledge').on('click', function(event){
 
     pledge_id = $(this).data("id");
 
@@ -199,7 +200,7 @@ $('a.duplicate-pledge').on('click', function(event){
                     }
                 })
             } else {
-                // submit form 
+                // submit form
                 $("#duplicate-form-"+ pledge_id ).submit();
             }
         },
