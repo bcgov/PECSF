@@ -2,7 +2,7 @@
     @php
         $ignore = false;
     @endphp
-    
+
     @foreach($pledges_by_yearcd as $key => $pledges)
     <div class="card">
         <div class="card-header" id="heading0{{ $loop->index }}">

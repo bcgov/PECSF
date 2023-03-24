@@ -120,11 +120,11 @@ class DonationController extends Controller {
                                                     and frequency = pledge_history_summaries.frequency)
                                             end
                                         end as number_of_charities")
-                           /* ->unionAll($annual_pay_period_pledges)*/
+                            ->unionAll($annual_pay_period_pledges)
                             ->unionAll($annual_one_time_pledges)
-                            /*->unionAll($donate_now_pledges)
+                            ->unionAll($donate_now_pledges)
                             ->unionAll($special_campaign_pledges)
-                            ->unionAll($event_pledges)*/
+                            ->unionAll($event_pledges)
                             ->get();
 
         $pledges_by_yearcd = collect( $all_pledges )->sortByDesc('yearcd')
