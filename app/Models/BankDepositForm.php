@@ -54,4 +54,9 @@ class BankDepositForm extends Model implements Auditable
         
     } 
 
+    public function charities() {
+        return $this->hasMany(BankDepositFormOrganizations::class, 'bank_deposit_form_id', 'id');
+    }
+
+
 }

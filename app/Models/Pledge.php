@@ -69,6 +69,14 @@ class Pledge extends Model implements Auditable
         }
     }
 
+    public function one_time_charities() {
+        return $this->charities()->where('frequency', 'one-time');
+    }
+
+    public function bi_weekly_charities() {
+        return $this->charities()->where('frequency', 'bi-weekly');
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
     }

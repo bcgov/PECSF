@@ -38,11 +38,11 @@ class DonationController extends Controller {
                          })->first();
 
         $user = User::where('id', Auth::id() )->first();
-                        
+
         // NOTE: Must use the raw select statement in Laravel for querying this custom SQL view due to the performance issue
-        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid . 
+        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid .
         //                                         "' and GUID <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
-        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (emplid = '" . $user->emplid . 
+        // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (emplid = '" . $user->emplid .
         //                                         "' and emplid <> '') OR (source = 'GF' and user_id = " . Auth::id() . ") order by yearcd desc, donation_type desc;" ) );
 
         $annual_pay_period_pledges = DB::table('pledges')
@@ -51,25 +51,24 @@ class DonationController extends Controller {
                 ->whereNull('pledges.deleted_at')
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
-                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
-                            'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.pay_period_amount,
+                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
+                            'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                                case when type = 'P' then 0 else (select count(*) from pledge_charities 
-                                            where pledge_charities.pledge_id = pledges.id 
+                                case when type = 'P' then 0 else (select count(*) from pledge_charities
+                                            where pledge_charities.pledge_id = pledges.id
                                               and pledge_charities.frequency = 'bi-weekly'
                                               and pledge_charities.deleted_at is null) end");
-                                            
+
         $annual_one_time_pledges = DB::table('pledges')
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.one_time_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
-                ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
-                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,  
+                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                            case when type = 'P' then 0 else (select count(*) from pledge_charities 
-                                        where pledge_charities.pledge_id = pledges.id 
+                            case when type = 'P' then 0 else (select count(*) from pledge_charities
+                                        where pledge_charities.pledge_id = pledges.id
                                           and pledge_charities.frequency = 'one-time'
                                           and pledge_charities.deleted_at is null) end");
 
@@ -77,18 +76,18 @@ class DonationController extends Controller {
                 ->whereNull('donate_now_pledges.deleted_at')
                 ->where('donate_now_pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', donate_now_pledges.user_id, donate_now_pledges.id, donate_now_pledges.emplid, yearcd, type,
-                            'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount, 
-                            case when type = 'P' then 
+                            'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount,
+                            case when type = 'P' then
                                 (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = donate_now_pledges.f_s_pool_id)
-                            else 
+                            else
                                 (select charities.charity_name from charities where donate_now_pledges.charity_id = charities.id )
-                            end, 1"); 
+                            end, 1");
 
         $special_campaign_pledges = DB::table('special_campaign_pledges')
                 ->whereNull('special_campaign_pledges.deleted_at')
                 ->where('special_campaign_pledges.emplid', $user->emplid)
                 ->selectRaw("'GF', special_campaign_pledges.user_id, special_campaign_pledges.id, special_campaign_pledges.emplid, yearcd, 'C',
-                            'Special Campaign', 'One-Time', special_campaign_pledges.one_time_amount, special_campaign_pledges.one_time_amount, 
+                            'Special Campaign', 'One-Time', special_campaign_pledges.one_time_amount, special_campaign_pledges.one_time_amount,
                             (select special_campaigns.name from special_campaigns where special_campaign_pledges.special_campaign_id = special_campaigns.id)
                             , 1");
 
@@ -96,30 +95,30 @@ class DonationController extends Controller {
                 ->where('bank_deposit_forms.organization_code', 'GOV')
                 ->whereIn('bank_deposit_forms.event_type', ['Cash One-Time Donation','Cheque One-Time Donation'])
                 ->where('bank_deposit_forms.approved', 1)
-                ->whereNull('bank_deposit_forms.deleted_at') 
+                ->whereNull('bank_deposit_forms.deleted_at')
                 ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
-                ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, year(created_at), 
+                ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, year(created_at),
                             case when regional_pool_id is null then 'C' else 'P' end,
-                            'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount, 
+                            'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
-                            case when regional_pool_id is null then (select count(*) from bank_deposit_form_organizations 
-                                where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id 
+                            case when regional_pool_id is null then (select count(*) from bank_deposit_form_organizations
+                                where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id
                                         and bank_deposit_form_organizations.deleted_at is null) else 0 end");
 
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
-                            ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type, 
-                                         campaign_type as donation_type, frequency, per_pay_amt as amount, pledge, 
-                                         region, 
-                                         case when source = 'P' then 0 else 
-                                            case when campaign_type = 'Donate Today' 
+                            ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type,
+                                         campaign_type as donation_type, frequency, per_pay_amt as amount, pledge,
+                                         region,
+                                         case when source = 'P' then 0 else
+                                            case when campaign_type = 'Donate Today'
                                                 then (select charity_name from charities a, pledge_histories b where a.registration_number = b.charity_bn and b.id = pledge_history_summaries.pledge_history_id)
                                                 else (select count(*) from pledge_histories where emplid = pledge_history_summaries.emplid
                                                     and yearcd = pledge_history_summaries.yearcd
                                                     and source = 'Non-Pool'
-                                                    and campaign_type = pledge_history_summaries.campaign_type 
+                                                    and campaign_type = pledge_history_summaries.campaign_type
                                                     and frequency = pledge_history_summaries.frequency)
-                                            end 
+                                            end
                                         end as number_of_charities")
                             ->unionAll($annual_pay_period_pledges)
                             ->unionAll($annual_one_time_pledges)
@@ -147,11 +146,10 @@ class DonationController extends Controller {
             return $pdf->download('Donation Summary.pdf');
         }
         else{
-            return view('donations.index', compact(//'pledges', 
-                'currentYear',  'totalPledgedDataTillNow','campaignYear', 'current_pledge', 
+            return view('donations.index', compact(//'pledges',
+                'currentYear',  'totalPledgedDataTillNow','campaignYear', 'current_pledge',
                 'pledges_by_yearcd'));
         }
-
     }
 
     public function pledgeDetail(Request $request)
@@ -181,10 +179,10 @@ class DonationController extends Controller {
             $frequency = $request->frequency;
             if ($request->frequency == 'One-Time') {
                 $pledge_amt = $old_pledges->first()->pledge;    // Note: Donate Today -- per_pay_amt is always zero
-            } else {                
-                // $pledge_amt = $old_pledges->first()->per_pay_amt;                
+            } else {
+                // $pledge_amt = $old_pledges->first()->per_pay_amt;
                 $pledge_amt = round($old_pledges->sum('per_pay_amt'),0);
-            } 
+            }
             //  $request->frequency == 'One-Time' ? $pledge->one_time_amount : $pledge->pay_period_amount ;
             $number_of_periods = $request->frequency == 'One-Time' ? 1 : $campaign_year->number_of_periods;
             // $total_amount = $request->frequency == 'One-Time' ? $pledge_amt : $pledge_amt * $number_of_periods;
@@ -192,7 +190,7 @@ class DonationController extends Controller {
             $pool_name = $old_pledges->first()->source == "Pool" ? $old_pledges->first()->region->name : '';
 
             return view('donations.partials.bi-pledge-detail-modal',
-                    compact('type', 'year', 'frequency', 'pool_name', 'pledge_amt', 'number_of_periods', 
+                    compact('type', 'year', 'frequency', 'pool_name', 'pledge_amt', 'number_of_periods',
                                 'total_amount', 'old_pledges', 'donate_today_pledge') )->render();
 
         } else {
@@ -214,7 +212,7 @@ class DonationController extends Controller {
             } elseif ($request->donation_type == 'Donate Now') {
 
                 $pledge = DonateNowPledge::where('id', $request->id)->first();
-                
+
                 $year = $request->yearcd;
                 $frequency = $request->frequency;
                 $pledge_amt = $pledge->one_time_amount;
@@ -227,7 +225,7 @@ class DonationController extends Controller {
                 // Special Campaign - Detail
 
                 $pledge = SpecialCampaignPledge::where('id', $request->id)->first();
-                
+
                 $year = $request->yearcd;
                 $frequency = $request->frequency;
                 $pledge_amt = $pledge->one_time_amount;
@@ -239,10 +237,10 @@ class DonationController extends Controller {
                 $special_campaign_name = $pledge ? $pledge->special_campaign->name : '';
 
                 return view('donations.partials.special-campaign-pledge-detail-modal',
-                        compact('year', 'frequency', 'pledge_amt', 
+                        compact('year', 'frequency', 'pledge_amt',
                                  'in_support_of', 'special_campaign_name', 'check_dt',
                                     'total_amount', 'pledge') )->render();
-                                    
+
             } elseif ($request->donation_type == 'Event') {
                 // Event - Detail
 
@@ -252,7 +250,7 @@ class DonationController extends Controller {
                 $frequency = $request->frequency;
                 $pledge_amt = $pledge->deposit_amount;
                 $total_amount = $pledge->deposit_amount;
-                
+
                 return view('donations.partials.event-detail-modal',
                         compact('year', 'frequency', 'pledge_amt', 'total_amount', 'pledge') )->render();
 

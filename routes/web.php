@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\DonationDataController;
 use App\Http\Controllers\Admin\OrganizationController;
 
 
+use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
@@ -48,6 +49,7 @@ use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
+use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\EligibleEmployeeCountController;
@@ -289,14 +291,28 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
-    // // Eligible Employee Count 
+    // Eligible Employee Count 
     Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
 
-    // // Eligible Employee Reporting
+    // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
     Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
     Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
+
+    // Annual and Event Pledge Report 
+    Route::get('/pledges/export', [PledgeReportController::class,'export2csv'])->name('pledges.export2csv');
+    Route::get('/pledges/export-progress/{id}', [PledgeReportController::class,'exportProgress'])->name('pledges.export2csv-progress');
+    Route::get('/pledges/download-export-file/{id}', [PledgeReportController::class,'downloadExportFile'])->name('pledges.download-export-file');
+    Route::resource('/pledges', PledgeReportController::class)->only(['index', 'show']);
+
+    // Annual and Event Charities Report 
+    Route::get('/pledge-charities/export', [PledgeCharityReportController::class,'export2csv'])->name('pledge-charities.export2csv');
+    Route::get('/pledge-charities/export-progress/{id}', [PledgeCharityReportController::class,'exportProgress'])->name('pledge-charities.export2csv-progress');
+    Route::get('/pledge-charities/download-export-file/{id}', [PledgeCharityReportController::class,'downloadExportFile'])->name('pledge-charities.download-export-file');
+    Route::resource('/pledge-charities', PledgeCharityReportController::class)->only(['index', 'show']);
+
+
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
     Route::get('/supply-report/delete', [SupplyReportController::class,"delete"])->name('delete');
     Route::get('/supply-report/export', [SupplyReportController::class,"export"])->name('export');
