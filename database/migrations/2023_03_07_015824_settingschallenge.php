@@ -29,5 +29,12 @@ class Settingschallenge extends Migration
     public function down()
     {
         //
+        Schema::table('settings', function (Blueprint $table) {
+            //
+            $table->dropColumn('challenge_final_date');
+            $table->dropColumn('campaign_start_date');
+            $table->dropColumn('campaign_end_date');
+            $table->dropColumn('campaign_final_date');
+        });
     }
 }

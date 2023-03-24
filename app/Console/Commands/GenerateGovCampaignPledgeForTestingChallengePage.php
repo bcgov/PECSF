@@ -211,6 +211,7 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                     'user_id' => $user->id,
                     'type' => $bi_pledge->source,
 
+                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
                     'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
 
                     'one_time_amount' => $bi_pledge->one_time_amount,

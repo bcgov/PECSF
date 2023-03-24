@@ -155,7 +155,7 @@ class CampaignPledgeRequest extends FormRequest
                         $sum += $percentages[$i];
                     }
                 }
-                if ($sum != 100) {
+                if ( round($sum,2) != 100) {
                     for ($i=0; $i < count($charities); $i++) {
                             $validator->errors()->add('percentages.' .$i, 'The sum of percentage is not 100.');
                     }

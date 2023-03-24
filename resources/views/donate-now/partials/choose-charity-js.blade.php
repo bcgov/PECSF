@@ -55,8 +55,8 @@
             });
         }
 
-        // 
-        
+        //
+
         function toggleSelectedCountArea() {
             if($(".organization").length < 1) {
                 $("#noselectedresults").show();
@@ -163,7 +163,7 @@
 
             //     // $(".next_button").attr("disabled",true);
 
-            // } 
+            // }
             $(this).parents("tr").remove();
 
             // if ($("input[name='charities[]']").length < 1) {
@@ -193,6 +193,8 @@
             $("#modal-country").html($(this).attr("country"));
             $("#modal-postal_code").html($(this).attr("postal_code"));
             $("#modal-uri").html($(this).attr("website"));
+            $("#modal-charity_type").html($(this).attr("charity_type"));
+            $("#modal-charity_name").html($(this).attr("charity_name"));
 
             $("#charityDetails").modal("show");
         });
