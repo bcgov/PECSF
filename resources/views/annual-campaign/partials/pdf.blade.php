@@ -61,10 +61,10 @@
 </div>
 <hr>
 
-<span>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues chequeus twice a year. In August for payroll deductions from Janurary-June, and in March for payroll deductions from July - December</span>
+<span>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August for payroll deductions from Janurary - June, and in March for payroll deductions from July - December</span>
 
 <div class="container">
-    
+
     <div class="row">
         <div class="col-12 col-sm-7">
             <h2 class="mt-5">{{ $date }}</h2>
@@ -88,7 +88,7 @@
                 <p class="mt-4"><h1>Disbursement</h1></p>
                 @foreach(['one-time', 'bi-weekly'] as $key)
                     @php $viewMode = 'pdf'; @endphp
-                
+
                     @if($key === 'one-time' && ($frequency === 'one-time' || $frequency === 'both'))
                         @php $key_ = $key; @endphp
                         @php $keyCase = 'oneTime'; @endphp
