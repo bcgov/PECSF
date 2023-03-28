@@ -36,7 +36,7 @@
         </div>
 
         <div class="card-body py-0">
-            <form action="{{ isset($pledge) ? route("annual-campaign.update", $pledge->id) : route("annual-campaign.store") }}" 
+            <form action="{{ isset($pledge) ? route("annual-campaign.update", $pledge->id) : route("annual-campaign.store") }}"
                     id="annual-campaign-form" method="POST">
                 @csrf
                 @isset($pledge)
@@ -46,7 +46,7 @@
                 <input type="hidden" id="step" name="step" value="{{ $step }}">
                 <input type="hidden" id="campaign_year_id" name="campaign_year_id" value="{{ $campaign_year->id }}">
                 <input type="hidden" name="number_of_periods" value="{{ $campaign_year->number_of_periods }}">
-                
+
                 {{-- Nav Items --}}
                 <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
                     <li class="nav-item">
@@ -61,11 +61,11 @@
                     <li class="nav-item">
                         <a class="nav-link" id="nav-distribution-tab" data-toggle="tab" href="#nav-distribution" data-id="1" role="tab" aria-controls="nav-distribution" aria-selected="false">Amount Distribution</a>
                     </li>
-                    <li class="nav-item">  
+                    <li class="nav-item">
                     <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="3" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
                     </li>
                 </ul>
-            
+
                 <div class="tab-content pb-3 px-1" id="nav-tabContent">
                     <div class="tab-pane fade step show active" id="nav-method" role="tabpanel" aria-labelledby="nav-method-tab">
 
@@ -81,29 +81,29 @@
                         </div>
 
                         @include('annual-campaign.partials.method-selection')
-                        
+
                     </div>
                     <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
                         <h3>2. Select your regional charity pool</h3>
-                                                
+
                         @include('annual-campaign.partials.pools')
                         @include('annual-campaign.partials.choose-charity')
 
                     </div>
                     <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
-                    
+
                         <h3>3. Decide on the frequency and amount</h3>
 
                         @include('annual-campaign.partials.amount')
 
                     </div>
                     <div class="tab-pane fade step" id="nav-distribution" role="tabpanel" aria-labelledby="nav-distribution-tab">
-                        <h3>4. Decide on the distribution</h3>
+                        <h3>4. Decide on the distributions</h3>
                         <p>You can distribute your contributions to each charity here. Start from the top and specify the amount of percentage so that together they are total 100%.
                         </p>
 
                         <span id="step-distribution-page">
-                            @include('annual-campaign.partials.distribution')    
+                            @include('annual-campaign.partials.distribution')
                         </span>
 
                     </div>
@@ -184,7 +184,7 @@
         font-weight: 400;
         color:  #b2b2b2;  /* #878788 ; */
         text-align: center;
-        z-index: 100; 
+        z-index: 100;
     }
 
     .bs4-step-tracking li:first-child:before {
@@ -200,7 +200,7 @@
     }
 
     .bs4-step-tracking li> div {
-        color: #fff; 
+        color: #fff;
         width: 38px;
         text-align: center;
         line-height: 38px;
@@ -221,7 +221,7 @@
         right: 0%;
         top: 20px;
         /* z-index: -1; */
-        z-index: -2; 
+        z-index: -2;
     }
 
     .bs4-step-tracking li:first-child:after {
@@ -280,7 +280,7 @@ $(function () {
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = {{ $step }};
     var submit_count = 0;
-   
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -289,7 +289,7 @@ $(function () {
 
     $('#annual-campaign-form').on('keyup keypress', function(e) {
         var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) { 
+        if (keyCode === 13) {
             e.preventDefault();
             return false;
         }
@@ -318,7 +318,7 @@ $(function () {
             nextstep = checkForm();
             if (nextstep == true) {
                 if (pool_option == 'P') {
-                    step++;         // skip amount distribution 
+                    step++;         // skip amount distribution
                 }
             }
         } else if (step == 4) {
@@ -338,7 +338,7 @@ $(function () {
                 $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
             }
             hideButtons(step);
-            
+
         }
     });
 
@@ -350,27 +350,27 @@ $(function () {
         if (step == limit) {
             pool_option = $("input[name='pool_option']:checked").val();
             if ( pool_option == 'P') {
-                step = step - 3; 
+                step = step - 3;
             } else {
-                step = step - 2; 
+                step = step - 2;
             }
             $(".next").trigger("click");
         } else if (step > 1) {
-            step = step - 2;    // Normal 
+            step = step - 2;    // Normal
             $(".next").trigger("click");
         }
         hideButtons(step);
         $(this).blur();
     });
 
-    // Click on Wizard STEP icon to jump to visited  page 
+    // Click on Wizard STEP icon to jump to visited  page
     $('ul.bs4-step-tracking li').on('click', function(e) {
-        
+
         if ($(this).hasClass('active') && ($(this).index() + 1 != step) ) {
             step = $(this).index();
             $(".next").trigger("click");
         }
-        
+
     })
 
 
@@ -385,11 +385,11 @@ $(function () {
         //     .css("width", percent + "%")
         //     .html(percent + "%");
         //
-        $('.bs4-step-tracking li').map( function (index, item) { 
+        $('.bs4-step-tracking li').map( function (index, item) {
             if (index < currstep) {
-                $(item).addClass('active');   
+                $(item).addClass('active');
             } else {
-                $(item).removeClass('active');   
+                $(item).removeClass('active');
             }
         });
     };
@@ -420,9 +420,9 @@ $(function () {
     // Validation when click on 'next' button
     function checkForm() {
 
-        // reset submission count 
+        // reset submission count
         submit_count = 0;
-        
+
         var valid = true;
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
@@ -430,7 +430,7 @@ $(function () {
                 fields = ['pool_option'];
             }
             if (step >= 1) {
-                fields = ['pool_id']; 
+                fields = ['pool_id'];
             }
             if (step >= 2) {
                 fields = ['one_time_amount_custom', 'bi_weekly_amount_custom'];
@@ -463,32 +463,32 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '/annual-campaign/' , 
-                //data: form.serialize(), 
+                url:  '/annual-campaign/' ,
+                //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
                 cache: false,
                 timeout: 30000,
                 success: function(data)
                 {
-                    // console.log(data ); 
+                    // console.log(data );
                     if (step == 3 && pool_option == 'P' || step == 4)  {
-                        $('#summary-page').html(data); 
+                        $('#summary-page').html(data);
                     }
                     if (step == 3 && pool_option == 'C')  {
-                        $('#step-distribution-page').html(data); 
+                        $('#step-distribution-page').html(data);
                     }
                 },
                 error: function(response) {
                     valid = false;
-                    if (response.status == 422) {   
+                    if (response.status == 422) {
                         $.each(response.responseJSON.errors, function(field_name,error){
-                            if ( field_name.includes('.') ) {   
+                            if ( field_name.includes('.') ) {
                                 items = field_name.split(".");
                                 pos = Number(items[ items.length -1 ]);
 
                                 if (field_name.includes('oneTimePercent') || field_name.includes('oneTimeAmount') ||
-                                    field_name.includes('biWeeklyPercent') || field_name.includes('biWeeklyAmount') 
+                                    field_name.includes('biWeeklyPercent') || field_name.includes('biWeeklyAmount')
                                    ) {
                                     // $("input[name='oneTimePercent[47162]']")
                                     $(document).find("input[name='" + items[0] + "[" + pos + "]']").parent().append('<span class="text-strong text-danger">' +error+ '</span>');
@@ -516,8 +516,8 @@ $(function () {
 
                             //     pledge_id = get_campaign_pledge_id();
                             //     if (pledge_id > 0) {
-                            //         $(document).find('[name=' + field_name + ']').parent().append('<span class="d-block text-strong text-danger">' + 
-                            //             'There is an existing pledge for this donor. Would you like to change it? Click <a ' + 
+                            //         $(document).find('[name=' + field_name + ']').parent().append('<span class="d-block text-strong text-danger">' +
+                            //             'There is an existing pledge for this donor. Would you like to change it? Click <a ' +
                             //             'href="/admin-pledge/campaign/'+pledge_id+'/edit">here</a> to proceed.' + '</span>');
                             //     }
                             // }
@@ -535,15 +535,15 @@ $(function () {
      $('#annual-campaign-form').on('submit', function () {
 
         $("input[type=hidden][name='step']").val( step );
-        $("#annual-campaign-form button[type='submit']").attr('disabled', 'true'); 
+        $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
         $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
     });
-    
+
 });
 
 </script>
 
-// Page 2 -- charities 
+
 @include('annual-campaign.partials.choose-charity-js')
 <script type="x-tmpl" id="organization-tmpl">
     @include('annual-campaign.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
@@ -559,7 +559,7 @@ $(function () {
     $(function () {
         $(".next").trigger("click");
     });
-    </script>    
+    </script>
 @endif
 
 @endpush
