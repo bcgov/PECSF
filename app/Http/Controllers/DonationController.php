@@ -32,12 +32,12 @@ class DonationController extends Controller {
         $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
                             ->orderBy('calendar_year', 'desc')
                             ->first();
-        $current_pledge = Pledge::where('user_id', Auth::id())
+
+        $user = User::where('id', Auth::id() )->first();                            
+        $current_pledge = Pledge::where('emplid', $user->emplid)
                          ->whereHas('campaign_year', function($q){
                              $q->where('calendar_year','=', today()->year + 1 );
                          })->first();
-
-        $user = User::where('id', Auth::id() )->first();
 
         // NOTE: Must use the raw select statement in Laravel for querying this custom SQL view due to the performance issue
         // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid .
