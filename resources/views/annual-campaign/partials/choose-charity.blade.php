@@ -56,7 +56,7 @@
                 <div id="selectedcountresults" class="float-right mr-2 text-secondary font-weight-bold"
                     style="{{ count($selected_charities) == 0 ? 'display:none;' : '' }}">{{ count($selected_charities) }} item(s) selected
                 </div>
-                <h5 style="width:100%;text-align:center; {{ count($selected_charities) > 0 ? 'display:none;' : '' }}" 
+                <h5 style="width:100%;text-align:center; {{ count($selected_charities) > 0 ? 'display:none;' : '' }}"
                     id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
                 <span class="charity_errors"></span>
 
@@ -85,7 +85,7 @@
                     </div>
                     <div class="modal-body">
 
-                        <table class="table">
+                        <table class="table charity">
                             <tr>
                                 <td>Business/Registration Number</td>
                                 <td id="registration_number"></td>
@@ -137,6 +137,21 @@
                             <tr>
                                 <td>Charitable Programs</td>
                                 <td id="charitable_programs"></td>
+                            </tr>
+                        </table>
+
+                        <table style="border:none;" class="table fsp">
+                            <tr style="border:none;">
+                                <td style="border:none;" rowspan="3"><img id="pool_image" /></td>
+                                <td style="border:none;" id="pool_name"></td>
+                            </tr>
+                            <tr style="border:none;">
+
+                                <td style="border:none;" id="pool_description"></td>
+                            </tr>
+                            <tr style="border:none;">
+
+                                <td style="border:none;" id="pool_registration_number"></td>
                             </tr>
                         </table>
                     </div>

@@ -588,12 +588,18 @@ class BankDepositFormController extends Controller
         }
         if (is_numeric($request->pool_filter)) {
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
-            $organizations->whereIn('id', $pool->charities->pluck('charity_id') );
+            $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
+            $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
         }
+
+
 
         $organizations = $organizations->paginate(7);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
+
+
+
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
     }
 }
