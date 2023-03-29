@@ -341,17 +341,16 @@ class AnnualCampaignController extends Controller
         //
         if ($request->ajax()) {
 
-            // Generate Distribution page or Summary Page
+            // Generate Distribution page or Summary Page 
             if ($request->step == 3 and $request->pool_option == 'C') {
-                $this->distribution($request);
+                return $this->distribution($request);
             }
-            else if (($request->step == 3 and $request->pool_option == 'P') or
+            if (($request->step == 3 and $request->pool_option == 'P') or 
                 ($request->step == 4 and $request->pool_option == 'C')) {
-                $this->summary($request);
+                return $this->summary($request);
             }
-            else{
-                exit();
-            }
+            
+            return response()->noContent();
 
         }
 
