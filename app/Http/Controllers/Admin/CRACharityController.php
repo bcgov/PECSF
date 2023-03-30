@@ -175,106 +175,106 @@ class CRACharityController extends Controller
     }
 
 
-    public function export2csv(Request $request) {
+    // public function export2csv(Request $request) {
 
-        if($request->ajax()) {
+    //     if($request->ajax()) {
 
-            $filters = $request->all(); 
+    //         $filters = $request->all(); 
 
-            // Submit a Job
-            $history = \App\Models\ProcessHistory::create([
-                'batch_id' => 0,
-                'process_name' => 'CharitiesExportJob',
-                'parameters' => json_encode( $filters ),
-                'status'  => 'Queued',
-                'submitted_at' => now(),
-                'original_filename' => '',
-                'filename' => '',
-                'total_count' => 0,
-                'done_count' => 0,
-                'created_by_id' => Auth::Id(),
-                'updated_by_id' => Auth::Id(),
-            ]);
+    //         // Submit a Job
+    //         $history = \App\Models\ProcessHistory::create([
+    //             'batch_id' => 0,
+    //             'process_name' => 'CharitiesExportJob',
+    //             'parameters' => json_encode( $filters ),
+    //             'status'  => 'Queued',
+    //             'submitted_at' => now(),
+    //             'original_filename' => '',
+    //             'filename' => '',
+    //             'total_count' => 0,
+    //             'done_count' => 0,
+    //             'created_by_id' => Auth::Id(),
+    //             'updated_by_id' => Auth::Id(),
+    //         ]);
 
-            // Submit the the export Job
-            $batch = Bus::batch([
-                new CharitiesExportJob($history->id, $filters ),
-            ])->dispatch();
+    //         // Submit the the export Job
+    //         $batch = Bus::batch([
+    //             new CharitiesExportJob($history->id, $filters ),
+    //         ])->dispatch();
 
-            // dd ($batch->id);
-            $history->batch_id = $batch->id;
-            $history->save();
+    //         // dd ($batch->id);
+    //         $history->batch_id = $batch->id;
+    //         $history->save();
 
-            // 
-            return response()->json([
-                    'batch_id' => $history->id,
-            ], 200);
+    //         // 
+    //         return response()->json([
+    //                 'batch_id' => $history->id,
+    //         ], 200);
 
-        }
+    //     }
 
-    }
+    // }
 
-    public function exportProgress(Request $request, $id) {
+    // public function exportProgress(Request $request, $id) {
 
-        // storage batch id in session
-        // get status 
-        $history = ProcessHistory::where('id', $id)->first();
+    //     // storage batch id in session
+    //     // get status 
+    //     $history = ProcessHistory::where('id', $id)->first();
 
-        if ($history) {
+    //     if ($history) {
 
-            $batch = Bus::findBatch($history->batch_id);
-            // TODO -- how to check failed
-            if ($batch->failedJobs) {
-                return response()->json([
-                    'finished' => false,
-                    'message' => 'Job failed, please contact system administrtator.',
-                ], 422);
+    //         $batch = Bus::findBatch($history->batch_id);
+    //         // TODO -- how to check failed
+    //         if ($batch->failedJobs) {
+    //             return response()->json([
+    //                 'finished' => false,
+    //                 'message' => 'Job failed, please contact system administrtator.',
+    //             ], 422);
                 
-            }
+    //         }
 
 
 
-            $finished = false;
-            $message = 'Procsssing..., please wait.' . now();
+    //         $finished = false;
+    //         $message = 'Procsssing..., please wait.' . now();
 
-            if ($history->status == 'Completed') {
-                $finished = true;
-                $link = route('settings.charities.download-export-file', $history->id);
-                $message = 'Done. Download file <a class="" href="'.$link.'">here</a>';
-            } else if ($history->status == 'Queued') {
-                $message = 'Queued, please wait.';
-            } else if ($history->status == 'Processing') {
-                $progress = round(($history->done_count / $history->total_count) * 100,0);
-                $message = 'Procsssing... ('. $progress .'%) , please wait.';
-            } else {
-                // others
-            }
+    //         if ($history->status == 'Completed') {
+    //             $finished = true;
+    //             $link = route('settings.charities.download-export-file', $history->id);
+    //             $message = 'Done. Download file <a class="" href="'.$link.'">here</a>';
+    //         } else if ($history->status == 'Queued') {
+    //             $message = 'Queued, please wait.';
+    //         } else if ($history->status == 'Processing') {
+    //             $progress = round(($history->done_count / $history->total_count) * 100,0);
+    //             $message = 'Procsssing... ('. $progress .'%) , please wait.';
+    //         } else {
+    //             // others
+    //         }
 
-            return response()->json([
-                'finished' => $finished,
-                'message' => $message,
-            ], 200);
-        }   
+    //         return response()->json([
+    //             'finished' => $finished,
+    //             'message' => $message,
+    //         ], 200);
+    //     }   
 
-    }
+    // }
 
-    public function downloadExportFile(Request $request, $id) {
+    // public function downloadExportFile(Request $request, $id) {
 
-        $history = ProcessHistory::where('id', $id)->first();
-        // $path = Student::where("id", $id)->value("file_path");
+    //     $history = ProcessHistory::where('id', $id)->first();
+    //     // $path = Student::where("id", $id)->value("file_path");
     
-        $filepath = $history->filename; 
+    //     $filepath = $history->filename; 
 
-        $headers = [
-            'Content-Description' => 'File Transfer',
-            'Content-Type' => 'application/csv',
-            "Content-Transfer-Encoding: UTF-8",
-        ];
+    //     $headers = [
+    //         'Content-Description' => 'File Transfer',
+    //         'Content-Type' => 'application/csv',
+    //         "Content-Transfer-Encoding: UTF-8",
+    //     ];
 
-        // return Storage::download($path);
-        return Storage::disk('public')->download($filepath, $filepath, $headers); 
+    //     // return Storage::download($path);
+    //     return Storage::disk('public')->download($filepath, $filepath, $headers); 
 
-    }  
+    // }  
 
 
     function getCharityQuery(Request $request) {

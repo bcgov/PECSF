@@ -39,6 +39,7 @@ use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
+use App\Http\Controllers\Admin\CRACharityReportController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
@@ -218,9 +219,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
     // CRA Charity
-    Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
-    Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
-    Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
+    // Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
+    // Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
+    // Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
     // Special Campaign Setup
@@ -312,7 +313,13 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/pledge-charities/download-export-file/{id}', [PledgeCharityReportController::class,'downloadExportFile'])->name('pledge-charities.download-export-file');
     Route::resource('/pledge-charities', PledgeCharityReportController::class)->only(['index', 'show']);
 
+    // Charities Report 
+    Route::get('/cra-charities/export', [CRACharityReportController::class,'export2csv'])->name('cra-charities.export2csv');
+    Route::get('/cra-charities/export-progress/{id}', [CRACharityReportController::class,'exportProgress'])->name('cra-charities.export2csv-progress');
+    Route::get('/cra-charities/download-export-file/{id}', [CRACharityReportController::class,'downloadExportFile'])->name('cra-charities.download-export-file');
+    Route::resource('/cra-charities', CRACharityReportController::class)->only(['index', 'show']);
 
+    //
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
     Route::get('/supply-report/delete', [SupplyReportController::class,"delete"])->name('delete');
     Route::get('/supply-report/export', [SupplyReportController::class,"export"])->name('export');

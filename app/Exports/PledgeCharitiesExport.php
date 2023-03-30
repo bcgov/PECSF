@@ -77,14 +77,16 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'Pool or Charity',
                         'Type',
                         'Subtype',
-                        'As of Date',
+                        'Goal Amount',
                         'Created At',
-                        'Amount',
-
-                        'Charity BN',
-                        'Charity Name',
+                        'Updated At',
+                        
                         'Percentage',
+                        'CRA business number',
+                        'CRA org name',
+                        'Specific Community Or Initiative',
                         'Charity Amount',
+
                     ]
                 ];
     }
@@ -111,13 +113,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
             $employee->pool_type,
             $employee->type,
             $employee->sub_type,
-            now(),
-            $employee->created_at,
             $employee->amount,
+            $employee->created_at,
+            $employee->updated_at,
 
+            $employee->percentage,
             $employee->charity ? $employee->charity->registration_number : '',
             $employee->charity ? $employee->charity->charity_name : '',
-            $employee->percentage,
+            $employee->supported_program,
             $employee->prorate_amount,
         ];
     }
@@ -431,7 +434,9 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             
                             'charity_id' => $pool_charity->charity_id,
                             'percentage' => $pool_charity->percentage,
+                            'supported_program' => $pool_charity->name,
                             'prorate_amount' => $calc_amount,
+
 
                         ]);
                     }
@@ -479,6 +484,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
                             'charity_id' => $pool_charity->charity_id,
                             'percentage' => $pool_charity->percentage,
+                            'supported_program' => $pool_charity->name,
                             'prorate_amount' => $calc_amount,
 
                         ]);
@@ -521,6 +527,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
                             'charity_id' => $pledge_charity->charity_id,
                             'percentage' => $pledge_charity->percentage,
+                            'supported_program' => $pledge_charity->additional,
                             'prorate_amount' => $pledge_charity->goal_amount,
 
                         ]);
@@ -561,6 +568,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
                             'charity_id' => $pledge_charity->charity_id,
                             'percentage' => $pledge_charity->percentage,
+                            'supported_program' => $pledge_charity->additional,
                             'prorate_amount' => $pledge_charity->goal_amount,
 
                         ]);
@@ -663,6 +671,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
                         'charity_id' => $pool_charity->charity_id,
                         'percentage' => $pool_charity->percentage,
+                        'supported_program' => $pool_charity->name,
                         'prorate_amount' => $calc_amount,
 
                     ]);
@@ -700,6 +709,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
                         'charity_id' => $event_charity->vendor_id,
                         'percentage' => $event_charity->donation_percent,
+                        'supported_program' => $event_charity->specific_community_or_initiative,
                         'prorate_amount' => round(($event_charity->goal_amount * $event->donation_percent) / 100, 2),
 
                     ]);
