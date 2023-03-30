@@ -364,69 +364,69 @@
 
 
 
-        <div class="row p-5">
-            <p>
-                Welcome to the volunteer section of the PECSF app.  This section will have increased functionality in future releases of the app.  As always, we welcome your feedback, if you have any suggestions or comments, please feel free to share them with us in our volunteer feedback survey.
-            </p>
 
-            <h2>Welcome to returning volunteers, new volunteers and those of you thinking of volunteering! </h2>
+        @endif
+    <div class="row p-5">
+        <p>
+            Welcome to the volunteer section of the PECSF app.  This section will have increased functionality in future releases of the app.  As always, we welcome your feedback, if you have any suggestions or comments, please feel free to share them with us in our volunteer feedback survey.
+        </p>
 
-            <table class="table">
-                <tr>
-                    <td style="width:200px;text-align:center;">
-                        <img src="/img/volunteering.png" />
+        <h2>Welcome to returning volunteers, new volunteers and those of you thinking of volunteering! </h2>
 
-                    </td>
+        <table class="table">
+            <tr>
+                <td style="width:200px;text-align:center;">
+                    <img src="/img/volunteering.png" />
+
+                </td>
                 <td style="text-align:center;font-size:36px;font-weight:bold;">
                     " Volunteers do not necessarily have the time; They just have the heart. " ~ Elizabeth Andrew
                 </td>
-                </tr>
-            </table>
+            </tr>
+        </table>
 
-        </div>
+    </div>
 
-        <div class="row p-5">
-           <h1>Volunteering</h1>
-            We thank you for volunteering with the PECSF program. If you want to help by volunteering with your ministry/organizations team, contact your PECSF Lead Coordinator.
-            Potential ways to help with your office’s campaign:
-            •	Canvasser
-            •	Event coordinator
-            •	Communications
-            •	50/50 ticket coordinator
-            •	And so much more…
+    <div class="row p-5">
+        <h1>Volunteering</h1>
+        We thank you for volunteering with the PECSF program. If you want to help by volunteering with your ministry/organizations team, contact your PECSF Lead Coordinator.
+        Potential ways to help with your office’s campaign:
+        •	Canvasser
+        •	Event coordinator
+        •	Communications
+        •	50/50 ticket coordinator
+        •	And so much more…
 
-        </div>
+    </div>
 
-        <div class="row p-5">
-            <h1>Training</h1>
-            Registration for PECSF courses is available in the Learning Centre’s PSA Learning System. Once you are in the system search “PECSF” and register for one of the following three courses.  Registration opens in June for courses in August and September.
+    <div class="row p-5">
+        <h1>Training</h1>
+        Registration for PECSF courses is available in the Learning Centre’s PSA Learning System. Once you are in the system search “PECSF” and register for one of the following three courses.  Registration opens in June for courses in August and September.
 
-            PECSF 101 – Did you know? Canvasser Training
+        PECSF 101 – Did you know? Canvasser Training
 
-            PECSF Gaming and Events – Know Your Limit!
+        PECSF Gaming and Events – Know Your Limit!
 
-            PECSF Lead Coordinator
-        </div>
+        PECSF Lead Coordinator
+    </div>
 
-        <div class="row p-5">
-            <h1>Resources</h1>
-            Visit the volunteer resource section on the PECSF website for all your campaign resources including campaign start-up and promotional material, document templates and logos as well as fundraising and gaming event guidelines and so much more.
-        </div>
+    <div class="row p-5">
+        <h1>Resources</h1>
+        Visit the volunteer resource section on the PECSF website for all your campaign resources including campaign start-up and promotional material, document templates and logos as well as fundraising and gaming event guidelines and so much more.
+    </div>
 
-        <div class="row p-5">
-            <h1>Blogs</h1>
-            We want to hear from you!  Contact us today at PECSF@gov.bc.ca to share a story about your favourite charity or why you chose to volunteer with PECSF.  You will find inspiring blogs from charities and volunteers on our PECSF Community Connect SharePoint.
-        </div>
+    <div class="row p-5">
+        <h1>Blogs</h1>
+        We want to hear from you!  Contact us today at PECSF@gov.bc.ca to share a story about your favourite charity or why you chose to volunteer with PECSF.  You will find inspiring blogs from charities and volunteers on our PECSF Community Connect SharePoint.
+    </div>
 
-        <div class="row p-5">
-            <h1>Contact</h1>
+    <div class="row p-5">
+        <h1>Contact</h1>
 
-        </div>
-        <div class="row p-5">
-            <strong>If you have any questions or are interested in volunteering for the 2023 Campaign, please email Kristina Allsopp at PECSF@gov.bc.ca.</strong>
-        </div>
-        @endif
-
+    </div>
+    <div class="row p-5">
+        <strong>If you have any questions or are interested in volunteering for the 2023 Campaign, please email Kristina Allsopp at PECSF@gov.bc.ca.</strong>
+    </div>
 
     <div class="d-flex mt-3">
         <h1>Dashboard</h1>
