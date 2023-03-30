@@ -90,10 +90,13 @@ Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
 
 
 // Route::get('/donate', [CharityController::class, 'start'])->name('donate');
-Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
-Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+
+    Route::get('donations', [DonationController::class, 'index'])->name('donations.list');
+    Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
+});
 
 // Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
 //     Route::get('/start', [CharityController::class, 'start'])->name('start');
