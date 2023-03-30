@@ -226,7 +226,14 @@
                 url: '{!! route('reporting.cra-charities.index') !!}',
                 data: function (data) {
                     data.year = $("input[name='as_of_date']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', className: "dt-nowrap"},

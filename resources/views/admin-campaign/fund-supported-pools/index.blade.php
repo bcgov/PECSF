@@ -204,7 +204,15 @@
                     d.region_id = $("select[name='region_id']").val();
                     d.start_date = $("input[name='start_date']").val();
                     d.status = $("select[name='status']").val();
-                    d.effectiveTypeFilter = $("select[name='effective_type']").val();                }
+                    d.effectiveTypeFilter = $("select[name='effective_type']").val();                
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'region.code', name: 'region.code', className: "dt-nowrap", orderData: [0, 2], },

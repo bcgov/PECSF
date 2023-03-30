@@ -206,7 +206,14 @@
                     data.start_time = $('#start_time').val();
                     data.end_time  = $('#end_time').val();
                     data.include_trashed = $('#include_trashed').prop("checked") ? '1' : '0';
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },

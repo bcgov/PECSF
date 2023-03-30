@@ -262,7 +262,14 @@
                     data.category_code  = $("select[name='category_code']").val();
                     data.province = $("select[name='province']").val();
                     data.use_alt_address = $("select[name='use_alt_address']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', orderable: false, searchable: false, 

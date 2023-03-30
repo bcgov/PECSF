@@ -277,7 +277,14 @@
                     data.cancelled = $('#cancelled').val();
                     data.special_campaign_name = $('#special_campaign_name').val();
                     data.deduct_pay_from = $('#deduct_pay_from').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},

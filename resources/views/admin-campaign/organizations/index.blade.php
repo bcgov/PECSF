@@ -108,7 +108,14 @@
             ajax: {
                 url: '{!! route('settings.organizations.index') !!}',
                 data: function (d) {
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'code', name: 'code', className: "dt-nowrap" },

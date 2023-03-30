@@ -215,7 +215,14 @@
                     data.term = $('#filter-keyword').val();
                     data.year = $('#filter-year').val();
                     data.bn   = $('#filter-bn').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'name', name: 'name', className: "dt-nowrap" },

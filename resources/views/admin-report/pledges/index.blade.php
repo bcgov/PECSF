@@ -196,7 +196,14 @@
                 url: '{!! route('reporting.pledges.index') !!}',
                 data: function (data) {
                     data.year = $("select[name='year']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', className: "dt-nowrap"},

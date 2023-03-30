@@ -258,7 +258,14 @@
                     data.pay_period_amt_from = $('#pay_period_amt_from').val();
                     data.pay_period_amt_to = $('#pay_period_amt_to').val();
                     data.cancelled = $('#cancelled').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},
