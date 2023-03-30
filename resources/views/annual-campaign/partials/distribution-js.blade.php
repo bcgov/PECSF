@@ -40,81 +40,135 @@ $(function () {
     function redistribute(type, section)
     {
         let sum = 0.00;
+        total_amount = section.find(".total-amount").val();
+        total_percent = section.find(".total-percent").val();
         expectedTotal = section.find(".total-amount").data('expected-total');
         // const section = $(this).parents('.amountDistributionSection');
         if (type == 'amount') {
             rows = section.find(".percent-input");
             target_rows= section.find(".amount-input");
+            expectedTotal = (expectedTotal * total_percent) / 100;
+
         } else {
             rows = section.find(".amount-input");
             target_rows= section.find(".percent-input");
+            expectedTotal = total_percent;
         }
 
+           
         $.each(rows, function(i) {
             if (i == (rows.length -1 ) ) {
                 newValue = 0;
-                if (type == 'amount')
-                    newValue = expectedTotal - sum;
-                    else
+                if (type == 'amount') {
+                    // newValue = expectedTotal - sum;
+                    newValue = Math.round(( (current / 100 ) * expectedTotal) * 100) / 100;
+                } else {
                     newValue = 100 - sum;
+                }
                 $(target_rows[i]).val( newValue.toFixed(2) );
             } else {
                 current = $(this).val();
                 newValue = 0;
-                if (type == 'amount')
+                if (type == 'amount') {
                     newValue = Math.round(( (current / 100 ) * expectedTotal) * 100) / 100;
-                else
-                    newValue = Math.round(( current / expectedTotal * 100) * 100) / 100;
+                } else {
+                    newValue = Math.round(( current / total_amount * 100) * 100) / 100;
+                }
                 $(target_rows[i]).val( newValue.toFixed(2) );
                 sum += newValue
             }
         });
+
+        // update the total percent to 100%
+        if (type == 'amount') {
+            section.find(".total-amount").val(expectedTotal.toFixed(2));
+        } else {
+            section.find(".total-percent").val( (100).toFixed(2) );
+        }
     }
 
-    $(document).on('change', '#step-distribution-page .percent-input', function (e) {
+
+    function update_percentage_section(row) {
+
         let total = 0;
-        const section = $(this).parents('.amountDistributionSection');
+        const section = $(row).parents('.amountDistributionSection');
         section.find(".percent-input").each( function () {
             total += Number($(this).val());
         });
-        if (total !== 100) {
-            const lastValue = Number(section.find(".percent-input").last().val());
-            const difference = 100 - total;
-            section.find(".percent-input").last().val( (lastValue + difference).toFixed(2)  );
-            total = 100;
-        }
-        section.find(".total-percent").val(total.toFixed(2));
 
-        $(this).val(  Number($(this).val()).toFixed(2) );
+        section.find(".total-percent").val(total.toFixed(2));
+        expectedTotal = section.find(".total-amount").data('expected-total');
+        section.find(".total-amount").val( (expectedTotal * total / 100).toFixed(2));
+
+        $(row).val(  Number($(row).val()).toFixed(2) );
         // percentage changed, re-calculate the amount distribution
         redistribute('amount', section);
+
+    }
+
+
+    $(document).on('keydown', '#step-distribution-page .percent-input', function (e) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13' || keycode == '9'){
+            // alert('You pressed a "enter" key in somewhere');  
+        } else {
+            return true;
+        }
+        update_percentage_section( this );
+    });
+
+    $(document).on('change', '#step-distribution-page .percent-input', function (event) {
+
+        if (event.originalEvent) {
+            update_percentage_section( this );
+        }
     });
 
 
-    $(document).on('change', '#step-distribution-page .amount-input', function (e) {
+    function update_amount_section(row) {
+
         let total = 0;
-        const section = $(this).parents('.amountDistributionSection');
+        const section = $(row).parents('.amountDistributionSection');
 
         const expectedTotal = section.find(".total-amount").data('expected-total');
         section.find(".amount-input").each( function () {
             total += Number($(this).val());
         });
-        if (total !== expectedTotal) {
-            const lastValue = Number(section.find(".amount-input").last().val());
-            const difference = expectedTotal - total;
-            section.find(".amount-input").last().val( (lastValue + difference).toFixed(2) );
-            total = expectedTotal;
-        }
+        // if (total !== expectedTotal) {
+        //     const lastValue = Number(section.find(".amount-input").last().val());
+        //     const difference = expectedTotal - total;
+        //     section.find(".amount-input").last().val( (lastValue + difference).toFixed(2) );
+        //     total = expectedTotal;
+        // }
         section.find(".total-amount").val(total.toFixed(2));
 
-        $(this).val(  Number($(this).val()).toFixed(2) );
+        $(row).val(  Number($(row).val()).toFixed(2) );
         // amount changed, re-calculate the percentage distribution
         redistribute('percent', section);
+
+    }
+
+    $(document).on('keydown', '#step-distribution-page .amount-input', function (e) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){
+            // alert('You pressed a "enter" key in somewhere');  
+        } else {
+            return true;
+        }
+        update_amount_section( this );
+    });
+
+
+    $(document).on('change', '#step-distribution-page .amount-input', function (event) {
+
+        if (event.originalEvent) {
+            update_amount_section( this );
+        }
         
     });
 
-    $("#step-distribution-page .percent-input").change();
-    $("#step-distribution-page .amount-input").change();
+    // $("#step-distribution-page .percent-input").change();
+    // $("#step-distribution-page .amount-input").change();
 
 
     $(document).on('click', '#step-distribution-page .distribute-evenly', function () {
@@ -125,11 +179,11 @@ $(function () {
             sum = 0;
             $.each(rows, function(i) {
                 if (i == (rows.length -1 ) ) {
-                    newValue = expectedTotal - sum;
-                    $(this).val( newValue );
+                    newValue = Math.round(( expectedTotal - sum) * 100) / 100;
+                    $(this).val( newValue.toFixed(2) );
                 } else {
                     newValue = Math.round(( expectedTotal / rows.length) * 100) / 100;
-                    $( this).val( newValue );
+                    $( this).val( newValue.toFixed(2) );
                     sum += newValue
                 }
             });
@@ -143,11 +197,13 @@ $(function () {
             expectedTotal = 100;
             rows  = section.find(".percent-input");
             distribute_evenly(expectedTotal, rows);
+            section.find(".total-percent").val( expectedTotal.toFixed(2) );
         // } else {
             // const section = $(this).parents('.amountDistributionSection');
             expectedTotal = section.find(".total-amount").data('expected-total');
             rows  = section.find(".amount-input");
             distribute_evenly(expectedTotal, rows);
+            section.find(".total-amount").val(expectedTotal.toFixed(2));
         // }
 
         // calucated and distributed
@@ -163,7 +219,7 @@ $(function () {
         //         sum += newValue
         //         console.log( i + ' - ' +  $( this).val() );
         //     }
-        // });
+        // });            
     });
 
 });
