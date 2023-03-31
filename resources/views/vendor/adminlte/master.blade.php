@@ -174,7 +174,7 @@
             var vsOpts = {
                 $slides: $('.v-slide'),
                 $list: $('.v-slides'),
-                duration: 15,
+                duration: 8,
                 lineHeight: 30
             }
 
@@ -186,7 +186,7 @@
             vsOpts.$slides.each(function(i) {
                 vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
                     y: i * -1 * vsOpts.lineHeight,
-                    ease: Elastic.easeOut.config(1, 0.8)
+                    ease: Elastic.easeOut.config(1, 0.7)
                 })
             })
             vSlide.play();
@@ -215,7 +215,7 @@
             });
         </script>
     @endif
-    {{-- Global AjaxError to redirect to login page when the session was expired --}}
+    {{-- Global AjaxError event to redirect to login page when the session was expired --}}
     <script>
         $(function() {
             $(document).ajaxError(function(event, jqxhr, settings, exception) {
