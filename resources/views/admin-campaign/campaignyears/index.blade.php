@@ -91,7 +91,14 @@
             ajax: {
                 url: '{!! route('settings.campaignyears.index') !!}',
                 data: function (d) {
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'calendar_year', name: 'calendar_year'},

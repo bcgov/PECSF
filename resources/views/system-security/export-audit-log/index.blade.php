@@ -247,7 +247,14 @@
                     data.start_time = $("input[name='start_time']").val();
                     data.end_time  = $("input[name='end_time']").val();
                     data.row_values  = $("input[name='row_values']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },

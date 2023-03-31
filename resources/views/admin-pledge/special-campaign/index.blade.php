@@ -277,7 +277,14 @@
                     data.cancelled = $('#cancelled').val();
                     data.special_campaign_name = $('#special_campaign_name').val();
                     data.deduct_pay_from = $('#deduct_pay_from').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},
@@ -407,13 +414,19 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Pledge ' + title +  ' was successfully deleted.', 'bg-success' );
                         },
-                        error: function(response) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: response.responseJSON.error,
-                            })
-                            console.log(response.responseJSON.error);
+                        error: function(xhr, resp, text) {
+                            if (xhr.status == 401 || xhr.status == 419) {
+                                { // session expired 
+                                    window.location.href = '/login'; 
+                                }
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: xhr.responseJSON.error,
+                                })
+                                console.log(xhr.responseJSON.error);
+                            }
                         }
                     });
                 } else if (result.isCancelledDenied) {

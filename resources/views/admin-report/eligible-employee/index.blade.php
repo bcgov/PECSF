@@ -261,7 +261,14 @@
                     data.business_unit  = $("input[name='business_unit']").val();
                     data.department = $("input[name='department']").val();
                     data.tgb_reg_district = $("input[name='tgb_reg_district']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'emplid', name: 'emplid', className: "dt-nowrap" },

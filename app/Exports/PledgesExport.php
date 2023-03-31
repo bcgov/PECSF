@@ -77,8 +77,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                         'Pool or Charity',
                         'Type',
                         'Subtype',
-                        'As of Date',
                         'Created At',
+                        'Updated At',
                         'Amount',
                     ],
                 ];
@@ -106,8 +106,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
             $employee->pool_type,
             $employee->type,
             $employee->sub_type,
-            now(),
             $employee->created_at,
+            $employee->updated_at,
             $employee->amount,
         ];
     }
