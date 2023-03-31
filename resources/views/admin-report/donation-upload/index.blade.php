@@ -208,7 +208,14 @@
             ajax: {
                 url: '{!! route('reporting.donation-upload.index') !!}',
                 data: function (d) {
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', className: "dt-nowrap"},

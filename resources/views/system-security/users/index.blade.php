@@ -272,7 +272,14 @@
                     data.last_signon_to  = $('#last_signon_to').val();
                     data.last_sync_from = $('#last_sync_from').val();
                     data.last_sync_to  = $('#last_sync_to').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
