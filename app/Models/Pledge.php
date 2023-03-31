@@ -7,10 +7,12 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Pledge extends Model
+class Pledge extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'organization_id',
@@ -65,6 +67,14 @@ class Pledge extends Model
         } else {
             return $this->charities()->where('frequency', 'bi-weekly');
         }
+    }
+
+    public function one_time_charities() {
+        return $this->charities()->where('frequency', 'one-time');
+    }
+
+    public function bi_weekly_charities() {
+        return $this->charities()->where('frequency', 'bi-weekly');
     }
 
     public function user() {

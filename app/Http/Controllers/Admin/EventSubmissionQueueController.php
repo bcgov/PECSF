@@ -80,40 +80,35 @@ class EventSubmissionQueueController extends Controller
                 $year =  intval(date("Y")) + 1;
                 do{
                     $campaign_year = CampaignYear::where('calendar_year', $year)->first();
+                    if(empty($campaign_year))
+                    {
+                        break;
+                    }
                     $year--;
 
                     if($year == 2005){
                         break;
                     }
                 }while(!$campaign_year->isOpen());
-
                 if(empty($campaign_year) || !$campaign_year->isOpen()){
                     $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
-
                 $gov_organization = Organization::where('code', 'GOV')->first();
                 $is_GOV = ($form->organization_code == $gov_organization->code);
-
                 if($is_GOV){
                     $existing = BankDepositForm::where("organization_code","=","GOV")
-                        ->where("event-type","=","Cash One-time Donation")
+                        ->where("event_type","=","Cash One-time Donation")
                         ->where("form_submitter_id","=",$form->form_submitter_id)
                         ->get();
-
                     if(!empty($existing))
                     {
                         BankDepositForm::where("id",$request->submission_id)->update(['bc_gov_id' => "S".$form->bc_gov_id]);
                     }
                 }
-
                 $pay_period_amount = $form->deposit_amount;
                 $one_time_amount =  $form->deposit_amount;
                 $pay_period_annual_amt = $form->deposit_amount;
-
-
                 $form = BankDepositForm::where("id",$request->submission_id)->first();
-
-
                 // Create a new Pledge
                 $form_organization = Organization::where('code', $form->organization_code)->first();
                 $form_user = User::where('id', $form->form_submitter_id)->first();
@@ -132,13 +127,13 @@ class EventSubmissionQueueController extends Controller
                     'goal_amount' => $form->deposit_amount,
                     'created_by_id' => $form_user->id,
                     'updated_by_id' => Auth::id(),
+                    'emplid' => $form_user->emplid
                 ]);
-
                 $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
-
-
-                $pledge->charities()->delete();
-
+                // $pledge->charities()->delete();
+                foreach($pledge->charities as $pledge_charity) {
+                    $pledge_charity->delete();
+                }
                 $pledgeCharities = BankDepositFormOrganizations::where("bank_deposit_form_id" , $form->id)->get();
 
                 if ( empty($form->regional_pool_id) )
@@ -217,9 +212,11 @@ class EventSubmissionQueueController extends Controller
         $cities = City::all();
         $organizations = [];
         $selected_charities = [];
-
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
         // load the view and pass
-        return view('admin-pledge.submission-queue.index',compact('selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
+        return view('admin-pledge.submission-queue.index',compact('fund_support_pool_list','selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
     }
     /**
      * Display a listing of pledge details.
@@ -402,7 +399,10 @@ class EventSubmissionQueueController extends Controller
             'updated_by_id' => Auth::id(),
         ]);
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {
@@ -565,7 +565,10 @@ class EventSubmissionQueueController extends Controller
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {

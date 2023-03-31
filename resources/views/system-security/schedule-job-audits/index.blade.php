@@ -23,7 +23,7 @@
                 <label for="tran_id">
                     Tran Id
                 </label>
-                <input name="tran_id" id="tran_id"  class="form-control" />
+                <input name="tran_id" id="tran_id" value="{{ $request->tran_id ? $request->tran_id : '' }}" class="form-control" />
             </div>
 
             <div class="form-group col-md-3">
@@ -206,7 +206,14 @@
                     data.start_time = $('#start_time').val();
                     data.end_time  = $('#end_time').val();
                     data.include_trashed = $('#include_trashed').prop("checked") ? '1' : '0';
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
@@ -301,8 +308,14 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Schedule Job Audit ' + title +  ' was successfully deleted.', 'bg-success' );
                         },
-                        error: function(response) {
-                            console.log('Error');
+                        error: function(xhr, resp, text) {
+                            if (xhr.status == 401 || xhr.status == 419) {
+                                { // session expired 
+                                    window.location.href = '/login'; 
+                                }
+                            } else {
+                                console.log('Error');
+                            }
                         }
                     });
                 } else if (result.isCancelledDenied) {

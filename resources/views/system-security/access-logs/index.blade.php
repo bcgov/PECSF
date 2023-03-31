@@ -200,8 +200,14 @@
                     data.login_at_from = $('#login_at_from').val();
                     data.login_at_to  = $('#login_at_to').val();
                     data.login_method  = $('#login_method').val();
-                    
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },

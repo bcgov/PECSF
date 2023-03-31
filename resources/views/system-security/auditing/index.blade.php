@@ -5,14 +5,14 @@
 @include('system-security.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Auditing</h4>
+        <h4>Table Audit Log</h4>
         <div class="flex-fill"></div>
 
     </div>
 @endsection
 @section('content')
 
-<div class="card">
+<div class="card search-filter">
 
     <div class="card-body pb-0 filter">
         <h2>Search Criteria</h2>
@@ -47,6 +47,13 @@
                         <option value="{{ $value }}">{{ $value }}</option>
                     @endforeach 
                 </select>
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="auditable_id">
+                    Audit ID
+                </label>
+                <input name="auditable_id" class="form-control" />
             </div>
 
             <div class="form-group col-md-2">
@@ -92,13 +99,13 @@
                 <label for="search">
                     &nbsp;
                 </label>
-                <input type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />
+                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary">Search</button>
             </div>
             <div class="form-group col-md-1">
                 <label for="search">
                     &nbsp;
                 </label>
-                <input type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary" />
+                <button type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary">Reset</button>
             </div>
 
         </div>
@@ -229,11 +236,19 @@
                     data.audit_user = $("input[name='audit_user']").val();
                     data.event_type = $("select[name='event_type']").val();
                     data.auditable_type = $("select[name='auditable_type']").val();
+                    data.auditable_id = $("input[name='auditable_id']").val();
                     data.start_time = $("input[name='start_time']").val();
                     data.end_time  = $("input[name='end_time']").val();
                     data.old_values  = $("input[name='old_values']").val();
                     data.new_values  = $("input[name='new_values']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
@@ -274,14 +289,9 @@
         });
 
         $('#reset-btn').on('click', function() {
-            $("input[name='audit_user']").val('');
-            $("select[name='event_type']").val('');
-            $("select[name='auditable_type']").val('');
-            $("input[name='start_time']").val('');
-            $("input[name='end_time']").val('');
-            $("input[name='old_values']").val('');
-            $("input[name='new_values']").val('');
-
+            
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
             oTable.search( '' ).columns().search( '' ).draw();
         });
 

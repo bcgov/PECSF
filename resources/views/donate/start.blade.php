@@ -31,8 +31,9 @@
                 <div class="form-check ">
                     <input class="form-check-input" type="radio" name="pool_option" id="pool1" value="C"
                         {{ $pool_option == "C" ? 'checked' : '' }}>
-                    <label class="form-check-label h5" for="pool1">
-                        Select up to 10 charities from the CRA List
+                    <label style="font-size:16px;line-height:25.6px;" class="form-check-label" for="pool1">
+                        <strong>Select up to 10 charities from the CRA List</strong><br>
+                        Explore keywords by keyword, category, province, or view charities, and their associated programs, which are part of the fund supported pools.
                     </label>
                 </div>
             </div>
@@ -43,8 +44,9 @@
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="pool_option" id="pool2" value="P"
                         {{ $pool_option == "P" ? 'checked' : '' }}>
-                    <label class="form-check-label h5" for="pool2">
-                        Select a regional Fund Supported Pool
+                    <label style="font-size:16px;line-height:25.6px;" class="form-check-label h5" for="pool2">
+                        <strong>Select a regional Fund Supported Pool</strong><br>
+                        Charities and distribution amounts are predetermined
                     </label>
                 </div>
             </div>

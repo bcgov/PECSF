@@ -15,7 +15,7 @@
     <div class="form-group org_hook col-md-4">
         <label for="category">Search by Province</label>
         <select class="form-control" style="width:100%;" type="text" name="province" id="charity_province">
-            <option value="">Choose a Province</option>
+            <option value="">ChoosFe a Province</option>
             @foreach(\App\Models\Charity::PROVINCE_LIST as $key => $value)
                 <option value="{{$key}}">{{$value}}</option>
             @endforeach
@@ -73,7 +73,7 @@
             </div>
             <div class="modal-body">
 
-                <table class="table">
+                <table class="table charity">
                     <tr>
                         <td>Business/Registration Number</td>
                         <td id="registration_number"></td>
@@ -125,6 +125,20 @@
                     <tr>
                         <td>Charitable Programs</td>
                         <td id="charitable_programs"></td>
+                    </tr>
+                </table>
+                <table style="border:none;" class="table fsp">
+                    <tr style="border:none;">
+                        <td style="border:none;" rowspan="3"><img id="pool_image" /></td>
+                        <td style="border:none;" id="pool_name"></td>
+                    </tr>
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="pool_description"></td>
+                    </tr>
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="pool_registration_number"></td>
                     </tr>
                 </table>
             </div>

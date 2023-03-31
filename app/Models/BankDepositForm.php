@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class BankDepositForm extends Model
+class BankDepositForm extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;    
 
     protected $fillable =[
         'organization_code',
@@ -51,5 +53,10 @@ class BankDepositForm extends Model
         return $this->belongsTo(FSPool::class, 'regional_pool_id', 'id')->withDefault();
         
     } 
+
+    public function charities() {
+        return $this->hasMany(BankDepositFormOrganizations::class, 'bank_deposit_form_id', 'id');
+    }
+
 
 }

@@ -212,7 +212,14 @@
                     data.frequency = $("select[name='frequency']").val();
                     data.amount_from = $("input[name='amount_from']").val();
                     data.amount_to = $("input[name='amount_to']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},

@@ -1,8 +1,7 @@
 @extends('adminlte::page')
 @section('content_header')
-    <div class="d-flex mt-3">
-        <h1>Dashboard</h1>
-        <div class="flex-fill"></div>
+    <div class="row p-5">
+        <h1>Volunteering in the BC Public Service</h1>
     </div>
 @endsection
 @section('content')
@@ -362,25 +361,101 @@
                 </div>
             </div>
         </div>
-<div class="row">
-    <div class="col-md-12 justify-content-center pt-3 mb-5">
-        <div class="card justify-content-center border-warning text-center" style="background:#D9EAF7;border-radius: 1em;">
-            <div class=" justify-content-center card-body" style="color:#1a5a96;">
-                <h5 class="card-title"></h5>
-                <p class="card-text text-center">It's time for you to renew your volunteer registration</p>
-                <p class="card-text text-center">
-                    Click below to make any necessary updates to your information
-                </p>
-                <p>
-                    <button class="btn btn-primary" onclick="$('#edit-event-modal').modal('show');">Renew volunteer Registration</button>
-                </p>
+
+
+
+
+        @endif
+    <div class="row p-5">
+        <p>
+            Welcome to the volunteer section of the PECSF app.  This section will have increased functionality in future releases of the app.  As always, we welcome your feedback, if you have any suggestions or comments, please feel free to share them with us in our volunteer feedback survey.
+        </p>
+
+        <h2>Welcome to returning volunteers, new volunteers and those of you thinking of volunteering! </h2>
+
+        <table class="table">
+            <tr>
+                <td style="width:200px;text-align:center;">
+                    <img src="/img/volunteering.png" />
+
+                </td>
+                <td style="text-align:center;font-size:36px;font-weight:bold;">
+                    " Volunteers do not necessarily have the time; They just have the heart. " ~ Elizabeth Andrew
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="row p-5">
+        <h1>Volunteering</h1>
+        We thank you for volunteering with the PECSF program. If you want to help by volunteering with your ministry/organizations team, contact your PECSF Lead Coordinator.
+        Potential ways to help with your office’s campaign:
+        •	Canvasser
+        •	Event coordinator
+        •	Communications
+        •	50/50 ticket coordinator
+        •	And so much more…
+
+    </div>
+
+    <div class="row p-5">
+        <h1>Training</h1>
+        Registration for PECSF courses is available in the Learning Centre’s PSA Learning System. Once you are in the system search “PECSF” and register for one of the following three courses.  Registration opens in June for courses in August and September.
+
+        PECSF 101 – Did you know? Canvasser Training
+
+        PECSF Gaming and Events – Know Your Limit!
+
+        PECSF Lead Coordinator
+    </div>
+
+    <div class="row p-5">
+        <h1>Resources</h1>
+        Visit the volunteer resource section on the PECSF website for all your campaign resources including campaign start-up and promotional material, document templates and logos as well as fundraising and gaming event guidelines and so much more.
+    </div>
+
+    <div class="row p-5">
+        <h1>Blogs</h1>
+        We want to hear from you!  Contact us today at PECSF@gov.bc.ca to share a story about your favourite charity or why you chose to volunteer with PECSF.  You will find inspiring blogs from charities and volunteers on our PECSF Community Connect SharePoint.
+    </div>
+
+    <div class="row p-5">
+        <h1>Contact</h1>
+
+    </div>
+    <div class="row p-5">
+        <strong>If you have any questions or are interested in volunteering for the 2023 Campaign, please email Kristina Allsopp at PECSF@gov.bc.ca.</strong>
+    </div>
+
+    <div class="d-flex mt-3">
+        <h1>Dashboard</h1>
+        <div class="flex-fill"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 justify-content-center pt-3 mb-5">
+            <div class="card justify-content-center border-warning text-center" style="background:#D9EAF7;border-radius: 1em;">
+                <div class=" justify-content-center card-body" style="color:#1a5a96;">
+
+                    @if(empty($settings->volunteer_language))
+                        <h5 class="card-title"></h5>
+                        <p class="card-text text-center">It's time for you to renew your volunteer registration</p>
+                        <p class="card-text text-center">
+                            Click below to make any necessary updates to your information
+                        </p>
+                    @else
+                        @php
+                            echo $settings->volunteer_language ;
+
+                        @endphp
+                    @endif
+                    <p>
+                        <button class="btn btn-primary" onclick="$('#edit-event-modal').modal('show');">Renew volunteer Registration</button>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-
-    @endif
 
     @include('volunteering.partials.statistics')
 @include('volunteering.partials.overall-graph')
@@ -459,9 +534,9 @@
         }*/
 var stop = false;
         requiredQuestion.each((index,e) => {
-            if(this.val() == "")
+            if(e.value == "")
             {
-                $("."+this.name+"_error").val(this.error);
+                $("."+e.name+"_error").html("Required Field");
                 stop = true;
             }
         });
@@ -506,7 +581,7 @@ var stop = false;
 
 
 
-        $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=organization_id] option:selected").text());
+        $("#summary-table").find('[data-value-for="organization"]').html($("#volunteer-registration").find("[name=business_unit_id] option:selected").text());
         $("#summary-table").find('[data-value-for="no_of_years"]').html(no_of_years);
         $("#summary-table").find('[data-value-for="address_type"]').html(address_type);
         $("#summary-table").find('[data-value-for="preferred_role"]').html($("#volunteer-registration").find("[name=preferred_role] option:selected").text());
@@ -538,6 +613,15 @@ var stop = false;
             }
         });
     });
+
+    @if($is_registered && $show)
+    $(".register").click(function(){$("#edit-event-modal").modal("show");});
+    @elseif($is_registered)
+    $(".register").click(function(){window.location = "/volunteering/edit";});
+    @else
+    $(".register").click(function(){$("#volunteer-registration").modal("show");});
+
+    @endif
 
 </script>
 @endpush

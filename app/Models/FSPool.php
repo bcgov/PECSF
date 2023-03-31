@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\FSPoolCharity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class FSPool extends Model
+class FSPool extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable =[
         'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id', 'created_at'
@@ -21,8 +23,8 @@ class FSPool extends Model
 
     protected $appends = [
         'canEdit', 'canDelete', 'effectiveType'];
-        
-    // Scope 
+
+    // Scope
     public function scopeCurrent($query)
     {
         $query->where('start_date', function($query) {
@@ -44,12 +46,12 @@ class FSPool extends Model
         });
     }
 
-    public function region() 
+    public function region()
     {
         return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();
     }
 
-    public function charities() 
+    public function charities()
     {
         return $this->hasMany(FSPoolCharity::class);
     }
@@ -103,7 +105,7 @@ class FSPool extends Model
         }
 
         return false;
-        
+
     }
 
     public function annual_campaign_pledges() {

@@ -204,7 +204,15 @@
                     d.region_id = $("select[name='region_id']").val();
                     d.start_date = $("input[name='start_date']").val();
                     d.status = $("select[name='status']").val();
-                    d.effectiveTypeFilter = $("select[name='effective_type']").val();                }
+                    d.effectiveTypeFilter = $("select[name='effective_type']").val();                
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'region.code', name: 'region.code', className: "dt-nowrap", orderData: [0, 2], },
@@ -320,15 +328,19 @@
                             Toast('Success',  'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
                                             '" was successfully deleted.', 'bg-success' );
                         },
-                        // error: function(response) {
-                            error: function (data) {
+                        error: function(xhr, resp, text) {
+                            if (xhr.status == 401 || xhr.status == 419) {
+                                { // session expired 
+                                    window.location.href = '/login'; 
+                                }
+                            } else {
                                 Swal.fire({
-                                        icon: 'error',
-                                        title: data.responseJSON.title, // data.responseJSON.title,
-                                        text: data.responseJSON.message,
-                                });
-
-                                console.log(data.responseJSON.message);
+                                    icon: 'error',
+                                    title: xhr.responseJSON.title,
+                                    text: xhr.responseJSON.message,
+                                })
+                                console.log(xhr.responseJSON.message);
+                            }
                         }
                     });
                 } else if (result.isDismissed) {

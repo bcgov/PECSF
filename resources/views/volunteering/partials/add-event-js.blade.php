@@ -19,7 +19,7 @@ $(".org_hook").hide();
 $("#pool_filter").parents(".form-group").hide();
 }
 });
-$("#pool_filter").parents(".form-group").hide();
+
 
 $("[name='event_type'],[name='organization_code']").change(function(){
 $("#sub_type").attr("disabled",false);
@@ -255,12 +255,22 @@ cache: false,
 contentType: false,
 dataType: 'json',
 success:function(response){
+    Swal.fire({
+        title: '<strong>Success!</strong>',
+        icon: 'success',
+        html:
+            'Form Submitted!',
+        showCloseButton: false,
+        showCancelButton: true,
+        focusConfirm: false,
+    }).then((result) => {
+        $("#bank_deposit_form").fadeTo("slow",1);
+        $('.errors').html("");
 
-$("#bank_deposit_form").fadeTo("slow",1);
-$('.errors').html("");
+        window.location = response[0];
+        console.log(response);
+    });
 
-window.location = response[0];
-console.log(response);
 },
 error: function(response) {
 $('.errors').html("");

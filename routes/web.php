@@ -15,7 +15,7 @@ use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
 
 use App\Http\Controllers\VolunteeringController;
-use App\Http\Controllers\PledgeCharityController;
+// use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\AnnualCampaignController;
 
 
@@ -35,19 +35,25 @@ use App\Http\Controllers\Admin\DonationDataController;
 use App\Http\Controllers\Admin\OrganizationController;
 
 
+use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
+use App\Http\Controllers\Admin\CRACharityReportController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
+use App\Http\Controllers\System\ExportAuditLogController;
 use App\Http\Controllers\System\UserMaintenanceController;
+use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
+use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
+use App\Http\Controllers\Admin\EligibleEmployeeCountController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
@@ -84,10 +90,13 @@ Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
 
 
 // Route::get('/donate', [CharityController::class, 'start'])->name('donate');
-Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('donations', [DonationController::class, 'index'])->middleware(['auth'])->name('donations.list');
-Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+
+    Route::get('donations', [DonationController::class, 'index'])->name('donations.list');
+    Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
+});
 
 // Route::prefix('donate')->middleware(['auth','campaign'])->name('donate.')->group(function () {
 //     Route::get('/start', [CharityController::class, 'start'])->name('start');
@@ -159,17 +168,21 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
 
 
 });
-Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
-Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');
 
-Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
-Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
-Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');
-Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
+    Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');
 
-Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
-Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
+    Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
+    Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
+    Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');
+    Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
 
+    Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
+    Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
+
+    Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
+});
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
@@ -180,7 +193,7 @@ Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(funct
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
 
-Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
+// Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 
 // Route::group(['middleware' => ['auth']], function() {
 //     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
@@ -193,7 +206,7 @@ Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(fun
     // Route::get('/users', [AdministratorController::class,'getUsers']);
 });
 
-Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
+
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
 
@@ -213,9 +226,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
 
     // CRA Charity
-    Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
-    Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
-    Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
+    // Route::get('/charities/export', [CRACharityController::class,'export2csv'])->name('charities.export2csv');
+    // Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
+    // Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
 
     // Special Campaign Setup
@@ -242,7 +255,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
     Route::get('/', [SettingsController::class,'index'])->name('others');
-    Route::get('/challenge', [SettingsController::class,'challenge'])->name('challenge');
+    Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
+    Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
+
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
 
@@ -284,11 +299,34 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
 
-    // // Eligible Employee Reporting
+    // Eligible Employee Count 
+    Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
+
+    // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
     Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
     Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
+
+    // Annual and Event Pledge Report 
+    Route::get('/pledges/export', [PledgeReportController::class,'export2csv'])->name('pledges.export2csv');
+    Route::get('/pledges/export-progress/{id}', [PledgeReportController::class,'exportProgress'])->name('pledges.export2csv-progress');
+    Route::get('/pledges/download-export-file/{id}', [PledgeReportController::class,'downloadExportFile'])->name('pledges.download-export-file');
+    Route::resource('/pledges', PledgeReportController::class)->only(['index', 'show']);
+
+    // Annual and Event Charities Report 
+    Route::get('/pledge-charities/export', [PledgeCharityReportController::class,'export2csv'])->name('pledge-charities.export2csv');
+    Route::get('/pledge-charities/export-progress/{id}', [PledgeCharityReportController::class,'exportProgress'])->name('pledge-charities.export2csv-progress');
+    Route::get('/pledge-charities/download-export-file/{id}', [PledgeCharityReportController::class,'downloadExportFile'])->name('pledge-charities.download-export-file');
+    Route::resource('/pledge-charities', PledgeCharityReportController::class)->only(['index', 'show']);
+
+    // Charities Report 
+    Route::get('/cra-charities/export', [CRACharityReportController::class,'export2csv'])->name('cra-charities.export2csv');
+    Route::get('/cra-charities/export-progress/{id}', [CRACharityReportController::class,'exportProgress'])->name('cra-charities.export2csv-progress');
+    Route::get('/cra-charities/download-export-file/{id}', [CRACharityReportController::class,'downloadExportFile'])->name('cra-charities.download-export-file');
+    Route::resource('/cra-charities', CRACharityReportController::class)->only(['index', 'show']);
+
+    //
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
     Route::get('/supply-report/delete', [SupplyReportController::class,"delete"])->name('delete');
     Route::get('/supply-report/export', [SupplyReportController::class,"export"])->name('export');
@@ -303,8 +341,8 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
 
     // Users Maintenance
-    Route::post('/users/{id}/lock', [UserMaintenanceController::class,'lockUser'])->name('users.lock');    
-    Route::post('/users/{id}/unlock', [UserMaintenanceController::class,'unlockUser'])->name('users.unlock');    
+    Route::post('/users/{id}/lock', [UserMaintenanceController::class,'lockUser'])->name('users.lock');
+    Route::post('/users/{id}/unlock', [UserMaintenanceController::class,'unlockUser'])->name('users.unlock');
     Route::resource('/users', UserMaintenanceController::class)->only(['index','show', 'edit', 'update']);
 
     // Access Log
@@ -312,9 +350,12 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::get('/access-logs-user', [AccessLogController::class, 'getUsers'])->name('access-logs.users');
     Route::get('/access-logs-user-detail/{id}', [AccessLogController::class, 'show']);
 
-    // Auditing 
+    // Auditing
     Route::resource('/auditing', AuditingController::class)->only(['index']);
-    
+
+    // Export Audit Log
+    Route::resource('/export-audits', ExportAuditLogController::class)->only(['index']);
+
     // Upload and download file (seed)
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
 

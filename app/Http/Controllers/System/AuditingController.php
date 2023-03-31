@@ -40,6 +40,9 @@ class AuditingController extends Controller
                 ->when($request->auditable_type, function($query) use($request) {
                     return $query->where('audits.auditable_type', "App\\Models\\" . $request->auditable_type);
                 })
+                ->when($request->auditable_id, function($query) use($request) {
+                    return $query->where('audits.auditable_id', $request->auditable_id);
+                })
                 ->when($request->start_time || $request->end_time, function($query) use($request) {
                     $from = $request->start_time ?? '1990-01-01';
                     $to = $request->end_time ?? '2099-12-31';

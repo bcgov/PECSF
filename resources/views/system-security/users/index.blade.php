@@ -143,12 +143,12 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>IDIR</th>
+                    <th>Organization</th>                    
                     <th>Emplid</th>
-                    <th>Locked </th>
+                    <th>Status</th>
                     <th>Sign On Count</th>
                     <th>Active Job Count</th>
 
-                    <th>Organization</th>                    
                     <th>Bus Unit</th>
                     <th>Dept ID</th>
                     <th>Dept Name</th>
@@ -272,7 +272,14 @@
                     data.last_signon_to  = $('#last_signon_to').val();
                     data.last_sync_from = $('#last_sync_from').val();
                     data.last_sync_to  = $('#last_sync_to').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
@@ -280,14 +287,15 @@
                 {data: 'name', name: 'name', className: "dt-nowrap" },
                 {data: 'primary_job.email', name: 'primary_job.email', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.idir', name: 'primary_job.idir', defaultContent: '', className: "dt-nowrap" },
+                {data: 'organization.code',  name: 'organization.code', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.emplid', name: 'primary_job.emplid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'acctlock', render: function ( data, type, row, meta ) {
                         icon_name = (data == 0) ? 'fa-user-check' : 'fa-user-times';
                         icon_color = (data == 0) ? 'text-primary' : 'text-danger';
-                        return '<span class="toggle_user" data-id="' + row.id + 
+                        return '<button type="button" class="btn"><span class="toggle_user" data-id="' + row.id + 
                                    '" data-locked="' + data + 
                                    '" data-name="' + row.name + 
-                                   '"><i class="fa ' + icon_name + ' fa-lg ' + icon_color + '"> </i></span>';
+                                   '"><i class="fa ' + icon_name + ' fa-lg ' + icon_color + '"> </i></span></button>';
                     }
                 },
                 {data: 'access_logs_count', name: 'access_logs_count', className: "dt-nowrap",
@@ -310,7 +318,6 @@
                         }
                     }
                 },
-                {data: 'organization.code',  name: 'organization.code', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.business_unit', name: 'primary_job.business_unit', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.deptid', name: 'primary_job.deptid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.dept_name', name: 'primary_job.dept_name', defaultContent: '', className: "dt-nowrap" },
@@ -346,6 +353,17 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
+        function Toast( toast_title, toast_body, toast_class) {
+            Swal.fire({
+                    position: 'top-end',
+                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
+                    title: toast_title,
+                    text: toast_body,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 5000
+            })
+        }
 
         $('body').on('click', 'span.toggle_user', function(e) {
             e.preventDefault();
@@ -365,7 +383,7 @@
 
             Swal.fire( {
                     title: title,
-                    text: 'This action cannot be undone.',
+                    text: '',
                     // icon: 'question',
                     //showDenyButton: true,
                     showCancelButton: true,
@@ -387,7 +405,11 @@
                             success: function(data)
                             {
                                 oTable.ajax.reload(null, false);	// reload datatables
-                                Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
+                                text = 'locked';
+                                if (locked == 1) {
+                                    text = 'unlocked';
+                                }
+                                Toast('Success', 'User  "' + name +  '" was successfully ' + text + '.', 'bg-success' );
                             },
                             error: function (data) {
                                     Swal.fire({

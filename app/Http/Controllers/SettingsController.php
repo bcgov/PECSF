@@ -38,10 +38,17 @@ class SettingsController extends Controller
 
     public function changeSetting(Request $request){
 
+        try{
+            $request->value = Carbon::parse($request->value);
+        }
+        catch(\Exception $e){
+            $request->value = $request->value;
+        }
+
         Setting::updateOrCreate([
             'id' => 1,
         ],[
-            $request->name => Carbon::parse($request->value),
+            $request->name =>  $request->value,
         ]);
         return json_encode([true]);
     }
