@@ -15,7 +15,7 @@ use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
 
 use App\Http\Controllers\VolunteeringController;
-use App\Http\Controllers\PledgeCharityController;
+// use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\AnnualCampaignController;
 
 
@@ -168,17 +168,21 @@ Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->grou
 
 
 });
-Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
-Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');
 
-Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
-Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
-Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');
-Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
+    Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');
 
-Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
-Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
+    Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
+    Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
+    Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');
+    Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
 
+    Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
+    Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
+
+    Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
+});
 
 Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
@@ -189,7 +193,7 @@ Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(funct
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
 
-Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
+// Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
 
 // Route::group(['middleware' => ['auth']], function() {
 //     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
@@ -202,7 +206,7 @@ Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(fun
     // Route::get('/users', [AdministratorController::class,'getUsers']);
 });
 
-Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
+
 
 Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function() {
 
