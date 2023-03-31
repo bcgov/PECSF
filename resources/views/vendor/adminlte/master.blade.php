@@ -215,6 +215,18 @@
             });
         </script>
     @endif
+    {{-- Global AjaxError to redirect to login page when the session was expired --}}
+    <script>
+        $(function() {
+            $(document).ajaxError(function(event, jqxhr, settings, exception) {
+                if (jqxhr.status == 401 || jqxhr.status == 419) {
+                   // session expired 
+                   window.location.href = '/login'; 
+                }
+                console.log('global ajaxError handler -- status ' + jqxhr.status + ' | ' + exception);
+            });
+        });
+    </script>
 </body>
 
 </html>
