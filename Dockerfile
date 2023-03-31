@@ -111,7 +111,11 @@ RUN bash -c 'mkdir -p /var/www/html/storage{app,framework,logs}'
 RUN chmod -R 755 /var/www/html/storage
 RUN chown -R www-data:www-data /var/www/html/storage/app /var/www/html/storage/framework /var/www/html/storage/logs
 
+RUN chmod -R 755 /var/log/apache2
+RUN chown -R www-data:www-data /var/log/apache2
+
 RUN chmod 4111 /usr/bin/sudo
+
 
 COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 
