@@ -308,8 +308,14 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Schedule Job Audit ' + title +  ' was successfully deleted.', 'bg-success' );
                         },
-                        error: function(response) {
-                            console.log('Error');
+                        error: function(xhr, resp, text) {
+                            if (xhr.status == 401 || xhr.status == 419) {
+                                { // session expired 
+                                    window.location.href = '/login'; 
+                                }
+                            } else {
+                                console.log('Error');
+                            }
                         }
                     });
                 } else if (result.isCancelledDenied) {

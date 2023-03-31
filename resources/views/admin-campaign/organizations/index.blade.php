@@ -368,14 +368,19 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Organization code ' + code +  ' was successfully deleted.', 'bg-success' );
                         },
-                        error: function (data) {
+                        error: function(xhr, resp, text) {
+                            if (xhr.status == 401 || xhr.status == 419) {
+                                { // session expired 
+                                    window.location.href = '/login'; 
+                                }
+                            } else {
                                 Swal.fire({
-                                        icon: 'error',
-                                        title: data.responseJSON.title, // data.responseJSON.title,
-                                        text: data.responseJSON.message,
-                                });
-
-                                console.log(data.responseJSON.message);
+                                    icon: 'error',
+                                    title: xhr.responseJSON.title,
+                                    text: xhr.responseJSON.message,
+                                })
+                                console.log(xhr.responseJSON.message);
+                            }
                         }
                     });
                 } else if (result.isCancelledDenied) {
