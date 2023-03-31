@@ -28,8 +28,9 @@
                 href="{{ route('reporting.pledges.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Annual Pledges and Events</a>
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.pledge-charities') ? 'active' : ''}}"
                 href="{{ route('reporting.pledge-charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Amount by charity</a>              
-        {{-- <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.charities') ? 'active' : ''}}"
-          href="{{ route('reporting.charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Charity report</a>               --}}
+        <div class="dropdown-divider"></div>                              
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.cra-charities') ? 'active' : ''}}"
+          href="{{ route('reporting.cra-charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Charity</a>              
         <div class="dropdown-divider"></div>                              
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.eligible-employee-count') ? 'active' : ''}}"
           href="{{ route('reporting.eligible-employee-count.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Summary</a>

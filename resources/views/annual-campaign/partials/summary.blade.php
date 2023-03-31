@@ -115,7 +115,7 @@ $(function () {
         section.find("#step-summary-area .percent-input").each( function () {
             total += Number($(this).val());
         });
-console.log( 'testing --> ' + this ) ;
+
         section.find("#step-summary-area .total-percent").val( total );
         section.find("#step-summary-area .total-percent-text").text('Total Amount: '+ total.toFixed(2) + '%');
     });

@@ -154,7 +154,7 @@
 
             //     // $(".next_button").attr("disabled",true);
 
-            // } 
+            // }
             $(this).parents("tr").remove();
 
             // if ($("input[name='charities[]']").length < 1) {
@@ -170,18 +170,39 @@
         });
 
         $("body").on("click",".view_details",function(){
-            $("#registration_number").html($(this).attr("registration_number"));
-            $("#charity_status").html($(this).attr("charity_status"));
-            $("#effective_date_of_status").html($(this).attr("effective_date_of_status"));
-            $("#sanction").html($(this).attr("sanction"));
-            $("#designation").html($(this).attr("designation"));
-            $("#modalcategory").html($(this).attr("category"));
-            $("#address").html($(this).attr("address"));
-            $("#city").html($(this).attr("city"));
-            $("#province").html($(this).attr("province"));
-            $("#country").html($(this).attr("country"));
-            $("#postal_code").html($(this).attr("postal_code"));
-            $("#uri").html($(this).attr("website"));
+
+            if($(this).attr("pool_image").length > 0){
+                $("table.charity").hide();
+                $("table.fsp").show();
+                $(".modal-header").hide();
+                $(".modal-footer").hide();
+                $("#pool_registration_number").html($(this).attr("registration_number"));
+                $("#pool_name").html($(this).attr("charity_name"));
+
+                $("#pool_image").attr("src","/img/uploads/fspools/"+$(this).attr("pool_image"));
+                $("#pool_description").html($(this).attr("pool_description"));
+            }
+            else{
+                $("table.charity").show();
+                $("table.fsp").hide();
+                $(".modal-header").show();
+                $(".modal-footer").show();
+                $("#registration_number").html($(this).attr("registration_number"));
+                $("#charity_status").html($(this).attr("charity_status"));
+                $("#effective_date_of_status").html($(this).attr("effective_date_of_status"));
+                $("#sanction").html($(this).attr("sanction"));
+                $("#designation").html($(this).attr("designation"));
+                $("#modalcategory").html($(this).attr("category"));
+                $("#address").html($(this).attr("address"));
+                $("#city").html($(this).attr("city"));
+                $("#province").html($(this).attr("province"));
+                $("#country").html($(this).attr("country"));
+                $("#postal_code").html($(this).attr("postal_code"));
+                $("#uri").html($(this).attr("website"));
+            }
+
+
+
             $("#charityDetails").modal("show");
         });
 

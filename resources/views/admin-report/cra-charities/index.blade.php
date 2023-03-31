@@ -4,7 +4,7 @@
     {{-- <h2>Reporting</h2> --}}
     @include('admin-report.partials.tabs')
     <div class="d-flex mt-3">
-        <h4>Annual Pledges and Events</h4>
+        <h4>Charity report</h4>
         <div class="flex-fill"></div>
     </div>
 @endsection
@@ -30,15 +30,10 @@
 
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="year">
-                    Calendar Year
+                <label for="as_of_date">
+                    As of Date
                 </label>
-                <select name="year" value="" class="form-control">
-                    {{-- <option value="">All</option> --}}
-                    @foreach( $years as $year)
-                        <option value="{{ $year }}" {{ today()->year == $year ? 'selected' : '' }}>{{ $year }} </option>
-                    @endforeach 
-                </select>
+                <input type="date" name="as_of_date" value="{{ $as_of_date }}" class="form-control">
             </div>
 
             {{-- <div class="form-group col-md-1">
@@ -157,6 +152,41 @@
             padding-bottom : 20px;
         }
 
+        /* processing position */
+        div.dataTables_wrapper div.dataTables_processing {
+            top: 5%;
+        }
+
+        /* Blink */
+        .blink {
+            animation: blinker 0.6s linear infinite;
+            /* color: #1c87c9;
+            font-size: 30px;
+            font-weight: bold;
+            font-family: sans-serif; */
+        }
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+        .blink-one {
+        animation: blinker-one 1s linear infinite;
+        }
+        @keyframes blinker-one {
+            0% {
+                opacity: 0;
+            }
+        }
+        .blink-two {
+        animation: blinker-two 1.4s linear infinite;
+        }
+        @keyframes blinker-two {
+            100% {
+                opacity: 0;
+            }
+        }
+
 </style>
 @endpush
 
@@ -193,9 +223,9 @@
                     oTable.columns.adjust().draw();
             },
             ajax: {
-                url: '{!! route('reporting.pledges.index') !!}',
+                url: '{!! route('reporting.cra-charities.index') !!}',
                 data: function (data) {
-                    data.year = $("select[name='year']").val();
+                    data.year = $("input[name='as_of_date']").val();
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
@@ -244,7 +274,7 @@
             id =  $(this).attr('data-id');
             $.ajax({
                 method: "GET",
-                url:  '{!! route('reporting.pledges.index') !!}/' + id,
+                url:  '{!! route('reporting.cra-charities.index') !!}/' + id,
                 dataType: 'json',
                 success: function(data)
                 {
@@ -284,12 +314,12 @@
                     $.ajax({
                         method: "GET",
                         dataType: 'json',
-                        url: '{!! route('reporting.pledges.export2csv') !!}',
+                        url: '{!! route('reporting.cra-charities.export2csv') !!}',
                         data: form.serialize(), // serializes the form's elements.
                         success: function(data) {
                             batch_id = data.batch_id;
                             console.log('export job submit');
-                            intervalID = setInterval(exportProgress, 3000);
+                            intervalID = setInterval(exportProgress, 5000);
                         },
                         error: function(response) {
                             $('#export-btn').prop('disabled', false);
@@ -308,7 +338,7 @@
             $.ajax({
                 method: "GET",
                 dataType: 'json',
-                url:  '/reporting/pledges/export-progress/' + batch_id,
+                url:  '/reporting/cra-charities/export-progress/' + batch_id,
                 success: function(data)
                 {
                     if (data.finished) {

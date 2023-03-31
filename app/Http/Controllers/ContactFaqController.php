@@ -28,8 +28,8 @@ class ContactFaqController extends Controller
             ],
             'Volunteering' => [
                 [
-                    'question' => 'How and where do I register to be a volunteer?',
-                    'answer' => 'To begin the Volunteer Registration process, please click <a href="/volunteering">here</a>'
+                    'question' => 'Where do I find more information on volunteering with the PECSF Annual Campaign?  ',
+                    'answer' => 'You will find volunteering information in the  <a href="/volunteering">Volunteer Section</a> which includes contact information for lead coordinators, possible roles, training, resources and blogs.'
                 ],
                 [
                     'question' => 'How much time on average do I have to commit to as a volunteer?',

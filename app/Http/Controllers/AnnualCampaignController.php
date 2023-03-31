@@ -30,7 +30,7 @@ class AnnualCampaignController extends Controller
      */
     function __construct()
     {
-        
+
 
     }
 
@@ -58,17 +58,17 @@ class AnnualCampaignController extends Controller
             return redirect()->route('donations.list');
         }
 
-        // 1) Initial the default values on the wizard 
+        // 1) Initial the default values on the wizard
         $step = 1;
-        $pool_option = 'P'; 
+        $pool_option = 'P';
 
-        // -- For Fund Support Pool page 
+        // -- For Fund Support Pool page
         $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
         $regional_pool_id = $fspools->count() > 0 ? $fspools->first()->id : null;
 
-        // -- For charities page 
+        // -- For charities page
         $designation_list = Charity::DESIGNATION_LIST;
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
@@ -96,15 +96,15 @@ class AnnualCampaignController extends Controller
         $calculatedTotalAmountOneTime = 0;
         $calculatedTotalPercentBiWeekly = 0;
         $calculatedTotalAmountBiWeekly = 0;
-        $annualBiWeeklyAmount = 0; 
+        $annualBiWeeklyAmount = 0;
         $annualOneTimeAmount = 0;
-        $grandTotal = 0; 
+        $grandTotal = 0;
         $oneTimeAmount = 0;
 
 
-        // 2) Check whether the existing record entered, then reloading the data  
+        // 2) Check whether the existing record entered, then reloading the data
         $organization = Organization::where('code', 'GOV')->first();
-        $user = User::where('id', Auth::id())->first(); 
+        $user = User::where('id', Auth::id())->first();
 
         $pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id )
                             // ->where('user_id', Auth::id())
@@ -123,7 +123,7 @@ class AnnualCampaignController extends Controller
 
                 $step = 3;  // Display summary page as a default if no error found
 
-                // Validate Pool 
+                // Validate Pool
                 if ($pledge->type == 'P') {
                     // Find the default selected FS Pool ID
                     $pos = $fspools->search(function ($item, $key) use($pledge){
@@ -137,7 +137,7 @@ class AnnualCampaignController extends Controller
                         $step = 1;
                     }
                 } else {
-                    // Find any inactive charity 
+                    // Find any inactive charity
                     // $charity_ids = $pledge->charities->pluck('charity_id');
                     $charity_ids = $pledge->charities->unique('charity_id')->pluck('charity_id');
                     $count = Charity::whereIn('id', $charity_ids)->where('charity_status', 'Registered')->count();
@@ -145,34 +145,34 @@ class AnnualCampaignController extends Controller
                         $step = 1;
                     }
                 }
-                // dd( [ $fspools, $pledge->region_id,  $pledge->f_s_pool_id, $regional_pool_id , $pos, $fspools[$pos]] );             
-                                
+                // dd( [ $fspools, $pledge->region_id,  $pledge->f_s_pool_id, $regional_pool_id , $pos, $fspools[$pos]] );
+
             } else {
                 $regional_pool_id = $pledge->type == 'P' ? $pledge->f_s_pool_id : $regional_pool_id;
             }
 
             $pool_option = $pledge->type;
             // $regional_pool_id = $pledge->type == 'P' ? $pledge->f_s_pool_id : $regional_pool_id;
-            $preselectedAmountOneTime = $pledge->one_time_amount > 0 ? $pledge->one_time_amount : $preselectedAmountOneTime; 
-            $preselectedAmountBiWeekly = $pledge->pay_period_amount > 0 ? $pledge->pay_period_amount : $preselectedAmountBiWeekly; 
-            
-            $frequency = 'both'; 
+            $preselectedAmountOneTime = $pledge->one_time_amount > 0 ? $pledge->one_time_amount : $preselectedAmountOneTime;
+            $preselectedAmountBiWeekly = $pledge->pay_period_amount > 0 ? $pledge->pay_period_amount : $preselectedAmountBiWeekly;
+
+            $frequency = 'both';
             if ($pledge->one_time_amount > 0 && $pledge->pay_period_amount == 0) {
-                $frequency = 'one-time';    
+                $frequency = 'one-time';
             } if ($pledge->one_time_amount == 0 && $pledge->pay_period_amount > 0) {
-                $frequency = 'bi-weekly';    
-            } 
-            
+                $frequency = 'bi-weekly';
+            }
+
             $preselectedData = [
                 'frequency' => $frequency,
                 'one-time-amount' => $preselectedAmountOneTime,
                 'bi-weekly-amount' => $preselectedAmountBiWeekly,
             ];
 
-            // These fields for Distribution page 
-            $oneTimeAmount = $pledge->one_time_amount; 
-            $biWeeklyAmount =  $pledge->pay_period_amount; 
-    
+            // These fields for Distribution page
+            $oneTimeAmount = $pledge->one_time_amount;
+            $biWeeklyAmount =  $pledge->pay_period_amount;
+
             $annualBiWeeklyAmount = $biWeeklyAmount * $campaign_year->number_of_periods;  // 26;
             $annualOneTimeAmount = $oneTimeAmount;
 
@@ -189,7 +189,7 @@ class AnnualCampaignController extends Controller
 
             // reload charity if the  pool_option is charities
             if ($pool_option == 'C') {
-                
+
                 if ($pledge && count($pledge->charities) > 0 )  {
 
                     $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
@@ -206,18 +206,18 @@ class AnnualCampaignController extends Controller
                             $charity['additional'] = $pledge_charity->additional ?? '';
                         }
 
-                        $charity['one-time-amount-distribution'] = 0;   
-                        $charity['one-time-percentage-distribution'] = 0;   
-                        $charity['bi-weekly-amount-distribution'] = 0;  
-                        $charity['bi-weekly-percentage-distribution'] = 0;   
+                        $charity['one-time-amount-distribution'] = 0;
+                        $charity['one-time-percentage-distribution'] = 0;
+                        $charity['bi-weekly-amount-distribution'] = 0;
+                        $charity['bi-weekly-percentage-distribution'] = 0;
 
                         // Get One-Time Distribution if exists
                         if ($pledge->one_time_amount > 0) {
                             $pledge_one_time = $pledge->charities->where('charity_id', $charity->id)->where('frequency','one-time')
                                             ->first();
 
-                            $charity['one-time-amount-distribution'] = $pledge_one_time->amount;   
-                            $charity['one-time-percentage-distribution'] = $pledge_one_time->percentage;   
+                            $charity['one-time-amount-distribution'] = $pledge_one_time->amount;
+                            $charity['one-time-percentage-distribution'] = $pledge_one_time->percentage;
                         }
 
                         // Get BiWeekly Distribution if exists
@@ -225,8 +225,8 @@ class AnnualCampaignController extends Controller
                             $pledge_biweekly = $pledge->charities->where('charity_id', $charity->id)->where('frequency','bi-weekly')
                                             ->first();
 
-                            $charity['bi-weekly-amount-distribution'] = $pledge_biweekly->amount;  
-                            $charity['bi-weekly-percentage-distribution'] = $pledge_biweekly->percentage;   
+                            $charity['bi-weekly-amount-distribution'] = $pledge_biweekly->amount;
+                            $charity['bi-weekly-percentage-distribution'] = $pledge_biweekly->percentage;
                         }
 
                         // Keep for comparing purpose
@@ -236,20 +236,20 @@ class AnnualCampaignController extends Controller
                         $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
                         $calculatedTotalPercentBiWeekly += $charity['bi-weekly-percentage-distribution'];
                         $calculatedTotalAmountBiWeekly += $charity['bi-weekly-amount-distribution'];
-        
+
                         $grandTotal += $charity['one-time-amount-distribution'];
                         $grandTotal += ($charity['bi-weekly-amount-distribution'] * $campaign_year->number_of_periods);  // 26
-                        
+
                         array_push($selected_charities, $charity);
                     }
                 }
 
             }
 
-        }                          
+        }
 
 
-        // 3) Set the amount initial value 
+        // 3) Set the amount initial value
         $amounts = [
             'bi-weekly' => [
                 [
@@ -313,22 +313,22 @@ class AnnualCampaignController extends Controller
         $multiple = true;
         $organizations = [];
 
-// dd([ $is_duplicate, $duplicate_pledge, $pool_option, $pledge, $fspools, $regional_pool_id, $campaign_year ]);             
-        return view('annual-campaign.wizard', compact('step', 'pool_option', 
-                        'fspools', 'regional_pool_id', 
+// dd([ $is_duplicate, $duplicate_pledge, $pool_option, $pledge, $fspools, $regional_pool_id, $campaign_year ]);
+        return view('annual-campaign.wizard', compact('step', 'pool_option',
+                        'fspools', 'regional_pool_id',
                         'campaign_year',
 
                         'organizations', 'multiple', 'selected_charities',
                         'designation_list', 'category_list', 'province_list', 'fund_support_pool_list',
                         'amounts', 'preselectedData', 'isCustomAmountOneTime', 'isCustomAmountBiWeekly',
-                                                
+
                         'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
-                         'frequency', // 'multiplier', 
+                         'frequency', // 'multiplier',
                          'last_selected_charities',
                          'is_duplicate',
                     ));
     }
-   
+
 
     /**
      * Store a newly created resource in storage.
@@ -340,7 +340,7 @@ class AnnualCampaignController extends Controller
     {
         //
         if ($request->ajax()) {
-                
+
             // Generate Distribution page or Summary Page 
             if ($request->step == 3 and $request->pool_option == 'C') {
                 return $this->distribution($request);
@@ -353,8 +353,8 @@ class AnnualCampaignController extends Controller
             return response()->noContent();
 
         }
-       
-        
+
+
         /* Final submission -- form submission (non-ajax call) */
         $input = $request->validated();
 
@@ -381,7 +381,7 @@ class AnnualCampaignController extends Controller
             'pay_period_amount' => $input['annualBiWeeklyAmount'] / $number_of_periods,
             'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount']
                                  : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ),
-            'updated_by_id' => Auth::id(), 
+            'updated_by_id' => Auth::id(),
         ]);
 
         if (!$pledge->created_by_id) {
@@ -407,7 +407,7 @@ class AnnualCampaignController extends Controller
                     if ($amount <= 0) {
                         continue;
                     }
-                
+
                     PledgeCharity::create([
                         'charity_id' => $id,
                         'pledge_id' => $pledge->id,
@@ -424,10 +424,10 @@ class AnnualCampaignController extends Controller
 
         $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
 
-        Session::flash('pledge_id', $pledge->id ); 
+        Session::flash('pledge_id', $pledge->id );
         return redirect()->route('annual-campaign.thank-you')
                 ->with('success', $message_text);
-        
+
     }
 
     /**
@@ -438,7 +438,7 @@ class AnnualCampaignController extends Controller
      */
     public function show(Request $request, $id)
     {
-        
+
     }
 
     /**
@@ -450,8 +450,8 @@ class AnnualCampaignController extends Controller
     public function edit(Request $request, $id)
     // public function edit(Request $request, $id)
     {
-        
-    
+
+
     }
 
     /**
@@ -463,7 +463,7 @@ class AnnualCampaignController extends Controller
      */
     public function update(AnnualCampaignRequest $request, $id)
     {
-        
+
     }
 
     /**
@@ -474,7 +474,7 @@ class AnnualCampaignController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        
+
     }
 
     public function thankYou()
@@ -496,18 +496,18 @@ class AnnualCampaignController extends Controller
 
         // charities change ?
         $charities_changed = false;
-        if ( count(array_diff($last_selected_charities, $request->charities)) > 0 || 
+        if ( count(array_diff($last_selected_charities, $request->charities)) > 0 ||
              count(array_diff( $request->charities, $last_selected_charities)) > 0 ) {
-         
+
             $charities_changed = true;
         }
         $last_selected_charities = $request->charities;
 
         // To recalculate the distributions
-        $selectedCharities = $request->charities; 
-        $frequency =  $request->frequency; 
+        $selectedCharities = $request->charities;
+        $frequency =  $request->frequency;
 
-        $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?  
+        $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?
                             ($request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom) : 0 ;
         $biWeeklyAmount = ($frequency === 'bi-weekly' || $frequency === 'both') ?
                             ($request->bi_weekly_amount ? $request->bi_weekly_amount : $request->bi_weekly_amount_custom) : 0 ;
@@ -515,7 +515,7 @@ class AnnualCampaignController extends Controller
         $annualBiWeeklyAmount = $biWeeklyAmount * $request->number_of_periods; //  26;
         $annualOneTimeAmount = $oneTimeAmount;
 
-        
+
         $selected_charities = [];
 
         $calculatedTotalPercentOneTime = 0;
@@ -550,7 +550,7 @@ class AnnualCampaignController extends Controller
 
             } else {
 
-                // percentage or amount based on input 
+                // percentage or amount based on input
                 $oneTimeAmountPerCharity = 0;
                 $oneTimePercentPerCharity = 0;
                 $biWeeklyAmountPerCharity = 0;
@@ -564,7 +564,7 @@ class AnnualCampaignController extends Controller
                     $biWeeklyPercentPerCharity = round(100 / count($selectedCharities), 2);
 
                 } else {
-                    
+
                     if ($frequency === 'one-time' || $frequency === 'both') {
                         if ($request->has('oneTimePercent')) {
                             $oneTimeAmountPerCharity =  round(( $request->oneTimePercent[$selected_charity] * $oneTimeAmount) / 100 , 2);
@@ -586,7 +586,7 @@ class AnnualCampaignController extends Controller
                     }
 
                 }
-                
+
                 $charity['one-time-amount-distribution'] = $oneTimeAmountPerCharity;
                 $charity['one-time-percentage-distribution'] = $oneTimePercentPerCharity;
                 $charity['bi-weekly-amount-distribution'] = $biWeeklyAmountPerCharity;
@@ -604,7 +604,7 @@ class AnnualCampaignController extends Controller
             }
 
         }
-            
+
         $pool_option = $request->pool_option;
         $regional_pool_id = $request->regional_pool_id;
 
@@ -624,15 +624,15 @@ class AnnualCampaignController extends Controller
         $frequency =  $request->frequency;
         $number_of_periods = $request->number_of_periods;
 
-        $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?  
+        $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?
                             ($request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom) : 0 ;
         $biWeeklyAmount = ($frequency === 'bi-weekly' || $frequency === 'both') ?
                             ($request->bi_weekly_amount ? $request->bi_weekly_amount : $request->bi_weekly_amount_custom) : 0 ;
 
         if ($pool_option == 'C') {
 
-            $selectedCharities = $request->charities; 
-            $frequency =  $request->frequency; 
+            $selectedCharities = $request->charities;
+            $frequency =  $request->frequency;
 
             $annualBiWeeklyAmount = $biWeeklyAmount * $number_of_periods; // 26;
             $annualOneTimeAmount = $oneTimeAmount;
@@ -741,7 +741,7 @@ class AnnualCampaignController extends Controller
 
         $viewData = compact('charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
              'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id');
-      
+
         return view('annual-campaign.partials.summary', $viewData)->render();
 
     }
@@ -751,7 +751,7 @@ class AnnualCampaignController extends Controller
 
         $pledge = Pledge::where('id', $id)->first();
 
-        // Make sure this transaction is for the current logged user 
+        // Make sure this transaction is for the current logged user
         if (!$pledge) {
             return abort(404);
         } elseif  (!($pledge->user_id == Auth::id())) {
@@ -886,7 +886,7 @@ class AnnualCampaignController extends Controller
         }
 
     }
-    
+
     public function regionalPoolDetail($id)
     {
         $pool = FSPool::where('id', $id)->first();
@@ -906,12 +906,12 @@ class AnnualCampaignController extends Controller
 
             // checking -- fund support pool
             if ($pledge->type == 'P') {
-        
-                // -- For Fund Support Pool page 
+
+                // -- For Fund Support Pool page
                 $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
                     return $pool->region->name;
                 });
-                
+
                 // Find the default selected FS Pool ID
                 $pos = $fspools->search(function ($item, $key) use($pledge){
                     return $item->region_id ==  $pledge->region_id;
@@ -921,7 +921,7 @@ class AnnualCampaignController extends Controller
                 }
 
             } else {
-                // check charity 
+                // check charity
                 // $charity_ids = $pledge->charities->pluck('charity_id');
                 $charity_ids = $pledge->charities->unique('charity_id')->pluck('charity_id');
 
@@ -936,16 +936,16 @@ class AnnualCampaignController extends Controller
         } else {
 
             $hist_pledge = PledgeHistorySummary::where('pledge_history_id', $id)
-                                ->first();  
+                                ->first();
 
             if ($hist_pledge->source == 'P') {
-                $hist_region = $hist_pledge->region_by_name(); 
+                $hist_region = $hist_pledge->region_by_name();
 
-                // -- For Fund Support Pool page 
+                // -- For Fund Support Pool page
                 $fspools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
                     return $pool->region->name;
                 });
-                
+
                 // Find the default selected FS Pool ID
                 $pos = $fspools->search(function ($item, $key) use($hist_region){
                     return $item->region_id ==  $hist_region->id;
@@ -963,7 +963,7 @@ class AnnualCampaignController extends Controller
                                 ->where('frequency', 'Bi-Weekly')
                                 ->orderBy('source')
                                 ->get();
-                                       
+
                 // One-Time
                 $one_time_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
                                 ->where('yearcd', $hist_pledge->yearcd)
@@ -1002,20 +1002,20 @@ class AnnualCampaignController extends Controller
     public function duplicate(Request $request)
     {
 
-        $user = User::where('id', Auth::id() )->first();        
-     
-        // check whether the current annual campaign pledge exists or not  
+        $user = User::where('id', Auth::id() )->first();
+
+        // check whether the current annual campaign pledge exists or not
         $current_pledge = Pledge::join('campaign_years', 'campaign_years.id', 'campaign_year_id')
-                                    ->where('campaign_years.calendar_year',  today()->year + 1 ) 
+                                    ->where('campaign_years.calendar_year',  today()->year + 1 )
                                     // ->where('user_id', Auth::id() )
                                     ->where('emplid', $user->emplid )
                                     ->first();
         if ($current_pledge) {
             return redirect()->route('donations.list')->with('error','The Annual Campaign pledge have already created, no duplication allowed!');
             // return abort(409);       // Conflict (pledge already exists)
-        } 
+        }
 
-        // Find the pledge 
+        // Find the pledge
         $hist_pledge = null;
         if ($request->source == 'GF') {
             $hist_pledge = Pledge::where('id', $request->id)->first();
@@ -1023,10 +1023,10 @@ class AnnualCampaignController extends Controller
             $hist_pledge = PledgeHistorySummary::where('pledge_history_id', $request->id)->first();
         }
 
-// dd([$hist_pledge, $request]);        
+// dd([$hist_pledge, $request]);
         if (!$hist_pledge) {
             return redirect()->route('donations.list')->with('error','The history record not found!');
-        }    
+        }
         if (!($hist_pledge->emplid == $user->emplid)) {
             return redirect()->route('donations.list')->with('error','This is not your history record!');
             // return abort(403);      // 403 Forbidden
@@ -1045,12 +1045,12 @@ class AnnualCampaignController extends Controller
             // Clone the new pledge from the specify pledge history
             if ($request->source == 'GF') {
                 $pledge = Pledge::where('id', $request->id)->first();
-               
+
                 $new_pledge = $pledge->replicate()->fill([
                     'campaign_year_id' => $campaignYear->id,
                 ]);
 
-                // replicate the relationship 
+                // replicate the relationship
                 $row = 0;
                 foreach($pledge->charities as $index => $old_charity)
                 {
@@ -1062,7 +1062,7 @@ class AnnualCampaignController extends Controller
                     $new_pledge_charity->amount =      $old_charity->amount;
                     $new_pledge_charity->frequency =   $old_charity->frequency;
                     $new_pledge_charity->goal_amount = $old_charity->goal_amount;
-                                                        
+
                     $new_pledge->charities[$row] = $new_pledge_charity;
                     $row += 1;
                 }
@@ -1079,7 +1079,7 @@ class AnnualCampaignController extends Controller
                 $new_pledge->f_s_pool_id = $hist_pledge->source == 'P' ? $hist_pledge->fund_supported_pool()->id : 0;
                 $new_pledge->pay_period_amount = 0;
                 $new_pledge->one_time_amount = 0;
-                
+
                 // 'Bi-Weekly'
                 $bi_weekly_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
                                 ->where('yearcd', $hist_pledge->yearcd)
@@ -1087,7 +1087,7 @@ class AnnualCampaignController extends Controller
                                 ->where('frequency', 'Bi-Weekly')
                                 ->orderBy('source')
                                 ->get();
-                                       
+
                 // One-Time
                 $one_time_pledges = PledgeHistory::where('emplid', $hist_pledge->emplid)
                                 ->where('yearcd', $hist_pledge->yearcd)
@@ -1116,7 +1116,7 @@ class AnnualCampaignController extends Controller
                             $new_pledge->pay_period_amount = $bi_weekly_pledge->pledge / 26;
                         }
 
-                        if ($bi_weekly_pledge->charity) { 
+                        if ($bi_weekly_pledge->charity) {
                             $new_pledge_charity = new PledgeCharity();
 
                             $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
@@ -1125,10 +1125,10 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity->amount = $bi_weekly_pledge->amount;
                             $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
                             $new_pledge_charity->goal_amount = $new_pledge_charity->amount * $campaignYear->number_of_periods;
-                                                                
+
                             $new_pledge->charities[$row] = $new_pledge_charity;
                             $row += 1;
-    
+
                         }
 
                     }
@@ -1138,16 +1138,16 @@ class AnnualCampaignController extends Controller
                             $new_pledge->one_time_amount = $one_time_pledge->pledge;
                         }
 
-                        if ($one_time_pledge->charity) { 
+                        if ($one_time_pledge->charity) {
                             $new_pledge_charity = new PledgeCharity();
 
                             $new_pledge_charity->charity_id = $one_time_pledge->charity->id;
                             $new_pledge_charity->additional = $one_time_pledge->name2;
                             $new_pledge_charity->percentage = $one_time_pledge->percent;
                             $new_pledge_charity->amount = $one_time_pledge->amount;
-                            $new_pledge_charity->frequency = 'one-time'; 
+                            $new_pledge_charity->frequency = 'one-time';
                             $new_pledge_charity->goal_amount =  $one_time_pledge->amount;
-                                                               
+
 
                             $new_pledge->charities[$row] = $new_pledge_charity;
                             $row += 1;
@@ -1161,7 +1161,7 @@ class AnnualCampaignController extends Controller
 
                 }
 
-                // dd([ $bi_weekly_pledges, $one_time_pledges, $new_pledge ]);                                            
+                // dd([ $bi_weekly_pledges, $one_time_pledges, $new_pledge ]);
 
             }
 
