@@ -170,19 +170,19 @@
                 type: 'GET',
                 data: 'yearcd='+ yearcd + '&frequency='+ frequency +'&source='+ source + '&id='+id+ '&donation_type='+donation_type   ,
                 dataType: 'html',
-                success: function (result) {
+                success: function (result, text, xhr) {
                     // $('.modal-title span').html(name);
+                    if(result.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login'; 
+                    }
                     $(target).html(result);
+                    $('#pledgeDetailModal').modal('show');
                 },
-                complete: function() {
+                error: function(xhr, resp, text) {
+                    alert("Something went wrong, Please try again...");
                 },
-                error: function () {
-                    alert("error");
-                    $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
-                }
             })
 
-            $('#pledgeDetailModal').modal('show')
         }
     });
 

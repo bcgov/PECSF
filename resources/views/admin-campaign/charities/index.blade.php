@@ -144,10 +144,10 @@
             </div>
         @endif
     
-        <div id="export-section" class="px-3 float-right">
+        {{-- <div id="export-section" class="px-3 float-right">
             <button type="button" id="export-btn" value="export" class="btn btn-primary px-4 mb-2">Export</button>
             <span id="export-section-result"></span>
-        </div>
+        </div> --}}
 
 		<table class="table table-bordered" id="charity-table" style="width:100%">
 			<thead>
@@ -262,7 +262,14 @@
                     data.category_code  = $("select[name='category_code']").val();
                     data.province = $("select[name='province']").val();
                     data.use_alt_address = $("select[name='use_alt_address']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', orderable: false, searchable: false, 
@@ -287,9 +294,9 @@
 
 
         // Move the export button to the filter area
-        $('#charity-table_filter').parent().append( $('#export-section') );
+        // $('#charity-table_filter').parent().append( $('#export-section') );
 
-        $(window).keydown(function(event){
+        $('#charity-filter-form').keydown(function(event){
             if(event.keyCode == 13) {
                 event.preventDefault();
                 oTable.ajax.reload();
@@ -310,138 +317,138 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
-        // For auto-refresh 
-        var intervalID = null;
-        var batch_id = null;
+        // // For auto-refresh 
+        // var intervalID = null;
+        // var batch_id = null;
 
-        $('#export-btn').on('click', function() {
+        // $('#export-btn').on('click', function() {
             
-            Swal.fire({
-                text: 'Are you sure to export the selected data ?'  ,
-                // icon: 'question',
-                //showDenyButton: true,
-                confirmButtonText: 'Export',
-                showCancelButton: true,
-            }).then((result) => {
+        //     Swal.fire({
+        //         text: 'Are you sure to export the selected data ?'  ,
+        //         // icon: 'question',
+        //         //showDenyButton: true,
+        //         confirmButtonText: 'Export',
+        //         showCancelButton: true,
+        //     }).then((result) => {
 
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
+        //         // Read more about isConfirmed, isDenied below 
+        //         if (result.isConfirmed) {
 
-                    // refresh data tables first
-                    oTable.draw();
-                    $('#export-btn').prop('disabled', true);
-                    $('#export-section-result').html('Queued. Please wait.');
+        //             // refresh data tables first
+        //             oTable.draw();
+        //             $('#export-btn').prop('disabled', true);
+        //             $('#export-section-result').html('Queued. Please wait.');
 
-                    var form = $('#charity-filter-form');
+        //             var form = $('#charity-filter-form');
 
-                    // Use ajax call to submit
-                    $.ajax({
-                        method: "GET",
-                        dataType: 'json',
-                        url: '{!! route('settings.charities.export2csv') !!}',
-                        data: form.serialize(), // serializes the form's elements.
-                        success: function(data) {
-                            batch_id = data.batch_id;
-                            console.log('export job submit');
-                            intervalID = setInterval(exportProgress, 2000);
-                        },
-                        error: function(response) {
-                            $('#export-btn').prop('disabled', false);
-                            console.log('Error');
-                        }
-                    });
-                }
+        //             // Use ajax call to submit
+        //             $.ajax({
+        //                 method: "GET",
+        //                 dataType: 'json',
+        //                 url: '/charities/export',
+        //                 data: form.serialize(), // serializes the form's elements.
+        //                 success: function(data) {
+        //                     batch_id = data.batch_id;
+        //                     console.log('export job submit');
+        //                     intervalID = setInterval(exportProgress, 2000);
+        //                 },
+        //                 error: function(response) {
+        //                     $('#export-btn').prop('disabled', false);
+        //                     console.log('Error');
+        //                 }
+        //             });
+        //         }
 
-            })
+        //     })
 
-        })
+        // })
 
-        function exportProgress() {
+        // function exportProgress() {
 
-            $.ajax({
-                method: "GET",
-                dataType: 'json',
-                url:  '/settings/charities/export-progress/' + batch_id,
-                success: function(data)
-                {
-                    if (data.finished) {
-                        clearInterval(intervalID);
-                        $('#export-btn').prop('disabled', false);
-                    }
-                    $('#export-section-result').html(data.message);
-                },
-                error: function(response) {
-                    if (response.status == 422) {
-                        $('#export-btn').prop('disabled', false);
-                        $('#export-section-result').html('');
+        //     $.ajax({
+        //         method: "GET",
+        //         dataType: 'json',
+        //         url:  '/settings/charities/export-progress/' + batch_id,
+        //         success: function(data)
+        //         {
+        //             if (data.finished) {
+        //                 clearInterval(intervalID);
+        //                 $('#export-btn').prop('disabled', false);
+        //             }
+        //             $('#export-section-result').html(data.message);
+        //         },
+        //         error: function(response) {
+        //             if (response.status == 422) {
+        //                 $('#export-btn').prop('disabled', false);
+        //                 $('#export-section-result').html('');
 
-                        Swal.fire({
-                            title: 'Export failed!',
-                            text: response.responseJSON.message,
-                            icon: 'error',
-                        })
-                        clearInterval(intervalID);
-                    }
-                    console.log('export job error');
-                }
+        //                 Swal.fire({
+        //                     title: 'Export failed!',
+        //                     text: response.responseJSON.message,
+        //                     icon: 'error',
+        //                 })
+        //                 clearInterval(intervalID);
+        //             }
+        //             console.log('export job error');
+        //         }
                 
-            });
+        //     });
 
-        }
+        // }
            
             
 
-        // Model for creating new charity
-        $('#charity-create-modal').on('show.bs.modal', function (e) {
-            // do something...
-            var fields = ['code', 'name', 'status', 'effdt', 'notes'];
-            $.each( fields, function( index, field_name ) {
-                $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
-                $(document).find('[name='+field_name+']').val('');
-            });
-            $('#charity-create-modal').find('[name=status]').val('A');
+        // // Model for creating new charity
+        // $('#charity-create-modal').on('show.bs.modal', function (e) {
+        //     // do something...
+        //     var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+        //     $.each( fields, function( index, field_name ) {
+        //         $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
+        //         $(document).find('[name='+field_name+']').val('');
+        //     });
+        //     $('#charity-create-modal').find('[name=status]').val('A');
 
-        })
+        // })
 
-        $(document).on("click", "#create-confirm-btn" , function(e) {
+        // $(document).on("click", "#create-confirm-btn" , function(e) {
 		
-            var form = $('#charity-create-model-form');
-            var id = e.target.value;
+        //     var form = $('#charity-create-model-form');
+        //     var id = e.target.value;
             
-            info = 'Are you sure to create this record?';
-            if (confirm(info))
-            {
+        //     info = 'Are you sure to create this record?';
+        //     if (confirm(info))
+        //     {
                     
-                var fields = ['code', 'name', 'status', 'effdt', 'notes'];
-                $.each( fields, function( index, field_name ) {
-                    $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
-                });
+        //         var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+        //         $.each( fields, function( index, field_name ) {
+        //             $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
+        //         });
 
-                $.ajax({
-                    method: "POST",
-                    url:  '{{ route('settings.charities.store')  }}',
-                    data: form.serialize(), // serializes the form's elements.
-                    success: function(data)
-                    {
-                        oTable.ajax.reload(null, false);	// reload datatables
-                        $('#charity-create-modal').modal('hide');
+        //         $.ajax({
+        //             method: "POST",
+        //             url:  '{{ route('settings.charities.store')  }}',
+        //             data: form.serialize(), // serializes the form's elements.
+        //             success: function(data)
+        //             {
+        //                 oTable.ajax.reload(null, false);	// reload datatables
+        //                 $('#charity-create-modal').modal('hide');
                         
-                        var code = $("#charity-create-model-form [name='code']").val();
-                        Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
-                    },
-                    error: function(response) {
-                        if (response.status == 422) {
+        //                 var code = $("#charity-create-model-form [name='code']").val();
+        //                 Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
+        //             },
+        //             error: function(response) {
+        //                 if (response.status == 422) {
                             
-                            $.each(response.responseJSON.errors, function(field_name,error){
-                                $(document).find('#charity-create-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
-                            })
-                        }
-                        console.log('Error');
-                    }
-                });
+        //                     $.each(response.responseJSON.errors, function(field_name,error){
+        //                         $(document).find('#charity-create-model-form [name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+        //                     })
+        //                 }
+        //                 console.log('Error');
+        //             }
+        //         });
             
-            };
-        });
+        //     };
+        // });
 
         // Model -- Edit 
     	$(document).on("click", ".edit-charity" , function(e) {
@@ -471,7 +478,6 @@
                                 $('#charity-edit-model-form input[name=use_alt_address]').prop('checked', true);
                             else 
                                 $('#charity-edit-model-form input[name=use_alt_address]').prop('checked', false);
-                            console.log(field_value);
                         }   
                     });
                     
