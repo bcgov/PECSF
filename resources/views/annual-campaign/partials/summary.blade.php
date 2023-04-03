@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     @csrf
-                    @foreach(['one-time', 'bi-weekly'] as $key)
+                    @foreach(['bi-weekly','one-time'] as $key)
                         @if($key === 'one-time' && ( $frequency === 'one-time' || $frequency === 'both'))
                             @php $key_ = $key; @endphp
                             @php $keyCase = 'oneTime'; @endphp
@@ -90,9 +90,13 @@
 <script>
 $(function () {
 
-    $("#step-summary-area .frequencybiWeekly").show();
-    if($("#step-summary-area .frequencyoneTime").length > 0){
-        $("#step-summary-area .frequencybiWeekly").hide();
+    // $("#step-summary-area .frequencybiWeekly").show();
+    // if($("#step-summary-area .frequencyoneTime").length > 0){
+    //     $("#step-summary-area .frequencybiWeekly").hide();
+    // }
+    $("#step-summary-area .frequencyoneTime").show();
+        if($("#step-summary-area .frequencybiWeekly").length > 0){
+        $("#step-summary-area .frequencyoneTime").hide();
     }
 
     $(document).on('click', '#distributeByDollar, #distributeByPercentage', function () {
