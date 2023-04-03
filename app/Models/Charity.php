@@ -38,7 +38,7 @@ class Charity extends Model implements Auditable
     ];
 
     protected $casts = [
-        'effective_date_of_status' => 'date:m-d-Y',
+        'effective_date_of_status' => 'date:Y-m-d',
     ];
 
     protected $appends = [
