@@ -1,5 +1,6 @@
 <div id="{{$keyCase}}Section" class="amountDistributionSection">
     @if (($viewMode ?? '') !== 'pdf')
+
     <p class="mt-4"><b>Your {{($key_)}} charitable donations will be disbursed as follows:</b></p>
     <div class="d-flex align-items-center justify-content-between mb-3">
        <!-- <div class="form-check form-switch p-0">
@@ -11,7 +12,7 @@
 
         <div class="btn-group btn-group-toggle mt-3 frequency frequency{{$keyCase}}" role="group"  aria-label="Select frequency" data-toggle="buttons">
             <label class="btn btn-outline-primary btn-lg active" for="distributeByPercentage">
-                <input type="radio"  checked class="btn-check"  autocomplete="off"  id="distributeByPercentage" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" >
+                <input type="radio"  checked class="btn-check"  autocomplete="off"  id="distributeByPercentage" name="distributionByPercent{{ucfirst($keyCase)}}" value="0" >
                 Percentage
             </label>
             <label class="btn btn-outline-primary btn-lg" for="distributeByDollar">
