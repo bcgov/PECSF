@@ -469,7 +469,7 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '/annual-campaign/' ,
+                url:  '/annual-campaign' ,
                 //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
