@@ -109,7 +109,7 @@ class DonationController extends Controller {
                             ->where('emplid', $user->emplid)
                             ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type,
                                          campaign_type as donation_type, frequency, per_pay_amt as amount, pledge,
-                                         region,
+                                         (select regions.name from regions where regions.code = pledge_history_summaries.region) as region,
                                          case when source = 'P' then 0 else
                                             case when campaign_type = 'Donate Today'
                                                 then (select charity_name from charities a, pledge_histories b where a.registration_number = b.charity_bn and b.id = pledge_history_summaries.pledge_history_id)

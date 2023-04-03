@@ -26,10 +26,14 @@ class PledgeHistorySummary extends Model
 
     }
 
-    public function region_by_name() {
-        return Region::where('name', $this->region)->first();
-        // return $this->belongsTo(Region::class, 'region', 'name');
+    public function region_by_code() {
+        return Region::where('code', $this->region)->first();
     }
+
+    // public function region_by_name() {
+    //     return Region::where('name', $this->region)->first();
+    //     // return $this->belongsTo(Region::class, 'region', 'name');
+    // }
 
     public function getIsAnnualCampaignAttribute()
     {
