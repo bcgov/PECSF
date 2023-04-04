@@ -2,7 +2,14 @@
 
 	$whitelist = array('');
 	$content = file_get_contents('../.env', true);
-	$config = file_get_contents('../storage/app/.adminer_cfg', true);
+
+	$filename = '../storage/app/adminer';
+	if (file_exists($filename) ) {
+		$config = file_get_contents($filename, true);
+	} else {
+		http_response_code(403);
+		die;
+	}
 
 	function getLineWithString($context, $str) {
 
