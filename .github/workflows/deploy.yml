@@ -120,6 +120,7 @@ jobs:
                 -p DB_PORT=3306 \
                 -p SITE_NAME=PECSF-NEW \
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD_DEV }}" \
+                -p DB_PASSWORD="${{ secrets.DB_PASSWORD_DEV }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
                 -p IMAGE_STREAM_TAG="pecsf:dev" \
@@ -228,8 +229,8 @@ jobs:
      NAMESPACE: 1fd77b-prod
      BUILD_NAMESPACE: 1fd77b-tools
      BRANCH: ${{ github.ref_name }}
-     APP: pecsf-new
-     APP_HOST: pecsf.apps.silver.devops.gov.bc.ca
+     APP: pecsf
+     APP_HOST: pecsf-prod.apps.silver.devops.gov.bc.ca
      DB_NAME: pecsf
     needs:
       - build
@@ -256,20 +257,21 @@ jobs:
           test -n "${BRANCH}"
           echo "Current namespace is ${NAMESPACE}"
           #oc -n ${BUILD_NAMESPACE} policy add-role-to-group system:image-puller system:serviceaccounts:${NAMESPACE}
-          oc -n ${NAMESPACE} process -f openshift/app/performance-dc.yml \
+          oc -n ${NAMESPACE} process -f openshift/app/pecsf-dc.yml \
                 -p APP_NAME=${APP} \
                 -p SITE_URL=${APP_HOST} \
-                -p DB_HOST=mysql-0.mysql \
+                -p DB_HOST=mysql-0.mysqlh \
                 -p PERFORMANCE_MEMORY_LIMIT=4Gi \
                 -p REPLICA_COUNT=2 \
                 -p PROJECT_NAMESPACE=1fd77b-prod \
-                -p DB_SERVICE_NAME=mysql-0.mysql \
+                -p DB_SERVICE_NAME=mysql-0.mysqlh \
                 -p PERFORMANCE_VOLUME_CAPACITY=10Gi \
                 -p DB_NAME=pecsf \
                 -p DB_USER=pecsf\
                 -p HTTP_PORT=8000 \
                 -p DB_PORT=3306 \
                 -p SITE_NAME=PECSF-NEW\
+                -p DB_PASSWORD="${{ secrets.DB_PASSWORD_PROD }}" \
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD_PROD }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \

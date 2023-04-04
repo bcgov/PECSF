@@ -35,6 +35,8 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y \
     vim \
 	sudo \
 	wget
+	sudo \
+	wget
 
 
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
@@ -105,11 +107,15 @@ COPY --chown=www-data:www-data server_files/start.sh /usr/local/bin/start
 
 RUN chmod +x /usr/local/bin/start
 RUN chmod +x /var/www/html/entrypoint.sh
+RUN chmod +x /var/www/html/entrypoint.sh
 
 # Create cache and session storage structure
 RUN bash -c 'mkdir -p /var/www/html/storage{app,framework,logs}'
 RUN chmod -R 755 /var/www/html/storage
 RUN chown -R www-data:www-data /var/www/html/storage/app /var/www/html/storage/framework /var/www/html/storage/logs
+
+RUN chmod -R 755 /var/log/apache2
+RUN chown -R www-data:www-data /var/log/apache2
 
 RUN chmod -R 755 /var/log/apache2
 RUN chown -R www-data:www-data /var/log/apache2
@@ -124,5 +130,6 @@ EXPOSE 8000
 
 # Add a command to base-image entrypont script
 #CMD /usr/local/bin/apache2-foreground
+CMD ["/var/www/html/entrypoint.sh"]
 
 CMD ["/var/www/html/entrypoint.sh"]

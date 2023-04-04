@@ -538,7 +538,7 @@ class AnnualCampaignController extends Controller
         }
         if (!($charities_changed) && !($biweekly_amount_changed)) {         
             $biWeeklyAmount = $request->biWeeklyAmount ? array_sum($request->biWeeklyAmount) : $biWeeklyAmount;
-            $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : biWeeklyPercent;
+            $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : $biWeeklyPercent;
         }
 
         $annualBiWeeklyAmount = $biWeeklyAmount * $request->number_of_periods; //  26;
