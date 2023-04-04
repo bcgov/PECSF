@@ -35,7 +35,6 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y \
     unzip \
     vim \
 	sudo \
-	wget \
 	wget
 
 
@@ -146,7 +145,6 @@ EXPOSE 8000
 
 # Add a command to base-image entrypont script
 #CMD /usr/local/bin/apache2-foreground
-CMD ["/var/www/html/entrypoint.sh"]
 
 CMD ["/var/www/html/entrypoint.sh"]
 
