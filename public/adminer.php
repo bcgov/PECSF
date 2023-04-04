@@ -37,7 +37,7 @@
 	$app_env = getValueWithKey($content, 'APP_ENV');
 	$adminer_env = getValueWithKey($config, 'ADMINER_ENABLE');
 
-	if (str_starts_with( strtolower($app_env) , 'prod') && ($adminer_env <> 'on') ) {
+	if ($adminer_env <> 'on') {
 			http_response_code(403);
 		die;
 	}
