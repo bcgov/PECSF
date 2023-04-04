@@ -369,7 +369,7 @@
         @endif
     <div class="row p-1">
         <h2>Welcome to returning volunteers, new volunteers and those of you thinking of volunteering! </h2>
-        <div>Welcome to the volunteer section of the PECSF app.  This section will have increased functionality in future releases of the app.  As always, we welcome your feedback, if you have any suggestions or comments, please feel free to share them with us in our <a href="https://forms.office.com/pages/responsepage.aspx?id=AFLbbw09ikqwNtNoXjWa3Ai9wfjgvSFOiS5TXhN1jFFUN1gxTjE4VkkzNUpMTFFRV1ZGVTVORTdCNCQlQCN0PWcu" target="_blank">volunteer feedback survey</a>
+        <div>Welcome to the volunteer section of the PECSF app.  This section will have increased functionality in future releases of the app.  As always, we welcome your feedback, if you have any suggestions or comments, please feel free to share them with us in our <a href="https://forms.office.com/pages/responsepage.aspx?id=AFLbbw09ikqwNtNoXjWa3Ai9wfjgvSFOiS5TXhN1jFFUN1gxTjE4VkkzNUpMTFFRV1ZGVTVORTdCNCQlQCN0PWcu" target="_blank">volunteer feedback survey.</a>
         </div>
         <table class="table mt-4" style="width:100%;text-align:center;">
             <tr>
@@ -424,12 +424,12 @@
     </div>
     <br><h2>Blogs</h2><br>
     <div class="row p-1">
-        We want to hear from you!  Contact us today at <a href="mailto:PECSF@gov.bc.ca" target="_blank">&nbsp;PECSF@gov.bc.ca</a> to share a story about your favourite charity or why you chose to volunteer with PECSF.  You will find inspiring blogs from charities and volunteers on our <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772/SitePages/News-and-Blogs.aspx">&nbsp;PECSF Community Connect SharePoint.</a>
+       <div>We want to hear from you!  Contact us today at <a href="mailto:PECSF@gov.bc.ca" target="_blank">&nbsp;PECSF@gov.bc.ca</a> to share a story about your favourite charity or why you chose to volunteer with PECSF.  You will find inspiring blogs from charities and volunteers on our <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772/SitePages/News-and-Blogs.aspx">&nbsp;PECSF Community Connect SharePoint.</a></div>
     </div>
     <br><h2>Contact</h2><br>
 
     <div class="row p-2">
-        <strong>If you have any questions or are interested in volunteering for the 2023 Campaign, please email Kristina Allsopp at <a href="mailto:PECSF@gov.bc.ca" target="_blank">&nbsp;PECSF@gov.bc.ca</a></strong>
+        <strong>If you have any questions or are interested in volunteering for the 2023 Campaign, please email Kristina Allsopp at <a href="mailto:PECSF@gov.bc.ca" target="_blank">PECSF@gov.bc.ca.</a></strong>
     </div>
 <!--
     <div class="d-flex mt-3">
