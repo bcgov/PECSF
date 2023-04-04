@@ -2,7 +2,7 @@
     <td>{{$pledge->organization_code}}</td>
     <td>{{$pledge->pecsf_id ? $pledge->pecsf_id : $pledge->bc_gov_id}}</td>
     <td>{{$pledge->id}}</td>
-    <td>{{$pledge->created_at}}</td>
+    <td>{{$pledge->campaign_year ? $pledge->campaign_year->calendar_year - 1 : null }}</td>
     <td>{{$pledge->event_type}}</td>
     <td>{{number_format($pledge->deposit_amount,2)}}</td>
     <td>{{$pledge->sub_type}}</td>
