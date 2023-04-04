@@ -9,7 +9,7 @@
 
             <div class="btn-group btn-group-toggle mt-3 frequency frequency{{$keyCase}}" role="group"  aria-label="Select frequency" data-toggle="buttons">
                 <label class="btn btn-outline-primary btn-lg active" for="distributeByPercentage{{ucfirst($keyCase)}}">
-                    <input type="radio" checked class="btn-check"  autocomplete="off"  id="distributeByPercentage{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" >
+                    <input type="radio" checked class="btn-check"  autocomplete="off"  id="distributeByPercentage{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="0" >
                     Percentage
                 </label>
                 <label class="btn btn-outline-primary btn-lg" for="distributeByDollar{{ucfirst($keyCase)}}">
@@ -71,7 +71,7 @@
                     </div>
                     {{-- <input type="number" class="form-control form-control-sm total-amount" data-expected-total='{{session("amount-step")["$key_-amount"]}}' placeholder="" disabled> --}}
                     <input type="number" class="form-control form-control-sm total-amount" 
-                      data-expected-total='{{ (ucfirst($key_) == 'Bi-weekly') ? $calculatedTotalAmountBiWeekly : $calculatedTotalAmountOneTime }}' 
+                      data-expected-total='{{ (ucfirst($key_) == 'Bi-weekly') ? $biWeeklyAmountEntered : $oneTimeAmountEntered }}' 
                       value='{{ (ucfirst($key_) == 'Bi-weekly') ? number_format($calculatedTotalAmountBiWeekly,2) : number_format($calculatedTotalAmountOneTime,2) }}' disabled>
                 </div>
             </td>

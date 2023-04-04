@@ -224,7 +224,7 @@ class ImportNonGovPledgeHistory extends Command
                     pledge_type, frequency, 
                     case when frequency = 'Bi-Weekly' then max(pledge / 26) else 0 end per_pay_amt, 
                     max(pledge) as pledge,
-                    case when source = 'Pool' then (select regions.name from regions where non_gov_pledge_histories.tgb_reg_district  = regions.code) else '' end,
+                    case when source = 'Pool' then non_gov_pledge_histories.tgb_reg_district else '' end,
                     event_type, event_sub_type, event_deposit_date
                 from non_gov_pledge_histories  
                  where pledge_type in ('Annual', 'Event') 
@@ -243,7 +243,7 @@ class ImportNonGovPledgeHistory extends Command
                     pledge_type, frequency,  
                     case when frequency = 'Bi-Weekly' then max(pledge / 26) else 0 end per_pay_amt, 
                     max(pledge) as pledge,
-                    case when source = 'Pool' then (select regions.name from regions where non_gov_pledge_histories.tgb_reg_district  = regions.code) else '' end,
+                    case when source = 'Pool' then non_gov_pledge_histories.tgb_reg_district else '' end,
                     event_type, event_sub_type, event_deposit_date
                 from non_gov_pledge_histories  
                  where pledge_type in ('Donate Today');

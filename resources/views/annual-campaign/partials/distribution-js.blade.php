@@ -43,16 +43,17 @@ $(function () {
         total_amount = section.find(".total-amount").val();
         total_percent = section.find(".total-percent").val();
         expectedTotal = section.find(".total-amount").data('expected-total');
+        expectedTotalPercent = Math.round(( total_amount / expectedTotal * 100) * 100) / 100;
         // const section = $(this).parents('.amountDistributionSection');
         if (type == 'amount') {
             rows = section.find(".percent-input");
             target_rows= section.find(".amount-input");
-            expectedTotal = (expectedTotal * total_percent) / 100;
+            // expectedTotal = (expectedTotal * total_percent) / 100;
 
         } else {
             rows = section.find(".amount-input");
             target_rows= section.find(".percent-input");
-            expectedTotal = total_percent;
+            // expectedTotal =  Math.round(( total_amount / expectedTotal * 100) * 100) / 100;
         }
 
            
@@ -63,28 +64,31 @@ $(function () {
                     // newValue = expectedTotal - sum;
                     newValue = Math.round(( (current / 100 ) * expectedTotal) * 100) / 100;
                 } else {
-                    newValue = 100 - sum;
+                    // newValue = 100 - sum;
+                    newValue = expectedTotalPercent - sum;
                 }
                 $(target_rows[i]).val( newValue.toFixed(2) );
+                // update total 
             } else {
                 current = $(this).val();
                 newValue = 0;
                 if (type == 'amount') {
                     newValue = Math.round(( (current / 100 ) * expectedTotal) * 100) / 100;
                 } else {
-                    newValue = Math.round(( current / total_amount * 100) * 100) / 100;
+                    newValue = Math.round(( current / expectedTotal * 100) * 100) / 100;
                 }
                 $(target_rows[i]).val( newValue.toFixed(2) );
                 sum += newValue
             }
         });
 
-        // update the total percent to 100%
-        if (type == 'amount') {
-            section.find(".total-amount").val(expectedTotal.toFixed(2));
-        } else {
-            section.find(".total-percent").val( (100).toFixed(2) );
-        }
+        // // update the total percent to 100%
+        // if (type == 'amount') {
+        //     section.find(".total-amount").val(expectedTotal.toFixed(2));
+        // } else {
+        //     // section.find(".total-percent").val( (100).toFixed(2) );
+        //     section.find(".total-percent").val(expectedTotalPercent.toFixed(2));
+        // }
     }
 
 
@@ -141,6 +145,9 @@ $(function () {
         //     total = expectedTotal;
         // }
         section.find(".total-amount").val(total.toFixed(2));
+
+        expectedTotalPercent = Math.round(( total / expectedTotal * 100) * 100) / 100;
+        section.find(".total-percent").val(expectedTotalPercent.toFixed(2));
 
         $(row).val(  Number($(row).val()).toFixed(2) );
         // amount changed, re-calculate the percentage distribution
