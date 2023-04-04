@@ -248,11 +248,6 @@ return [
                 ]
                 ,
                 [
-                    'text' => 'Volunteer Profile',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
-                    'url'  => '/profile',
-                ],
-                [
                     'text' => 'Forms',
                     'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/bank_deposit_form',

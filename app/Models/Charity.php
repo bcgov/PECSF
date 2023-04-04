@@ -38,7 +38,7 @@ class Charity extends Model implements Auditable
     ];
 
     protected $casts = [
-        'effective_date_of_status' => 'date:m-d-Y',
+        'effective_date_of_status' => 'date:Y-m-d',
     ];
 
     protected $appends = [
@@ -104,6 +104,7 @@ class Charity extends Model implements Auditable
         "0110"	=>	"Supportive Health Care",
         "0010"	=>	"Teaching Institutions",
         "0155"	=>	"Upholding Human Rights",
+        "0" => ""
     ];
 
     public static function charity_status_list()
