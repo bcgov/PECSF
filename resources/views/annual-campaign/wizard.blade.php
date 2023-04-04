@@ -327,6 +327,8 @@ $(function () {
             pass = validate_distribution();
             if (pass) {
             nextstep = checkForm();
+                if (!nextstep)
+                    $(window).scrollTop(200);
             }
 
         } else {
@@ -360,13 +362,26 @@ $(function () {
             } else {
                 step = step - 2;
             }
-            $(".next").trigger("click");
+            // $(".next").trigger("click");
         } else if (step > 1) {
             step = step - 2;    // Normal
-            $(".next").trigger("click");
+            // $(".next").trigger("click");
         }
+
+        // to show current and hide other tabs
+        if (step < $(".step").length) {
+            $(".step").show();
+            $(".step")
+                .not(":eq(" + step++ + ")")
+                .hide();
+            stepProgress(step);
+            $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+        }
+
+        // Update nav buttons
         hideButtons(step);
         $(this).blur();
+
     });
 
     // Click on Wizard STEP icon to jump to visited  page
@@ -374,7 +389,21 @@ $(function () {
 
         if ($(this).hasClass('active') && ($(this).index() + 1 != step) ) {
             step = $(this).index();
-            $(".next").trigger("click");
+            // $(".next").trigger("click");
+
+            // to show current and hide other tabs
+            if (step < $(".step").length) {
+                $(".step").show();
+                $(".step")
+                    .not(":eq(" + step++ + ")")
+                    .hide();
+                stepProgress(step);
+                $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+            }
+
+            // Update nav buttons
+            hideButtons(step);
+            $(this).blur();
         }
 
     })
@@ -549,7 +578,7 @@ $(function () {
 
 </script>
 
-
+// Page 2 -- charities 
 @include('annual-campaign.partials.choose-charity-js')
 <script type="x-tmpl" id="organization-tmpl">
     @include('annual-campaign.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
@@ -558,7 +587,7 @@ $(function () {
     $(".org_hook").show();
 </script>
 
-
+// Page 4 -- distribution 
 @include('annual-campaign.partials.distribution-js')
 
 <script>
@@ -570,33 +599,39 @@ $(function () {
         bi_weekly_expected = $('#biWeeklySection').find(".total-amount").data('expected-total');
         bi_weekly_calculated = $('#biWeeklySection').find(".total-amount").val();
 
+        frequency = $("input[name=frequency]:checked").val();
+
         one_time_percent = $('#oneTimeSection').find(".total-percent").val();
         bi_weekly_percent = $('#biWeeklySection').find(".total-percent").val();
 
         msg = '';
-        if (one_time_percent && one_time_percent != 100) {
-            msg += 'The sum of One Time percentage <b>' + one_time_percent + '</b> did not match with 100%.';
-            $('#distributeByPercentageOneTime').trigger('click');
-        } else {
-            if (one_time_expected != one_time_calculated) {
-                msg += 'The total distributed Bi-weekly amount <b>$ ' + one_time_calculated + '</b> did not match with your selection $ ' + one_time_expected + '.';
-                $('#distributeByDollarOneTime').trigger('click');
+        if (frequency == 'one-time' || frequency == 'both') {
+            if ( one_time_percent && one_time_percent != 100) {
+                msg += 'The sum of One Time percentage <b>' + one_time_percent + '</b> did not match with 100%.';
+                $('#distributeByPercentageOneTime').trigger('click');
+            } else {
+                if (one_time_expected != one_time_calculated) {
+                    msg += 'The total distributed Bi-weekly amount <b>$ ' + one_time_calculated + '</b> did not match with your selection $ ' + one_time_expected + '.';
+                    $('#distributeByDollarOneTime').trigger('click');
+                }
             }
         }
 
-        if (bi_weekly_percent && bi_weekly_percent != 100) {
-            if (msg) {
-                msg += '<br/> And <br/>';
-            }
-            msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '</b> did not match with 100%.';
-            $('#distributeByPercentageBiWeekly').trigger('click');
-        } else {
-            if (bi_weekly_expected != bi_weekly_calculated) {
+        if (frequency == 'bi-weekly' || frequency == 'both') {
+            if (bi_weekly_percent && bi_weekly_percent != 100) {
                 if (msg) {
                     msg += '<br/> And <br/>';
                 }
-                msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected + '.';
-                $('#distributeByDollarBiWeekly').trigger('click');
+                msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '</b> did not match with 100%.';
+                $('#distributeByPercentageBiWeekly').trigger('click');
+            } else {
+                if (bi_weekly_expected != bi_weekly_calculated) {
+                    if (msg) {
+                        msg += '<br/> And <br/>';
+                    }
+                    msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected + '.';
+                    $('#distributeByDollarBiWeekly').trigger('click');
+                }
             }
         }
 
