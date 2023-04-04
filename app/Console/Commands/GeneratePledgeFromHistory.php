@@ -182,7 +182,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
 
@@ -265,7 +265,7 @@ class GeneratePledgeFromHistory extends Command
                     $this->LogMessage('   Exception -- Organization not found - ' . $bi_pledge->org_code . ' (id - ' . $bi_pledge->id . ')' );
                 }
 
-                $region = Region::where('name', $bi_pledge->region)->first();
+                $region = Region::where('code', $bi_pledge->region)->first();
                 if ($bi_pledge->region && (!$region)) {
                     $valid = false;
                     $this->LogMessage('   Exception -- Region not found - ' . $bi_pledge->tgb_reg_district . ' (id - ' . $bi_pledge->id . ')' );
@@ -294,7 +294,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                     if (!$pool) {
@@ -415,7 +415,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')                                       
                                        ->first();
                 }
@@ -581,7 +581,7 @@ class GeneratePledgeFromHistory extends Command
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -739,7 +739,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
 
@@ -929,7 +929,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -1100,7 +1100,7 @@ class GeneratePledgeFromHistory extends Command
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }

@@ -378,7 +378,7 @@ class ImportPledgeHistory extends Command
                 select min(pledge_histories.id), emplid, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,  
                     campaign_type, frequency, 
                     case when frequency = 'Bi-Weekly' then max(pledge / 26) else 0 end per_pay_amt, max(pledge) as pledge, 
-                    case when max(source) = 'Pool' then (select regions.name from regions where max(pledge_histories.tgb_reg_district)  = regions.code) else '' end,
+                    case when max(source) = 'Pool' then max(pledge_histories.tgb_reg_district) else '' end,
 
                     null as event_type,
                     null as event_sub_type,
@@ -400,7 +400,7 @@ class ImportPledgeHistory extends Command
                 (pledge_history_id,emplid,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
                 select min(pledge_histories.id), emplid, yearcd, case when max(source) = 'Pool' then 'P' else 'C' end,
                         campaign_type, frequency, max(per_pay_amt), max(pledge),    
-                        case when max(source) = 'Pool' then (select regions.name from regions where max(pledge_histories.tgb_reg_district)  = regions.code) else '' end,
+                        case when max(source) = 'Pool' then max(pledge_histories.tgb_reg_district) else '' end,
                         max(event_type) as event_type,
                         max(event_sub_type) as event_sub_type,
                         max(event_deposit_date) as event_deposit_date
@@ -420,7 +420,7 @@ class ImportPledgeHistory extends Command
                 (pledge_history_id,emplid,yearcd,source,campaign_type,frequency,per_pay_amt,pledge,region, event_type, event_sub_type, event_deposit_date)
                 select pledge_histories.id, emplid, yearcd, case when source = 'Pool' then 'P' else 'C' end,
                         campaign_type, frequency, per_pay_amt, pledge,    
-                        case when source = 'Pool' then (select regions.name from regions where pledge_histories.tgb_reg_district  = regions.code) else '' end,
+                        case when source = 'Pool' then pledge_histories.tgb_reg_district else '' end,
                         null as event_type,
                         null as event_sub_type,
                         null as event_deposit_date

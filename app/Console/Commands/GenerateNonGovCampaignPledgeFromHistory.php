@@ -166,7 +166,7 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -287,7 +287,7 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
         if ( $bi_pledge->source == 'P') {
 
             $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                            ->where('regions.name', '=', $bi_pledge->region )
+                            ->where('regions.code', '=', $bi_pledge->region )
                             ->first();
             if (!$pool) {
                 $valid = false;

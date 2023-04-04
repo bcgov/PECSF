@@ -2,7 +2,7 @@
 <input type="hidden" name="last_selected_charities" value="{{ json_encode( isset($last_selected_charities) ? $last_selected_charities : [] ) }}">
 
 
-@foreach(['one-time', 'bi-weekly'] as $key)
+@foreach(['bi-weekly','one-time'] as $key)
     {{-- @if($key === 'one-time' && (session()->get('amount-step')['frequency'] === 'one-time' || session()->get('amount-step')['frequency'] === 'both')) --}}
     @if($key === 'one-time' && ($frequency === 'one-time' || $frequency === 'both'))
         @php $key_ = $key; @endphp
