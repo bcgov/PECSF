@@ -120,7 +120,6 @@ jobs:
                 -p DB_PORT=3306 \
                 -p SITE_NAME=PECSF-NEW \
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD_DEV }}" \
-                -p DB_PASSWORD="${{ secrets.DB_PASSWORD_DEV }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
                 -p IMAGE_STREAM_TAG="pecsf:dev" \
@@ -196,7 +195,7 @@ jobs:
                 -p HTTP_PORT=8000 \
                 -p DB_PORT=3306 \
                 -p SITE_NAME=PECSF-NEW \
-                -p DB_PASSWORD="${{ secrets.DB_PASSWORD_TEST}}" \
+                -p DB_PASSWORD="${{ secrets.DB_PASSWORD_TEST }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
                 -p IMAGE_STREAM_TAG="pecsf:test" \
@@ -271,7 +270,6 @@ jobs:
                 -p HTTP_PORT=8000 \
                 -p DB_PORT=3306 \
                 -p SITE_NAME=PECSF-NEW\
-                -p DB_PASSWORD="${{ secrets.DB_PASSWORD_PROD }}" \
                 -p DB_PASSWORD="${{ secrets.DB_PASSWORD_PROD }}" \
                 -p GIT_PROJECT=pecsf \
                 -p BUILD_NAMESPACE="1fd77b-tools" \
