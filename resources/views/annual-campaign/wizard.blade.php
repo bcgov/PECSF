@@ -287,7 +287,7 @@ $(function () {
         }
     });
 
-    $(document).on("keyup keypress", "#annual-campaign-form", function(e) { 
+    $(document).on("keyup keypress", "#annual-campaign-form", function(e) {
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13) {
             e.preventDefault();
@@ -324,7 +324,7 @@ $(function () {
         } else if (step == 4) {
 
             // Online Validation on distributed amount and percentages
-            pass = validate_distribution(); 
+            pass = validate_distribution();
             if (pass) {
             nextstep = checkForm();
             }
@@ -549,7 +549,7 @@ $(function () {
 
 </script>
 
-// Page 2 -- charities 
+
 @include('annual-campaign.partials.choose-charity-js')
 <script type="x-tmpl" id="organization-tmpl">
     @include('annual-campaign.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
@@ -558,11 +558,11 @@ $(function () {
     $(".org_hook").show();
 </script>
 
-// Page 4 -- distribution 
+
 @include('annual-campaign.partials.distribution-js')
 
 <script>
-    
+
     function validate_distribution() {
 
         one_time_expected = $('#oneTimeSection').find(".total-amount").data('expected-total');
@@ -573,7 +573,7 @@ $(function () {
         one_time_percent = $('#oneTimeSection').find(".total-percent").val();
         bi_weekly_percent = $('#biWeeklySection').find(".total-percent").val();
 
-        msg = ''; 
+        msg = '';
         if (one_time_percent && one_time_percent != 100) {
             msg += 'The sum of One Time percentage <b>' + one_time_percent + '</b> did not match with 100%.';
             $('#distributeByPercentageOneTime').trigger('click');
@@ -586,14 +586,14 @@ $(function () {
 
         if (bi_weekly_percent && bi_weekly_percent != 100) {
             if (msg) {
-                msg += '<br/> And <br/>'; 
+                msg += '<br/> And <br/>';
             }
             msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '</b> did not match with 100%.';
             $('#distributeByPercentageBiWeekly').trigger('click');
         } else {
             if (bi_weekly_expected != bi_weekly_calculated) {
                 if (msg) {
-                    msg += '<br/> And <br/>'; 
+                    msg += '<br/> And <br/>';
                 }
                 msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected + '.';
                 $('#distributeByDollarBiWeekly').trigger('click');
@@ -614,7 +614,7 @@ $(function () {
         return true;
 
     }
-   
+
 </script>
 
 @if ($is_duplicate)

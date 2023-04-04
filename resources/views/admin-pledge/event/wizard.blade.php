@@ -488,8 +488,6 @@ $(function () {
             reset_user_profile_info();
     });
 
-    // Page 2
-    // function to initialize select2 dynamic
     function initializeSelect2(selectElementObj) {
         selectElementObj.select2({
             placeholder: 'select charity',
