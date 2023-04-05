@@ -92,12 +92,13 @@ class DonationController extends Controller {
                             , 1");
 
         $event_pledges = DB::table('bank_deposit_forms')
+                ->join('campaign_years', 'campaign_years.id', 'bank_deposit_forms.campaign_year_id')
                 ->where('bank_deposit_forms.organization_code', 'GOV')
                 ->whereIn('bank_deposit_forms.event_type', ['Cash One-Time Donation','Cheque One-Time Donation'])
                 ->where('bank_deposit_forms.approved', 1)
                 ->whereNull('bank_deposit_forms.deleted_at')
                 ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
-                ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, year(created_at),
+                ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, campaign_years.calendar_year,
                             case when regional_pool_id is null then 'C' else 'P' end,
                             'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
