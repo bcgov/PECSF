@@ -334,11 +334,46 @@ $(function () {
     $(".back").on("click", function() {
         if (step > 1) {
             step = step - 2;
-            $(".next").trigger("click");
+            // $(".next").trigger("click");
         }
+
+        // to show current and hide other tabs
+        if (step < $(".step").length) {
+            $(".step").show();
+            $(".step")
+                .not(":eq(" + step++ + ")")
+                .hide();
+            stepProgress(step);
+            $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+        }
+
         hideButtons(step);
         $(this).blur();
     });
+
+    // Click on Wizard STEP icon to jump to visited  page
+    $('ul.bs4-step-tracking li').on('click', function(e) {
+
+        if ($(this).hasClass('active') && ($(this).index() + 1 != step) ) {
+            step = $(this).index();
+            // $(".next").trigger("click");
+
+            // to show current and hide other tabs
+            if (step < $(".step").length) {
+                $(".step").show();
+                $(".step")
+                    .not(":eq(" + step++ + ")")
+                    .hide();
+                stepProgress(step);
+                $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+            }
+
+            // Update nav buttons
+            hideButtons(step);
+            $(this).blur();
+        }
+
+    })
 
     // CALCULATE PROGRESS BAR
     stepProgress = function(currstep) {
