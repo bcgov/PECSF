@@ -8,7 +8,7 @@
         <p>{{ $year }}</p>
       </div>
 </div>    
-<div class="row">
+{{-- <div class="row">
     <div class="col-4 text-right">
           @if ($frequency == 'One-Time')
             <p class="font-weight-bold">One Time Payroll Deduction</p> 
@@ -19,6 +19,14 @@
       <div class="col-1">
         <p>${{ number_format($pledge_amt,2) }}</p>
       </div>
+</div>     --}}
+<div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Event Type</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->event_type }}</p>
+    </div>
 </div>    
 <div class="row">
     <div class="col-4 text-right">
@@ -36,22 +44,14 @@
       <p>{{ $pledge->deposit_date->format('Y-m-d') }}</p>
     </div>
 </div>    
-<div class="row">
-  <div class="col-4 text-right">
-  <p class="font-weight-bold">Event Type</p> 
-    </div>
-    <div class="col-6">
-      <p>{{ $pledge->event_type }}</p>
-    </div>
-</div>    
-<div class="row">
+{{-- <div class="row">
   <div class="col-4 text-right">
   <p class="font-weight-bold">Event Sub-type</p> 
     </div>
     <div class="col-6">
       <p>{{ $pledge->sub_type }}</p>
     </div>
-</div>    
+</div>     --}}
 @if ($pledge->regional_pool_id)
 <div class="row">
     <div class="col-4 text-right">
