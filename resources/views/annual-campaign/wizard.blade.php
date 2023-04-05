@@ -498,7 +498,7 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '/annual-campaign' ,
+                url:  '{{ route("annual-campaign.store") }}', 
                 //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
