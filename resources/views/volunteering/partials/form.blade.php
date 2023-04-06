@@ -3,7 +3,7 @@
     @csrf
     <br>
 
-    <input type="hidden" name="form_id" id="form_id" value="" />
+    <input type="hidden" name="form_id" id="form_id" value="0" />
 
     <div class="form-row" style="left: 5px;
     position: relative;width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
