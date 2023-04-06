@@ -1,0 +1,307 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: '${APP_NAME}'
+metadata:
+  name: pecsf-persistent
+objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: '${APP_NAME}-secrets'
+    stringData:
+      database-name: '${DB_NAME}'
+      database-password: '${DB_PASSWORD}'
+      database-root-password: '${DB_ROOT_PASSWORD}'
+      database-user: '${DB_USER}'
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: '${APP_NAME}'
+    spec:
+      ports:
+        - name: '${APP_NAME}'
+          port: 8000
+      selector:
+        deploymentconfig: '${APP_NAME}'
+  - apiVersion: v1
+    kind: Route
+    metadata:
+      name: '${APP_NAME}'
+      namespace: '${PROJECT_NAMESPACE}'
+      labels:
+        service: '${APP_NAME}'
+    spec:
+      host: '${SITE_URL}'
+      to:
+        kind: Service
+        name: '${APP_NAME}'
+        weight: 100
+      conditions:
+        - type: Admitted
+          status: 'True'
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+      port:
+        targetPort: 8000
+      wildcardPolicy: None
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: env-data
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 250Mi
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: web-app-storage
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 25Gi
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: 'true'
+      name: '${APP_NAME}'
+      namespace: '${PROJECT_NAMESPACE}'
+      labels:
+        service: '${APP_NAME}'
+    spec:
+      replicas: '${{REPLICA_COUNT}}'
+      selector:
+        deploymentconfig: '${APP_NAME}'
+      strategy:
+        type: Rolling
+        rollingParams:
+          updatePeriodSeconds: 1
+          intervalSeconds: 1
+          timeoutSeconds: 600
+          maxUnavailable: 1
+          maxSurge: 25%
+      template:
+        metadata:
+          labels:
+            deploymentconfig: '${APP_NAME}'
+        spec:
+          containers:
+            - image: '${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}'
+              name: '${APP_NAME}'
+              lifecycle:
+                postStart:
+                  exec:
+                    command: ["/bin/sh", "-c", "php /var/www/html/artisan queue:work --tries=3 --timeout=0 --memory=512 > /var/www/html/storage/logs/queue-work-2.log &
+"]
+              restartPolicy: Always
+              imagePullPolicy: Always
+              ports:
+                - containerPort: 8000
+              volumeMounts:
+                - name: config-vol
+                  mountPath: /var/www/html/.env
+                  subPath: .env
+                - name: client-images
+                  mountPath: /var/www/html/public/img/uploads
+                - name: web-app-storage
+                  mountPath: /var/www/html/storage
+              resources:
+                limits:
+                  memory: '${PERFORMANCE_MEMORY_LIMIT}'
+                  cpu: 1500m
+                requests:
+                  memory: 2Gi
+                  cpu: 750m
+              env:
+                - name: APP_NAME
+                  value: '${APP_NAME}'
+                - name: SITE_NAME
+                  value: '${SITE_NAME}'
+                - name: SITE_URL
+                  value: 'https://${SITE_URL}'
+                - name: PERFORMANCE_MEMORY_LIMIT
+                  value: '${PERFORMANCE_MEMORY_LIMIT}'
+                - name: PERFORMANCE_DATA_PATH
+                  value: '${PERFORMANCE_DATA_PATH}'
+                - name: PERFORMANCE_VOLUME_CAPACITY
+                  value: '${PERFORMANCE_VOLUME_CAPACITY}'
+                - name: HTTP_PORT
+                  value: '${HTTP_PORT}'
+                - name: DB_SERVICE_NAME
+                  value: '${DB_SERVICE_NAME}'
+                - name: DB_HOST
+                  value: '${DB_HOST}'
+                - name: DB_PORT
+                  value: '${DB_PORT}'
+                - name: PROJECT_NAMESPACE
+                  value: '${PROJECT_NAMESPACE}'
+                - name: DB_NAME
+                  value: '${DB_NAME}'
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: '${APP_NAME}-secrets'
+                      key: database-user
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: '${APP_NAME}-secrets'
+                      key: database-password
+                - name: GIT_PROJECT
+                  value: '${GIT_PROJECT}'
+                - name: GIT_TAG
+                  value: '${GIT_TAG}'
+                - name: HOST_NAME
+                  value: '${HOST_NAME}'
+                - name: MYSQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-user
+                      name: '${APP_NAME}-secrets'
+                - name: MYSQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-password
+                      name: '${APP_NAME}-secrets'
+                - name: MYSQL_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-root-password
+                      name: '${APP_NAME}-secrets'
+                - name: MYSQL_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-name
+                      name: '${APP_NAME}-secrets'
+          volumes:
+            - name: config-vol
+              configMap:
+                name: config-env-pecsf
+                items:
+                  - key: .env
+                    path: .env
+            - name: client-images
+              persistentVolumeClaim:
+                claimName: client-images
+            - name: web-app-storage
+              persistentVolumeClaim:
+                claimName: web-app-storage
+      triggers:
+        - type: ConfigChange
+      revisionHistoryLimit: 10
+      test: false
+parameters:
+  - description: Application name.
+    displayName: App Name
+    name: APP_NAME
+    required: true
+    value: '${APP_NAME}'
+  - description: Website name.
+    displayName: Site Name
+    name: SITE_NAME
+    required: true
+    value: '${SITE_NAME}'
+  - description: Website URL.
+    displayName: URL
+    name: SITE_URL
+    required: true
+    value: '${SITE_URL}'
+  - description: Image registry
+    displayName: Image Registry
+    name: IMAGE_REGISTRY
+    value: 'image-registry.openshift-image-registry.svc:5000'
+  - description: Build namespace.
+    displayName: Build Namespace
+    required: true
+    name: BUILD_NAMESPACE
+  - description: Image stream tag
+    displayName: Image Stream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: PERFORMANCE_MEMORY_LIMIT
+    required: true
+    value: '${PERFORMANCE_MEMORY_LIMIT}'
+  - description: 'Volume space available for Performance application, e.g. 512Mi, 2Gi.'
+    displayName: Performance Volume Capacity
+    name: PERFORMANCE_VOLUME_CAPACITY
+    required: true
+    value: '${PERFORMANCE_VOLUME_CAPACITY}'
+  - description: Ports opened for connections to the application from the Internet.
+    displayName: App Port
+    name: HTTP_PORT
+    required: true
+    value: '${HTTP_PORT}'
+  - description: >-
+      Container Ports opened for connections to the application from the
+      Internet.
+    displayName: Container Port
+    name: CONTAINER_PORT
+    required: true
+    value: '${CONTAINER_PORT}'
+  - description: Database service name.
+    displayName: DB Service Name
+    name: DB_SERVICE_NAME
+    required: true
+    value: '${DB_SERVICE_NAME}'
+  - description: Database host name.
+    displayName: DB Host
+    name: DB_HOST
+    required: true
+    value: '${DB_HOST}'
+  - description: Database Port opened for connections from other containers.
+    displayName: DB Port
+    name: DB_PORT
+    required: true
+    value: '${DB_PORT}'
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: PROJECT_NAMESPACE
+    value: '${PROJECT_NAMESPACE}'
+  - description: Name of the MySQL database accessed.
+    displayName: MySQL Database Name
+    name: DB_NAME
+    required: true
+    value: '${DB_NAME}'
+  - description: Username for MySQL user that will be used for accessing the database.
+    displayName: MySQL Connection Username
+    name: DB_USER
+    required: false
+    value: '${DB_USER}'
+  - description: Password for the MySQL connection user.
+    displayName: MySQL Connection Password
+    name: DB_PASSWORD
+    required: false
+    value: '${DB_PASSWORD}'
+  - description: 'Git project URL, where project source can be found.'
+    displayName: Git Project
+    name: GIT_PROJECT
+    required: true
+    value: '${GIT_PROJECT}'
+  - description: Git project URL.
+    displayName: Git URL
+    name: GIT_URL
+    required: true
+    value: '${GIT_URL}'
+  - description: Git project tag to use for source.
+    displayName: Git Tag
+    name: GIT_TAG
+    required: true
+    value: '${GIT_TAG}'
+  - description: GitHub Authorization Token (oAuth)
+    displayName: GitHub oAuth
+    name: GITHUB_AUTH_TOKEN
+    required: true
+    value: '${GITHUB_AUTH_TOKEN}'
+  - description: No. of replicas
+    displayName: Number of Replicas
+    name: REPLICA_COUNT
+    required: true

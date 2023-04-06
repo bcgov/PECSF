@@ -82,17 +82,31 @@
           </div>
     </div>    
     <div class="row">
+        @if ($old_pledges->first()->campaign_type == 'Event')   
+          {{-- No output for 'event' type --}}
+        @else 
+          <div class="col-4 text-right">
+              @if ($frequency == 'One-Time')
+                <p class="font-weight-bold">One Time Payroll Deduction</p> 
+              @else
+                <p class="font-weight-bold">Bi-weekly payroll Deduction</p> 
+              @endif
+            </div>
+            <div class="col-1">
+              <p>${{ number_format($pledge_amt,2) }}</p>
+            </div>
+        @endif
+    </div>
+    @if ($old_pledges->first()->campaign_type == 'Event')    
+      <div class="row">
         <div class="col-4 text-right">
-            @if ($frequency == 'One-Time')
-              <p class="font-weight-bold">One Time Payroll Deduction</p> 
-            @else
-              <p class="font-weight-bold">Bi-weekly payroll Deduction</p> 
-            @endif
+        <p class="font-weight-bold">Event Type</p> 
           </div>
-          <div class="col-1">
-            <p>${{ number_format($pledge_amt,2) }}</p>
+          <div class="col-6">
+            <p>{{ $old_pledges->first()->event_type }}</p>
           </div>
-    </div>    
+      </div>
+    @endif        
     <div class="row">
         <div class="col-4 text-right">
         <p class="font-weight-bold">Total Amount</p> 
@@ -108,15 +122,6 @@
           </div>
           <div class="col-6">
             <p>{{ $old_pledges->first()->event_deposit_date }}</p>
-          </div>
-      </div>    
-
-      <div class="row">
-        <div class="col-4 text-right">
-        <p class="font-weight-bold">Event Type</p> 
-          </div>
-          <div class="col-6">
-            <p>{{ $old_pledges->first()->event_type }}</p>
           </div>
       </div>    
       <div class="row">

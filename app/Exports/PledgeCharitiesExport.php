@@ -608,7 +608,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                                 THEN 'P'
                                 ELSE 'C'
                             END as pool_type ")
-                // ->join('regions', 'regions.id', 'bank_deposit_forms.region_id')
+                ->join('campaign_years', 'campaign_years.id', 'bank_deposit_forms.campaign_year_id')
                 ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
                 ->where( function($query) {
                     $query->where('employee_jobs.empl_rcd', '=', function($q) {
@@ -621,7 +621,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                 ->where('bank_deposit_forms.approved', 1)
                 ->whereNull('bank_deposit_forms.deleted_at')
                         ->when( $filters['year'], function($query) use($filters) {
-                            $query->whereRaw('year(bank_deposit_forms.created_at) = ' . $filters['year']);
+                            $query->where('campaign_years.calendar_year', $filters['year']);
                         })
                 ->get();
 

@@ -73,7 +73,7 @@ class AnnualCampaignController extends Controller
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
 
-        $fund_support_pool_list = FSPool::current()->with('region')->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
                                     return $pool->region->name;
                                   });
         $selected_charities = [];
@@ -538,7 +538,7 @@ class AnnualCampaignController extends Controller
         }
         if (!($charities_changed) && !($biweekly_amount_changed)) {         
             $biWeeklyAmount = $request->biWeeklyAmount ? array_sum($request->biWeeklyAmount) : $biWeeklyAmount;
-            $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : biWeeklyPercent;
+            $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : $biWeeklyPercent;
         }
 
         $annualBiWeeklyAmount = $biWeeklyAmount * $request->number_of_periods; //  26;

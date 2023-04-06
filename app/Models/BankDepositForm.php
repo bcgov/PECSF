@@ -15,6 +15,7 @@ class BankDepositForm extends Model implements Auditable
     protected $fillable =[
         'organization_code',
         'form_submitter_id',
+        'campaign_year_id',
         'event_type',
         'sub_type',
         'deposit_date',
@@ -58,5 +59,8 @@ class BankDepositForm extends Model implements Auditable
         return $this->hasMany(BankDepositFormOrganizations::class, 'bank_deposit_form_id', 'id');
     }
 
+    public function campaign_year() {
+        return $this->belongsTo(CampaignYear::class, 'campaign_year_id', 'id');
+    }
 
 }

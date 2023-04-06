@@ -58,7 +58,7 @@ class DonateNowController extends Controller
 
         //
         $pool_option = 'P';
-        $pools = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $pools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
@@ -81,7 +81,7 @@ class DonateNowController extends Controller
         $edit_pecsf_allow = true;
         $organizations = [];
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 

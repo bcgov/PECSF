@@ -198,6 +198,7 @@ class EventSubmissionQueueController extends Controller
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
@@ -224,9 +225,11 @@ class EventSubmissionQueueController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function details(Request $request){
-        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id ")
+        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id, campaign_years.calendar_year as calendar_year")
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
+            ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")
+
             ->get();
         foreach($submissions as $index => $submission){
             $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id","=",$request->form_id)->get();

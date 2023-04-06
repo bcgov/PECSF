@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+data:
+  primary.cnf: |
+    # Apply this config only on the primary.
+    [mysqld]
+    log-bin
+    max_allowed_packet=500M
+    expire_logs_days=1
+    binlog_format = ROW 
+  replica.cnf: |
+    # Apply this config only on replicas.
+    [mysqld]
+    super-read-only    
+    binlog_format = ROW   

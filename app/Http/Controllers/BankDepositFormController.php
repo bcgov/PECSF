@@ -42,6 +42,7 @@ class BankDepositFormController extends Controller
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
@@ -296,6 +297,7 @@ class BankDepositFormController extends Controller
                 'business_unit' => $request->business_unit,
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
+                'campaign_year_id' => $request->campaign_year,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
