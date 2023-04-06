@@ -283,9 +283,10 @@ tag = prop.substring(0,prop.indexOf("."));
 error = errors[prop][0].split(".");
 error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
+$("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>');
+
 }
 }
 $(".invalid-feedback").css("display","block");
@@ -323,7 +324,7 @@ console.log( 'more info - ' + id );
 if ( id  ) {
 // Lanuch Modal page for listing the Pool detail
 $.ajax({
-url: '/donate/regional-pool-detail/' + id,
+url: '/donate-now/regional-pool-detail/' + id,
 type: 'GET',
 // data: $("#notify-form").serialize(),
 dataType: 'html',
@@ -335,8 +336,9 @@ $(target).html(result);
 },
 complete: function() {
 },
-error: function () {
-alert("error");
+error: function (result) {
+    target = '.pledgeDetail';
+    $(target).html('');
 $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
 }
 })
