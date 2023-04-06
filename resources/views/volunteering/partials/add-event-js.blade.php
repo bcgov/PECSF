@@ -323,7 +323,7 @@ console.log( 'more info - ' + id );
 if ( id  ) {
 // Lanuch Modal page for listing the Pool detail
 $.ajax({
-url: '/donate/regional-pool-detail/' + id,
+url: '/donate-now/regional-pool-detail/' + id,
 type: 'GET',
 // data: $("#notify-form").serialize(),
 dataType: 'html',
@@ -335,8 +335,9 @@ $(target).html(result);
 },
 complete: function() {
 },
-error: function () {
-alert("error");
+error: function (result) {
+    target = '.pledgeDetail';
+    $(target).html('');
 $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
 }
 })
