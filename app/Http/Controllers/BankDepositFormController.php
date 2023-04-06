@@ -48,7 +48,7 @@ class BankDepositFormController extends Controller
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
         $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        $regions = Region::where("status","=","A")->get();
+        $regions = Region::where("status","=","A")->orderby("name", "asc")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
@@ -231,12 +231,13 @@ class BankDepositFormController extends Controller
             }
             else{
                 $total = 0;
-
+                $a = [];
                 if($request->org_count < 1){
                     $validator->errors()->add('charity','You need to Select a Charity.');
                 }
                 else{
-                    for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
+
+                    for($i=(count(request("donation_percent")) - 10) ;$i >= (count(request("donation_percent")) - $request->org_count);$i--){
 
                         if(empty(request("id")[$i]))
                         {
@@ -244,7 +245,7 @@ class BankDepositFormController extends Controller
                         }
                         if(empty(request('vendor_id')[$i])){
                             $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
-                        };
+                        }
                         if(empty(request('donation_percent')[$i])){
                             $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
                         }
@@ -252,6 +253,7 @@ class BankDepositFormController extends Controller
                             $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
                         }
                         else{
+                            $a[] = $i;
                             if(!empty(request("donation_percent")[$i]))
                             {
                                 $total = request('donation_percent')[$i] + $total;
@@ -259,8 +261,10 @@ class BankDepositFormController extends Controller
                         }
                     }
                     if($total != 100) {
-                        for ($j = 0; $j < $request->org_count; $j++) {
-                            $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
+                        for ($i=(count(request("donation_percent")) - 10);$i >= (count(request("donation_percent")) - $request->org_count);$i--) {
+                            if(in_array($i,$a)){
+                                $validator->errors()->add('donation_percent.' . $i, 'The Donation Percent Does not equal 100%.');
+                            }
                         }
                     }
                 }
@@ -460,14 +464,15 @@ class BankDepositFormController extends Controller
                             if(!empty(request("donation_percent")[$i]))
                             {
                                 $total = request('donation_percent')[$i] + $total;
+                                if($total != 100) {
+                                    for ($j = 0; $j < $request->org_count; $j++) {
+                                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
+                                    }
+                                }
                             }
                         }
                     }
-                    if($total != 100) {
-                        for ($j = 0; $j < $request->org_count; $j++) {
-                            $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
-                        }
-                    }
+
                 }
             }
         });
@@ -592,13 +597,9 @@ class BankDepositFormController extends Controller
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
         }
 
-
-
         $organizations = $organizations->paginate(7);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
-
-
 
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
     }

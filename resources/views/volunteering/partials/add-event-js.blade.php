@@ -285,7 +285,7 @@ error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
 $("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>');
+
 }
 }
 $(".invalid-feedback").css("display","block");
