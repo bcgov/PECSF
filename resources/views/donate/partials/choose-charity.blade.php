@@ -57,7 +57,7 @@
             @endforeach
             @else
                 <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
-                <span class="charity_errors"></span>
+                <span class="charity_errors errors"></span>
             @endif
         </table>
 </div>

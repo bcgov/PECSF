@@ -283,6 +283,7 @@ tag = prop.substring(0,prop.indexOf("."));
 error = errors[prop][0].split(".");
 error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
+$("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 
