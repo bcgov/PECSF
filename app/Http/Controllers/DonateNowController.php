@@ -48,7 +48,7 @@ class DonateNowController extends Controller
      */
     public function create()
     {
-    
+
         // Make sure the Annual camplaign is not started
         if (\App\Models\CampaignYear::isAnnualCampaignOpenNow() ) {
             return response("<h4>Invalid operation. Donate Now is not available during Annual Campaign Period. Click <a href='".
@@ -128,7 +128,7 @@ class DonateNowController extends Controller
                 } else {
                     // $charity = Charity::where('id', $request->charity_id)->first();
                     $charity = Charity::where('id', $request->charities[0])->first();
-                    
+
                     $in_support_of = $charity ? $charity->charity_name : '';
                 }
 
@@ -383,7 +383,6 @@ class DonateNowController extends Controller
     {
         $pool = FSPool::where('id', $id)->first();
         $charities = $pool ? $pool->charities : [];
-
         return view('donate-now.partials.pool-detail', compact('charities') )->render();
     }
 
