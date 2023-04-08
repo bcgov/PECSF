@@ -1,50 +1,22 @@
 <?php
 
 	$whitelist = array('');
-	$content = file_get_contents('../.env', true);
 
-	$filename = '../storage/app/adminer';
-	if (file_exists($filename) ) {
-		$config = file_get_contents($filename, true);
-	} else {
+	$filename = "../storage/app/adminer";
+	$ini_array = parse_ini_file( $filename );
+	
+	$adminer_env = $ini_array['ADMINER_ENABLE'];
+	$otp_secret = $ini_array['ADMINER_OTP_SECRET'];
+	$whitelist = $ini_array['WHITELIST'];
+
+	if (!($adminer_env)) {
 		http_response_code(403);
 		die;
 	}
 
-	function getLineWithString($context, $str) {
-
-		$lines = explode(PHP_EOL, $context);
-		foreach ($lines as $lineNumber => $line) {
-			if (strpos($line, $str) !== false) {
-				return $line;
-			}
-		}
-		return null;
-	}
-	
-	function getValueWithKey($context, $str) {
-
-		$line = getLineWithString($context, $str);
-		if ($line) {
-			$values = explode("=", $line);
-			return $values[1];
-		} else {
-			return '';
-		}
-	}
-
-	// Not allow to use in production envrionment
-	$app_env = getValueWithKey($content, 'APP_ENV');
-	$adminer_env = getValueWithKey($config, 'ADMINER_ENABLE');
-
-	if ($adminer_env <> 'on') {
-			http_response_code(403);
-		die;
-	}
-
 	// Not allow to use without sepcify the ip in whitelist
-	$whitelist = getValueWithKey($config , 'WHITELIST');
     $ips = explode(',',$whitelist);
+
    if (in_array($_SERVER['REMOTE_ADDR'], $ips)) {
 	   //Action for allowed IP Addresses
    } else {
