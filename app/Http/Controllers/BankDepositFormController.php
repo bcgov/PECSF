@@ -232,7 +232,7 @@ class BankDepositFormController extends Controller
             else{
                 $total = 0;
                 $a = [];
-                $reverse = count(request("donation_percent") ) - $request->org_count;
+                $reverse = count(is_array(request("donation_percent"))? request("donation_percent"):[]) - $request->org_count;
                 if($request->org_count < 1){
                     $validator->errors()->add('charity','You need to Select a Charity.');
                 }
