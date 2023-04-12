@@ -343,15 +343,15 @@ class AnnualCampaignController extends Controller
         //
         if ($request->ajax()) {
 
-            // Generate Distribution page or Summary Page 
+            // Generate Distribution page or Summary Page
             if ($request->step == 3 and $request->pool_option == 'C') {
                 return $this->distribution($request);
             }
-            if (($request->step == 3 and $request->pool_option == 'P') or 
+            if (($request->step == 3 and $request->pool_option == 'P') or
                 ($request->step == 4 and $request->pool_option == 'C')) {
                 return $this->summary($request);
             }
-            
+
             return response()->noContent();
 
         }
@@ -531,12 +531,12 @@ class AnnualCampaignController extends Controller
         $biWeeklyAmountEntered = $biWeeklyAmount;
 
         $oneTimePercent = 100;
-        $biWeeklyPercent = 100;                                    
-        if (!($charities_changed) && !($onetime_amount_changed)) {         
+        $biWeeklyPercent = 100;
+        if (!($charities_changed) && !($onetime_amount_changed)) {
             $oneTimeAmount = $request->oneTimeAmount ? array_sum($request->oneTimeAmount) : $oneTimeAmount;
             $oneTimePercent = $request->oneTimePercent ? array_sum($request->oneTimePercent) : $oneTimePercent;
         }
-        if (!($charities_changed) && !($biweekly_amount_changed)) {         
+        if (!($charities_changed) && !($biweekly_amount_changed)) {
             $biWeeklyAmount = $request->biWeeklyAmount ? array_sum($request->biWeeklyAmount) : $biWeeklyAmount;
             $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : $biWeeklyPercent;
         }
@@ -1069,7 +1069,7 @@ class AnnualCampaignController extends Controller
             return redirect()->route('donations.list')->with('error','The history record not found!');
         }
         if (!($hist_pledge->emplid == $user->emplid)) {
-            return redirect()->route('donations.list')->with('error','This is not your history record!');
+         //   return redirect()->route('donations.list')->with('error','This is not your history record!');
             // return abort(403);      // 403 Forbidden
         }
         if (!($hist_pledge->is_annual_campaign) && ($request->source == 'BI')) {

@@ -6,7 +6,14 @@
 
 @section('content')
 
-<div class="container mt-1">
+<div class="container mt-1"
+
+
+        @if ($is_duplicate)
+                    style='display:none';
+    @endif
+
+>
   <div class="row">
     <div class="col-9 col-sm-9">
         <h1>Make a Donation</h1>
@@ -498,7 +505,7 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '{{ route("annual-campaign.store") }}', 
+                url:  '{{ route("annual-campaign.store") }}',
                 //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
@@ -578,7 +585,7 @@ $(function () {
 
 </script>
 
-// Page 2 -- charities 
+// Page 2 -- charities
 @include('annual-campaign.partials.choose-charity-js')
 <script type="x-tmpl" id="organization-tmpl">
     @include('annual-campaign.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
@@ -587,7 +594,7 @@ $(function () {
     $(".org_hook").show();
 </script>
 
-// Page 4 -- distribution 
+// Page 4 -- distribution
 @include('annual-campaign.partials.distribution-js')
 
 <script>
@@ -662,6 +669,7 @@ $(function () {
     <script>
     $(function () {
         $(".next").trigger("click");
+        $(".container").fadeTo("slow",1);
     });
     </script>
 @endif
