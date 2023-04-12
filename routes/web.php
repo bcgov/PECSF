@@ -230,6 +230,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Route::get('/charities/export-progress/{id}', [CRACharityController::class,'exportProgress'])->name('charities.export2csv-progress');
     // Route::get('/charities/download-export-file/{id}', [CRACharityController::class,'downloadExportFile'])->name('charities.download-export-file');
     Route::resource('/charities', CRACharityController::class)->except(['create','destroy']);
+    Route::resource('/charity-list-maintenance', CharityListMaintenanceController::class)->only(['index','store', 'show']);
 
     // Special Campaign Setup
     Route::get('/special-campaigns/charities', [SpecialCampaignSetupController::class,'getCharities']);
@@ -243,7 +244,6 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Administrators
     Route::resource('/administrators', AdministratorController::class)->only(['index','store', 'destroy']);
-    Route::resource('/charity-list-maintenance', CharityListMaintenanceController::class)->only(['index','store', 'destroy']);
     Route::get('/administrators/users', [AdministratorController::class,'getUsers'])->name('administrators.users');
     // Route::get('/administrators/{administrator}/delete', [AdministratorController::class,'destroy']);
 

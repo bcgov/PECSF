@@ -605,32 +605,38 @@ $(function () {
         bi_weekly_percent = $('#biWeeklySection').find(".total-percent").val();
 
         msg = '';
-        if (frequency == 'one-time' || frequency == 'both') {
-            if ( one_time_percent && one_time_percent != 100) {
-                msg += 'The sum of One Time percentage <b>' + one_time_percent + '</b> did not match with 100%.';
-                $('#distributeByPercentageOneTime').trigger('click');
+        if (frequency == 'bi-weekly' || frequency == 'both') {
+
+            tab = $('#biWeeklySection input[name="distributionByPercentBiWeekly"]:checked').val();
+
+            if (tab == 0 && bi_weekly_percent && bi_weekly_percent != 100) {
+                msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '%</b> did not match with 100.00%.';
+                // $('#distributeByPercentageBiWeekly').trigger('click');
             } else {
-                if (one_time_expected != one_time_calculated) {
-                    msg += 'The total distributed Bi-weekly amount <b>$ ' + one_time_calculated + '</b> did not match with your selection $ ' + one_time_expected + '.';
-                    $('#distributeByDollarOneTime').trigger('click');
+                if (tab == 1 && bi_weekly_expected != bi_weekly_calculated) {
+                    msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected.toFixed(2) + '.';
+                    // $('#distributeByDollarBiWeekly').trigger('click');
                 }
             }
         }
 
-        if (frequency == 'bi-weekly' || frequency == 'both') {
-            if (bi_weekly_percent && bi_weekly_percent != 100) {
+        if (frequency == 'one-time' || frequency == 'both') {
+
+            tab = $('#oneTimeSection input[name="distributionByPercentOneTime"]:checked').val();
+
+            if (tab == 0 && one_time_percent && one_time_percent != 100) {
                 if (msg) {
                     msg += '<br/> And <br/>';
                 }
-                msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '</b> did not match with 100%.';
-                $('#distributeByPercentageBiWeekly').trigger('click');
+                msg += 'The sum of One Time percentage <b>' + one_time_percent + '%</b> did not match with 100.00%.';
+                // $('#distributeByPercentageOneTime').trigger('click');
             } else {
-                if (bi_weekly_expected != bi_weekly_calculated) {
+                if (tab == 1 && one_time_expected != one_time_calculated) {
                     if (msg) {
                         msg += '<br/> And <br/>';
                     }
-                    msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected + '.';
-                    $('#distributeByDollarBiWeekly').trigger('click');
+                    msg += 'The total distributed One Time amount <b>$ ' + one_time_calculated + '</b> did not match with your selection $ ' + one_time_expected.toFixed(2) + '.';
+                    // $('#distributeByDollarOneTime').trigger('click');
                 }
             }
         }
