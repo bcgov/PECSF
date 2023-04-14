@@ -13,13 +13,15 @@ $(function () {
             $("#oneTimeSection").find(".by-amount").removeClass("d-none");
             $("#oneTimeSection").find(".by-percent").addClass("d-none");
             $("#oneTimeSection").find(".percent-amount-text").html("Distribute by Percentage");
+            // redistribute('amount', $("#oneTimeSection"));
         } else {
             $("#oneTimeSection").find(".by-percent").removeClass("d-none");
             $("#oneTimeSection").find(".by-amount").addClass("d-none");
             $("#oneTimeSection").find(".percent-amount-text").html("Distribute by Dollar Amount");
+            // redistribute('percent', $("#oneTimeSection"));
         }
-        $("#oneTimeSection .percent-input").change();
-        $("#oneTimeSection .amount-input").change();
+        // $("#oneTimeSection .percent-input").change();
+        // $("#oneTimeSection .amount-input").change();
     });
     $(document).on('click', '#distributeByPercentageBiWeekly, #distributeByDollarBiWeekly', function (e) {
         const frequency = '#oneTimeSection';
@@ -28,13 +30,15 @@ $(function () {
             $("#biWeeklySection").find(".by-amount").removeClass("d-none");
             $("#biWeeklySection").find(".by-percent").addClass("d-none");
             $("#biWeeklySection").find(".percent-amount-text").html("Distribute by Percentage");
+            // redistribute('amount', $("#biWeeklySection"));
         } else {
             $("#biWeeklySection").find(".by-percent").removeClass("d-none");
             $("#biWeeklySection").find(".by-amount").addClass("d-none");
             $("#biWeeklySection").find(".percent-amount-text").html("Distribute by Dollar Amount");
+            // redistribute('percent', $("#biWeeklySection"));
         }
-        $("#biWeeklySection .percent-input").change();
-        $("#biWeeklySection .amount-input").change();
+        // $("#biWeeklySection .percent-input").change();
+        // $("#biWeeklySection .amount-input").change();
     });
 
     function redistribute(type, section)
