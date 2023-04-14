@@ -6,7 +6,14 @@
 
 @section('content')
 
-<div class="container mt-1">
+<div class="container mt-1"
+
+
+        @if ($is_duplicate)
+                    style='display:none';
+    @endif
+
+>
   <div class="row">
     <div class="col-9 col-sm-9">
         <h1>Make a Donation</h1>
@@ -498,7 +505,7 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '{{ route("annual-campaign.store") }}', 
+                url:  '{{ route("annual-campaign.store") }}',
                 //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
@@ -578,7 +585,7 @@ $(function () {
 
 </script>
 
-// Page 2 -- charities 
+// Page 2 -- charities
 @include('annual-campaign.partials.choose-charity-js')
 <script type="x-tmpl" id="organization-tmpl">
     @include('annual-campaign.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
@@ -587,7 +594,7 @@ $(function () {
     $(".org_hook").show();
 </script>
 
-// Page 4 -- distribution 
+// Page 4 -- distribution
 @include('annual-campaign.partials.distribution-js')
 
 <script>
@@ -605,32 +612,38 @@ $(function () {
         bi_weekly_percent = $('#biWeeklySection').find(".total-percent").val();
 
         msg = '';
-        if (frequency == 'one-time' || frequency == 'both') {
-            if ( one_time_percent && one_time_percent != 100) {
-                msg += 'The sum of One Time percentage <b>' + one_time_percent + '</b> did not match with 100%.';
-                $('#distributeByPercentageOneTime').trigger('click');
+        if (frequency == 'bi-weekly' || frequency == 'both') {
+
+            tab = $('#biWeeklySection input[name="distributionByPercentBiWeekly"]:checked').val();
+
+            if (tab == 0 && bi_weekly_percent && bi_weekly_percent != 100) {
+                msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '%</b> did not match with 100.00%.';
+                // $('#distributeByPercentageBiWeekly').trigger('click');
             } else {
-                if (one_time_expected != one_time_calculated) {
-                    msg += 'The total distributed Bi-weekly amount <b>$ ' + one_time_calculated + '</b> did not match with your selection $ ' + one_time_expected + '.';
-                    $('#distributeByDollarOneTime').trigger('click');
+                if (tab == 1 && bi_weekly_expected != bi_weekly_calculated) {
+                    msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected.toFixed(2) + '.';
+                    // $('#distributeByDollarBiWeekly').trigger('click');
                 }
             }
         }
 
-        if (frequency == 'bi-weekly' || frequency == 'both') {
-            if (bi_weekly_percent && bi_weekly_percent != 100) {
+        if (frequency == 'one-time' || frequency == 'both') {
+
+            tab = $('#oneTimeSection input[name="distributionByPercentOneTime"]:checked').val();
+
+            if (tab == 0 && one_time_percent && one_time_percent != 100) {
                 if (msg) {
                     msg += '<br/> And <br/>';
                 }
-                msg += 'The sum of Bi-weekly percentage <b>' + bi_weekly_percent + '</b> did not match with 100%.';
-                $('#distributeByPercentageBiWeekly').trigger('click');
+                msg += 'The sum of One Time percentage <b>' + one_time_percent + '%</b> did not match with 100.00%.';
+                // $('#distributeByPercentageOneTime').trigger('click');
             } else {
-                if (bi_weekly_expected != bi_weekly_calculated) {
+                if (tab == 1 && one_time_expected != one_time_calculated) {
                     if (msg) {
                         msg += '<br/> And <br/>';
                     }
-                    msg += 'The total distributed Bi-weekly amount <b>$ ' + bi_weekly_calculated + '</b> did not match with your selection $' + bi_weekly_expected + '.';
-                    $('#distributeByDollarBiWeekly').trigger('click');
+                    msg += 'The total distributed One Time amount <b>$ ' + one_time_calculated + '</b> did not match with your selection $ ' + one_time_expected.toFixed(2) + '.';
+                    // $('#distributeByDollarOneTime').trigger('click');
                 }
             }
         }
@@ -656,6 +669,7 @@ $(function () {
     <script>
     $(function () {
         $(".next").trigger("click");
+        $(".container").fadeTo("slow",1);
     });
     </script>
 @endif

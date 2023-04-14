@@ -116,6 +116,9 @@
         height: 38px !important;
     }
 
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 5%;
+    }
 
 </style>
 @endpush
@@ -140,6 +143,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },
             serverSide: true,
             select: true,
             'order': [[1, 'asc']],

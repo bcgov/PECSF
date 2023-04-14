@@ -71,7 +71,7 @@
                     </div>
                     {{-- <input type="number" class="form-control form-control-sm total-amount" data-expected-total='{{session("amount-step")["$key_-amount"]}}' placeholder="" disabled> --}}
                     <input type="number" class="form-control form-control-sm total-amount" 
-                      data-expected-total='{{ (ucfirst($key_) == 'Bi-weekly') ? $biWeeklyAmountEntered : $oneTimeAmountEntered }}' 
+                      data-expected-total='{{ (ucfirst($key_) == 'Bi-weekly') ? $last_bi_weekly_amount : $last_one_time_amount }}' 
                       value='{{ (ucfirst($key_) == 'Bi-weekly') ? number_format($calculatedTotalAmountBiWeekly,2) : number_format($calculatedTotalAmountOneTime,2) }}' disabled>
                 </div>
             </td>

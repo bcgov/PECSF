@@ -167,6 +167,9 @@
             padding-bottom : 20px;
         }
 
+        div.dataTables_wrapper div.dataTables_processing {
+         top: 5%;
+        }
 
 .file-upload {display:block;text-align:center;font-family: Helvetica, Arial, sans-serif;font-size: 12px;}
 .file-upload .file-select{display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
@@ -199,6 +202,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },            
             serverSide: true,
             // select: true,
             'order': [[0, 'desc']],
