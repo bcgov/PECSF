@@ -154,6 +154,10 @@
         margin-bottom: 10px;
     }
 
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 5%;
+    }
+
     .select2-selection--multiple{
         overflow: hidden !important;
         height: auto !important;
@@ -188,6 +192,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },
             serverSide: true,
             // select: true,
             'order': [[ 0, 'desc']],

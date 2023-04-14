@@ -42,7 +42,6 @@ class BankDepositFormController extends Controller
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
@@ -233,13 +232,14 @@ class BankDepositFormController extends Controller
             else{
                 $total = 0;
                 $a = [];
+                $reverse = count(is_array(request("donation_percent"))? request("donation_percent"):[]) - $request->org_count;
                 if($request->org_count < 1){
                     $validator->errors()->add('charity','You need to Select a Charity.');
                 }
                 else{
+                    for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
 
-                    for($i=(count(request("donation_percent")) - 10) ;$i >= (count(request("donation_percent")) - $request->org_count);$i--){
-
+                        $reverse++;
                         if(empty(request("id")[$i]))
                         {
                             $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
@@ -248,24 +248,23 @@ class BankDepositFormController extends Controller
                             $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
                         }
                         if(empty(request('donation_percent')[$i])){
-                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
+                            $validator->errors()->add('donation_percent.'.(((count(request("donation_percent")))+1) - $reverse),'The Donation Percent is required.');
                         }
                         else if(!is_numeric(request('donation_percent')[$i])){
-                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
+                            $validator->errors()->add('donation_percent.'.(((count(request("donation_percent")))) - $reverse),'The Donation Percent must be a number.');
                         }
                         else{
-                            $a[] = $i;
+
                             if(!empty(request("donation_percent")[$i]))
                             {
+                                $a[] = (((count(request("donation_percent")))+1) - $reverse);
                                 $total = request('donation_percent')[$i] + $total;
                             }
                         }
                     }
                     if($total != 100) {
-                        for ($i=(count(request("donation_percent")) - 10);$i >= (count(request("donation_percent")) - $request->org_count);$i--) {
-                            if(in_array($i,$a)){
-                                $validator->errors()->add('donation_percent.' . $i, 'The Donation Percent Does not equal 100%.');
-                            }
+                        for($i=(count($a)-1);$i >= 0;$i--){
+                            $validator->errors()->add('donation_percent.' . $a[$i], 'The Donation Percent Does not equal 100%.');
                         }
                     }
                 }
@@ -297,7 +296,6 @@ class BankDepositFormController extends Controller
                 'business_unit' => $request->business_unit,
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
-                'campaign_year_id' => $request->campaign_year,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
@@ -447,34 +445,43 @@ class BankDepositFormController extends Controller
                     $validator->errors()->add('charity','You need to Select a Charity.');
                 }
                 else{
+                    $a = [];
                     for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
-
                         if(empty(request("organization_name")[$i]))
                         {
+
                             $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
                         }
                         if(empty(request('vendor_id')[$i])){
+
                             $validator->errors()->add('vendor_id.'.$i,'The Vendor Id is required.');
                         };
                         if(empty(request('donation_percent')[$i])){
+
                             $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
                         }
                         else if(!is_numeric(request('donation_percent')[$i])){
+
                             $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
                         }
                         else{
+                            $a[] = $i;
                             if(!empty(request("donation_percent")[$i]))
                             {
+
                                 $total = request('donation_percent')[$i] + $total;
-                                if($total != 100) {
-                                    for ($j = 0; $j < $request->org_count; $j++) {
-                                        $validator->errors()->add('donation_percent.' . $j, 'The Donation Percent Does not equal 100%.');
-                                    }
-                                }
                             }
                         }
                     }
 
+
+                    if($total != 100) {
+                        for($i=count($a);$i > -1;$i--){
+
+                                $validator->errors()->add('donation_percent.' . $a[$i], 'The Donation Percent Does not equal 100%.');
+
+                        }
+                    }
                 }
             }
         });

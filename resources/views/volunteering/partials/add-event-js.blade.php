@@ -274,7 +274,7 @@ success:function(response){
 },
 error: function(response) {
 $('.errors').html("");
-
+    $(".donation_percent_errors").html("");
 if(response.responseJSON.errors){
 errors = response.responseJSON.errors;
 for(const prop in response.responseJSON.errors){
@@ -284,8 +284,8 @@ error = errors[prop][0].split(".");
 error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
 $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+$(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+
 
 }
 }
