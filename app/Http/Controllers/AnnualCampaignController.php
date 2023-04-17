@@ -91,6 +91,9 @@ class AnnualCampaignController extends Controller
 
         // Distribution page -- Keep the last selected charities (to determine any changes)
         $last_selected_charities = [];
+        $last_one_time_amount = null;
+        $last_bi_weekly_amount = null;        
+
 
         $calculatedTotalPercentOneTime = 0;
         $calculatedTotalAmountOneTime = 0;
@@ -173,6 +176,8 @@ class AnnualCampaignController extends Controller
             // These fields for Distribution page
             $oneTimeAmount = $pledge->one_time_amount;
             $biWeeklyAmount =  $pledge->pay_period_amount;
+            $last_one_time_amount = $pledge->one_time_amount;
+            $last_bi_weekly_amount = $pledge->pay_period_amount;
 
             $annualBiWeeklyAmount = $biWeeklyAmount * $campaign_year->number_of_periods;  // 26;
             $annualOneTimeAmount = $oneTimeAmount;
@@ -327,6 +332,7 @@ class AnnualCampaignController extends Controller
                         'oneTimeAmountEntered', 'biWeeklyAmountEntered',
                          'frequency', // 'multiplier',
                          'last_selected_charities',
+                         'last_one_time_amount', 'last_bi_weekly_amount',
                          'is_duplicate',
                     ));
     }
@@ -343,15 +349,15 @@ class AnnualCampaignController extends Controller
         //
         if ($request->ajax()) {
 
-            // Generate Distribution page or Summary Page
+            // Generate Distribution page or Summary Page 
             if ($request->step == 3 and $request->pool_option == 'C') {
                 return $this->distribution($request);
             }
-            if (($request->step == 3 and $request->pool_option == 'P') or
+            if (($request->step == 3 and $request->pool_option == 'P') or 
                 ($request->step == 4 and $request->pool_option == 'C')) {
                 return $this->summary($request);
             }
-
+            
             return response()->noContent();
 
         }
@@ -495,6 +501,8 @@ class AnnualCampaignController extends Controller
     public function distribution($request=[]) {
 
         $last_selected_charities = json_decode($request->last_selected_charities) ?? [];
+        $last_one_time_amount = $request->last_one_time_amount ?? null;
+        $last_bi_weekly_amount = $request->last_bi_weekly_amount ?? null;
 
         // charities change ?
         $charities_changed = false;
@@ -517,34 +525,47 @@ class AnnualCampaignController extends Controller
         // Amount Changed ?
         $onetime_amount_changed = false;
         $biweekly_amount_changed = false;
-        $new_oneTimeAmount = $request->oneTimeAmount ? array_sum($request->oneTimeAmount) : null;
-        $new_biWeeklyAmount = $request->biWeeklyAmount ? array_sum($request->biWeeklyAmount) : null;
-        if ($oneTimeAmount != $new_oneTimeAmount) {
+        if ($last_one_time_amount != $oneTimeAmount) {
             $onetime_amount_changed = true;
         }
-        if ($biWeeklyAmount != $new_biWeeklyAmount) {
+        if ($last_bi_weekly_amount != $biWeeklyAmount) {
             $biweekly_amount_changed = true;
+        }
+        // assign the current selection to store for comparison 
+        $last_one_time_amount = $oneTimeAmount;
+        $last_bi_weekly_amount = $biWeeklyAmount;
+
+        $oneTimePercent = $request->oneTimePercent ? array_sum($request->oneTimePercent) : 100;
+        $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : 100;   
+
+        if ($charities_changed) {
+            $oneTimePercent = 100;
+            $biWeeklyPercent = 100;
+        } else {
+
+            if ($onetime_amount_changed ) {
+                $oneTimeAmount = $oneTimeAmount ;
+                $oneTimePercent = 100;
+            } else {
+                $oneTimeAmount = $request->oneTimeAmount ? array_sum($request->oneTimeAmount) : null;
+            }
+            if ($biweekly_amount_changed ) {
+                $biWeeklyAmount = $biWeeklyAmount;
+                $biWeeklyPercent = 100;
+            } else {
+                $biWeeklyAmount = $request->biWeeklyAmount ? array_sum($request->biWeeklyAmount) : null;
+            }
+
         }
 
         // Keep user entered expected-total
         $oneTimeAmountEntered = $oneTimeAmount;
         $biWeeklyAmountEntered = $biWeeklyAmount;
 
-        $oneTimePercent = 100;
-        $biWeeklyPercent = 100;
-        if (!($charities_changed) && !($onetime_amount_changed)) {
-            $oneTimeAmount = $request->oneTimeAmount ? array_sum($request->oneTimeAmount) : $oneTimeAmount;
-            $oneTimePercent = $request->oneTimePercent ? array_sum($request->oneTimePercent) : $oneTimePercent;
-        }
-        if (!($charities_changed) && !($biweekly_amount_changed)) {
-            $biWeeklyAmount = $request->biWeeklyAmount ? array_sum($request->biWeeklyAmount) : $biWeeklyAmount;
-            $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : $biWeeklyPercent;
-        }
-
         $annualBiWeeklyAmount = $biWeeklyAmount * $request->number_of_periods; //  26;
         $annualOneTimeAmount = $oneTimeAmount;
 
-// dd([ $onetime_amount_changed, $biweekly_amount_changed, $oneTimeAmount, $biWeeklyAmount, $new_oneTimeAmount, $new_biWeeklyAmount, $request]);
+// dd([ $onetime_amount_changed, $biweekly_amount_changed, $oneTimeAmount, $biWeeklyAmount, $request]);
 
         $selected_charities = [];
 
@@ -563,11 +584,21 @@ class AnnualCampaignController extends Controller
 
             if ($index == count($selectedCharities) - 1 ) {
 
-                $charity['one-time-amount-distribution'] = $oneTimeAmount - $calculatedTotalAmountOneTime ;
-                $charity['one-time-percentage-distribution'] = $oneTimePercent - $calculatedTotalPercentOneTime;
+                if($charities_changed || $onetime_amount_changed) {
+                    $charity['one-time-amount-distribution'] = $oneTimeAmount - $calculatedTotalAmountOneTime ;
+                    $charity['one-time-percentage-distribution'] = $oneTimePercent - $calculatedTotalPercentOneTime;
+                } else {
+                    $charity['one-time-amount-distribution'] = $request->has('oneTimeAmount') ? $request->oneTimeAmount[$selected_charity] : 0;
+                    $charity['one-time-percentage-distribution'] = $request->has('oneTimePercent') ? $request->oneTimePercent[$selected_charity] :0 ;
+                }
 
-                $charity['bi-weekly-amount-distribution'] =  $biWeeklyAmount - $calculatedTotalAmountBiWeekly ;
-                $charity['bi-weekly-percentage-distribution'] = $biWeeklyPercent - $calculatedTotalPercentBiWeekly;
+                if($charities_changed || $biweekly_amount_changed) {
+                    $charity['bi-weekly-amount-distribution'] =  $biWeeklyAmount - $calculatedTotalAmountBiWeekly ;
+                    $charity['bi-weekly-percentage-distribution'] = $biWeeklyPercent - $calculatedTotalPercentBiWeekly;
+                } else {
+                    $charity['bi-weekly-amount-distribution'] = $request->has('biWeeklyAmount') ? $request->biWeeklyAmount[$selected_charity] : 0;
+                    $charity['bi-weekly-percentage-distribution'] = $request->has('biWeeklyPercent') ? $request->biWeeklyPercent[$selected_charity] : 0;
+                }
 
                 $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
                 $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
@@ -598,10 +629,11 @@ class AnnualCampaignController extends Controller
                     if ($frequency === 'one-time' || $frequency === 'both') {
                         if ($request->has('oneTimePercent')) {
                             if($onetime_amount_changed) {
-                                $oneTimeAmountPerCharity =  round(( $request->oneTimePercent[$selected_charity] * $oneTimeAmount) / 100 , 2);
-                                $oneTimePercentPerCharity = $request->oneTimePercent[$selected_charity];
-                            } else {
                                 // $oneTimeAmountPerCharity =  round(( $request->oneTimePercent[$selected_charity] * $oneTimeAmount) / 100 , 2);
+                                // $oneTimePercentPerCharity = $request->oneTimePercent[$selected_charity];
+                                $oneTimeAmountPerCharity = round($oneTimeAmount / count($selectedCharities), 2);
+                                $oneTimePercentPerCharity = round(100 / count($selectedCharities), 2);
+                            } else {
                                 $oneTimeAmountPerCharity =  $request->oneTimeAmount[$selected_charity];
                                 $oneTimePercentPerCharity = $request->oneTimePercent[$selected_charity];
                             }
@@ -614,8 +646,10 @@ class AnnualCampaignController extends Controller
                     if ($frequency === 'bi-weekly' || $frequency === 'both') {
                         if ($request->has('biWeeklyPercent')) {
                             if ($biweekly_amount_changed) {
-                                $biWeeklyAmountPerCharity = round(( $request->biWeeklyPercent[$selected_charity] * $biWeeklyAmount) / 100 , 2);
-                                $biWeeklyPercentPerCharity = $request->biWeeklyPercent[$selected_charity];
+                                // $biWeeklyAmountPerCharity = round(( $request->biWeeklyPercent[$selected_charity] * $biWeeklyAmount) / 100 , 2);
+                                // $biWeeklyPercentPerCharity = $request->biWeeklyPercent[$selected_charity];
+                                $biWeeklyAmountPerCharity = round($biWeeklyAmount / count($selectedCharities), 2);
+                                $biWeeklyPercentPerCharity = round(100 / count($selectedCharities), 2);
                             } else {
                                 $biWeeklyAmountPerCharity = $request->biWeeklyAmount[$selected_charity];
                                 $biWeeklyPercentPerCharity = $request->biWeeklyPercent[$selected_charity];
@@ -653,6 +687,7 @@ class AnnualCampaignController extends Controller
              'oneTimeAmountEntered', 'biWeeklyAmountEntered',
              'frequency', 'pool_option', 'regional_pool_id',
              'last_selected_charities',
+             'last_one_time_amount', 'last_bi_weekly_amount',
             );
 
         return view('annual-campaign.partials.distribution', $viewData)->render();
@@ -1069,7 +1104,7 @@ class AnnualCampaignController extends Controller
             return redirect()->route('donations.list')->with('error','The history record not found!');
         }
         if (!($hist_pledge->emplid == $user->emplid)) {
-         //   return redirect()->route('donations.list')->with('error','This is not your history record!');
+            return redirect()->route('donations.list')->with('error','This is not your history record!');
             // return abort(403);      // 403 Forbidden
         }
         if (!($hist_pledge->is_annual_campaign) && ($request->source == 'BI')) {

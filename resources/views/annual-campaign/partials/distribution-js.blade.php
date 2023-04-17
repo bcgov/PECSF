@@ -13,12 +13,12 @@ $(function () {
             $("#oneTimeSection").find(".by-amount").removeClass("d-none");
             $("#oneTimeSection").find(".by-percent").addClass("d-none");
             $("#oneTimeSection").find(".percent-amount-text").html("Distribute by Percentage");
-            redistribute('amount', $("#oneTimeSection"));
+            // redistribute('amount', $("#oneTimeSection"));
         } else {
             $("#oneTimeSection").find(".by-percent").removeClass("d-none");
             $("#oneTimeSection").find(".by-amount").addClass("d-none");
             $("#oneTimeSection").find(".percent-amount-text").html("Distribute by Dollar Amount");
-            redistribute('percent', $("#oneTimeSection"));
+            // redistribute('percent', $("#oneTimeSection"));
         }
         // $("#oneTimeSection .percent-input").change();
         // $("#oneTimeSection .amount-input").change();
@@ -30,12 +30,12 @@ $(function () {
             $("#biWeeklySection").find(".by-amount").removeClass("d-none");
             $("#biWeeklySection").find(".by-percent").addClass("d-none");
             $("#biWeeklySection").find(".percent-amount-text").html("Distribute by Percentage");
-            redistribute('amount', $("#biWeeklySection"));
+            // redistribute('amount', $("#biWeeklySection"));
         } else {
             $("#biWeeklySection").find(".by-percent").removeClass("d-none");
             $("#biWeeklySection").find(".by-amount").addClass("d-none");
             $("#biWeeklySection").find(".percent-amount-text").html("Distribute by Dollar Amount");
-            redistribute('percent', $("#biWeeklySection"));
+            // redistribute('percent', $("#biWeeklySection"));
         }
         // $("#biWeeklySection .percent-input").change();
         // $("#biWeeklySection .amount-input").change();
