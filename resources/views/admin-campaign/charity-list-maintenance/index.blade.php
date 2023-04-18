@@ -310,75 +310,96 @@
         $("#upload-form").submit(function(e) {
             e.preventDefault();
 
-            if (!isLoading) {
-                isLoading = true;
+            Swal.fire( {
+                title: 'Are you sure you want to update the charities by the uploaded file ?',
+                text: 'This process will take at least 20 mins to complete.',
+                // icon: 'question',
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Submit',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-primary', //insert class here
+                    cancelButton: 'btn btn-outline-secondary ml-2', //insert class here
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
 
-                var form = document.getElementById("upload-form");
-                var formData = new FormData();
-                $("select[name='organization_id']").each(function(){
-                    formData.append('organization_id', $(this).val());
-                });
-                $("input[name='donation_file']").each(function(){
-                    if ($(this).val() ) {
-                        formData.append('donation_file',  $(this)[0].files[0]);
-                    }
-                });
+                if (result.isConfirmed) {
 
-                var fields = ['organization_id', 'donation_file'];
-                $.each( fields, function( index, field_name ) {
-                    $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
-                });
-                $('.donation_file_error').html('');
+                    if (!isLoading) {
+                        isLoading = true;
 
-                $("#upload-form").fadeTo("slow",0.2);
-                $.ajax({
-                    url: "{{ route('settings.charity-list-maintenance.store') }}",
-                    type:"POST",
-                    data: formData,
-                    headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
-                    processData: false,     // tell jQuery not to process the data
-                    contentType: false,     // tell jQuery not to set contentType
-                    cache: false,
-                    dataType: 'json',
-                    success:function(response){
+                        var form = document.getElementById("upload-form");
+                        var formData = new FormData();
+                        $("select[name='organization_id']").each(function(){
+                            formData.append('organization_id', $(this).val());
+                        });
+                        $("input[name='donation_file']").each(function(){
+                            if ($(this).val() ) {
+                                formData.append('donation_file',  $(this)[0].files[0]);
+                            }
+                        });
 
-                        // Clear up the uploded file
-                        //$("input[name='donation_file']").val('');
-                        $("input[name='donation_file']").val(null);
-                        $(".file-upload").removeClass('active');
-                        $("#noFile").text("No file chosen...");
-                        $('#remove-upload-area').hide();
+                        var fields = ['organization_id', 'donation_file'];
+                        $.each( fields, function( index, field_name ) {
+                            $('#upload-form [name='+field_name+']').nextAll('span.text-danger').remove();
+                        });
+                        $('.donation_file_error').html('');
 
-                        oTable.ajax.reload(null, false);	// reload datatables
+                        $("#upload-form").fadeTo("slow",0.2);
+                        $.ajax({
+                            url: "{{ route('settings.charity-list-maintenance.store') }}",
+                            type:"POST",
+                            data: formData,
+                            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                            processData: false,     // tell jQuery not to process the data
+                            contentType: false,     // tell jQuery not to set contentType
+                            cache: false,
+                            dataType: 'json',
+                            success:function(response){
 
-                        // var code = $("#bu-edit-model-form [name='code']").val();
-                        Toast('Success', response.success,  'bg-success');
+                                // Clear up the uploded file
+                                //$("input[name='donation_file']").val('');
+                                $("input[name='donation_file']").val(null);
+                                $(".file-upload").removeClass('active');
+                                $("#noFile").text("No file chosen...");
+                                $('#remove-upload-area').hide();
 
-                        // window.location = response[0];
-                        console.log(response);
+                                oTable.ajax.reload(null, false);	// reload datatables
 
-                    },
-                    error: function(response) {
-                        if (response.status == 422) {
-                            $.each(response.responseJSON.errors, function(field_name,error){
+                                // var code = $("#bu-edit-model-form [name='code']").val();
+                                Toast('Success', response.success,  'bg-success');
 
-                                if (field_name == 'donation_file') {
-                                    $('.donation_file_error').html( '<span class="text-strong text-danger">' + error + '</span>');
-                                } else {
-                                    $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+                                // window.location = response[0];
+                                console.log(response);
+
+                            },
+                            error: function(response) {
+                                if (response.status == 422) {
+                                    $.each(response.responseJSON.errors, function(field_name,error){
+
+                                        if (field_name == 'donation_file') {
+                                            $('.donation_file_error').html( '<span class="text-strong text-danger">' + error + '</span>');
+                                        } else {
+                                            $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+                                        }
+                                    })
                                 }
-                            })
-                        }
-                        console.log('Error');
-                    },
-                    complete:function(){
-                        $("#upload-form").fadeTo("slow",1.0);
-                        isLoading = false;
-                    }
-                    
-                });
+                                console.log('Error');
+                            },
+                            complete:function(){
+                                $("#upload-form").fadeTo("slow",1.0);
+                                isLoading = false;
+                            }
+                            
+                        });
 
-            }
+                    }
+                }
+            
+            });
             
         });
 
