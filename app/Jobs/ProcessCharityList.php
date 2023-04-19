@@ -18,7 +18,14 @@ class ProcessCharityList implements ShouldQueue, ShouldBeUnique
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $uploadFilePath;
-    protected int $history_id;
+    protected $history_id;
+
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
 
     /**
      * Create a new job instance.
@@ -85,7 +92,7 @@ class ProcessCharityList implements ShouldQueue, ShouldBeUnique
      */
     public function middleware()
     {
-        echo "The job (ProcessCharityList) with history id " . $this->history_id . " started at " . now() . PHP_EOL;
+        echo "The job (ProcessCharityList) with process history id " . $this->history_id . " started at " . now() . PHP_EOL;
         // If you don’t want any overlapping jobs to be released back onto the queue, you can use the dontRelease method
         return [(new WithoutOverlapping($this->history_id))->dontRelease()];
     }

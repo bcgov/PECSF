@@ -13,9 +13,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use App\Exports\PledgesExport;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Maatwebsite\Excel\Facades\Excel;
 
-class PledgesExportJob implements ShouldQueue
+class PledgesExportJob implements ShouldQueue, ShouldBeUnique
 {
     use  Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -49,4 +50,22 @@ class PledgesExportJob implements ShouldQueue
         Excel::store(new PledgesExport($this->history_id, $this->filters), 'public/'.$this->filename);  
         
     }
+
+    public function uniqueId()
+    {
+        return $this->history_id;
+    }
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array
+     */
+    public function middleware()
+    {
+        echo "The job (PledgesExportJob) with process history id " . $this->history_id . " started at " . now() . PHP_EOL;
+        // If you don’t want any overlapping jobs to be released back onto the queue, you can use the dontRelease method
+        return [(new WithoutOverlapping($this->history_id))->dontRelease()];
+    }
+
 }
