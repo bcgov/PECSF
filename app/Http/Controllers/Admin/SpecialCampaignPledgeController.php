@@ -41,6 +41,10 @@ class SpecialCampaignPledgeController extends Controller
 
         if($request->ajax()) {
 
+            // store the filter 
+            $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
+            session(['admin_pledge_special_campaign_filter' => $filter]);            
+
             $pledges = SpecialCampaignPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'special_campaign')
                             // ->leftJoin('users', 'users.id', '=', 'special_campaign_pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'special_campaign_pledges.emplid')
@@ -137,13 +141,19 @@ class SpecialCampaignPledgeController extends Controller
                 ->make(true);
         }
 
+        // restore filter if required 
+        $filter = null;
+        if (str_contains( url()->previous(), 'admin-pledge/special-campaign')) {
+            $filter = session('admin_pledge_special_campaign_filter');
+        }
+
         // get all the record 
         $organizations = Organization::orderBy('name')->get();
         $years = SpecialCampaignPledge::distinct('yearcd')->orderBy('yearcd', 'desc')->pluck('yearcd');
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
-        return view('admin-pledge.special-campaign.index', compact('organizations', 'years','cities'));
+        return view('admin-pledge.special-campaign.index', compact('organizations', 'years','cities', 'filter'));
 
     }
 
