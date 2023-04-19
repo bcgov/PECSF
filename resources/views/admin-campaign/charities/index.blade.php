@@ -118,13 +118,13 @@
                     <label for="search">
                         &nbsp;
                     </label>
-                    <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />Search</button>
+                    <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary">Search</button>
                 </div>
                 <div class="form-group col-md-1">
                     <label for="search">
                         &nbsp;
                     </label>
-                    <button type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary">Reset</button>
+                    <button type="button" id="reset-btn" value="Clear" class="form-control btn btn-secondary">Clear</button>
                 </div>
             </div>
     
