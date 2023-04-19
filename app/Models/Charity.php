@@ -15,7 +15,7 @@ class Charity extends Model implements Auditable
         'registration_number',
         'charity_name',
         'charity_status',
-        'type_od_qualified_donee',
+        'type_of_qualified_donee',
         'effective_date_of_status',
         'sanction',
         'designation_code',

@@ -41,6 +41,11 @@ class FundSupportedPoolController extends Controller
     public function index(Request $request)
     {
         if($request->ajax()) {
+
+            // store the filter 
+            $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
+            session(['settings_fund_supported_pools_filter' => $filter]);
+
             $pools = FSPool::with('region', 'charities', 'charities.charity')
                     ->when( $request->region_id, function ($query)  use($request) {
                         $query->where('f_s_pools.region_id',$request->region_id);
@@ -51,25 +56,25 @@ class FundSupportedPoolController extends Controller
                     ->when( $request->status, function ($query)  use($request) {
                         $query->where('f_s_pools.status', $request->status);
                     })
-                    ->when( $request->effectiveTypeFilter == 'F', function ($q)  {
+                    ->when( $request->effective_type == 'F', function ($q)  {
                         return $q->where('f_s_pools.start_date', '>', today() )
                                  ->whereNull('f_s_pools.deleted_at');
                     })
-                    ->when( $request->effectiveTypeFilter == 'H', function ($q)  {
+                    ->when( $request->effective_type == 'H', function ($q)  {
                         return $q->where('f_s_pools.start_date', '<', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                                            ->whereNull('f_s_pools.deleted_at')
+                                            ->whereNull('A.deleted_at')
                                             ->where('A.start_date', '<=', today());
                                     });
                     })
-                    ->when( $request->effectiveTypeFilter == 'C', function ($q)  {
+                    ->when( $request->effective_type == 'C', function ($q)  {
                         return $q->where('f_s_pools.start_date', '=', function ($query) {
                                     $query->selectRaw('max(start_date)')
                                             ->from('f_s_pools as A')
                                             ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                                            ->whereNull('f_s_pools.deleted_at')
+                                            ->whereNull('A.deleted_at')
                                             ->where('A.start_date', '<=', today());
                                     });
                     })
@@ -101,9 +106,17 @@ class FundSupportedPoolController extends Controller
             ->make(true);
         }
 
+        // restore filter if required 
+        $filter = [];
+        if (str_contains( url()->previous(), 'settings/fund-supported-pools')) {
+            $filter = session('settings_fund_supported_pools_filter');
+        } else {
+            $filter['effective_type']= 'C'; 
+        }
+
         $regions = Region::orderBy('name')->get();
 
-        return view('admin-campaign.fund-supported-pools.index', compact('regions'));
+        return view('admin-campaign.fund-supported-pools.index', compact('regions', 'filter'));
     }
 
     /**
@@ -585,7 +598,7 @@ class FundSupportedPoolController extends Controller
 
             $pool = FSPool::where('id', $id)->first();
 
-            if ($pool->hasPledge() ) {
+            if ($pool->hasPledge() && $pool->start_date < today()) {
                 return response()->json([
                     'title'  => "Invalid delete!",
                     'message' => 'The Fund Support Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);

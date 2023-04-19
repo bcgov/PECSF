@@ -93,9 +93,18 @@
             "language": {
                processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
             },
+            stateSave: true,            
             serverSide: true,
             select: true,
             'order': [[0, 'desc']],
+            "initComplete": function(settings, json) {
+                oTable.columns.adjust().draw(false);
+
+                @if (!(str_contains( url()->previous(), 'settings/campaignyears')))
+                    oTable.table().search("").draw();
+                @endif
+        
+            },
             ajax: {
                 url: '{!! route('settings.campaignyears.index') !!}',
                 data: function (d) {
@@ -116,7 +125,7 @@
                 {data: 'end_date', name: 'end_date'},
                 {data: 'close_date', name: 'close_date'},
 
-                {data: 'action', name: 'action', orderable: false, searchable: false}
+                {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"}
             ],
             columnDefs: [
                     {
@@ -139,3 +148,4 @@
     });
     </script>
 @endpush
+
