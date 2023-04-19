@@ -378,7 +378,7 @@
 
                 </td>
                 <td style="text-align:left;font-size:26px;font-weight:bold;vertical-align:middle;">
-                    " Volunteers do not necessarily have the time; They just have the heart. " ~ Elizabeth Andrew
+                    " Volunteers do not necessarily have the time; they just have the heart. " ~ Elizabeth Andrew
                 </td>
             </tr>
         </table>
@@ -404,7 +404,7 @@
         </ul>
 
     </div>
-    <br><h2>Training</h2><br>
+    <br><h2>Training</h2>
     <div class="row p-1">
         Registration for PECSF courses is available in the Learning Centre’s PSA Learning System. Once you are in the system search “PECSF” and register for one of the following three courses.  Registration opens in June for courses in August and September.
 
@@ -418,15 +418,15 @@
             </li>
         </ul>
     </div>
-    <br><h2>Resources</h2><br>
+    <br><h2>Resources</h2>
     <div class="row p-1">
         <div>Visit the &nbsp;<a href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer/resources" target="_blank">volunteer resource section </a>on the PECSF website for all your campaign resources including campaign start-up and promotional material, document templates and logos as well as fundraising and gaming event guidelines and so much more.</div>
     </div>
-    <br><h2>Blogs</h2><br>
+    <br><h2>Blogs</h2>
     <div class="row p-1">
        <div>We want to hear from you!  Contact us today at <a href="mailto:PECSF@gov.bc.ca" target="_blank">&nbsp;PECSF@gov.bc.ca</a> to share a story about your favourite charity or why you chose to volunteer with PECSF.  You will find inspiring blogs from charities and volunteers on our <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772/SitePages/News-and-Blogs.aspx">&nbsp;PECSF Community Connect SharePoint.</a></div>
     </div>
-    <br><h2>Contact</h2><br>
+    <br><h2>Contact</h2>
 
     <div class="row p-2">
         <strong>If you have any questions or are interested in volunteering for the 2023 Campaign, please email Kristina Allsopp at <a href="mailto:PECSF@gov.bc.ca" target="_blank">PECSF@gov.bc.ca.</a></strong>
