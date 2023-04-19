@@ -6,17 +6,19 @@ use App\Imports\CharitiesImport;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ProcessCharityList implements ShouldQueue
+class ProcessCharityList implements ShouldQueue, ShouldBeUnique
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $uploadFilePath;
-    protected $history_id;
+    protected int $history_id;
 
     /**
      * Create a new job instance.
@@ -69,6 +71,23 @@ class ProcessCharityList implements ShouldQueue
 
         }
 
+    }
+
+    public function uniqueId()
+    {
+        return $this->history_id;
+    }
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array
+     */
+    public function middleware()
+    {
+        echo "The job (ProcessCharityList) with history id " . $this->history_id . " started at " . now() . PHP_EOL;
+        // If you don’t want any overlapping jobs to be released back onto the queue, you can use the dontRelease method
+        return [(new WithoutOverlapping($this->history_id))->dontRelease()];
     }
 
 }
