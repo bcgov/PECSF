@@ -606,7 +606,7 @@ class BankDepositFormController extends Controller
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->paginate(7);
+        $organizations = $organizations->groupby("charity_name")->paginate(7);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
