@@ -194,11 +194,11 @@
                 <div class="row no-gutters">
                     <div class="col-3">
                         <p>Created by: 
-                            {{ $pledge->created_by->name }} </p>
+                            {{ isset($pledge->created_by) ? $pledge->created_by->name : '' }} </p>
                     </div>
                     <div class="col-3">
                         <p>Created at: 
-                            {{ date_timezone_set($pledge->created_at, timezone_open('America/Vancouver')) }}
+                            {{ $pledge->created_at }}
                                </p>
                     </div>
                   </div>
@@ -210,7 +210,7 @@
                   </div>
                   <div class="col-3">
                     <p>Modified at: 
-                        {{ date_timezone_set($pledge->updated_at, timezone_open('America/Vancouver')) }} </p>
+                        {{ $pledge->updated_at }} </p>
                   </div>
                 </div>
 
