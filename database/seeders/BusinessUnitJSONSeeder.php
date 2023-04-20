@@ -27,8 +27,8 @@ class BusinessUnitJSONSeeder extends Seeder
                 'status' => $business_unit->status,
                 'name' => $business_unit->name,
                 'notes' => $business_unit->notes,
-                'created_by_id' => $business_unit->created_by_id,
-                'updated_by_id' => $business_unit->updated_by_id,
+                // 'created_by_id' => $business_unit->created_by_id,
+                // 'updated_by_id' => $business_unit->updated_by_id,
             ]);
 
         }
