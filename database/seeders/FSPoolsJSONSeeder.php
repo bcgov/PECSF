@@ -32,8 +32,8 @@ class FSPoolsJSONSeeder extends Seeder
                             'name' => $in_pool->region->name, 
                             'status' => $in_pool->region->status, 
                             'notes' => $in_pool->region->notes, 
-                            "created_by_id" => $in_pool->region->created_by_id, 
-                            "updated_by_id" => $in_pool->region->updated_by_id, 
+                            // "created_by_id" => $in_pool->region->created_by_id, 
+                            // "updated_by_id" => $in_pool->region->updated_by_id, 
                             "deleted_at" => $in_pool->region->deleted_at, 
                         ]);
 
@@ -42,8 +42,8 @@ class FSPoolsJSONSeeder extends Seeder
                             "start_date" => $in_pool->start_date,
                         ],[
                             "status"     =>  $in_pool->status,
-                            "created_by_id" => $in_pool->created_by_id,
-                            "updated_by_id" => $in_pool->updated_by_id,
+                            // "created_by_id" => $in_pool->created_by_id,
+                            // "updated_by_id" => $in_pool->updated_by_id,
                             "deleted_at" => $in_pool->deleted_at,
                         ]);
 
@@ -79,8 +79,8 @@ class FSPoolsJSONSeeder extends Seeder
                         "comments" => $in_pool_charity->charity->comments,
                         "ongoing_program" => $in_pool_charity->charity->ongoing_program,
                         "url" => $in_pool_charity->charity->url,
-                        "created_by_id" => $in_pool_charity->charity->created_by_id,
-                        "updated_by_id" => $in_pool_charity->charity->updated_by_id,
+                        // "created_by_id" => $in_pool_charity->charity->created_by_id,
+                        // "updated_by_id" => $in_pool_charity->charity->updated_by_id,
                         // "created_at" => $in_pool_charity->charity-> null,
                         // "updated_at" => $in_pool_charity->charity-> "2022-05-10T09:51:05.000000Z",
                     ]);

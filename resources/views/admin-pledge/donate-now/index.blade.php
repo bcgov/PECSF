@@ -45,7 +45,8 @@
                 <label for="tran_id">
                     Tran ID
                 </label>
-                <input type="number" name="tran_id" id="tran_id"  class="form-control" />
+                <input type="number" name="tran_id" id="tran_id"  class="form-control" 
+                    value="{{ isset($filter['tran_id']) ? $filter['tran_id'] : '' }}" />
             </div>
             <div class="form-group col-md-3">
                 <label for="organization_id">
@@ -54,7 +55,9 @@
                 <select name="organization_id" id="organization_id" value="" class="form-control">
                     <option value="">All</option>
                     @foreach( $organizations as $organization)
-                    <option value="{{ $organization->id }}">{{ $organization->name }} ({{ $organization->code }})</option>
+                    <option value="{{ $organization->id }}"
+                        {{ isset($filter['organization_id']) && $filter['organization_id'] == $organization->id ? 'selected' : '' }}>
+                        {{ $organization->name }} ({{ $organization->code }})</option>
                     @endforeach 
                 </select>
             </div>
@@ -64,6 +67,7 @@
                     Empl ID
                 </label>
                 <input type="number" name="emplid" id="emplid"  class="form-control" 
+                            value="{{ isset($filter['emplid']) ? $filter['emplid'] : '' }}"
                             onKeyPress="if(this.value.length==6) return false;"/>
             </div> 
 
@@ -72,6 +76,7 @@
                     PECSF ID
                 </label>
                 <input type="number" name="pecsf_id" id="pecsf_id"  class="form-control" 
+                            value="{{ isset($filter['pecsf_id']) ? $filter['pecsf_id'] : '' }}"
                             onKeyPress="if(this.value.length==6) return false;"/>
             </div> 
 
@@ -79,7 +84,8 @@
                 <label for="name">
                     Name
                 </label>
-                <input name="name" id="name"  class="form-control" />
+                <input name="name" id="name"  class="form-control" 
+                        value="{{ isset($filter['name']) ? $filter['name'] : '' }}"/>
             </div> 
 
             <div class="form-group col-md-2">
@@ -89,7 +95,8 @@
                 <select class="form-control" name="city" id="city" {{ isset($pledge) ? 'disabled' : '' }}>
                     <option value="">All</option>
                     @foreach ($cities as $city)
-                        <option value="{{ $city->city }}" >
+                        <option value="{{ $city->city }}" 
+                            {{ isset($filter['city']) && $filter['city'] == $city->city ? 'selected' : '' }}>
                             {{ $city->city }}</option>
                     @endforeach
                 </select>
@@ -104,7 +111,10 @@
                 <select id="campaign_year_id" class="form-control" name="campaign_year_id">
                     <option value="">All</option>
                     @foreach ($campaign_years as $cy)
-                        <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }}
+                        <option value="{{ $cy->id }}" {{ 
+                            isset($filter['campaign_year_id']) ? ($filter['campaign_year_id'] == $cy->id ? 'selected' : '') :
+                            ($cy->calendar_year == date('Y') ? 'selected' : '') }}>
+                            {{ $cy->calendar_year }} 
                         </option>
                     @endforeach
                 </select>
@@ -114,7 +124,8 @@
                 <label for="seqno">
                     Seq. No
                 </label>
-                <input type="number"  name="seqno" id="seqno"  class="form-control" />
+                <input type="number"  name="seqno" id="seqno"  class="form-control" 
+                    value="{{ isset($filter['seqno']) ? $filter['seqno'] : '' }}">
             </div>
 
             <div class="form-group col-md-2">
@@ -130,25 +141,27 @@
 
             <div class="form-group col-md-2">
                 <label for="one_time_amt_from">Amount (From)</label>
-                <input class="form-control " type="number" id="one_time_amt_from" name="one_time_amt_from">
+                <input class="form-control " type="number" id="one_time_amt_from" name="one_time_amt_from"
+                        value="{{ isset($filter['one_time_amt_from']) ? $filter['one_time_amt_from'] : '' }}">
             </div>
 
             <div class="form-group col-md-2">
                 <label for="one_time_amt_to">Amount (To)</label>
-                <input class="form-control " type="number" id="one_time_amt_to" name="one_time_amt_to">
+                <input class="form-control " type="number" id="one_time_amt_to" name="one_time_amt_to"
+                        value="{{ isset($filter['one_time_amt_to']) ? $filter['one_time_amt_to'] : '' }}">
             </div>
 
             <div class="form-group col-md-1">
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="button" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
+                <button type="button" id="refresh-btn" value="Search" class="form-control btn-primary">Search</button>
             </div>
             <div class="form-group col-md-1">
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Reset</button>
+                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Clear</button>
             </div>
 
         </div>
@@ -242,12 +255,16 @@
             "language": {
                processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
             },
+            stateSave: true,  
             serverSide: true,
             // select: true,
             'order': [[0, 'desc']],
-            stateSave: true,            
             "initComplete": function(settings, json) {
-                    oTable.columns.adjust().draw();
+                oTable.columns.adjust().draw(false);
+
+                @if (!(str_contains( url()->previous(), 'admin-pledge/donate-now')))
+                    oTable.page( 'first' ).draw( 'page' );
+                @endif
             },
             ajax: {
                 url: '{!! route('admin-pledge.donate-now.index') !!}',

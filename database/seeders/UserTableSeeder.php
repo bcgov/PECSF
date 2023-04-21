@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Organization;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 
@@ -192,6 +193,9 @@ class UserTableSeeder extends Seeder
         $organization = Organization::where('code','GOV')->first();
 
         foreach ($users as $user) {
+
+          if ( (!(App::environment('prod'))) || (App::environment('prod') && $user['id'] == 999)) {                      
+
             User::updateOrCreate([
                  'email' => $user['email'],
             ], [
@@ -202,6 +206,9 @@ class UserTableSeeder extends Seeder
               'organization_id' => $organization ? $organization->id : null,
               'emplid' => $user['emplid'],
             ]);
+
+          }
+
         }
 
       // Assign Role to User 

@@ -56,6 +56,16 @@ class FSPool extends Model implements Auditable
         return $this->hasMany(FSPoolCharity::class);
     }
 
+    public function created_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'created_by_id')->withDefault();
+    }
+
+    public function updated_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'updated_by_id')->withDefault();
+    }
+    
     public function getCanEditAttribute()
     {
 

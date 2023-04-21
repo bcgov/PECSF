@@ -37,7 +37,9 @@
                     <select name="region_id" value="" class="form-control">
                         <option value="">All</option>
                         @foreach ($regions as $region)
-                            <option value="{{ $region->id }}">{{ $region->code }} - {{ $region->name }} </option>
+                            <option value="{{ $region->id }}"
+                                {{ isset($filter['region_id']) && $filter['region_id'] == $region->id ? 'selected' : '' }}>
+                                {{ $region->code }} - {{ $region->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -46,7 +48,8 @@
                     <label for="start">
                         Start Date (>=)
                     </label>
-                    <input type="date" name="start_date"  class="form-control" />
+                    <input type="date" name="start_date"  class="form-control" 
+                            value="{{ isset($filter['start_date']) ? $filter['start_date'] : '' }}" />
                 </div>
     
                 <div class="form-group col-md-2">
@@ -54,9 +57,9 @@
                         Status
                     </label>
                     <select name="status" value="" class="form-control">
-                        <option value="">All</option>
-                        <option value="A">Active</option>
-                        <option value="I">Inactive</option>
+                        <option value="" {{ isset($filter['status']) && $filter['status'] == '' ? 'selected' : '' }}>All</option>
+                        <option value="A" {{ isset($filter['status']) && $filter['status'] == 'A' ? 'selected' : '' }}>Active</option>
+                        <option value="I" {{ isset($filter['status']) && $filter['status'] == 'I' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
     
@@ -65,10 +68,10 @@
                         Effective Type
                     </label>
                     <select name="effective_type" class="form-control ">
-                        <option value="" selected>Show All</option>
-                        <option value="C">Current</option>
-                        <option value="F">Future</option>
-                        <option value="H">History</option>
+                        <option value="" {{ isset($filter['effective_type']) && $filter['effective_type'] == '' ? 'selected' : '' }}>Show All</option>
+                        <option value="C" {{ isset($filter['effective_type']) && $filter['effective_type'] == 'C' ? 'selected' : '' }}>Current</option>
+                        <option value="F" {{ isset($filter['effective_type']) && $filter['effective_type'] == 'F' ? 'selected' : '' }}>Future</option>
+                        <option value="H" {{ isset($filter['effective_type']) && $filter['effective_type'] == 'H' ? 'selected' : '' }}>History</option>
                     </select>
                 </div>
                 
@@ -76,13 +79,13 @@
                     <label for="search">
                         &nbsp;
                     </label>
-                    <button type="button" id="refresh-btn" value="Refresh" class="form-control btn btn-primary" />Search</button>
+                    <button type="button" id="refresh-btn" value="Search" class="form-control btn btn-primary">Search</button>
                 </div>
                 <div class="form-group col-md-1">
                     <label for="search">
                         &nbsp;
                     </label>
-                    <button type="button" id="reset-btn" value="Reset" class="form-control btn btn-secondary">Reset</button>
+                    <button type="button" id="reset-btn" value="Clear" class="form-control btn btn-secondary">Clear</button>
                 </div>
                 
             </div>    
@@ -121,7 +124,7 @@
                     <th>Region Name</th>
                     <th>Start Date</th>
                     <th>Status</th>
-                    <th>Effective Type</th>
+                    {{-- <th>Effective Type</th> --}}
                     <th>Number of Charity</th>
                     <th>Action</th>
                 </tr>
@@ -202,16 +205,24 @@
             "language": {
                processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
             },
+            stateSave: true,               
             serverSide: true,
             select: true,
             'order': [[0, 'asc'], [2, 'asc']],
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw(false);
+
+                @if (!(str_contains( url()->previous(), 'settings/fund-supported-pools')))
+                    oTable.page( 'first' ).draw( 'page' );
+                @endif    
+            },
             ajax: {
                 url: '{!! route('settings.fund-supported-pools.index') !!}',
                 data: function (d) {
                     d.region_id = $("select[name='region_id']").val();
                     d.start_date = $("input[name='start_date']").val();
                     d.status = $("select[name='status']").val();
-                    d.effectiveTypeFilter = $("select[name='effective_type']").val();                
+                    d.effective_type = $("select[name='effective_type']").val();                
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
@@ -226,9 +237,9 @@
                 {data: 'region.name', name: 'region.name', className: "dt-nowrap", orderData: [1, 2], },
                 {data: 'start_date', name: 'start_date', className: "dt-nowrap",  orderData: [0, 2], },
                 {data: 'status', name: 'status', className: "dt-nowrap", orderData: [3, 2], },
-                {data: 'effectiveType', name: 'effectiveType', className: "dt-nowrap", orderable: false, searchable: false, "visible": true },
+                // {data: 'effectiveType', name: 'effectiveType', className: "dt-nowrap", orderable: false, searchable: false, "visible": true },
                 {data: 'charities', orderable: false, searchable: false, },
-                {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
+                {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false},
             ],
             columnDefs: [
                     {
@@ -241,27 +252,27 @@
                         },
                         targets: 3
                     },
-                    {
-                        render: function (data, type, full, meta) {
-                            if (data == 'H') {
-                                return 'History';
-                            } else if (data == 'F') {
-                                return 'Future';
-                            } else {
-                                return 'Current';
-                            }
-                        },
-                        targets: 4
-                    },
+                    // {
+                    //     render: function (data, type, full, meta) {
+                    //         if (data == 'H') {
+                    //             return 'History';
+                    //         } else if (data == 'F') {
+                    //             return 'Future';
+                    //         } else {
+                    //             return 'Current';
+                    //         }
+                    //     },
+                    //     targets: 4
+                    // },
                     {
                         render: function (data, type, full, meta) {
                             return data.length;
                         },
-                        targets: 5
+                        targets: 4
                     },
                     {
-                        width: '5em',
-                        targets: [1],
+                        // width: '5em',
+                        // targets: [1],
                     },
             ]
         });

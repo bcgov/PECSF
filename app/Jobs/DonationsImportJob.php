@@ -13,8 +13,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class DonationsImportJob implements ShouldQueue
+class DonationsImportJob implements ShouldQueue, ShouldBeUnique
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -101,4 +102,22 @@ class DonationsImportJob implements ShouldQueue
 
         }
     }
+
+    public function uniqueId()
+    {
+        return $this->history_id;
+    }
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array
+     */
+    public function middleware()
+    {
+        echo "The job (DonationsImportJob) with process history id " . $this->history_id . " started at " . now() . PHP_EOL;
+        // If you don’t want any overlapping jobs to be released back onto the queue, you can use the dontRelease method
+        return [(new WithoutOverlapping($this->history_id))->dontRelease()];
+    }
+
 }

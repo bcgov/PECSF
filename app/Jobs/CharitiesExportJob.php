@@ -5,16 +5,18 @@ namespace App\Jobs;
 use App\Models\Charity;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use App\Models\ProcessHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 ini_set('memory_limit', '-1');          // To avoid "PHP Fatal error:  Allowed memory size of xxxxx bytes exhausted"
 
-class CharitiesExportJob implements ShouldQueue
+class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -179,10 +181,10 @@ class CharitiesExportJob implements ShouldQueue
                             'f_s_pool_charities.contact_title', 'f_s_pool_charities.contact_name', 'f_s_pool_charities.contact_email',
                             'charities.comments',
                             DB::Raw("case when f_s_pool_id is null then 'No' else 'Yes' end as f_s_pool_flag"),
-                        );
+                    );
        
         // Update Process history before counting 
-        \App\Models\ProcessHistory::UpdateOrCreate([
+        ProcessHistory::UpdateOrCreate([
             'id' => $this->history_id,
         ],[                    
             'status' => 'Processing',
@@ -193,7 +195,7 @@ class CharitiesExportJob implements ShouldQueue
 
         // Update Process history after the total count 
         $total_count = $sql->count();
-        \App\Models\ProcessHistory::UpdateOrCreate([
+        ProcessHistory::UpdateOrCreate([
             'id' => $this->history_id,
         ],[                    
            'total_count' => $total_count,
@@ -220,7 +222,7 @@ class CharitiesExportJob implements ShouldQueue
 
                 // update done count
                 $count = $count + count($charities);
-                \App\Models\ProcessHistory::UpdateOrCreate([
+                ProcessHistory::UpdateOrCreate([
                     'id' => $this->history_id,
                 ],[                    
                    'status' => 'Processing',
@@ -231,11 +233,31 @@ class CharitiesExportJob implements ShouldQueue
 
         fclose($handle);
 
-        \App\Models\ProcessHistory::UpdateOrCreate([
+        // Update the data at the end
+        ProcessHistory::UpdateOrCreate([
             'id' => $this->history_id,
         ],[                    
            'status' => 'Completed',
            'end_at' => now(),
         ]);
+
     }
+
+    public function uniqueId()
+    {
+        return $this->history_id;
+    }
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array
+     */
+    public function middleware()
+    {
+        echo "The job (CharitiesExportJob) with process history id " . $this->history_id . " started at " . now() . PHP_EOL;
+        // If you don’t want any overlapping jobs to be released back onto the queue, you can use the dontRelease method
+        return [(new WithoutOverlapping($this->history_id))->dontRelease()];
+    }
+
 }
