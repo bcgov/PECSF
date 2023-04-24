@@ -83,10 +83,14 @@
                                     <td>{{ $pledge->region }}
                                     </td>
                                 @else
-                                    <td>{{ '' }} </td>
+                                    <td>
+                                        @foreach($pledge->distinct_charities()->get() as $charity)
+                                        {{ $charity->name }}<br>
+                                        @endforeach
+                                    </td>
                                 @endif
                                 <td>{{ $pledge->frequency }} </td>
-                                
+
                                 <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
                                 {{-- <td class="text-right">$ {{ $pledge->frequency == 'Bi-Weekly' ?
                                         number_format($pledge->pay_period_amount * $pledge->campaign_year->number_of_periods,2) :
