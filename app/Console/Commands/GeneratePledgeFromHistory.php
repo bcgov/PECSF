@@ -752,6 +752,7 @@ class GeneratePledgeFromHistory extends Command
 
                 $old_pledge = BankDepositForm::where('organization_code',  'GOV')
                                     ->where('form_submitter_id', 999)
+                                    ->where('campaign_year_id', $campaign_year->id)
                                     ->where('bc_gov_id', $bi_pledge->emplid)
                                     ->where('pecsf_id', null)
                                     ->where('event_type', $event_type)
@@ -769,6 +770,7 @@ class GeneratePledgeFromHistory extends Command
                     $pledge = BankDepositForm::updateOrCreate([
                             'organization_code' => 'GOV',
                             'form_submitter_id' => 999,
+                            'campaign_year_id' => $campaign_year->id,
                             'bc_gov_id' => $bi_pledge->emplid,
                             'pecsf_id' => null,
                             'event_type' => $event_type, 
@@ -1112,6 +1114,7 @@ class GeneratePledgeFromHistory extends Command
 
                 $old_pledge = BankDepositForm::where('organization_code', $bi_pledge->org_code)
                                     ->where('form_submitter_id', 999)
+                                    ->where('campaign_year_id', $campaign_year->id)
                                     ->where('bc_gov_id', $bi_pledge->emplid)
                                     ->where('pecsf_id', $bi_pledge->pecsf_id)
                                     ->where('event_type', $event_type)
@@ -1127,6 +1130,7 @@ class GeneratePledgeFromHistory extends Command
                     $pledge = BankDepositForm::updateOrCreate([
                             'organization_code' => $bi_pledge->org_code,
                             'form_submitter_id' => 999,
+                            'campaign_year_id' => $campaign_year->id,
                             'bc_gov_id' => $bi_pledge->emplid,
                             'pecsf_id' => $bi_pledge->pecsf_id,
                             'event_type' => $event_type,
