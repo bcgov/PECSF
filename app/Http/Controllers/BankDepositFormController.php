@@ -600,13 +600,12 @@ class BankDepositFormController extends Controller
         {
             $organizations->where("charity_name","LIKE","%".$request->keyword."%");
         }
-        if (is_numeric($request->pool_filter)) {
+        if (is_numeric($request->pool_filter)){
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
             $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
-            $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->groupby("charity_name")->paginate(7);
+        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
