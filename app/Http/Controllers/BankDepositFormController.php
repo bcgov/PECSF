@@ -589,7 +589,8 @@ class BankDepositFormController extends Controller
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
             $organizations->whereIn('id', $pool->charities->pluck('charity_id') );
         }
-        $organizations = $organizations->where("charity_status","=","Registered")->groupby("charity_name")->paginate(7);
+
+        $organizations = $organizations->paginate(7);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
