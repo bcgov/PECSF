@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(RolePermissionTableSeeder::class);
         // \App\Models\User::factory(10)->create();
-        $this->call(UserTableSeeder::class);
         
         // Core tables
         //$this->call(BusinessunitSeeder::class);   // Based on TEST export on Sep 13, 2022
@@ -24,8 +23,9 @@ class DatabaseSeeder extends Seeder
         $this->call(CampaignYearSeeder::class);
         // $this->call(RegionSqlFileSeeder::class);        // Based on TEST export on Sep 17, 2022
         $this->call(OrganizationJSONSeeder::class);  // Based on TEST export on Sep 17, 2022
+        $this->call(UserTableSeeder::class);
 
-        $this->call(FSPoolsJSONSeeder::class);
+        // $this->call(FSPoolsJSONSeeder::class);   // have to run after import charities
         
         // To switch Charity Seed from XL to Limited 20 Records, toggle below comments
         //$this->call(CharitySeeder::class);

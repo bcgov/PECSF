@@ -38,10 +38,10 @@ class OutputBusinessUnits2Json extends Command
      */
     public function handle()
     {
-        // Fund Support Pools 
-        $bus = BusinessUnit::orderBy('code')->get();
+        // Business Units
+        $bus = BusinessUnit::orderBy('id')->get();
                
-        $path = database_path('seeds/business_units.json');
+        $path = storage_path('app/uploads/business_units.json');
         $sql = file_put_contents($path, json_encode($bus, JSON_PRETTY_PRINT) );
 
         return 0;

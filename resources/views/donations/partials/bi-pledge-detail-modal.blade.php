@@ -45,12 +45,34 @@
         </div>
     </div>
 
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">Benefitting Charity</th>
+          <th scope="col">Percent</th>
+          <th scope="col">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+              <tr>
+                  <td scope="row">1</td>
+                  <td>
+                      <p>{{ $donate_today_pledge->charity->charity_name ?? 'N/A' }}</p>
+                      <p>{{ $donate_today_pledge->name2 ?? 'N/A' }}</p>
+                  </td>
+                  <td class="text-center">{{ number_format($donate_today_pledge->percent,2) }}%</td>
+                  <td class="text-center">${{ number_format($donate_today_pledge->amount,2) }}</td>
+              </tr>
+      </tbody>
+    </table>
+
 
   </div>
 
 @else
 
-    <div class="container">
+  <div class="container">
     <div class="row">
         <div class="col-4 text-right">
             <p class="font-weight-bold">Year</p>
@@ -60,17 +82,31 @@
           </div>
     </div>    
     <div class="row">
+        @if ($old_pledges->first()->campaign_type == 'Event')   
+          {{-- No output for 'event' type --}}
+        @else 
+          <div class="col-4 text-right">
+              @if ($frequency == 'One-Time')
+                <p class="font-weight-bold">One Time Payroll Deduction</p> 
+              @else
+                <p class="font-weight-bold">Bi-weekly payroll Deduction</p> 
+              @endif
+            </div>
+            <div class="col-1">
+              <p>${{ number_format($pledge_amt,2) }}</p>
+            </div>
+        @endif
+    </div>
+    @if ($old_pledges->first()->campaign_type == 'Event')    
+      <div class="row">
         <div class="col-4 text-right">
-            @if ($frequency == 'One-Time')
-              <p class="font-weight-bold">One Time Payroll Deduction</p> 
-            @else
-              <p class="font-weight-bold">Bi-weekly payroll Deduction</p> 
-            @endif
+        <p class="font-weight-bold">Event Type</p> 
           </div>
-          <div class="col-1">
-            <p>${{ number_format($pledge_amt,2) }}</p>
+          <div class="col-6">
+            <p>{{ $old_pledges->first()->event_type }}</p>
           </div>
-    </div>    
+      </div>
+    @endif        
     <div class="row">
         <div class="col-4 text-right">
         <p class="font-weight-bold">Total Amount</p> 
@@ -79,6 +115,25 @@
             <p>${{ number_format($total_amount,2) }}</p>
           </div>
     </div>
+    @if ($old_pledges->first()->campaign_type == 'Event')
+      <div class="row">
+        <div class="col-4 text-right">
+        <p class="font-weight-bold">Deposit Date</p> 
+          </div>
+          <div class="col-6">
+            <p>{{ $old_pledges->first()->event_deposit_date }}</p>
+          </div>
+      </div>    
+      <div class="row">
+        <div class="col-4 text-right">
+        <p class="font-weight-bold">Event Sub-type</p> 
+          </div>
+          <div class="col-6">
+            <p>{{ $old_pledges->first()->event_sub_type }}</p>
+          </div>
+      </div>    
+    @endif
+
     @if ($pool_name)
     <div class="row">
         <div class="col-4 text-right">
@@ -91,7 +146,7 @@
     @endif
 
 
-  <table class="table">
+    <table class="table">
       <thead class="thead-light">
         <tr>
           <th scope="col"></th>

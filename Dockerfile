@@ -33,7 +33,8 @@ RUN apt-get update -y && apt -y upgrade && apt-get install -y \
     zip \
     unzip \
     vim \
-	sudo
+	sudo \
+	wget
 
 
 RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
@@ -73,6 +74,21 @@ RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
 RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
 RUN docker-php-ext-install pdo pdo_mysql opcache
 
+RUN apt-get install -y \
+        libzip-dev \
+        zip \
+    && docker-php-ext-install zip
+
+RUN apt-get install -y apt-transport-https lsb-release ca-certificates 
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
+    
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 
 
@@ -88,13 +104,18 @@ COPY --chown=www-data:www-data server_files/mods-enabled/rewrite.load /etc/apach
 COPY --chown=www-data:www-data server_files/start.sh /usr/local/bin/start
 
 RUN chmod +x /usr/local/bin/start
+RUN chmod +x /var/www/html/entrypoint.sh
 
 # Create cache and session storage structure
 RUN bash -c 'mkdir -p /var/www/html/storage{app,framework,logs}'
 RUN chmod -R 755 /var/www/html/storage
 RUN chown -R www-data:www-data /var/www/html/storage/app /var/www/html/storage/framework /var/www/html/storage/logs
 
+RUN chmod -R 755 /var/log/apache2
+RUN chown -R www-data:www-data /var/log/apache2
+
 RUN chmod 4111 /usr/bin/sudo
+COPY ./php-memory-limits.ini /usr/local/etc/php/conf.d/php-memory-limits.ini
 
 
 
@@ -103,8 +124,5 @@ EXPOSE 8000
 
 
 # Add a command to base-image entrypont script
-CMD /usr/local/bin/apache2-foreground
-
 #CMD /usr/local/bin/apache2-foreground
-
-#RUN /usr/local/bin/apache2-foreground
+CMD ["/var/www/html/entrypoint.sh"]

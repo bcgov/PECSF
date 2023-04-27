@@ -9,8 +9,10 @@
     @include('admin-pledge.partials.tabs')
 @endsection
 @section('content')
+    <a href="/admin-pledge/maintain-event">Event Pledge List ></a> <span><strong>Event Submission Queue</strong></span>
+    <br>
+    <br>
     <p><a href="/admin-pledge/maintain-event"><button class="btn btn-primary" role="button"  >Back To List</button></a></p>
-
     <div style="clear:both;float:none;"></div>
     <br>
     <br>
@@ -164,11 +166,20 @@
                     $("#business_unit").val(data[0].business_unit).select2();
                     $("[name='event_type']").trigger("change");
                     $("#deposit_amount").val(data[0].deposit_amount);
-                    $("#deposit_date").val(data[0].deposit_date.substring(0,data[0].deposit_date.indexOf(" ")));
+                    $("#deposit_date").val(data[0].deposit_date);
+                    $("#campaign_year").html( (data[0].calendar_year - 1));
 
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
                       $("#sub_type").attr("disabled",false);
                       $("#sub_type").val(data[0].sub_type).select2();
+                        $("#pecsf_id").val(data[0].pecsf_id);
+                        $("#bc_gov_id").val(data[0].bc_gov_id);
+                        $("#pecsfid").find("label").show();
+                        $("#pecsfid").find("input").show();
+                        $("#bcgovid").find("label").hide();
+                        $("#bcgovid").find("input").hide();
+                        $("#pecsfid").show();
+                        $("#bcgovid").hide();
                     }
                     else{
                         $("#address_1").val(data[0].address_line_1);
@@ -177,7 +188,7 @@
                         $("#postal_code").val(data[0].address_postal_code);
                         $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
-                        $("#bcgov_id").val(data[0].bcgov_id);
+                        $("#bc_gov_id").val(data[0].bc_gov_id);
 
                         if(data[0].organization_code == "GOV"){
                             $("#pecsfid").find("label").hide();
@@ -246,8 +257,8 @@
                         text = text.replace(/XXX/g, attachment_number + 1);
                         $('#attachments').append( text );
                         attachment_number++;
-                        $('.attachment').last().find(".filename").html(data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
-                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form_attachments"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.indexOf("/"),data[0].attachments[i].local_path.length));
+                     $('.attachment').last().find(".filename").html("/challenge/download/"+data[0].attachments[i].id);
+                        $('.attachment').last().find(".view_attachment").attr("href","/challenge/download/"+data[0].attachments[i].id);
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
@@ -274,20 +285,60 @@
                 $('#lock-event-modal').modal("show");
             }
             else if($(this).val() == 1){
-                Swal.fire({
-                   title: 'Successfully Approved!',
-                    text: 'Approved!',
-                });
-                $(this).parents("tr").remove();
-                $.post("/admin-pledge/status",
-                    {
-                        submission_id: $("#submission_id").val(),
-                        status: 1
-                    },
-                    function (data, status) {
-                    });
-            }
-            else{
+             Swal.fire({
+                   title: 'Approved?',
+                    text: 'Should We Approved This Event?',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText:
+                        '<i class="fa fa-thumbs-up"></i> Approve!',
+                    confirmButtonAriaLabel: 'Approved!',
+                    cancelButtonText:
+                        '<i class="fa fa-thumbs-down"></i>',
+                    cancelButtonAriaLabel: 'Thumbs down'
+                }).then((result) => {
+                 if (result.isConfirmed) {
+                     $(this).parents("tr").remove();
+                     $.post("/admin-pledge/status",
+                         {
+                             submission_id: $("#submission_id").val(),
+                             status: 1
+                         },
+                         function (data, status) {
+
+                             Swal.fire({
+                                 title: '<strong>Success!</strong>',
+                                 icon: 'info',
+                                 html:
+                                     'The Event was successfully approved and can be viewed in the main list',
+                                 showCloseButton: true,
+                                 showCancelButton: true,
+                                 focusConfirm: false,
+                                 confirmButtonText:
+                                     '<i class="fa fa-thumbs-up"></i> Go To list',
+                                 confirmButtonAriaLabel: 'Go To list',
+                                 cancelButtonText:
+                                     'Close',
+                                 cancelButtonAriaLabel: 'Close'
+                             }).then((result) => {
+                                 if (result.isConfirmed) {
+                                     window.location.href = "/admin-pledge/maintain-event";
+                                 }
+                             });
+                         });
+                 } else {
+
+
+                     $(".status").val(0).trigger("change");
+
+                 }
+             });
+
+               }
+
+               else{
+
                 $.post("/admin-pledge/status",
                     {
                         submission_id: $("#submission_id").val(),
@@ -295,7 +346,7 @@
                     },
                     function (data, status) {
                     });
-            }
+        }
         });
 
         $(".lock-submission").click(function(){

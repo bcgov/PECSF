@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-12">
             <h3 class="mt-0">{{ $pool_option == 'C' ?  '5. Summary' : '4. Summary' }}</h3>
-            <p class="mt-3">Please review your donation plan and press <b>Pledge</b> when ready!</p>
+            <p class="mt-3">Please review your donation plan and press <b>“Pledge”</b> when ready! Use the "Back” button, to make changes to your pledge.</p>
                 <div class="card bg-light p-3">
                     <p class="card-title"><b>Deductions</b></p>
                     <div class="card">
@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     @csrf
-                    @foreach(['one-time', 'bi-weekly'] as $key)
+                    @foreach(['bi-weekly','one-time'] as $key)
                         @if($key === 'one-time' && ( $frequency === 'one-time' || $frequency === 'both'))
                             @php $key_ = $key; @endphp
                             @php $keyCase = 'oneTime'; @endphp
@@ -90,9 +90,13 @@
 <script>
 $(function () {
 
-    $("#step-summary-area .frequencybiWeekly").show();
-    if($("#step-summary-area .frequencyoneTime").length > 0){
-        $("#step-summary-area .frequencybiWeekly").hide();
+    // $("#step-summary-area .frequencybiWeekly").show();
+    // if($("#step-summary-area .frequencyoneTime").length > 0){
+    //     $("#step-summary-area .frequencybiWeekly").hide();
+    // }
+    $("#step-summary-area .frequencyoneTime").show();
+        if($("#step-summary-area .frequencybiWeekly").length > 0){
+        $("#step-summary-area .frequencyoneTime").hide();
     }
 
     $(document).on('click', '#distributeByDollar, #distributeByPercentage', function () {
@@ -115,7 +119,7 @@ $(function () {
         section.find("#step-summary-area .percent-input").each( function () {
             total += Number($(this).val());
         });
-console.log( 'testing --> ' + this ) ;
+
         section.find("#step-summary-area .total-percent").val( total );
         section.find("#step-summary-area .total-percent-text").text('Total Amount: '+ total.toFixed(2) + '%');
     });

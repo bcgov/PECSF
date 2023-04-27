@@ -69,6 +69,7 @@ class MaintainEventPledgeController extends Controller
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
@@ -104,7 +105,7 @@ class MaintainEventPledgeController extends Controller
             $event_pledges = $event_pledges->orderBy("created_at","desc")->limit($request->limit)->get();
         }
         else{
-            $event_pledges = BankDepositForm::orderBy("created_at","desc");
+            $event_pledges = BankDepositForm::orderBy("bank_deposit_forms.created_at","desc");
             if(!empty($request->event_type))
             {
                 $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
@@ -115,6 +116,8 @@ class MaintainEventPledgeController extends Controller
             }
 
             $event_pledges->where("approved","=",1);
+
+            $event_pledges->join("users","form_submitter_id","users.id");
                $event_pledges = $event_pledges->limit(30)->get();
         }
         $charities=Charity::when($request->has("title"),function($q)use($request){
@@ -236,6 +239,7 @@ class MaintainEventPledgeController extends Controller
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
@@ -331,7 +335,10 @@ class MaintainEventPledgeController extends Controller
             'updated_by_id' => Auth::id(),
         ]);
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {
@@ -494,7 +501,10 @@ class MaintainEventPledgeController extends Controller
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {

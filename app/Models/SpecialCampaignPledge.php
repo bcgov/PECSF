@@ -6,13 +6,18 @@ use App\Models\SpecialCampaign;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SpecialCampaignPledge extends Model
+class SpecialCampaignPledge extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
     
     protected $fillable = [
-        'organization_id', 'user_id', 'pecsf_id', 'yearcd', 'seqno',
+        'organization_id', 
+        'emplid',       // Use for checking unique pledge per campaign year
+        'user_id',      // Not in use in the near future due to multiple GUID to emplid issue
+        'pecsf_id', 'yearcd', 'seqno',
         'special_campaign_id', 'one_time_amount', 'deduct_pay_from',
         'first_name', 'last_name', 'city', 'cancelled', 'cancelled_by_id', 'cancelled_at',
         'ods_export_status', 'ods_export_at', 'created_by_id','updated_by_id',
@@ -48,7 +53,7 @@ class SpecialCampaignPledge extends Model
 
     public function special_campaign() 
     {
-        return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withDefault();
+        return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withTrashed()->withDefault();
     }
 
     public function campaign_year() {

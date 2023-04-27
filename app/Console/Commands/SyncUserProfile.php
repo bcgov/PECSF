@@ -169,7 +169,6 @@ class SyncUserProfile extends Command
                     if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) and
                          (trim($user->email) == $target_email ) and 
                          ($user->source_type == self::SOURCE_TYPE) and   
-                         ($user->employee_job_id == $employee->id) and 
                          ($user->emplid == $employee->emplid) and 
                          ($user->acctlock == $acctlock)  
                         ) {
@@ -216,7 +215,6 @@ class SyncUserProfile extends Command
                             'acctlock' => 0,
                             'last_sync_at' => $new_sync_at,
                             'organization_id' => $organization->id,
-                            'employee_job_id' => $employee->id,
                             'emplid' => $employee->emplid,
                         ]);
 

@@ -45,11 +45,14 @@ class DonateNowPledgeController extends Controller
 
         if($request->ajax()) {
 
+            // store the filter 
+            $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
+            session(['admin_pledge_donate_now_filter' => $filter]);
+
             $pledges = DonateNowPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'charity')
-                            ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
-                            // ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
-                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                            // ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'donate_now_pledges.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
@@ -76,7 +79,7 @@ class DonateNowPledgeController extends Controller
                             ->when( $request->name, function($query) use($request) {
                                 $query->where('donate_now_pledges.first_name', 'like', '%' . $request->name . '%')
                                       ->orWhere('donate_now_pledges.first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('users.name', 'like', '%' . $request->name . '%');
+                                      ->orWhere('employee_jobs.name', 'like', '%' . $request->name . '%');
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
@@ -147,6 +150,12 @@ class DonateNowPledgeController extends Controller
                 ->make(true);
         }
 
+        // restore filter if required 
+        $filter = null;
+        if (str_contains( url()->previous(), 'admin-pledge/donate-now')) {
+            $filter = session('admin_pledge_donate_now_filter');
+        }
+                
         // get all the record 
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
@@ -154,7 +163,7 @@ class DonateNowPledgeController extends Controller
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
-        return view('admin-pledge.donate-now.index', compact('organizations', 'campaign_years','cities'));
+        return view('admin-pledge.donate-now.index', compact('organizations', 'campaign_years','cities', 'filter'));
 
     }
 
@@ -198,10 +207,12 @@ class DonateNowPledgeController extends Controller
      */
     public function store(DonateNowPledgeRequest $request)
     {
-        
+        $user = User::where('id', $request->user_id )->first();
+
         // Create a new Pledge
         $last_seqno = DonateNowPledge::where('organization_id', $request->organization_id)
-                        ->where('user_id', $request->user_id)
+                        ->where('emplid', $user->emplid)
+                        // ->where('user_id', $request->user_id)
                         ->where('pecsf_id', $request->pecsf_id)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
@@ -209,9 +220,11 @@ class DonateNowPledgeController extends Controller
         $seqno = $last_seqno ? ($last_seqno + 1) : 1;
         //  dd([$request, $seqno] );
         $gov = Organization::where('code', 'GOV')->first();
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $request->organization_id,
+            'emplid' => ($request->organization_id == $gov->id) ? $user->emplid : null,
             'user_id' => ($request->organization_id == $gov->id) ? $request->user_id : null,
             'pecsf_id' => (!($request->organization_id == $gov->id)) ? $request->pecsf_id : null,
             'first_name' => (!($request->organization_id == $gov->id)) ? $request->pecsf_first_name : null, 
@@ -220,6 +233,7 @@ class DonateNowPledgeController extends Controller
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $request->pool_option,
+            'region_id' => ($request->pool_option == 'P' ? $pool->region_id : null),
             'f_s_pool_id' => ($request->pool_option == 'P' ? $request->pool_id : null),
             'charity_id' =>  ($request->pool_option == 'C' ? $request->charity_id : null),
             'one_time_amount' => $request->one_time_amount,
@@ -308,13 +322,14 @@ class DonateNowPledgeController extends Controller
      * @param  \App\Models\Pledge  $pledge
      * @return \Illuminate\Http\Response
      */
-    public function update(CampaignPledgeRequest $request, $id)
+    public function update(DonateNowPledgeRequest $request, $id)
     {
         
         $pledge = DonateNowPledge::where('id', $id)->first();
 
         $gov_organization = Organization::where('code', 'GOV')->first();
         $is_GOV = ($request->organization_id == $gov_organization->id);
+        $pool = FSPool::where('id', $request->pool_id)->first();
 
         // $pay_period_amount = $request->pay_period_amount ? 
         //             $request->pay_period_amount : $request->pay_period_amount_other ;
@@ -331,6 +346,7 @@ class DonateNowPledgeController extends Controller
         }
 
         $pledge->type = $request->pool_option;
+        $pledge->region_id = ($request->pool_option == 'P' ? $pool->region_id : null);
         $pledge->f_s_pool_id = ($request->pool_option == 'P' ? $request->pool_id : null);
         $pledge->charity_id  = ($request->pool_option == 'C' ? $request->charity_id : null);
         $pledge->one_time_amount = $request->one_time_amount ?? 0;

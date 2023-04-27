@@ -2,6 +2,7 @@
     @php
         $ignore = false;
     @endphp
+
     @foreach($pledges_by_yearcd as $key => $pledges)
     <div class="card">
         <div class="card-header" id="heading0{{ $loop->index }}">
@@ -23,29 +24,80 @@
                         <th>Donation Type</th>
                         <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th>Amount</th>
+                        <th class="text-right">Amount</th>
                         <th></th>
                     </tr>
                     @php $total = 0; $ignore = true; @endphp
                     @foreach($pledges as $pledge)
                         <tr class="">
-                            <td>{{ $pledge->donation_type }}</td>
+                            <td style="width: 15%">
+                                @switch($pledge->donation_type)
+                                    @case('Donate Today')
+                                        {{ 'Donate Now' }}
+                                    @break
+                                    @case('Donate Now')
+                                        {{ 'Donate Now' }}
+                                        @break
+                                    @case('Event')
+                                        {{ 'Annual' }}
+                                        @break
+                                    @default
+                                        {{ $pledge->donation_type }}
+                                @endswitch
+                            </td>
                             @if ($pledge->type == 'P')
                                 {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                 <td>{{ $pledge->region }}   </td>
                             @else
-                                @if ($pledge->donation_type == 'Special Campaign')
-                                    <td>{{ $pledge->region }} </td>
-                                @else 
-                                    <td>{{ '' }} </td>
+                                <td>
+                                @if ($pledge->source == 'GF')
+                                    @switch($pledge->donation_type)
+                                        @case('Special Campaign')
+                                            {{ $pledge->region }}
+                                            @break
+                                        @case('Donate Now')
+                                            {{ $pledge->region }}
+                                            @break
+                                        @default
+                                        <a type="button" class="more-info"
+                                            data-source="{{ $pledge->source }}"
+                                            data-type="{{ $pledge->donation_type }}"
+                                            data-id="{{ $pledge->id }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->yearcd }}">
+                                            {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
+                                        </a>
+
+                                    @endswitch
+                                @else
+                                    @if ($pledge->donation_type == 'Donate Today')
+                                        {{ $pledge->number_of_charities }}
+                                    @else
+                                        <a type="button" class="more-info "
+                                            data-source="{{ $pledge->source  }}"
+                                            data-type="{{ $pledge->donation_type }}"
+                                            data-id="{{ $pledge->id }}"
+                                            data-frequency="{{ $pledge->frequency }}"
+                                            data-yearcd="{{ $pledge->yearcd }}">
+                                                {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
+                                        </a>
+                                    @endif
                                 @endif
+                                </td>
+
+                                {{-- @if ($pledge->donation_type == 'Special Campaign')
+                                    <td>{{ $pledge->region }} </td>
+                                @else
+                                    <td></td>
+                                @endif --}}
+
                             @endif
-                            <td>{{ $pledge->frequency }} </td>
+                            <td style="width: 10%">{{ $pledge->frequency }} </td>
                             @php
 
                             @endphp
-                            <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
-                            <td class="text-right">
+                            <td class="text-right" style="width: 15%">$ {{ number_format($pledge->pledge,2) }} </td>
+                            <td class="text-right" style="width: 10%">
                                 {{-- @if ($pledge->campaign_type == 'Annual')  --}}
                                 <button type="button" class="more-info btn btn-sm btn-outline-primary"
                                             data-source="{{ $pledge->source  }}"
@@ -78,10 +130,19 @@
                     @endphp
                 @else
 
-                <a style="margin-left: auto;
+                    <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;"
+                                {{-- href="#"  --}}
+                                data-id="{{ $pledge->id }}"
+                                data-source="{{ $pledge->source }}"
+                                {{-- onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();" --}}
+                                >
+                                {{$ignore}}Duplicate this Annual Campaign pledge
+                    </a>
+
+                {{-- <a style="margin-left: auto;
     margin-right: auto;
     width: fit-content;
-    display: block;" href="/donate/duplicate/{{$pledge->id}}">
+    display: block;" href="{{ route('annual-campaign.duplicate', $pledge->id) }}">
                 <button type="button" class="pl-5 pr-5 duplicate align-content-center btn-lg btn-primary"
                         data-source="{{ $pledge->source  }}"
                         data-type="{{ $pledge->donation_type }}"
@@ -89,7 +150,15 @@
                         data-frequency="{{ $pledge->frequency }}"
                         data-yearcd="{{ $pledge->yearcd }}">{{$ignore}}Duplicate this pledge
                 </button>
-                </a>
+                </a> --}}
+                    <form id="duplicate-form-{{ $pledge->id }}" action="{{ route('annual-campaign.duplicate', $pledge->id) }}" method="POST" style="display: none;">
+                        @csrf
+                        <input type="hidden" name="source" value="{{ $pledge->source }}">
+                        <input type="hidden" name="type" value="{{ $pledge->donation_type }}">
+                        <input type="hidden" name="id" value="{{ $pledge->id }}">
+                        <input type="hidden" name="frequency" value="{{ $pledge->frequency }}">
+                        <input type="hidden" name="yearcd" value="{{ $pledge->yearcd }}">
+                    </form>
                 @endif
 
             </div>
@@ -100,3 +169,50 @@
 
 
 </div>
+
+
+@push('js')
+<script>
+$('a.duplicate-pledge').on('click', function(event){
+
+    pledge_id = $(this).data("id");
+
+    $.ajax({
+        url: '/annual-campaign/valid-duplicate/' + pledge_id,
+        data: 'source='+ $(this).data("source") ,
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+            // $('.modal-title span').html(name);
+            if (result.message) {
+                Swal.fire({
+                    title: 'Are you sure ?',
+                    text: result.message,
+                    // icon: 'question',
+                    //showDenyButton: true,
+                    confirmButtonText: 'Continue',
+                    showCancelButton: true,
+                }).then((result) => {
+
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $("#duplicate-form-"+ pledge_id ).submit();
+                    }
+                })
+            } else {
+                // submit form
+                $("#duplicate-form-"+ pledge_id ).submit();
+            }
+        },
+        complete: function() {
+        },
+        error: function () {
+            alert("error");
+            $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+        }
+    })
+
+});
+
+</script>
+@endpush

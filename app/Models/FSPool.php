@@ -6,23 +6,32 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\FSPoolCharity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class FSPool extends Model
+class FSPool extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable =[
         'region_id', 'start_date', 'status', 'created_by_id', 'updated_by_id', 'created_at'
     ];
-    protected $appends = ['canDelete', 'effectiveType'];
 
-    // Scope 
+    protected $casts = [
+        'start_date' => 'date:Y-m-d',
+    ];
+
+    protected $appends = [
+        'canEdit', 'canDelete', 'effectiveType'];
+
+    // Scope
     public function scopeCurrent($query)
     {
         $query->where('start_date', function($query) {
                 return $query->selectRaw('max(start_date)')
                         ->from('f_s_pools as A')
                         ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                        ->whereNull('deleted_at')
                         ->where('A.start_date', '<=', today());
         });
     }
@@ -32,23 +41,53 @@ class FSPool extends Model
             return $query->selectRaw('max(start_date)')
                     ->from('f_s_pools as A')
                     ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                    ->whereNull('deleted_at')
                     ->where('A.start_date', '<=', $specifyDate);
         });
     }
 
-    public function region() 
+    public function region()
     {
         return $this->belongsTo(Region::Class, 'region_id', 'id')->withDefault();
     }
 
-    public function charities() 
+    public function charities()
     {
         return $this->hasMany(FSPoolCharity::class);
     }
 
+    public function created_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'created_by_id')->withDefault();
+    }
+
+    public function updated_by()
+    {
+        return $this->hasOne(User::Class, 'id', 'updated_by_id')->withDefault();
+    }
+    
+    public function getCanEditAttribute()
+    {
+
+        if ($this->start_date < today()) {
+            return false;
+        };
+
+        return true;
+    }
+
     public function getCanDeleteAttribute()
     {
-        return ( $this->start_date >= today() );
+
+        if ($this->start_date < today()) {
+            return false;
+        };
+
+        // if ( $this->transactionExists ) {
+        //     return false;
+        // }
+
+        return true;
     }
 
     public function getEffectiveTypeAttribute()
@@ -62,6 +101,32 @@ class FSPool extends Model
         } else {
             return 'F';
         }
+
+    }
+
+    public function hasPledge()
+    {
+        if ( $this->annual_campaign_pledges()->exists() ) {
+            return true;
+        }
+
+        if ( $this->donate_now_pledges()->exists() ) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public function annual_campaign_pledges() {
+
+        return $this->hasMany(Pledge::class, 'region_id', 'region_id')
+                    ->whereRaw("Date(pledges.created_at) >= '" . $this->start_date . "'");
+    }
+
+    public function donate_now_pledges() {
+        return $this->hasMany(DonateNowPledge::class, 'region_id', 'region_id')
+                    ->whereRaw("Date(donate_now_pledges.created_at) >= '" . $this->start_date . "'");
 
     }
 

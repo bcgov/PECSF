@@ -57,6 +57,10 @@
         margin-bottom: 10px;
     }
 
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 5%;
+    }
+
 </style>
 @endpush
 
@@ -76,6 +80,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },
             serverSide: true,
             "pageLength": 50,
             select: true,
@@ -83,7 +90,14 @@
             ajax: {
                 url: '{!! route('settings.pay-calendars.index') !!}',
                 data: function (d) {
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', width: '2em'},

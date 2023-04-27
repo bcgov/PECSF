@@ -24,10 +24,11 @@ class BusinessUnitJSONSeeder extends Seeder
                 'code' => $business_unit->code,
             ], [
                 'effdt' => $business_unit->effdt,
-                'name' => $business_unit->name,
                 'status' => $business_unit->status,
-                'created_by_id' => $business_unit->created_by_id,
-                'updated_by_id' => $business_unit->updated_by_id,
+                'name' => $business_unit->name,
+                'notes' => $business_unit->notes,
+                // 'created_by_id' => $business_unit->created_by_id,
+                // 'updated_by_id' => $business_unit->updated_by_id,
             ]);
 
         }

@@ -143,12 +143,12 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>IDIR</th>
+                    <th>Organization</th>                    
                     <th>Emplid</th>
-                    <th>Locked </th>
+                    <th>Status</th>
                     <th>Sign On Count</th>
                     <th>Active Job Count</th>
 
-                    <th>Organization</th>                    
                     <th>Bus Unit</th>
                     <th>Dept ID</th>
                     <th>Dept Name</th>
@@ -224,6 +224,10 @@
         margin-bottom: 10px;
     }
 
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 5%;
+    }
+
 </style>
 @endpush
 
@@ -252,6 +256,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },
             serverSide: true,
             // select: true,
             'order': [[0, 'asc']],
@@ -272,7 +279,14 @@
                     data.last_signon_to  = $('#last_signon_to').val();
                     data.last_sync_from = $('#last_sync_from').val();
                     data.last_sync_to  = $('#last_sync_to').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', name: 'id', className: "dt-nowrap" },
@@ -280,13 +294,15 @@
                 {data: 'name', name: 'name', className: "dt-nowrap" },
                 {data: 'primary_job.email', name: 'primary_job.email', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.idir', name: 'primary_job.idir', defaultContent: '', className: "dt-nowrap" },
+                {data: 'organization.code',  name: 'organization.code', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.emplid', name: 'primary_job.emplid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'acctlock', render: function ( data, type, row, meta ) {
-                        if(data == 0) {
-                            return '<i class="fa fa-user-check fa-lg text-primary"> </i>';
-                        } else {
-                            return '<i class="fa fa-user-times fa-lg text-danger"> </i>';
-                        }
+                        icon_name = (data == 0) ? 'fa-user-check' : 'fa-user-times';
+                        icon_color = (data == 0) ? 'text-primary' : 'text-danger';
+                        return '<button type="button" class="btn"><span class="toggle_user" data-id="' + row.id + 
+                                   '" data-locked="' + data + 
+                                   '" data-name="' + row.name + 
+                                   '"><i class="fa ' + icon_name + ' fa-lg ' + icon_color + '"> </i></span></button>';
                     }
                 },
                 {data: 'access_logs_count', name: 'access_logs_count', className: "dt-nowrap",
@@ -309,7 +325,6 @@
                         }
                     }
                 },
-                {data: 'organization.code',  name: 'organization.code', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.business_unit', name: 'primary_job.business_unit', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.deptid', name: 'primary_job.deptid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.dept_name', name: 'primary_job.dept_name', defaultContent: '', className: "dt-nowrap" },
@@ -345,32 +360,79 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
-        // // Model -- Show
-    	// $(document).on("click", ".more-link , .show-user" , function(e) {
-		// 	e.preventDefault();
+        function Toast( toast_title, toast_body, toast_class) {
+            Swal.fire({
+                    position: 'top-end',
+                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
+                    title: toast_title,
+                    text: toast_body,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 5000
+            })
+        }
 
-        //     id =  $(this).attr('data-id');
-        //     $.ajax({
-        //         method: "GET",
-        //         url:  '/system/users/' + id,
-        //         dataType: 'json',
-        //         success: function(data)
-        //         {
-        //             $('#userModalLabel').html('Job : ' + data.id + ' (' + data.user_name + ')' );
-        //             //  started at ' + data.start_time);
-        //             $('#modal-source_type').html(data.status);
-        //             $('#modal-message').html(data.message);
-        //             $('#user-show-modal').modal('show');
-        //         },
-        //         error: function(response) {
-        //             console.log('Error');
-        //         }
-        //     });
-    	// });
+        $('body').on('click', 'span.toggle_user', function(e) {
+            e.preventDefault();
 
+            id = $(this).attr('data-id');
+            locked = $(this).attr('data-locked');
+            name = $(this).attr('data-name');
+   
+            title = 'Are you sure you want to lock the user "' + name + '" ?';
+            url = '/system/users/' + id + '/lock';
+            button_text = 'Lock';
+            if (locked == 1) {
+                title = 'Are you sure you want to unlock the user "' + name + '" ?';
+                url = '/system/users/' + id + '/unlock';
+                button_text = 'Unlock';
+            }
 
-
-
+            Swal.fire( {
+                    title: title,
+                    text: '',
+                    // icon: 'question',
+                    //showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: button_text,
+                    buttonsStyling: false,
+                    //confirmButtonClass: 'btn btn-danger',
+                    customClass: {
+                        confirmButton: 'btn btn-danger', //insert class here
+                        cancelButton: 'btn btn-secondary ml-2', //insert class here
+                    }
+                    //denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        // Swal.fire('Saved!', '', '')
+                        $.ajax({
+                            method: "POST",
+                            url: url,
+                            success: function(data)
+                            {
+                                oTable.ajax.reload(null, false);	// reload datatables
+                                text = 'locked';
+                                if (locked == 1) {
+                                    text = 'unlocked';
+                                }
+                                Toast('Success', 'User  "' + name +  '" was successfully ' + text + '.', 'bg-success' );
+                            },
+                            error: function (data) {
+                                    Swal.fire({
+                                            icon: 'error',
+                                            title: data.responseJSON.title, // data.responseJSON.title,
+                                            text: data.responseJSON.message,
+                                    });
+                                    console.log(data.responseJSON.message);
+                            }
+                        });
+                    } else if (result.isCancelledDenied) {
+                        // Swal.fire('Changes are not saved', '', '')
+                    }
+                });
+              
+        });
 
     });
 

@@ -7,13 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Region extends Model
+class Region extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable =[
         'code', 'name', 'status', 'effdt', 'notes', 'created_by_id', 'updated_by_id'
+    ];
+
+    protected $appends = [
+        'hasFSPool',
     ];
 
     public function created_by()
@@ -34,5 +40,17 @@ class Region extends Model
 
     }
 
+    public function getHasFSPoolAttribute()
+    {
+        if ( $this->f_s_pools()->exists() ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function f_s_pools() {
+        return $this->hasMany(FSPool::class, 'region_id', 'id');
+    }
 
 }

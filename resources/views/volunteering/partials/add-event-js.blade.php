@@ -19,14 +19,9 @@ $(".org_hook").hide();
 $("#pool_filter").parents(".form-group").hide();
 }
 });
-$("#pool_filter").parents(".form-group").hide();
-$("[name='organization_code']").change(function(){
-});
-    $("#pecsfid").find("label").hide();
-    $("#pecsfid").find("input").hide();
-    $("#bcgovid").find("label").hide();
-    $("#bcgovid").find("input").hide();
-$("[name='event_type']").change(function(){
+
+
+$("[name='event_type'],[name='organization_code']").change(function(){
 $("#sub_type").attr("disabled",false);
 
 
@@ -57,6 +52,24 @@ else{
         $("#bcgovid").find("input").show();
         $("#pecsfid").hide();
         $("#bcgovid").show();
+        $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+        $("#event_type>option[value='Gaming']").prop('disabled',false);
+    }
+    else if($("[name='organization_code']").val() == "RET"){
+        $("#pecsfid").find("label").hide();
+        $("#pecsfid").find("input").hide();
+        $("#bcgovid").find("label").hide();
+        $("#bcgovid").find("input").hide();
+
+        if($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser")
+        {
+            alert("Invalid Event Type for Retiree. We selected a default option on your behalf.");
+            $("#event_type").val("Cash One-Time Donation").trigger("change");
+        }
+        $("#event_type>option[value='Fundraiser']").prop('disabled',true);
+        $("#event_type>option[value='Gaming']").prop('disabled',true);
+
+
     }
     else{
         $("#pecsfid").find("label").show();
@@ -65,6 +78,8 @@ else{
         $("#bcgovid").find("input").hide();
         $("#pecsfid").show();
         $("#bcgovid").hide();
+        $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+        $("#event_type>option[value='Gaming']").prop('disabled',false);
     }
 
 $(".address_hook").show();
@@ -95,6 +110,101 @@ e.preventDefault();
 
 
 var formData = new FormData();
+    $("#supply_order_form").submit(function(e)
+    {
+        e.preventDefault();
+        var form = document.getElementById("create_supply_order_form");
+
+
+
+        $("select").each(function(){
+            if($(this).val()){
+                if($(this).val().length > 0){
+                    formData.append($(this).attr("name"), $(this).val());
+                }
+            }
+
+        });
+        $("input").each(function(){
+            if($(this).attr('type') != "submit"){
+                if($(this).attr('type') == "radio"){
+                    if($(this).is(':checked')){
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                }
+                else if($(this).attr('type') == "file"){
+//formData.append('attachments[]',  $(this)[0].files[0]);
+                }
+                else{
+                    formData.append($(this).attr("name"), $(this).val());
+                }
+            }
+        });
+        $("textarea").each(function(){
+            if($(this).val().length > 0) {
+                formData.append($(this).attr("name"), $(this).val());
+            }
+        });
+
+
+        $(this).fadeTo("slow",0.2);
+        $.ajax({
+            url: $("#supply_order_form").attr("action"),
+            type:"POST",
+            data: formData,
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+                window.locationredirect = response[0];
+                console.log(response);
+                Swal.fire({
+                    title: '<strong>Success!</strong>',
+                    icon: 'info',
+                    html:
+                        'The form was submitted successfully. Your items will be sent in the mail within 3-5 business days. For assistance, please email pecsf@gov.bc.ca. For information and resources, please visit the PECSF website (gov.bc.ca). ',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+
+                    confirmButtonAriaLabel: 'Volunteers!',
+                    cancelButtonText:
+                        'Close',
+                    cancelButtonAriaLabel: 'Close'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/volunteering";
+                    }
+                });
+                $("#supply_order_form").fadeTo("slow",1);
+                $('.errors').html("");
+
+
+            },
+            error: function(response) {
+                $('.invalid-feedback').html("");
+                $("#supply_order_form").fadeTo("slow",1);
+
+                if(response.responseJSON.errors){
+                    errors = response.responseJSON.errors;
+                    for(const prop in response.responseJSON.errors){
+
+                        tag = prop;
+                        error = errors[prop][0].split(".");
+                        error = error[0];
+                        error = error.replace("_"," ");
+
+                        $("[name="+tag+"]").parents("label").append('<span class="invalid-feedback">'+error.replace("field"," field ")+'</span>');
+                    }
+                }
+                $(".invalid-feedback").css("display","block");
+                $("#bank_deposit_form").fadeTo("slow",1);
+            },
+        });
+
+    });
 $("#bank_deposit_form").submit(function(e)
 {
 e.preventDefault();
@@ -145,16 +255,26 @@ cache: false,
 contentType: false,
 dataType: 'json',
 success:function(response){
+    Swal.fire({
+        title: '<strong>Success!</strong>',
+        icon: 'success',
+        html:
+            'Form Submitted!',
+        showCloseButton: false,
+        showCancelButton: true,
+        focusConfirm: false,
+    }).then((result) => {
+        $("#bank_deposit_form").fadeTo("slow",1);
+        $('.errors').html("");
 
-$("#bank_deposit_form").fadeTo("slow",1);
-$('.errors').html("");
+        window.location = response[0];
+        console.log(response);
+    });
 
-window.location = response[0];
-console.log(response);
 },
 error: function(response) {
 $('.errors').html("");
-
+    $(".donation_percent_errors").html("");
 if(response.responseJSON.errors){
 errors = response.responseJSON.errors;
 for(const prop in response.responseJSON.errors){
@@ -163,9 +283,10 @@ tag = prop.substring(0,prop.indexOf("."));
 error = errors[prop][0].split(".");
 error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
-$("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$("#organization"+count).find("."+tag+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$("." + prop + "_errors").html('<span class="invalid-feedback">'+error+'</span>');
+$("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+$(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+
+
 }
 }
 $(".invalid-feedback").css("display","block");
@@ -203,7 +324,7 @@ console.log( 'more info - ' + id );
 if ( id  ) {
 // Lanuch Modal page for listing the Pool detail
 $.ajax({
-url: '/donate/regional-pool-detail/' + id,
+url: '/donate-now/regional-pool-detail/' + id,
 type: 'GET',
 // data: $("#notify-form").serialize(),
 dataType: 'html',
@@ -215,8 +336,9 @@ $(target).html(result);
 },
 complete: function() {
 },
-error: function () {
-alert("error");
+error: function (result) {
+    target = '.pledgeDetail';
+    $(target).html('');
 $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
 }
 })

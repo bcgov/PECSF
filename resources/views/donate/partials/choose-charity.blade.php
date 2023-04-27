@@ -57,7 +57,7 @@
             @endforeach
             @else
                 <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
-                <span class="charity_errors"></span>
+                <span class="charity_errors errors"></span>
             @endif
         </table>
 </div>
@@ -67,13 +67,13 @@
             <div class="modal-header bg-light">
                 <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" style="color:#000;" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
 
-                <table class="table">
+                <table class="table charity">
                     <tr>
                         <td>Business/Registration Number</td>
                         <td id="registration_number"></td>
@@ -125,6 +125,20 @@
                     <tr>
                         <td>Charitable Programs</td>
                         <td id="charitable_programs"></td>
+                    </tr>
+                </table>
+                <table style="border:none;" class="table fsp">
+                    <tr style="border:none;">
+                        <td style="border:none;" rowspan="3"><img id="pool_image" /></td>
+                        <td style="border:none;" id="pool_name"></td>
+                    </tr>
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="pool_description"></td>
+                    </tr>
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="pool_registration_number"></td>
                     </tr>
                 </table>
             </div>

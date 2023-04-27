@@ -32,7 +32,15 @@ class UserMaintenanceController extends Controller
         if($request->ajax()) {
 
             $users = User::select('users.*')
-                        ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
+                        ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                        ->where( function($query) {
+                            $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                    $q->from('employee_jobs as J2') 
+                                        ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                        ->selectRaw('min(J2.empl_rcd)');
+                                })
+                                ->orWhereNull('employee_jobs.empl_rcd');
+                        })
                         ->leftJoin('regions', 'employee_jobs.region_id', '=', 'regions.id')
                         ->when($request->source_type, function($query) use($request) {
                             return $query->where('users.source_type',  $request->source_type);
@@ -96,10 +104,10 @@ class UserMaintenanceController extends Controller
                         //     return $user->deleted_at ? $user->updated_by->name : '';       
                         // })
                         ->editColumn('created_at', function ($user) {
-                            return $user->created_at->format('Y-m-d H:m:s'); // human readable format
+                            return $user->created_at ? $user->created_at->format('Y-m-d H:m:s') : null; // human readable format
                         })
                         ->editColumn('updated_at', function ($user) {
-                            return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
+                            return $user->updated_at ? $user->updated_at->format('Y-m-d H:m:s') : null; // human readable format
                         })
                         ->rawColumns(['action'])
                         ->make(true);
@@ -111,5 +119,38 @@ class UserMaintenanceController extends Controller
         return view('system-security.users.index', compact('request', 'source_type_options', 'organizations') );
 
     }
+
+    public function lockUser(Request $request, $id) {
+    
+        if($request->ajax()) {
+            $user = User::where('id', $id)->first();
+
+            $user->acctlock = 1;
+            $user->save();
+            
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
+
+    }
+
+    public function unlockUser(Request $request, $id) {
+    
+        if($request->ajax()) {
+            $user = User::where('id', $id)->first();
+
+            $user->acctlock = 0;
+            $user->save();
+            
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
+
+    }
+
 
 }

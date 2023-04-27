@@ -135,15 +135,27 @@ class RegionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $region = Region::where('id', $id)->first();
-        $region->updated_by_id = Auth::Id();
-        $region->save();
-        
-        $region->delete();
+        if($request->ajax()) {
+            $region = Region::where('id', $id)->first();
 
-        return response()->noContent();
+            if ($region->hasFSPool) {
+                return response()->json([
+                    'title'  => "Invalid delete!",
+                    'message' => 'The Region "' . $region->code . ' - ' . $region->name . '" cannot be deleted, it is being referenced on the Fund Support Pool(s).'], 403);
+            }
+
+            $region->updated_by_id = Auth::Id();
+            $region->save();
+            
+            $region->delete();
+
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
     }
 
 

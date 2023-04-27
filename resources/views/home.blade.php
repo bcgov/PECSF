@@ -23,7 +23,7 @@
 </style>
 <div class="container mt-5">
     <div class="row">
-        <div class="col-12 col-xl-12 offset-md-1">
+        <div class="col-12 col-xl-12 ">
             <h1 class="text-center">Welcome, {{ Auth::user()->name }}</h1>
             <p class="text-center h4"><b>Choose from the options below:</b></p>
 
@@ -37,7 +37,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card_hook col-md-5 p-2">
+                <div class="card_hook col-md-6 p-2">
                     <div class="card" style="height:333px" >
                         <a href="{{route('donations.list')}}" class="card-body text-center">
                             <img src="/svgs/give.svg" style="color:white;" alt="Connect" height="62">
@@ -99,48 +99,22 @@
     </div>
   </div>
 </div>
-
-<div class="container mt-5">
+<!--
+<div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-12 col-xl-8 offset-xl-2">
             <h1 class="text-center">Check out our leaderboard</h1>
 
-            <div class="row p-3">
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table table-bordered rounded" id="myTable2">
-                            <tr class="bg-light">
-                                <th onclick="sortTable(0)" style="cursor: pointer;">Rank</th>
-                                <th onclick="sortTable(1)" style="cursor: pointer;">Organization Name</th>
-                                <th onclick="sortTable(2)" style="cursor: pointer;">Participation Rate (%)</th>
-                                <th onclick="sortTable(2)" style="cursor: pointer;">Previous Participation Rate (%)</th>
-                                <th onclick="sortTable(5)" style="cursor: pointer;">Donors</th>
-                                <th onclick="sortTable(6)" style="cursor: pointer;">Dollar Donated</th>
-                            </tr>
-                            @foreach($charities as $index => $charity)
-                            <tr>
-                                <td>{{$index+1}}{{$index == 0 ? 'st' : ($index == 1 ? 'nd' : ($index == 2 ? 'rd' : 'th')) }}</td>
-                                <td>{{$charity['name']}}</td>
-                                <td>{{round(($charity['participation_rate'] * 100),2)}}%</td>
-                                <td>{{round(($charity['previous_participation_rate'] * 100),2)}}%</td>
-
-                                <td>{{$charity['donors']}}</td>
-                                <td>${{$charity['dollars']}}</td>
-                            </tr>
-                            @endforeach
-                        </table>
-                        <p></p>
-                        <div class="text-center">
-                            <a class="btn btn-primary" href="/challenge" role="button">Go to challenge page</a>
-                        </div>
-                    </div>
+            <div class="row justify-content-center">
+                <div class="text-center">
+                    <a class="btn btn-primary" href="/challenge" role="button">Go to challenge page</a>
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-
+-->
 
 @endsection
 

@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h2>Reporting</h2>
+    {{-- <h2>Reporting</h2> --}}
     @include('admin-report.partials.tabs')
     <div class="d-flex mt-3">
         <h4>PECSF - Donation Upload</h4>
@@ -18,6 +18,8 @@
                 </button>
             </div>
         @endif --}}
+
+<p><a href="/administrators/dashboard">Back</a></p>        
 
     <h6>Select the relevant organization, upload PECSF Donation files for non BC Gov entities below, then click "Submit" to send reports to PECSF administration.</h6>
     <div class="card">
@@ -165,6 +167,9 @@
             padding-bottom : 20px;
         }
 
+        div.dataTables_wrapper div.dataTables_processing {
+         top: 5%;
+        }
 
 .file-upload {display:block;text-align:center;font-family: Helvetica, Arial, sans-serif;font-size: 12px;}
 .file-upload .file-select{display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
@@ -197,6 +202,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },            
             serverSide: true,
             // select: true,
             'order': [[0, 'desc']],
@@ -206,7 +214,14 @@
             ajax: {
                 url: '{!! route('reporting.donation-upload.index') !!}',
                 data: function (d) {
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id', className: "dt-nowrap"},

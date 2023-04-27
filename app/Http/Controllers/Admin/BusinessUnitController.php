@@ -138,14 +138,27 @@ class BusinessUnitController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $business_unit = BusinessUnit::where('id', $id)->first();
-        $business_unit->updated_by_id = Auth::Id();
-        $business_unit->save();
-        
-        $business_unit->delete();
 
-        return response()->noContent();
+        if($request->ajax()) {
+            $business_unit = BusinessUnit::where('id', $id)->first();
+
+            if ($business_unit->hasPledge() ) {
+                return response()->json([
+                    'title'  => "Invalid delete!",
+                    'message' => 'The Business Unit "' . $business_unit->code . ' - ' . $business_unit->name . '" cannot be deleted, it is being referenced on the pledge(s).'], 403);
+            }
+
+            $business_unit->updated_by_id = Auth::Id();
+            $business_unit->save();
+            
+            $business_unit->delete();
+
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
     }
 }

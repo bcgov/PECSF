@@ -93,9 +93,11 @@
             <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
         </div>
         @endif
-        <div class="justify-content-center">
-            <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a>
-        </div>
+        @if ($pledges_by_yearcd->count() > 0)
+            <div class="justify-content-center">
+                <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -104,7 +106,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header bg-primary">
-            <h5 class="modal-title" id="pledgeDetailModalTitle">Pledge Detail
+            <h5 class="modal-title" id="pledgeDetailModalTitle">Donation Detail
                     <span class="text-dark font-weight-bold"></span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -122,7 +124,17 @@
 @include('donations.partials.learn-more-modal')
 
 
+@push('css')
+    
+<link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
+@endpush    
+    
+
 @push('js')
+
+<script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+
 <script>
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
         if(e.to == 0) {
@@ -158,19 +170,19 @@
                 type: 'GET',
                 data: 'yearcd='+ yearcd + '&frequency='+ frequency +'&source='+ source + '&id='+id+ '&donation_type='+donation_type   ,
                 dataType: 'html',
-                success: function (result) {
+                success: function (result, text, xhr) {
                     // $('.modal-title span').html(name);
+                    if(result.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login'; 
+                    }
                     $(target).html(result);
+                    $('#pledgeDetailModal').modal('show');
                 },
-                complete: function() {
+                error: function(xhr, resp, text) {
+                    alert("Something went wrong, Please try again...");
                 },
-                error: function () {
-                    alert("error");
-                    $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
-                }
             })
 
-            $('#pledgeDetailModal').modal('show')
         }
     });
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class KeycloakLoginController extends Controller
 {
@@ -47,9 +48,10 @@ class KeycloakLoginController extends Controller
                 ]);
 
                 // Set Special Campaign Banner when activated special campaign
-                $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
-                if (count($banner_texts) > 0 ) {
-                    session()->put('special-campaign-banner-text', $banner_texts );
+                // $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
+                // if (count($banner_texts) > 0 ) {
+                if ( \App\Models\SpecialCampaign::hasActiveSpecialCampaign() ) {
+                    session()->put('has-active-special-campaign', 'YES' );
                 }
 
                 Auth::loginUsingId($isUser->id);
@@ -58,6 +60,14 @@ class KeycloakLoginController extends Controller
                 return redirect('/');
 
             } else {
+
+
+                $guid = $keycloak_user->user['idir_user_guid'];
+                $idir  = $keycloak_user->user['idir_username'];
+                $email = $keycloak_user->user['email'];
+                $name = $keycloak_user->user['name'];
+
+                Log::error("Keycloak signon failed (No user profile) : {$idir} - {$guid} - {$email} - {$name}");
 
                 return redirect('/login')
                     ->with('error-psft', 'You do not have active PeopleSoft HCM account.');

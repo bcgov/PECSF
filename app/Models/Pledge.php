@@ -7,14 +7,17 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Pledge extends Model
+class Pledge extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'organization_id',
-        'user_id',
+        'emplid',       // Use for checking unique pledge per campaign year
+        'user_id',      // Not in use in the near future due to multiple GUID to emplid issue
 
         "pecsf_id",
         "first_name",
@@ -66,6 +69,14 @@ class Pledge extends Model
         }
     }
 
+    public function one_time_charities() {
+        return $this->charities()->where('frequency', 'one-time');
+    }
+
+    public function bi_weekly_charities() {
+        return $this->charities()->where('frequency', 'bi-weekly');
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
     }
@@ -90,6 +101,21 @@ class Pledge extends Model
             'calendar_year' => '',
         ]);
     }
+
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_id', 'id');
+    }
+
+    public function current_fund_supported_pool_by_region() {
+
+        if ($this->type == 'P') {
+            $region = Region::where('id', $this->region_id)->first();
+            return FSPool::current()->where('region_id', $region->id)->first();
+        } else {
+            return null;
+        }
+    }
+
 
     public function fund_supported_pool() {
        

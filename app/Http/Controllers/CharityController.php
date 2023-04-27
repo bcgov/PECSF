@@ -643,8 +643,11 @@ class CharityController extends Controller
         // $total = "Yet To Calculated";
         $weekly = "ToDelete";
 
+        $duplicate = Session::get('duplicate');
+        Session::get('duplicate',false);
+
         $viewData = compact('charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
-            'weekly', 'frequency', 'multiplier', 'pool_option', 'regional_pool_id');
+            'weekly', 'frequency', 'multiplier', 'pool_option', 'regional_pool_id','duplicate');
         if ($getData) {
             return $viewData;
         }
@@ -923,7 +926,7 @@ class CharityController extends Controller
         session()->forget('pool_option');
         session()->forget('regional_pool_id');
         session()->forget('charities');
-
+        session()->put('duplicate', true);
         $pledge = Pledge::where("id","=",$request->pledge_id)->first();
         if(!empty($pledge))
         {

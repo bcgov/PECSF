@@ -48,9 +48,17 @@ class DonateNowController extends Controller
      */
     public function create()
     {
+
+        // Make sure the Annual camplaign is not started
+        if (\App\Models\CampaignYear::isAnnualCampaignOpenNow() ) {
+            return response("<h4>Invalid operation. Donate Now is not available during Annual Campaign Period. Click <a href='".
+                         route('donations.list') ."'>here</a> to go back.</h4>");
+            // abort(404);
+        }
+
         //
         $pool_option = 'P';
-        $pools = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $pools = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
@@ -73,7 +81,7 @@ class DonateNowController extends Controller
         $edit_pecsf_allow = true;
         $organizations = [];
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
@@ -120,7 +128,7 @@ class DonateNowController extends Controller
                 } else {
                     // $charity = Charity::where('id', $request->charity_id)->first();
                     $charity = Charity::where('id', $request->charities[0])->first();
-                    
+
                     $in_support_of = $charity ? $charity->charity_name : '';
                 }
 
@@ -138,8 +146,11 @@ class DonateNowController extends Controller
         $message_text = '';
 
         // Create a new Pledge
+        $pool = FSPool::where('id', $request->pool_id)->first();
+
         $last_seqno = DonateNowPledge::where('organization_id', $organization_id)
-                        ->where('user_id', $user->id)
+                        // ->where('user_id', $user->id)
+                        ->where('emplid', $user->emplid)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
 
@@ -148,17 +159,19 @@ class DonateNowController extends Controller
 
         $pledge = DonateNowPledge::Create([
             'organization_id' => $organization_id,
+            'emplid'  => $user->emplid,
             'user_id' => $user->id,
             'yearcd'  => $request->yearcd,
             'seqno'   => $seqno,
             'type'    => $pool_option,
+            'region_id' => ($pool_option == 'P' ? $pool->region_id : null),
             'f_s_pool_id' => ($pool_option == 'P' ? $request->pool_id : null),
             // 'charity_id' =>  ($pool_option == 'C' ? $request->charity_id : null),
             'charity_id' =>  ($pool_option == 'C' ? $request->charities[0] : null),
             'one_time_amount' => $one_time_amount ?? 0,
             'deduct_pay_from' => $check_dt,
             // 'special_program' => $request->special_program,
-            'special_program' => $request->additional[0],
+            'special_program' => ($pool_option == 'C' ? $request->additional[0] : null),
 
             'created_by_id' => $user->id,
             'updated_by_id' => $user->id,
@@ -370,7 +383,6 @@ class DonateNowController extends Controller
     {
         $pool = FSPool::where('id', $id)->first();
         $charities = $pool ? $pool->charities : [];
-
         return view('donate-now.partials.pool-detail', compact('charities') )->render();
     }
 

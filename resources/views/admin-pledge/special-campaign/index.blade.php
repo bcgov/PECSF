@@ -39,13 +39,15 @@
 <form class="filter">
     <div class="card-body pb-0 search-filter">
         <h2>Search Criteria</h2>
+        <p>Enter any informartion you have and click Search. Leave fields blank for a list of all values.</p>
 
         <div class="form-row">
             <div class="form-group col-md-1">
                 <label for="tran_id">
                     Tran ID
                 </label>
-                <input type="number" name="tran_id" id="tran_id"  class="form-control" />
+                <input type="number" name="tran_id" id="tran_id"  class="form-control" 
+                        value="{{ isset($filter['tran_id']) ? $filter['tran_id'] : '' }}" />
             </div>
             <div class="form-group col-md-3">
                 <label for="organization_id">
@@ -54,7 +56,9 @@
                 <select name="organization_id" id="organization_id" value="" class="form-control">
                     <option value="">All</option>
                     @foreach( $organizations as $organization)
-                    <option value="{{ $organization->id }}">{{ $organization->name }} ({{ $organization->code }})</option>
+                    <option value="{{ $organization->id }}"
+                        {{ isset($filter['organization_id']) && $filter['organization_id'] == $organization->id ? 'selected' : '' }}>
+                        {{ $organization->name }} ({{ $organization->code }})</option>
                     @endforeach 
                 </select>
             </div>
@@ -64,6 +68,7 @@
                     Empl ID
                 </label>
                 <input type="number" name="emplid" id="emplid"  class="form-control" 
+                            value="{{ isset($filter['emplid']) ? $filter['emplid'] : '' }}"
                             onKeyPress="if(this.value.length==6) return false;"/>
             </div> 
 
@@ -72,6 +77,7 @@
                     PECSF ID
                 </label>
                 <input type="number" name="pecsf_id" id="pecsf_id"  class="form-control" 
+                            value="{{ isset($filter['pecsf_id']) ? $filter['pecsf_id'] : '' }}"
                             onKeyPress="if(this.value.length==6) return false;"/>
             </div> 
 
@@ -79,7 +85,8 @@
                 <label for="name">
                     Name
                 </label>
-                <input name="name" id="name"  class="form-control" />
+                <input name="name" id="name"  class="form-control" 
+                    value="{{ isset($filter['name']) ? $filter['name'] : '' }}"/>
             </div> 
 
             <div class="form-group col-md-2">
@@ -89,7 +96,8 @@
                 <select class="form-control" name="city" id="city" {{ isset($pledge) ? 'disabled' : '' }}>
                     <option value="">All</option>
                     @foreach ($cities as $city)
-                        <option value="{{ $city->city }}" >
+                        <option value="{{ $city->city }}" 
+                            {{ isset($filter['city']) && $filter['city'] == $city->city ? 'selected' : '' }}>
                             {{ $city->city }}</option>
                     @endforeach
                 </select>
@@ -98,13 +106,14 @@
 
         <div class="form-row">
             <div class="form-group col-md-2">
-                <label for="campaign_year">
-                    Campaign Year
+                <label for="yearcd">
+                    Calendar Year
                 </label>
-                <select id="campaign_year_id" class="form-control" name="campaign_year_id">
+                <select id="yearcd" class="form-control" name="yearcd">
                     <option value="">All</option>
-                    @foreach ($campaign_years as $cy)
-                        <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }}
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}" {{ ((isset($filter['yearcd']) ? $filter['yearcd'] : date('Y')) == $year) ? 'selected' : '' }}>
+                            {{ $year }}
                         </option>
                     @endforeach
                 </select>
@@ -114,14 +123,16 @@
                 <label for="seqno">
                     Seq. No
                 </label>
-                <input type="number"  name="seqno" id="seqno"  class="form-control" />
+                <input type="number"  name="seqno" id="seqno"  class="form-control" 
+                        value="{{ isset($filter['seqno']) ? $filter['seqno'] : '' }}">
             </div>
 
             <div class="form-group col-md-4">
                 <label for="special_campaign_name">
                     Special Campaign Name 
                 </label>
-                <input type="text"  name="special_campaign_name" id="special_campaign_name"  class="form-control" />
+                <input type="text"  name="special_campaign_name" id="special_campaign_name"  class="form-control" 
+                        value="{{ isset($filter['special_campaign_name']) ? $filter['special_campaign_name'] : '' }}">
             </div>
 
         </div>
@@ -132,7 +143,8 @@
                 <label for="deduct_pay_from">
                     Pay Date
                 </label>
-                <input type="date"  name="deduct_pay_from" id="deduct_pay_from"  class="form-control" />
+                <input type="date"  name="deduct_pay_from" id="deduct_pay_from"  class="form-control" 
+                        value="{{ isset($filter['deduct_pay_from']) ? $filter['deduct_pay_from'] : '' }}">
             </div>
 
             <div class="form-group col-md-2">
@@ -140,33 +152,35 @@
                     Cancel Status
                 </label>
                 <select class="form-control" name="cancelled" id="cancelled">
-                    <option value="">All</option>
-                    <option value="C">Cancelled</option>
-                    <option value="N">Not Cancelled</option>
+                    <option value="" {{ isset($filter['cancelled']) && $filter['cancelled'] == '' ? 'selected' : '' }}>All</option>
+                    <option value="C" {{ isset($filter['cancelled']) && $filter['cancelled'] == 'C' ? 'selected' : '' }}>Cancelled</option>
+                    <option value="N" {{ isset($filter['cancelled']) && $filter['cancelled'] == 'N' ? 'selected' : '' }}>Not Cancelled</option>
                 </select>
             </div> 
 
             <div class="form-group col-md-2">
                 <label for="one_time_amt_from">Amount (From)</label>
-                <input class="form-control " type="number" id="one_time_amt_from" name="one_time_amt_from">
+                <input class="form-control " type="number" id="one_time_amt_from" name="one_time_amt_from"
+                        value="{{ isset($filter['one_time_amt_from']) ? $filter['one_time_amt_from'] : '' }}">
             </div>
 
             <div class="form-group col-md-2">
                 <label for="one_time_amt_to">Amount (To)</label>
-                <input class="form-control " type="number" id="one_time_amt_to" name="one_time_amt_to">
+                <input class="form-control " type="number" id="one_time_amt_to" name="one_time_amt_to"
+                        value="{{ isset($filter['one_time_amt_to']) ? $filter['one_time_amt_to'] : '' }}">
             </div>
 
-            <div class="form-group col-md-1">
+            <div class="form-group col-md-1" style="min-width: 100px;">
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="submit" id="refresh-btn" value="Refresh" class="form-control btn-primary">Refresh</button>
+                <button type="button" id="refresh-btn" value="Search" class="form-control btn-primary">Search</button>
             </div>
-            <div class="form-group col-md-1">
+            <div class="form-group col-md-1" style="min-width: 100px;">
                 <label for="search">
                     &nbsp;
                 </label>
-                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Reset</button>
+                <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary " >Clear</button>
             </div>
 
         </div>
@@ -229,6 +243,11 @@
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
+
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 5%;
+    }
+    
 </style>
 @endpush
 
@@ -252,12 +271,19 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },
+            stateSave: true,   
             serverSide: true,
             // select: true,
             'order': [[0, 'desc']],
-            stateSave: true,            
             "initComplete": function(settings, json) {
-                    oTable.columns.adjust().draw();
+                    oTable.columns.adjust().draw(false);
+
+                @if (!(str_contains( url()->previous(), 'admin-pledge/special-campaign')))
+                    oTable.page( 'first' ).draw( 'page' );
+                @endif    
             },
             ajax: {
                 url: '{!! route('admin-pledge.special-campaign.index') !!}',
@@ -270,13 +296,20 @@
                     data.seqno = $('#seqno').val();
                     data.name = $('#name').val();
                     data.city = $('#city').val();
-                    data.campaign_year_id = $('#campaign_year_id').val();
+                    data.yearcd = $('#yearcd').val();
                     data.one_time_amt_from = $('#one_time_amt_from').val();
                     data.one_time_amt_to = $('#one_time_amt_to').val();
                     data.cancelled = $('#cancelled').val();
                     data.special_campaign_name = $('#special_campaign_name').val();
                     data.deduct_pay_from = $('#deduct_pay_from').val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},
@@ -406,13 +439,19 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             Toast('Success', 'Pledge ' + title +  ' was successfully deleted.', 'bg-success' );
                         },
-                        error: function(response) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: response.responseJSON.error,
-                            })
-                            console.log(response.responseJSON.error);
+                        error: function(xhr, resp, text) {
+                            if (xhr.status == 401 || xhr.status == 419) {
+                                { // session expired 
+                                    window.location.href = '/login'; 
+                                }
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: xhr.responseJSON.error,
+                                })
+                                console.log(xhr.responseJSON.error);
+                            }
                         }
                     });
                 } else if (result.isCancelledDenied) {

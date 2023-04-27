@@ -3,7 +3,7 @@
     @csrf
     <br>
 
-    <input type="hidden" name="form_id" id="form_id" value="" />
+    <input type="hidden" name="form_id" id="form_id" value="0" />
 
     <div class="form-row" style="left: 5px;
     position: relative;width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
@@ -38,7 +38,7 @@
         </div>
         <div class="form-group col-md-4">
             <label for="campaign_year">Campaign year</label>
-            <div id="campaign_year">{{$campaign_year->calendar_year}}</div>
+            <div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>
             <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
                        @error('form_submitter')
@@ -147,10 +147,10 @@
 
         <div class="form-group col-md-4">
             <label for="event_type">Employment city</label>
-            <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
+            <select onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');" class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
                 <option value="">Select a city</option>
                 @foreach($cities as $city)
-                    <option value="{{$city->city}}">{{$city->city}}</option>
+                    <option region="{{$city->TGB_REG_DISTRICT}}" value="{{$city->city}}">{{$city->city}}</option>
                     @endforeach
             </select>
 
@@ -166,7 +166,7 @@
             <select class="form-control search_icon" id="region" name="region">
                 <option value="">Select a region</option>
             @foreach($regions as $region)
-                    <option value="{{$region->id}}">{{$region->name}}</option>
+                    <option  code="{{$region->code}}" value="{{$region->id}}">{{$region->name}}</option>
                 @endforeach
             </select>
             <span class="region_errors errors">
@@ -415,7 +415,7 @@
             <div class="modal-body pledgeDetail">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+                <button type="button" style="color:#000;" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

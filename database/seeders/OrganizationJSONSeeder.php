@@ -27,9 +27,10 @@ class OrganizationJSONSeeder extends Seeder
             ],[
                 'name' => $organization->name,
                 'effdt' => $organization->effdt,
+                'bu_code' => $organization->bu_code,
                 'status' => $organization->status,
-                'created_by_id' => $organization->created_by_id,
-                'updated_by_id' => $organization->updated_by_id,
+                // 'created_by_id' => $organization->created_by_id,
+                // 'updated_by_id' => $organization->updated_by_id,
             ]);
         }    
     }

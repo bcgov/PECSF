@@ -40,6 +40,16 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function credentials(Request $request)
+    {
+        return [
+            'email' => request()->email,
+            'password' => request()->password,
+            'acctlock' => 0,                        //  check additional field during login 
+            'source_type' => 'LCL',                 //  check additional field during login 
+        ];
+    } 
+
     /**
      * The user has been authenticated.
      *
@@ -51,9 +61,13 @@ class LoginController extends Controller
     {
 
         // Set Special Campaign Banner when activated special campaign
-        $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
-        if (count($banner_texts) > 0 ) {
-            session()->put('special-campaign-banner-text', $banner_texts );
+        // $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
+        // if (count($banner_texts) > 0 ) {
+        //     session()->put('special-campaign-banner-text', $banner_texts );
+        // }
+
+        if ( \App\Models\SpecialCampaign::hasActiveSpecialCampaign() ) {
+            session()->put('has-active-special-campaign', 'YES' );
         }
 
         // Update the last signon datetime

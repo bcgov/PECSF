@@ -57,111 +57,54 @@ class EventSubmissionQueueController extends Controller
             {
                 $count = BankDepositForm::where("event_type","Fundraiser")->count() + 1;
                 $zeroes = 3 - strlen($count);
-                $id = "G".date("y");
+                $id = "F".date("y");
                 for($i = 0; $i<$zeroes;$i++){
                     $id.= "0";
                 }
                 $id .= $count;
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
             }
-            else{
+            else if($form->organization_code == "RET"){
+                $count = BankDepositForm::where("organization_code","RET")->count() + 1;
+                $zeroes = 3 - strlen($count);
+                $id = "R".date("y");
+                for($i = 0; $i<$zeroes;$i++){
+                    $id.= "0";
+                }
+                $id .= $count;
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+            }
+
 
                 BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
                 $year =  intval(date("Y")) + 1;
                 do{
                     $campaign_year = CampaignYear::where('calendar_year', $year)->first();
+                    if(empty($campaign_year))
+                    {
+                        break;
+                    }
                     $year--;
 
                     if($year == 2005){
                         break;
                     }
                 }while(!$campaign_year->isOpen());
-
                 if(empty($campaign_year) || !$campaign_year->isOpen()){
                     $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
-
                 $gov_organization = Organization::where('code', 'GOV')->first();
                 $is_GOV = ($form->organization_code == $gov_organization->code);
-
-                $pay_period_amount = $form->deposit_amount;
-                $one_time_amount =  $form->deposit_amount;
-                $pay_period_annual_amt = $form->deposit_amount;
-
-
-
-
-                // Create a new Pledge
-                $form_organization = Organization::where('code', $form->organization_code)->first();
-                $form_user = User::where('id', $form->form_submitter_id)->first();
-                $pledge = Pledge::Create([
-                    'organization_id' => $form_organization->id,
-                    'user_id' =>    $form->form_submitter_id,
-                    "pecsf_id" =>   $form->pecsf_id,
-                    "first_name" => $form_user->name,
-                    "last_name" =>  "",
-                    "city" =>       $form->employment_city,
-                    'campaign_year_id' => $campaign_year->id,
-                    'type' => $form->regional_pool_id ? "P" : "C",
-                    'f_s_pool_id' => empty($form->regional_pool_id) ? 0 : $form->regional_pool_id,
-                    'one_time_amount' => $form->deposit_amount,
-                    'pay_period_amount' => 0,
-                    'goal_amount' => $form->deposit_amount,
-                    'created_by_id' => $form_user->id,
-                    'updated_by_id' => Auth::id(),
-                ]);
-
-                $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
-
-
-                $pledge->charities()->delete();
-
-                $pledgeCharities = BankDepositFormOrganizations::where("bank_deposit_form_id" , $form->id)->get();
-
-                if ( empty($form->regional_pool_id) )
-                {
-                    foreach( ['one-time'] as $frequency) {
-
-                        $one_time_sum = 0;
-                        $one_time_goal_sum = 0;
-                        $pay_period_sum = 0;
-                        $pay_period_goal_sum = 0;
-
-                        $last_key = array_key_last($pledgeCharities->toArray());
-                        foreach($pledgeCharities as $key => $charity) {
-                            $percent = $charity->donation_percent;
-                            $charity = Charity::where("id",$charity->vendor_id)->first();
-
-
-                            $new_one_time = round( $percent * $one_time_amount /100, 2);
-                            $new_one_time_goal = round( $percent * $one_time_amount /100, 2);
-                            $new_pay_period = round( $percent * $pay_period_amount /100, 2);
-                            $new_pay_period_goal = round( $percent * $pay_period_annual_amt /100, 2);
-
-                            if ($key == $last_key) {
-                                $new_one_time = round($one_time_amount - $one_time_sum, 2);
-                                $new_one_time_goal = round($one_time_amount - $one_time_goal_sum, 2);
-                                $new_pay_period = round($pay_period_amount - $pay_period_sum, 2);
-                                $new_pay_period_goal = round($pay_period_annual_amt - $pay_period_goal_sum, 2);
-                            }
-
-                            // One-Time
-                            if ($frequency == 'one-time' && $one_time_amount) {
-                                PledgeCharity::create([
-                                    'charity_id' => $charity->id,
-                                    'pledge_id' => $pledge->id,
-                                    'frequency' => 'one-time',
-                                    'additional' => $charity->specific_community_or_initiative,
-                                    'percentage' => $percent,
-                                    'amount' => round($form->deposit_amount * ($charity->donation_percent / 100)),
-                                    'goal_amount' => round($form->deposit_amount * ($charity->donation_percent / 100)),
-                                ]);
-                            }
-                        }
+                if($is_GOV){
+                    $existing = BankDepositForm::where("organization_code","=","GOV")
+                        ->where("event_type","=","Cash One-time Donation")
+                        ->where("form_submitter_id","=",$form->form_submitter_id)
+                        ->get();
+                    if(!empty($existing))
+                    {
+                        BankDepositForm::where("id",$request->submission_id)->update(['bc_gov_id' => "S".$form->bc_gov_id]);
                     }
                 }
-
-            }
         }
     }
 
@@ -180,6 +123,7 @@ class EventSubmissionQueueController extends Controller
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
@@ -194,9 +138,11 @@ class EventSubmissionQueueController extends Controller
         $cities = City::all();
         $organizations = [];
         $selected_charities = [];
-
+        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
         // load the view and pass
-        return view('admin-pledge.submission-queue.index',compact('selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
+        return view('admin-pledge.submission-queue.index',compact('fund_support_pool_list','selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
     }
     /**
      * Display a listing of pledge details.
@@ -204,14 +150,81 @@ class EventSubmissionQueueController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function details(Request $request){
-        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id ")
+        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id, campaign_years.calendar_year as calendar_year")
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
+            ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")
+
             ->get();
         foreach($submissions as $index => $submission){
             $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id","=",$request->form_id)->get();
             $submissions[$index]["attachments"] = BankDepositFormAttachments::where("bank_deposit_form_id","=",$request->form_id)->get();
         }
+
+        $existing = [];
+        if($submissions[0]->organization_code == "GOV"){
+            $existing = BankDepositForm::where("organization_code","=","GOV")
+                ->where("event_type","=","Cash One-time Donation")
+                ->where("form_submitter_id","=",$submissions[0]->form_submitter_id)
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->bc_gov_id = "S".$submissions[0]->bc_gov_id;
+            }
+        }
+        $existing = [];
+
+        if($submissions[0]->organization_code == "RET"){
+            $existing = BankDepositForm::where("organization_code","=","RET")
+                ->orderBy("pecsf_id","desc")
+                ->whereNotNull("pecsf_id")
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2).(intval(str_replace("R","",$existing[0]->bc_gov_id)) +1);
+            }
+            else{
+                $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2)."001";
+
+            }
+        }
+        $existing = [];
+
+        if($submissions[0]->event_type == "Gaming")
+        {
+            $existing = BankDepositForm::where("event_type","=","Gaming")
+                ->where("pecsf_id","LIKE","G%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->pecsf_id = "G".substr(date("Y"),2,2).(intval(str_replace("G","",$existing[0]->pecsf_id)) + 1);
+            }
+            else{
+                $submissions[0]->pecsf_id = "G".substr(date("Y"),2,2)."001";
+            }
+        }
+        $existing = [];
+
+        if($submissions[0]->event_type == "Fundraiser")
+        {
+            $existing = BankDepositForm::where("event_type","=","Fundraiser")
+                ->where("pecsf_id","LIKE","F%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0)
+            {
+                $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2).(intval(str_replace("F","",$existing[0]->pecsf_id)) + 1);
+            }
+            else{
+                $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2)."001";
+            }
+        }
+
         echo json_encode($submissions);
     }
 
@@ -314,7 +327,10 @@ class EventSubmissionQueueController extends Controller
             'updated_by_id' => Auth::id(),
         ]);
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {
@@ -477,7 +493,10 @@ class EventSubmissionQueueController extends Controller
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
 
-        $pledge->charities()->delete();
+        // $pledge->charities()->delete();
+        foreach($pledge->charities as $pledge_charity) {
+            $pledge_charity->delete();
+        }
 
         if ( $request->pool_option == 'C' )
         {

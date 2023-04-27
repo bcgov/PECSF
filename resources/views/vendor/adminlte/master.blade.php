@@ -74,43 +74,42 @@
 </head>
 
 <body class="@yield('classes_body')" @yield('body_data')>
-    @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+    @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
-    {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
-    <div class="top-message-bar p-2  bg-warning   XXsticky-top">
-        <div class="row  justify-content-center ">
-            <div class="col-sm-12 col-md-8">
-                <div class="float-right">
-                    {{-- <span class="h6">One of three columns</span> --}}
-                    <div class="special-campaign-container">
-                        <div class="row px-3">
-                            <div class="v-slider-frame">
-                                <ul class="v-slides">
-                                    
-                                    @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
-                                        <li class="v-slide">{{  $text }}</li>
-                                    @endforeach
-                                </ul>
+        {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
+        <div class="top-message-bar p-2  bg-warning   XXsticky-top">
+            <div class="row  justify-content-center ">
+                <div class="col-sm-12 col-md-8 col-lg-10">
+                    <div class="float-right">
+                        {{-- <span class="h6">One of three columns</span> --}}
+                        <div class="special-campaign-container">
+                            <div class="row pr-1">
+                                <div class="v-slider-frame">
+                                    <ul class="v-slides">
+                                        @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
+                                            <li class="v-slide">{{  $text }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <div class="float-left">
-                    <span class="h6 mx-2">|</span>
-                    <span class="h6 text-primary font-weight-bold special-campaign">
-                        <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
-                    </span>
-                </div>
-                <div class="form-inline float-right align-middle pr-2">
-                    <button type="submit" class="close">
-                        <span aria-hidden="true" class="h6 font-weight-bold">X</span>
-                    </button>
+                <div class="col-sm-12 col-md-4 col-lg-2">
+                    <div class="float-left">
+                        <span class="h6 mx-2">|</span>
+                        <span class="h6 text-primary font-weight-bold special-campaign">
+                            <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
+                        </span>
+                    </div>
+                    <div class="form-inline float-right align-middle pr-2">
+                        <button type="submit" class="close">
+                            <span aria-hidden="true" class="h6 font-weight-bold">X</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
     {{-- Body Content --}}
@@ -151,7 +150,7 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
-    @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+    @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
         <style>
             .v-slider-frame {
                 border: none;
@@ -175,7 +174,7 @@
             var vsOpts = {
                 $slides: $('.v-slide'),
                 $list: $('.v-slides'),
-                duration: 10,
+                duration: 8,
                 lineHeight: 30
             }
 
@@ -187,7 +186,7 @@
             vsOpts.$slides.each(function(i) {
                 vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
                     y: i * -1 * vsOpts.lineHeight,
-                    ease: Elastic.easeOut.config(1, 0.3)
+                    ease: Elastic.easeOut.config(1, 0.7)
                 })
             })
             vSlide.play();
@@ -216,6 +215,18 @@
             });
         </script>
     @endif
+    {{-- Global AjaxError event to redirect to login page when the session was expired --}}
+    <script>
+        $(function() {
+            $(document).ajaxError(function(event, jqxhr, settings, exception) {
+                if (jqxhr.status == 401 || jqxhr.status == 419) {
+                   // session expired 
+                   window.location.href = '/login'; 
+                }
+                console.log('global ajaxError handler -- status ' + jqxhr.status + ' | ' + exception);
+            });
+        });
+    </script>
 </body>
 
 </html>

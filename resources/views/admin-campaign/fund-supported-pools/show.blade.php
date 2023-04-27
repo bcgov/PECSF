@@ -30,7 +30,7 @@
                 <div class="form-group col-md-3">
                     <label for="startd_date">Start Date</label>
                     <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" 
-                            id="start_date" value="{{ $pool->start_date }}" disabled>
+                            id="start_date" value="{{ $pool->start_date->format('Y-m-d') }}" disabled>
                 </div>
                 <div class="form-group col-md-2">
                     <label for="pool_status">Status</label>
@@ -98,7 +98,41 @@
                     </div>
                 </div>
             </div>
-            <div>
+
+            {{-- Audit Information  --}}
+            <div class="card m-0 pb-3">
+                <div class="card-header bg-light">
+                    <h6 class="text-dark font-weight-bold">Audit Information</h6>
+                </div>
+                <div class="card-body ">
+                    <div class="row no-gutters">
+                        <div class="col-3">
+                            <p><span class="font-weight-bold">Created by: </span>
+                                {{ isset($pool->created_by) ? $pool->created_by->name : ''}} </p>
+                        </div>
+                        <div class="col-3">
+                            <p><span class="font-weight-bold">Created at:</span> 
+                                {{ $pool->created_at }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3">
+                            <p><span class="font-weight-bold">Modified by:</span> 
+                                {{ isset($pool->updated_by) ? $pool->updated_by->name : ''}} </p>
+                        </div>
+                        <div class="col-3">
+                            <p><span class="font-weight-bold">Modified at:</span> 
+                                {{ $pool->updated_at }} 
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="pt-3">
                 {{-- <input class="btn btn-primary" type="submit" value="Save"> --}}
                 <a class="btn btn-outline-primary"  href="{{ route('settings.fund-supported-pools.index') }}">Cancel</a>
             </div>

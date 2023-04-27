@@ -248,28 +248,18 @@ return [
                 ]
                 ,
                 [
-                    'text' => 'Volunteer Profile',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
-                    'url'  => '/profile',
-                ],
-                [
-                    'text' => 'Training',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
-                    'url'  => '/training',
-                ],
-                [
                     'text' => 'Forms',
                     'icon' => 'nav-icon fa fa-circle fa-sm',
                     'url'  => '/bank_deposit_form',
                 ],
                 ]
         ],
-        [
+      /*  [
             'text' => 'Challenge',
             'url' => '/challenge',
             'icon' => 'nav-icon fa fa-chart-bar', // 'challenge',
             'active' => ['challenge/*']
-        ],
+        ],*/
         [
             'text' => 'FAQs',
             'url' => '/contact',
@@ -295,7 +285,7 @@ return [
                 [
                     'text' => 'Training, Communications and Engagement',
                     'icon' => 'nav-icon fa fa-graduation-cap',
-                    'url'  => '/settings/others',
+                    'url'  => '/settings',
                 ],
                 [
                     'text' => 'Reporting',
@@ -320,6 +310,11 @@ return [
                     'text' => 'Users',
                     'icon' => 'nav-icon far fa-circle',
                     'url'  => '/system/users',
+                ],
+                [
+                    'text' => 'Auditing',
+                    'icon' => 'nav-icon far fa-circle',
+                    'url'  => '/system/auditing',
                 ],
                 [
                     'text' => 'Access Logs',
