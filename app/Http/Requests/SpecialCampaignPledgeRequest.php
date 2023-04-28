@@ -28,7 +28,7 @@ class SpecialCampaignPledgeRequest extends FormRequest
 
         $gov = Organization::where('code', 'GOV')->first();
 
-        return [ 
+        return [
                 'organization_id'  => ['required'],
                 'user_id'       => [$this->organization_id == $gov->id ? 'required' : 'nullable',  'exists:users,id' ],
                 'pecsf_id'      => ['digits:6',  $this->organization_id != $gov->id ? 'required' : 'nullable'],
@@ -37,7 +37,7 @@ class SpecialCampaignPledgeRequest extends FormRequest
                 'pecsf_city'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
 
                 'special_campaign_id'  => [ 'required', Rule::exists("special_campaigns", "id")->whereNull("deleted_at") ],
-                
+
                 'one_time_amount'  => [ 'required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/' ],
         ];
 
@@ -58,7 +58,7 @@ class SpecialCampaignPledgeRequest extends FormRequest
 
             'one_time_amount.required' => 'The amount is required.',
             'one_time_amount.min'      => 'The min amount is $ 1.0.',
-            'one_time_amount.regex' => 'The invalid amount, max 2 decimal places.',
+            'one_time_amount.regex' => ' The One-time custom amount must have maximum of 2 decimal places',
         ];
     }
 
