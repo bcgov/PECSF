@@ -18,8 +18,8 @@ class PledgeHistorySummary extends Model
     public function fund_supported_pool() {
 
         if ($this->source == 'P') {
-            $region = Region::where('name', $this->region)->first();
-            return FSPool::current()->where('region_id', $region->id)->first();
+            $region = Region::where('code', $this->region)->first();
+            return $region ? FSPool::current()->where('region_id', $region->id)->first() : null;
         } else {
             return null;
         }
