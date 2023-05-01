@@ -20,6 +20,7 @@ class PledgeHistorySummary extends Model
         if ($this->source == 'P') {
             $region = Region::where('code', $this->region)->first();
             return $region ? FSPool::current()->where('region_id', $region->id)->first() : null;
+
         } else {
             return null;
         }
@@ -40,7 +41,7 @@ class PledgeHistorySummary extends Model
         return ($this->campaign_type == 'Annual') ? true : false;
     }
 
-    public function first_detail() 
+    public function first_detail()
     {
         // return $this->hasMany(PledgeHistory::class, 'id', 'pledge_history_id');
         return $this->belongsTo(PledgeHistory::class,  'pledge_history_id', 'id');
