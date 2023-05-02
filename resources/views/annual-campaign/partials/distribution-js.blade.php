@@ -63,6 +63,7 @@ $(function () {
            
         $.each(rows, function(i) {
             if (i == (rows.length -1 ) ) {
+                current = $(this).val();
                 newValue = 0;
                 if (type == 'amount') {
                     // newValue = expectedTotal - sum;

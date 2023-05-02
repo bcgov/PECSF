@@ -216,3 +216,14 @@ div.border-primary a {
 body{
     font-size:1rem!important;
 }
+
+.btn-outline-primary span {
+    color: black;
+}
+.btn-outline-primary.active span,.btn-outline-primary:hover span{
+    color:white;
+}
+.pool_image,#pool_image{
+    max-width:250px;
+    max-height:250px;
+}
