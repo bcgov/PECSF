@@ -1198,7 +1198,7 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
                             $new_pledge_charity->additional = $bi_weekly_pledge->name2;
                             $new_pledge_charity->percentage = $bi_weekly_pledge->percent;
-                            $new_pledge_charity->amount = $bi_weekly_pledge->amount;
+                            $new_pledge_charity->amount = $bi_weekly_pledge->amount / 26;
                             $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
                             $new_pledge_charity->goal_amount = $new_pledge_charity->amount * $campaignYear->number_of_periods;
 
