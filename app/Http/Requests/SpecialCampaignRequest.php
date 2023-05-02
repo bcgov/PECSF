@@ -28,7 +28,7 @@ class SpecialCampaignRequest extends FormRequest
         $my_rules = [];
 
         if ($this->step == 1) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     'step' => ['required'],
                     'special_campaign_id'      => ['required',  'exists:special_campaigns,id' ],
@@ -37,10 +37,10 @@ class SpecialCampaignRequest extends FormRequest
         }
 
         if ($this->step >= 2) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
-                    'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount), 
-                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                    'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount),
+                                        ['required','numeric','min:1', 'regex:/^(-?\w+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -62,9 +62,9 @@ class SpecialCampaignRequest extends FormRequest
             // 'one_time_amount_custom.min' => 'The custom amount must be at least 0.01.',
 
             'one_time_amount_custom.required' => 'The amount is required.',
-            'one_time_amount_custom.min'      => 'The min amount is $ 1.0.',
-            'one_time_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
-
+            'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1',
+            'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
+            'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
         ];
     }
 
