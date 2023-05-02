@@ -607,6 +607,7 @@ class BankDepositFormController extends Controller
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
             $organizations->where("f_s_pool_charities.status","=","A");
             $organizations->selectRaw("image");
+            $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
         $organizations = $organizations->where("charity_status","=","Registered")->paginate(7);
