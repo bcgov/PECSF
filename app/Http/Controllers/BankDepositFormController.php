@@ -585,7 +585,7 @@ class BankDepositFormController extends Controller
 
     public function organizations(Request $request)
     {
-        $organizations = Charity::where("charity_status","=","Registered");
+        $organizations = Charity::selectRaw("charities.id as id, charity_name, effective_date_of_status, category_code, registration_number, charity_status, address, city, province, country, postal_code, sanction")->where("charity_status","=","Registered");
 
         if($request->province != "")
         {
@@ -605,6 +605,7 @@ class BankDepositFormController extends Controller
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
             $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
+            $organizations->where("f_s_pool_charities.status","=","A");
         }
 
         $organizations = $organizations->where("charity_status","=","Registered")->groupby("charity_name")->paginate(7);
