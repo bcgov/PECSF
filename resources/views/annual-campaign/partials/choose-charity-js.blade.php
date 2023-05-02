@@ -170,7 +170,7 @@
         });
 
         $("body").on("click",".view_details",function(e){
-            if($(this).attr("pool_image").length > 0){
+            if($(this).attr("pool_image").length > 21){
                 $("table.charity").hide();
                 $("table.fsp").show();
                 $(".modal-header").hide();
