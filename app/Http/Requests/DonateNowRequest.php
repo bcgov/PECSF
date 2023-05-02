@@ -109,6 +109,7 @@ class DonateNowRequest extends FormRequest
             'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1',
             'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
  ];
+
     }
 
 }
