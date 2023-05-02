@@ -80,13 +80,43 @@
                             <tr class="">
                                 <td>{{ $pledge->donation_type }}</td>
                                 @if ($pledge->type == 'P')
-                                    <td>{{ $pledge->region }}
-                                    </td>
+                                    {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
+                                    <td>{{ $pledge->region }}   </td>
                                 @else
                                     <td>
-                                        @foreach($pledge->distinct_charities()->get() as $charity)
-                                        {{ $charity->name }}<br>
-                                        @endforeach
+                                        @if ($pledge->source == 'GF')
+                                            @switch($pledge->donation_type)
+                                                @case('Special Campaign')
+                                                    {{ $pledge->region }}
+                                                    @break
+                                                @case('Donate Now')
+                                                    {{ $pledge->region }}
+                                                    @break
+                                                @default
+                                                    <a type="button" class="more-info"
+                                                       data-source="{{ $pledge->source }}"
+                                                       data-type="{{ $pledge->donation_type }}"
+                                                       data-id="{{ $pledge->id }}"
+                                                       data-frequency="{{ $pledge->frequency }}"
+                                                       data-yearcd="{{ $pledge->yearcd }}">
+                                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
+                                                    </a>
+
+                                            @endswitch
+                                        @else
+                                            @if ($pledge->donation_type == 'Donate Today')
+                                                {{ $pledge->number_of_charities }}
+                                            @else
+                                                <a type="button" class="more-info "
+                                                   data-source="{{ $pledge->source  }}"
+                                                   data-type="{{ $pledge->donation_type }}"
+                                                   data-id="{{ $pledge->id }}"
+                                                   data-frequency="{{ $pledge->frequency }}"
+                                                   data-yearcd="{{ $pledge->yearcd }}">
+                                                    {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
+                                                </a>
+                                            @endif
+                                        @endif
                                     </td>
                                 @endif
                                 <td>{{ $pledge->frequency }} </td>
