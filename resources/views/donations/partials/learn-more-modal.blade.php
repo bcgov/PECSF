@@ -11,7 +11,7 @@
                 </button>
             </div>
             <div id="donateGuideCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                <div class="carousel-inner text-center">
+                <div class="carousel-inner text-center" style="min-height: 550px;">
                     <div class="carousel-item active">
                         <h3 class="text-primary my-5">
                             Why donate to the Provincial Employees Community Service Fund?
@@ -27,12 +27,14 @@
                         <div class="my-4">
                             <img src="{{asset('img/donate-intro.png')}}" alt="" style="max-width: 400px;">
                         </div>
-                        <p class="m-4">
-                            Employees, including retirees, can donate anytime, however the majority of employees sign <br> up to support their favourite charities during the annual fall PECSF awareness campaign.
-                        </p>
-                        <p class="m-4">
-                            Registering during the Fall campaign and pledge drive ensures payroll deductions are set up for the next calendar year. Payroll deductions begin with the first pay in January.
-                        </p>
+                        <div class="px-5" >
+                            <p class="mx-5 px-5">
+                                Employees, including retirees, can donate anytime, however the majority of employees sign up to support their favourite charities during the annual fall PECSF awareness campaign.
+                            </p>
+                            <p class="mx-5 px-5">
+                                Registering during the fall campaign and pledge drive ensures payroll deductions are set up for the next calendar year. Payroll deductions begin with the first pay in January.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="carousel-item">
@@ -40,15 +42,17 @@
                             How donating to PECSF works
                         </h3>
                         <div class="row">
-                            <div class="col-12 col-md-4 offset-md-1">
+                            <div class="col-12 col-md-4 offset-md-1 text-left">
                                 <h4 class="text-primary">
-                                    Step 1: Choose your charities
+                                    Step 1 - Select your preferred method for choosing charities 
                                 </h4>
                                 <p>
-                                    Simply use the search bar to type in the name of a charity.
+                                    If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA). You can also choose individual Fund Supported Pool entries. 
                                 </p>
                                 <p>
-                                    Up to 10 charitable organizations can be funded through this new online portal.
+                                    If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined 
+                                    and cannot be adjusted, removed, or substituted. Visit the PECSF webpages to learn more about the 
+                                    <a href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity" target="_blank">Fund Supported Pool</a> option. 
                                 </p>
                             </div>
                             <div class="col-12 col-md-5 offset-md-1">
@@ -63,15 +67,16 @@
                         <div class="row">
                             <div class="col-12 col-md-4 offset-md-1">
                                 <h4 class="text-primary">
-                                    Step 2: Decide on the frequency and amount
+                                    Step 2 - Select your charities - CRA option
                                 </h4>
-                                <p>
-                                    Current employees can choose biweekly deductions in any amount or a one-time payroll deduction.
+                                <p class="">
+                                    Search for CRA registered charities using keyword, category and/or province. If you don't see any results, 
+                                    you may need to remove filters that you have already selected, or your search may get so specific that no results will display. 
                                 </p>
-                                <p>
+                                {{-- <p>
                                 It is recommended that you make a one-time contribution if you do not wish to use the payroll
 deduction plan.
-                                </p>
+                                </p> --}}
                             </div>
                             <div class="col-12 col-md-5 offset-md-1">
                                 <img src="{{asset('img/donation-intro/step-2.png')}}" alt="" style="max-width: 450px;">
@@ -102,6 +107,84 @@ deduction plan.
                             </div>
                         </div>
                     </div>
+{{-- page 6 --}}
+<div class="carousel-item">
+    <h3 class="text-primary my-5">
+        How donating to PECSF works
+    </h3>
+    <div class="row">
+        <div class="col-12 col-md-4 offset-md-1">
+            <h4 class="text-primary">
+                Step 2 - Select your charities - FSP option 
+            </h4>
+            <p>
+                Search for Individual Fund Supported Pool entries using the Search by Fund Supported Pool drop-down. Select the region and choose your charities. 
+            </p>
+        </div>
+        <div class="col-12 col-md-5 offset-md-1">
+            <img src="{{asset('img/donation-intro/step-6.png')}}" alt="" style="max-width: 450px;">
+        </div>
+    </div>
+</div>
+{{-- page 7 --}}
+<div class="carousel-item">
+    <h3 class="text-primary my-5">
+        How donating to PECSF works
+    </h3>
+    <div class="row">
+        <div class="col-12 col-md-4 offset-md-1">
+            <h4 class="text-primary">
+                Step 3 - Decide on the frequency and amount 
+            </h4>
+            <p>Current employees can choose bi-weekly or a one-time payroll deduction in any amount. 
+            </p>
+            <p>It is recommended that you make a one-time contribution if you do not wish to use the payroll deduction plan. 
+            </p>
+            <p>You may make both a bi-weekly and one-time payroll deduction. </p>
+        </div>
+        <div class="col-12 col-md-5 offset-md-1">
+            <img src="{{asset('img/donation-intro/step-7.png')}}" alt="" style="max-width: 450px;">
+        </div>
+    </div>
+</div>
+{{-- page 8 --}}
+<div class="carousel-item">
+    <h3 class="text-primary my-5">
+        How donating to PECSF works
+    </h3>
+    <div class="row">
+        <div class="col-12 col-md-4 offset-md-1">
+            <h4 class="text-primary">
+                Step 4 - Decide on the distribution - CRA option only 
+            </h4>
+            <p>By default, your donation is distributed evenly to each organization, however, you have the option to customize the distribution.</p>
+            <p>You have the option to distribute your donation by percentage or by dollar amount. Use the toggles to distribute your contributions to each charity.</p>
+        </div>
+        <div class="col-12 col-md-5 offset-md-1">
+            <img src="{{asset('img/donation-intro/step-8.png')}}" alt="" style="max-width: 450px;">
+        </div>
+    </div>
+</div>
+{{-- page 9 --}}
+<div class="carousel-item">
+    <h3 class="text-primary my-5">
+        How donating to PECSF works
+    </h3>
+    <div class="row">
+        <div class="col-12 col-md-4 offset-md-1">
+            <h4 class="text-primary">
+                Step 4/5 - Review and submit 
+            </h4>
+            <p>Review your choices to ensure accuracy, and that you're ready to submit.</p>
+            <p>Your <span class="font-weight-bold"><u>Payroll Deductions</u></span> begin on the first pay cheque in January following the annual awareness campaign 
+                and will appear on your T4 for the year that the funds were deducted.</p>
+        </div>
+        <div class="col-12 col-md-5 offset-md-1">
+            <img src="{{asset('img/donation-intro/step-9.png')}}" alt="" style="max-width: 450px;">
+        </div>
+    </div>
+</div>
+{{-- page 10 (Last) --}}
                     <div class="carousel-item">
                         <h3 class="text-primary my-5">
                             How donating to PECSF works
@@ -109,26 +192,29 @@ deduction plan.
                         <div class="row">
                             <div class="col-12 col-md-4 offset-md-1">
                                 <h4 class="text-primary">
-                                    Step 4: review and submit
+                                    Next steps and getting assistance
                                 </h4>
                                 <p>
-                                Check over your choices to ensure accuracy, and that you’re ready to submit. Once you press “submit”, the action cannot be undone.
+                                    After submitting your pledge, you will have the opportunity to download a PDF summary (for information only) and 
+                                    return to your donor history. You may return to make edits to your campaign pledge anytime during the fall awareness
+                                     campaign until the end of November. To make, update or cancel your pledge outside of the campaign, email 
+                                     <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
                                 </p>
-                                <p>
+                                {{-- <p>
                                 Your <strong><u><b>Payroll Deductions</b></u></strong> begin on the first paycheque of 2022 and will appear on your 2022 T4.
                                 </p>
                                 <p>
                                 By default, your donation is distributed evenly to each organization, however, you have the option to customize the distribution.
-                                </p>
+                                </p> --}}
                             </div>
                             <div class="col-12 col-md-5 offset-md-1">
-                                <img src="{{asset('img/donation-intro/step-4.png')}}" alt="" style="max-width: 450px;">
+                                <img src="{{asset('img/donation-intro/step-10.png')}}" alt="" style="max-width: 450px;">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer d-flex">
-                    <x-button href="#donateGuideCarousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Back</x-button>
+                    <button href="#donateGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                     <div class="flex-fill"></div>
                     <x-button href="#donateGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                     @if ( $campaignYear->isOpen() )
