@@ -191,17 +191,17 @@ class AnnualCampaignRequest extends FormRequest
     public function messages()
     {
         return [
-
             'charities.required' => 'At least one charity must be specified.',
             'charities.min' => 'At least one charity must be specified.',
             'charities.*.exists' =>  'The invalid charity entered.',
             'one_time_amount_custom.required' => 'The amount is required.',
-            'one_time_amount_custom.min'      => 'The min amount is $ 1.',
+            'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1.',
             'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
             'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
             'bi_weekly_amount_custom.required' => 'The amount is required.',
             'bi_weekly_amount_custom.min' => 'The minimum Bi-weekly custom amount is $1.',
             'bi_weekly_amount_custom.regex' => ' The Bi-weekly custom amount must have maximum of 2 decimal places.',
+            'bi_weekly_amount_custom.numeric' => ' The Bi-weekly custom amount must be a number.',
             'biWeeklyPercent.*.required' => 'The Percentage field is required.',
             'biWeeklyPercent.*.numeric' => 'The Percentage must be a number.',
             'biWeeklyPercent.*.between' => 'The percentage must be between 0.01 and 100.',
