@@ -140,7 +140,7 @@
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
         }
-        else if (e.to === 5) {
+        else if (e.to === 9) {
             $(this).find(".next-btn").addClass("d-none");
             $(this).find(".ready-btn").removeClass("d-none");
         } else {

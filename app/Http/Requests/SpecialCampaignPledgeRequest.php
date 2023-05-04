@@ -55,10 +55,9 @@ class SpecialCampaignPledgeRequest extends FormRequest
             'user_id.required'       => 'The Employee field is required',
             'special_campaign_id.required' => 'The special campaign is required. ',
             'special_campaign_id.exists' => 'The selected special campaign is invalid. ',
-
             'one_time_amount.required' => 'The amount is required.',
-            'one_time_amount.min'      => 'The min amount is $ 1.0.',
-            'one_time_amount.regex' => ' The One-time custom amount must have maximum of 2 decimal places',
+            'one_time_amount.min'      => 'The min amount is $1.',
+            'one_time_amount.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
         ];
     }
 

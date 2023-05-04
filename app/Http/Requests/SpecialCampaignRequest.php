@@ -40,7 +40,7 @@ class SpecialCampaignRequest extends FormRequest
             $my_rules = array_merge($my_rules,
                 [
                     'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount),
-                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                                        ['required','numeric','min:1', 'regex:/^(-?\w+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -63,8 +63,8 @@ class SpecialCampaignRequest extends FormRequest
 
             'one_time_amount_custom.required' => 'The amount is required.',
             'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1',
-            'one_time_amount_custom.regex' => ' The One-time custom amount must be numeric and have maximum of 2 decimal places',
-
+            'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
+            'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
         ];
     }
 

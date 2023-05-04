@@ -54,7 +54,7 @@ class DonateNowRequest extends FormRequest
                 [
                     // 'one_time_amount_custom'  => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
                     'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount),
-                                                    ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                                                    ['required','numeric','min:1', 'regex:/^(-?\w+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -104,12 +104,12 @@ class DonateNowRequest extends FormRequest
             'charities.min' => 'At least one charity must be specified.',
             'charities.max' => 'More than one charity were specified.',
             'charities.*.exists' =>  'The invalid charity entered.',
-
+            'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
             'one_time_amount_custom.required' => 'The amount is required.',
             'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1',
-            'one_time_amount_custom.regex' => ' The One-time custom amount must be numeric and have maximum of 2 decimal places',
+            'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
+ ];
 
-        ];
     }
 
 }
