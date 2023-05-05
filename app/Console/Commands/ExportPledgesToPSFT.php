@@ -126,7 +126,7 @@ class ExportPledgesToPSFT extends Command
             //     continue;
             // }
 
-            if ($user->source_type == 'LCL') {
+            if (App::environment('prod') && $user->source_type == 'LCL') {
                 $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $pledge_skip_count += 1;
                 continue;
@@ -300,7 +300,7 @@ class ExportPledgesToPSFT extends Command
             //     continue;
             // }
 
-            if ($user->source_type == 'LCL') {
+            if (App::environment('prod') && $user->source_type == 'LCL') {
                 $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $this->skip += 1;
                 continue;
@@ -404,7 +404,7 @@ class ExportPledgesToPSFT extends Command
             //     continue;
             // }
 
-            if ($user->source_type == 'LCL') {
+            if (App::environment('prod') && $user->source_type == 'LCL') {
                 $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $this->skip += 1;
                 continue;
