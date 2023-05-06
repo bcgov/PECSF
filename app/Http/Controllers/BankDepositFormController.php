@@ -7,6 +7,7 @@ use App\Models\BankDepositForm;
 use App\Models\BankDepositFormOrganizations;
 use App\Models\BankDepositFormAttachments;
 use App\Models\Charity;
+use App\Models\EmployeeJob;
 use App\Models\Organization;
 use App\Models\Pledge;
 use Illuminate\Http\Request;
@@ -610,10 +611,33 @@ class BankDepositFormController extends Controller
             $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7);
+        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7)->onEachSide(1);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
     }
+
+    function bc_gov_id(Request $request){
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id")->first();
+        if(!empty($record)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Employee Id not found'], 404);
+        }
+    }
+
+    function business_unit(Request $request){
+        $record = Organization::where("organizations.code","=",$request->id)->join("business_units","business_units.code","organizations.bu_code")->selectRaw("business_units.id as business_unit_id, organizations.bu_code")->first();
+        if(!empty($record->bu_code)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Organization Code not found'], 404);
+        }
+    }
+
 }
