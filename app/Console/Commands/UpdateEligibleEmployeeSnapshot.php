@@ -75,12 +75,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
         $setting = Setting::first();
 
         $as_of_date = today();
-$as_of_date = Carbon::parse( '2023-04-06'); 
         $year = today()->year;
-
-$this->storeEligibleEmployeeSummary($year, $as_of_date);
-exit;
-        
 
         $this->LogMessage( "The current setting for daily campaign update " );   
         $this->LogMessage( "As of date           : " . $as_of_date->format('Y-m-d') );           

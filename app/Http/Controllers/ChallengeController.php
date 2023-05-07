@@ -3,31 +3,19 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-// use App\Models\Pledge;
-// use App\Models\Region;
-// use App\Models\Department;
-// use App\Models\EmployeeJob;
-// use App\Models\BusinessUnit;
 use App\Models\CampaignYear;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-// use Maatwebsite\Excel\Excel;
 use App\Models\DailyCampaign;
 use App\Models\DailyCampaignView;
-// use Illuminate\Support\Collection;
 
 use Illuminate\Support\Facades\DB;
-// use App\Models\DonorByBusinessUnit;
-// use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\HistoricalChallengePage;
 use Illuminate\Support\Facades\Storage;
 use App\Exports\DailyCampaignByBUExport;
 use App\Exports\DailyCampaignByDeptExport;
 use App\Exports\DailyCampaignByRegionExport;
-// use App\Models\BankDepositFormAttachments;
-
-// use Illuminate\Pagination\LengthAwarePaginator;
 use Yajra\Datatables\Datatables;
 
 class ChallengeController extends Controller
@@ -42,15 +30,14 @@ class ChallengeController extends Controller
 
     public function index(Request $request) {
 
-        // if(isset($request->year)){
-        //     $year = $request->year;
-        // }
-        // else{
-        //     $date = Carbon::now();
-        //     $year = $date->format("Y");
-        // }
-
         $campaign_year = $request->year ? $request->year : today()->year;
+
+        $history = HistoricalChallengePage::select('year')
+                                ->where('year', '<', $campaign_year)
+                                ->orderBy('year', 'desc')
+                                ->first(); 
+
+        $prior_year = $history ? $history->year : $campaign_year - 1;                                
 
         if($request->ajax()) {
 
@@ -61,7 +48,9 @@ class ChallengeController extends Controller
                 $parameters = [
                     $campaign_year,
                     $campaign_year,
+                    $prior_year,
                     $campaign_year,
+                    $prior_year,
                     $campaign_year,
                     $campaign_year,
                 ];
@@ -79,15 +68,15 @@ class ChallengeController extends Controller
                                     ) * 100 
                                 else 0 end as participation_rate,
                             -- 0 as previous_participation_rate, 
-                            (select participation_rate from historical_challenge_pages where year = 2021 
+                            (select participation_rate from historical_challenge_pages where year = ? 
                                 and historical_challenge_pages.organization_name = A.organization_name
                             ) as previous_participation_rate,
                             (A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
                                 and eligible_employee_by_bus.organization_code = 'GOV' 
                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
-                            ) * 100) - (select participation_rate from historical_challenge_pages where year = 2021 
+                            ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ? 
                                 and historical_challenge_pages.organization_name = A.organization_name
-                                )
+                                ),0)
                             as 'change_rate', 
                             A.donors, A.dollars, (@row_number:=@row_number + 1) AS rank
                             ,(select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
