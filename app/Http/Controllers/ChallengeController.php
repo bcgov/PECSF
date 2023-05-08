@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Setting;
 use App\Models\CampaignYear;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\DailyCampaign;
-use App\Models\DailyCampaignView;
+use Yajra\Datatables\Datatables;
 
+use App\Models\DailyCampaignView;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\HistoricalChallengePage;
 use Illuminate\Support\Facades\Storage;
 use App\Exports\DailyCampaignByBUExport;
 use App\Exports\DailyCampaignByDeptExport;
 use App\Exports\DailyCampaignByRegionExport;
-use Yajra\Datatables\Datatables;
 
 class ChallengeController extends Controller
 {
@@ -138,82 +139,17 @@ class ChallengeController extends Controller
         }
 
         $year_options = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
-        array_unshift($year_options , strval( today()->year ) );
+        $year = $year_options ? $year_options[0] : null;
 
-        $year = today()->year;
+        $setting = Setting::first();
+        if ( today() >= $setting->challenge_start_date && today() <= $setting->challenge_end_date ) {
+            array_unshift($year_options , strval( today()->year ) );
+            $year = today()->year;
+        }
 
         return view('challenge.index', compact('year_options', 'year'));
     }
 
-
-    // public function downloadFile(Request $request, $id) {
-
-    //     $history = BankDepositFormAttachments::where('id', $id)->first();
-    //     // $path = Student::where("id", $id)->value("file_path");
-
-
-
-    //    header('Content-Type: application/octet-stream');
-    //     header("Content-Transfer-Encoding: Binary");
-    //     header("Content-disposition: attachment; filename=\"" . basename($history->local_path) . "\"");
-    //     readfile($history->local_path);
-    // }
-
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    // public function paginate($items, $perPage = 5, $page = null, $options = [])
-    // {
-    //     $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-    //     $items = $items instanceof Collection ? $items : Collection::make($items);
-    //     return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
-    // }
-
-    // public function preview(Request $request)
-    // {
-    //     $dollarTotal = 0;
-    //     $donorTotal = 0;
-    //     if($request->sort == "region"){
-    //         $charities = Region::report($request)->get();
-    //         $row = ["Organization Name", "Donors", "Dollars"];
-    //         $rows[] = $row;
-
-
-    //             foreach ($charities as $charity) {
-    //                 $donorTotal = $donorTotal + $charity->donors;
-    //                 $dollarTotal = $dollarTotal + $charity->dollars;
-    //                $rows[]=[$charity->name, $charity->donors, "$".number_format($charity->dollars,2)];
-    //             }
-    //     }
-    //     else if($request->sort == "department"){
-    //         $charities = Department::report($request)->get();
-    //         $row = ["Organization Name", "Dept ID", "Department Name","Donors"];
-    //         $rows[] = $row;
-    //             foreach ($charities as $charity) {
-    //                 $donorTotal = $donorTotal + $charity->donors;
-
-    //                 $rows[] = [$charity->business_unit_name, $charity->bi_department_id, $charity->department_name,$charity->donors];
-    //             }
-    //     }
-    //     else{
-    //         $charities = BusinessUnit::report($request)->get();
-    //         $row = ["Organization Name", "Donors", "Dollars"];
-    //         $rows[] = $row;
-
-    //         foreach ($charities as $charity) {
-    //             $donorTotal = $donorTotal + $charity->donors;
-    //             $dollarTotal = $dollarTotal + $charity->dollars;
-    //            $rows[] = [$charity->name, $charity->donors,"$".number_format($charity->dollars,2)] ;
-    //         }
-    //     }
-
-    //     return view('challenge.preview', compact('rows','request','donorTotal','dollarTotal'));
-
-
-    // }
 
     public function daily_campaign(Request $request){
 
@@ -257,233 +193,6 @@ class ChallengeController extends Controller
         } 
 
     }
-
-// dd('test');
-     
-//         if ($request->sort == "organization") {
-//             $fileName = 'Stats By Organization.csv';
-//             $headers = array(
-//                 "Content-type" => "text/csv",
-//                 "Content-Disposition" => "attachment; filename=$fileName",
-//                 "Pragma" => "no-cache",
-//                 "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-//                 "Expires" => "0"
-//             );
-//             $date = new Carbon($_GET['start_date']);
-//             $year = $date->format("Y");
-//             $charities = Pledge::select(DB::raw('business_units.status, organizations.name as org_name, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-//                 ->join("organizations","pledges.organization_id","organizations.id")
-//                 ->join("users","pledges.user_id","users.id")
-//                 ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-//                 ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-//                 ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-//                 ->where("elligible_employees.year","=",$year)
-//                 ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-//                 ->where('employee_jobs.empl_status',"=","A")
-//                 ->where('pledges.created_at',">",$date->copy()->startOfYear())
-//                 ->where('pledges.created_at',"<",$date->copy())
-//                 ->where('business_units.status',"=","A")
-//                 ->whereNull('employee_jobs.date_deleted')
-//                 ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
-//                 ->groupBy('pledges.organization_id')
-//                 ->limit(500)
-//                 ->get();
-
-
-//             $row = ["","Organization Name", "Donors", "Dollars"];
-
-//             $file = fopen('test.csv', 'w');
-//             fputcsv($file, $row);
-//             foreach ($charities as $index => $charity) {
-//                 fputcsv($file, [($index + 1),$charity->org_name, $charity->donors, "$".number_format($charity->dollars,2)]);
-//             }
-//             $date = new Carbon($_GET['start_date']);
-//             $year = $date->format("Y");
-//             $totals  = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-//                 ->join("organizations","pledges.organization_id","organizations.id")
-//                 ->join("users","pledges.user_id","users.id")
-//                 ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-//                 ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-//                 ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-//                 ->where("elligible_employees.year","=",$year)
-//                 ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-//                 ->where('employee_jobs.empl_status',"=","A")
-//                 ->where('pledges.created_at',">",$date->copy()->startOfYear())
-//                 ->where('pledges.created_at',"<",$date->copy())
-//                 ->where('business_units.status',"=","A")
-//                 ->whereNull('employee_jobs.date_deleted')
-//                 ->havingRaw('participation_rate < ? ', [101])
-//                 ->groupBy('pledges.organization_id')
-//                 ->limit(500)
-//                 ->get();
-//             $totalDonors = 0;
-//             $totalDollars = 0;
-//             foreach($totals as $line){
-//                 $totalDonors += $line->donors;
-//                 $totalDollars += $line->dollars;
-//             }
-//             fputcsv($file,["totals","",number_format($totalDonors,2),"$".number_format($totalDollars,2)]);
-//             $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
-//             $objPHPExcel = $reader->load("test.csv");
-//             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');
-//             $objWriter->save('By Organization.xlsx');
-
-//             header('Content-Description: File Transfer');
-//             header('Content-Type: application/octet-stream');
-//             header('Content-Disposition: attachment; filename="'.basename('By Organization.xlsx').'"');
-//             header('Expires: 0');
-//             header('Cache-Control: must-revalidate');
-//             header('Pragma: public');
-//             header('Content-Length: ' . filesize('By Region.xlsx'));
-//             readfile("By Organization.xlsx");
-
-//             fclose($file);
-//         } else if ($request->sort == "region") {
-//             $fileName = 'Stats By Region.csv';
-//             $headers = array(
-//                 "Content-type" => "text/csv",
-//                 "Content-Disposition" => "attachment; filename=$fileName",
-//                 "Pragma" => "no-cache",
-//                 "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-//                 "Expires" => "0"
-//             );
-//             $date = new Carbon($_GET['start_date']);
-//             $year = $date->format("Y");
-//             $charities = Pledge::select(DB::raw('business_units.status,regions.name as name, departments.department_name, departments.bi_department_id, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-//                 ->join("users","pledges.user_id","users.id")
-//                 ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-//                 ->join("regions","employee_jobs.region_id","regions.id")
-//                 ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-//                 ->join("departments","employee_jobs.deptid","departments.bi_department_id")
-//                 ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-//                 ->where("elligible_employees.year","=",$year)
-//                 ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-//                 ->where('employee_jobs.empl_status',"=","A")
-//                 ->where('pledges.created_at',">",$date->copy()->startOfYear())
-//                 ->where('pledges.created_at',"<",$date->copy())
-//                 ->where('business_units.status',"=","A")
-//                 ->whereNull('employee_jobs.date_deleted')
-//                 ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
-//                 ->groupBy('employee_jobs.region_id')
-//                 ->limit(500)
-//                 ->get();
-
-//             $row = ["","Regional District Name", "Donors", "Dollars"];
-
-//                 $file = fopen('test.csv', 'w');
-//                 fputcsv($file, $row);
-//                 foreach ($charities as $index => $charity) {
-//                     fputcsv($file, [($index + 1),$charity->name, $charity->donors, "$".number_format($charity->dollars,2)]);
-//                 }
-//                 $date = new Carbon($_GET['start_date']);
-//                 $year = $date->format("Y");
-
-//                 $totalDonors = 0;
-//                 $totalDollars = 0;
-//                 foreach($charities as $line){
-//                     $totalDonors += $line->donors;
-//                     $totalDollars += $line->dollars;
-//                 }
-//                 fputcsv($file,["totals","",$totalDonors,"$".number_format($totalDollars)]);
-//             $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
-//             $objPHPExcel = $reader->load("test.csv");
-//             $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');
-//             $objWriter->save('By Region.xlsx');
-
-//             header('Content-Description: File Transfer');
-//             header('Content-Type: application/octet-stream');
-//             header('Content-Disposition: attachment; filename="'.basename('By Region.xlsx').'"');
-//             header('Expires: 0');
-//             header('Cache-Control: must-revalidate');
-//             header('Pragma: public');
-//             header('Content-Length: ' . filesize('By Region.xlsx'));
-//             readfile("By Region.xlsx");
-
-//                 fclose($file);
-
-//         }
-// else if($request->sort == "department"){
-//     $fileName = 'Stats By Department.csv';
-//     $headers = array(
-//         "Content-type" => "text/csv",
-//         "Content-Disposition" => "attachment; filename=$fileName",
-//         "Pragma" => "no-cache",
-//         "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-//         "Expires" => "0"
-//     );
-//     $date = new Carbon($_GET['start_date']);
-//     $year = $date->format("Y");
-//     $charities = Pledge::select(DB::raw('business_units.status, departments.department_name, departments.bi_department_id, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-//         ->join("users","pledges.user_id","users.id")
-//         ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-//         ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-//         ->join("departments","employee_jobs.deptid","departments.bi_department_id")
-//         ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-//         ->where("elligible_employees.year","=",$year)
-//         ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-//         ->where('employee_jobs.empl_status',"=","A")
-//         ->where('pledges.created_at',">",$date->copy()->startOfYear())
-//         ->where('pledges.created_at',"<",$date->copy())
-//         ->where('business_units.status',"=","A")
-//         ->whereNull('employee_jobs.date_deleted')
-//         ->havingRaw('participation_rate < ? and employee_count > ?', [101,4])
-//         ->groupBy('employee_jobs.deptid')
-//         ->limit(500)
-//         ->get();
-
-
-//     $row = ["","Department Name", "Department Id", "Donors", "Dollars"];
-
-//     $file = fopen('test.csv', 'w');
-//     fputcsv($file, $row);
-//     foreach ($charities as $index => $charity) {
-//         fputcsv($file, [($index + 1),$charity->department_name,$charity->bi_department_id, $charity->donors, "$".number_format($charity->dollars,2)]);
-//     }
-//     $date = new Carbon($_GET['start_date']);
-//     $year = $date->format("Y");
-//     $totals  = Pledge::select(DB::raw('business_units.status, COUNT(business_units.name) as employee_count, SUM(pledges.goal_amount) as dollars, COUNT(employee_jobs.emplid) as donors, business_units.id,business_units.name, (COUNT(employee_jobs.emplid) / elligible_employees.ee_count) as participation_rate'))
-//         ->join("users","pledges.user_id","users.id")
-//         ->join("employee_jobs","employee_jobs.emplid","users.emplid")
-//         ->join("business_units","business_units.code","=","employee_jobs.business_unit")
-//         ->join("elligible_employees","elligible_employees.business_unit","business_units.code")
-//         ->join("departments","employee_jobs.deptid","departments.bi_department_id")
-//         ->where("elligible_employees.year","=",$year)
-//         ->where("employee_jobs.empl_rcd","=","select min(empl_rcd) from employee_jobs J2 where J2.emplid = J.emplid and J2.empl_status = 'A' and J2.date_deleted is null")
-//         ->where('employee_jobs.empl_status',"=","A")
-//         ->where('pledges.created_at',">",$date->copy()->startOfYear())
-//         ->where('pledges.created_at',"<",$date->copy())
-//         ->where('business_units.status',"=","A")
-//         ->whereNull('employee_jobs.date_deleted')
-//         ->groupBy('employee_jobs.deptid')
-//         ->limit(500)
-//         ->get();
-//     $totalDonors = 0;
-//     $totalDollars = 0;
-//     foreach($totals as $line){
-//         $totalDonors += $line->donors;
-//         $totalDollars += $line->dollars;
-//     }
-//     fputcsv($file,["totals","","",$totalDonors,"$".number_format($totalDollars)]);
-//     $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Csv');
-//     $objPHPExcel = $reader->load("test.csv");
-//     $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');
-//     $objWriter->save('By Department.xlsx');
-
-//     header('Content-Description: File Transfer');
-//     header('Content-Type: application/octet-stream');
-//     header('Content-Disposition: attachment; filename="'.basename('By Department.xlsx').'"');
-//     header('Expires: 0');
-//     header('Cache-Control: must-revalidate');
-//     header('Pragma: public');
-//     header('Content-Length: ' . filesize('By Department.xlsx'));
-//     readfile("By Department.xlsx");
-
-//     fclose($file);
-// }
-       // return response()->stream($callback, 200, $headers);
-    // }
-
-
 
 
 }
