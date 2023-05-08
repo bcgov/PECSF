@@ -144,7 +144,7 @@ class EventSubmissionQueueController extends Controller
         $cities = City::all();
         $organizations = [];
         $selected_charities = [];
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
         // load the view and pass
