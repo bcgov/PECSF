@@ -91,7 +91,7 @@
 
                     </div>
                     <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-                        <h3>2. Select your regional charity pool</h3>
+                        <h3>2. Choose your charities (up to 10)</h3>
 
                         @include('annual-campaign.partials.pools')
                         @include('annual-campaign.partials.choose-charity')
