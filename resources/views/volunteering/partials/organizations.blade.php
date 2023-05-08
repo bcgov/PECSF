@@ -39,7 +39,7 @@
 </table>
 <div class="col-md-12">
     @if($organizations)
-        {{$organizations->onEachSide(1)->links('pagination.custom')}}
+        {{$organizations->onEachSide(1)->links('volunteering.partials.pagination')}}
     @else
 
     @endif
