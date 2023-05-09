@@ -44,7 +44,7 @@ class ChallengeController extends Controller
 
         if($request->ajax()) {
 
-            if ( today() >= $setting->challenge_start_date  && today() < $setting->challenge_final_date) {
+            if ( $campaign_year == today()->year ) {
 
                 // Use Dynamic data during the challenge period
                 if ( today() >= $setting->challenge_start_date && today() < $setting->challenge_end_date ) {
