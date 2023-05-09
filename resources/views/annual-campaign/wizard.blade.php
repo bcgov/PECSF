@@ -92,10 +92,16 @@
                     </div>
                     <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
                         <h3>2. Choose your charities (up to 10)</h3>
-
+                        <p class="p-1"></p>
+                        <div class="card mx-3 p-0 pl-2 bg-primary">
+                            <div class="card-body bg-light">
+                                By choosing this option your donation will support the designated programs of the regional
+                                Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
+                                {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
+                            </div>
+                        </div>
                         @include('annual-campaign.partials.pools')
                         @include('annual-campaign.partials.choose-charity')
-
                     </div>
                     <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
 
