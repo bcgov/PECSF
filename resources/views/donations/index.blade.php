@@ -139,11 +139,14 @@
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
+            $(this).find(".start-btn").removeClass("d-none");
+            $(this).find(".next-btn").addClass("d-none");
         }
-        else if (e.to === 9) {
+        else if (e.to === 8) {
             $(this).find(".next-btn").addClass("d-none");
             $(this).find(".ready-btn").removeClass("d-none");
         } else {
+            $(this).find(".start-btn").addClass("d-none");
             $(this).find(".prev-btn").removeClass("d-none");
             $(this).find(".next-btn").removeClass("d-none")
             $(this).find(".ready-btn").addClass("d-none");
