@@ -10,13 +10,19 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 
 use Maatwebsite\Excel\Events\BeforeExport;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 ini_set('memory_limit', '-1');          // To avoid "PHP Fatal error:  Allowed memory size of xxxxx bytes exhausted"
 
-class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
+class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping,  WithColumnWidths, 
+                    ShouldAutoSize, WithStyles, WithEvents
 {
     use Exportable;
 
@@ -29,6 +35,9 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
         $this->sql = EligibleEmployeeDetail::with('related_region')
                             ->when( $filters['year'], function($query) use($filters) {
                                 $query->where('eligible_employee_details.year', $filters['year']);
+                            })
+                            ->when( $filters['as_of_date'], function($query) use($filters) {
+                                $query->where('eligible_employee_details.as_of_date', $filters['as_of_date']);
                             })
                             ->when( $filters['emplid'], function($query) use($filters) {
                                 $query->where('eligible_employee_details.emplid', 'like', '%'. $filters['emplid'] .'%');
@@ -69,7 +78,8 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
                                         });
                                 });
                             })
-                            ->select('eligible_employee_details.*');
+                            ->select('eligible_employee_details.*')
+                            ->orderBy('emplid');
 
         $this->total_count = $this->sql->count();
 
@@ -84,9 +94,14 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
 
     public function headings(): array
     {
-        return ['Emplid', 'Name', 'Status', 'Address1', 'Address2', 
+        return [
+                ['Eligible Employee Listing'],
+                [' Year : ' . $this->filters['year'] ],
+                [' As of date : ' . $this->filters['as_of_date'] ],
+                [],
+                ['Emplid', 'Name', 'Status', 'Address1', 'Address2', 
                 'City', 'Province', 'Postal', 'Organization_name', 'Business_unit',
-                'Business Unit Name', 'Dept ID', 'Dept Name', 'Region', 'Region Name',
+                'Business Unit Name', 'Dept ID', 'Dept Name', 'Region', 'Region Name',]
                ];
     }
 
@@ -120,6 +135,33 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
 
     }
 
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            // Style the first row as bold text.
+            1    => ['font' => ['bold' => true]],
+            2    => ['font' => ['bold' => true],],
+            3    => ['font' => ['bold' => true]],
+
+            5    => ['font' => ['bold' => true], 'background'],
+
+            // // Styling a specific cell by coordinate.
+            // 'B2' => ['font' => ['italic' => true]],
+
+            // Styling an entire column.
+            'A1'  => ['font' => ['size' => 16]],
+        ];
+    }
+
+    public function columnWidths(): array
+    {
+        return [
+            'A' => 15,
+            // 'B' => 20,            
+            // 'C' => 20,            
+        ];
+    }
+
     public function registerEvents(): array
     {
         return [
@@ -135,6 +177,19 @@ class EligibleEmployeesExport implements FromQuery, WithHeadings, WithMapping, W
                     'start_at' => now(),
                 ]);
 
+            },
+            AfterSheet::class    => function(AfterSheet $event) {
+  
+                $event->sheet->getDelegate()->getStyle('A5:O5')
+                        ->getFill()
+                        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()
+                        ->setARGB('dbdbdb');
+
+                $event->sheet->getDelegate()->getStyle('A')
+                        ->getAlignment()
+                        ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+  
             },
         ];
     }
