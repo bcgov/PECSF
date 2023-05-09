@@ -285,6 +285,7 @@ error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
 $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+$("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 
 
 }

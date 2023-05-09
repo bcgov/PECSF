@@ -139,8 +139,25 @@ class BankDepositFormController extends Controller
         return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
+    public function ignoreRemovedFiles($request){
+        if(!empty(request()->ignoreFiles))
+        {
+            $fields = $request['attachments'];
+            $request['attachments'] = [];
+            foreach( $fields as $index => $file )
+            {
+                if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
+                {
+                    $request['attachments'][] = $file;
+                }
+            }
+        }
+        return $request;
+    }
+
     public function store(Request $request) {
-        $validator = Validator::make(request()->all(), [
+
+        $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -154,7 +171,7 @@ class BankDepositFormController extends Controller
             'business_unit'         => 'required',
             'charity_selection' => 'required',
             'description' => 'required',
-            'attachments.*' => 'required',
+            'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
         ],[
             'organization_code' => 'The Organization Code is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
@@ -282,11 +299,11 @@ class BankDepositFormController extends Controller
                     }
                 }
                 if(!$fileFound){
-                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                    $validator->errors()->add('attachment','Atleast one attachment is required.');
                 }
             }
             else{
-                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                $validator->errors()->add('attachment','Atleast one attachment is required.');
             }
         });
         $validator->validate();
