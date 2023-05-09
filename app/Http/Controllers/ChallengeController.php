@@ -31,6 +31,8 @@ class ChallengeController extends Controller
 
     public function index(Request $request) {
 
+        $setting = Setting::first();
+
         $campaign_year = $request->year ? $request->year : today()->year;
 
         $history = HistoricalChallengePage::select('year')
@@ -42,63 +44,96 @@ class ChallengeController extends Controller
 
         if($request->ajax()) {
 
-            $is_current = $campaign_year == today()->year;
+            if ( today() >= $setting->challenge_start_date  && today() < $setting->challenge_final_date) {
 
-            if ($is_current) {
+                // Use Dynamic data during the challenge period
+                if ( today() >= $setting->challenge_start_date && today() < $setting->challenge_end_date ) {
 
-                $parameters = [
-                    $campaign_year,
-                    $campaign_year,
-                    $prior_year,
-                    $campaign_year,
-                    $prior_year,
-                    $campaign_year,
-                    $campaign_year,
-                ];
+                        $parameters = [
+                            $campaign_year,
+                            $campaign_year,
+                            $prior_year,
+                            $campaign_year,
+                            $prior_year,
+                            $campaign_year,
+                            $campaign_year,
+                            $campaign_year,
+                        ];
 
-                $sql = <<<SQL
-                    select 1 as current, business_unit_code, organization_name,
-                            -- 0 as participation_rate, 
-                            case when (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                and eligible_employee_by_bus.organization_code = 'GOV' 
-                                and eligible_employee_by_bus.business_unit_code = A.business_unit_code
-                                ) > 0 then 
-                                    A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
+                        $sql = <<<SQL
+                            select 1 as current, business_unit_code, organization_name,
+                                    -- 0 as participation_rate, 
+                                    case when (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
                                         and eligible_employee_by_bus.organization_code = 'GOV' 
                                         and eligible_employee_by_bus.business_unit_code = A.business_unit_code
-                                    ) * 100 
-                                else 0 end as participation_rate,
-                            -- 0 as previous_participation_rate, 
-                            (select participation_rate from historical_challenge_pages where year = ? 
-                                and historical_challenge_pages.organization_name = A.organization_name
-                            ) as previous_participation_rate,
-                            (A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                and eligible_employee_by_bus.organization_code = 'GOV' 
-                                and eligible_employee_by_bus.business_unit_code = A.business_unit_code
-                            ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ? 
-                                and historical_challenge_pages.organization_name = A.organization_name
-                                ),0)
-                            as 'change_rate', 
-                            A.donors, A.dollars, (@row_number:=@row_number + 1) AS rank
-                            ,(select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                and eligible_employee_by_bus.organization_code = 'GOV' 
-                                and eligible_employee_by_bus.business_unit_code = A.business_unit_code
-                            ) as ee_count
-                     from 
-                        (select business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
-                        from daily_campaign_view  
-                        left outer join business_units on business_units.code = business_unit_code
-                        where campaign_year = ?
-                        group by business_unit_code
-                        order by sum(donors) desc) 
-                        as A, (SELECT @row_number:=0) AS temp
-                    where donors >= 5
-                    order by donors desc; 
-                SQL;
+                                        ) > 0 then 
+                                            A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
+                                                and eligible_employee_by_bus.organization_code = 'GOV' 
+                                                and eligible_employee_by_bus.business_unit_code = A.business_unit_code
+                                            ) * 100 
+                                        else 0 end as participation_rate,
+                                    -- 0 as previous_participation_rate, 
+                                    (select participation_rate from historical_challenge_pages where year = ?
+                                        and historical_challenge_pages.organization_name = A.organization_name
+                                    ) as previous_participation_rate,
+                                    (A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
+                                        and eligible_employee_by_bus.organization_code = 'GOV' 
+                                        and eligible_employee_by_bus.business_unit_code = A.business_unit_code
+                                    ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ?
+                                        and historical_challenge_pages.organization_name = A.organization_name
+                                        ),0)
+                                    as 'change_rate', 
+                                    A.donors, A.dollars, (@row_number:=@row_number + 1) AS rank
+                                    ,(select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
+                                        and eligible_employee_by_bus.organization_code = 'GOV' 
+                                        and eligible_employee_by_bus.business_unit_code = A.business_unit_code
+                                    ) as ee_count
+                            from 
+                                (select business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
+                                from daily_campaign_view  
+                                left outer join business_units on business_units.code = business_unit_code
+                                where campaign_year = ?
+                                group by business_unit_code
+                                order by sum(donors) desc) 
+                                as A, (SELECT @row_number:=0) AS temp
+                            where donors >= 5
+                            order by A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
+                                                and eligible_employee_by_bus.organization_code = 'GOV' 
+                                                and eligible_employee_by_bus.business_unit_code = A.business_unit_code
+                                            ) * 100 desc
+                                        
+                        SQL;
 
 
-                $challenges = DB::select($sql, $parameters);
+                        $challenges = DB::select($sql, $parameters);
 
+                // } elseif ( today() >= $setting->challenge_end_date && today() < $setting->challenge_final_date ) {
+                } else {
+
+                        $parameters = [
+                            $campaign_year,
+                            today()->format('Y-m-d'),
+                        ];
+
+                        $sql = <<<SQL
+                            select 0 as current, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
+                                        donors, dollars, (@row_number:=@row_number + 1) AS rank,
+                                        eligible_employee_count as ee_count
+                            from daily_campaigns, (SELECT @row_number:=0) AS temp
+                            where daily_type = 0
+                            and campaign_year = ?
+                            and as_of_date = (select max(as_of_date) from daily_campaigns D1
+                                                                where D1.campaign_year = daily_campaigns.campaign_year
+                                                                and D1.daily_type = daily_campaigns.daily_type
+                                                                and D1.as_of_date <= ?
+                                                                )     
+                            and donors >= 5
+                            order by participation_rate desc;     
+                        SQL;
+
+                        $challenges = DB::select($sql, $parameters);
+                }
+            
             } else {
 
                 // SELECT (@row_number:=@row_number + 1) AS row_num, Name, Country, Year  
@@ -114,7 +149,7 @@ class ChallengeController extends Controller
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
                        and donors >= 5
-                     order by donors desc;     
+                     order by participation_rate desc;     
                 SQL;
                 
                 $challenges = DB::select($sql, $parameters);
@@ -128,6 +163,7 @@ class ChallengeController extends Controller
             }
 
             return Datatables::of($challenges)
+
                     // ->addColumn('current_', function ($special_campaign) {
                     //     return '<button class="btn btn-info btn-sm  show-bu" data-id="'. $special_campaign->id .'" >Show</button>' .
                     //         '<button class="btn btn-primary btn-sm ml-2 edit-bu" data-id="'. $special_campaign->id .'" >Edit</button>' .
@@ -141,8 +177,7 @@ class ChallengeController extends Controller
         $year_options = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
         $year = $year_options ? $year_options[0] : null;
 
-        $setting = Setting::first();
-        if ( today() >= $setting->challenge_start_date && today() <= $setting->challenge_end_date ) {
+        if ( today() >= $setting->challenge_start_date ) {
             array_unshift($year_options , strval( today()->year ) );
             $year = today()->year;
         }

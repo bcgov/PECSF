@@ -64,11 +64,11 @@
                     <input type="date" class="form-control input-control" name="campaign_end_date" 
                                 value="{{ $setting->campaign_end_date->toDateString() }}" />
                 </div>
-                <div class="form-group col-md-3">
+                {{-- <div class="form-group col-md-3">
                     <label for="campaign_final_date">Final Date</label>
                     <input type="date" class="form-control input-control" name="campaign_final_date" 
                                 value="{{ $setting->campaign_final_date->toDateString() }}" />
-                </div>
+                </div> --}}
                 <div class="col-md-3">
                     <label>&nbsp;</label><br>
                     <a class="save btn form-control btn-primary">Save</a>

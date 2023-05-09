@@ -10,6 +10,7 @@ use App\Models\ScheduleJobAudit;
 use App\Models\DailyCampaignView;
 use Illuminate\Support\Facades\DB;
 use App\Models\EligibleEmployeeDetail;
+use App\Models\HistoricalChallengePage;
 
 class UpdateDailyCampaign extends Command
 {
@@ -100,55 +101,53 @@ class UpdateDailyCampaign extends Command
 
             // Step 1
             $this->LogMessage("Updating daily campaign by business units");
-            $group_by_org_bu = DailyCampaignView::where('campaign_year', $campaign_year)
-                            ->leftJoin('business_units', 'daily_campaign_view.business_unit_code', 'business_units.code') 
-                            ->select(
-                                'daily_campaign_view.business_unit_code', 
-                                'business_units.name',
-                                DB::raw("SUM(daily_campaign_view.donors) as donors"),
-                                DB::raw("SUM(daily_campaign_view.dollars) as dollars"),
-                                'daily_campaign_view.campaign_year',
-                            )
-                            ->groupBy('business_unit_code')
-                            ->orderBy('business_unit_code')
-                            ->get();
 
-            foreach( $group_by_org_bu as $row)  {
+            $campaign_year = today()->year;
 
-                $ee_count = 0;
-                if ($row->organization_code == 'GOV') {
-                    $ee_count = EligibleEmployeeDetail::where('year', $campaign_year)
-                                    ->where('as_of_date', '=', function ($query) use($as_of_date) {
-                                        $query->selectRaw('max(as_of_date)')
-                                              ->from('eligible_employee_details as E1')
-                                              ->whereColumn('E1.year', 'eligible_employee_details.year')
-                                              ->where('E1.as_of_date', '<=', $as_of_date );
-                                    })
-                                    ->where('business_unit', $row->business_unit_code)
-                                    ->count();
-                }
+            $history = HistoricalChallengePage::select('year')
+                                    ->where('year', '<', $campaign_year)
+                                    ->orderBy('year', 'desc')
+                                    ->first(); 
+    
+            $prior_year = $history ? $history->year : $campaign_year - 1;        
+
+            $parameters = [
+                $campaign_year,
+                $campaign_year,
+                $prior_year,
+                $campaign_year,
+                $prior_year,
+                $campaign_year,
+                $campaign_year,
+                $campaign_year,
+            ];
+
+            $sql = DailyCampaignView::dynamicSqlForChallengePage();     // Shared sql
+            $challenges = DB::select($sql, $parameters);
+
+            foreach( $challenges as $row)  {
 
                 DailyCampaign::create([
                     "campaign_year" => $campaign_year,
                     "as_of_date" => $as_of_date,
                     "daily_type" => 0,      // Business Unit (Oragnization)
                     'business_unit' => $row->business_unit_code,
-                    'business_unit_name' => $row->name,
+                    'business_unit_name' => $row->organization_name,
                     'region_code' => null,
                     'region_name' => null,
                     'deptid' => null,
                     'dept_name' => null,
 
-                    'participation_rate' => null,
-                    'previous_participation_rate' => null,
-                    'change_rate' => null,
+                    'participation_rate' => round($row->participation_rate,2),
+                    'previous_participation_rate' => $row->previous_participation_rate,
+                    'change_rate' => round($row->change_rate,2),
 
-                    'eligible_employee_count' => $ee_count,
+                    'eligible_employee_count' => $row->ee_count,
                     'donors'  => $row->donors,
                     "dollars" => $row->dollars,
                 ]);
             }                          
-            $this->LogMessage('Total rows created count : ' . $group_by_org_bu->count()  );
+            $this->LogMessage('Total rows created count : ' . sizeof($challenges)  );
 
             // Step 2
             $this->LogMessage("");

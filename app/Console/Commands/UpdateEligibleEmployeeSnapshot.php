@@ -77,16 +77,17 @@ class UpdateEligibleEmployeeSnapshot extends Command
         $as_of_date = today();
         $year = today()->year;
 
-        $this->LogMessage( "The current setting for daily campaign update " );   
+        $this->LogMessage( "" );   
+        $this->LogMessage( "Note: The business rule for collecting the eligible employee data on Sep 1st and Oct 15th every year" );   
+        $this->LogMessage( "" );   
         $this->LogMessage( "As of date           : " . $as_of_date->format('Y-m-d') );           
         $this->LogMessage( "" );   
-        $this->LogMessage( "Campaign Start Date  : " . ($setting->campaign_start_date ? $setting->campaign_start_date->format('Y-m-d') : null) );   
-        $this->LogMessage( "Campaign End Date    : " . ($setting->campaign_end_date ? $setting->campaign_end_date->format('Y-m-d') : null) );   
-        $this->LogMessage( "Campaign Final Date  : " . ($setting->campaign_final_date ? $setting->campaign_final_date->format('Y-m-d') : null) );   
-        $this->LogMessage( "" );   
 
-        if ($as_of_date == $setting->campaign_start_date || 
-            $as_of_date == $setting->campaign_final_date) {
+        // Important Note: Only collect the eligible employee on Sep 1 and Oct 15 yearly.
+
+        if ( ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
+             ($as_of_date->month == 10 && $as_of_date->day == 15)
+           ) {
 
             $sql = EmployeeJob::where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
