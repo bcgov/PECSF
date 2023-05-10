@@ -20,14 +20,14 @@ class UpdateEligibleEmployeeSnapshot extends Command
      *
      * @var string
      */
-    protected $signature = 'command:UpdateEligibleEmployeeSnapshot';
+    protected $signature = "command:UpdateEligibleEmployeeSnapshot {--date=}";
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'To take a snapshot of the Eligible Employee';
+    protected $description = 'To take a snapshot of the Eligible Employee, optional --date YYYY-MM-DD to collect for the current as specified date';
 
     /**
      * Create a new command instance.
@@ -72,10 +72,13 @@ class UpdateEligibleEmployeeSnapshot extends Command
 
     protected function StoreEligibleEmployeeDetail() 
     {
+
         $setting = Setting::first();
 
-        $as_of_date = today();
-        $year = today()->year;
+        // $as_of_date = today();
+        $as_of_date = $this->option('date') ? Carbon::parse($this->option('date')) : today();
+        
+        $year = $as_of_date->year;
 
         $this->LogMessage( "" );   
         $this->LogMessage( "Note: The business rule for collecting the eligible employee data on Sep 1st and Oct 15th every year" );   
@@ -85,9 +88,11 @@ class UpdateEligibleEmployeeSnapshot extends Command
 
         // Important Note: Only collect the eligible employee on Sep 1 and Oct 15 yearly.
 
-        if ( ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
-             ($as_of_date->month == 10 && $as_of_date->day == 15)
-           ) {
+        if ( $as_of_date && 
+                ( $this->option('date')  ||
+                 ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
+                 ($as_of_date->month == 10 && $as_of_date->day == 15)
+                ) ) {
 
             $sql = EmployeeJob::where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
@@ -119,12 +124,12 @@ class UpdateEligibleEmployeeSnapshot extends Command
                 foreach($chuck as $row)  {
 
                     // Special Rule -- To split GCPE employees from business unit BC022 
-                    $bu = BusinessUnit::where('code', $row->business_unit)->where('effdt','<=', $as_of_date)->orderBy('effdt', 'desc')->first();
+                    $bu = BusinessUnit::where('code', $row->business_unit)->first();
                     $business_unit_code = $bu->linked_bu_code;
                     if ($row->business_unit == 'BC022' && str_starts_with($row->dept_name, 'GCPE')) {
                         $business_unit_code  = 'BGCPE';
                     }
-                    $linked_bu = BusinessUnit::where('code', $business_unit_code)->where('effdt','<=', $as_of_date)->orderBy('effdt', 'desc')->first();
+                    $linked_bu = BusinessUnit::where('code', $business_unit_code)->first();
 
                     $row_count++;
 
