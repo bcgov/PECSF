@@ -489,7 +489,7 @@ $("#attachment_input_1").val("");
             },
         });
     });
-
+    $("#business_unit").attr("disabled","true").select2();
     $("body").on("change","#organization_code",function(){
         if($(this).val() != "GOV"){
             $.ajax({
@@ -502,7 +502,7 @@ $("#attachment_input_1").val("");
                 dataType: 'json',
                 success:function(response){
                     $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
-                    $("#business_unit").val(response.business_unit_id).select2();
+                    $("#business_unit").attr("disabled","false").val(response.business_unit_id).attr("disabled","true").select2();
                     setTimeout(function(){
                         $("#employment_city").parents(".form-body").fadeTo("slow",1);
                     },500);
