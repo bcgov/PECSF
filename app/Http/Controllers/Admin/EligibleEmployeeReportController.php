@@ -60,8 +60,11 @@ class EligibleEmployeeReportController extends Controller
         // $empl_status_List = EligibleEmployeeDetail::EMPL_STATUS_LIST;
         $office_cities = EligibleEmployeeDetail::office_city_list();
         $organizations = EligibleEmployeeDetail::organization_list();
-        $years = EligibleEmployeeDetail::distinct('year','as_of_date')->orderBy('year')->pluck('as_of_date','year');
-
+        $years = EligibleEmployeeDetail::select('year','as_of_date')
+                        ->distinct()
+                        ->orderBy('year', 'desc')
+                        ->orderBy('as_of_date', 'desc')
+                        ->get();
 
         // load the view and pass data
         return view('admin-report.eligible-employee.index', compact('office_cities','organizations', 'years'));

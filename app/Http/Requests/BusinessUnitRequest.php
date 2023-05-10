@@ -30,6 +30,14 @@ class BusinessUnitRequest extends FormRequest
                          ],
             'name'    => 'required|max:60',
             'status'  => ['required', Rule::in(['A', 'I']) ],
+            'linked_bu_code' => [ 'required', 'max:5', 
+                                    Rule::when( $this->code <> $this->linked_bu_code,
+                                    [Rule::exists('business_units')->where(function ($query) {
+                                                   return $query->where('code', $this->linked_bu_code)
+                                                                ->whereNull("deleted_at");
+
+                                    })])
+            ],
         ];
         if ($this->request->get('status') == "A") {
             $rules['effdt'] = 'before:today';
@@ -48,6 +56,8 @@ class BusinessUnitRequest extends FormRequest
         return [
             'effdt.required' => 'The effective date field is required',
             'effdt.before' => 'The effective date field must be in the past if the status is Active',
+
+            'linked_bu_code.exists' => "The associated business unit is invalid.",
        ];
     }
 

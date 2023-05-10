@@ -7,6 +7,7 @@ use App\Models\BankDepositForm;
 use App\Models\BankDepositFormOrganizations;
 use App\Models\BankDepositFormAttachments;
 use App\Models\Charity;
+use App\Models\EmployeeJob;
 use App\Models\Organization;
 use App\Models\Pledge;
 use Illuminate\Http\Request;
@@ -131,15 +132,32 @@ class BankDepositFormController extends Controller
             }
         }
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
         return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
+    public function ignoreRemovedFiles($request){
+        if(!empty(request()->ignoreFiles))
+        {
+            $fields = $request['attachments'];
+            $request['attachments'] = [];
+            foreach( $fields as $index => $file )
+            {
+                if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
+                {
+                    $request['attachments'][] = $file;
+                }
+            }
+        }
+        return $request;
+    }
+
     public function store(Request $request) {
-        $validator = Validator::make(request()->all(), [
+
+        $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -153,7 +171,7 @@ class BankDepositFormController extends Controller
             'business_unit'         => 'required',
             'charity_selection' => 'required',
             'description' => 'required',
-            'attachments.*' => 'required',
+            'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
         ],[
             'organization_code' => 'The Organization Code is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
@@ -281,11 +299,11 @@ class BankDepositFormController extends Controller
                     }
                 }
                 if(!$fileFound){
-                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                    $validator->errors()->add('attachment','Atleast one attachment is required.');
                 }
             }
             else{
-                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                $validator->errors()->add('attachment','Atleast one attachment is required.');
             }
         });
         $validator->validate();
@@ -610,10 +628,33 @@ class BankDepositFormController extends Controller
             $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7);
+        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7)->onEachSide(1);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
     }
+
+    function bc_gov_id(Request $request){
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id")->first();
+        if(!empty($record)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Employee Id not found'], 404);
+        }
+    }
+
+    function business_unit(Request $request){
+        $record = Organization::where("organizations.code","=",$request->id)->join("business_units","business_units.code","organizations.bu_code")->selectRaw("business_units.id as business_unit_id, organizations.bu_code")->first();
+        if(!empty($record->bu_code)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Organization Code not found'], 404);
+        }
+    }
+
 }

@@ -285,6 +285,7 @@ error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
 $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+$("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 
 
 }
@@ -455,4 +456,73 @@ $("#attachment_input_1").val("");
             templateSelection:formatState
         }
     );
+
+
+    $("body").on("blur","#bc_gov_id",function(){
+        $.ajax({
+            url: "/bank_deposit_form/bc_gov_id?id="+$(this).val(),
+            type: "GET",
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+                $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+                $("#employment_city").val(response.office_city).select2();
+                $("#region").val(response.region_id).select2();
+                $("#business_unit").val(response.business_unit_id).select2();
+                setTimeout(function(){
+                    $("#employment_city").parents(".form-body").fadeTo("slow",1);
+                },500);
+            },
+            error: function(response) {
+                Swal.fire({
+                    title: '<strong>Not Found!</strong>',
+                    icon: 'error',
+                    html:
+                        'Employee Id not Found!',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                });
+            },
+        });
+    });
+
+    $("body").on("change","#organization_code",function(){
+        if($(this).val() != "GOV"){
+            $.ajax({
+                url: "/bank_deposit_form/business_unit?id="+$(this).val(),
+                type: "GET",
+                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                processData: false,
+                cache: false,
+                contentType: false,
+                dataType: 'json',
+                success:function(response){
+                    $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+                    $("#business_unit").val(response.business_unit_id).select2();
+                    setTimeout(function(){
+                        $("#employment_city").parents(".form-body").fadeTo("slow",1);
+                    },500);
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: '<strong>Not Found!</strong>',
+                        icon: 'error',
+                        html:
+                            'Business Unit not found!',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        focusConfirm: false,
+                    });
+                },
+            });
+        }
+
+
+    });
+
+
 </script>
