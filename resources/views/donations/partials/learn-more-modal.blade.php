@@ -17,7 +17,7 @@
                             Why donate to the Provincial Employees Community Service Fund?
                         </h3>
                         <div class="my-4">
-                            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Zysh5X1sEk8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ZMEjHqr3npo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                     </div>
                     <div class="carousel-item">
@@ -42,7 +42,7 @@
                             How donating to PECSF works
                         </h3>
                         <div class="row">
-                            <div class="col-12 col-md-4 offset-md-1 text-left">
+                            <div class="col-12 col-md-4 offset-md-1">
                                 <h4 class="text-primary">
                                     Step 1 - Select your preferred method for choosing charities 
                                 </h4>
@@ -80,30 +80,6 @@ deduction plan.
                             </div>
                             <div class="col-12 col-md-5 offset-md-1">
                                 <img src="{{asset('img/donation-intro/step-2.png')}}" alt="" style="max-width: 450px;">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <h3 class="text-primary my-5">
-                            How donating to PECSF works
-                        </h3>
-                        <div class="row">
-                            <div class="col-12 col-md-4 offset-md-1">
-                                <h4 class="text-primary">
-                                    Step 3: Decide on the distribution
-                                </h4>
-                                <p>
-                                Use the toggles to distribute your contributions to each charity.
-                                </p>
-                                <p>
-                                You have the option to distribute your donation by percentage or by dollar amount.
-                                </p>
-                                <p>
-                                By default, your donation is distributed evenly to each organization, however, you have the option to customize the distribution.
-                                </p>
-                            </div>
-                            <div class="col-12 col-md-5 offset-md-1">
-                                <img src="{{asset('img/donation-intro/step-3.png')}}" alt="" style="max-width: 450px;">
                             </div>
                         </div>
                     </div>
@@ -147,6 +123,33 @@ deduction plan.
         </div>
     </div>
 </div>
+
+                    {{-- <div class="carousel-item">
+                        <h3 class="text-primary my-5">
+                            How donating to PECSF works
+                        </h3>
+                        <div class="row">
+                            <div class="col-12 col-md-4 offset-md-1">
+                                <h4 class="text-primary">
+                                    Step 4: Decide on the distribution
+                                </h4>
+                                <p>
+                                Use the toggles to distribute your contributions to each charity.
+                                </p>
+                                <p>
+                                You have the option to distribute your donation by percentage or by dollar amount.
+                                </p>
+                                <p>
+                                By default, your donation is distributed evenly to each organization, however, you have the option to customize the distribution.
+                                </p>
+                            </div>
+                            <div class="col-12 col-md-5 offset-md-1">
+                                <img src="{{asset('img/donation-intro/step-3.png')}}" alt="" style="max-width: 450px;">
+                            </div>
+                        </div>
+                    </div> --}}
+
+
 {{-- page 8 --}}
 <div class="carousel-item">
     <h3 class="text-primary my-5">
@@ -180,7 +183,7 @@ deduction plan.
                 and will appear on your T4 for the year that the funds were deducted.</p>
         </div>
         <div class="col-12 col-md-5 offset-md-1">
-            <img src="{{asset('img/donation-intro/step-9.png')}}" alt="" style="max-width: 450px;">
+            <img src="{{asset('img/donation-intro/step-9.png')}}" alt="" style="max-width: 370px;">
         </div>
     </div>
 </div>
@@ -200,6 +203,9 @@ deduction plan.
                                      campaign until the end of November. To make, update or cancel your pledge outside of the campaign, email 
                                      <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
                                 </p>
+                                <p>If you have any questions or experience any difficulties during the pledge process, contact the PECSF 
+                                    HQ team at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>. They're always here and happy to assist you! 
+                                </p>
                                 {{-- <p>
                                 Your <strong><u><b>Payroll Deductions</b></u></strong> begin on the first paycheque of 2022 and will appear on your 2022 T4.
                                 </p>
@@ -216,7 +222,8 @@ deduction plan.
                 <div class="modal-footer d-flex">
                     <button href="#donateGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                     <div class="flex-fill"></div>
-                    <x-button href="#donateGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
+                    <x-button href="#donateGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to donate</x-button>
+                    <x-button href="#donateGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
                     @if ( $campaignYear->isOpen() )
                         <x-button :href="route('annual-campaign.index')" role="button" class="ready-btn d-none">I'm ready to Donate!</x-button>
                     @else
