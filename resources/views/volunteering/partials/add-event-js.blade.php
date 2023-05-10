@@ -409,8 +409,14 @@ $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
+    if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1)) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg"</span>');
+        $(".invalid-feedback").show();
+        return;
+    }
 if(file[0].size < 2097152)
 {
     formData.append('attachments[]', file[0]);
@@ -520,9 +526,5 @@ $("#attachment_input_1").val("");
                 },
             });
         }
-
-
     });
-
-
 </script>
