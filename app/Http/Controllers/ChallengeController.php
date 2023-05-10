@@ -107,7 +107,6 @@ class ChallengeController extends Controller
 
                         $challenges = DB::select($sql, $parameters);
 
-                // } elseif ( today() >= $setting->challenge_end_date && today() < $setting->challenge_final_date ) {
                 } else {
 
                         $parameters = [
