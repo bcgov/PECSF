@@ -185,19 +185,19 @@ class UpdateEligibleEmployeeSnapshot extends Command
 
     protected function storeEligibleEmployeeSummary($campaign_year, $as_of_date) 
     {
-        
+        $eff_rec = EligibleEmployeeDetail::where('year', $campaign_year)
+                                        ->where('as_of_date', '<=', $as_of_date )
+                                        ->selectRaw('max(as_of_date) as eff_date' )
+                                        ->distinct()
+                                        ->first();
+        $eff_date = $eff_rec ? $eff_rec->eff_date : null;
+
         $group_by_bu = EligibleEmployeeDetail::where('year', $campaign_year)
-                            ->where('as_of_date', '=', function ($query) use($as_of_date) {
-                                    $query->selectRaw('max(as_of_date)')
-                                            ->from('eligible_employee_details as E1')
-                                            ->whereColumn('E1.year', 'eligible_employee_details.year')
-                                            ->where('E1.as_of_date', '<=', $as_of_date );
-                            })
-                            ->where('year', $campaign_year)
+                            ->where('as_of_date', $eff_date )
                             ->select( 'year', 'business_unit', 'business_unit_name', 'organization_code',
                                         DB::raw("count(*) as ee_count"),       
                             )
-                            ->groupBy('organization_code', 'business_unit')
+                            ->groupBy('organization_code', 'business_unit', 'business_unit_name')
                             ->orderBy('organization_code')
                             ->orderBy('business_unit')
                             ->get();
@@ -205,6 +205,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
         // dd( $group_by_bu->toSql(), $group_by_bu->count() );
             
         EligibleEmployeeByBU::where('campaign_year', $campaign_year )
+                            ->where('organization_code', 'GOV')
                             ->delete();
 
         foreach($group_by_bu as $row ) {
