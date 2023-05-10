@@ -136,7 +136,12 @@
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
 <script>
+
+$(function () {    
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
+
+        $('#movie_player').attr('src', 'https://www.youtube-nocookie.com/embed/ZMEjHqr3npo')
+        
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
             $(this).find(".start-btn").removeClass("d-none");
@@ -151,6 +156,7 @@
             $(this).find(".next-btn").removeClass("d-none")
             $(this).find(".ready-btn").addClass("d-none");
         }
+
     })
 
     $('#learn-more-modal').on('show.bs.modal', function (event) {
@@ -192,7 +198,7 @@
 
         }
     });
-
+});
 
 </script>
 @endpush
