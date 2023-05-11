@@ -58,6 +58,7 @@ class ChallengeController extends Controller
                             $campaign_year,
                             $campaign_year,
                             $campaign_year,
+                            $campaign_year,
                         ];
 
                         $sql = <<<SQL
@@ -96,7 +97,10 @@ class ChallengeController extends Controller
                                 group by business_unit_code
                                 order by sum(donors) desc) 
                                 as A, (SELECT @row_number:=0) AS temp
-                            where donors >= 5
+                            where (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
+                                                and eligible_employee_by_bus.organization_code = 'GOV' 
+                                                and eligible_employee_by_bus.business_unit_code = A.business_unit_code
+                                            ) >= 5
                             order by A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
                                                 and eligible_employee_by_bus.organization_code = 'GOV' 
                                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
@@ -126,7 +130,7 @@ class ChallengeController extends Controller
                                                                 and D1.daily_type = daily_campaigns.daily_type
                                                                 and D1.as_of_date <= ?
                                                                 )     
-                            and donors >= 5
+                            and eligible_employee_count >= 5
                             order by participation_rate desc;     
                         SQL;
 
@@ -144,10 +148,14 @@ class ChallengeController extends Controller
                 $sql = <<<SQL
                     select 0 as current, organization_name, participation_rate, previous_participation_rate, `change` as change_rate, 
                                 donors, dollars, (@row_number:=@row_number + 1) AS rank,
-                                0 as ee_count
+                                round(case when participation_rate > 0 then 
+                                            donors / (participation_rate / 100) 
+                                else donors end) as ee_count
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
-                       and donors >= 5
+                       and round((case when participation_rate > 0 then 
+                                            donors / (participation_rate / 100) 
+                                else donors end),2) >= 5
                      order by participation_rate desc;     
                 SQL;
                 
