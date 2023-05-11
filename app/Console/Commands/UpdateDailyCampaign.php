@@ -170,10 +170,10 @@ class UpdateDailyCampaign extends Command
                 $ee_count = 0;
                 if ($row->organization_code == 'GOV') {
                     $ee_count = EligibleEmployeeDetail::where('year', $campaign_year)
-                                    ->where('as_of_date', '=', function ($query) use($as_of_date) {
+                                    ->where('as_of_date', '=', function ($query) use($as_of_date, $campaign_year) {
                                         $query->selectRaw('max(as_of_date)')
                                               ->from('eligible_employee_details as E1')
-                                              ->whereColumn('E1.year', 'eligible_employee_details.year')
+                                              ->where('E1.year', $campaign_year)
                                               ->where('E1.as_of_date', '<=', $as_of_date );
                                     })
                                     ->where('tgb_reg_district', $row->tgb_reg_district)
