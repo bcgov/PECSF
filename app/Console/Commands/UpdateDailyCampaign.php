@@ -160,16 +160,17 @@ class UpdateDailyCampaign extends Command
                                           ->orWhereNull('daily_campaign_view.campaign_year');
                             }) 
                             ->select(
-                                'daily_campaign_view.tgb_reg_district', 
+                                'regions.code', 
                                 'regions.name',
                                 DB::raw("SUM(daily_campaign_view.donors) as donors"),
                                 DB::raw("SUM(daily_campaign_view.dollars) as dollars"),
                                 'daily_campaign_view.campaign_year',
                                 'daily_campaign_view.organization_code',
                             )
-                            ->groupBy('tgb_reg_district')
-                            ->orderBy('tgb_reg_district')
-                            ->get();
+                            ->groupBy('regions.code')
+                            ->orderBy('regions.code')
+                            ; // ->get();
+dd($group_by_org_region->toSql() )  ;
 
             foreach( $group_by_org_region as $row)  {
 
@@ -182,7 +183,7 @@ class UpdateDailyCampaign extends Command
                                               ->where('E1.year', $campaign_year)
                                               ->where('E1.as_of_date', '<=', $as_of_date );
                                     })
-                                    ->where('tgb_reg_district', $row->tgb_reg_district)
+                                    ->where('tgb_reg_district', $row->code)
                                     ->count();
                 }
 
@@ -192,7 +193,7 @@ class UpdateDailyCampaign extends Command
                     "daily_type" => 1,          // Region
                     'business_unit' => null, 
                     'business_unit_name' => null,
-                    'region_code' => $row->tgb_reg_district, 
+                    'region_code' => $row->code, 
                     'region_name' => $row->name, 
                     'deptid' => null,
                     'dept_name' => null,
@@ -218,7 +219,7 @@ class UpdateDailyCampaign extends Command
                                         ->orWhereNull('daily_campaign_view.campaign_year');
                             }) 
                             ->select(
-                                'daily_campaign_view.business_unit_code', 
+                                'business_units.code', 
                                 'business_units.name',
                                 'daily_campaign_view.deptid', 
                                 'daily_campaign_view.dept_name', 
@@ -227,8 +228,8 @@ class UpdateDailyCampaign extends Command
                                 'daily_campaign_view.campaign_year',
                                 'daily_campaign_view.organization_code',
                             )
-                            ->groupBy('business_unit_code', 'deptid', 'dept_name')
-                            ->orderBy('business_unit_code')
+                            ->groupBy('business_units.code', 'deptid', 'dept_name')
+                            ->orderBy('business_units.code')
                             ->orderBy('deptid')
                             ->orderBy('dept_name')
                             ->get();
@@ -244,7 +245,7 @@ class UpdateDailyCampaign extends Command
                                               ->where('E1.year', $campaign_year)
                                               ->where('E1.as_of_date', '<=', $as_of_date );
                                     })
-                                    ->where('business_unit', $row->business_unit_code)
+                                    ->where('business_unit', $row->code)
                                     ->where('deptid', $row->deptid)
                                     ->count();
                 }
@@ -253,7 +254,7 @@ class UpdateDailyCampaign extends Command
                     "campaign_year" => $campaign_year,
                     "as_of_date" => $as_of_date,
                     "daily_type" => 2,          // Department
-                    'business_unit' => $row->business_unit_code,
+                    'business_unit' => $row->code,
                     'business_unit_name' => $row->name,
                     'region_code' => null,
                     'region_name' => null,
