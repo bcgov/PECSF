@@ -169,8 +169,7 @@ class UpdateDailyCampaign extends Command
                             )
                             ->groupBy('regions.code')
                             ->orderBy('regions.code')
-                            ; // ->get();
-dd($group_by_org_region->toSql() )  ;
+                            ->get();
 
             foreach( $group_by_org_region as $row)  {
 
