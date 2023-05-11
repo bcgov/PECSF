@@ -91,8 +91,8 @@ class ChallengeController extends Controller
                                     ) as ee_count
                             from 
                                 (select business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
-                                from daily_campaign_view  
-                                left outer join business_units on business_units.code = business_unit_code
+                                from business_units  
+                                left outer join daily_campaign_view on business_units.code = daily_campaign_view.business_unit_code
                                 where campaign_year = ?
                                 group by business_unit_code
                                 order by sum(donors) desc) 

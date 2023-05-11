@@ -36,7 +36,7 @@ class DailyCampaignByRegionExport implements FromCollection, WithHeadings, WithC
         //
         $rows = DailyCampaign::where('daily_type', 1)
                             ->where('campaign_year', $this->campaign_year)
-                            ->where('as_of_date', $this->as_of_date)
+                            ->where('eligible_employee_count', $this->as_of_date)
                             ->where('donors', '>=', 5)
                             ->select('region_name', 'donors', 'dollars')
                             ->orderBy('region_name')
