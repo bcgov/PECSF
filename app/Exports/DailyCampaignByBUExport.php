@@ -38,7 +38,7 @@ class DailyCampaignByBUExport implements FromCollection, WithHeadings, WithColum
                             ->where('campaign_year', $this->campaign_year)
                             ->where('as_of_date', $this->as_of_date)
                             ->where('eligible_employee_count', '>=', 5)
-                            ->whereNotNull('dollars')
+                            // ->whereNotNull('dollars')
                             ->select('business_unit_name', 'donors', 'dollars')
                             ->orderBy('business_unit_name')
                             ->get();
