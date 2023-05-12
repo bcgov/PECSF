@@ -28,7 +28,7 @@ class DonateNowPledgeRequest extends FormRequest
 
         $gov = Organization::where('code', 'GOV')->first();
 
-        return [ 
+        return [
                 'organization_id'  => ['required'],
                 'user_id'       => [$this->organization_id == $gov->id ? 'required' : 'nullable',  'exists:users,id' ],
                 'pecsf_id'      => ['digits:6',  $this->organization_id != $gov->id ? 'required' : 'nullable'],
@@ -60,7 +60,7 @@ class DonateNowPledgeRequest extends FormRequest
             'charity_id.required_if' => 'A charity selection is required. Please choose a charity.',
 
             'one_time_amount.required' => 'The amount is required.',
-            'one_time_amount.min'      => 'The min amount is $ 1.0.',
+            'one_time_amount.min'      => 'The minimum One-time custom amount is $1',
             'one_time_amount.regex' => 'The invalid amount, max 2 decimal places.',
         ];
     }

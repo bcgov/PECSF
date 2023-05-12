@@ -27,14 +27,14 @@ class CampaignPledgeRequest extends FormRequest
      */
     public function rules()
     {
-        
+
         $my_rules = [];
 
         $gov = Organization::where('code', 'GOV')->first();
 
-        if ($this->step == 1) { 
+        if ($this->step == 1) {
             if (empty($this->pledge_id) ) {
-                $my_rules = array_merge($my_rules, 
+                $my_rules = array_merge($my_rules,
                     [
                         //
                         'campaign_year_id'    => ['required', 'exists:campaign_years,id',
@@ -42,27 +42,27 @@ class CampaignPledgeRequest extends FormRequest
                                             $query->where('organization_id', $this->organization_id)
                                                     ->when($this->organization_id == $gov->id, function($q) {
                                                         return $q->where('user_id', $this->user_id);
-                                                    }) 
+                                                    })
                                                     ->when($this->organization_id != $gov->id, function($q) {
                                                         return $q->where('pecsf_id', $this->pecsf_id);
-                                                    }) 
+                                                    })
                                                     ->where('campaign_year_id', $this->campaign_year_id)
                                                     ->whereNull('deleted_at');
                                         })->ignore($this->pledge_id),
                         ],
                         'organization_id'  => ['required'],
                         'user_id'       => [$this->organization_id == $gov->id ? 'required' : 'nullable',  'exists:users,id' ],
-                        
+
                         'pecsf_id'      => ['digits:6',  $this->organization_id != $gov->id ? 'required' : 'nullable'],
                         'pecsf_first_name'  => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[\pL\s\-]+$/u'],
                         'pecsf_last_name'   => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[\pL\s\-]+$/u'],
                         'pecsf_city'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
                         // 'city_id'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
-                    
+
                     ]
                 );
             } else {
-                // Allow edit 
+                // Allow edit
                 if ($this->organization_id != $gov->id) {
 
                     $organization = Organization::where('id', $this->organization_id)->first();
@@ -70,18 +70,18 @@ class CampaignPledgeRequest extends FormRequest
 
                     $cy  = CampaignYear::where('id',  $this->campaign_year_id)->first();
                     $year = $cy ? $cy->calendar_year : null;
-                    
+
                     $my_rules = array_merge($my_rules,
-                        [ 
+                        [
                             'campaign_year_id'    => ['required', 'exists:campaign_years,id',
                                 Rule::unique('pledges')->where(function ($query) use($gov) {
                                     $query->where('organization_id', $this->organization_id)
                                             // ->when($this->organization_id == $gov->id, function($q) {
                                             //     return $q->where('user_id', $this->user_id);
-                                            // }) 
+                                            // })
                                             ->when($this->organization_id != $gov->id, function($q) {
                                                 return $q->where('pecsf_id', $this->pecsf_id);
-                                            }) 
+                                            })
                                             ->where('campaign_year_id', $this->campaign_year_id);
                                 })->ignore($this->pledge_id),
                             ],
@@ -107,27 +107,27 @@ class CampaignPledgeRequest extends FormRequest
                     );
                 }
             }
-        } 
+        }
 
         if ($this->step >= 2) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     'step'          => ['required'],
-                    'pay_period_amount_other'    => [ Rule::when( $this->pay_period_amount =='', 
+                    'pay_period_amount_other'    => [ Rule::when( $this->pay_period_amount =='',
                                         ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
-                    'one_time_amount_other'    => [ Rule::when( $this->one_time_amount =='', 
+                    'one_time_amount_other'    => [ Rule::when( $this->one_time_amount =='',
                                         ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
 
         if ($this->step >= 3) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     //
                     'pool_option'   => ['required', Rule::in(['C', 'P']) ],
                     'pool_id'       => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
-                    'charities.*'   => ['required_if:pool_option,C'], 
+                    'charities.*'   => ['required_if:pool_option,C'],
                     'percentages.*' => $this->pool_option == 'C' ?
                                 'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/' :  '',
                 ]
@@ -161,7 +161,7 @@ class CampaignPledgeRequest extends FormRequest
                     }
                 }
 
-                // Check duplicate charity id 
+                // Check duplicate charity id
                 $dups = array_count_values(
                     array_filter($charities, fn($value) => !is_null($value) && $value !== '')
                 );
@@ -179,7 +179,7 @@ class CampaignPledgeRequest extends FormRequest
             }
         });
     }
-    
+
 
     /**
      * Get the error messages for the defined validation rules.
@@ -202,10 +202,10 @@ class CampaignPledgeRequest extends FormRequest
             'pecsf_city.required'   => 'The City field is required.',
 
             'one_time_amount_other.required' => 'The amount is required.',
-            'one_time_amount_other.min'      => 'The min amount is $ 1.0.',
+            'one_time_amount_other.min'      => 'The min amount is $ 1.',
             'one_time_amount_other.regex' => 'The invalid amount, max 2 decimal places.',
             'pay_period_amount_other.required' => 'The amount is required.',
-            'pay_period_amount_other.min' => 'The min amount is $ 1.0.',
+            'pay_period_amount_other.min' => 'The min amount is $ 1.',
             'pay_period_amount_other.regex' => 'The invalid amount, max 2 decimal places.',
 
             'charities.*.required_if' => 'The Charity field is required.',

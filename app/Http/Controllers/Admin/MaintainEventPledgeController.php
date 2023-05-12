@@ -196,7 +196,7 @@ class MaintainEventPledgeController extends Controller
         }
         $multiple = 'false';
         // load the view and pass
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
         $organizations = [];
@@ -226,7 +226,7 @@ class MaintainEventPledgeController extends Controller
         $pay_period_amount_other = null;
         $one_time_amount_other = null;
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
@@ -257,7 +257,7 @@ class MaintainEventPledgeController extends Controller
         if(empty($current_user)){
             redirect("login");
         }
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
         return view('admin-pledge.create.index', compact('fund_support_pool_list','selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));

@@ -75,7 +75,6 @@
 
                 <div class="tab-content pb-3 px-1" id="nav-tabContent">
                     <div class="tab-pane fade step show active" id="nav-method" role="tabpanel" aria-labelledby="nav-method-tab">
-
                         <h3>1. Select your preferred method for choosing charities</h3>
                         <p class="p-1"></p>
                         <div class="card mx-3 p-0 pl-2 bg-primary">
@@ -86,23 +85,22 @@
 
                             </div>
                         </div>
-
                         @include('annual-campaign.partials.method-selection')
-
                     </div>
                     <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-                        <h3>2. Select your regional charity pool</h3>
-
-                        @include('annual-campaign.partials.pools')
-                        @include('annual-campaign.partials.choose-charity')
-
+                        @if(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) > 0))
+                            @include('annual-campaign.partials.choose-charity')
+                        @elseif(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) < 1))
+                            @include('annual-campaign.partials.pools')
+                        @else
+                            <p class="p-1"></p>
+                            @include('annual-campaign.partials.pools')
+                            @include('annual-campaign.partials.choose-charity')
+                        @endif
                     </div>
                     <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
-
                         <h3>3. Decide on the frequency and amount</h3>
-
                         @include('annual-campaign.partials.amount')
-
                     </div>
                     <div class="tab-pane fade step" id="nav-distribution" role="tabpanel" aria-labelledby="nav-distribution-tab">
                         <h3>4. Decide on the distributions</h3>

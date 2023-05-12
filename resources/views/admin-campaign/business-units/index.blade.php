@@ -41,6 +41,7 @@
 					<th>Name</th>
                     <th>Status</th>
                     <th>Effective Date</th>
+                    <th>Associated BU</th>
                     <th>Notes</th>
                     <th>Action</th>
 				</tr>
@@ -130,6 +131,7 @@
                 {data: 'name', name: 'name', className: "dt-nowrap" },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
                 {data: 'effdt', name: 'effdt'},
+                {data: 'linked_bu_code',  className: 'dt-nowrap'},
                 {data: 'notes', name: 'notes', className: 'editable', width: '30em', orderable: false},
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
@@ -144,7 +146,7 @@
         // Model for creating new business unit
         $('#bu-create-modal').on('show.bs.modal', function (e) {
             // do something...
-            var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 $(document).find('[name='+field_name+']').val('');
@@ -162,7 +164,7 @@
             if (confirm(info))
             {
 
-                var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+                var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
                 $.each( fields, function( index, field_name ) {
                     $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -196,6 +198,11 @@
         // Model -- Edit
     	$(document).on("click", ".edit-bu" , function(e) {
 			e.preventDefault();
+
+            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            $.each( fields, function( index, field_name ) {
+                $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
+            });
 
             id = $(this).attr('data-id');
 
@@ -240,7 +247,7 @@
             info = 'Confirm to update this record?';
             if (confirm(info))
             {
-                var fields = ['code', 'name', 'status', 'effdt', 'notes'];
+                var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
                 $.each( fields, function( index, field_name ) {
                     $('#bu-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -275,6 +282,11 @@
         // Model -- Show
     	$(document).on("click", ".show-bu" , function(e) {
 			e.preventDefault();
+
+            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            $.each( fields, function( index, field_name ) {
+                $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
+            });
 
             id = $(this).attr('data-id');
             $.ajax({

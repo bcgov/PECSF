@@ -46,13 +46,13 @@
 
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
+        <div class="flex-fill"></div>        
         @if($totalPledgedDataTillNow > 0)
-            <div class="flex-fill"></div>
             @if (!$campaignYear->isOpen() )
                 <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
             @endif
-            <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
         @endif
+        <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
     </div>
     <div class="d-flex flex-column">
         <p class="m-0">
@@ -139,15 +139,22 @@
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
+            $(this).find(".start-btn").removeClass("d-none");
+            $(this).find(".next-btn").addClass("d-none");
         }
-        else if (e.to === 5) {
+        else if (e.to === 8) {
             $(this).find(".next-btn").addClass("d-none");
             $(this).find(".ready-btn").removeClass("d-none");
         } else {
+            $(this).find(".start-btn").addClass("d-none");
             $(this).find(".prev-btn").removeClass("d-none");
             $(this).find(".next-btn").removeClass("d-none")
             $(this).find(".ready-btn").addClass("d-none");
         }
+    })
+
+    $('#learn-more-modal').on('show.bs.modal', function (event) {
+        $('#donateGuideCarousel').carousel(0);
     })
 
     $('.more-info').click( function(event) {

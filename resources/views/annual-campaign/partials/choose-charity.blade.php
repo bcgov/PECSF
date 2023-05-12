@@ -1,4 +1,6 @@
 <div id="step-charities-area">
+    <h3>2. Choose your charities (up to 10)</h3>
+
     <div class=" form-row">
 
         <div class="form-group org_hook col-md-4">

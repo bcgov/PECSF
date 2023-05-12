@@ -25,10 +25,12 @@
                 </label>
                 <select name="year" value="" class="form-control">
                     {{-- <option value="">All</option> --}}
-                    @foreach( $years as $year => $as_of_date)
-                        <option value="{{ $year }}" {{ today()->year == $year ? 'selected' : '' }}>{{ $year }} [Snapshot on : {{ $as_of_date }}]</option>
+                    @foreach( $years as $row)
+                        <option value="{{ $row->year }}" {{  $loop->index == 0 ? 'selected' : '' }}
+                                as_of_date="{{ $row->as_of_date }}">{{ $row->year }} [Snapshot on : {{ $row->as_of_date }}]</option>
                     @endforeach 
                 </select>
+                <input type="hidden" id="as_of_date" name="as_of_date" value="" class="form-control" />
             </div>
 
             <div class="form-group col-md-1">
@@ -358,7 +360,9 @@
                     $('#export-section-result').html('Queued. Please wait.');
 
                     var form = $('#eligible-employee-form');
-
+                    as_of_date = $("select[name='year']").find('option:selected').attr('as_of_date');
+                    $("input[name='as_of_date'").val( as_of_date );
+                    
                     // Use ajax call to submit
                     $.ajax({
                         method: "GET",
