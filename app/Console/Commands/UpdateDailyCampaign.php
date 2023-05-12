@@ -160,21 +160,21 @@ class UpdateDailyCampaign extends Command
                                           ->orWhereNull('daily_campaign_view.campaign_year');
                             }) 
                             ->select(
-                                'regions.code', 
-                                'regions.name',
+                                DB::raw('regions.code as code'), 
+                                DB::raw('regions.name as name'),
                                 DB::raw("SUM(daily_campaign_view.donors) as donors"),
                                 DB::raw("SUM(daily_campaign_view.dollars) as dollars"),
                                 'daily_campaign_view.campaign_year',
                                 'daily_campaign_view.organization_code',
                             )
-                            ->groupBy('regions.code')
+                            ->groupBy('regions.code', 'regions.name', 'daily_campaign_view.campaign_year', 'daily_campaign_view.organization_code')
                             ->orderBy('regions.code')
                             ->get();
 
             foreach( $group_by_org_region as $row)  {
 
                 $ee_count = 0;
-                if ($row->organization_code == 'GOV') {
+                if ($row->code) {
                     $ee_count = EligibleEmployeeDetail::where('year', $campaign_year)
                                     ->where('as_of_date', '=', function ($query) use($as_of_date, $campaign_year) {
                                         $query->selectRaw('max(as_of_date)')
@@ -227,7 +227,8 @@ class UpdateDailyCampaign extends Command
                                 'daily_campaign_view.campaign_year',
                                 'daily_campaign_view.organization_code',
                             )
-                            ->groupBy('business_units.code', 'deptid', 'dept_name')
+                            ->groupBy('business_units.code', 'business_units.name', 'deptid', 'dept_name',
+                                     'daily_campaign_view.campaign_year', 'daily_campaign_view.organization_code')
                             ->orderBy('business_units.code')
                             ->orderBy('deptid')
                             ->orderBy('dept_name')
@@ -236,7 +237,7 @@ class UpdateDailyCampaign extends Command
             foreach( $group_by_org_dept as $row)  {
 
                 $ee_count = 0;
-                if ($row->organization_code == 'GOV') {
+                if ($row->code) {
                     $ee_count = EligibleEmployeeDetail::where('year', $campaign_year)
                                     ->where('as_of_date', '=', function ($query) use($as_of_date, $campaign_year) {
                                         $query->selectRaw('max(as_of_date)')
