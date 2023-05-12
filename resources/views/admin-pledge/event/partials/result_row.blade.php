@@ -3,8 +3,8 @@
     <td>{{$pledge->name}}</td>
 
     <td>{{$pledge->organization_code == "GOV" ? $pledge->bc_gov_id : ""}}</td>
-    <td>{{$pledge->organization_code != "GOV" ? $pledge->pecsf_id : ""}}</td>
-    <td>{{$pledge->campaign_year ? $pledge->campaign_year->calendar_year - 1 : null }}</td>
+    <td>{{ !empty($pledge->pecsf_id) ? $pledge->pecsf_id : ""}}</td>
+    <td>{{$pledge->campaign_year ? $pledge->campaign_year->calendar_year  : null }}</td>
     <td>{{$pledge->event_type}}</td>
     <td>{{number_format($pledge->deposit_amount,2)}}</td>
     <td>{{$pledge->sub_type}}</td>

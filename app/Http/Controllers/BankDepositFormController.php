@@ -9,8 +9,10 @@ use App\Models\BankDepositFormAttachments;
 use App\Models\Charity;
 use App\Models\Organization;
 use App\Models\Pledge;
+use App\Models\ProcessHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\FSPool;
@@ -449,7 +451,6 @@ class BankDepositFormController extends Controller
                     for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
                         if(empty(request("organization_name")[$i]))
                         {
-
                             $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
                         }
                         if(empty(request('vendor_id')[$i])){
@@ -476,13 +477,29 @@ class BankDepositFormController extends Controller
 
 
                     if($total != 100) {
-                        for($i=count($a);$i > -1;$i--){
-
-                                $validator->errors()->add('donation_percent.' . $a[$i], 'The Donation Percent Does not equal 100%.');
-
+                        for($i=(count($a) - 1);$i > -1;$i--){
+                                $validator->errors()->add('donation_percent.' . $i, 'The Donation Percent Does not equal 100%.');
                         }
                     }
                 }
+            }
+
+            $existing = [];
+            if($request->organization_code == "GOV"){
+                $existing = BankDepositForm::where("organization_code","=","GOV")
+                    ->where("event_type","=","Cash One-time Donation")
+                    ->where("form_submitter_id","=",$request->form_submitter_id)
+                    ->get();
+                if(empty($request->pecsf_id))
+                {
+                    $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                }
+                else if($request->pecsf_id[0] != "s" || !is_numeric(substr($request->pecsf_id,1)))
+                {
+                    $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter; The PECSF ID must be a number prepended with an S.');
+                }
+
+
             }
         });
         $validator->validate();
@@ -491,7 +508,6 @@ class BankDepositFormController extends Controller
         $form = BankDepositForm::where("id","=",$request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
-                'form_submitter_id' =>  $request->form_submitter,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
@@ -612,4 +628,40 @@ class BankDepositFormController extends Controller
 
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
     }
+
+    function bc_gov_id(Request $request){
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id")->first();
+        if(!empty($record)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Employee Id not found'], 404);
+        }
+    }
+
+    function business_unit(Request $request){
+        $record = Organization::where("organizations.code","=",$request->id)->join("business_units","business_units.code","organizations.bu_code")->selectRaw("business_units.id as business_unit_id, organizations.bu_code")->first();
+        if(!empty($record->bu_code)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Organization Code not found'], 404);
+        }
+    }
+
+
+        public function download(Request $request, $fileName) {
+            $headers = [
+                'Content-Description' => 'File Transfer',
+                'Content-Type' => 'application/csv',
+                "Content-Transfer-Encoding: UTF-8",
+            ];
+            // return Storage::download($path);
+            return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
+        }
+
+
+
 }

@@ -270,7 +270,7 @@ success:function(response){
         window.location = response[0];
         console.log(response);
     });
-
+    $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
 },
 error: function(response) {
 $('.errors').html("");
