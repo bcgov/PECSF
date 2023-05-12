@@ -93,8 +93,8 @@ class ChallengeController extends Controller
                                 (select business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
                                 from business_units  
                                 left outer join daily_campaign_view on business_units.code = daily_campaign_view.business_unit_code
-                                where campaign_year = ?
-                                group by business_unit_code
+                                where (daily_campaign_view.campaign_year = 2023 or daily_campaign_view .campaign_year is null) 
+                                group by business_unit_code, name
                                 order by sum(donors) desc) 
                                 as A, (SELECT @row_number:=0) AS temp
                             where (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
