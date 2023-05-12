@@ -170,7 +170,7 @@
         });
 
         $("body").on("click",".view_details",function(e){
-            if($(this).attr("pool_image").length > 0){
+            if($(this).attr("pool_image").length > 21){
                 $("table.charity").hide();
                 $("table.fsp").show();
                 $(".modal-header").hide();
@@ -192,7 +192,6 @@
                 $("#effective_date_of_status").html($(this).attr("effective_date_of_status"));
                 $("#sanction").html($(this).attr("sanction"));
                 $("#designation").html($(this).attr("designation"));
-                $("#category").html($(this).attr("category"));
                 $("#address").html($(this).attr("address"));
                 $("#city").html($(this).attr("city"));
                 $("#province").html($(this).attr("province"));

@@ -7,6 +7,7 @@ use App\Models\BankDepositForm;
 use App\Models\BankDepositFormOrganizations;
 use App\Models\BankDepositFormAttachments;
 use App\Models\Charity;
+use App\Models\EmployeeJob;
 use App\Models\Organization;
 use App\Models\Pledge;
 use App\Models\ProcessHistory;
@@ -84,64 +85,34 @@ class BankDepositFormController extends Controller
         $terms = explode(" ", $request->get("title") );
         $multiple = 'false';
         $selected_charities = [];
-        if (Session::has('charities')) {
-            $selectedCharities = Session::get('charities');
 
-            $_charities = Charity::whereIn('id', $selectedCharities['id'])
-                ->get(['id', 'charity_name as text']);
 
-            foreach ($_charities as $charity) {
-                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
-                if (!$charity['additional']) {
-                    $charity['additional'] = '';
-                }
-
-                array_push($selected_charities, $charity);
-            }
-        } else {
-
-            // reload the existig pledge
-            $errors = session('errors');
-
-            if (!$errors) {
-
-                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-                    ->first();
-                $pledge = Pledge::where('user_id', Auth::id())
-                    ->whereHas('campaign_year', function($q){
-                        $q->where('calendar_year','=', today()->year + 1 );
-                    })->first();
-
-                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
-
-                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
-
-                    $_charities = Charity::whereIn('id', $_ids )
-                        ->get(['id', 'charity_name as text']);
-
-                    foreach ($_charities as $charity) {
-                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
-
-                        $charity['additional'] = '';
-                        if ($pledge_charity) {
-                            $charity['additional'] = $pledge_charity->additional ?? '';
-                        }
-
-                        array_push($selected_charities, $charity);
-                    }
-                }
-            }
-        }
-
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
         return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
+    public function ignoreRemovedFiles($request){
+        if(!empty(request()->ignoreFiles))
+        {
+            $fields = $request['attachments'];
+            $request['attachments'] = [];
+            foreach( $fields as $index => $file )
+            {
+                if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
+                {
+                    $request['attachments'][] = $file;
+                }
+            }
+        }
+        return $request;
+    }
+
     public function store(Request $request) {
-        $validator = Validator::make(request()->all(), [
+
+        $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -155,7 +126,7 @@ class BankDepositFormController extends Controller
             'business_unit'         => 'required',
             'charity_selection' => 'required',
             'description' => 'required',
-            'attachments.*' => 'required',
+            'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
         ],[
             'organization_code' => 'The Organization Code is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
@@ -283,11 +254,11 @@ class BankDepositFormController extends Controller
                     }
                 }
                 if(!$fileFound){
-                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                    $validator->errors()->add('attachment','Atleast one attachment is required.');
                 }
             }
             else{
-                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                $validator->errors()->add('attachment','Atleast one attachment is required.');
             }
         });
         $validator->validate();
@@ -298,6 +269,7 @@ class BankDepositFormController extends Controller
                 'business_unit' => $request->business_unit,
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
+                'campaign_year_id' =>  $request->campaign_year,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
@@ -600,7 +572,7 @@ class BankDepositFormController extends Controller
 
     public function organizations(Request $request)
     {
-        $organizations = Charity::where("charity_status","=","Registered");
+        $organizations = Charity::selectRaw("charities.id as id, charity_name, effective_date_of_status, category_code, registration_number, charity_status, address, city, province, country, postal_code, sanction")->where("charity_status","=","Registered");
 
         if($request->province != "")
         {
@@ -616,13 +588,16 @@ class BankDepositFormController extends Controller
         {
             $organizations->where("charity_name","LIKE","%".$request->keyword."%");
         }
-        if (is_numeric($request->pool_filter)) {
+        if (is_numeric($request->pool_filter)){
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
             $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
+            $organizations->where("f_s_pool_charities.status","=","A");
+            $organizations->selectRaw("image, f_s_pool_charities.description as pool_description");
+            $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->groupby("charity_name")->paginate(7);
+        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7)->onEachSide(1);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
@@ -650,8 +625,6 @@ class BankDepositFormController extends Controller
                 'message' => 'Organization Code not found'], 404);
         }
     }
-
-
         public function download(Request $request, $fileName) {
             $headers = [
                 'Content-Description' => 'File Transfer',
@@ -661,7 +634,4 @@ class BankDepositFormController extends Controller
             // return Storage::download($path);
             return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
         }
-
-
-
 }

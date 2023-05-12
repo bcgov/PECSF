@@ -8,7 +8,7 @@
                     {{ $pool_option == "C" ? 'checked' : '' }}>
                 <label style="font-size:16px;line-height:25.6px;" class="form-check-label" for="pool1">
                     <strong>Select up to 10 charities from the CRA List</strong><br>
-                    <span style="color:black;">Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Fund Supported Pools.
+                    <span>Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Fund Supported Pools.
                     </span>
                 </label>
             </div>
@@ -22,7 +22,7 @@
                     {{ $pool_option == "P" ? 'checked' : '' }}>
                 <label style="font-size:16px;line-height:25.6px;" class="form-check-label h5" for="pool2">
                     <strong>Select a regional Fund Supported Pool</strong><br>
-                    <span style="color:black;">Charities and distribution amounts are pre-determined.</span>
+                    <span>Charities and distribution amounts are pre-determined.</span>
                 </label>
 
             </div>

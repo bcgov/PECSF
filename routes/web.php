@@ -53,7 +53,6 @@ use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
-use App\Http\Controllers\Admin\EligibleEmployeeCountController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
@@ -185,11 +184,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
 });
 
-Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
+Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
-    Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
+    // Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
@@ -255,6 +254,8 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
+
+    // Challenge Settings
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
     Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
@@ -299,10 +300,8 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
-
     // Eligible Employee Count
     Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
-
     // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
@@ -364,4 +363,3 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
 
 });
 
-Route::get('/challenge/download/{id}', [ChallengeController::class,'downloadFile'])->name('challenge.download');

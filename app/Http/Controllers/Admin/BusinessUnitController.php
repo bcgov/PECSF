@@ -67,6 +67,7 @@ class BusinessUnitController extends Controller
                 'name' => $request->name,
                 'status' => $request->status,
                 'effdt' => $request->effdt,
+                'linked_bu_code' => $request->linked_bu_code,
                 'notes' => $request->notes,
                 'created_by_id' => Auth::id(),
                 'updated_by_id' => Auth::id(),
