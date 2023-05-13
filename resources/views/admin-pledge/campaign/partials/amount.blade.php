@@ -5,6 +5,8 @@
     <div class="card-body ">
 
         <fieldset class="form-group amount-selection">
+            <div class="pay_period_amount_error">
+            </div>
             <div class="row">
                 <div class="col-sm-10">
                      <div class="form-check">
@@ -50,7 +52,7 @@
                         <span>Other:</span>
                         <input class="form-input" type="text" name="pay_period_amount_other" value="{{ $pay_period_amount_other }}" />
                     </div>
-
+                  
                 </div>
             </div>
         </fieldset>
@@ -65,6 +67,8 @@
     <div class="card-body">
 
         <fieldset class="form-group amount-selection">
+            <div class="one_time_amount_error">
+            </div>
             <div class="row">
                 {{-- <legend class="col-form-label col-sm-2 pt-0">Radios</legend> --}}
                 <div class="col-sm-10">
@@ -79,28 +83,28 @@
                         <input class="form-check-input" type="radio" name="one_time_amount" id="one_time_amount_1"
                             value="6" {{ $one_time_amount == 6 ? 'checked' : '' }}>
                         <label class="form-check-label" for="one_time_amount_1">
-                            $6 per pay
+                            $6 
                         </label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="one_time_amount" id="one_time_amount_2"
                             value="12" {{ $one_time_amount == 12 ? 'checked' : '' }}>
                         <label class="form-check-label" for="one_time_amount_2">
-                            $12 per pay
+                            $12 
                         </label>
                     </div>
                     <div class="form-check ">
                         <input class="form-check-input" type="radio" name="one_time_amount" id="one_time_amount_3"
                             value="20" {{ $one_time_amount == 20 ? 'checked' : '' }}>
                         <label class="form-check-label" for="one_time_amount_3">
-                            $20 per pay
+                            $20 
                         </label>
                     </div>
                     <div class="form-check ">
                         <input class="form-check-input" type="radio" name="one_time_amount" id="one_time_amount_4"
                             value="50" {{ $one_time_amount == 50 ? 'checked' : '' }}>
                         <label class="form-check-label" for="one_time_amount_4">
-                            $50 per pay
+                            $50 
                         </label>
                     </div>
                     <div class="form-check ">
