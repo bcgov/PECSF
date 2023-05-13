@@ -140,7 +140,8 @@
 $(function () {    
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
 
-        $('#movie_player').attr('src', 'https://www.youtube-nocookie.com/embed/ZMEjHqr3npo')
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
         
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
@@ -158,10 +159,16 @@ $(function () {
         }
 
     })
-
+    
     $('#learn-more-modal').on('show.bs.modal', function (event) {
         $('#donateGuideCarousel').carousel(0);
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
     })
+
+    $("#learn-more-modal").on("hidden.bs.modal", function () {
+        $('#movie_player').attr('src', '')
+    });
 
     $('.more-info').click( function(event) {
         event.stopPropagation();
