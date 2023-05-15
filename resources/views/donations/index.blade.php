@@ -136,7 +136,13 @@
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
 <script>
+
+$(function () {    
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
+
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
+        
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
             $(this).find(".start-btn").removeClass("d-none");
@@ -151,11 +157,18 @@
             $(this).find(".next-btn").removeClass("d-none")
             $(this).find(".ready-btn").addClass("d-none");
         }
-    })
 
+    })
+    
     $('#learn-more-modal').on('show.bs.modal', function (event) {
         $('#donateGuideCarousel').carousel(0);
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
     })
+
+    $("#learn-more-modal").on("hidden.bs.modal", function () {
+        $('#movie_player').attr('src', '')
+    });
 
     $('.more-info').click( function(event) {
         event.stopPropagation();
@@ -192,7 +205,7 @@
 
         }
     });
-
+});
 
 </script>
 @endpush
