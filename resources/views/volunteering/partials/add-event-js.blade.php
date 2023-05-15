@@ -270,7 +270,7 @@ success:function(response){
         window.location = response[0];
         console.log(response);
     });
-
+    $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
 },
 error: function(response) {
 $('.errors').html("");
@@ -285,6 +285,7 @@ error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
 $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+$("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 
 
 }
@@ -408,8 +409,14 @@ $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
+    if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1)) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg"</span>');
+        $(".invalid-feedback").show();
+        return;
+    }
 if(file[0].size < 2097152)
 {
     formData.append('attachments[]', file[0]);
@@ -488,7 +495,7 @@ $("#attachment_input_1").val("");
             },
         });
     });
-
+    $("#business_unit").attr("disabled","true").select2();
     $("body").on("change","#organization_code",function(){
         if($(this).val() != "GOV" && $(this).val() != "false"){
             $.ajax({
@@ -501,7 +508,7 @@ $("#attachment_input_1").val("");
                 dataType: 'json',
                 success:function(response){
                     $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
-                    $("#business_unit").val(response.business_unit_id).select2();
+                    $("#business_unit").attr("disabled","false").val(response.business_unit_id).attr("disabled","true").select2();
                     setTimeout(function(){
                         $("#employment_city").parents(".form-body").fadeTo("slow",1);
                     },500);
@@ -522,9 +529,5 @@ $("#attachment_input_1").val("");
         else if($(this).val() == "GOV"){
             $("#business_unit").val("").select2();
         }
-
-
     });
-
-
 </script>

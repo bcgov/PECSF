@@ -100,18 +100,13 @@ class Kernel extends ConsoleKernel
                         ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
 
                 // Snapshot of eligible employees 
-                $schedule->command('command:SetEligibleEmployeeBUCount')
-                        ->yearlyOn(8, 31, '5:00')
-                        ->sendOutputTo(storage_path('logs/SetEligibleEmployeeBUCount_Aug.log'));
+                $schedule->command('command:UpdateEligibleEmployeeSnapshot')
+                        ->dailyAt('4:30')
+                        ->sendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
 
-                $schedule->command('command:SetEligibleEmployeeBUCount')
-                        ->yearlyOn(9, 1, '5:00')
-                        ->sendOutputTo(storage_path('logs/SetEligibleEmployeeBUCount_Sept.log'));
-
-                $schedule->command('command:SetEligibleEmployeeBUCount')
-                        ->yearlyOn(10, 15, '5:00')
-                        ->sendOutputTo(storage_path('logs/SetEligibleEmployeeBUCount_Oct.log'));
-
+                $schedule->command('command:UpdateDailyCampaign')
+                        ->dailyAt('4:45')
+                        ->sendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
                 
                 // Daily Testing 
                 $schedule->command('notify:daily')

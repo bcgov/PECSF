@@ -49444,3 +49444,9 @@ body {
   max-width: 250px;
   max-height: 250px;
 }
+
+.custom.pagination .page-item {
+  padding: 4px 8px 4px 8px;
+  border: #ccc 1px solid;
+  margin: 4px;
+}

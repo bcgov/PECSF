@@ -41,6 +41,7 @@ class EventSubmissionQueueController extends Controller
 
         $form = BankDepositForm::where("id",$request->submission_id)->first();
         if($request->status == 1){
+
             if($form->event_type == "Gaming")
             {
                 $count = BankDepositForm::where("event_type","Gaming")->count() + 1;
@@ -93,18 +94,10 @@ class EventSubmissionQueueController extends Controller
                 if(empty($campaign_year) || !$campaign_year->isOpen()){
                     $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
-                $gov_organization = Organization::where('code', 'GOV')->first();
-                $is_GOV = ($form->organization_code == $gov_organization->code);
-                if($is_GOV){
-                    $existing = BankDepositForm::where("organization_code","=","GOV")
-                        ->where("event_type","=","Cash One-time Donation")
-                        ->where("form_submitter_id","=",$form->form_submitter_id)
-                        ->get();
-                    if(!empty($existing))
-                    {
-                        BankDepositForm::where("id",$request->submission_id)->update(['bc_gov_id' => "S".$form->bc_gov_id]);
-                    }
-                }
+        }
+        
+        if($request->status == 2){
+            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
         }
 
         if($request->status == 2){
@@ -144,9 +137,10 @@ class EventSubmissionQueueController extends Controller
         $cities = City::all();
         $organizations = [];
         $selected_charities = [];
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
+
         // load the view and pass
         return view('admin-pledge.submission-queue.index',compact('fund_support_pool_list','selected_charities','organizations','cities','pools','regional_pool_id','business_units','regions','departments','campaign_year','submissions','current_user'));
     }
@@ -168,18 +162,7 @@ class EventSubmissionQueueController extends Controller
         }
 
         $existing = [];
-        if($submissions[0]->organization_code == "GOV"){
-            $existing = BankDepositForm::where("organization_code","=","GOV")
-                ->where("event_type","=","Cash One-time Donation")
-                ->where("form_submitter_id","=",$submissions[0]->form_submitter_id)
-                ->get();
 
-            if(count($existing) > 0)
-            {
-                $submissions[0]->bc_gov_id = "S".$submissions[0]->bc_gov_id;
-            }
-        }
-        $existing = [];
 
         if($submissions[0]->organization_code == "RET"){
             $existing = BankDepositForm::where("organization_code","=","RET")
@@ -229,6 +212,19 @@ class EventSubmissionQueueController extends Controller
             else{
                 $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2)."001";
             }
+        }
+
+        $gov_organization = Organization::where('code', 'GOV')->first();
+        foreach($submissions as $index => $submission){
+            $is_GOV = ($submission->organization_code == $gov_organization->code);
+            $existing = false;
+            if($is_GOV){
+                $existing = BankDepositForm::where("organization_code","=","GOV")
+                    ->where("event_type","=","Cash One-time Donation")
+                    ->where("form_submitter_id","=",$submission->form_submitter_id)
+                    ->get();
+            }
+            $submissions[$index]->existing = $existing ? true : false;
         }
 
         echo json_encode($submissions);

@@ -10,8 +10,10 @@ use App\Models\Charity;
 use App\Models\EmployeeJob;
 use App\Models\Organization;
 use App\Models\Pledge;
+use App\Models\ProcessHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\FSPool;
@@ -83,64 +85,34 @@ class BankDepositFormController extends Controller
         $terms = explode(" ", $request->get("title") );
         $multiple = 'false';
         $selected_charities = [];
-        if (Session::has('charities')) {
-            $selectedCharities = Session::get('charities');
 
-            $_charities = Charity::whereIn('id', $selectedCharities['id'])
-                ->get(['id', 'charity_name as text']);
 
-            foreach ($_charities as $charity) {
-                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
-                if (!$charity['additional']) {
-                    $charity['additional'] = '';
-                }
-
-                array_push($selected_charities, $charity);
-            }
-        } else {
-
-            // reload the existig pledge
-            $errors = session('errors');
-
-            if (!$errors) {
-
-                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-                    ->first();
-                $pledge = Pledge::where('user_id', Auth::id())
-                    ->whereHas('campaign_year', function($q){
-                        $q->where('calendar_year','=', today()->year + 1 );
-                    })->first();
-
-                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
-
-                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
-
-                    $_charities = Charity::whereIn('id', $_ids )
-                        ->get(['id', 'charity_name as text']);
-
-                    foreach ($_charities as $charity) {
-                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
-
-                        $charity['additional'] = '';
-                        if ($pledge_charity) {
-                            $charity['additional'] = $pledge_charity->additional ?? '';
-                        }
-
-                        array_push($selected_charities, $charity);
-                    }
-                }
-            }
-        }
-
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
         return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
+    public function ignoreRemovedFiles($request){
+        if(!empty(request()->ignoreFiles))
+        {
+            $fields = $request['attachments'];
+            $request['attachments'] = [];
+            foreach( $fields as $index => $file )
+            {
+                if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
+                {
+                    $request['attachments'][] = $file;
+                }
+            }
+        }
+        return $request;
+    }
+
     public function store(Request $request) {
-        $validator = Validator::make(request()->all(), [
+
+        $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -154,7 +126,7 @@ class BankDepositFormController extends Controller
             'business_unit'         => 'required',
             'charity_selection' => 'required',
             'description' => 'required',
-            'attachments.*' => 'required',
+            'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
         ],[
             'organization_code' => 'The Organization Code is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
@@ -282,11 +254,11 @@ class BankDepositFormController extends Controller
                     }
                 }
                 if(!$fileFound){
-                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                    $validator->errors()->add('attachment','Atleast one attachment is required.');
                 }
             }
             else{
-                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                $validator->errors()->add('attachment','Atleast one attachment is required.');
             }
         });
         $validator->validate();
@@ -451,7 +423,6 @@ class BankDepositFormController extends Controller
                     for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
                         if(empty(request("organization_name")[$i]))
                         {
-
                             $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
                         }
                         if(empty(request('vendor_id')[$i])){
@@ -478,13 +449,29 @@ class BankDepositFormController extends Controller
 
 
                     if($total != 100) {
-                        for($i=count($a);$i > -1;$i--){
-
-                                $validator->errors()->add('donation_percent.' . $a[$i], 'The Donation Percent Does not equal 100%.');
-
+                        for($i=(count($a) - 1);$i > -1;$i--){
+                                $validator->errors()->add('donation_percent.' . $i, 'The Donation Percent Does not equal 100%.');
                         }
                     }
                 }
+            }
+
+            $existing = [];
+            if($request->organization_code == "GOV"){
+                $existing = BankDepositForm::where("organization_code","=","GOV")
+                    ->where("event_type","=","Cash One-time Donation")
+                    ->where("form_submitter_id","=",$request->form_submitter_id)
+                    ->get();
+                if(empty($request->pecsf_id))
+                {
+                    $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                }
+                else if($request->pecsf_id[0] != "s" || !is_numeric(substr($request->pecsf_id,1)))
+                {
+                    $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter; The PECSF ID must be a number prepended with an S.');
+                }
+
+
             }
         });
         $validator->validate();
@@ -493,7 +480,6 @@ class BankDepositFormController extends Controller
         $form = BankDepositForm::where("id","=",$request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
-                'form_submitter_id' =>  $request->form_submitter,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
@@ -639,5 +625,13 @@ class BankDepositFormController extends Controller
                 'message' => 'Organization Code not found'], 404);
         }
     }
-
+        public function download(Request $request, $fileName) {
+            $headers = [
+                'Content-Description' => 'File Transfer',
+                'Content-Type' => 'application/csv',
+                "Content-Transfer-Encoding: UTF-8",
+            ];
+            // return Storage::download($path);
+            return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
+        }
 }

@@ -230,9 +230,9 @@ class CharityController extends Controller
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
-                                    return $pool->region->name;
-                                  });
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
 
 
         $selected_charities = [];

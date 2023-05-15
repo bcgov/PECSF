@@ -34,16 +34,14 @@
                     @endphp</button></td>
         </tr>
     @endforeach
+
 </table>
-
-
 <div class="col-md-12">
     @if($organizations)
-        {{$organizations->links()}}
+        {{$organizations->onEachSide(1)->links('volunteering.partials.pagination')}}
     @else
 
     @endif
 </div>
-
 <br>
 
