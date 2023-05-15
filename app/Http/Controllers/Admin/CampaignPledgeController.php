@@ -116,11 +116,15 @@ class CampaignPledgeController extends Controller
                     return "<span>" . $text . '</span>' ;
                 })
                 ->addColumn('action', function ($pledge) use($gov) {
-                    $delete = ($pledge->organization_id != $gov->id)  ? '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
-                             $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
-                    return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
-                        '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>'
-                        . $delete;
+                    $delete = ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null )  ? 
+                                    '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
+                                    $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
+                    $edit = ($pledge->ods_export_status == null )  ? 
+                            '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>' : '';
+                    return  '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
+                        $edit . 
+                        // '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.donate-now.edit',$pledge->id) . '">Edit</a>'
+                        $delete;
 
                 })
                 ->editColumn('created_at', function ($user) {
@@ -167,8 +171,8 @@ class CampaignPledgeController extends Controller
         $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
         $cities = City::orderBy('city')->get();
 
-        $pay_period_amount = 20;
-        $one_time_amount = 20;
+        $pay_period_amount = 0;
+        $one_time_amount = 0;
         $pay_period_amount_other = null;
         $one_time_amount_other = null;
 
@@ -420,7 +424,12 @@ class CampaignPledgeController extends Controller
     // public function edit(Request $request, $id)
     {
         //
-        $pledge = Pledge::where('id', $id)->first();
+        $pledge = Pledge::where('id', $id)
+                        ->whereNull('ods_export_status')->first();
+
+        if (!($pledge)) {
+            return abort(404);      // 404 Not Found
+        }
      
         $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
             return $pool->region->name;

@@ -75,7 +75,6 @@
 
                 <div class="tab-content pb-3 px-1" id="nav-tabContent">
                     <div class="tab-pane fade step show active" id="nav-method" role="tabpanel" aria-labelledby="nav-method-tab">
-
                         <h3>1. Select your preferred method for choosing charities</h3>
                         <p class="p-1"></p>
                         <div class="card mx-3 p-0 pl-2 bg-primary">
@@ -86,44 +85,22 @@
 
                             </div>
                         </div>
-
                         @include('annual-campaign.partials.method-selection')
-
                     </div>
                     <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-                        <h3>2. Choose your charities (up to 10)</h3>
-
                         @if(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) > 0))
                             @include('annual-campaign.partials.choose-charity')
                         @elseif(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) < 1))
-                            <p class="p-1"></p>
-                            <div class="card mx-3 p-0 pl-2 bg-primary">
-                                <div class="card-body bg-light">
-                                    By choosing this option your donation will support the designated programs of the regional
-                                    Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
-                                    {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
-                                </div>
-                            </div>
                             @include('annual-campaign.partials.pools')
                         @else
                             <p class="p-1"></p>
-                            <div class="card mx-3 p-0 pl-2 bg-primary">
-                                <div class="card-body bg-light">
-                                    By choosing this option your donation will support the designated programs of the regional
-                                    Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
-                                    {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
-                                </div>
-                            </div>
                             @include('annual-campaign.partials.pools')
                             @include('annual-campaign.partials.choose-charity')
                         @endif
                     </div>
                     <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
-
                         <h3>3. Decide on the frequency and amount</h3>
-
                         @include('annual-campaign.partials.amount')
-
                     </div>
                     <div class="tab-pane fade step" id="nav-distribution" role="tabpanel" aria-labelledby="nav-distribution-tab">
                         <h3>4. Decide on the distributions</h3>
@@ -154,7 +131,7 @@
                         style="display: none">Back</button>
                     <button type="button" class="action next btn btn-lg  btn-primary "
                         >Next</button>
-                    <button type="submit" class="action submit btn btn-lg  btn-primary "
+                    <button type="button" class="action submit btn btn-lg  btn-primary "
                         style="display: none">Pledge</button>
                 </div>
 
@@ -595,11 +572,19 @@ $(function () {
     }
 
     // Page 5 -- summary (handle single submission only )
-     $('#annual-campaign-form').on('submit', function () {
+    //  $('#annual-campaign-form').on('submit', function () {
 
+    //     $("input[type=hidden][name='step']").val( step );
+    //     $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
+    //     $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
+    // });
+
+    $('#annual-campaign-form button.action.submit').on('click', function() {
         $("input[type=hidden][name='step']").val( step );
-        $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
-        $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
+        $(this).attr('disabled', 'true');
+        $(this).html('Pledge submitted');
+
+        $("#annual-campaign-form").submit();
     });
 
 });

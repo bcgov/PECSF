@@ -37,7 +37,7 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
         $rows = DailyCampaign::where('daily_type', 2)
                             ->where('campaign_year', $this->campaign_year)
                             ->where('as_of_date', $this->as_of_date)
-                            ->where('donors', '>=', 5)
+                            ->where('eligible_employee_count', '>=', 5)
                             ->select('business_unit_name', 'deptid', 'dept_name', 'donors', 'dollars')
                             ->orderBy('business_unit_name')
                             ->orderBy('dept_name')

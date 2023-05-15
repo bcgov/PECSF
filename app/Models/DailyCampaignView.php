@@ -20,7 +20,7 @@ class DailyCampaignView extends Model
     public static function dynamicSqlForChallengePage() {
     
         $sql = <<<SQL
-                    select 1 as current, business_unit_code, organization_name,
+                    select 1 as current, organization_code, business_unit_code, organization_name,
                             -- 0 as participation_rate, 
                             case when (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
                                 and eligible_employee_by_bus.organization_code = 'GOV' 
@@ -48,13 +48,12 @@ class DailyCampaignView extends Model
                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                             ) as ee_count
                      from 
-                        (select business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
-                        from daily_campaign_view  
-                        left outer join business_units on business_units.code = business_unit_code
-                        where campaign_year = ?
-                        group by business_unit_code
-                        order by sum(donors) desc) 
-                        as A, (SELECT @row_number:=0) AS temp
+                        (select organization_code, business_units.code as business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
+                           from business_units left outer join daily_campaign_view on business_units.code = daily_campaign_view.business_unit_code
+                          where (daily_campaign_view.campaign_year = ? or daily_campaign_view.campaign_year is null)
+                          group by business_units.code, organization_name
+                          order by sum(donors) desc
+                        ) as A, (SELECT @row_number:=0) AS temp
                     where 1=1
                     order by A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
                                         and eligible_employee_by_bus.organization_code = 'GOV' 
