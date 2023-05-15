@@ -2,7 +2,7 @@
 @section('content_header')
 @if ($message = Session::get('error'))
 <div class="alert alert-danger alert-block">
-	<button type="button" class="close" data-dismiss="alert">×</button>	
+	<button type="button" class="close" data-dismiss="alert">×</button>
         <strong>{{ $message }}</strong>
 </div>
 @endif
@@ -13,7 +13,7 @@
                 <h5 class="card-title"></h5>
                 @if ( $campaignYear->isOpen() )
                     <p class="card-text text-left">
-                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
+                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrollment for the PECSF Campaign.
                         The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January.
                     </p>
                     @if ($current_pledge)
@@ -23,7 +23,7 @@
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make change to your PECSF pledge</a>
                     @else
                         <p class="card-text text-left">
-                            To make a pledge click the Donate button, copy a prior years choices from your Donation History.
+                            To make a pledge click the Donate button, copy a prior year's choices from your Donation History.
                         </p>
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Donate</a>
                     @endif
@@ -46,7 +46,7 @@
 
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
-        <div class="flex-fill"></div>        
+        <div class="flex-fill"></div>
         @if($totalPledgedDataTillNow > 0)
             @if (!$campaignYear->isOpen() )
                 <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
@@ -125,11 +125,11 @@
 
 
 @push('css')
-    
+
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
-@endpush    
-    
+@endpush
+
 
 @push('js')
 
@@ -180,7 +180,7 @@
                 success: function (result, text, xhr) {
                     // $('.modal-title span').html(name);
                     if(result.indexOf('body class="login-page"') != -1){
-                        window.location.href = '/login'; 
+                        window.location.href = '/login';
                     }
                     $(target).html(result);
                     $('#pledgeDetailModal').modal('show');
