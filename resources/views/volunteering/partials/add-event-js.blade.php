@@ -469,7 +469,7 @@ $("#attachment_input_1").val("");
             success:function(response){
                 $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
                 $("#employment_city").val(response.office_city).select2();
-                $("#region").val(response.region_id).select2();
+                $("#region").val($("#region option[code='"+response.tgb_reg_district+"']").val()).select2();
                 $("#business_unit").val(response.business_unit_id).select2();
                 setTimeout(function(){
                     $("#employment_city").parents(".form-body").fadeTo("slow",1);
@@ -490,7 +490,7 @@ $("#attachment_input_1").val("");
     });
 
     $("body").on("change","#organization_code",function(){
-        if($(this).val() != "GOV"){
+        if($(this).val() != "GOV" && $(this).val() != "false"){
             $.ajax({
                 url: "/bank_deposit_form/business_unit?id="+$(this).val(),
                 type: "GET",
@@ -518,6 +518,9 @@ $("#attachment_input_1").val("");
                     });
                 },
             });
+        }
+        else if($(this).val() == "GOV"){
+            $("#business_unit").val("").select2();
         }
 
 
