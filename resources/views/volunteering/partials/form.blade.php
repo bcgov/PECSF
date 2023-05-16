@@ -340,7 +340,7 @@
         <div class="form-group  org_hook col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
         </div>
-        <div class="form-group org_hook col-md-12">
+        <div class="form-group col-md-12">
             <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered charitable organizations.
                 Our system uses the official name of the charity registered with the CRA. You can use the View CRA Charity List link to confirm if the organization you would like to support is registered. You can also support a specific branch or program name.</p>
 

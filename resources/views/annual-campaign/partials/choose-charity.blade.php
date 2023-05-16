@@ -28,7 +28,7 @@
             </div>
 
             @isset($fund_support_pool_list)
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4 org_hook">
                     <label for="pool_selection_id">Search by Fund Support Pool</label>
                     <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
                         <option value="">Choose a Fund Support Pool</option>

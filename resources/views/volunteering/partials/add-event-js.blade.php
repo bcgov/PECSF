@@ -2,6 +2,7 @@
 <script>
     $("#sub_type").select2();
     $("#event_type").select2();
+    $(".org_hook").hide();
 
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
