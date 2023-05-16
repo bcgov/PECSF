@@ -393,6 +393,13 @@ e.preventDefault();
 $(".attachment_errors").html("");
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.originalEvent.dataTransfer.files;
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
+    $(".attachment_errors").html("");
+    if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1)) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
+        $(".invalid-feedback").show();
+        return;
+    }
     if(file[0].size < 2097152) {
         formData.append('attachments[]', file[0]);
         $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
@@ -409,11 +416,11 @@ $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
-var allowed = ["pdf","xls","xlsx","csv","png","jpeg"];
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
     if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1)) < 0){
-        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg"</span>');
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
         $(".invalid-feedback").show();
         return;
     }
@@ -421,13 +428,15 @@ if(file[0].size < 2097152)
 {
     formData.append('attachments[]', file[0]);
     $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
+    $(".invalid-feedback").show();
     const index = ignoreFiles.indexOf(file[0].name);
     if (index > -1) { // only splice array when item is found
         ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
     }
 }
 else{
-    $(".attachment_errors").html("Please upload a smaller file < 2MB");
+    $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
+    $(".invalid-feedback").show();
 }
 });
 
