@@ -359,24 +359,26 @@
                 <h3 class="blue">File(s)</h3>
 
             </div>
-
+            <div class="form-row form-header">
+                <span class="attachment_errors errors">
+                       @error('attachments')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                            @enderror
+                        </span>
+            </div>
             <div class="form-row form-body">
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
-                    <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
+                    <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
+                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">
 
                 </table>
             </div>
-            <span class="attachment_errors errors">
-                       @error('attachments')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                            @enderror
-                        </span>
+
     </div>
 
 
