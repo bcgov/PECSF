@@ -409,7 +409,7 @@ var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
         }
     }
     else{
-        $(".attachment_errors").html("Please upload a smaller file < 2MB");
+        $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
     }
 });
 $("#attachment_input_1").change(function(e){
