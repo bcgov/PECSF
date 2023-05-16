@@ -131,7 +131,7 @@
                         style="display: none">Back</button>
                     <button type="button" class="action next btn btn-lg  btn-primary "
                         >Next</button>
-                    <button type="submit" class="action submit btn btn-lg  btn-primary "
+                    <button type="button" class="action submit btn btn-lg  btn-primary "
                         style="display: none">Pledge</button>
                 </div>
 
@@ -572,11 +572,19 @@ $(function () {
     }
 
     // Page 5 -- summary (handle single submission only )
-     $('#annual-campaign-form').on('submit', function () {
+    //  $('#annual-campaign-form').on('submit', function () {
 
+    //     $("input[type=hidden][name='step']").val( step );
+    //     $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
+    //     $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
+    // });
+
+    $('#annual-campaign-form button.action.submit').on('click', function() {
         $("input[type=hidden][name='step']").val( step );
-        $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
-        $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
+        $(this).attr('disabled', 'true');
+        $(this).html('Pledge submitted');
+
+        $("#annual-campaign-form").submit();
     });
 
 });
