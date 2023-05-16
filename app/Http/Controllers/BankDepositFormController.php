@@ -605,7 +605,7 @@ class BankDepositFormController extends Controller
     }
 
     function bc_gov_id(Request $request){
-        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id")->first();
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, employee_jobs.tgb_reg_district")->first();
         if(!empty($record)){
             return response()->json($record, 200);
         }
