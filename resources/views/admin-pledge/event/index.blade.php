@@ -59,7 +59,7 @@
                     <option value="calendar_year" {{$request->search_by == 'calendar_year' ? 'selected' : ''}}>Calendar Year</option>
                     <option value="organization_code" {{$request->search_by == 'organization_code' ? 'selected' : ''}}>Organization Code</option>
                     <option value="employee_id" {{$request->search_by == 'employee_id' ? 'selected' : ''}}>Employee ID</option>
-                    <option value="id" {{$request->search_by == 'id' ? 'selected' : ''}}>PECSF Identifier</option>
+                    <option value="pecsf_id" {{$request->search_by == 'id' ? 'selected' : ''}}>PECSF Identifier</option>
                 </select>
                 <span class="search_by_errors errors">
                        @error('search_by')
@@ -102,7 +102,7 @@
                 <select name="event_type" id="event_type" value="" class="form-control">
                     <option value="">Select a Event Type</option>
                     <option value="Cash One-Time Donation">Cash One-Time Donation</option>
-                    <option value="Cheque One-Time Donation">Cash One-Time Donation</option>
+                    <option value="Cheque One-Time Donation">Cheque One-Time Donation</option>
                     <option value="Fundraiser">Fundraiser</option>
                     <option value="Gaming">Gaming</option>
                 </select>

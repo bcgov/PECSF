@@ -178,10 +178,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
     Route::get('/bank_deposit_form/bc_gov_id',[BankDepositFormController::class, 'bc_gov_id'])->name('bc_gov_id');
     Route::get('/bank_deposit_form/business_unit',[BankDepositFormController::class, 'business_unit'])->name('business_unit');
-
+    Route::get('/bank_deposit_form/download/{fileName}',[BankDepositFormController::class, 'download'])->name('download');
     Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
     Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
-
     Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
 });
 
@@ -301,8 +300,8 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
-
-
+    // Eligible Employee Count
+    Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
     // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');

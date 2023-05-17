@@ -387,7 +387,7 @@
 
 <br>
     <br>
-    <input type="submit" style="margin-left:20px;" onclick="$('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');"  class="col-md-2 btn btn-primary" value="Submit" />
+    <input type="submit" style="margin-left:20px;"   class="col-md-2 btn btn-primary" value="Submit" />
     <br>
     <br>
     <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are possible through eForm. Please contact pecsf@gov.bc.ca</p>

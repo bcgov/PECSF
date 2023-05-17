@@ -257,12 +257,18 @@
                         text = text.replace(/XXX/g, attachment_number + 1);
                         $('#attachments').append( text );
                         attachment_number++;
-                     $('.attachment').last().find(".filename").html("/challenge/download/"+data[0].attachments[i].id);
-                        $('.attachment').last().find(".view_attachment").attr("href","/challenge/download/"+data[0].attachments[i].id);
+                     $('.attachment').last().find(".filename").html("Attachment #"+(i + 1)+" "+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+" ");
+                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
                     $("#edit-event-modal").nextAll("button").attr("disabled",true);
+
+                    if(data[0].existing == true){
+                        $("#bcgovid").hide();
+                        $("#pecsfid *,#pecsfid").show();
+                        $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                    }
 
                     $('#edit-event-modal').modal('show');
                     console.log(data);

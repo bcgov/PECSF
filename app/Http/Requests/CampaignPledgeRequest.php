@@ -146,6 +146,20 @@ class CampaignPledgeRequest extends FormRequest
             $charities = $this->charities;
             $percentages = $this->percentages;
 
+            if ($step >= 2) {
+
+                $pay_period_amount = $this->pay_period_amount  ? 
+                                $this->pay_period_amount : $this->pay_period_amount_other ;
+                $one_time_amount = $this->one_time_amount ? 
+                                $this ->one_time_amount : $this->one_time_amount_other;
+
+                if (!($pay_period_amount > 0 || $one_time_amount > 0)) {
+                    $validator->errors()->add('pay_period_amount_error', 'Either a bi-weekly or one-time deduction amount(s) must be selected.');
+                    $validator->errors()->add('one_time_amount_error', 'Either a bi-weekly or one-time deduction amount(s) must be selected.');
+                }
+
+            }
+
             if ($charities && $this->pool_option == 'C' && $step >= 3) {
 
                 // Check 100%
