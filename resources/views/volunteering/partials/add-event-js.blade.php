@@ -395,7 +395,7 @@ $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.originalEvent.dataTransfer.files;
 var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
     $(".attachment_errors").html("");
-    if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1).toLowerCase()) < 0){
+    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
         $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
         $(".invalid-feedback").show();
         return;
@@ -420,7 +420,7 @@ $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
-    if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1).toLowerCase()) < 0){
+    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
         $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
         $(".invalid-feedback").show();
         return;
