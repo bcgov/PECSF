@@ -20,6 +20,7 @@ use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CampaignPledgeRequest;
+use Carbon\Carbon;
 
 class MaintainEventPledgeController extends Controller
 {
@@ -41,7 +42,6 @@ class MaintainEventPledgeController extends Controller
      */
     public function index(Request $request)
     {
-        //
         if($request->ajax()) {
 
             $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
@@ -82,15 +82,23 @@ class MaintainEventPledgeController extends Controller
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
         $cities = City::all();
-        if(isset($request->search_by) && !empty($request->begins_with)){
-            if($request->search_by == "calendar_year"){
-                $event_pledges = BankDepositForm::where("created_at","<=",$request->begins_with);
+        if(!empty(request("search_by")) && !empty(request("begins_with"))){
+            if(request("search_by") == "calendar_year"){
+                $event_pledges = BankDepositForm::join("campaign_years","campaign_years.id","bank_deposit_forms.campaign_year_id");
+                $event_pledges =  $event_pledges->where("calendar_year","=",request("begins_with"));
             }
             else if($request->search_by == "id"){
                 $event_pledges = BankDepositForm::where($request->search_by,"=",$request->begins_with);
             }
+            else if($request->search_by == "employee_id"){
+                $event_pledges = BankDepositForm::where("bc_gov_id","like","%".$request->begins_with."%");
+            }
+            else if($request->search_by == "pecsf_id"){
+                $event_pledges =  BankDepositForm::where("pecsf_id","like","%".$request->begins_with."%");
+            }
             else{
-                $event_pledges = BankDepositForm::where($request->search_by,"like",$request->begins_with."%");
+                $event_pledges = BankDepositForm::where($request->search_by,"=",$request->begins_with);
+
             }
 
             if(!empty($request->event_type))
@@ -102,7 +110,7 @@ class MaintainEventPledgeController extends Controller
             {
                 $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
             }
-            $event_pledges = $event_pledges->orderBy("created_at","desc")->limit($request->limit)->get();
+            $event_pledges = $event_pledges->orderBy("bank_deposit_forms.created_at","desc")->limit(request("limit"))->get();
         }
         else{
             $event_pledges = BankDepositForm::orderBy("bank_deposit_forms.created_at","desc");
