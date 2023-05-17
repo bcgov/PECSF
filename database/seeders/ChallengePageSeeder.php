@@ -35,7 +35,7 @@ class ChallengePageSeeder extends Seeder
 
         DB::table('historical_challenge_pages')->truncate();
 
-        $years = [2021,2020,2019,2018];
+        $years = [2022,2021,2020,2019,2018];
 
         foreach($years as $year){
 
@@ -44,12 +44,13 @@ class ChallengePageSeeder extends Seeder
             {
 
                 HistoricalChallengePage::create([
-                    "organization_name" => $data[0],
-                    "participation_rate" => $data[1],
-                    "previous_participation_rate" => $data[2],
-                    "change" => $data[3],
-                    "donors" => $data[4],
-                    "dollars" => $data[5],
+                    "business_unit_code" => $data[0],
+                    "organization_name" => $data[1],
+                    "participation_rate" => $data[2],
+                    "previous_participation_rate" => $data[3],
+                    "change" => $data[4],
+                    "donors" => $data[5],
+                    "dollars" => $data[6],
                     "year" => $year
                 ]);
 
