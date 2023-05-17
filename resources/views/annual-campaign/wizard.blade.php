@@ -292,6 +292,25 @@ $(function () {
         }
     });
 
+    // treat browser back button like the 'back' button in this wizard page
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', function(event) {
+        url = this.location.href;
+        if (url.indexOf('annual-campaign/create')) {
+            current_step = $("input[type=hidden][name='step']").val();
+            if (current_step == 1) {
+                // back
+                $(".cancel").trigger("click");
+            } else {
+                history.pushState(null, null, location.href);
+                $(".back").trigger("click");
+            }
+        }
+    });
+
+
+
+
     $(document).on("keyup keypress", "#annual-campaign-form", function(e) {
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13) {
@@ -436,6 +455,9 @@ $(function () {
 
     // DISPLAY AND HIDE "NEXT", "BACK" AND "SUMBIT" BUTTONS
     hideButtons = function(step) {
+        // sync variable and the hidden variable
+        $("input[type=hidden][name='step']").val( step );
+
         var limit = parseInt($(".step").length);
         $(".action").hide();
         $(".cancel").hide();
