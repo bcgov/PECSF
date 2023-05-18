@@ -542,4 +542,9 @@ $("#attachment_input_1").val("");
             $("#business_unit").val("").select2();
         }
     });
+    $("#keyword").keypress(function(e){
+        if(e.which == 13) {
+           e.preventDefault();
+        }
+    });
 </script>
