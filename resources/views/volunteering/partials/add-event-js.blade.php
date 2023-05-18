@@ -418,6 +418,7 @@ $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+
 var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
