@@ -538,4 +538,9 @@ $("#attachment_input_1").val("");
             });
         }
     });
+    $("#keyword").keypress(function(e){
+        if(e.which == 13) {
+           e.preventDefault();
+        }
+    });
 </script>
