@@ -47,7 +47,7 @@
 <div class="charity-error-hook  {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
-    <div class="error max-charities-error invalid-feedback" style="display:none;"><i style="color:black;" class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
+    <div class="error max-charities-error" style="display:none;color:#D8292F;"><i style="color:black;" class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
         <table class="" id="organizations" style="display:block;width:100%">
            @if(count($selected_charities) > 0)
