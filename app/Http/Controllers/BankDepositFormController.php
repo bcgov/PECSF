@@ -372,7 +372,7 @@ class BankDepositFormController extends Controller
                     {
                         $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
                     }
-                    else if(!empty(BankDepositForm::where("pecsf_id","=",$request->pecsf_id)->where("event_type","IN",["Cash One-time Donation","Cheque One-time Donation"])->get())){
+                    else if(count(BankDepositForm::where("pecsf_id","=",$request->pecsf_id)->whereIn("event_type",["Cash one-time donation","Cheque one-time donation"])->get()) > 0 ){
                         $validator->errors()->add('pecsf_id','PECSF ID Exists for Cash or Cheque One-Time Donation.');
                     }
                 }
