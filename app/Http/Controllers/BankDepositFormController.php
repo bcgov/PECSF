@@ -157,6 +157,9 @@ class BankDepositFormController extends Controller
                     else if(strlen($request->pecsf_id) != 6){
                         $validator->errors()->add('pecsf_id','The PECSF ID must be 6 digits.');
                     }
+                    else if(count(BankDepositForm::where("pecsf_id","=",$request->pecsf_id)->whereIn("event_type",["Cash one-time donation","Cheque one-time donation"])->get()) > 0 ){
+                        $validator->errors()->add('pecsf_id','PECSF ID Exists for Cash or Cheque One-Time Donation.');
+                    }
 
             }
             if($request->organization_code == "GOV"){
@@ -361,7 +364,6 @@ class BankDepositFormController extends Controller
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
                 if($request->organization_code != "GOV")
                 {
-
                     if(empty($request->pecsf_id))
                     {
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
@@ -370,7 +372,9 @@ class BankDepositFormController extends Controller
                     {
                         $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
                     }
-
+                    else if(count(BankDepositForm::where("pecsf_id","=",$request->pecsf_id)->whereIn("event_type",["Cash one-time donation","Cheque one-time donation"])->get()) > 0 ){
+                        $validator->errors()->add('pecsf_id','PECSF ID Exists for Cash or Cheque One-Time Donation.');
+                    }
                 }
                 if($request->organization_code == "GOV"){
                     if(empty($request->bc_gov_id))
@@ -605,7 +609,7 @@ class BankDepositFormController extends Controller
     }
 
     function bc_gov_id(Request $request){
-        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district")->first();
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id")->first();
         if(!empty($record)){
             return response()->json($record, 200);
         }
