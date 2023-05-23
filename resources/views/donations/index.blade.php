@@ -36,7 +36,7 @@
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
                         {{-- Click the detail button below to see your campaign pledge in VIEW mode.    --}}
                     </p>
-                    <p>
+                    <p class="card-text text-left">
                         To make a new one-time donation outside of campaign, click <span class="font-weight-bold">“Donate to PECSF Now”</span> below.
                     </p>
                 @endif
