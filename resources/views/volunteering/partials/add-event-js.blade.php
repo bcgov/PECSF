@@ -2,6 +2,7 @@
 <script>
     $("#sub_type").select2();
     $("#event_type").select2();
+    $(".org_hook").hide();
 
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
@@ -393,6 +394,13 @@ e.preventDefault();
 $(".attachment_errors").html("");
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.originalEvent.dataTransfer.files;
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
+    $(".attachment_errors").html("");
+    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
+        $(".invalid-feedback").show();
+        return;
+    }
     if(file[0].size < 2097152) {
         formData.append('attachments[]', file[0]);
         $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
@@ -402,18 +410,20 @@ var file = e.originalEvent.dataTransfer.files;
         }
     }
     else{
-        $(".attachment_errors").html("Please upload a smaller file < 2MB");
+        $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
+        $(".invalid-feedback").show();
     }
 });
 $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
-var allowed = ["pdf","xls","xlsx","csv","png","jpeg"];
+
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
-    if(allowed.indexOf(file[0].name.substring(file[0].name.indexOf(".")+1)) < 0){
-        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg"</span>');
+    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
         $(".invalid-feedback").show();
         return;
     }
@@ -421,13 +431,15 @@ if(file[0].size < 2097152)
 {
     formData.append('attachments[]', file[0]);
     $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
+    $(".invalid-feedback").show();
     const index = ignoreFiles.indexOf(file[0].name);
     if (index > -1) { // only splice array when item is found
         ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
     }
 }
 else{
-    $(".attachment_errors").html("Please upload a smaller file < 2MB");
+    $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
+    $(".invalid-feedback").show();
 }
 });
 
@@ -495,7 +507,7 @@ $("#attachment_input_1").val("");
             },
         });
     });
-    $("#business_unit").attr("disabled","true").select2();
+
     $("body").on("change","#organization_code",function(){
         if($(this).val() != "GOV" && $(this).val() != "false"){
             $.ajax({
@@ -508,7 +520,7 @@ $("#attachment_input_1").val("");
                 dataType: 'json',
                 success:function(response){
                     $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
-                    $("#business_unit").attr("disabled","false").val(response.business_unit_id).attr("disabled","true").select2();
+                    $("#business_unit").val(response.business_unit_id).select2();
                     setTimeout(function(){
                         $("#employment_city").parents(".form-body").fadeTo("slow",1);
                     },500);
@@ -528,6 +540,11 @@ $("#attachment_input_1").val("");
         }
         else if($(this).val() == "GOV"){
             $("#business_unit").val("").select2();
+        }
+    });
+    $("#keyword").keypress(function(e){
+        if(e.which == 13) {
+           e.preventDefault();
         }
     });
 </script>

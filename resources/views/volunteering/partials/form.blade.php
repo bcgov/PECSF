@@ -340,7 +340,7 @@
         <div class="form-group  org_hook col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
         </div>
-        <div class="form-group org_hook col-md-12">
+        <div class="form-group col-md-12">
             <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered charitable organizations.
                 Our system uses the official name of the charity registered with the CRA. You can use the View CRA Charity List link to confirm if the organization you would like to support is registered. You can also support a specific branch or program name.</p>
 
@@ -359,24 +359,26 @@
                 <h3 class="blue">File(s)</h3>
 
             </div>
-
+            <div class="form-row form-header">
+                <span class="attachment_errors errors">
+                       @error('attachments')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                            @enderror
+                        </span>
+            </div>
             <div class="form-row form-body">
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
-                    <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
+                    <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
+                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">
 
                 </table>
             </div>
-            <span class="attachment_errors errors">
-                       @error('attachments')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                            @enderror
-                        </span>
+
     </div>
 
 
