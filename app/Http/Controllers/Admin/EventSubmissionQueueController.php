@@ -95,7 +95,7 @@ class EventSubmissionQueueController extends Controller
                     $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
         }
-        
+
         if($request->status == 2){
             BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
         }
@@ -190,7 +190,7 @@ class EventSubmissionQueueController extends Controller
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "G".substr(date("Y"),2,2).(intval(str_replace("G","",$existing[0]->pecsf_id)) + 1);
+                $submissions[0]->pecsf_id = "G".(intval(str_replace("G","",$existing[0]->pecsf_id)) + 1);
             }
             else{
                 $submissions[0]->pecsf_id = "G".substr(date("Y"),2,2)."001";
@@ -207,7 +207,7 @@ class EventSubmissionQueueController extends Controller
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2).(intval(str_replace("F","",$existing[0]->pecsf_id)) + 1);
+                $submissions[0]->pecsf_id = "F".(intval(str_replace("F","",$existing[0]->pecsf_id)) + 1);
             }
             else{
                 $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2)."001";

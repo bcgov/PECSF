@@ -249,7 +249,7 @@ class BankDepositFormController extends Controller
 
             $existing_pecsf_id = BankDepositForm::where("organization_code","=","GOV")
                 ->where("campaign_year_id","=",$request->campaign_year)
-                ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+                ->whereIn("pecsf_id",[str_replace("s","",strtolower($request->pecsf_id))])
                 ->get();
             if(count($existing_pecsf_id) > 0)
             {
