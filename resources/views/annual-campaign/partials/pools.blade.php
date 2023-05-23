@@ -1,6 +1,6 @@
 
 <div id="step-regional-pools-area" class="p-3">
-    <div class="card p-0 pl-2 bg-primary" >
+ 
     @if(str_contains(Route::current()->getName(), 'donate-now'))
         <h3>2. Choose your regional fund supported pool></h3>
     @else
@@ -17,7 +17,7 @@
         @foreach( $fspools as $pool )
         <div class="col mb-4">
 
-            <div class="card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->id }}">
                 {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                         width="50" height="50"> --}}
                 <div class="card-body m-1 p-2">
