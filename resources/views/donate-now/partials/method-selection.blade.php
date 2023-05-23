@@ -85,7 +85,7 @@
 <h3 class="mt-1">1. Select your preferred method for choosing charities</h3>
 <div id="preferred-method-area">
     <p class="p-1"></p>
-    <div class="card mx-3 p-0 pl-2 bg-primary" >
+    <div class="card p-0 pl-2 bg-primary" >
         <div class="card-body bg-light">
             If you select the CRA charity list option, you can support up to 1  charity of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
 
@@ -112,7 +112,7 @@
                     {{ $pool_option == "C" ? 'checked' : '' }}>
                 <label style="font-size:16px;line-height:25.6px;" class="form-check-label" for="pool1">
                     <strong>Select one charity from the CRA List</strong><br>
-                    <span style="color:black;">Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Fund Supported Pools.
+                    <span>Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Fund Supported Pools.
                     </span>
                 </label>
             </div>
@@ -126,7 +126,7 @@
                     {{ $pool_option == "P" ? 'checked' : '' }}>
                 <label style="font-size:16px;line-height:25.6px;" class="form-check-label h5" for="pool2">
                     <strong>Select a regional Fund Supported Pool</strong><br>
-                    <span style="color:black;">Charities and distribution amounts are pre-determined.</span>
+                    <span>Charities and distribution amounts are pre-determined.</span>
                 </label>
             </div>
         </div>

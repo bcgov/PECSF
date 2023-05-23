@@ -2,7 +2,7 @@
 @section('content_header')
 @if ($message = Session::get('error'))
 <div class="alert alert-danger alert-block">
-	<button type="button" class="close" data-dismiss="alert">×</button>	
+	<button type="button" class="close" data-dismiss="alert">×</button>
         <strong>{{ $message }}</strong>
 </div>
 @endif
@@ -13,7 +13,7 @@
                 <h5 class="card-title"></h5>
                 @if ( $campaignYear->isOpen() )
                     <p class="card-text text-left">
-                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
+                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrollment for the PECSF Campaign.
                         The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January.
                     </p>
                     @if ($current_pledge)
@@ -23,7 +23,7 @@
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make change to your PECSF pledge</a>
                     @else
                         <p class="card-text text-left">
-                            To make a pledge click the Donate button, copy a prior years choices from your Donation History.
+                            To make a pledge click the Donate button, copy a prior year's choices from your Donation History.
                         </p>
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Donate</a>
                     @endif
@@ -36,7 +36,7 @@
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
                         {{-- Click the detail button below to see your campaign pledge in VIEW mode.    --}}
                     </p>
-                    <p>
+                    <p class="card-text text-left">
                         To make a new one-time donation outside of campaign, click <span class="font-weight-bold">“Donate to PECSF Now”</span> below.
                     </p>
                 @endif
@@ -46,7 +46,7 @@
 
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
-        <div class="flex-fill"></div>        
+        <div class="flex-fill"></div>
         @if($totalPledgedDataTillNow > 0)
             @if (!$campaignYear->isOpen() )
                 <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
@@ -125,11 +125,11 @@
 
 
 @push('css')
-    
+
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
-@endpush    
-    
+@endpush
+
 
 @push('js')
 
@@ -140,7 +140,8 @@
 $(function () {    
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
 
-        $('#movie_player').attr('src', 'https://www.youtube-nocookie.com/embed/ZMEjHqr3npo')
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
         
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
@@ -158,10 +159,16 @@ $(function () {
         }
 
     })
-
+    
     $('#learn-more-modal').on('show.bs.modal', function (event) {
         $('#donateGuideCarousel').carousel(0);
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
     })
+
+    $("#learn-more-modal").on("hidden.bs.modal", function () {
+        $('#movie_player').attr('src', '')
+    });
 
     $('.more-info').click( function(event) {
         event.stopPropagation();
@@ -186,7 +193,7 @@ $(function () {
                 success: function (result, text, xhr) {
                     // $('.modal-title span').html(name);
                     if(result.indexOf('body class="login-page"') != -1){
-                        window.location.href = '/login'; 
+                        window.location.href = '/login';
                     }
                     $(target).html(result);
                     $('#pledgeDetailModal').modal('show');

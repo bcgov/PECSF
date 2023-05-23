@@ -49450,3 +49450,10 @@ body {
   border: #ccc 1px solid;
   margin: 4px;
 }
+
+.invalid-feedback {
+  font-size: 14px;
+  font-family: "BCSans";
+  font-weight: 400;
+  color: #D8292F;
+}

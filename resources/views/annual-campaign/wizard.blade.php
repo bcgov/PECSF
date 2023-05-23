@@ -77,7 +77,7 @@
                     <div class="tab-pane fade step show active" id="nav-method" role="tabpanel" aria-labelledby="nav-method-tab">
                         <h3>1. Select your preferred method for choosing charities</h3>
                         <p class="p-1"></p>
-                        <div class="card mx-3 p-0 pl-2 bg-primary">
+                        <div class="card p-0 pl-2 bg-primary">
                             <div class="card-body bg-light">
                                 If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
                                 If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted. 
@@ -131,7 +131,7 @@
                         style="display: none">Back</button>
                     <button type="button" class="action next btn btn-lg  btn-primary "
                         >Next</button>
-                    <button type="submit" class="action submit btn btn-lg  btn-primary "
+                    <button type="button" class="action submit btn btn-lg  btn-primary "
                         style="display: none">Pledge</button>
                 </div>
 
@@ -292,6 +292,25 @@ $(function () {
         }
     });
 
+    // treat browser back button like the 'back' button in this wizard page
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', function(event) {
+        url = this.location.href;
+        if (url.indexOf('annual-campaign/create')) {
+            current_step = $("input[type=hidden][name='step']").val();
+            if (current_step == 1) {
+                // back
+                $(".cancel").trigger("click");
+            } else {
+                history.pushState(null, null, location.href);
+                $(".back").trigger("click");
+            }
+        }
+    });
+
+
+
+
     $(document).on("keyup keypress", "#annual-campaign-form", function(e) {
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13) {
@@ -436,6 +455,9 @@ $(function () {
 
     // DISPLAY AND HIDE "NEXT", "BACK" AND "SUMBIT" BUTTONS
     hideButtons = function(step) {
+        // sync variable and the hidden variable
+        $("input[type=hidden][name='step']").val( step );
+
         var limit = parseInt($(".step").length);
         $(".action").hide();
         $(".cancel").hide();
@@ -572,11 +594,19 @@ $(function () {
     }
 
     // Page 5 -- summary (handle single submission only )
-     $('#annual-campaign-form').on('submit', function () {
+    //  $('#annual-campaign-form').on('submit', function () {
 
+    //     $("input[type=hidden][name='step']").val( step );
+    //     $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
+    //     $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
+    // });
+
+    $('#annual-campaign-form button.action.submit').on('click', function() {
         $("input[type=hidden][name='step']").val( step );
-        $("#annual-campaign-form button[type='submit']").attr('disabled', 'true');
-        $("#annual-campaign-form button[type='submit']").html('Pledge submitted');
+        $(this).attr('disabled', 'true');
+        $(this).html('Pledge submitted');
+
+        $("#annual-campaign-form").submit();
     });
 
 });
