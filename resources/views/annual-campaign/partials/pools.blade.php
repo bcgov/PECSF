@@ -1,5 +1,6 @@
 
 <div id="step-regional-pools-area" class="p-3">
+    <div class="card p-0 pl-2 bg-primary" >
     @if(str_contains(Route::current()->getName(), 'donate-now'))
         <h3>2. Choose your regional fund supported pool></h3>
     @else

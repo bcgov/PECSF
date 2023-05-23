@@ -4,7 +4,7 @@
 <h3 class="mt-5">1. Select your preferred method for choosing charities</h3>
 <div>
     <p class="p-1"></p>
-    <div class="card mx-3 pl-3 bg-primary">
+    <div class="card pl-3 bg-primary">
         <div class="card-body bg-light">
             If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
 
