@@ -33,13 +33,15 @@ class DailyCampaignView extends Model
                                 else 0 end as participation_rate,
                             -- 0 as previous_participation_rate, 
                             (select participation_rate from historical_challenge_pages where year = ?
-                                and historical_challenge_pages.organization_name = A.organization_name
+                                -- and historical_challenge_pages.organization_name = A.organization_name
+                                and historical_challenge_pages.business_unit_code = A.business_unit_code
                             ) as previous_participation_rate,
                             (A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
                                 and eligible_employee_by_bus.organization_code = 'GOV' 
                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                             ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ?
-                                and historical_challenge_pages.organization_name = A.organization_name
+                                -- and historical_challenge_pages.organization_name = A.organization_name
+                                and historical_challenge_pages.business_unit_code = A.business_unit_code
                                 ),0)
                             as 'change_rate', 
                             A.donors, A.dollars, (@row_number:=@row_number + 1) AS rank

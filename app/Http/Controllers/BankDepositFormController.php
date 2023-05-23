@@ -50,7 +50,7 @@ class BankDepositFormController extends Controller
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->orderby("name", "asc")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')

@@ -165,9 +165,9 @@ class UpdateDailyCampaign extends Command
                                 DB::raw("SUM(daily_campaign_view.donors) as donors"),
                                 DB::raw("SUM(daily_campaign_view.dollars) as dollars"),
                                 'daily_campaign_view.campaign_year',
-                                'daily_campaign_view.organization_code',
+                                // 'daily_campaign_view.organization_code',
                             )
-                            ->groupBy('regions.code', 'regions.name', 'daily_campaign_view.campaign_year', 'daily_campaign_view.organization_code')
+                            ->groupBy('regions.code', 'regions.name', 'daily_campaign_view.campaign_year')
                             ->orderBy('regions.code')
                             ->get();
 
@@ -225,10 +225,9 @@ class UpdateDailyCampaign extends Command
                                 DB::raw("SUM(daily_campaign_view.donors) as donors"),
                                 DB::raw("SUM(daily_campaign_view.dollars) as dollars"),
                                 'daily_campaign_view.campaign_year',
-                                'daily_campaign_view.organization_code',
                             )
                             ->groupBy('business_units.code', 'business_units.name', 'deptid', 'dept_name',
-                                     'daily_campaign_view.campaign_year', 'daily_campaign_view.organization_code')
+                                     'daily_campaign_view.campaign_year')
                             ->orderBy('business_units.code')
                             ->orderBy('deptid')
                             ->orderBy('dept_name')
