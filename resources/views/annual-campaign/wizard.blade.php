@@ -77,7 +77,7 @@
                     <div class="tab-pane fade step show active" id="nav-method" role="tabpanel" aria-labelledby="nav-method-tab">
                         <h3>1. Select your preferred method for choosing charities</h3>
                         <p class="p-1"></p>
-                        <div class="card mx-3 p-0 pl-2 bg-primary">
+                        <div class="card p-0 pl-2 bg-primary">
                             <div class="card-body bg-light">
                                 If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
                                 If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted. 
