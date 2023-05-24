@@ -240,7 +240,7 @@ class BankDepositFormController extends Controller
                     ->where("event_type", "=", "Cash One-time Donation")
                     ->where("form_submitter_id", "=", $request->form_submitter_id)
                     ->get();
-                if (empty(!$existing)) {
+                if (empty(!$existing) && !empty($request->pecsf_id)) {
                     if (strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id, 1))) {
                         $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
                     }
@@ -472,7 +472,7 @@ class BankDepositFormController extends Controller
                     ->where("event_type","=","Cash One-time Donation")
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
-                if(empty(!$existing))
+                if(empty(!$existing) && !empty($request->pecsf_id))
                 {
                    if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
                     {
