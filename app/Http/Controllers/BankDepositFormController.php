@@ -246,14 +246,7 @@ class BankDepositFormController extends Controller
                     }
                 }
             }
-
-            $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
-                ->whereIn("pecsf_id",[str_replace("s","",strtolower($request->pecsf_id))])
-                ->get();
-            if(count($existing_pecsf_id) > 0)
-            {
-                $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
-            }
+            
 
             if(!empty(request("attachments"))){
                 $fileFound = false;
