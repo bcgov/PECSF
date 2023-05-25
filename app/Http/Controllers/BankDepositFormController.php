@@ -240,7 +240,7 @@ class BankDepositFormController extends Controller
                     ->where("event_type", "=", "Cash One-time Donation")
                     ->where("form_submitter_id", "=", $request->form_submitter_id)
                     ->get();
-                if (empty(!$existing)) {
+                if (empty(!$existing) && !empty($request->pecsf_id)) {
                     if (strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id, 1))) {
                         $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
                     }
@@ -455,7 +455,8 @@ class BankDepositFormController extends Controller
                     ->where("event_type","=","Cash One-time Donation")
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
-                if(!empty($existing))
+    
+          if(!empty($existing))
                 {
                     if(!empty($request->pecsf_id)){
                         if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
@@ -619,7 +620,7 @@ class BankDepositFormController extends Controller
     }
 
     function bc_gov_id(Request $request){
-        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id")->first();
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district")->first();
         if(!empty($record)){
             return response()->json($record, 200);
         }
