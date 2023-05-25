@@ -265,7 +265,7 @@
                     $("#edit-event-modal").nextAll("button").attr("disabled",true);
 
                     if(data[0].existing == true){
-                        $("#bcgovid").hide();
+                        $("#bcgovid").html($("#pecsfid").html());
                         $("#pecsfid *,#pecsfid").show();
                         $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
                     }
