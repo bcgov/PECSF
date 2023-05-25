@@ -233,7 +233,9 @@ else if($(this).attr('type') == "file"){
 //formData.append('attachments[]',  $(this)[0].files[0]);
 }
 else{
-formData.append($(this).attr("name"), $(this).val());
+    if($(this).val().length > 0){
+        formData.append($(this).attr("name"), $(this).val());
+    }
 }
 }
 });

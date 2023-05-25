@@ -246,7 +246,7 @@ class BankDepositFormController extends Controller
                     }
                 }
             }
-            
+
 
             if(!empty(request("attachments"))){
                 $fileFound = false;
@@ -374,16 +374,7 @@ class BankDepositFormController extends Controller
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
                     }
                 }
-                if($request->organization_code == "GOV"){
-                    if(empty($request->bc_gov_id))
-                    {
-                        $validator->errors()->add('bc_gov_id','An Employee ID is required.');
-                    }
-                    else if(!is_numeric($request->bc_gov_id))
-                    {
-                        $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
-                    }
-                }
+
             }
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
             {
@@ -464,12 +455,29 @@ class BankDepositFormController extends Controller
                     ->where("event_type","=","Cash One-time Donation")
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
-                if(empty(!$existing) && !empty($request->pecsf_id))
+    
+          if(!empty($existing))
                 {
-                   if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
-                    {
-                        $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                    if(!empty($request->pecsf_id)){
+                        if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
+                        {
+                            $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                        }
                     }
+                 else{
+                     $validator->errors()->add('pecsf_id','The PECSF ID is required.');
+
+                 }
+                }
+                else{
+                        if(empty($request->bc_gov_id))
+                        {
+                            $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+                        }
+                        else if(!is_numeric($request->bc_gov_id))
+                        {
+                            $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                        }
                 }
 
             }
