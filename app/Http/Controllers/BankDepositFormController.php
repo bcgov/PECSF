@@ -452,11 +452,11 @@ class BankDepositFormController extends Controller
             $existing = [];
             if($request->organization_code == "GOV"){
                 $existing = BankDepositForm::where("organization_code","=","GOV")
-                    ->where("event_type","=","Cash One-time Donation")
+                    ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
-    
-          if(!empty($existing))
+
+          if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
                 {
                     if(!empty($request->pecsf_id)){
                         if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
@@ -469,7 +469,7 @@ class BankDepositFormController extends Controller
 
                  }
                 }
-                else{
+                else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
                         if(empty($request->bc_gov_id))
                         {
                             $validator->errors()->add('bc_gov_id','An Employee ID is required.');
@@ -481,12 +481,15 @@ class BankDepositFormController extends Controller
                 }
 
             }
-            $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
-                ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
-                ->get();
-            if(count($existing_pecsf_id) > 0)
-            {
-                $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
+
+            if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
+                $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
+                    ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+                    ->get();
+                if(count($existing_pecsf_id) > 0)
+                {
+                    $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
+                }
             }
         });
         $validator->validate();
