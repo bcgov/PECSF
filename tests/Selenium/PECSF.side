@@ -1,0 +1,386 @@
+{
+  "id": "d7eefd25-2433-4fde-a3d9-fe1f77be6da1",
+  "version": "2.0",
+  "name": "PECSF",
+  "url": "https://pecsf-dev.apps.silver.devops.gov.bc.ca",
+  "tests": [{
+    "id": "1fd18156-ec9d-417b-b867-9efae802f814",
+    "name": "Volunteer Form GOV General",
+    "commands": [{
+      "id": "6b86b440-f3d0-4864-89ab-3f5016e2e88c",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a3bbb6a1-4760-4e8c-a00b-6074d965e2a1",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1920x1040",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8e4dcdb4-77ff-459c-b39d-388c71744516",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Volunteering",
+      "targets": [
+        ["linkText=Volunteering", "linkText"],
+        ["css=.has-treeview:nth-child(3) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(@href, 'https://pecsf-dev.apps.silver.devops.gov.bc.ca/volunteering')]", "xpath:href"],
+        ["xpath=//li[3]/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "2f4a7908-e629-494b-a812-f3974ead5601",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Forms",
+      "targets": [
+        ["linkText=Forms", "linkText"],
+        ["css=.menu-is-opening .nav-item:nth-child(2) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(@href, 'https://pecsf-dev.apps.silver.devops.gov.bc.ca/bank_deposit_form')]", "xpath:href"],
+        ["xpath=//li[3]/ul/li[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Forms')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f0843beb-9a3e-466b-933a-1d44e64baf66",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-organization_code-container",
+      "targets": [
+        ["id=select2-organization_code-container", "id"],
+        ["css=#select2-organization_code-container", "css:finder"],
+        ["xpath=//span[@id='select2-organization_code-container']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//span/span/span/span", "xpath:position"]
+      ],
+      "value": "GOV"
+    }, {
+      "id": "1d2ef3fb-2cbd-473f-8cbf-9d916d069f6f",
+      "comment": "",
+      "command": "type",
+      "target": "id=select2-organization_code-container",
+      "targets": [],
+      "value": "GOV"
+    }, {
+      "id": "33bfb7be-440a-42dd-ba4a-8c156ca8d98a",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//li[contains(text(),'GOV')]",
+      "targets": [
+        ["id=select2-organization_code-container", "id"],
+        ["css=#select2-organization_code-container", "css:finder"],
+        ["xpath=//span[@id='select2-organization_code-container']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div/div/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6031ab26-af01-4422-8187-b15df724859c",
+      "comment": "",
+      "command": "click",
+      "target": "id=description",
+      "targets": [
+        ["id=description", "id"],
+        ["name=description", "name"],
+        ["css=#description", "css:finder"],
+        ["xpath=//input[@id='description']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "0a0658c8-e1bf-46fe-ba8e-d4c5f9b8d787",
+      "comment": "",
+      "command": "type",
+      "target": "id=description",
+      "targets": [
+        ["id=description", "id"],
+        ["name=description", "name"],
+        ["css=#description", "css:finder"],
+        ["xpath=//input[@id='description']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": "Test E Form Gov Selenium"
+    }, {
+      "id": "7a4750be-6b22-4dc7-a723-65e5b13409f5",
+      "comment": "",
+      "command": "click",
+      "target": "id=bc_gov_id",
+      "targets": [
+        ["id=bc_gov_id", "id"],
+        ["name=bc_gov_id", "name"],
+        ["css=#bc_gov_id", "css:finder"],
+        ["xpath=//input[@id='bc_gov_id']", "xpath:attributes"],
+        ["xpath=//div[@id='bcgovid']/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div[3]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b369dffe-058a-4ee2-b222-1166baa7dbe3",
+      "comment": "",
+      "command": "type",
+      "target": "id=bc_gov_id",
+      "targets": [
+        ["id=bc_gov_id", "id"],
+        ["name=bc_gov_id", "name"],
+        ["css=#bc_gov_id", "css:finder"],
+        ["xpath=//input[@id='bc_gov_id']", "xpath:attributes"],
+        ["xpath=//div[@id='bcgovid']/input", "xpath:idRelative"],
+        ["xpath=//div[3]/div[3]/input", "xpath:position"]
+      ],
+      "value": "112899"
+    }, {
+      "id": "146d2cab-f279-4dd7-bf28-3f01ca387cf5",
+      "comment": "",
+      "command": "click",
+      "target": "id=form_submitter",
+      "targets": [
+        ["id=form_submitter", "id"],
+        ["css=#form_submitter", "css:finder"],
+        ["xpath=//div[@id='form_submitter']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div/div[2]/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div[2]/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6add385b-7822-4d9c-bcd0-619b65ca3bac",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-event_type-container",
+      "targets": [
+        ["id=select2-event_type-container", "id"],
+        ["css=#select2-event_type-container", "css:finder"],
+        ["xpath=//span[@id='select2-event_type-container']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div[4]/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[4]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fedea832-799c-40dc-b71d-f6cfd348b7ca",
+      "comment": "",
+      "command": "click",
+      "target": "id=deposit_date",
+      "targets": [
+        ["id=deposit_date", "id"],
+        ["name=deposit_date", "name"],
+        ["css=#deposit_date", "css:finder"],
+        ["xpath=//input[@id='deposit_date']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div[6]/input", "xpath:idRelative"],
+        ["xpath=//div[6]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bd506ba0-941f-40b2-85ea-d227a5e79cc4",
+      "comment": "",
+      "command": "click",
+      "target": "id=deposit_date",
+      "targets": [
+        ["id=deposit_date", "id"],
+        ["name=deposit_date", "name"],
+        ["css=#deposit_date", "css:finder"],
+        ["xpath=//input[@id='deposit_date']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div[6]/input", "xpath:idRelative"],
+        ["xpath=//div[6]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bf1bc878-f3d6-495f-9d38-a99f29f0428a",
+      "comment": "",
+      "command": "type",
+      "target": "id=deposit_date",
+      "targets": [
+        ["id=deposit_date", "id"],
+        ["name=deposit_date", "name"],
+        ["css=#deposit_date", "css:finder"],
+        ["xpath=//input[@id='deposit_date']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div[6]/input", "xpath:idRelative"],
+        ["xpath=//div[6]/input", "xpath:position"]
+      ],
+      "value": "2023-05-10"
+    }, {
+      "id": "3ce9e8c0-f0e4-44dd-bc8f-24426000d278",
+      "comment": "",
+      "command": "click",
+      "target": "id=deposit_amount",
+      "targets": [
+        ["id=deposit_amount", "id"],
+        ["name=deposit_amount", "name"],
+        ["css=#deposit_amount", "css:finder"],
+        ["xpath=//input[@id='deposit_amount']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div[7]/input", "xpath:idRelative"],
+        ["xpath=//div[7]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "12dd59e9-37bc-4918-b4ec-52ce066ba871",
+      "comment": "",
+      "command": "type",
+      "target": "id=deposit_amount",
+      "targets": [
+        ["id=deposit_amount", "id"],
+        ["name=deposit_amount", "name"],
+        ["css=#deposit_amount", "css:finder"],
+        ["xpath=//input[@id='deposit_amount']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[3]/div[7]/input", "xpath:idRelative"],
+        ["xpath=//div[7]/input", "xpath:position"]
+      ],
+      "value": "1000"
+    }, {
+      "id": "0ee09953-8f86-4ac0-abba-a908a7cffbc7",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-region-container",
+      "targets": [
+        ["id=select2-region-container", "id"],
+        ["css=#select2-region-container", "css:finder"],
+        ["xpath=//span[@id='select2-region-container']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[5]/div[2]/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[2]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6e1d7abd-2ae7-4d4a-8a71-f5582a148244",
+      "comment": "",
+      "command": "click",
+      "target": "id=address_1",
+      "targets": [
+        ["id=address_1", "id"],
+        ["name=address_1", "name"],
+        ["css=#address_1", "css:finder"],
+        ["xpath=//input[@id='address_1']", "xpath:attributes"],
+        ["xpath=//div[@id='address_line_1']/input", "xpath:idRelative"],
+        ["xpath=//div[7]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "1ebb81e4-d523-4645-85b0-4bb390933fab",
+      "comment": "",
+      "command": "type",
+      "target": "id=address_1",
+      "targets": [
+        ["id=address_1", "id"],
+        ["name=address_1", "name"],
+        ["css=#address_1", "css:finder"],
+        ["xpath=//input[@id='address_1']", "xpath:attributes"],
+        ["xpath=//div[@id='address_line_1']/input", "xpath:idRelative"],
+        ["xpath=//div[7]/div/input", "xpath:position"]
+      ],
+      "value": "1760 Simcoe St N"
+    }, {
+      "id": "6613c0b4-94cc-48b6-ac1d-a8170860e875",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-city-container",
+      "targets": [
+        ["id=select2-city-container", "id"],
+        ["css=#select2-city-container", "css:finder"],
+        ["xpath=//span[@id='select2-city-container']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[7]/div[2]/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[7]/div[2]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "95816f11-68ee-45e4-b74e-55bd8ce51965",
+      "comment": "",
+      "command": "click",
+      "target": "id=select2-province-container",
+      "targets": [
+        ["id=select2-province-container", "id"],
+        ["css=#select2-province-container", "css:finder"],
+        ["xpath=//span[@id='select2-province-container']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[7]/div[3]/span/span/span/span", "xpath:idRelative"],
+        ["xpath=//div[7]/div[3]/span/span/span/span", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b74f1794-1991-4677-8cf5-1ce5ce31537d",
+      "comment": "",
+      "command": "click",
+      "target": "id=postal_code",
+      "targets": [
+        ["id=postal_code", "id"],
+        ["name=postal_code", "name"],
+        ["css=.form-group > #postal_code", "css:finder"],
+        ["xpath=//input[@id='postal_code']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[7]/div[4]/input", "xpath:idRelative"],
+        ["xpath=//div[4]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fc381c5b-cb7e-4816-81a1-2a371885970c",
+      "comment": "",
+      "command": "type",
+      "target": "id=postal_code",
+      "targets": [
+        ["id=postal_code", "id"],
+        ["name=postal_code", "name"],
+        ["css=.form-group > #postal_code", "css:finder"],
+        ["xpath=//input[@id='postal_code']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[7]/div[4]/input", "xpath:idRelative"],
+        ["xpath=//div[4]/input", "xpath:position"]
+      ],
+      "value": "l1g4x9"
+    }, {
+      "id": "ac547d54-708c-4ed6-9c21-9b3a983d7806",
+      "comment": "",
+      "command": "click",
+      "target": "css=.card:nth-child(5) > .card-body",
+      "targets": [
+        ["css=.card:nth-child(5) > .card-body", "css:finder"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div", "xpath:idRelative"],
+        ["xpath=//form/div[2]/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "465960e5-1a55-4b29-a800-f8835e83c57f",
+      "comment": "",
+      "command": "click",
+      "target": "css=u",
+      "targets": [
+        ["css=u", "css:finder"],
+        ["xpath=//a[@id='upload-area-text']/u", "xpath:idRelative"],
+        ["xpath=//u", "xpath:position"],
+        ["xpath=//u[contains(.,'Browse')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a9c59940-af17-41ba-a23d-c529caff78a5",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary",
+      "targets": [
+        ["css=.btn-primary", "css:finder"],
+        ["xpath=//input[@value='Submit']", "xpath:attributes"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/input", "xpath:idRelative"],
+        ["xpath=//form/div[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a6d90648-f624-4e4c-aa1e-5b213c623714",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.attachment_errors > .invalid-feedback",
+      "targets": [
+        ["css=.attachment_errors > .invalid-feedback", "css:finder"],
+        ["xpath=//form[@id='bank_deposit_form']/div[2]/div/div[12]/span/span", "xpath:idRelative"],
+        ["xpath=//div[12]/span/span", "xpath:position"]
+      ],
+      "value": "Atleast one attachment is required"
+    }]
+  }],
+  "suites": [{
+    "id": "57a11939-4a12-4841-9cb2-f8ea63453a19",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": []
+  }],
+  "urls": ["https://pecsf-dev.apps.silver.devops.gov.bc.ca/"],
+  "plugins": []
+}

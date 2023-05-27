@@ -230,7 +230,100 @@ class EFormTest extends TestCase
             'description' => 'None',
             'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
         ])->assertStatus(422)
+            ->assertJsonMissingValidationErrors("postal_code");
+
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => null,
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Gaming',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'GGGGGGGG',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
+            ->assertJsonMissingValidationErrors("postal_code");
+
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => null,
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cash One-time donation',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'GGGGGGGG',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
             ->assertJsonValidationErrorFor("postal_code");
+
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => null,
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cheque One-time donation',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'GGGGGGGG',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrorFor("postal_code");
+
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => null,
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cheque One-time donation',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'L1g 4x9',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
+            ->assertJsonMissingValidationErrors("postal_code");
+
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => null,
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cash One-time donation',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'L1g 4x9',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
+            ->assertJsonMissingValidationErrors("postal_code");
+
+
+
     }
 
     /** @test */
@@ -384,7 +477,7 @@ class EFormTest extends TestCase
 
         $this->actingAs($this->user);
         $this->json('post', '/bank_deposit_form',[
-            'organization_code'         => "LA",
+            'organization_code'         => "GOV",
             'form_submitter'         => $this->user->id,
             'campaign_year'         => 20,
             'event_type'         => 'Cash One-time donation',
@@ -401,6 +494,44 @@ class EFormTest extends TestCase
         ])->assertStatus(422)
             ->assertJsonValidationErrorFor("bc_gov_id");
 
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => "GOV",
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cash One-time donation',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'L1D 5D9',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'bc_gov_id' => "abc",
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrorFor("bc_gov_id");
+
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => "GOV",
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cash One-time donation',
+            'sub_type'         => null,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'L1D 5D9',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'fsp',
+            'description' => 'None',
+            'bc_gov_id' => 123456,
+            'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
+        ])->assertStatus(422)
+            ->assertJsonMissingValidationErrors("bc_gov_id");
+
     }
 
     /** @test */
@@ -412,7 +543,7 @@ class EFormTest extends TestCase
             'organization_code'         => null,
             'form_submitter'         => $this->user->id,
             'campaign_year'         => 20,
-            'event_type'         => 'Cash One-time donation',
+            'event_type'         => 'Cash One-Time Donation',
             'sub_type'         => null,
             'deposit_date'         => Carbon::now(),
             'deposit_amount'         => 1024,
@@ -437,7 +568,7 @@ class EFormTest extends TestCase
             'organization_code'         => null,
             'form_submitter'         => $this->user->id,
             'campaign_year'         => 20,
-            'event_type'         => 'Cash One-time donation',
+            'event_type'         => 'Cash One-Time Donation',
             'sub_type'         => null,
             'deposit_date'         => Carbon::now(),
             'deposit_amount'         => 1024,
@@ -462,7 +593,7 @@ class EFormTest extends TestCase
             'organization_code'         => null,
             'form_submitter'         => $this->user->id,
             'campaign_year'         => 20,
-            'event_type'         => 'Cash One-time donation',
+            'event_type'         => 'Cash One-Time Donation',
             'sub_type'         => null,
             'deposit_date'         => Carbon::now(),
             'deposit_amount'         => 1024,
@@ -487,7 +618,7 @@ class EFormTest extends TestCase
             'organization_code'         => null,
             'form_submitter'         => $this->user->id,
             'campaign_year'         => 20,
-            'event_type'         => 'Cash One-time donation',
+            'event_type'         => 'Cash One-Time Donation',
             'sub_type'         => null,
             'deposit_date'         => Carbon::now(),
             'deposit_amount'         => 1024,
@@ -544,11 +675,11 @@ class EFormTest extends TestCase
             'postal_code'         => 'L1D 5D9',
             'region'         => 'Cariboo',
             'business_unit'         => '26',
-            'charity_selection' => 'charity',
+            'charity_selection' => 'Charity',
             'description' => 'None',
             'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
         ])->assertStatus(422)
-            ->assertJsonValidationErrorFor("org_count");
+            ->assertJsonValidationErrorFor("charity");
 
     }
 
@@ -569,14 +700,16 @@ class EFormTest extends TestCase
             'postal_code'         => 'L1D 5D9',
             'region'         => 'Cariboo',
             'business_unit'         => '26',
-            'charity_selection' => 'fsp',
+            'charity_selection' => 'charity',
             'description' => 'None',
             'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
-            'orgs' => ["id" => 1]
+            'orgs' => ["id" => 1],
+            'org_count' => 1,
+            'donation_percent' => [25,25,25,25]
         ])->assertStatus(422)
-            ->assertJsonValidationErrorFor("orgs"); $this->actingAs($this->admin);
-        $response = $this->get('/campaignyears/create');
-        $response->assertSee('-12-31');
+            ->assertJsonValidationErrorFor("organization_name.3"); $this->actingAs($this->admin);
+
+
 
     }
 
@@ -597,16 +730,14 @@ class EFormTest extends TestCase
             'postal_code'         => 'L1D 5D9',
             'region'         => 'Cariboo',
             'business_unit'         => '26',
-            'charity_selection' => 'fsp',
+            'charity_selection' => 'Charity',
             'description' => 'None',
             'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
-            'orgs' => ["id" => 1]
+             'orgs' => ["id" => 1],
+            'org_count' => 1,
+            'donation_percent' => [25,25,25,25]
         ])->assertStatus(422)
-            ->assertJsonValidationErrorFor("vendor_id"); $this->actingAs($this->admin);
-        $response = $this->get('/campaignyears/create');
-        $response->assertSee('-12-31');
-
-
+            ->assertJsonValidationErrorFor("vendor_id.3"); $this->actingAs($this->admin);
     }
 
     /** @test */
@@ -626,14 +757,15 @@ class EFormTest extends TestCase
             'postal_code'         => 'L1D 5D9',
             'region'         => 'Cariboo',
             'business_unit'         => '26',
-            'charity_selection' => 'fsp',
+            'charity_selection' => 'Charity',
             'description' => 'None',
             'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
-            'orgs' => ["id" => 1]
+            'orgs' => ["id" => 1],
+            'org_count' => 1,
+            'donation_percent' => [25,"A",25,25]
         ])->assertStatus(422)
-            ->assertJsonValidationErrorFor("donation_percent"); $this->actingAs($this->admin);
-        $response = $this->get('/campaignyears/create');
-        $response->assertSee('-12-31');
+            ->assertJsonValidationErrorFor("donation_percent.1"); $this->actingAs($this->admin);
+
 
 
     }
@@ -656,14 +788,15 @@ class EFormTest extends TestCase
             'postal_code'         => 'L1D 5D9',
             'region'         => 'Cariboo',
             'business_unit'         => '26',
-            'charity_selection' => 'fsp',
+            'charity_selection' => 'Charity',
             'description' => 'None',
             'attachments.*' => UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100),
-            'orgs' => ["id" => 1]
+            'orgs' => ["id" => 1],
+            'org_count' => 1,
+            'donation_percent' => [25,15,25,25]
         ])->assertStatus(422)
-            ->assertJsonValidationErrorFor("donation_percent"); $this->actingAs($this->admin);
-        $response = $this->get('/campaignyears/create');
-        $response->assertSee('-12-31');
+            ->assertJsonValidationErrorFor("donation_percent.1"); $this->actingAs($this->admin);
+
 
 
     }
@@ -671,6 +804,30 @@ class EFormTest extends TestCase
     /** @test */
     public function successful_gov_form_submits()
     {
+        $this->actingAs($this->user);
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => "GOV",
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cash One-Time donation',
+            'sub_type'         => false,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'L1G 4X9',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'Charity',
+            'description' => 'None',
+            'bc_gov_id' => 118000,
+            'attachments' => [UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100)],
+            'id' => ["Automated Tests"],
+            'vendor_id' => [116789],
+            'org_count' => 1,
+            'donation_percent' => [100]
+        ])->assertStatus(200);
+
+
         return true;
     }
 
@@ -678,7 +835,29 @@ class EFormTest extends TestCase
     /** @test */
     public function successful_non_gov_form_submits()
     {
-        return true;
+        $this->actingAs($this->user);
+        $this->json('post', '/bank_deposit_form',[
+            'organization_code'         => "LA",
+            'form_submitter'         => $this->user->id,
+            'campaign_year'         => 20,
+            'event_type'         => 'Cash One-Time donation',
+            'sub_type'         => false,
+            'deposit_date'         => Carbon::now(),
+            'deposit_amount'         => 1024,
+            'employment_city'         => 'Quebec',
+            'postal_code'         => 'L1G 4X9',
+            'region'         => 'Cariboo',
+            'business_unit'         => '26',
+            'charity_selection' => 'Charity',
+            'description' => 'None',
+            'pecsf_id' => 118000,
+            'attachments' => [UploadedFile::fake()->image('avatar.jpg', 250, 250)->size(100)],
+            'id' => ["Automated Tests"],
+            'vendor_id' => [116789],
+            'org_count' => 1,
+            'donation_percent' => [100]
+        ])->assertStatus(200);
+
     }
 
 }

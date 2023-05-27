@@ -329,15 +329,18 @@ class BankDepositFormController extends Controller
             ]);
         }
 
-        if(strpos($_SERVER['HTTP_REFERER'],'admin-pledge') !== FALSE)
-        {
-            echo  json_encode(array(route('admin-pledge.maintain-event.index')));
-
+        if(!empty($_SERVER['HTTP_REFERER'])){
+            if(strpos($_SERVER['HTTP_REFERER'],'admin-pledge') !== FALSE)
+            {
+                echo  json_encode(array(route('admin-pledge.maintain-event.index')));
+            }
+            else{
+                echo  json_encode(array(route('bank_deposit_form')));
+            }
         }
         else{
             echo  json_encode(array(route('bank_deposit_form')));
         }
-
     }
     public function update(Request $request) {
         $validator = Validator::make(request()->all(), [
