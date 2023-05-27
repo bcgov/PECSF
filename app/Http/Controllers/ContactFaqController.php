@@ -47,7 +47,7 @@ class ContactFaqController extends Controller
                 ],
                 [
                     'question' => 'Who are the PECSF Headquarters (team)? ',
-                    'answer' => 'The PECSF program is coordinated by team within the BC Public Service Agency. This team is responsible for volunteer recruitment, training, recognition, and all PECSF program operational support provincially. '
+                    'answer' => 'The PECSF program is coordinated by a team within the BC Public Service Agency. This team is responsible for volunteer recruitment, training, recognition, and all PECSF program operational support provincially.'
                 ],
                 [
                     'question' => 'Who are the PECSF Board of Directors?',
