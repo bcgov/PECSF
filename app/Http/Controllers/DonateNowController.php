@@ -372,7 +372,7 @@ class DonateNowController extends Controller
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
-            return $pdf->download('Donation Summary.pdf');
+            return $pdf->download('Donate Now Summary - '.date("Y-m-d").'.pdf');
         } else {
             return view('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
         }
