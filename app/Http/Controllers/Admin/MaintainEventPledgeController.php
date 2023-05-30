@@ -214,4 +214,33 @@ class MaintainEventPledgeController extends Controller
     }
 
 
+    public function createEvent(){
+        $pools = FSPool::where('start_date', '=', function ($query) {
+            $query->selectRaw('max(start_date)')
+                ->from('f_s_pools as A')
+                ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
+                ->where('A.start_date', '<=', today());
+        })
+            ->where('status', 'A')
+            ->get();
+        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
+        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+        $regions = Region::where("status","=","A")->get();
+        $departments = Department::all();
+        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
+            ->first();
+        $current_user = User::where('id', Auth::id() )->first();
+        $cities = City::all();
+        $organizations = [];
+        $selected_charities = [];
+        if(empty($current_user)){
+            redirect("login");
+        }
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
+            return $pool->region->name;
+        });
+        return view('admin-pledge.create.index', compact('fund_support_pool_list','selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
+    }
+
 }
