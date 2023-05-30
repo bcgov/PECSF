@@ -33,7 +33,7 @@ class DonationController extends Controller {
                             ->orderBy('calendar_year', 'desc')
                             ->first();
 
-        $user = User::where('id', Auth::id() )->first();                            
+        $user = User::where('id', Auth::id() )->first();
         $current_pledge = Pledge::where('emplid', $user->emplid)
                          ->whereHas('campaign_year', function($q){
                              $q->where('calendar_year','=', today()->year + 1 );
@@ -144,7 +144,7 @@ class DonationController extends Controller {
             $pdf = PDF::loadView('donations.partials.pdf', compact(//'pledges',
                 'currentYear', 'totalPledgedDataTillNow', 'campaignYear', 'current_pledge',
                 'pledges_by_yearcd'));
-            return $pdf->download('Donation Summary.pdf');
+            return $pdf->download('Donation History Summary.pdf');
         }
         else{
             return view('donations.index', compact(//'pledges',
@@ -156,7 +156,7 @@ class DonationController extends Controller {
     public function pledgeDetail(Request $request)
     {
 
-        if ($request->ajax()) {        
+        if ($request->ajax()) {
             $campaign_year = CampaignYear::where('calendar_year', $request->yearcd)->first();
 
             if ($request->source == 'BI') {
@@ -261,7 +261,7 @@ class DonationController extends Controller {
 
             }
         } else {
-            return redirect('/');            
+            return redirect('/');
         }
 
     }

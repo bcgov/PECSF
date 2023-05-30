@@ -145,22 +145,10 @@ class BankDepositFormController extends Controller
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV" && $request->organization_code != "RET")
             {
-
                     if(empty($request->pecsf_id))
                     {
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
                     }
-                    else if(!is_numeric($request->pecsf_id))
-                    {
-                        $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
-                    }
-                    else if(strlen($request->pecsf_id) != 6){
-                        $validator->errors()->add('pecsf_id','The PECSF ID must be 6 digits.');
-                    }
-                    else if(count(BankDepositForm::where("pecsf_id","=",$request->pecsf_id)->whereIn("event_type",["Cash one-time donation","Cheque one-time donation"])->get()) > 0 ){
-                        $validator->errors()->add('pecsf_id','PECSF ID Exists for Cash or Cheque One-Time Donation.');
-                    }
-
             }
             if($request->organization_code == "GOV"){
                 if(empty($request->bc_gov_id))
@@ -246,6 +234,20 @@ class BankDepositFormController extends Controller
                 }
             }
 
+            $existing = [];
+            if($request->organization_code == "GOV") {
+                $existing = BankDepositForm::where("organization_code", "=", "GOV")
+                    ->where("event_type", "=", "Cash One-time Donation")
+                    ->where("form_submitter_id", "=", $request->form_submitter_id)
+                    ->get();
+                if (empty(!$existing) && !empty($request->pecsf_id)) {
+                    if (strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id, 1))) {
+                        $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                    }
+                }
+            }
+
+
             if(!empty(request("attachments"))){
                 $fileFound = false;
                 foreach(array_reverse(request('attachments')) as $key => $attachment){
@@ -264,6 +266,9 @@ class BankDepositFormController extends Controller
                 $validator->errors()->add('attachment','Atleast one attachment is required.');
             }
         });
+
+
+
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
 
@@ -368,24 +373,8 @@ class BankDepositFormController extends Controller
                     {
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
                     }
-                    else if(!is_numeric($request->pecsf_id))
-                    {
-                        $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
-                    }
-                    else if(count(BankDepositForm::where("pecsf_id","=",$request->pecsf_id)->whereIn("event_type",["Cash one-time donation","Cheque one-time donation"])->get()) > 0 ){
-                        $validator->errors()->add('pecsf_id','PECSF ID Exists for Cash or Cheque One-Time Donation.');
-                    }
                 }
-                if($request->organization_code == "GOV"){
-                    if(empty($request->bc_gov_id))
-                    {
-                        $validator->errors()->add('bc_gov_id','An Employee ID is required.');
-                    }
-                    else if(!is_numeric($request->bc_gov_id))
-                    {
-                        $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
-                    }
-                }
+
             }
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
             {
@@ -463,19 +452,44 @@ class BankDepositFormController extends Controller
             $existing = [];
             if($request->organization_code == "GOV"){
                 $existing = BankDepositForm::where("organization_code","=","GOV")
-                    ->where("event_type","=","Cash One-time Donation")
+                    ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
-                if(empty($request->pecsf_id))
+
+          if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
                 {
-                    $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+                    if(!empty($request->pecsf_id)){
+                        if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
+                        {
+                            $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                        }
+                    }
+                 else{
+                     $validator->errors()->add('pecsf_id','The PECSF ID is required.');
+
+                 }
                 }
-                else if($request->pecsf_id[0] != "s" || !is_numeric(substr($request->pecsf_id,1)))
-                {
-                    $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter; The PECSF ID must be a number prepended with an S.');
+                else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
+                        if(empty($request->bc_gov_id))
+                        {
+                            $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+                        }
+                        else if(!is_numeric($request->bc_gov_id))
+                        {
+                            $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                        }
                 }
 
+            }
 
+            if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
+                $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
+                    ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+                    ->get();
+                if(count($existing_pecsf_id) > 0)
+                {
+                    $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
+                }
             }
         });
         $validator->validate();

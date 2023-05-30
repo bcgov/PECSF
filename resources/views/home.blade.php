@@ -28,24 +28,39 @@
             <p class="text-center h4"><b>Choose from the options below:</b></p>
 
             <div class="row p-3">
-                <div class="card_hook col-md-3 p-2">
-                    <div class="card" style="height:auto" >
-                        <a class="card-body text-center"  href="{{route('volunteering.index')}}">
-                            <i class="x nav-icon fas fa-hands-helping fa-2x "></i>
-                          <p class="text-primary "> <span style="font-size:20px;">Volunteering</span></p>
-                          <p class="mt-1"> Looking to do more than just donate? Volunteer to help run a campaign or host an event.</p>
-                        </a>
-                    </div>
+            <div class="card_hook col-md-12 p-2">
+                <div class="card">
+                    <a href="{{route('contact')}}" class="card-body text-center">
+                        <i class="x nav-icon fas fa-info-circle  fa-2x bottom-right"></i><br>
+                        <p style="color:black;">Learn more about PECSF and how to donate</p>
+                    </a>
                 </div>
-                <div class="card_hook col-md-6 p-2">
-                    <div class="card" style="height:333px" >
+            </div>
+            </div>
+
+
+
+            <div class="row p-3">
+
+                <div class="card_hook col-md-9 p-2">
+                    <div class="card" style="height:280px" >
                         <a href="{{route('donations.list')}}" class="card-body text-center">
-                            <img src="/svgs/give.svg" style="color:white;" alt="Connect" height="62">
+                            <img src="/svgs/give.svg" style="color:white;" alt="Connect" height="55">
                             <p class="text-primary "> <span style="font-size:22px;" >Donations </span></p>
-                            <p>Support the charities of your choice with payroll deduction in any amount.</p>
+                            <p style="color:black;">Support the charities of your choice with payroll deduction in any amount.</p>
                         </a>
                     </div>
                 </div>
+                <div class="card_hook col-md-3 p-2">
+                    <div class="card pt-4" style="height:auto" >
+                        <a class="card-body text-center"  href="{{route('volunteering.index')}}">
+                            <i class="x nav-icon fa-solid fas fa-money-check-alt fa-2x"></i>
+                            <p class="text-primary "> <span style="font-size:20px;">Volunteering</span></p>
+                            <p class="mt-1" style="color:black;"> Looking to do more than just donate? Volunteer to help run a campaign or host an event.</p>
+                        </a>
+                    </div>
+                </div>
+                <!--
                 <div class="card_hook col-md-3 p-2">
                     <div class="card" style="height:auto;" >
                         <a href="{{route('contact')}}" class="card-body text-center">
@@ -55,7 +70,7 @@
                         </a>
                     </div>
                 </div>
-
+                -->
             </div>
 
         </div>

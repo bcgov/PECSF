@@ -44,26 +44,11 @@ class EventSubmissionQueueController extends Controller
 
             if($form->event_type == "Gaming")
             {
-                $count = BankDepositForm::where("event_type","Gaming")->count() + 1;
-                $zeroes = 3 - strlen($count);
-                $id = "G".date("y");
-                for($i = 0; $i<$zeroes;$i++){
-                    $id.= "0";
-                }
-                $id .= $count;
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
             }
-
             else if($form->event_type == "Fundraiser")
             {
-                $count = BankDepositForm::where("event_type","Fundraiser")->count() + 1;
-                $zeroes = 3 - strlen($count);
-                $id = "F".date("y");
-                for($i = 0; $i<$zeroes;$i++){
-                    $id.= "0";
-                }
-                $id .= $count;
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
             }
             else if($form->organization_code == "RET"){
                 $count = BankDepositForm::where("organization_code","RET")->count() + 1;
@@ -172,7 +157,7 @@ class EventSubmissionQueueController extends Controller
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2).(intval(str_replace("R","",$existing[0]->bc_gov_id)) +1);
+                $submissions[0]->pecsf_id = "R".str_pad((intval(str_replace("R","",$existing[0]->pecsf_id)) +1),3,'0',STR_PAD_LEFT);
             }
             else{
                 $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2)."001";

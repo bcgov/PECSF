@@ -43,9 +43,11 @@
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <span>PECSF Donation Summary</span>
+    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>
+<br>
 <hr>
 
 <span><i>Please note that this is not a Tax Receipt</i></span>
