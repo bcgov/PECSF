@@ -78,12 +78,6 @@ class EventSubmissionQueueController extends Controller
         if($request->status == 2){
             BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
         }
-
-        if($request->status == 2){
-            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
-
-        }
-
     }
 
     /**
