@@ -56,9 +56,11 @@
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <span>PECSF Donation Summary</span>
+    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>
+<br>
 <hr>
 
 <span>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August for payroll deductions from January - June, and in March for payroll deductions from July - December</span>

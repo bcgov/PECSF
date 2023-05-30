@@ -271,8 +271,8 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
     Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
-    Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
-    Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
+    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index']);
+    Route::resource('/submission-queue', EventSubmissionQueueController::class)->only(['status','details','index']);
     Route::get('/details', [EventSubmissionQueueController::class,"details"])->name('details');
     Route::post('/status', [EventSubmissionQueueController::class,"status"])->name('status');
     Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');

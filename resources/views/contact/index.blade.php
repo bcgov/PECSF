@@ -17,7 +17,12 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h2>FAQ</h2>
+            <h2 aria-expanded="false">FAQ
+                <div style="cursor:pointer" onclick="toggle();" class="toggle-all expander float-right">
+
+                </div>
+            </h2>
+<div style="clear:both;"></div>
             <section>
                 @foreach($sections as $section => $qnas)
                 <h5>
@@ -25,7 +30,7 @@
                     PECSF program
                 @else
                     {{$section}}
-                @endif    
+                @endif
                 </h5>
                 <div id="accordion{{$section}}">
                     @foreach($qnas as $i => $qna)
@@ -37,7 +42,7 @@
                                 </button>
                                 <div class="flex-fill"></div>
                                 <div class="expander">
-                                    
+
                                 </div>
                             </h5>
                         </div>
@@ -55,4 +60,30 @@
         </div>
     </div>
 </div>
+@push('js')
+    <script>
+
+        function toggle(){
+            if($("h2").attr("aria-expanded") == "true"){
+                $("h2").attr("aria-expanded",false);
+                $("h5").attr("aria-expanded",false);
+                $(".collapse").hide();
+            }
+            else{
+                $("h2").attr("aria-expanded",true);
+                $("h5").attr("aria-expanded",true);
+                $(".collapse").show();
+            }
+        }
+
+$("h5 .expander").click(function(e){
+    e.preventDefault();
+    $(".collapse").each(function(){$(this)[0].style.display = null;});
+    $("h2").attr("aria-expanded",false);
+    $("h5").attr("aria-expanded",false);
+    return true;
+});
+
+    </script>
+@endpush
 @endsection
