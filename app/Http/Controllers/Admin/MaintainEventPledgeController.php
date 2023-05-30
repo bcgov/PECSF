@@ -126,6 +126,7 @@ class MaintainEventPledgeController extends Controller
             $event_pledges->where("approved","=",1);
 
             $event_pledges->join("users","form_submitter_id","users.id");
+            $event_pledges->selectRaw("*,bank_deposit_forms.id as id");
                $event_pledges = $event_pledges->limit(30)->get();
         }
         $charities=Charity::when($request->has("title"),function($q)use($request){
