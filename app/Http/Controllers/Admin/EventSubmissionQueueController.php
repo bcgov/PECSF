@@ -38,11 +38,19 @@ class EventSubmissionQueueController extends Controller
 
             if($form->event_type == "Gaming")
             {
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+                BankDepositForm::where("id",$request->submission_id)->update([
+                    'approved' => $request->status,
+                    'approved_by_id' =>  Auth::id(),
+                    'approved_at' => now(),
+                ]);
             }
             else if($form->event_type == "Fundraiser")
             {
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+                BankDepositForm::where("id",$request->submission_id)->update([
+                    'approved' => $request->status,
+                    'approved_by_id' =>  Auth::id(),
+                    'approved_at' => now(),
+                ]);
             }
             else if($form->organization_code == "RET"){
                 $count = BankDepositForm::where("organization_code","RET")->count() + 1;
@@ -52,7 +60,12 @@ class EventSubmissionQueueController extends Controller
                     $id.= "0";
                 }
                 $id .= $count;
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status,'pecsf_id' => $id]);
+                BankDepositForm::where("id",$request->submission_id)->update([
+                    'approved' => $request->status,
+                    'pecsf_id' => $id,
+                    'approved_by_id' =>  Auth::id(),
+                    'approved_at' => now(),
+                ]);
             }
 
 

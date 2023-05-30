@@ -294,6 +294,8 @@ class BankDepositFormController extends Controller
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
 
+                'created_by_id' => Auth::id(),
+                'updated_by_id' => Auth::id(),
             ]
         );
 
@@ -513,7 +515,9 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
-                'business_unit' => $request->business_unit
+                'business_unit' => $request->business_unit,
+
+                'updated_by_id' => Auth::id(),
             ]
         );
 
