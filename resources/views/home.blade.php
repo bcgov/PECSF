@@ -28,8 +28,8 @@
             <p class="text-center h4"><b>Choose from the options below:</b></p>
 
             <div class="row p-3">
-            <div class="card_hook col-md-12 p-2">
-                <div class="card">
+            <div class=" col-md-12 p-2">
+                <div class="card card_hook ">
                     <a href="{{route('contact')}}" class="card-body text-center">
                         <i class="x nav-icon fas fa-info-circle  fa-2x bottom-right"></i><br>
                         <p style="color:black;">Learn more about PECSF and how to donate</p>
@@ -42,27 +42,26 @@
 
             <div class="row p-3">
 
-                <div class="card_hook col-md-9 p-2">
-                    <div class="card" style="height:280px" >
-                        <a href="{{route('donations.list')}}" class="card-body text-center">
+                <div class=" col-md-9 p-2">
+                    <div class="card card_hook " style="height:505px" >
+                        <a href="{{route('donations.list')}}" style="margin-top:15%;" class="card-body text-center">
                             <img src="/svgs/give.svg" style="color:white;" alt="Connect" height="55">
                             <p class="text-primary "> <span style="font-size:22px;" >Donations </span></p>
                             <p style="color:black;">Support the charities of your choice with payroll deduction in any amount.</p>
                         </a>
                     </div>
                 </div>
-                <div class="card_hook col-md-3 p-2">
-                    <div class="card pt-4" style="height:auto" >
+
+
+                <div class=" col-md-3 p-2">
+                    <div class="card_hook card pt-4" style="height:auto" >
                         <a class="card-body text-center"  href="{{route('volunteering.index')}}">
-                            <i class="x nav-icon fa-solid fas fa-money-check-alt fa-2x"></i>
+                            <i class="x nav-icon fas fa-hands-helping fa-2x"></i>
                             <p class="text-primary "> <span style="font-size:20px;">Volunteering</span></p>
                             <p class="mt-1" style="color:black;"> Looking to do more than just donate? Volunteer to help run a campaign or host an event.</p>
                         </a>
                     </div>
-                </div>
-                <!--
-                <div class="card_hook col-md-3 p-2">
-                    <div class="card" style="height:auto;" >
+                    <div class="card_hook card" style="height:auto;" >
                         <a href="{{route('contact')}}" class="card-body text-center">
                             <i class="x nav-icon fas fa-question-circle fa-2x "></i>
                             <p class="text-primary ">  <span style="font-size:22px;">Contact </span></p>
@@ -70,9 +69,22 @@
                         </a>
                     </div>
                 </div>
-                -->
+
+
             </div>
 
+
+            <div class="row p-3">
+                <div class=" col-md-12 p-2">
+                    <div class="card card_hook ">
+                        <a href="{{route('bank_deposit_form')}}" class="card-body text-center">
+                            <i class="x nav-icon fa-solid fas fa-money-check-alt fa-2x bottom-right"></i><br>
+                            <p class="text-primary "> <span style="font-size:22px;" >eForm </span></p>
+                            <p style="color:black;">Submit for your cash, cheque, fundraising or gaming bank deposit form.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -138,12 +150,12 @@
     var mouseOutTimer = false;
 
     function reset(){
-        $(".card_hook .card").css("background","white");
-        $(".card_hook .card").find("span").css("color","#1a5a96");
-        $(".card_hook .card").find("i").css("color","#1a5a96");
-        $(".card_hook .card").find("p").css("color","#000");
-        $(".card_hook .card").find("p.text-primary").css("color","#1a5a96");
-        $(".card_hook .card").find("img").css("filter","none");
+        $(".card_hook").css("background","white");
+        $(".card_hook").find("span").css("color","#1a5a96");
+        $(".card_hook").find("i").css("color","#1a5a96");
+        $(".card_hook").find("p").css("color","#000");
+        $(".card_hook").find("p.text-primary").css("color","#1a5a96");
+        $(".card_hook").find("img").css("filter","none");
     }
 
     $(".card_hook").mouseout(function(){
@@ -159,11 +171,11 @@
 
     $(".card_hook").hover(function(){
         reset();
-        $(this).find(".card").css("background","#1a5a96");
-        $(this).find(".card span").css("color","#fff");
-        $(this).find(".card i").css("color","#fff");
-        $(this).find(".card img").css("filter","invert(100%) sepia(100%) saturate(0%) hue-rotate(248deg) brightness(106%) contrast(106%)");
-        $(this).find(".card p").css("color","#fff");
+        $(this).css("background","#1a5a96");
+        $(this).find("span").css("color","#fff");
+        $(this).find("i").css("color","#fff");
+        $(this).find("img").css("filter","invert(100%) sepia(100%) saturate(0%) hue-rotate(248deg) brightness(106%) contrast(106%)");
+        $(this).find("p").css("color","#fff");
     });
 
     $(".card_hook").mouseout(function(){
