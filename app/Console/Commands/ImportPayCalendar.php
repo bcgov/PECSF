@@ -110,59 +110,53 @@ class ImportPayCalendar extends Command
 
     protected function UpdatePayCalendar()
     {
-        // try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_PAY_CALENDAR_BI_ENDPOINT'));
 
-            if ($response->successful()) {
-                $data = json_decode($response->body())->value;
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_PAY_CALENDAR_BI_ENDPOINT'));
 
-                foreach ($data as $row) {
+        if ($response->successful()) {
+            $data = json_decode($response->body())->value;
 
-                        $pyc = PayCalendar::updateOrCreate([
-                            'pay_end_dt' => $row->pay_end_dt,
-                        ], [
-                            'pay_begin_dt' => $row->pay_begin_dt,
-                            'check_dt' => $row->check_dt,
-                            'close_dt' => $row->close_dt,
-                        ]);
+            foreach ($data as $row) {
 
-
-                        if ($pyc->wasRecentlyCreated) {
-
-                            $this->created_count += 1;
-                            $this->LogMessage('(CREATED) => pay_end_dt  | ' . $pyc->pay_end_dt . ' | ' . $pyc->pay_begin_dt . ' | ' . $pyc->check_dt . ' | ' . $pyc->close_dt );
+                    $pyc = PayCalendar::updateOrCreate([
+                        'pay_end_dt' => $row->pay_end_dt,
+                    ], [
+                        'pay_begin_dt' => $row->pay_begin_dt,
+                        'check_dt' => $row->check_dt,
+                        'close_dt' => $row->close_dt,
+                    ]);
 
 
-                        } elseif ($pyc->wasChanged() ) {
+                    if ($pyc->wasRecentlyCreated) {
 
-                            $this->updated_count += 1;
-
-                            $this->LogMessage('(UPDATED) => pay_end_dt | ' . $pyc->pay_end_dt );
-                            $changes = $pyc->getChanges();
-                            unset($changes["updated_at"]);
-                            $this->LogMessage('  summary => '. json_encode( $changes ) );
-
-                        } else {
-                            // No Action
-                        }
-                    
-                }
+                        $this->created_count += 1;
+                        $this->LogMessage('(CREATED) => pay_end_dt  | ' . $pyc->pay_end_dt . ' | ' . $pyc->pay_begin_dt . ' | ' . $pyc->check_dt . ' | ' . $pyc->close_dt );
 
 
-            } else {
-                $this->status = 'Error';
-                $this->LogMessage( $response->status() . ' - ' . $response->body() );
+                    } elseif ($pyc->wasChanged() ) {
+
+                        $this->updated_count += 1;
+
+                        $this->LogMessage('(UPDATED) => pay_end_dt | ' . $pyc->pay_end_dt );
+                        $changes = $pyc->getChanges();
+                        unset($changes["updated_at"]);
+                        $this->LogMessage('  summary => '. json_encode( $changes ) );
+
+                    } else {
+                        // No Action
+                    }
+                
             }
-        // } catch (\Exception $ex) {
-                            
-        //     // write to log message 
-        //     $this->status = 'Error';
-        //     $this->LogMessage( $ex->getMessage() );
 
-        //     return 1;
-        // }
+
+        } else {
+            $this->status = 'Error';
+            $this->LogMessage( $response->status() . ' - ' . $response->body() );
+
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
+        }
 
     }
 

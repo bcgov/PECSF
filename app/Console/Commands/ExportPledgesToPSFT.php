@@ -555,9 +555,11 @@ class ExportPledgesToPSFT extends Command
         } else {
 
             // log message in system
-            $this->status = 'Error';
+            // $this->status = 'Error';
             $this->LogMessage( "(Error) - Data - " . json_encode($pushdata) );
             $this->LogMessage( "        - " . $response->status() . ' - ' . $response->body() );
+            
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
 
             $this->failure += 1;
 

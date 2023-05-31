@@ -247,6 +247,7 @@ class ImportPledgeHistory extends Command
                     $this->status = 'Error';
                     $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
                 }
 
             }

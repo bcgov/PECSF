@@ -245,6 +245,8 @@ class ExportDatabaseToBI extends Command
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
+                throw new Exception( $response->status() . ' - ' . $response->body()   );
+
                 $this->failure += 1;
                 return false;
             }
