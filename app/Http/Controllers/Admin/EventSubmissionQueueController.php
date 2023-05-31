@@ -69,7 +69,11 @@ class EventSubmissionQueueController extends Controller
             }
 
 
-                BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+                BankDepositForm::where("id",$request->submission_id)->update([
+                        'approved' => $request->status,
+                        'approved_by_id' =>  Auth::id(),
+                        'approved_at' => now(),
+                    ]);
                 $year =  intval(date("Y")) + 1;
                 do{
                     $campaign_year = CampaignYear::where('calendar_year', $year)->first();
