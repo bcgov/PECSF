@@ -105,53 +105,40 @@ class ImportCities extends Command
         //$filter = 'date_updated gt \''.$last_start_time.'\' or date_deleted gt \''.$last_start_time.'\'';
         $filter = '';  // Disbaled the filter due to process timimg issue
 
-        // try {
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_PS_TGB_CITY_TBL_ENDPOINT').'?$count=true&$top=1000'.'&$filter='.$filter);
 
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_PS_TGB_CITY_TBL_ENDPOINT').'?$count=true&$top=1000'.'&$filter='.$filter);
+        if ($response->successful()) {
+            $data = json_decode($response->body())->value;
+            $batches = array_chunk($data, 1000);
 
-            if ($response->successful()) {
-                $data = json_decode($response->body())->value;
-                $batches = array_chunk($data, 1000);
+            foreach ($batches as $key => $batch) {
+                $this->info( '    -- each batch (1000) $key - '. $key );
+                $this->info( '    -- count batch (1000) $key - '. count($batch));
 
-                foreach ($batches as $key => $batch) {
-                    $this->info( '    -- each batch (1000) $key - '. $key );
-                    $this->info( '    -- count batch (1000) $key - '. count($batch));
-
-                    foreach ($batch as $row) {
-                        City::updateOrCreate([
-                            'city' => $row->City,
-                            'country' => $row->Country,
-                            'province' => $row->Province,
-                            'TGB_REG_DISTRICT' => $row->TGB_REG_DISTRICT,
-                            'DescrShort' => $row->DescrShort
-                        ],[
-                            'city' => $row->City,
-                            'country' => $row->Country,
-                            'province' => $row->Province,
-                            'TGB_REG_DISTRICT' => $row->TGB_REG_DISTRICT,
-                            'DescrShort' => $row->DescrShort
-                        ]);
-                    }
+                foreach ($batch as $row) {
+                    City::updateOrCreate([
+                        'city' => $row->City,
+                        'country' => $row->Country,
+                        'province' => $row->Province,
+                        'TGB_REG_DISTRICT' => $row->TGB_REG_DISTRICT,
+                        'DescrShort' => $row->DescrShort
+                    ],[
+                        'city' => $row->City,
+                        'country' => $row->Country,
+                        'province' => $row->Province,
+                        'TGB_REG_DISTRICT' => $row->TGB_REG_DISTRICT,
+                        'DescrShort' => $row->DescrShort
+                    ]);
                 }
-            } else {
-                $this->info( $response->status() );
-                $this->info( $response->body() );
             }
+        } else {
+            $this->info( $response->status() );
+            $this->info( $response->body() );
 
-        // } catch (\Exception $ex) {
-
-        //     // log message in system
-        //     $this->task->status = 'Error';
-        //     $this->task->end_time = Carbon::now();
-        //     $this->task->message = $ex->getMessage() . PHP_EOL;
-        //     $this->task->save();
-
-        //     throw new Exception($ex);
-
-        // }
-
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
+        }
 
     }
 

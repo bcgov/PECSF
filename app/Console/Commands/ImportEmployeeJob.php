@@ -140,20 +140,20 @@ class ImportEmployeeJob extends Command
         $filter = "";  // Disabled the filter due to process timimg issue
         $orderBy = 'EMPLID asc, EMPL_RCD asc, EFFDT desc, EFFSEQ desc, date_updated desc';
 
-        try {
+        // try {
             // Validate the value...
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                 ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT').'?$count=true&$top=1'.
                                 '&$filter='.$filter.'&$orderBy='.$orderBy);
-        } catch (\Exception $ex) {
+        // } catch (\Exception $ex) {
 
-            // write to log message 
-            $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+        //     // write to log message 
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
 
-            return 1;
-        }
+        //     return 1;
+        // }
 
         $row_count = json_decode($response->body())->{'@odata.count'};
         $this->total_count = $row_count;
@@ -312,6 +312,8 @@ class ImportEmployeeJob extends Command
                     // write to log message 
                     $this->status = 'Error';
                     $this->LogMessage( 'Status: ' . $response->status() . ' Response Body: ' .  $response->body() );
+                    
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
 
                 }
 
