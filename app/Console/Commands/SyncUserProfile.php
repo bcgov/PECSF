@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use DateTime;
 use Carbon\Carbon;
+use Exception;
 use App\Models\User;
 use App\Models\EmployeeJob;
 use App\Models\Organization;
@@ -35,6 +36,7 @@ class SyncUserProfile extends Command
 
     /* Source Type is HCM */
     protected const SOURCE_TYPE = 'HCM';
+    protected $task;
     protected $created_count;
     protected $updated_count;
     protected $locked_count;
@@ -71,27 +73,51 @@ class SyncUserProfile extends Command
     public function handle()
     {
 
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+        try {
 
-        $this->LogMessage( now() );        
-        $this->LogMessage("Update/Create - User Profile");
-        $this->SyncUserProfile();
-        $this->LogMessage( now() );     
-        
-        if  ($this->created_count > self::MAX_CREATE_COUNT)  {
-            $this->LogMessage( '' );
-            $this->LogMessage( '*NOTE: more than ' . self::MAX_CREATE_COUNT . ' new row found, only the first ' . self::MAX_CREATE_COUNT . ' lines detail were shown in the log');
-            $this->LogMessage( '' );
-        }
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
-        if  ($this->updated_count > self::MAX_UPDATE_COUNT)  {
-            $this->LogMessage( '' );
-            $this->LogMessage( '*NOTE: more than ' . self::MAX_UPDATE_COUNT . ' changes found, only the first ' . self::MAX_UPDATE_COUNT . ' lines detail were shown in the log');
-            $this->LogMessage( '' );
+            $this->LogMessage( now() );        
+            $this->LogMessage("Update/Create - User Profile");
+            $this->SyncUserProfile();
+            $this->LogMessage( now() );     
+            
+            if  ($this->created_count > self::MAX_CREATE_COUNT)  {
+                $this->LogMessage( '' );
+                $this->LogMessage( '*NOTE: more than ' . self::MAX_CREATE_COUNT . ' new row found, only the first ' . self::MAX_CREATE_COUNT . ' lines detail were shown in the log');
+                $this->LogMessage( '' );
+            }
+
+            if  ($this->updated_count > self::MAX_UPDATE_COUNT)  {
+                $this->LogMessage( '' );
+                $this->LogMessage( '*NOTE: more than ' . self::MAX_UPDATE_COUNT . ' changes found, only the first ' . self::MAX_UPDATE_COUNT . ' lines detail were shown in the log');
+                $this->LogMessage( '' );
+            }
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message .= $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
         }
 
         $this->LogMessage( 'Total new created row(s) : ' . $this->created_count );
@@ -175,8 +201,6 @@ class SyncUserProfile extends Command
                             // reach here mean No Differece found -- no action required
                     } else {                
 
-                        try {
-
                             $user->source_type = self::SOURCE_TYPE;
                             $user->email  = $target_email;
                             $user->idir = $employee->idir;
@@ -192,13 +216,6 @@ class SyncUserProfile extends Command
                                 unset($changes["updated_at"]);
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
                             }
-
-                        } catch(\Illuminate\Database\QueryException $ex){ 
-
-                            $this->status = 'Error';
-                            $this->LogMessage('Exception -- ' . $ex->getMessage() ); 
-
-                        }
 
                     }
 

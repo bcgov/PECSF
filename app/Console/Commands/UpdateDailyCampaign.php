@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\Region;
 use App\Models\Setting;
 use App\Models\BusinessUnit;
@@ -30,6 +31,8 @@ class UpdateDailyCampaign extends Command
      */
     protected $description = 'Update Daily Campaign Statistics and stored in the daily_campaigns table';
 
+    protected $task;
+
     /**
      * Create a new command instance.
      *
@@ -50,16 +53,41 @@ class UpdateDailyCampaign extends Command
      */
     public function handle()
     {
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Task -- Update Daily Campaign Statistics and stored in the daily_campaigns table'");
-        $this->storeDailyCampaign();
-        $this->LogMessage( now() );
+        try {
+            
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
+
+            $this->LogMessage( now() );
+            $this->LogMessage("Task -- Update Daily Campaign Statistics and stored in the daily_campaigns table'");
+            $this->storeDailyCampaign();
+            $this->LogMessage( now() );
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message .= $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
+        }    
 
         // Update the Task Audit log
         $this->task->end_time = Carbon::now();

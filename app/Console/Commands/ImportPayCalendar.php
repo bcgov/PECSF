@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\PayCalendar;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
@@ -25,6 +26,7 @@ class ImportPayCalendar extends Command
     protected $description = 'Sync Pay Calendar from PeopleSoft via ODS';
 
      /* attributes for share in the command */
+     protected $task;
      protected $created_count;
      protected $updated_count;
      protected $message;
@@ -56,27 +58,51 @@ class ImportPayCalendar extends Command
      */
     public function handle()
     {
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+        try {
+            
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
-        $this->LogMessage( now() );   
-        $this->LogMessage("Task -- Update/Create - Pay Calendar");
-        $this->UpdatePayCalendar();
-        $this->LogMessage( now() );   
+            $this->LogMessage( now() );   
+            $this->LogMessage("Task -- Update/Create - Pay Calendar");
+            $this->UpdatePayCalendar();
+            $this->LogMessage( now() );   
 
-        $this->LogMessage( '' );
-        $this->LogMessage( 'Total new created row(s) : ' . $this->created_count );
-        $this->LogMessage( 'Total Updated row(s) : ' . $this->updated_count );
-        $this->LogMessage( '' );
+            $this->LogMessage( '' );
+            $this->LogMessage( 'Total new created row(s) : ' . $this->created_count );
+            $this->LogMessage( 'Total Updated row(s) : ' . $this->updated_count );
+            $this->LogMessage( '' );
 
-        // Update the Task Audit log
-        $this->task->end_time = Carbon::now();
-        $this->task->status = $this->status;
-        $this->task->message = $this->message;
-        $this->task->save();
+            // Update the Task Audit log
+            $this->task->end_time = Carbon::now();
+            $this->task->status = $this->status;
+            $this->task->message = $this->message;
+            $this->task->save();
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message .= $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
+        }
 
         return 0;
     }
@@ -84,7 +110,7 @@ class ImportPayCalendar extends Command
 
     protected function UpdatePayCalendar()
     {
-        try {
+        // try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                 ->get(env('ODS_INBOUND_PAY_CALENDAR_BI_ENDPOINT'));
@@ -129,14 +155,14 @@ class ImportPayCalendar extends Command
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
             }
-        } catch (\Exception $ex) {
+        // } catch (\Exception $ex) {
                             
-            // write to log message 
-            $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+        //     // write to log message 
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
 
-            return 1;
-        }
+        //     return 1;
+        // }
 
     }
 
