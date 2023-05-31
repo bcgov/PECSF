@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\Setting;
 use App\Models\EmployeeJob;
 use App\Models\BusinessUnit;
@@ -28,6 +29,8 @@ class UpdateEligibleEmployeeSnapshot extends Command
      * @var string
      */
     protected $description = 'To take a snapshot of the Eligible Employee, optional --date YYYY-MM-DD to collect for the current as specified date';
+
+    protected $task;
 
     /**
      * Create a new command instance.
@@ -55,11 +58,35 @@ class UpdateEligibleEmployeeSnapshot extends Command
             'status' => 'Processing',
         ]);
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Task -- Capture a snapshot of Eligible Employee with region, business unit, department");
-        $this->storeEligibleEmployeeDetail();
-        $this->LogMessage( now() );
+        try {
 
+            $this->LogMessage( now() );
+            $this->LogMessage("Task -- Capture a snapshot of Eligible Employee with region, business unit, department");
+            $this->storeEligibleEmployeeDetail();
+            $this->LogMessage( now() );
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message .= $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
+        }
+        
         // Update the Task Audit log
         $this->task->end_time = Carbon::now();
         $this->task->status = $this->status;
