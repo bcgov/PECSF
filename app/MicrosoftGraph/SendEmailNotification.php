@@ -71,7 +71,7 @@ class SendEmailNotification
     protected function sendMailUsingSMPTServer() 
     {
 
-        $this->subject = "PECSF [". App::environment() . "] -- The Process ('" . $this->job_id  . " - ". $this->job_name . ")' was failed to complete.";
+        $this->subject = "PECSF [". App::environment() . "] -- The Process (" . $this->job_id  . " - ". $this->job_name . ") was failed to complete.";
 
         $this->body = "<p>";
         $this->body .= "Process ID   : " . $this->job_id . "</br>";

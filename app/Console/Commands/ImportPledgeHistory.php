@@ -186,12 +186,13 @@ class ImportPledgeHistory extends Command
     {
 
         // try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_VNDR_BI_ENDPOINT') .'?$count=true&$top=1');
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+        ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+        ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_VNDR_BI_ENDPOINT') .'?$count=true&$top=1');
 
+        if ($response->successful()) {
             $row_count = json_decode($response->body())->{'@odata.count'};
-           
+            
             if ($row_count > 0) {
                 // Truncate Pledge History table when records returned from BI
                 PledgeHistoryVendor::truncate();
@@ -252,6 +253,14 @@ class ImportPledgeHistory extends Command
 
             }
 
+        } else {
+
+            $this->status = 'Error';
+            $this->LogMessage( $response->status() . ' - ' . $response->body() );
+
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
+        }
+
         // } catch (\Exception $ex) {
 
         //     $this->status = 'Error';
@@ -272,10 +281,11 @@ class ImportPledgeHistory extends Command
         $filter = '(yearcd eq '. $in_year .')';
 
         // try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
 
+        if ($response->successful()) {                
             $row_count = json_decode($response->body())->{'@odata.count'};
             
             $size = 10000;
@@ -373,9 +383,15 @@ class ImportPledgeHistory extends Command
                     $this->status = 'Error';
                     $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
-                }
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
 
+                }
             }
+
+        } else {
+
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
+        }
 
         // } catch (\Exception $ex) {
         
