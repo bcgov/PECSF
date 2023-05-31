@@ -129,9 +129,11 @@ class ImportNonGovPledgeHistory extends Command
         $filter = '(yearcd eq '. $in_year .')';
                 
         // try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
+
+        if ($response->successful()) {
 
             $row_count = json_decode($response->body())->{'@odata.count'};
             
@@ -219,6 +221,15 @@ class ImportNonGovPledgeHistory extends Command
                 }
 
             }
+
+        } else {
+
+            $this->status = 'Error';
+            $this->LogMessage( $response->status() . ' - ' . $response->body() );
+            
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
+
+        }
 
         // } catch (\Exception $ex) {
 
