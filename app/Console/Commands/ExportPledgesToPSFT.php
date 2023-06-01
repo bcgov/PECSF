@@ -295,7 +295,7 @@ class ExportPledgesToPSFT extends Command
         $pledgeData = DonateNowPledge::join('organizations', 'donate_now_pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
                             ->whereNull('donate_now_pledges.ods_export_status')
-                            ->whereNull('donate_now_pledges.cancelled')
+                            ->whereNull('donate_now_pledges.cancelled_at')
                             ->select('donate_now_pledges.*')
                             ->orderBy('donate_now_pledges.id')->get();
 
@@ -410,7 +410,7 @@ class ExportPledgesToPSFT extends Command
         $pledgeData = SpecialCampaignPledge::join('organizations', 'special_campaign_pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
                             ->whereNull('special_campaign_pledges.ods_export_status')
-                            ->whereNull('special_campaign_pledges.cancelled')
+                            ->whereNull('special_campaign_pledges.cancelled_at')
                             ->select('special_campaign_pledges.*')
                             ->orderBy('special_campaign_pledges.id')
                             ->get();
