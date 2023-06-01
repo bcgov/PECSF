@@ -2,7 +2,7 @@
 @section('content_header')
 @if ($message = Session::get('error'))
 <div class="alert alert-danger alert-block">
-	<button type="button" class="close" data-dismiss="alert">×</button>	
+	<button type="button" class="close" data-dismiss="alert">×</button>
         <strong>{{ $message }}</strong>
 </div>
 @endif
@@ -13,17 +13,17 @@
                 <h5 class="card-title"></h5>
                 @if ( $campaignYear->isOpen() )
                     <p class="card-text text-left">
-                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrolment for the PECSF Campaign.
+                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrollment for the PECSF Campaign.
                         The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January.
                     </p>
                     @if ($current_pledge)
                         <p class="card-text text-left">
                             To make changes to your proposed pledge, click into the box below where your {{ $campaignYear->calendar_year }} choices are shown.
                         </p>
-                        <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make change to your PECSF pledge</a>
+                        <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make a change to your PECSF pledge</a>
                     @else
                         <p class="card-text text-left">
-                            To make a pledge click the Donate button, copy a prior years choices from your Donation History.
+                            To make a pledge click the Donate button, copy a prior year's choices from your Donation History.
                         </p>
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Donate</a>
                     @endif
@@ -36,7 +36,7 @@
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
                         {{-- Click the detail button below to see your campaign pledge in VIEW mode.    --}}
                     </p>
-                    <p>
+                    <p class="card-text text-left">
                         To make a new one-time donation outside of campaign, click <span class="font-weight-bold">“Donate to PECSF Now”</span> below.
                     </p>
                 @endif
@@ -46,13 +46,13 @@
 
     <div class="d-flex mt-3">
         <h1>My Donations</h1>
+        <div class="flex-fill"></div>
         @if($totalPledgedDataTillNow > 0)
-            <div class="flex-fill"></div>
             @if (!$campaignYear->isOpen() )
                 <x-button :href="route('donate-now.index')">Donate to PECSF Now</x-button>
             @endif
-            <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
         @endif
+        <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
     </div>
     <div class="d-flex flex-column">
         <p class="m-0">
@@ -125,30 +125,50 @@
 
 
 @push('css')
-    
+
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
-@endpush    
-    
+@endpush
+
 
 @push('js')
 
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
 <script>
+
+$(function () {
     $('#learn-more-modal').on('slide.bs.carousel', function (e) {
+
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
+
         if(e.to == 0) {
             $(this).find(".prev-btn").addClass("d-none");
+            $(this).find(".start-btn").removeClass("d-none");
+            $(this).find(".next-btn").addClass("d-none");
         }
-        else if (e.to === 5) {
+        else if (e.to === 8) {
             $(this).find(".next-btn").addClass("d-none");
             $(this).find(".ready-btn").removeClass("d-none");
         } else {
+            $(this).find(".start-btn").addClass("d-none");
             $(this).find(".prev-btn").removeClass("d-none");
             $(this).find(".next-btn").removeClass("d-none")
             $(this).find(".ready-btn").addClass("d-none");
         }
+
     })
+
+    $('#learn-more-modal').on('show.bs.modal', function (event) {
+        $('#donateGuideCarousel').carousel(0);
+        movie_id = $('#movie_player').attr('movie-id');
+        $('#movie_player').attr('src', movie_id);
+    })
+
+    $("#learn-more-modal").on("hidden.bs.modal", function () {
+        $('#movie_player').attr('src', '')
+    });
 
     $('.more-info').click( function(event) {
         event.stopPropagation();
@@ -173,7 +193,7 @@
                 success: function (result, text, xhr) {
                     // $('.modal-title span').html(name);
                     if(result.indexOf('body class="login-page"') != -1){
-                        window.location.href = '/login'; 
+                        window.location.href = '/login';
                     }
                     $(target).html(result);
                     $('#pledgeDetailModal').modal('show');
@@ -185,7 +205,7 @@
 
         }
     });
-
+});
 
 </script>
 @endpush

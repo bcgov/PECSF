@@ -1,4 +1,6 @@
 <div id="step-charities-area">
+    <h3>2. Choose your charities (up to 10)</h3>
+
     <div class=" form-row">
 
         <div class="form-group org_hook col-md-4">
@@ -26,7 +28,7 @@
             </div>
 
             @isset($fund_support_pool_list)
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-4 org_hook">
                     <label for="pool_selection_id">Search by Fund Support Pool</label>
                     <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
                         <option value="">Choose a Fund Support Pool</option>

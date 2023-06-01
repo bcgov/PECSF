@@ -7,10 +7,13 @@ use App\Models\BankDepositForm;
 use App\Models\BankDepositFormOrganizations;
 use App\Models\BankDepositFormAttachments;
 use App\Models\Charity;
+use App\Models\EmployeeJob;
 use App\Models\Organization;
 use App\Models\Pledge;
+use App\Models\ProcessHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\FSPool;
@@ -47,7 +50,7 @@ class BankDepositFormController extends Controller
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->orderby("name", "asc")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
@@ -82,64 +85,34 @@ class BankDepositFormController extends Controller
         $terms = explode(" ", $request->get("title") );
         $multiple = 'false';
         $selected_charities = [];
-        if (Session::has('charities')) {
-            $selectedCharities = Session::get('charities');
 
-            $_charities = Charity::whereIn('id', $selectedCharities['id'])
-                ->get(['id', 'charity_name as text']);
 
-            foreach ($_charities as $charity) {
-                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
-                if (!$charity['additional']) {
-                    $charity['additional'] = '';
-                }
-
-                array_push($selected_charities, $charity);
-            }
-        } else {
-
-            // reload the existig pledge
-            $errors = session('errors');
-
-            if (!$errors) {
-
-                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-                    ->first();
-                $pledge = Pledge::where('user_id', Auth::id())
-                    ->whereHas('campaign_year', function($q){
-                        $q->where('calendar_year','=', today()->year + 1 );
-                    })->first();
-
-                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
-
-                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
-
-                    $_charities = Charity::whereIn('id', $_ids )
-                        ->get(['id', 'charity_name as text']);
-
-                    foreach ($_charities as $charity) {
-                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
-
-                        $charity['additional'] = '';
-                        if ($pledge_charity) {
-                            $charity['additional'] = $pledge_charity->additional ?? '';
-                        }
-
-                        array_push($selected_charities, $charity);
-                    }
-                }
-            }
-        }
-
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
         return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
 
+    public function ignoreRemovedFiles($request){
+        if(!empty(request()->ignoreFiles))
+        {
+            $fields = $request['attachments'];
+            $request['attachments'] = [];
+            foreach( $fields as $index => $file )
+            {
+                if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
+                {
+                    $request['attachments'][] = $file;
+                }
+            }
+        }
+        return $request;
+    }
+
     public function store(Request $request) {
-        $validator = Validator::make(request()->all(), [
+
+        $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -153,7 +126,7 @@ class BankDepositFormController extends Controller
             'business_unit'         => 'required',
             'charity_selection' => 'required',
             'description' => 'required',
-            'attachments.*' => 'required',
+            'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
         ],[
             'organization_code' => 'The Organization Code is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
@@ -172,19 +145,10 @@ class BankDepositFormController extends Controller
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV" && $request->organization_code != "RET")
             {
-
                     if(empty($request->pecsf_id))
                     {
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
                     }
-                    else if(!is_numeric($request->pecsf_id))
-                    {
-                        $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
-                    }
-                    else if(strlen($request->pecsf_id) != 6){
-                        $validator->errors()->add('pecsf_id','The PECSF ID must be 6 digits.');
-                    }
-
             }
             if($request->organization_code == "GOV"){
                 if(empty($request->bc_gov_id))
@@ -270,6 +234,20 @@ class BankDepositFormController extends Controller
                 }
             }
 
+            $existing = [];
+            if($request->organization_code == "GOV") {
+                $existing = BankDepositForm::where("organization_code", "=", "GOV")
+                    ->where("event_type", "=", "Cash One-time Donation")
+                    ->where("form_submitter_id", "=", $request->form_submitter_id)
+                    ->get();
+                if (empty(!$existing) && !empty($request->pecsf_id)) {
+                    if (strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id, 1))) {
+                        $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                    }
+                }
+            }
+
+
             if(!empty(request("attachments"))){
                 $fileFound = false;
                 foreach(array_reverse(request('attachments')) as $key => $attachment){
@@ -281,13 +259,16 @@ class BankDepositFormController extends Controller
                     }
                 }
                 if(!$fileFound){
-                    $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                    $validator->errors()->add('attachment','Atleast one attachment is required.');
                 }
             }
             else{
-                $validator->errors()->add('attachment.0','Atleast one attachment is required.');
+                $validator->errors()->add('attachment','Atleast one attachment is required.');
             }
         });
+
+
+
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
 
@@ -296,6 +277,7 @@ class BankDepositFormController extends Controller
                 'business_unit' => $request->business_unit,
                 'organization_code' => $request->organization_code,
                 'form_submitter_id' =>  $request->form_submitter,
+                'campaign_year_id' =>  $request->campaign_year,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
@@ -312,6 +294,8 @@ class BankDepositFormController extends Controller
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
 
+                'created_by_id' => Auth::id(),
+                'updated_by_id' => Auth::id(),
             ]
         );
 
@@ -387,27 +371,12 @@ class BankDepositFormController extends Controller
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
                 if($request->organization_code != "GOV")
                 {
-
                     if(empty($request->pecsf_id))
                     {
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
                     }
-                    else if(!is_numeric($request->pecsf_id))
-                    {
-                        $validator->errors()->add('pecsf_id','The PECSF ID must be a number.');
-                    }
+                }
 
-                }
-                if($request->organization_code == "GOV"){
-                    if(empty($request->bc_gov_id))
-                    {
-                        $validator->errors()->add('bc_gov_id','An Employee ID is required.');
-                    }
-                    else if(!is_numeric($request->bc_gov_id))
-                    {
-                        $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
-                    }
-                }
             }
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
             {
@@ -449,7 +418,6 @@ class BankDepositFormController extends Controller
                     for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
                         if(empty(request("organization_name")[$i]))
                         {
-
                             $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
                         }
                         if(empty(request('vendor_id')[$i])){
@@ -476,12 +444,53 @@ class BankDepositFormController extends Controller
 
 
                     if($total != 100) {
-                        for($i=count($a);$i > -1;$i--){
-
-                                $validator->errors()->add('donation_percent.' . $a[$i], 'The Donation Percent Does not equal 100%.');
-
+                        for($i=(count($a) - 1);$i > -1;$i--){
+                                $validator->errors()->add('donation_percent.' . $i, 'The Donation Percent Does not equal 100%.');
                         }
                     }
+                }
+            }
+
+            $existing = [];
+            if($request->organization_code == "GOV"){
+                $existing = BankDepositForm::where("organization_code","=","GOV")
+                    ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
+                    ->where("form_submitter_id","=",$request->form_submitter_id)
+                    ->get();
+
+          if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
+                {
+                    if(!empty($request->pecsf_id)){
+                        if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
+                        {
+                            $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                        }
+                    }
+                 else{
+                     $validator->errors()->add('pecsf_id','The PECSF ID is required.');
+
+                 }
+                }
+                else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
+                        if(empty($request->bc_gov_id))
+                        {
+                            $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+                        }
+                        else if(!is_numeric($request->bc_gov_id))
+                        {
+                            $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+                        }
+                }
+
+            }
+
+            if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
+                $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
+                    ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+                    ->get();
+                if(count($existing_pecsf_id) > 0)
+                {
+                    $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
                 }
             }
         });
@@ -491,7 +500,6 @@ class BankDepositFormController extends Controller
         $form = BankDepositForm::where("id","=",$request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
-                'form_submitter_id' =>  $request->form_submitter,
                 'event_type' =>  $request->event_type,
                 'sub_type' => $request->sub_type,
                 'deposit_date' => $request->deposit_date,
@@ -507,7 +515,9 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
-                'business_unit' => $request->business_unit
+                'business_unit' => $request->business_unit,
+
+                'updated_by_id' => Auth::id(),
             ]
         );
 
@@ -584,7 +594,7 @@ class BankDepositFormController extends Controller
 
     public function organizations(Request $request)
     {
-        $organizations = Charity::where("charity_status","=","Registered");
+        $organizations = Charity::selectRaw("charities.id as id, charity_name, effective_date_of_status, category_code, registration_number, charity_status, address, city, province, country, postal_code, sanction")->where("charity_status","=","Registered");
 
         if($request->province != "")
         {
@@ -600,16 +610,50 @@ class BankDepositFormController extends Controller
         {
             $organizations->where("charity_name","LIKE","%".$request->keyword."%");
         }
-        if (is_numeric($request->pool_filter)) {
+        if (is_numeric($request->pool_filter)){
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
             $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
+            $organizations->where("f_s_pool_charities.status","=","A");
+            $organizations->selectRaw("image, f_s_pool_charities.description as pool_description");
+            $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->groupby("charity_name")->paginate(7);
+        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7)->onEachSide(1);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
         return view('volunteering.partials.organizations', compact('selected_vendors','organizations','total'))->render();
     }
+
+    function bc_gov_id(Request $request){
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district")->first();
+        if(!empty($record)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Employee Id not found'], 404);
+        }
+    }
+
+    function business_unit(Request $request){
+        $record = Organization::where("organizations.code","=",$request->id)->join("business_units","business_units.code","organizations.bu_code")->selectRaw("business_units.id as business_unit_id, organizations.bu_code")->first();
+        if(!empty($record->bu_code)){
+            return response()->json($record, 200);
+        }
+        else{
+            return response()->json([
+                'message' => 'Organization Code not found'], 404);
+        }
+    }
+        public function download(Request $request, $fileName) {
+            $headers = [
+                'Content-Description' => 'File Transfer',
+                'Content-Type' => 'application/csv',
+                "Content-Transfer-Encoding: UTF-8",
+            ];
+            // return Storage::download($path);
+            return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
+        }
 }

@@ -416,13 +416,16 @@ $(function () {
             });
             $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
             $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
+            // Amount field 
+            $('.pay_period_amount_error').html('');
+            $('.one_time_amount_error').html('');
 
             var form = $('#admin-pldege-campaign-form');
             $('#admin-pldege-campaign-form input[name=step]').val( step );
 
             $.ajax({
                 method: "POST",
-                url:  '/admin-pledge/campaign/' ,
+                url : "{{ route('admin-pledge.campaign.store') }}",
                 //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
@@ -445,8 +448,14 @@ $(function () {
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
                             } else {
-                                $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
-                                $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                                if (field_name.includes('pay_period_amount_error')) {
+                                    $('.pay_period_amount_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                } else if (field_name.includes('one_time_amount_error')) {
+                                    $('.one_time_amount_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                } else {
+                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                    $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                                }
                             }
 
                             // additional checking for pledge existence

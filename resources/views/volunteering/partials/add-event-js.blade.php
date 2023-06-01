@@ -2,6 +2,7 @@
 <script>
     $("#sub_type").select2();
     $("#event_type").select2();
+    $(".org_hook").hide();
 
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
@@ -232,7 +233,9 @@ else if($(this).attr('type') == "file"){
 //formData.append('attachments[]',  $(this)[0].files[0]);
 }
 else{
-formData.append($(this).attr("name"), $(this).val());
+    if($(this).val().length > 0){
+        formData.append($(this).attr("name"), $(this).val());
+    }
 }
 }
 });
@@ -270,7 +273,7 @@ success:function(response){
         window.location = response[0];
         console.log(response);
     });
-
+    $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
 },
 error: function(response) {
 $('.errors').html("");
@@ -285,6 +288,7 @@ error = error[0] + error[1].substring(1,error[1].length);
 error = error.replace("_"," ");
 $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+$("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 
 
 }
@@ -392,6 +396,13 @@ e.preventDefault();
 $(".attachment_errors").html("");
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
 var file = e.originalEvent.dataTransfer.files;
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
+    $(".attachment_errors").html("");
+    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
+        $(".invalid-feedback").show();
+        return;
+    }
     if(file[0].size < 2097152) {
         formData.append('attachments[]', file[0]);
         $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
@@ -401,26 +412,36 @@ var file = e.originalEvent.dataTransfer.files;
         }
     }
     else{
-        $(".attachment_errors").html("Please upload a smaller file < 2MB");
+        $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
+        $(".invalid-feedback").show();
     }
 });
 $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
 $("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+
+var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
 var file = e.target.files;
     $(".attachment_errors").html("");
+    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
+        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
+        $(".invalid-feedback").show();
+        return;
+    }
 if(file[0].size < 2097152)
 {
     formData.append('attachments[]', file[0]);
     $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
+    $(".invalid-feedback").show();
     const index = ignoreFiles.indexOf(file[0].name);
     if (index > -1) { // only splice array when item is found
         ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
     }
 }
 else{
-    $(".attachment_errors").html("Please upload a smaller file < 2MB");
+    $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
+    $(".invalid-feedback").show();
 }
 });
 
@@ -455,4 +476,77 @@ $("#attachment_input_1").val("");
             templateSelection:formatState
         }
     );
+
+
+    $("body").on("blur","#bc_gov_id",function(){
+        $.ajax({
+            url: "/bank_deposit_form/bc_gov_id?id="+$(this).val(),
+            type: "GET",
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+                $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+                $("#employment_city").val(response.office_city).select2();
+                $("#region").val($("#region option[code='"+response.tgb_reg_district+"']").val()).select2();
+                $("#business_unit").val(response.business_unit_id).select2();
+                setTimeout(function(){
+                    $("#employment_city").parents(".form-body").fadeTo("slow",1);
+                },500);
+            },
+            error: function(response) {
+                Swal.fire({
+                    title: '<strong>Not Found!</strong>',
+                    icon: 'error',
+                    html:
+                        'Employee Id not Found!',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                });
+            },
+        });
+    });
+
+    $("body").on("change","#organization_code",function(){
+        if($(this).val() != "GOV" && $(this).val() != "false"){
+            $.ajax({
+                url: "/bank_deposit_form/business_unit?id="+$(this).val(),
+                type: "GET",
+                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                processData: false,
+                cache: false,
+                contentType: false,
+                dataType: 'json',
+                success:function(response){
+                    $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+                    $("#business_unit").val(response.business_unit_id).select2();
+                    setTimeout(function(){
+                        $("#employment_city").parents(".form-body").fadeTo("slow",1);
+                    },500);
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title: '<strong>Not Found!</strong>',
+                        icon: 'error',
+                        html:
+                            'Business Unit not found!',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        focusConfirm: false,
+                    });
+                },
+            });
+        }
+        else if($(this).val() == "GOV"){
+            $("#business_unit").val("").select2();
+        }
+    });
+    $("#keyword").keypress(function(e){
+        if(e.which == 13) {
+           e.preventDefault();
+        }
+    });
 </script>

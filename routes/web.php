@@ -53,7 +53,6 @@ use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
-use App\Http\Controllers\Admin\EligibleEmployeeCountController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
@@ -177,18 +176,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
     Route::get('/bank_deposit_form/organization_name', [BankDepositFormController::class, 'organization_name'])->name('organization_name_ajax');
     Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
-
+    Route::get('/bank_deposit_form/bc_gov_id',[BankDepositFormController::class, 'bc_gov_id'])->name('bc_gov_id');
+    Route::get('/bank_deposit_form/business_unit',[BankDepositFormController::class, 'business_unit'])->name('business_unit');
+    Route::get('/bank_deposit_form/download/{fileName}',[BankDepositFormController::class, 'download'])->name('download');
     Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
     Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
-
     Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
 });
 
-Route::prefix('challenge')->middleware(['auth'])->name('challege.')->group(function () {
+Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
-    Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
+    // Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
@@ -254,6 +254,8 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);
+
+    // Challenge Settings
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
     Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
@@ -269,8 +271,8 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
     Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
-    Route::resource('/maintain-event', MaintainEventPledgeController::class)->except(['destroy']);
-    Route::resource('/submission-queue', EventSubmissionQueueController::class)->except(['destroy']);
+    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index']);
+    Route::resource('/submission-queue', EventSubmissionQueueController::class)->only(['status','details','index']);
     Route::get('/details', [EventSubmissionQueueController::class,"details"])->name('details');
     Route::post('/status', [EventSubmissionQueueController::class,"status"])->name('status');
     Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
@@ -298,29 +300,27 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
-
-    // Eligible Employee Count 
+    // Eligible Employee Count
     Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
-
     // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');
     Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
     Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
 
-    // Annual and Event Pledge Report 
+    // Annual and Event Pledge Report
     Route::get('/pledges/export', [PledgeReportController::class,'export2csv'])->name('pledges.export2csv');
     Route::get('/pledges/export-progress/{id}', [PledgeReportController::class,'exportProgress'])->name('pledges.export2csv-progress');
     Route::get('/pledges/download-export-file/{id}', [PledgeReportController::class,'downloadExportFile'])->name('pledges.download-export-file');
     Route::resource('/pledges', PledgeReportController::class)->only(['index', 'show']);
 
-    // Annual and Event Charities Report 
+    // Annual and Event Charities Report
     Route::get('/pledge-charities/export', [PledgeCharityReportController::class,'export2csv'])->name('pledge-charities.export2csv');
     Route::get('/pledge-charities/export-progress/{id}', [PledgeCharityReportController::class,'exportProgress'])->name('pledge-charities.export2csv-progress');
     Route::get('/pledge-charities/download-export-file/{id}', [PledgeCharityReportController::class,'downloadExportFile'])->name('pledge-charities.download-export-file');
     Route::resource('/pledge-charities', PledgeCharityReportController::class)->only(['index', 'show']);
 
-    // Charities Report 
+    // Charities Report
     Route::get('/cra-charities/export', [CRACharityReportController::class,'export2csv'])->name('cra-charities.export2csv');
     Route::get('/cra-charities/export-progress/{id}', [CRACharityReportController::class,'exportProgress'])->name('cra-charities.export2csv-progress');
     Route::get('/cra-charities/download-export-file/{id}', [CRACharityReportController::class,'downloadExportFile'])->name('cra-charities.download-export-file');
@@ -363,4 +363,3 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
 
 });
 
-Route::get('/challenge/download/{id}', [ChallengeController::class,'downloadFile'])->name('challenge.download');

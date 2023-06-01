@@ -88,6 +88,7 @@ RUN apt-get update && apt-get install -y \
         libpng-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
+
     
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 

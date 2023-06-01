@@ -360,10 +360,18 @@ class DonateNowController extends Controller
         $one_time_amount = $pledge->one_time_amount;
         $in_support_of = "";
         if ($pledge->type == 'P')  {
-            $pool  = FSPool::current()->where('id', $pledge->f_s_pool_id)->first();
+            $pool  = FSPool::current()->where('f_s_pools.id', $pledge->f_s_pool_id)->join("regions","f_s_pools.region_id","regions.id")->first();
+            $pool['text'] = $pool->name;
+            $pool['additional'] = $pool->notes;
+            $pool['one-time-percentage-distribution'] = 100;
+            $pool['one-time-amount-distribution'] = $one_time_amount;
             $in_support_of = $pool ? $pool->region->name : '';
         } else {
             $charity = Charity::where('id', $pledge->charity_id)->first();
+            $charity['text'] = $charity->charity_name;
+            $charity['additional'] = $charity->status;
+            $charity['one-time-percentage-distribution'] = 100;
+            $charity['one-time-amount-distribution'] = $one_time_amount;
             $in_support_of = $charity ? $charity->charity_name : '';
         }
 
@@ -371,8 +379,11 @@ class DonateNowController extends Controller
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
-            return $pdf->download('Donation Summary.pdf');
+            $date = date("Y-m-d");
+            $charities = [!empty($charity) ? $charity : $pool];
+            $annualOneTimeAmount = $one_time_amount;
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('annualOneTimeAmount','charities','date','user', 'one_time_amount', 'in_support_of'));
+            return $pdf->download('Donate Now Summary - '.date("Y-m-d").'.pdf');
         } else {
             return view('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
         }

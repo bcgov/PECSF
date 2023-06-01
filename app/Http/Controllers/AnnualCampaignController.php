@@ -92,7 +92,7 @@ class AnnualCampaignController extends Controller
         // Distribution page -- Keep the last selected charities (to determine any changes)
         $last_selected_charities = [];
         $last_one_time_amount = null;
-        $last_bi_weekly_amount = null;        
+        $last_bi_weekly_amount = null;
 
 
         $calculatedTotalPercentOneTime = 0;
@@ -349,15 +349,15 @@ class AnnualCampaignController extends Controller
         //
         if ($request->ajax()) {
 
-            // Generate Distribution page or Summary Page 
+            // Generate Distribution page or Summary Page
             if ($request->step == 3 and $request->pool_option == 'C') {
                 return $this->distribution($request);
             }
-            if (($request->step == 3 and $request->pool_option == 'P') or 
+            if (($request->step == 3 and $request->pool_option == 'P') or
                 ($request->step == 4 and $request->pool_option == 'C')) {
                 return $this->summary($request);
             }
-            
+
             return response()->noContent();
 
         }
@@ -531,12 +531,12 @@ class AnnualCampaignController extends Controller
         if ($last_bi_weekly_amount != $biWeeklyAmount) {
             $biweekly_amount_changed = true;
         }
-        // assign the current selection to store for comparison 
+        // assign the current selection to store for comparison
         $last_one_time_amount = $oneTimeAmount;
         $last_bi_weekly_amount = $biWeeklyAmount;
 
         $oneTimePercent = $request->oneTimePercent ? array_sum($request->oneTimePercent) : 100;
-        $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : 100;   
+        $biWeeklyPercent = $request->biWeeklyPercent ? array_sum($request->biWeeklyPercent) : 100;
 
         if ($charities_changed) {
             $oneTimePercent = 100;
@@ -825,7 +825,7 @@ class AnnualCampaignController extends Controller
 
     public function summaryPdf(Request $request, $id) {
 
-        $pledge = Pledge::where('id', $id)->first();
+        $pledge = Pledge::where('pledges.id', $id)->join("campaign_years","campaign_year_id","campaign_years.id")->first();
 
         // Make sure this transaction is for the current logged user
         if (!$pledge) {
@@ -958,7 +958,7 @@ class AnnualCampaignController extends Controller
             $date = date("Y-m-d");
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
                  'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
-            return $pdf->download('Donation Summary.pdf');
+            return $pdf->download('Annual Campaign Summary - '.$pledge->calendar_year.'.pdf');
         }
 
     }
@@ -1198,7 +1198,7 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
                             $new_pledge_charity->additional = $bi_weekly_pledge->name2;
                             $new_pledge_charity->percentage = $bi_weekly_pledge->percent;
-                            $new_pledge_charity->amount = $bi_weekly_pledge->amount;
+                            $new_pledge_charity->amount = $bi_weekly_pledge->amount / 26;
                             $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
                             $new_pledge_charity->goal_amount = $new_pledge_charity->amount * $campaignYear->number_of_periods;
 

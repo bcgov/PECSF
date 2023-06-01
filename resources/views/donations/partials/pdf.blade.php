@@ -43,9 +43,11 @@
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <span>PECSF Donation Summary</span>
+    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>
+<br>
 <hr>
 
 <span><i>Please note that this is not a Tax Receipt</i></span>
@@ -80,13 +82,43 @@
                             <tr class="">
                                 <td>{{ $pledge->donation_type }}</td>
                                 @if ($pledge->type == 'P')
-                                    <td>{{ $pledge->region }}
-                                    </td>
+                                    {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
+                                    <td>{{ $pledge->region }}   </td>
                                 @else
                                     <td>
-                                        @foreach($pledge->distinct_charities()->get() as $charity)
-                                        {{ $charity->name }}<br>
-                                        @endforeach
+                                        @if ($pledge->source == 'GF')
+                                            @switch($pledge->donation_type)
+                                                @case('Special Campaign')
+                                                    {{ $pledge->region }}
+                                                    @break
+                                                @case('Donate Now')
+                                                    {{ $pledge->region }}
+                                                    @break
+                                                @default
+                                                    <a type="button" class="more-info"
+                                                       data-source="{{ $pledge->source }}"
+                                                       data-type="{{ $pledge->donation_type }}"
+                                                       data-id="{{ $pledge->id }}"
+                                                       data-frequency="{{ $pledge->frequency }}"
+                                                       data-yearcd="{{ $pledge->yearcd }}">
+                                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
+                                                    </a>
+
+                                            @endswitch
+                                        @else
+                                            @if ($pledge->donation_type == 'Donate Today')
+                                                {{ $pledge->number_of_charities }}
+                                            @else
+                                                <a type="button" class="more-info "
+                                                   data-source="{{ $pledge->source  }}"
+                                                   data-type="{{ $pledge->donation_type }}"
+                                                   data-id="{{ $pledge->id }}"
+                                                   data-frequency="{{ $pledge->frequency }}"
+                                                   data-yearcd="{{ $pledge->yearcd }}">
+                                                    {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
+                                                </a>
+                                            @endif
+                                        @endif
                                     </td>
                                 @endif
                                 <td>{{ $pledge->frequency }} </td>

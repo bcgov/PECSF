@@ -27,22 +27,22 @@ class DonateNowRequest extends FormRequest
 
         $my_rules = [];
 
-        if ($this->step == 1) { 
-            $my_rules = array_merge($my_rules, 
+        if ($this->step == 1) {
+            $my_rules = array_merge($my_rules,
                 [
                     'pool_option'  => ['required', Rule::in(['C', 'P']) ],
                 ]
             );
-        } 
+        }
 
         if ($this->step >= 2) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     'step' => ['required'],
                     'pool_option'  => ['required', Rule::in(['C', 'P']) ],
                     'pool_id'      => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', [ Rule::exists("f_s_pools", "id")->whereNull("deleted_at"), ]) ],
                     // 'charity_id'   => ['required_if:pool_option,C', Rule::when( $this->pool_option == 'P', ['exists:charities,id']) ],
-                    'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1', 'max:1']) ], 
+                    'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1', 'max:1']) ],
                     'charities.*' =>  [ Rule::when( $this->pool_option == 'C', ['exists:charities,id']) ],
 
                 ]
@@ -50,11 +50,11 @@ class DonateNowRequest extends FormRequest
         }
 
         if ($this->step >= 3) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     // 'one_time_amount_custom'  => [ Rule::when( $this->one_time_amount =='', ['required','numeric']) ],
                     'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount),
-                                                    ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                                                    ['required','numeric','min:1', 'regex:/^(-?\w+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
@@ -82,7 +82,7 @@ class DonateNowRequest extends FormRequest
                 }
             }
 
-            
+
         });
     }
 
@@ -104,12 +104,12 @@ class DonateNowRequest extends FormRequest
             'charities.min' => 'At least one charity must be specified.',
             'charities.max' => 'More than one charity were specified.',
             'charities.*.exists' =>  'The invalid charity entered.',
-
+            'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
             'one_time_amount_custom.required' => 'The amount is required.',
-            'one_time_amount_custom.min'      => 'The min amount is $ 1.0.',
-            'one_time_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
+            'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1',
+            'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
+ ];
 
-        ];
     }
 
 }
