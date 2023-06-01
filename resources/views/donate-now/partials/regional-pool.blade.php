@@ -1,10 +1,16 @@
 
-<h3 class="mt-1">2. Select your regional charity pool</h3>
+<h3 class="mt-1">
+    @if(str_contains(Route::current()->getName(), 'donate-now'))
+        <h3>2. Choose your regional fund supported pool</h3>
+    @else
+        <h3>2. Select your regional charity pool</h3>
+    @endif
+</h3>
 <div>
     <p class="p-1"></p>
-    <div class="card mx-3 p-0 pl-2 bg-primary">
+    <div class="card p-0 pl-2 bg-primary">
         <div class="card-body bg-light">
-          By choosing this oprion your donation will support the designated programs of the regional
+          By choosing this option your donation will support the designated programs of the regional
           Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
           {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
         </div>
@@ -22,14 +28,14 @@
         @foreach( $pools as $pool )
         <div class="col mb-4">
 
-            <div class="card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->id }}">
                 {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                             width="50" height="50"> --}}
                 <div class="card-body m-1 p-2">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pool_id" id="regional_pool{{ $pool->id }}"
                             value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
-                        <label class="form-check-label  pl-3" for="xxxpool{{ $pool->id }}">
+                        <label style="font-weight:700;" class="form-check-label h5 pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
                     </div>

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use stdClass;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\DB;
@@ -27,10 +28,11 @@ class ImportNonGovPledgeHistory extends Command
      */
     protected $description = 'Import the Non Gov Pledge History data from BI';
 
-        /* Variable for logging */
-        protected $message;
-        protected $status;
-        protected $row_count;
+    /* Variable for logging */
+    protected $task;
+    protected $message;
+    protected $status;
+    protected $row_count;
 
     /**
      * Create a new command instance.
@@ -54,34 +56,58 @@ class ImportNonGovPledgeHistory extends Command
      */
     public function handle()
     {
-        // Determine the start year
-        $last_task = ScheduleJobAudit::where('job_name', $this->signature)
-                            ->where('status', 'Completed')
-                            ->first();
 
-        $start_year = 2005;
-        if ($last_task) {
-            $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
-        }
+        try {
 
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+            // Determine the start year
+            $last_task = ScheduleJobAudit::where('job_name', $this->signature)
+                                ->where('status', 'Completed')
+                                ->first();
+
+            $start_year = 2005;
+            if ($last_task) {
+                $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
+            }
+
+            $this->LogMessage( now() );    
+            $this->LogMessage("Step - 1 : Create - Non-Gov Pledge History");
+            for ($yr = $start_year; $yr <= now()->year; $yr++) {
+                $this->UpdateNonGovPledgeHistory($yr);
+            }
+
+            $this->LogMessage( now() );    
+            $this->LogMessage("Step - 2 : Create - Non-Gov Pledge History Summary");
+            $this->UpdatePledgeHistorySummary();
+
+            $this->LogMessage( now() );    
         
-        $this->LogMessage( now() );    
-        $this->LogMessage("Step - 1 : Create - Non-Gov Pledge History");
-        for ($yr = $start_year; $yr <= now()->year; $yr++) {
-            $this->UpdateNonGovPledgeHistory($yr);
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message = $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
         }
-
-        $this->LogMessage( now() );    
-        $this->LogMessage("Step - 2 : Create - Non-Gov Pledge History Summary");
-        $this->UpdatePledgeHistorySummary();
-
-        $this->LogMessage( now() );    
 
         // Update the Task Audit log
         $this->task->end_time = Carbon::now();
@@ -102,10 +128,12 @@ class ImportNonGovPledgeHistory extends Command
         $this->LogMessage( 'Loading pledge history data for '. $in_year);
         $filter = '(yearcd eq '. $in_year .')';
                 
-        try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
+        // try {
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_REPORT_NON_GOV_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
+
+        if ($response->successful()) {
 
             $row_count = json_decode($response->body())->{'@odata.count'};
             
@@ -187,20 +215,31 @@ class ImportNonGovPledgeHistory extends Command
 
                     $this->status = 'Error';
                     $this->LogMessage( $response->status() . ' - ' . $response->body() );
+                    
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
 
                 }
 
             }
 
-        } catch (\Exception $ex) {
+        } else {
 
-            // write to log message 
             $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
-
-            return 1;
+            $this->LogMessage( $response->status() . ' - ' . $response->body() );
+            
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
 
         }
+
+        // } catch (\Exception $ex) {
+
+        //     // write to log message 
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
+
+        //     return 1;
+
+        // }
 
     }
 

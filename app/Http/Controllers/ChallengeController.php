@@ -161,9 +161,7 @@ class ChallengeController extends Controller
                                 else donors end) as ee_count
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
-                       and round((case when participation_rate > 0 then 
-                                            donors / (participation_rate / 100) 
-                                else donors end),2) >= 5
+                       and donors >= 5
                      order by participation_rate desc;     
                 SQL;
                 

@@ -1,4 +1,4 @@
-<div id="method-selection-area" class="mx-3">
+<div id="method-selection-area">
     <p class="p-1"></p>
 
     <div class="card btn btn-outline-primary text-left {{ $pool_option == "C" ? 'active' : '' }}" id="card-pool1">
