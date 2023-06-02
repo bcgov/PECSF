@@ -35,8 +35,13 @@
                     <div class="form-group row m-0">
                         <label for="charity_status" class="col-sm-3 col-form-label col-form-label">Status:
                             </label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control form-control" name="charity_status" value="" disabled>
+                        <div class="col-sm-4">
+                            {{-- <input type="text" class="form-control form-control" name="charity_status" value="" disabled> --}}
+                            <select id="charity_status" class="form-control" name="charity_status">
+                                @foreach ($charity_status_list as $status)
+                                    <option value="{{ $status }}">{{ $status }}</option>
+                                @endforeach 
+                            </select>
                         </div>
                     </div>
 

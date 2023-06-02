@@ -462,7 +462,7 @@
 			e.preventDefault();
 
             // clean up old error messages
-            var fields = ['alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_postal_code', 
+            var fields = ['charity_status', 'alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_postal_code', 
                         'alt_country', 'financial_contact_name', 'financial_contact_title',
                         'financial_contact_email', 'comments'];
             $.each( fields, function( index, field_name ) {
@@ -514,7 +514,7 @@
             info = 'Confirm to update this record?';
             if (confirm(info))
             {
-                var fields = ['alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_postal_code', 
+                var fields = ['charity_status', 'alt_address1', 'alt_address2', 'alt_city', 'alt_province', 'alt_postal_code', 
                             'alt_country', 'financial_contact_name', 'financial_contact_title',
                             'financial_contact_email', 'comments'];
                 $.each( fields, function( index, field_name ) {
