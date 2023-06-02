@@ -2,16 +2,19 @@
 
 namespace App\Imports;
 
+use Exception;
 use App\Models\Charity;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use App\Models\CharityStaging;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
-use Maatwebsite\Excel\Concerns\WithStartRow;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterImport;
-use Maatwebsite\Excel\Events\BeforeImport;
 
 class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, WithCustomCsvSettings, WithEvents
 {
@@ -65,11 +68,21 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
             if(empty($row[4]))
             {
                 $this->skipped_count += 1;
-                $this->logMessage('[SKIPPED] ' . json_encode($row) );
+                $this->logMessage('[SKIPPED - missing eff date] ' . json_encode($row) );
                 continue;
             }
 
             try{
+
+                $old_charity = Charity::where('registration_number', $row[0])
+                                    ->first();
+
+                if ($old_charity->charity_status == 'Pending-Dissolution') {
+                    $this->skipped_count += 1;
+                    $this->logMessage('[SKIPPED - Pending-Dissolution] ' . json_encode($old_charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])) );
+                    continue;
+                }
+
                 $charity = Charity::UpdateOrCreate([
                     'registration_number' => $row[0],
                 ], [
@@ -87,20 +100,39 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     'country' => $row[12],
                     'postal_code' => $row[13],
                 ]);
-            }
-            catch(Exception $e){
-                continue;
-            }
 
-            if ($charity->wasRecentlyCreated) {
-                // $this->logMessage('[CREATED] ' . json_encode($row) );
-                $this->created_count += 1;
-            } elseif ($charity->wasChanged() ) {
-                $changes = $charity->getChanges();
-                // $this->logMessage('[UPDATED] ' . json_encode($changes) );
-                $this->updated_count += 1;
-            } else {
-                // No Action
+                if ($charity->wasRecentlyCreated) {
+                    // $this->logMessage('[CREATED] ' . json_encode($row) );
+                    $this->logMessage('[CREATED] ' . json_encode( $pledge->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])));
+                    $this->created_count += 1;
+                } elseif ($charity->wasChanged() ) {
+                    $changes = $charity->getChanges();
+                    unset($changes["updated_at"]);
+                    $this->logMessage('[UPDATED] on RN# ' . $charity->registration_number . ' - ' . json_encode($changes) );
+                    $this->updated_count += 1;
+                } else {
+                    // No Action
+                }
+
+                $charityStaging = CharityStaging::create([
+                    'history_id' => $this->history_id,
+                    'registration_number' => $row[0],
+                    'charity_name' => $row[1],
+                    'charity_status' => $row[2],
+                    
+                ]);
+
+            }
+            catch(Exception $ex){
+
+                $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+                $history->status = 'Error';
+                $history->message .= $ex->getMessage() . PHP_EOL;
+                $history->end_at = now();
+                $history->save();
+
+                // write message to the log  
+                throw new Exception($ex);
             }
 
         }
@@ -152,6 +184,43 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
             },
             AfterImport::class => function (AfterImport $event) {
 
+                // handle the record not in CRA file
+                $history_id = $this->history_id;
+                $sql = Charity::whereNotExists(function($query) use( $history_id) {
+                                     $query->select(DB::raw(1))
+                                           ->from('charity_stagings')
+                                           ->where('history_id', $history_id)
+                                           ->whereColumn('charities.registration_number', 'charity_stagings.registration_number');
+                                })
+                                ->where('charity_status', '!=', 'No-CRA-match');
+
+                $this->logMessage('');
+                $this->logMessage('-- Additional step to mark charity which not found in CRA file : ');
+                $this->logMessage('');
+
+                $not_in_cra_count = 0;
+                $sql->chunk(1000, function($chuck) use( &$not_in_cra_count ) {
+
+                    foreach($chuck as $charity)  {
+
+                        $charity->charity_status = 'No-CRA-match';
+                        $charity->save();
+
+                        $changes = $charity->getChanges();
+                        unset($changes["updated_at"]);
+                        $this->logMessage('[UPDATED STATUS] on RN# ' . $charity->registration_number . ' - ' . json_encode($changes) );
+
+                        $not_in_cra_count += 1;
+
+                    }
+                    
+                });
+
+                $this->logMessage('');
+
+                // clean up the staging data
+                CharityStaging::where('history_id', $history_id)->delete();
+
                 $message = 'Import process ended at : ' . now()  . PHP_EOL;
                 $message .= PHP_EOL;                
 
@@ -164,14 +233,16 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 }
 
                 $message .= PHP_EOL;
-                $message .= 'Total Row count     : ' . $this->row_count . PHP_EOL;
-                $message .= 'Total Process count : ' . $this->done_count . PHP_EOL;
+                $message .= 'Total Row count        : ' . $this->row_count . PHP_EOL;
+                $message .= 'Total Process count    : ' . $this->done_count . PHP_EOL;
                 $message .= PHP_EOL;                
 
                 $message .= PHP_EOL;                                
-                $message .= 'Total Created count : ' . $this->created_count . PHP_EOL;
-                $message .= 'Total Updated count : ' . $this->updated_count . PHP_EOL;
-                $message .= 'Total Skipped count : ' . $this->skipped_count . PHP_EOL;
+                $message .= 'Total Created count              : ' . $this->created_count . PHP_EOL;
+                $message .= 'Total Updated count              : ' . $this->updated_count . PHP_EOL;
+                $message .= 'Total Updated (Not-in-CRA) count : ' . $not_in_cra_count . PHP_EOL;
+                $message .= 'Total Skipped count              : ' . $this->skipped_count . PHP_EOL;
+
 
                 $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
 
