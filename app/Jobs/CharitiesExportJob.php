@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use App\Models\ProcessHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -240,6 +241,18 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
            'status' => 'Completed',
            'end_at' => now(),
         ]);
+
+        
+        // Clean Up files over 14 days
+        $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
+        $prcs = ProcessHistory::where('id', $this->history_id)->first();
+
+        $file_names = ProcessHistory::where('process_name', $prcs->process_name)
+                        ->whereBetween('updated_at', [ today()->subdays( $retention_days + 90), today()->subdays( $retention_days + 1), ])
+                        ->pluck('filename')
+                        ->toArray();
+
+        Storage::disk('public')->delete( $file_names );
 
     }
 

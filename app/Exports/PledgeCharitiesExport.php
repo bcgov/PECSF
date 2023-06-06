@@ -4,16 +4,17 @@ namespace App\Exports;
 
 // use App\Models\EmployeeJob;
 use App\Models\Pledge;
-use App\Models\PledgeCharityStaging;
 use App\Models\ProcessHistory;
 use App\Models\BankDepositForm;
-
 use Illuminate\Support\Facades\DB;
+
+use App\Models\PledgeCharityStaging;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeExport;
-use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -168,6 +169,22 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                     'message' => 'Exported completed',
                     'end_at' => now(),
                 ]);
+
+                // Clean up Staging table 
+                PledgeCharityStaging::where('history_id', $this->history_id)
+                                        ->orWhere('updated_at', '<', today() )
+                                        ->delete(); 
+
+                // Clean Up files over 14 days
+                $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
+                $prcs = ProcessHistory::where('id', $this->history_id)->first();
+
+                $file_names = ProcessHistory::where('process_name', $prcs->process_name)
+                                ->whereBetween('updated_at', [ today()->subdays( $retention_days + 90), today()->subdays( $retention_days + 1), ])
+                                ->pluck('filename')
+                                ->toArray();
+
+                Storage::disk('public')->delete( $file_names );
 
             },
 
