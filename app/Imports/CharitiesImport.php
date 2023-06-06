@@ -77,7 +77,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 $old_charity = Charity::where('registration_number', $row[0])
                                     ->first();
 
-                if ($old_charity->charity_status == 'Pending-Dissolution') {
+                if ($old_charity && $old_charity->charity_status == 'Pending-Dissolution') {
                     $this->skipped_count += 1;
                     $this->logMessage('[SKIPPED - Pending-Dissolution] ' . json_encode($old_charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])) );
                     continue;
@@ -103,7 +103,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
                 if ($charity->wasRecentlyCreated) {
                     // $this->logMessage('[CREATED] ' . json_encode($row) );
-                    $this->logMessage('[CREATED] ' . json_encode( $pledge->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])));
+                    $this->logMessage('[CREATED] ' . json_encode( $charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])));
                     $this->created_count += 1;
                 } elseif ($charity->wasChanged() ) {
                     $changes = $charity->getChanges();
