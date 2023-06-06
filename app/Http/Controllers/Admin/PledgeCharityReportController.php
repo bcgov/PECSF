@@ -109,15 +109,19 @@ class PledgeCharityReportController extends Controller
 
             // Prepare for the datatables
             $processes = ProcessHistory::where('process_name', $this->process_name);
-
             return Datatables::of($processes)
                 // ->addColumn('short_message', function ($process) {
                 //     return substr($process->message, 0, 255);
                 // })
                 ->addColumn('download_file_link', function ($process) {
+                    $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
                     if ($process->status == 'Completed') {
-                        $url = route('reporting.pledge-charities.download-export-file', $process->id);
-                        $link = '<a class="" href="'.$url.'">'. $process->original_filename . '</a>';
+                        if ($process->updated_at >= today()->subdays($retention_days) ) {
+                                $url = route('reporting.pledge-charities.download-export-file', $process->id);
+                                $link = '<a class="" href="'.$url.'">'. $process->original_filename . '</a>';
+                        } else {
+                            $link = $process->original_filename;    
+                        }
                     } else {
                         // $link = $process->original_filename;
                         $link = '';
