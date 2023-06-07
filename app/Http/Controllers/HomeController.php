@@ -30,6 +30,12 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        return view('home');
+
+        $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                            ->orderBy('calendar_year', 'desc')
+                            ->first();
+
+        return view('home', compact('campaignYear'));
+
     }
 }
