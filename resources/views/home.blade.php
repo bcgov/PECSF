@@ -5,8 +5,8 @@
 <style>
     .home-tiles .card {
         border-radius: 12px;
-        border: 2px solid #ebedec;
-        background-color: #f8fafc;
+        border: 2px solid #b2b3c533;
+        background-color: #ffffff;
     }
 
     .home-tiles .card:hover {
@@ -40,14 +40,14 @@
 <div class="container mb-4">
   <div class="row">
     <div class="col-12 col-xl-12 ">
-        <h1 class="text-center text-primary">Welcome, {{ Auth::user()->name }}</h1>
-        <p class="text-center h5 text-primary"><b>Choose from the options below:</b></p>
+        <h1 class="text-center text-secondary">Welcome, {{ Auth::user()->name }}</h1>
+        <p class="text-center h5 text-secondary"><b>Choose from the options below:</b></p>
     </div>
   </div>
 </div>  
 
 
-<div class="container home-tiles">
+<div class="container home-tiles px-0">
   <div class="row" style="min-height:580px" >
 
     <div class="col col-md-6">
@@ -67,7 +67,7 @@
     </div>
 
     <div class="col col-md-6">
-      <div class="container h-100" >
+      <div class="container h-100 px-0" >
           <div class="row h-50 pb-2">
             <div class="col col-md-6">
               <a href="#" data-toggle="modal" data-target="#learn-more-modal">                  
@@ -75,15 +75,15 @@
                     <div class="card-body d-table-cell align-middle text-center">
                       {{-- <span  class="card-body text-center" data-toggle="modal" data-target="#learn-more-modal">                   --}}
                         <i class="nav-icon fas fa-info-circle fa-2x"></i><br>
-                        <p class="font-weight-bold"><span></span></p>
-                        <p class="">Learn more about PECSF and how to donate</p>
+                        <p class="font-weight-bold"><span>Learn</span></p>
+                        <p class="">Need more information about PECSF or how to donate ?</p>
+                        <p></p>
                       {{-- </span> --}}
                     </div>
 
                 </div>
               </a>                    
             </div>
-
             <div class="col col-md-6">
               <a href="{{route('volunteering.index')}}">
                 <div class="card px-2 d-table" style="height: 100%">
@@ -91,7 +91,7 @@
                     {{-- <a class="card-body text-center"  href="{{route('volunteering.index')}}"> --}}
                       <i class="x nav-icon fas fa-hands-helping fa-2x"></i>
                       <p class="font-weight-bold"><span >Volunteering</span></p>
-                      <p class="" > Looking to do more than just donate? Volunteer to help run a campaign or host an event.</p>
+                      <p class="" >Looking to do more than just donate? Volunteer to help run a campaign or host an event.</p>
                     {{-- </a> --}}
                   </div>
                 </div>
@@ -100,7 +100,7 @@
 
           </div>
 
-          <div class="row h-50 pt-2">
+          <div class="row h-50 pt-3">
             <div class="col col-md-6">
               <a href="{{route('bank_deposit_form')}}">
                 <div class="card px-2 d-table" style="height: 100%">
@@ -122,7 +122,8 @@
                     {{-- <a href="{{route('contact')}}" class="card-body"> --}}
                         <i class="nav-icon fas fa-question-circle fa-2x "></i><br>
                         <p class="text-primary font-weight-bold"><span style="font-size:22px;">Contact</span></p>
-                        <p class="">Got questions? &nbsp;We are here to help!</p>
+                        <p class="">Got questions? &nbsp;We are here to help !</p>
+                        <p class="p-1"></P>
                     {{-- </a> --}}
                   </div>
                 </div>
