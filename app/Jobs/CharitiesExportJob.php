@@ -142,7 +142,7 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
             'contact_email',
                   
             'created_at',
-            'update_at',
+            'updated_at',
             'notes',
         ];
     
