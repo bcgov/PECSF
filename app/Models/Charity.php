@@ -109,10 +109,16 @@ class Charity extends Model implements Auditable
 
     public static function charity_status_list()
     {
-        return self::where('charity_status', '<>', '')
+        $arr = self::where('charity_status', '<>', '')
                     ->orderBy('charity_status')
                     ->distinct()
-                    ->pluck('charity_status');
+                    ->pluck('charity_status')
+                    ->toArray();
+        
+        array_push($arr, 'No-CRA-match');
+        array_push($arr, 'Pending-Dissolution');
+
+        return $arr;
     }
 
     public static function office_city_list()
