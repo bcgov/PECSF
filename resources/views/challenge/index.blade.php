@@ -1,13 +1,5 @@
-@php
-    function ordinal($number) {
-        $ends = array('th','st','nd','rd','th','th','th','th','th','th');
-        if ((($number % 100) >= 11) && (($number%100) <= 13))
-            return $number. 'th';
-        else
-            return $number. $ends[$number % 10];
-    }
-@endphp
 @extends('adminlte::page')
+
 @section('content_header')
 <div class="mt-3">
 <h1>Challenge</h1>
@@ -26,8 +18,8 @@
     If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
-@section('content')
 
+@section('content')
 
 <div class="card">
     <div class="card-body">
@@ -216,6 +208,10 @@ $(function() {
         serverSide: true,
         select: true,
         paging: false,
+        "initComplete": function(settings, json) {
+            min_height = $(".wrapper").height();
+            $(".main-sidebar").css('min-height', min_height);
+        },
         ajax: {
             url: '{!! route('challenge.index') !!}',
             data: function (data) {
