@@ -121,7 +121,7 @@ class ChallengeController extends Controller
                                     ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ?
                                         -- and historical_challenge_pages.organization_name = A.organization_name
                                         and historical_challenge_pages.business_unit_code = A.business_unit_code
-                                        ),0) desc
+                                        ),0)
                                         
                         SQL;
 
@@ -147,7 +147,7 @@ class ChallengeController extends Controller
                                                                 and D1.as_of_date <= ?
                                                                 )     
                             and eligible_employee_count >= 5
-                            order by participation_rate desc, abs(change_rate) desc;     
+                            order by participation_rate desc, abs(change_rate);     
                         SQL;
 
                         $challenges = DB::select($sql, $parameters);
@@ -170,7 +170,7 @@ class ChallengeController extends Controller
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
                        and donors >= 5
-                     order by participation_rate desc, abs(`change`) desc;     
+                     order by participation_rate desc, abs(`change`);     
                 SQL;
                 
                 $challenges = DB::select($sql, $parameters);
