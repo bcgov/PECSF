@@ -176,16 +176,25 @@ class CampaignPledgeRequest extends FormRequest
                 }
 
                 // Check duplicate charity id
+                $combined = [];
+                for ($i=0; $i < count($charities); $i++) {
+                   array_push($combined, $charities[$i] . '|' . $this->additional[$i]  );
+                }
+
                 $dups = array_count_values(
-                    array_filter($charities, fn($value) => !is_null($value) && $value !== '')
+                    // array_filter($charities, fn($value) => !is_null($value) && $value !== '')
+                    array_filter($combined, fn($value) => !is_null($value) && $value !== '')
                 );
 
                 for ($i=0; $i < count($charities); $i++) {
-                    if ( array_key_exists($charities[$i],$dups) && $dups[ $charities[$i] ] > 1) {
-                        $validator->errors()->add('charities.' .$i, 'The duplicated charity is entered.');
+                    $key = $charities[$i]. '|' . $this->additional[$i]; 
+                    // if ( array_key_exists($charities[$i],$dups) && $dups[ $charities[$i] ] > 1) {
+                    if ( array_key_exists($key,$dups) && $dups[ $key ] > 1) {
+                        // $validator->errors()->add('charities.' .$i, 'The duplicated charity is entered.');
+                        $validator->errors()->add('additional.' .$i, 'The duplicated Program or Branch Name is entered.');
                     }
                 }
-
+// dd( [$this->request, $dups, $combined, $validator->errors() ]);
             // if ($this->somethingElseIsInvalid()) {
             //     $validator->errors()->add('field', 'Something is wrong with this field!');
             // }
