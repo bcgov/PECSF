@@ -415,7 +415,11 @@ $(function () {
                 $('#admin-pldege-campaign-form [name='+ field_name +']').removeClass('is-invalid');
             });
             $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="charities[]"]').removeClass('is-invalid');
             $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="percentages[]"]').removeClass('is-invalid');
+            $('#admin-pldege-campaign-form [name="additional[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="additional[]"]').removeClass('is-invalid');
             // Amount field 
             $('.pay_period_amount_error').html('');
             $('.one_time_amount_error').html('');
