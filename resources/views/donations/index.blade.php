@@ -138,37 +138,37 @@
 <script>
 
 $(function () {
-    $('#learn-more-modal').on('slide.bs.carousel', function (e) {
+    // $('#learn-more-modal').on('slide.bs.carousel', function (e) {
 
-        movie_id = $('#movie_player').attr('movie-id');
-        $('#movie_player').attr('src', movie_id);
+    //     movie_id = $('#movie_player').attr('movie-id');
+    //     $('#movie_player').attr('src', movie_id);
 
-        if(e.to == 0) {
-            $(this).find(".prev-btn").addClass("d-none");
-            $(this).find(".start-btn").removeClass("d-none");
-            $(this).find(".next-btn").addClass("d-none");
-        }
-        else if (e.to === 8) {
-            $(this).find(".next-btn").addClass("d-none");
-            $(this).find(".ready-btn").removeClass("d-none");
-        } else {
-            $(this).find(".start-btn").addClass("d-none");
-            $(this).find(".prev-btn").removeClass("d-none");
-            $(this).find(".next-btn").removeClass("d-none")
-            $(this).find(".ready-btn").addClass("d-none");
-        }
+    //     if(e.to == 0) {
+    //         $(this).find(".prev-btn").addClass("d-none");
+    //         $(this).find(".start-btn").removeClass("d-none");
+    //         $(this).find(".next-btn").addClass("d-none");
+    //     }
+    //     else if (e.to === 8) {
+    //         $(this).find(".next-btn").addClass("d-none");
+    //         $(this).find(".ready-btn").removeClass("d-none");
+    //     } else {
+    //         $(this).find(".start-btn").addClass("d-none");
+    //         $(this).find(".prev-btn").removeClass("d-none");
+    //         $(this).find(".next-btn").removeClass("d-none")
+    //         $(this).find(".ready-btn").addClass("d-none");
+    //     }
 
-    })
+    // })
 
-    $('#learn-more-modal').on('show.bs.modal', function (event) {
-        $('#donateGuideCarousel').carousel(0);
-        movie_id = $('#movie_player').attr('movie-id');
-        $('#movie_player').attr('src', movie_id);
-    })
+    // $('#learn-more-modal').on('show.bs.modal', function (event) {
+    //     $('#donateGuideCarousel').carousel(0);
+    //     movie_id = $('#movie_player').attr('movie-id');
+    //     $('#movie_player').attr('src', movie_id);
+    // })
 
-    $("#learn-more-modal").on("hidden.bs.modal", function () {
-        $('#movie_player').attr('src', '')
-    });
+    // $("#learn-more-modal").on("hidden.bs.modal", function () {
+    //     $('#movie_player').attr('src', '')
+    // });
 
     $('.more-info').click( function(event) {
         event.stopPropagation();
