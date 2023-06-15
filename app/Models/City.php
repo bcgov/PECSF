@@ -15,4 +15,9 @@ class City extends Model
         'TGB_REG_DISTRICT',
         'DescrShort',
     ];
+
+    public function region()
+    {
+        return $this->belongsTo(Region::Class, 'TGB_REG_DISTRICT', 'code')->withDefault();
+    }
 }

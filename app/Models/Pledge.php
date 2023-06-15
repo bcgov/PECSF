@@ -129,6 +129,31 @@ class Pledge extends Model implements Auditable
         ]);
     }
 
+    public function pecsf_user_region() {
+
+        $region = Region::where('code', '=', function ($query) {
+            $query->select('TGB_REG_DISTRICT')
+                ->from('cities')
+                ->where('cities.city', $this->city)
+                ->limit(1);
+        })->first();
+        
+        return $region;
+
+    }
+
+    public function pecsf_user_bu() {
+
+        $bu = BusinessUnit::where('code', '=', function ($query) {
+            $query->select('bu_code')
+                ->from('organizations')
+                ->where('id', $this->organization_id)
+                ->limit(1);
+        })->first();
+
+        return $bu;
+    }
+
     // public function scopeOnlyCampaignYear($query, $campaign_year) {
 
     //     $cy = CampaignYear::where('calendar_year', $campaign_year )->first();
