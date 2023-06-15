@@ -101,7 +101,21 @@
                         <label for="">City</label>
                         <input type="text" class="form-control"  value="{{ $pledge->city }}" disabled>
                     </div>
-                </div>                
+                </div>
+                <div class="form-row">
+                    <div class="col-md-4 mb-4">
+                        <label for="">Business Unit</label>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu() ? 
+                                ($pledge->pecsf_user_bu() ? $pledge->pecsf_user_bu()->name . ' (' . 
+                                $pledge->pecsf_user_bu()->code . ')' : '' ) : '' }}" disabled>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label for="">Region</label>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_region() ?
+                                ($pledge->pecsf_user_region() ? $pledge->pecsf_user_region()->name . ' (' . 
+                                                    $pledge->pecsf_user_region()->code . ')' : '' ) : '' }}" disabled>
+                    </div>
+                </div>                   
             @endif
             </div>
         </div>
