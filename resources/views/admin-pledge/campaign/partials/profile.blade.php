@@ -98,7 +98,8 @@
                     <select class="form-control" style="width:100%;" name="pecsf_city" id="pecsf_city" >
                         <option value="">Select a City</option>
                         @foreach ($cities as $city)
-                            <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || (isset($pledge) && $city->city == $pledge->city) ? 'selected' : '' }}>
+                            <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || (isset($pledge) && $city->city == $pledge->city) ? 'selected' : '' }}
+                                        data-region="{{ $city->region ? $city->region->name : '' }}">
                                 {{ $city->city }}</option>
                         @endforeach
                     </select>
@@ -106,6 +107,20 @@
                    <input type="text" class="form-control" id="pecsf_city" name="pecsf_city"
                       value="{{ ( isset($pledge) ? $pledge->city : '') }}" readonly>
                 @endif
+            </div>
+            <div class="col-md-3 mb-3">
+            </div>
+            <div class="col-md-4 mb-4">
+                <label for="pecsf_bu">Business Unit</label>
+                <input type="text" class="form-control border-0" id="pecsf_bu" name="pecsf_bu"
+                    value="{{ (isset($pledge) && $pledge->pecsf_user_bu() ) ? $pledge->pecsf_user_bu()->name . ' (' . $pledge->pecsf_user_bu()->code . ')' : '' }}"
+                    readonly>
+            </div>
+            <div class="col-md-4 mb-4">
+                <label for="pecsf_region">Region</label>
+                <input type="text" class="form-control border-0" id="pecsf_region" name="pecsf_region"
+                    value="{{ (isset($pledge) && $pledge->pecsf_user_region() ) ? $pledge->pecsf_user_region()->name . ' (' . $pledge->pecsf_user_region()->code . ')' : '' }}"
+                    readonly>
             </div>
         </div>
 
