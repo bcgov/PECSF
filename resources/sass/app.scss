@@ -224,10 +224,25 @@ body{
     max-height:250px;
 }
 .custom.pagination .page-item{
-    padding: 4px 8px 4px 8px;
-    border: #ccc 1px solid;
-    margin: 4px;
+    padding: 4px 12px 4px 12px;
+    border: #a2adb7 2px solid;
+    margin-top: 1.2em;
+    font-weight: bold;
 }
+
+ul.custom.pagination li:nth-child(n+2) {
+    margin-left: -2px;
+}
+
+ul.custom.pagination li.active {
+    background-color: #1a5a96;
+    color: white; 
+    border: #1a5a96 2px solid;
+}
+
+
+
+
 .invalid-feedback{
     font-size:14px;
     font-family:"BCSans";
