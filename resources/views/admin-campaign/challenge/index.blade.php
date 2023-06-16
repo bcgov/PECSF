@@ -18,8 +18,8 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-12"> <label class="text-primary"><h1>Challenge Page Updates</h1></label></div>
+            <div class="row pb-2">
+                <div class="col-md-12"><h4 class="text-primary">Challenge Page Updates</h4></div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-3">
@@ -37,23 +37,12 @@
                     <input type="date" class="form-control input-control" name="challenge_final_date" 
                                 value="{{ $setting->challenge_final_date->toDateString() }}" />
                 </div>
-                <div class="col-md-3">
-                    <label>&nbsp;</label><br>
-                    <a class="save btn form-control btn-primary">Save</a>
-                </div>
             </div>
   
-        
-        </div>
-    </div>
-
-
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-12"> <label class="text-primary"><h1>Campaign Page Updates</h1></label></div>
+            <div class="row pt-4">
+                <div class="col-md-12"><h4 class="text-primary">Daily Campaign Updates</h4></div>
             </div>
-            <div class="form-row">
+            <div class="form-row pt-2">
                 <div class="form-group col-md-3">
                     <label for="campaign_start_date">Start Date</label>
                     <input type="date" class="form-control input-control" name="campaign_start_date" 
@@ -64,14 +53,19 @@
                     <input type="date" class="form-control input-control" name="campaign_end_date" 
                                 value="{{ $setting->campaign_end_date->toDateString() }}" />
                 </div>
-                {{-- <div class="form-group col-md-3">
+                <div class="form-group col-md-3">
                     <label for="campaign_final_date">Final Date</label>
                     <input type="date" class="form-control input-control" name="campaign_final_date" 
                                 value="{{ $setting->campaign_final_date->toDateString() }}" />
-                </div> --}}
-                <div class="col-md-3">
-                    <label>&nbsp;</label><br>
+                </div>
+            </div>
+
+            <div class="row pt-4 pl-2">
+                <div>
                     <a class="save btn form-control btn-primary">Save</a>
+                </div>
+                <div class="pl-2">
+                    <a href="/administrators/dashboard" class="btn form-control btn-secondary">Cancel</a>
                 </div>
             </div>
         
@@ -86,23 +80,9 @@
 
 @push('css')
 
-    {{-- <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet"> --}}
-	{{-- <style>
-	#campaignyear-table_filter label {
-		text-align: right !important;
-        padding-right: 10px;
-	}
-    .dataTables_scrollBody {
-        margin-bottom: 10px;
-    }
-</style> --}}
-    {{-- <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet"> --}}
-
 @endpush
 
 @push('js')
-    {{-- <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script> --}}
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
@@ -112,32 +92,6 @@
                 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
             }
         });
-
-
-    // $("input").change(function(){
-    //     $.post("/settings/challenge",
-    //         {
-    //             'name': $(this).attr("name"),
-    //             'value': $(this).val()
-    //         },
-    //         function (data, status) {
-    //             Swal.fire({
-    //                 title: '<strong>Success!</strong>',
-    //                 icon: 'success',
-    //                 html:
-    //                     'Setting was changed',
-    //                 showCloseButton: false,
-    //                 showCancelButton: true,
-    //                 focusConfirm: false,
-    //             }).then((result) => {
-
-    //             });
-    //         },"json");
-    // });
-
-    // $(".save").click(function(){
-    //    $("input").trigger("change");
-    // });
 
     function Toast( toast_title, toast_body, toast_class) {
             $(document).Toasts('create', {
@@ -170,12 +124,7 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(data)
                 {
-                    
-                    // $('#setting-edit-form').modal('hide');
-
-                    // var code = $("#bu-edit-model-form [name='code']").val();
                     Toast('Success', 'The setting was successfully updated.', 'bg-success' );
-
                 },
                 error: function(response) {
                     if (response.status == 422) {
