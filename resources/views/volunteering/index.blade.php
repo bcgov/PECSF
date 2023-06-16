@@ -386,7 +386,7 @@
     </div>
     <h2>Volunteering</h2>
     <div class="row p-1">
-<div>      We thank you for volunteering with the PECSF program. If you want to help by volunteering with your ministry/organizations team, contact your <a href="https://bcgov.sharepoint.com/teams/056772/SitePages/Resources.aspx" target="_blank">&nbsp;PECSF Lead Coordinator.</a>
+<div>      We thank you for volunteering with the PECSF program. If you want to help by volunteering with your ministry/organizations team, contact your <a href="https://bcgov.sharepoint.com/teams/056772/SitePages/Resources.aspx#organization-ministry-contact-information-ministries" target="_blank">&nbsp;PECSF Lead Coordinator.</a>
     &nbsp;Potential ways to help with your office’s campaign:</div>
 
 
