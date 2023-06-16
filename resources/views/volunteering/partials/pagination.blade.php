@@ -1,9 +1,9 @@
 @if ($paginator->hasPages())
     <ul class="custom pagination pagination">
         @if ($paginator->onFirstPage())
-            <li class="disabled page-item"><span>«</span></li>
+            <li class="disabled text-secondary  page-item"><span class="font-weight-bold">&lt;</span></li>
         @else
-            <li class="page-item" ><a href="{{ $paginator->previousPageUrl() }}" rel="prev">«</a></li>
+            <li class="page-item text-primary font-weight-bold" ><a href="{{ $paginator->previousPageUrl() }}" rel="prev">&lt;</a></li>
         @endif
         @if($paginator->currentPage() > 3)
             <li class="hidden-xs page-item"><a href="{{ $paginator->url(1) }}">1</a></li>
@@ -27,9 +27,9 @@
             <li class="hidden-xs page-item"><a href="{{ $paginator->url($paginator->lastPage()) }}">{{ $paginator->lastPage() }}</a></li>
         @endif
         @if ($paginator->hasMorePages())
-            <li class="page-item"><a href="{{ $paginator->nextPageUrl() }}" rel="next">»</a></li>
+            <li class="page-item text-primary font-weight-bold"><a href="{{ $paginator->nextPageUrl() }}" rel="next">&gt;</a></li>
         @else
-            <li class="disabled page-item"><span>»</span></li>
+            <li class="disabled page-item text-secondary font-weight-bold"><span>&gt;</span></li>
         @endif
     </ul>
 @endif
