@@ -67,18 +67,18 @@ Expand All
         var toggleCount = $(".expander").length;
 
         function toggle(){
-            if($("h2").attr("aria-expanded") == "true"){
-                $("h2").attr("aria-expanded",false);
-                $("h5").attr("aria-expanded",false);
+            if($("#toggle_all_hook").text() == "Collapse All"){
+                $(".card-header h2").attr("aria-expanded",false);
+                $(".card-header h5").attr("aria-expanded",false);
                 $(".collapse").hide();
                 $("#toggle_all_hook").text("Expand All");
                 $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
 
 
             }
-            else{
-                $("h2").attr("aria-expanded",true);
-                $("h5").attr("aria-expanded",true);
+            else if($("#toggle_all_hook").text() == "Expand All"){
+                $(".card-header h2").attr("aria-expanded",true);
+                $(".card-header h5").attr("aria-expanded",true);
                 $(".collapse").show();
                 $("#toggle_all_hook").text("Collapse All");
                 $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
@@ -95,13 +95,13 @@ Expand All
             closed = toggleCount - open;
             if(open == toggleCount){
                 $("#toggle_all_hook").text("Collapse All");
-                $("#toggle_all_hook").click();
+
                 $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
 
             }
             if(closed == toggleCount){
                 $("#toggle_all_hook").text("Expand All");
-                $("#toggle_all_hook").click();
+
                 $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
             }
         });
