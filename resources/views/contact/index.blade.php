@@ -19,9 +19,7 @@
         <div class="col-12">
             <h2 aria-expanded="false">FAQ
 
-                <button style="cursor:pointer" onclick="toggle();" id="toggle_all_hook" class="btn-primary  btn-sm btn float-right">
-Expand All
-                </button>
+                <button style="cursor:pointer" onclick="toggle();" id="toggle_all_hook" class="btn-primary  btn-sm btn float-right">Expand All</button>
             </h2>
 <div style="clear:both;"></div>
             <section>
@@ -99,7 +97,7 @@ Expand All
                 $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
 
             }
-            if(closed == toggleCount){
+            if(toggleCount == (toggleCount - open)){
                 $("#toggle_all_hook").text("Expand All");
 
                 $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
