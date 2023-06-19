@@ -42,7 +42,7 @@ class FundSupportedPoolController extends Controller
     {
         if($request->ajax()) {
 
-            // store the filter 
+            // store the filter
             $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
             session(['settings_fund_supported_pools_filter' => $filter]);
 
@@ -106,12 +106,12 @@ class FundSupportedPoolController extends Controller
             ->make(true);
         }
 
-        // restore filter if required 
+        // restore filter if required
         $filter = [];
         if (str_contains( url()->previous(), 'settings/fund-supported-pools')) {
             $filter = session('settings_fund_supported_pools_filter');
         } else {
-            $filter['effective_type']= 'C'; 
+            $filter['effective_type']= 'C';
         }
 
         $regions = Region::orderBy('name')->get();
@@ -601,7 +601,7 @@ class FundSupportedPoolController extends Controller
             if ($pool->hasPledge() && $pool->start_date < today()) {
                 return response()->json([
                     'title'  => "Invalid delete!",
-                    'message' => 'The Fund Support Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);
+                    'message' => 'The Fund Supported Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);
             }
 
             // $validator = Validator::make(request()->all(), [
