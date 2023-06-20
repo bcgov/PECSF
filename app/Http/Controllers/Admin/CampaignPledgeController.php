@@ -217,14 +217,12 @@ class CampaignPledgeController extends Controller
 
                 //
                 $selected_charities =[];
-                $_charities = Charity::whereIn('id', $request->charities)->get() ?? [];
-
-                foreach ($_charities as $key => $charity) {
-                    $idx = array_search( $charity->id,  $request->charities);
-                    $charity['additional'] = $request->additional[$idx];
-                    $charity['percentage'] = $request->percentages[$idx];
+                for ($i=0; $i < count($request->charities); $i++) {
+                    $charity = Charity::where('id', $request->charities[$i])->first();
+                    $charity['additional'] = $request->additional[$i];
+                    $charity['percentage'] = $request->percentages[$i];
                     array_push($selected_charities, $charity);
-                }
+                }                
 
                 return view('admin-pledge.campaign.partials.summary', compact('user', 'organization', 'campaign_year',
                             'pool_option', 'pool', 'charities', 'selected_charities', 
