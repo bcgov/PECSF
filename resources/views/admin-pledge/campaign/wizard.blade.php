@@ -499,6 +499,15 @@ $(function () {
         $('#user_region').val('');
     }
 
+    function reset_pecsf_profile_info() {
+        $('#pecsf_id').val('');
+        $('#pecsf_first_name').val('');
+        $('#pecsf_last_name').val('');
+        $('#pecsf_city').val('');
+        $('#pecsf_bu').val('');
+        $('#pecsf_region').val('');
+    }
+
     $('#organization_id').change( function() {
 
         pledge_id = $('#pledge_id').val();
@@ -516,7 +525,10 @@ $(function () {
             $('.emplid_section').hide();
             $('.pecsf_id_section').show();
 
-            if (!first_load) {
+            if (pledge_id && first_load) {
+                // No action
+            } else {
+                reset_pecsf_profile_info();
                 get_nongov_user_detail();
             }
             first_load = false;
