@@ -272,7 +272,7 @@ class ExportDatabaseToBI extends Command
 
         // 
         $this->task->message = $this->message;
-        $this->task->save();
+        // $this->task->save();
         
     }
 

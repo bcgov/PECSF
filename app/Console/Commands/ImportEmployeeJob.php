@@ -343,7 +343,7 @@ class ImportEmployeeJob extends Command
 
         if (time() - $this->last_refresh_time > 5) {
             $this->task->message = $this->message;
-            $this->task->save();
+            // $this->task->save();
 
             $this->last_refresh_time = time();
         }
