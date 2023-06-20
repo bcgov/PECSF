@@ -296,29 +296,34 @@ return [
         ],
         [
             'text' => 'System Security',
-            'icon' => 'nav-icon fa fa-user-shield',
+            'icon' => 'nav-icon fa fa-shield-alt',
             'url'  => '/system/schedule-job-audits',
             'can'  => ['setting'],
             'active' => ['system/*'],
             'submenu' => [
                 [
                     'text' => 'Schedule Job Audits',
-                    'icon' => 'nav-icon far fa-circle',
+                    'icon' => 'nav-icon far fa-calendar-check',
                     'url'  => '/system/schedule-job-audits',
                 ],
                 [
+                    'text' => 'Administrators',
+                    'icon' => 'nav-icon fa fa-user-shield',
+                    'url'  => '/system/administrators',
+                ],
+                [
                     'text' => 'Users',
-                    'icon' => 'nav-icon far fa-circle',
+                    'icon' => 'nav-icon far fa-user',
                     'url'  => '/system/users',
                 ],
                 [
                     'text' => 'Auditing',
-                    'icon' => 'nav-icon far fa-circle',
+                    'icon' => 'nav-icon far fa-check-square',
                     'url'  => '/system/auditing',
                 ],
                 [
                     'text' => 'Access Logs',
-                    'icon' => 'nav-icon far fa-circle',
+                    'icon' => 'nav-icon far fa-id-card',
                     'url'  => '/system/access-logs',
                 ],
 

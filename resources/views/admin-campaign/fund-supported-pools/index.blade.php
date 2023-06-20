@@ -10,7 +10,7 @@
 
         <div class="d-flex">
             <div class="mr-2">
-                <x-button :href="route('settings.fund-supported-pools.create')">Add a New Value</x-button>        
+                <x-button :href="route('settings.fund-supported-pools.create')">Add a New Value</x-button>
                 {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#region-create-modal">
                     Add a New Value
                   </button> --}}
@@ -24,7 +24,7 @@
 
 <form id="fspool-filter-form" method="post">
     <div class="card search-filter">
-    
+
         <div class="card-body pb-0 ">
             <h2 class="text-primary">Search Criteria</h2>
             <p>Enter any informartion you have and click Search. Leave fields blank for a list of all values.</p>
@@ -33,7 +33,7 @@
                 <div class="form-group col-md-2">
                     <label for="region_id">
                         Region
-                    </label> 
+                    </label>
                     <select name="region_id" value="" class="form-control">
                         <option value="">All</option>
                         @foreach ($regions as $region)
@@ -48,10 +48,10 @@
                     <label for="start">
                         Start Date (>=)
                     </label>
-                    <input type="date" name="start_date"  class="form-control" 
+                    <input type="date" name="start_date"  class="form-control"
                             value="{{ isset($filter['start_date']) ? $filter['start_date'] : '' }}" />
                 </div>
-    
+
                 <div class="form-group col-md-2">
                     <label for="status">
                         Status
@@ -62,7 +62,7 @@
                         <option value="I" {{ isset($filter['status']) && $filter['status'] == 'I' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
-    
+
                 <div class="form-group col-md-2">
                     <label for="effective_type">
                         Effective Type
@@ -74,7 +74,7 @@
                         <option value="H" {{ isset($filter['effective_type']) && $filter['effective_type'] == 'H' ? 'selected' : '' }}>History</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group col-md-1">
                     <label for="search">
                         &nbsp;
@@ -87,10 +87,10 @@
                     </label>
                     <button type="button" id="reset-btn" value="Clear" class="form-control btn btn-secondary">Clear</button>
                 </div>
-                
-            </div>    
-    
-        </div>    
+
+            </div>
+
+        </div>
     </div>
 </form>
 
@@ -101,13 +101,13 @@
 
         @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }} 
+                {{ $message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         @endif
-    
+
         {{-- <div class="category-filter">
             <select id="effectiveTypeFilter" class="form-control form-control-sm ml-1">
                 <option value="" selected>Show All</option>
@@ -131,10 +131,10 @@
             </thead>
         </table>
 
-        
 
-	</div>    
-</div>   
+
+	</div>
+</div>
 
 @include('admin-campaign.fund-supported-pools.partials.modal-duplicate')
 
@@ -143,7 +143,7 @@
 
 @push('css')
 
-    
+
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
@@ -155,7 +155,7 @@
 	#fspool-table_filter label {
 		text-align: right !important;
         padding-right: 10px;
-	} 
+	}
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
@@ -175,7 +175,7 @@
 
 
 @push('js')
- 
+
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
@@ -183,18 +183,18 @@
     <script>
     window.setTimeout(function() {
         $(".alert-success").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove(); 
+            $(this).remove();
         });
     }, 5000);
-    
+
 
     $(function() {
-        	
+
         $.ajaxSetup({
             headers: {
             'X-CSRF-TOKEN': '{{csrf_token()}}'
             }
-        }); 
+        });
 
         // Datatables
         var oTable = $('#fspool-table').DataTable({
@@ -205,7 +205,7 @@
             "language": {
                processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
             },
-            stateSave: true,               
+            stateSave: true,
             serverSide: true,
             select: true,
             'order': [[0, 'asc'], [2, 'asc']],
@@ -214,7 +214,7 @@
 
                 @if (!(str_contains( url()->previous(), 'settings/fund-supported-pools')))
                     oTable.page( 'first' ).draw( 'page' );
-                @endif    
+                @endif
             },
             ajax: {
                 url: '{!! route('settings.fund-supported-pools.index') !!}',
@@ -222,12 +222,12 @@
                     d.region_id = $("select[name='region_id']").val();
                     d.start_date = $("input[name='start_date']").val();
                     d.status = $("select[name='status']").val();
-                    d.effective_type = $("select[name='effective_type']").val();                
+                    d.effective_type = $("select[name='effective_type']").val();
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
-                            { // session expired 
-                                window.location.href = '/login'; 
+                            { // session expired
+                                window.location.href = '/login';
                             }
                         }
                 },
@@ -277,7 +277,7 @@
             ]
         });
 
-        // 
+        //
         $(window).keydown(function(event){
             if(event.keyCode == 13) {
                 event.preventDefault();
@@ -319,7 +319,7 @@
             delete_start_date = $(this).attr('data-start-date');
 
             Swal.fire( {
-                title: 'Are you sure you want to delete fund support pool "' + delete_region + '" with start date "' + delete_start_date + '" ?',
+                title: 'Are you sure you want to delete Fund Supported Pool "' + delete_region + '" with start date "' + delete_start_date + '" ?',
                 text: 'This action cannot be undone.',
                 // icon: 'question',
                 //showDenyButton: true,
@@ -348,8 +348,8 @@
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {
-                                { // session expired 
-                                    window.location.href = '/login'; 
+                                { // session expired
+                                    window.location.href = '/login';
                                 }
                             } else {
                                 Swal.fire({
@@ -383,7 +383,7 @@
 
             $('#pool-duplicate-modal input[name="region"]').val( duplicate_region );
             $('#pool-duplicate-modal input[name="old_start_date"]').val( duplicate_start_date );
-            
+
             $('#pool-duplicate-modal-button').attr('data-id', duplicate_id);
 
             // Clean up a previous error message if exists
@@ -406,19 +406,19 @@
         })
 
         $(document).on("click", "#pool-duplicate-modal-button" , function(e) {
-            
+
             var fields = ['start_date'];
             $.each( fields, function( index, field_name ) {
                 $('#pool-duplicate-modal').find('[name='+field_name+']').nextAll('span.text-danger').remove();
             });
 
-            
+
             var form = $('#pool-duplicate-modal-form');
             var id = $(this).attr('data-id');
             var start_date = $('#pool-duplicate-modal-form input[name="start_date"]').val();
 
             $.ajax({
-                url:  '/settings/fund-supported-pools/duplicate/' + id, 
+                url:  '/settings/fund-supported-pools/duplicate/' + id,
                 method: 'post',
                 data: form.serialize(), // serializes the form's elements.
                 success: function(data)
@@ -430,7 +430,7 @@
                     // Display a message
                     Toast('Success', 'The Fund Supported Pool "' + duplicate_region + '" with Start date "' + start_date +
                           '" was successfully created.', 'bg-success m-3');
-                    
+
                 },
                 error: function(response) {
                     if (response.status == 422) {
@@ -447,7 +447,7 @@
         });
 
 
-        function Toast( toast_title, toast_body, toast_class) { 
+        function Toast( toast_title, toast_body, toast_class) {
             // $(document).Toasts('create', {
             //     icon: 'fas fa-solid fa-check',
             //     class: toast_class,
