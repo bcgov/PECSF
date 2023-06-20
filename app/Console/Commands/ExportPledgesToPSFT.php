@@ -578,7 +578,7 @@ class ExportPledgesToPSFT extends Command
         $this->message .= $text . PHP_EOL;
 
         $this->task->message = $this->message;
-        $this->task->save();
+        // $this->task->save();
         
     }
 
