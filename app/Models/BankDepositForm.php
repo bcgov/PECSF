@@ -68,6 +68,11 @@ class BankDepositForm extends Model implements Auditable
         return $this->belongsTo(CampaignYear::class, 'campaign_year_id', 'id');
     }
 
+    public function form_submitted_by()
+    {
+        return $this->belongsTo(User::Class, 'form_submitter_id', 'id')->withDefault();
+    }
+    
     public function created_by()
     {
         return $this->belongsTo(User::Class, 'created_by_id', 'id')->withDefault();
