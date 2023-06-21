@@ -93,6 +93,7 @@
                         <th>Process ID</th>
                         <th>File Name</th>
                         <th>Submitted At</th>
+                        <th>Submitted By</th>
                         <th>Start At</th>
                         <th>End At</th>
                         <th>Status</th>
@@ -226,6 +227,7 @@
                 {data: 'id', className: "dt-nowrap"},
                 {data: 'original_filename', width: '80px'},
                 {data: 'submitted_at',  className: "dt-nowrap"},
+                {data: 'created_by.name',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'start_at', defaultContent: '', className: "dt-nowrap" },
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},

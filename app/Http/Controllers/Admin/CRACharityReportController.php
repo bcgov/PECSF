@@ -70,8 +70,13 @@ class CRACharityReportController extends Controller
                 // })
                 ->addColumn('download_file_link', function ($process) {
                     if ($process->status == 'Completed') {
-                        $url = route('reporting.cra-charities.download-export-file', $process->id);
-                        $link = '<a class="" href="'.$url.'">'. $process->original_filename . '</a>';
+                        $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
+                        if ($process->updated_at >= today()->subdays($retention_days) ) {
+                            $url = route('reporting.cra-charities.download-export-file', $process->id);
+                            $link = '<a class="" href="'.$url.'">'. $process->original_filename . '</a>';
+                        } else {
+                            $link = $process->original_filename;    
+                        }
                     } else {
                         // $link = $process->original_filename;
                         $link = '';

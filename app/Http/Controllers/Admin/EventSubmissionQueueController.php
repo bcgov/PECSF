@@ -155,18 +155,16 @@ class EventSubmissionQueueController extends Controller
 
 
         if($submissions[0]->organization_code == "RET"){
-            $existing = BankDepositForm::where("organization_code","=","RET")
+            $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
                 ->orderBy("pecsf_id","desc")
-                ->whereNotNull("pecsf_id")
                 ->get();
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "R".str_pad((intval(str_replace("R","",$existing[0]->pecsf_id)) +1),3,'0',STR_PAD_LEFT);
+                $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
             }
             else{
                 $submissions[0]->pecsf_id = "R".substr(date("Y"),2,2)."001";
-
             }
         }
         $existing = [];
@@ -174,13 +172,13 @@ class EventSubmissionQueueController extends Controller
         if($submissions[0]->event_type == "Gaming")
         {
             $existing = BankDepositForm::where("event_type","=","Gaming")
-                ->where("pecsf_id","LIKE","G%")
+                ->where("pecsf_id","LIKE","G".substr(date("Y"),2,2)."%")
                 ->orderBy("pecsf_id","desc")
                 ->get();
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "G".(intval(str_replace("G","",$existing[0]->pecsf_id)) + 1);
+                $submissions[0]->pecsf_id = "G".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
             }
             else{
                 $submissions[0]->pecsf_id = "G".substr(date("Y"),2,2)."001";
@@ -191,13 +189,13 @@ class EventSubmissionQueueController extends Controller
         if($submissions[0]->event_type == "Fundraiser")
         {
             $existing = BankDepositForm::where("event_type","=","Fundraiser")
-                ->where("pecsf_id","LIKE","F%")
+                ->where("pecsf_id","LIKE","F".substr(date("Y"),2,2)."%")
                 ->orderBy("pecsf_id","desc")
                 ->get();
 
             if(count($existing) > 0)
             {
-                $submissions[0]->pecsf_id = "F".(intval(str_replace("F","",$existing[0]->pecsf_id)) + 1);
+                $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
             }
             else{
                 $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2)."001";

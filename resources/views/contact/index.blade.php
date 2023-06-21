@@ -18,9 +18,8 @@
     <div class="row">
         <div class="col-12">
             <h2 aria-expanded="false">FAQ
-                <div style="cursor:pointer" onclick="toggle();" class="toggle-all expander float-right">
 
-                </div>
+                <button style="cursor:pointer" onclick="toggle();" id="toggle_all_hook" class="btn-primary  btn-sm btn float-right">Expand All</button>
             </h2>
 <div style="clear:both;"></div>
             <section>
@@ -36,7 +35,7 @@
                     @foreach($qnas as $i => $qna)
                     <div class="card">
                         <div class="card-header" id="heading{{$i}}{{$section}}">
-                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
+                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;"  data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
                                 <button class="btn btn-link">
                                     {{$qna['question']}}
                                 </button>
@@ -63,27 +62,47 @@
 @push('js')
     <script>
 
+        var toggleCount = $(".expander").length;
+
         function toggle(){
-            if($("h2").attr("aria-expanded") == "true"){
-                $("h2").attr("aria-expanded",false);
-                $("h5").attr("aria-expanded",false);
+            if($("#toggle_all_hook").text() == "Collapse All"){
+                $(".card-header h2").attr("aria-expanded",false);
+                $(".card-header h5").attr("aria-expanded",false);
                 $(".collapse").hide();
+                $("#toggle_all_hook").text("Expand All");
+                $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
+
+
             }
-            else{
-                $("h2").attr("aria-expanded",true);
-                $("h5").attr("aria-expanded",true);
+            else if($("#toggle_all_hook").text() == "Expand All"){
+                $(".card-header h2").attr("aria-expanded",true);
+                $(".card-header h5").attr("aria-expanded",true);
                 $(".collapse").show();
+                $("#toggle_all_hook").text("Collapse All");
+                $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
+
             }
         }
 
-$("h5 .expander").click(function(e){
-    e.preventDefault();
-    $(".collapse").each(function(){$(this)[0].style.display = null;});
-    $("h2").attr("aria-expanded",false);
-    $("h5").attr("aria-expanded",false);
-    return true;
-});
 
+        $(".card-header").click(function(){
+            $($(this).children("h5").attr("data-target")).toggle();
+            $(this).children("h5").attr("aria-expanded",$(this).children("h5").attr("aria-expanded") == "true" ? "false" : "true");
+            $(this).children("h2").attr("aria-expanded",$(this).children("h2").attr("aria-expanded") == "true" ? "false" : "true");
+            open = $("[aria-expanded='true']").length;
+            closed = toggleCount - open;
+            if(open == toggleCount){
+                $("#toggle_all_hook").text("Collapse All");
+
+                $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
+
+            }
+            if(toggleCount == (toggleCount - open)){
+                $("#toggle_all_hook").text("Expand All");
+
+                $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
+            }
+        });
     </script>
 @endpush
 @endsection

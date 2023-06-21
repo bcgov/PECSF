@@ -310,6 +310,9 @@
 
 $(function () {
 
+    // First load
+    var first_load = true;
+
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
     var submit_count = 0;
@@ -496,21 +499,39 @@ $(function () {
         $('#user_region').val('');
     }
 
+    function reset_pecsf_profile_info() {
+        $('#pecsf_id').val('');
+        $('#pecsf_first_name').val('');
+        $('#pecsf_last_name').val('');
+        $('#pecsf_city').val('');
+        $('#pecsf_bu').val('');
+        $('#pecsf_region').val('');
+    }
+
     $('#organization_id').change( function() {
 
         pledge_id = $('#pledge_id').val();
         if (!pledge_id) {
             reset_user_profile_info();
         }
-        $('#user_id').val(null).trigger('change');
 
         code = $("select[name='organization_id']").find(":selected").attr('code');
         if (code == 'GOV') {
             $('.emplid_section').show();
             $('.pecsf_id_section').hide();
+
+            $('#user_id').val(null).trigger('change');            
         } else {
             $('.emplid_section').hide();
             $('.pecsf_id_section').show();
+
+            if (pledge_id && first_load) {
+                // No action
+            } else {
+                reset_pecsf_profile_info();
+                get_nongov_user_detail();
+            }
+            first_load = false;
         }
 
     });
@@ -559,6 +580,11 @@ $(function () {
             reset_user_profile_info();
     });
 
+    $('#pecsf_city').change( function() {
+        region = $('#pecsf_city option:selected').attr('data-region');
+        $("#pecsf_region").val( region );
+    });
+
     function get_campaign_pledge_id()
     {
         pledge_id = 0;
@@ -592,6 +618,9 @@ $(function () {
         $('#pecsf_first_name').val('');
         $('#pecsf_last_name').val('');
         $('#pecsf_city').val('');
+        $('#pecsf_bu').val('');
+        $('#pecsf_region').val('');
+        
 
         $.get({
             url: '{{ route('admin-pledge.administrators.nongovuser') }}' +
@@ -608,6 +637,8 @@ $(function () {
                     $('#pecsf_first_name').val( data.first_name );
                     $('#pecsf_last_name').val( data.last_name );
                     $('#pecsf_city').val( data.city );
+                    $('#pecsf_bu').val(data.pecsf_bu);
+                    $('#pecsf_region').val(data.pecsf_region);
                 }
             },
             error: function(response) {
