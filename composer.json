@@ -28,7 +28,9 @@
         "socialiteproviders/keycloak": "^5.1",
         "socialiteproviders/microsoft-azure": "^4.2",
         "spatie/laravel-permission": "^4.2",
-        "yajra/laravel-datatables": "^1.5"
+        "yajra/laravel-datatables": "^1.5",
+
+        "phpoffice/phpspreadsheet" : "~1.28.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
