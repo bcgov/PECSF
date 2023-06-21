@@ -63,7 +63,7 @@ class Kernel extends ConsoleKernel
                         ->weekdays()
                         ->at('2:00')
                         //  ->everyFifteenMinutes()
-                        ->appendOutputTo(storage_path('logs/ImportPayCalendar.log'));
+                        ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'));
                         
 
                 // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
@@ -73,7 +73,7 @@ class Kernel extends ConsoleKernel
 
                 $schedule->command('command:ImportPledgeHistory')
                         ->dailyAt('2:15')
-                        ->appendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
+                        ->sendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
 
                 $schedule->command('command:ImportCities')
                         //  ->yearlyOn(9, 1, '02:30')
@@ -102,11 +102,11 @@ class Kernel extends ConsoleKernel
                 // Snapshot of eligible employees 
                 $schedule->command('command:UpdateEligibleEmployeeSnapshot')
                         ->dailyAt('4:30')
-                        ->sendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
+                        ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
 
                 $schedule->command('command:UpdateDailyCampaign')
                         ->dailyAt('4:45')
-                        ->sendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
+                        ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
                 
                 // Daily Testing 
                 $schedule->command('notify:daily')

@@ -95,28 +95,34 @@
                                                     {{ $pledge->region }}
                                                     @break
                                                 @default
-                                                    <a type="button" class="more-info"
-                                                       data-source="{{ $pledge->source }}"
-                                                       data-type="{{ $pledge->donation_type }}"
-                                                       data-id="{{ $pledge->id }}"
-                                                       data-frequency="{{ $pledge->frequency }}"
-                                                       data-yearcd="{{ $pledge->yearcd }}">
-                                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
-                                                    </a>
+                                                    @foreach(explode(",",$pledge->number_of_charities) as $charity)
+                                                        <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                            data-source="{{ $pledge->source }}"
+                                                            data-type="{{ $pledge->donation_type }}"
+                                                            data-id="{{ $pledge->id }}"
+                                                            data-frequency="{{ $pledge->frequency }}"
+                                                            data-yearcd="{{ $pledge->yearcd }}">
+                                                            {{$charity}}
+                                                        </a>
+                                                        <br>
+                                                    @endforeach
 
                                             @endswitch
                                         @else
                                             @if ($pledge->donation_type == 'Donate Today')
                                                 {{ $pledge->number_of_charities }}
                                             @else
-                                                <a type="button" class="more-info "
-                                                   data-source="{{ $pledge->source  }}"
-                                                   data-type="{{ $pledge->donation_type }}"
-                                                   data-id="{{ $pledge->id }}"
-                                                   data-frequency="{{ $pledge->frequency }}"
-                                                   data-yearcd="{{ $pledge->yearcd }}">
-                                                    {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
-                                                </a>
+                                                @foreach(explode(",",$pledge->number_of_charities) as $charity)
+                                                    <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                        data-source="{{ $pledge->source }}"
+                                                        data-type="{{ $pledge->donation_type }}"
+                                                        data-id="{{ $pledge->id }}"
+                                                        data-frequency="{{ $pledge->frequency }}"
+                                                        data-yearcd="{{ $pledge->yearcd }}">
+                                                        {{$charity}}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
                                             @endif
                                         @endif
                                     </td>
