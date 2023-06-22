@@ -30,7 +30,7 @@
         "spatie/laravel-permission": "^4.2",
         "yajra/laravel-datatables": "^1.5",
 
-        "phpoffice/phpspreadsheet" : "~1.28.0"
+        "maennchen/zipstream-php" : "^2.1"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
