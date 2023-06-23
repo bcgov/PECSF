@@ -28,7 +28,7 @@
 			<div class="form-group row">
                 <label for="name" class="col-sm-3 col-form-label">Deposit Amount:</label>
                 <div class="col-sm-4">
-					<input type="text" class="form-control text-right"  name="formatted_deposit_amount" value="" disabled>
+					<input type="text" class="form-control"  name="formatted_deposit_amount" value="" disabled>
             	</div>
             </div>
 
