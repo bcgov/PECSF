@@ -41,11 +41,13 @@ class SpecialCampaignPledgeController extends Controller
 
         if($request->ajax()) {
 
-            $pledges = SpecialCampaignPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 
-                            'special_campaign')
-                            ->leftJoin('users', 'users.id', '=', 'special_campaign_pledges.user_id')
-                            // ->leftJoin('employee_jobs', 'employee_jobs.id', '=', 'users.employee_job_id')
-                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+            // store the filter 
+            $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
+            session(['admin_pledge_special_campaign_filter' => $filter]);            
+
+            $pledges = SpecialCampaignPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'special_campaign')
+                            // ->leftJoin('users', 'users.id', '=', 'special_campaign_pledges.user_id')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'special_campaign_pledges.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                         $q->from('employee_jobs as J2') 
@@ -80,13 +82,8 @@ class SpecialCampaignPledgeController extends Controller
                                              ->orWhere('special_campaign_pledges.city', 'like', '%'. $request->city .'%');
                                 });
                             })
-                            ->when( $request->campaign_year_id, function($query) use($request) {
-                                // $query->where('campaign_year_id', $request->campaign_year_id);
-                                $query->where('yearcd', function($q) use($request){
-                                            $q->select('calendar_year')
-                                                    ->from('campaign_years')
-                                                    ->where('campaign_years.id', $request->campaign_year_id);
-                                });
+                            ->when( $request->yearcd, function($query) use($request) {
+                                $query->where('yearcd', $request->yearcd);
                             })
                             ->when( $request->cancelled == 'C', function($query) use($request) {
                                 $query->whereNotNull('special_campaign_pledges.cancelled');
@@ -144,14 +141,19 @@ class SpecialCampaignPledgeController extends Controller
                 ->make(true);
         }
 
+        // restore filter if required 
+        $filter = null;
+        if (str_contains( url()->previous(), 'admin-pledge/special-campaign')) {
+            $filter = session('admin_pledge_special_campaign_filter');
+        }
+
         // get all the record 
-        //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
-        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
+        $organizations = Organization::orderBy('name')->get();
+        $years = SpecialCampaignPledge::distinct('yearcd')->orderBy('yearcd', 'desc')->pluck('yearcd');
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
-        return view('admin-pledge.special-campaign.index', compact('organizations', 'campaign_years','cities'));
+        return view('admin-pledge.special-campaign.index', compact('organizations', 'years','cities', 'filter'));
 
     }
 
@@ -175,14 +177,18 @@ class SpecialCampaignPledgeController extends Controller
         $special_campaigns = SpecialCampaign::orderBy('name')->get();
 
         // default the first special campaign
-        $pledge->special_campaign_id = $special_campaigns->first()->id;
+        // $pledge->special_campaign_id = $special_campaigns->first()->id;
 
+        $current_year = today()->year; 
+        $years = range($current_year, $current_year - 3);
         $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
         $cities = City::orderBy('city')->get();
 
         $is_new_pledge = true;
 
-        return view('admin-pledge.special-campaign.create-edit', compact('pledge', 'organizations', 'special_campaigns', 'campaignYears','cities',
+        return view('admin-pledge.special-campaign.create-edit', compact('pledge', 'organizations', 'special_campaigns', 
+        'years', //'campaignYears',
+                        'cities',
                     'is_new_pledge',
                     //  'deduct_pay_from', 'one_time_amount'
                     ));
@@ -196,10 +202,13 @@ class SpecialCampaignPledgeController extends Controller
      */
     public function store(SpecialCampaignPledgeRequest $request)
     {
+
+        $user = User::where('id', $request->user_id )->first();
         
         // Create a new Pledge
         $last_seqno = SpecialCampaignPledge::where('organization_id', $request->organization_id)
-                        ->where('user_id', $request->user_id)
+                        ->where('emplid', $user->emplid)
+                        // ->where('user_id', $request->user_id)
                         ->where('pecsf_id', $request->pecsf_id)
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
@@ -210,6 +219,7 @@ class SpecialCampaignPledgeController extends Controller
 
         $pledge = SpecialCampaignPledge::Create([
             'organization_id' => $request->organization_id,
+            'emplid' => ($request->organization_id == $gov->id) ? $user->emplid : null,
             'user_id' => ($request->organization_id == $gov->id) ? $request->user_id : null,
             'pecsf_id' => (!($request->organization_id == $gov->id)) ? $request->pecsf_id : null,
             'first_name' => (!($request->organization_id == $gov->id)) ? $request->pecsf_first_name : null, 
@@ -369,33 +379,40 @@ class SpecialCampaignPledgeController extends Controller
      * @param  \App\Models\Pledge  $pledge
      * @return \Illuminate\Http\Response
      */
-    public function cancel(SpecialCampaignPledgeRequest $request, $id)
+    public function cancel(Request $request, $id)
     {
 
         //
-        $pledge = SpecialCampaignPledge::where('id', $id)
-                                    ->whereNull('cancelled')
-                                    ->whereNull('ods_export_status')
-                                    ->first();
+        if($request->ajax()) {
+            $pledge = SpecialCampaignPledge::where('id', $id)
+                                        ->whereNull('cancelled')
+                                        ->whereNull('ods_export_status')
+                                        ->first();
 
-        if (!($pledge)) {
-            return abort(404);      // 404 Not Found
+            if (!($pledge)) {
+                return response()->json([
+                    'title'  => "Invalid cancel!",
+                    'message' => 'The special campaign pledge  "' . $id . '" cannot be cancelled, it has transferred to Peoplesoft System.'], 403);
+            }
+
+            // $gov = Organization::where('code', 'GOV')->first();
+
+            // if ($pledge->organization_id == $gov->id) {
+            //     return response()->json(['error' => "You are not allowed to cancel this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422); 
+            // }       
+
+            // Delete the pledge
+            $pledge->cancelled = 'Y';
+            $pledge->cancelled_by_id = Auth::Id();
+            $pledge->cancelled_at = now();
+            $pledge->save();
+
+            Session::flash('success', 'Pledge with Transaction ID ' . $pledge->id . ' have been cancelled successfully' ); 
+            return response()->noContent();
+
+        } else {
+            abort(404);
         }
-
-        // $gov = Organization::where('code', 'GOV')->first();
-
-        // if ($pledge->organization_id == $gov->id) {
-        //     return response()->json(['error' => "You are not allowed to cancel this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422); 
-        // }       
-
-        // Delete the pledge
-        $pledge->cancelled = 'Y';
-        $pledge->cancelled_by_id = Auth::Id();
-        $pledge->cancelled_at = now();
-        $pledge->save();
-
-        Session::flash('success', 'Pledge with Transaction ID ' . $pledge->id . ' have been cancelled successfully' ); 
-        return response()->noContent();
 
     }
 

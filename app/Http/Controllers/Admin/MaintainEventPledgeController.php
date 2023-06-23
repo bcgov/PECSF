@@ -20,6 +20,7 @@ use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CampaignPledgeRequest;
+use Carbon\Carbon;
 
 class MaintainEventPledgeController extends Controller
 {
@@ -41,207 +42,127 @@ class MaintainEventPledgeController extends Controller
      */
     public function index(Request $request)
     {
-        //
         if($request->ajax()) {
 
-            $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
-                            'distinct_charities', 'distinct_charities.charity')
-                            ->select('pledges.*');
+            // store the filter 
+            $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
+            session(['admin_pledge_event_pledge_filter' => $filter]);
+
+            $pledges = BankDepositForm::with('campaign_year','form_submitted_by')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
+                            ->where( function($query) {
+                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                        $q->from('employee_jobs as J2') 
+                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            ->selectRaw('min(J2.empl_rcd)');
+                                    })
+                                    ->orWhereNull('employee_jobs.empl_rcd');
+                            })
+                            ->when($request->tran_id, function($query) use($request) {
+                                return $query->where('bank_deposit_forms.id', 'like', $request->tran_id);
+                            })
+                            ->when( $request->organization_code, function($query) use($request) {
+                                $query->where('bank_deposit_forms.organization_code', $request->organization_code);
+                            })
+                            ->when( $request->pecsf_id, function($query) use($request) {
+                                $query->where('bank_deposit_forms.pecsf_id', 'like', '%'. $request->pecsf_id .'%');
+                            })
+                            ->when( $request->emplid, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('bank_deposit_forms.bc_gov_id', 'like', '%'. $request->emplid .'%')
+                                             ->orWhere('employee_jobs.name', 'like', '%' . $request->name . '%');
+                                });             
+                            })
+                            ->when( $request->description, function($query) use($request) {
+                                $query->where('bank_deposit_forms.description', 'like', '%'. $request->description .'%');
+                            })
+                            ->when( $request->employment_city, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('employee_jobs.city', 'like', '%'. $request->employment_city .'%')
+                                             ->orWhere('bank_deposit_forms.employment_city', 'like', '%'. $request->employment_city .'%');
+                                });
+                            })
+                            ->when( $request->campaign_year_id, function($query) use($request) {
+                                $query->where('bank_deposit_forms.campaign_year_id', $request->campaign_year_id);
+                            })
+                            ->when( $request->event_type, function($query) use($request) {
+                                $query->where('bank_deposit_forms.event_type', $request->event_type);
+                            })
+                            ->when( $request->sub_type, function($query) use($request) {
+                                $query->where('bank_deposit_forms.sub_type', $request->sub_type);
+                            })
+                            ->select('bank_deposit_forms.*');
 
             return Datatables::of($pledges)
-                ->addColumn('description', function($pledge) {
-                    $text =  $pledge->type == 'P' ? $pledge->fund_supported_pool->region->name :
-                                       $pledge->distinct_charities->count() . ' chartites'  ;
-                    //   $title = implode(', ',  $pledge->distinct_charities->pluck('charity.charity_name')->toArray());
-                    return "<span>" . $text . '</span>' ;
-                })
                 ->addColumn('action', function ($pledge) {
-                    return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
-                        '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>';
-            })->rawColumns(['action','description'])
-            ->make(true);
+                    return  '<a href="#" class="more-info-pledge fas fa-info-circle fa-2x bottom-right" data-id="' . $pledge->id . '"></a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-        // get all the record
-        //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
+         // restore filter if required 
+         $filter = null;
+         if (str_contains( url()->previous(), 'admin-pledge/create') ||
+             str_contains( url()->previous(), 'admin-pledge/submission-queue') ||
+             str_contains( url()->previous(), 'admin-pledge/maintain-event')) {
+             $filter = session('admin_pledge_event_pledge_filter');
+         }
 
-        $pools = FSPool::where('start_date', '=', function ($query) {
-            $query->selectRaw('max(start_date)')
-                ->from('f_s_pools as A')
-                ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                ->where('A.start_date', '<=', today());
-        })
-            ->where('status', 'A')
-            ->get();
-        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::all();
-        $regions = Region::where("status","=","A")->get();
-        $departments = Department::all();
-        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-            ->first();
-        $current_user = User::where('id', Auth::id() )->first();
-        $cities = City::all();
-        if(isset($request->search_by) && !empty($request->begins_with)){
-            if($request->search_by == "calendar_year"){
-                $event_pledges = BankDepositForm::where("created_at","<=",$request->begins_with);
-            }
-            else if($request->search_by == "id"){
-                $event_pledges = BankDepositForm::where($request->search_by,"=",$request->begins_with);
-            }
-            else{
-                $event_pledges = BankDepositForm::where($request->search_by,"like",$request->begins_with."%");
-            }
+        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
+        $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
+        $cities = City::orderBy('city')->get();
 
-            if(!empty($request->event_type))
-            {
-                $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
-            }
+        $event_types = ['Cash One-Time Donation', 'Cheque One-Time Donation', 'Fundraiser', 'Gaming'];
+        $sub_types = ['Auction', 'Entertainment', 'Food', 'Other', 'Sports', '50/50 Draw'];
 
-            if(!empty($request->sub_type))
-            {
-                $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
-            }
-            $event_pledges = $event_pledges->orderBy("created_at","desc")->limit($request->limit)->get();
-        }
-        else{
-            $event_pledges = BankDepositForm::orderBy("created_at","desc");
-            if(!empty($request->event_type))
-            {
-                $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
-            }
-            if(!empty($request->sub_type))
-            {
-                $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
-            }
-
-            $event_pledges->where("approved","=",1);
-               $event_pledges = $event_pledges->limit(30)->get();
-        }
-        $charities=Charity::when($request->has("title"),function($q)use($request){
-
-            $searchValues = preg_split('/\s+/', $request->get("title"), -1, PREG_SPLIT_NO_EMPTY);
-
-            if ($request->get("designation_code")) {
-                $q->where('designation_code', $request->get("designation_code"));
-            }
-            if ($request->get("category_code")) {
-                $q->where('category_code', $request->get("category_code"));
-            }
-            if ($request->get("province")) {
-                $q->where('province', $request->get("province"));
-            }
-
-            foreach ($searchValues as $term) {
-                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
-            }
-            return $q->orderby('charity_name','asc');
-
-        })->where('charity_status','Registered')->paginate(10);
-        $designation_list = Charity::DESIGNATION_LIST;
-        $category_list = Charity::CATEGORY_LIST;
-        $province_list = Charity::PROVINCE_LIST;
-        $terms = explode(" ", $request->get("title") );
-
-        $selected_charities = [];
-        if (Session::has('charities')) {
-            $selectedCharities = Session::get('charities');
-
-            $_charities = Charity::whereIn('id', $selectedCharities['id'])
-                ->get(['id', 'charity_name as text']);
-
-            foreach ($_charities as $charity) {
-                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
-                if (!$charity['additional']) {
-                    $charity['additional'] = '';
-                }
-
-                array_push($selected_charities, $charity);
-            }
-        } else {
-
-            // reload the existig pledge
-            $errors = session('errors');
-
-            if (!$errors) {
-
-                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-                    ->first();
-                $pledge = Pledge::where('user_id', Auth::id())
-                    ->whereHas('campaign_year', function($q){
-                        $q->where('calendar_year','=', today()->year + 1 );
-                    })->first();
-
-                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
-
-                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
-
-                    $_charities = Charity::whereIn('id', $_ids )
-                        ->get(['id', 'charity_name as text']);
-
-                    foreach ($_charities as $charity) {
-                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
-
-                        $charity['additional'] = '';
-                        if ($pledge_charity) {
-                            $charity['additional'] = $pledge_charity->additional ?? '';
-                        }
-
-                        array_push($selected_charities, $charity);
-                    }
-                }
-            }
-        }
-        $multiple = 'false';
-        // load the view and pass
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
-        $organizations = [];
-        return view('admin-pledge.event.index',compact('fund_support_pool_list','organizations','multiple','selected_charities','terms','charities','province_list','category_list','designation_list','cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
-
+        return view('admin-pledge.event.index',compact(
+                         'filter', 'organizations', 'campaign_years', 'cities', 'event_types', 'sub_types'));
 
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
      *
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function show(Request $request, $id)
     {
-        //
-        $pool_option = 'P';
-        $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
 
-        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
+        if ($request->ajax()) {
 
-        $pay_period_amount = 20;
-        $one_time_amount = 20;
-        $pay_period_amount_other = null;
-        $one_time_amount_other = null;
+            $pledge = BankDepositForm::where('id', $id)->first();
 
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
+            $pledge->formatted_deposit_amount = number_format($pledge->deposit_amount,2);
 
-        return view('admin-pledge.campaign.wizard', compact('fund_support_pool_list','pool_option', 'fspools', 'organizations','campaignYears',
-            'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
+            $pledge->created_by_name = $pledge->created_by ? $pledge->created_by->name : '';
+            $pledge->updated_by_name = $pledge->updated_by ? $pledge ->updated_by->name : '';
+            $pledge->approved_by_name = $pledge->approved_by ? $pledge ->approved_by->name : '';
+            $pledge->formatted_created_at = $pledge->created_at->format('Y-m-d H:i:s');
+            $pledge->formatted_updated_at = $pledge->updated_at->format('Y-m-d H:i:s');
+            
+            unset($pledge->created_by );
+            unset($pledge->updated_by );
+            unset($pledge->approved_by );
+            return response()->json($pledge);
+        }
+
     }
+
 
     public function createEvent(){
         $pools = FSPool::where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
+                ->whereNull('A.deleted_at')
                 ->where('A.start_date', '<=', today());
         })
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
@@ -253,365 +174,10 @@ class MaintainEventPledgeController extends Controller
         if(empty($current_user)){
             redirect("login");
         }
-        $fund_support_pool_list = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
         return view('admin-pledge.create.index', compact('fund_support_pool_list','selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(CampaignPledgeRequest $request)
-    {
-        //
-
-        if ($request->ajax()) {
-
-            // Generate Summary Page
-            if ($request->step == 3)  {
-
-                $pool_option = $request->pool_option;
-
-
-                $user = User::where('id', $request->user_id)->first() ?? null;
-                $campaign_year = CampaignYear::where('id', $request->campaign_year_id)->first();
-
-                $pool  = FSPool::current()->where('id', $request->pool_id)->first() ?? null;
-                $charities = Charity::whereIn('id', $request->charities)->get() ?? [];
-
-                $pay_period_amount = $request->pay_period_amount > 0 ?
-                            $request->pay_period_amount * $campaign_year->number_of_periods :
-                            $request->pay_period_amount_other * $campaign_year->number_of_periods;
-                $one_time_amount = $request->one_time_amount > 0 ?
-                            $request->one_time_amount : $request->one_time_amount_other;
-
-                //
-                $selected_charities =[];
-
-                $_charities = Charity::whereIn('id', $request->charities)->get() ?? [];
-
-                foreach ($_charities as $key => $charity) {
-                    $charity['additional'] = $request->additional[$key];
-                    $charity['percentage'] = $request->percentages[$key];
-                    array_push($selected_charities, $charity);
-                }
-
-                return view('admin-pledge.campaign.partials.summary', compact('user', 'campaign_year', 'pool_option', 'pool',
-                            'charities', 'selected_charities', 'pay_period_amount','one_time_amount' ))->render();
-
-            }
-
-            return response()->noContent();
-
-        }
-
-        /* Final submission -- form submission (non-ajax call) */
-        $campaign_year = CampaignYear::where('id', $request->campaign_year_id)->first();
-
-        $pay_period_amount = $request->pay_period_amount  ?
-                    $request->pay_period_amount : $request->pay_period_amount_other ;
-        $one_time_amount = $request->one_time_amount ?
-                    $request->one_time_amount : $request->one_time_amount_other;
-        $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
-
-        $pledge = Pledge::Create([
-            'organization_id' => $request->organization_id,
-            'user_id' => $request->user_id,
-            'campaign_year_id' => $request->campaign_year_id,
-            'type' => $request->pool_option,
-            'f_s_pool_id' => $request->pool_option == 'P' ? $request->pool_id : 0,
-            'one_time_amount' => $one_time_amount,
-            'pay_period_amount' => $pay_period_amount ,
-            'goal_amount' => $pay_period_annual_amt + $one_time_amount,
-            'created_by_id' => Auth::id(),
-            'updated_by_id' => Auth::id(),
-        ]);
-
-        $pledge->charities()->delete();
-
-        if ( $request->pool_option == 'C' )
-        {
-            foreach( ['one-time', 'bi-weekly'] as $frequency) {
-
-                $one_time_sum = 0;
-                $one_time_goal_sum = 0;
-                $pay_period_sum = 0;
-                $pay_period_goal_sum = 0;
-
-                $last_key = array_key_last($request->charities);
-                foreach($request->charities as $key => $charity) {
-
-                    $percent = $request->percentages[$key];
-
-                    $new_one_time = round( $percent * $one_time_amount /100, 2);
-                    $new_one_time_goal = round( $percent * $one_time_amount /100, 2);
-                    $new_pay_period = round( $percent * $pay_period_amount /100, 2);
-                    $new_pay_period_goal = round( $percent * $pay_period_annual_amt /100, 2);
-
-                    if ($key == $last_key) {
-                        $new_one_time = round($one_time_amount - $one_time_sum, 2);
-                        $new_one_time_goal = round($one_time_amount - $one_time_goal_sum, 2);
-                        $new_pay_period = round($pay_period_amount - $pay_period_sum, 2);
-                        $new_pay_period_goal = round($pay_period_annual_amt - $pay_period_goal_sum, 2);
-                    }
-
-                    // One-Time
-                    if ($frequency == 'one-time' && $one_time_amount) {
-                        PledgeCharity::create([
-                            'charity_id' => $charity,
-                            'pledge_id' => $pledge->id,
-                            'frequency' => 'one-time',
-                            'additional' => $request->additional[$key],
-                            'percentage' => $request->percentages[$key],
-                            'amount' => $new_one_time,
-                            'goal_amount' => $new_one_time_goal,
-                        ]);
-                    }
-
-                    // Bi-weekly
-                    if ($frequency == 'bi-weekly' && $pay_period_amount) {
-
-                        PledgeCharity::create([
-                            'charity_id' => $charity,
-                            'pledge_id' => $pledge->id,
-                            'frequency' => 'bi-weekly',
-                            'additional' => $request->additional[$key],
-                            'percentage' => $request->percentages[$key],
-                            'amount' => $new_pay_period,
-                            'goal_amount' => $new_pay_period_goal,
-                        ]);
-                    }
-
-                    $one_time_sum += $new_one_time;
-                    $one_time_goal_sum += $new_one_time_goal;
-                    $pay_period_sum += $new_pay_period;
-                    $pay_period_goal_sum += $new_pay_period_goal;
-
-                }
-            }
-
-        }
-
-        // return response()->noContent();
-        return redirect()->route('admin-pledge.campaign.index')
-                ->with('success','Pledge with Transaction ID ' . $pledge->id . ' have been created successfully');
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Pledge  $pledge
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request, $id)
-    {
-        //
-        // dd(['show', $request, $id]);
-
-        $pledge = Pledge::where('id', $id)->first();
-
-        $selected_charities =[];
-
-        $sql = PledgeCharity::selectRaw("charity_id, additional, percentage,
-                    sum(case when frequency = 'one-time' then goal_amount else 0 end) as one_time_amount,
-                    sum(case when frequency = 'bi-weekly' then goal_amount else 0 end) pay_period_amount")
-                ->where('pledge_id', $id)
-                ->groupBy(['charity_id', 'additional', 'percentage'])
-                ;
-
-        $pledges_charities = $sql->get();
-
-        return view('admin-pledge.campaign.show', compact('pledge', 'pledges_charities'));
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Pledge  $pledge
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, $id)
-    // public function edit(Request $request, $id)
-    {
-        //
-        $pledge = Pledge::where('id', $id)->first();
-
-        $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
-
-        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $campaignYears = CampaignYear::where('calendar_year', '>=', today()->year )->orderBy('calendar_year')->get();
-
-        $pool_option = $pledge->type;
-        $pay_period_amount = $pledge->pay_period_amount ?? 0;
-        $one_time_amount = $pledge->one_time_amount ?? 0;
-
-        $amt_choices = [0,6,12,20,50];
-
-        $pay_period_amount_other = in_array($pay_period_amount, $amt_choices) ? '' :   $pay_period_amount;
-        $one_time_amount_other = in_array($one_time_amount, $amt_choices) ? '' :   $one_time_amount;
-
-
-        return view('admin-pledge.campaign.wizard', compact('pledge', 'pool_option', 'fspools', 'organizations','campaignYears',
-                    'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other'));
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Pledge  $pledge
-     * @return \Illuminate\Http\Response
-     */
-    public function update(CampaignPledgeRequest $request, $id)
-    {
-
-        // dd([$request, $id]);
-
-        $pledge = Pledge::where('id', $id)->first();
-        $campaign_year = $pledge->campaign_year;
-
-        $pay_period_amount = $request->pay_period_amount ?
-                    $request->pay_period_amount : $request->pay_period_amount_other ;
-        $one_time_amount = $request->one_time_amount ?
-                    $request->one_time_amount : $request->one_time_amount_other;
-        $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
-
-        $pledge->type = $request->pool_option;
-        $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
-        $pledge->one_time_amount = $one_time_amount;
-        $pledge->pay_period_amount = $pay_period_amount;
-        $pledge->goal_amount = $pay_period_annual_amt + $one_time_amount;
-        $pledge->created_by_id = Auth::id();
-        $pledge->updated_by_id = Auth::id();
-        $pledge->save();
-
-        $pledge->charities()->delete();
-
-        if ( $request->pool_option == 'C' )
-        {
-            foreach( ['one-time', 'bi-weekly'] as $frequency) {
-
-                $one_time_sum = 0;
-                $one_time_goal_sum = 0;
-                $pay_period_sum = 0;
-                $pay_period_goal_sum = 0;
-
-                $last_key = array_key_last($request->charities);
-                foreach($request->charities as $key => $charity) {
-
-                    $percent = $request->percentages[$key];
-
-                    $new_one_time = round( $percent * $one_time_amount /100, 2);
-                    $new_one_time_goal = round( $percent * $one_time_amount /100, 2);
-                    $new_pay_period = round( $percent * $pay_period_amount /100, 2);
-                    $new_pay_period_goal = round( $percent * $pay_period_annual_amt /100, 2);
-
-                    if ($key == $last_key) {
-                        $new_one_time = round($one_time_amount - $one_time_sum, 2);
-                        $new_one_time_goal = round($one_time_amount - $one_time_goal_sum, 2);
-                        $new_pay_period = round($pay_period_amount - $pay_period_sum, 2);
-                        $new_pay_period_goal = round($pay_period_annual_amt - $pay_period_goal_sum, 2);
-                    }
-
-                    // One-Time
-                    if ($frequency == 'one-time' && $one_time_amount) {
-                        PledgeCharity::create([
-                            'charity_id' => $charity,
-                            'pledge_id' => $pledge->id,
-                            'frequency' => 'one-time',
-                            'additional' => $request->additional[$key],
-                            'percentage' => $request->percentages[$key],
-                            'amount' => $new_one_time,
-                            'goal_amount' => $new_one_time_goal,
-                        ]);
-                    }
-
-                    // Bi-weekly
-                    if ($frequency == 'bi-weekly' && $pay_period_amount) {
-
-                        PledgeCharity::create([
-                            'charity_id' => $charity,
-                            'pledge_id' => $pledge->id,
-                            'frequency' => 'bi-weekly',
-                            'additional' => $request->additional[$key],
-                            'percentage' => $request->percentages[$key],
-                            'amount' => $new_pay_period,
-                            'goal_amount' => $new_pay_period_goal,
-                        ]);
-                    }
-
-                    $one_time_sum += $new_one_time;
-                    $one_time_goal_sum += $new_one_time_goal;
-                    $pay_period_sum += $new_pay_period;
-                    $pay_period_goal_sum += $new_pay_period_goal;
-
-                }
-            }
-
-        }
-
-       return redirect()->route('admin-pledge.campaign.index')
-                ->with('success','Pledge with Transaction ID ' . $pledge->id . ' have been updated successfully');
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Pledge  $pledge
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Pledge $pledge)
-    {
-        //
-    }
-
-
-    public function getUsers(Request $request)
-    {
-
-        $term = trim($request->q);
-
-        $users = User::where('users.organization_id', $request->org_id)
-             ->when($term, function($query) use($term) {
-                return $query->where( function($q) use($term) {
-                      $q->whereRaw( "lower(users.name) like '%".$term."%'")
-                       //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
-                        ->orWhere( "users.emplid", 'like', '%'.$term.'%');
-               });
-            })
-            ->with('primary_job')
-            ->with('primary_job.region')
-            ->with('primary_job.bus_unit')
-            ->limit(50)
-            ->orderby('users.name','asc')
-            ->get();
-
-         $formatted_users = [];
-         foreach ($users as $user) {
-            $formatted_users[] = ['id' => $user->id,
-                    'text' => $user->name . ' ('. $user->emplid .')',
-                    'email' =>  $user->primary_job->email,
-                    'emplid' => $user->emplid,
-                    'first_name' =>  $user->primary_job->first_name ?? '',
-                    'last_name' =>  $user->primary_job->last_name ?? '',
-                    'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',
-                    'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,
-                    'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',
-                    'organization' => $user->primary_job->organization_name ?? '',
-            ];
-        }
-
-        return response()->json($formatted_users);
-
-    }
 }

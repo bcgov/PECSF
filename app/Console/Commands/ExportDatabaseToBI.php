@@ -38,6 +38,7 @@ class ExportDatabaseToBI extends Command
 
     ];
  
+    protected $task;
     protected $success;
     protected $failure;
     protected $message;
@@ -117,69 +118,93 @@ class ExportDatabaseToBI extends Command
         ]);
 
         $this->task = $task;
+
+        try {
          
-        // Get the latest success job 
-        $last_job = ScheduleJobAudit::where('job_name', $job_name)
-                      ->where('status','Completed')
-                      ->orderBy('end_time', 'desc')->first();
+            // Get the latest success job 
+            $last_job = ScheduleJobAudit::where('job_name', $job_name)
+                        ->where('status','Completed')
+                        ->orderBy('end_time', 'desc')->first();
 
 
-        $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
+            $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
 
-        $this->LogMessage("Table '{$table_name}' Detail to BI (Datawarehouse) start on " . now() );
-        $this->Logmessage("");
-        $this->Logmessage("Table Name                   : '{$table_name}' ");
-        $this->LogMessage("The Last send completed time : " . $last_start_time);
-        $this->LogMessage("The schedule Job id          : " . $task->id);
-        $this->LogMessage("The command name             : " . $job_name);
-        
-        // Main Process for each table 
-        $sql = DB::table($table_name)
-            ->when( $last_job && $delta_field, function($q) use($last_start_time, $delta_field, $hidden_fields ) {
-                return $q->where($delta_field, '>=', $last_start_time);
-            })
-            ->orderBy('id');
+            $this->LogMessage("Table '{$table_name}' Detail to BI (Datawarehouse) start on " . now() );
+            $this->Logmessage("");
+            $this->Logmessage("Table Name                   : '{$table_name}' ");
+            $this->LogMessage("The Last send completed time : " . $last_start_time);
+            $this->LogMessage("The schedule Job id          : " . $task->id);
+            $this->LogMessage("The command name             : " . $job_name);
             
-        // Chucking
-        $row_count = 0;
-        $sql->chunk(5000, function($chuck) use($task, $table_name, $hidden_fields, $last_job, &$row_count, &$n) {
-            $this->LogMessage( "Sending table '{$table_name}' batch (5000) - " . ++$n );
+            // Main Process for each table 
+            $sql = DB::table($table_name)
+                ->when( $last_job && $delta_field, function($q) use($last_start_time, $delta_field, $hidden_fields ) {
+                    return $q->where($delta_field, '>=', $last_start_time);
+                })
+                ->orderBy('id');
+                
+            // Chucking
+            $row_count = 0;
+            $sql->chunk(5000, function($chuck) use($task, $table_name, $hidden_fields, $last_job, &$row_count, &$n) {
+                $this->LogMessage( "Sending table '{$table_name}' batch (5000) - " . ++$n );
 
-            //$chuck->makeHidden(['password', 'remember_token']);
-            if ($hidden_fields) {
-                foreach($chuck as $item) {
-                    foreach($hidden_fields as $hidden_field) {
-                        // unset($item->password);
-                        unset($item->$hidden_field);
+                //$chuck->makeHidden(['password', 'remember_token']);
+                if ($hidden_fields) {
+                    foreach($chuck as $item) {
+                        foreach($hidden_fields as $hidden_field) {
+                            // unset($item->password);
+                            unset($item->$hidden_field);
+                        }
+
                     }
-
                 }
-            }
 
-            $pushdata = new stdClass();
-            $pushdata->table_name = $table_name;
-            $pushdata->table_data = json_encode($chuck);
-            $pushdata->delta_ind = $last_job ? "1" : "0";
-         
-            $result = $this->sendData( $pushdata );
-            if ($result) {
-                // Log to the table
-                foreach($chuck as $row)  {
-                    ExportAuditLog::create([
-                        'schedule_job_name' => $task->job_name,
-                        'schedule_job_id' => $task->id,
-                        'to_application' => 'BI',
-                        'table_name' => $table_name,
-                        'row_id' => $row->id,
-                        'row_values' => json_encode($row),
-                    ]);
-
-                    $row_count += 1;
-                }
-            }
+                $pushdata = new stdClass();
+                $pushdata->table_name = $table_name;
+                $pushdata->table_data = json_encode($chuck);
+                $pushdata->delta_ind = $last_job ? "1" : "0";
             
-            unset($pushdata);
-        });
+                $result = $this->sendData( $pushdata );
+                if ($result) {
+                    // Log to the table
+                    foreach($chuck as $row)  {
+                        ExportAuditLog::create([
+                            'schedule_job_name' => $task->job_name,
+                            'schedule_job_id' => $task->id,
+                            'to_application' => 'BI',
+                            'table_name' => $table_name,
+                            'row_id' => $row->id,
+                            'row_values' => json_encode($row),
+                        ]);
+
+                        $row_count += 1;
+                    }
+                }
+                
+                unset($pushdata);
+            });
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message = $this->task->message . PHP_EOL . $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $job_name;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
+        }    
 
         $this->LogMessage("" );
         $this->LogMessage("Success (No of Batch ) - " . $this->success);
@@ -202,7 +227,7 @@ class ExportDatabaseToBI extends Command
     
     protected function sendData($pushdata) {
 
-        try {
+        // try {
 
             $response = Http::withBasicAuth(
                 env('ODS_USERNAME'),
@@ -220,18 +245,20 @@ class ExportDatabaseToBI extends Command
                 $this->status = 'Error';
                 $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
+                throw new Exception( $response->status() . ' - ' . $response->body()   );
+
                 $this->failure += 1;
                 return false;
             }
         
-        } catch (\Exception $ex) {
+        // } catch (\Exception $ex) {
 
-            // log message in system
-            $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+        //     // log message in system
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
 
-            throw new Exception($ex);
-        }
+        //     throw new Exception($ex);
+        // }
 
     }
 
@@ -245,7 +272,7 @@ class ExportDatabaseToBI extends Command
 
         // 
         $this->task->message = $this->message;
-        $this->task->save();
+        // $this->task->save();
         
     }
 

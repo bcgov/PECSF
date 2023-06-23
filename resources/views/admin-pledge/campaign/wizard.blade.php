@@ -36,7 +36,7 @@
     </div>
 
   <div class="card-body py-0 pt-4">
-    <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}" 
+    <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}"
             id="admin-pldege-campaign-form" method="POST">
         @csrf
         @isset($pledge)
@@ -44,7 +44,7 @@
             <input type="hidden" id="pledge_id" name="pledge_id" value="{{ $pledge->id }}">
         @endisset
         <input type="hidden" id="step" name="step" value="">
-        
+
         {{-- Nav Items --}}
         <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
             <li class="nav-item">
@@ -56,11 +56,11 @@
             <li class="nav-item">
                 <a class="nav-link" id="nav-selection-tab" data-toggle="tab" href="#nav-selection" data-id="1" role="tab" aria-controls="nav-selection" aria-selected="false">Selection</a>
             </li>
-            <li class="nav-item">  
+            <li class="nav-item">
               <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="3" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
             </li>
         </ul>
-    
+
         <div class="tab-content pb-3 px-1" id="nav-tabContent">
             <div class="tab-pane fade step show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                 <div class="pl-2 font-weight-bold">Step 1 -  Select donor</div>
@@ -70,7 +70,7 @@
                     </ul>
 
                 @include('admin-pledge.campaign.partials.profile')
-                
+
             </div>
             <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
                 <div class="pl-2 font-weight-bold">Step 2 -  Choose the frequency and amount for deductions</div>
@@ -82,13 +82,13 @@
                 @include('admin-pledge.campaign.partials.amount')
             </div>
             <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-               
+
                 <div class="pl-2 font-weight-bold">Step 3 - Select preferred method for choosing charities</div>
 
                 <ul class="ml-2 pt-1">
                     <li>Choose a regional Fund Supported Pool or the CRA charity list option </li>
                 </ul>
-                
+
 
                 @include('admin-pledge.campaign.partials.method-selection')
 
@@ -120,14 +120,14 @@
           <div class="col">
             <div class="card mt-3">
               <div class="card-header font-weight-bold">My Bootstrap 5 multi-step-form</div>
-                    
+
                 <div class="card-body p-5 step" style="">Step 1</div>
 
                     <div class="card-body p-5 step" style="display: none;">Step 2</div>
                     <div class="card-body p-5 step" style="display: none;">Step 3</div>
                     <div class="card-body p-5 step" style="display: none;">Step 4</div>
                     <div class="card-body p-5 step" style="display: none;">Step 5</div>
-                    
+
                     <div class="card-footer">
                         <button type="button" class="action back btn btn-sm btn-outline-secondary"
                             style="display: none">Back</button>
@@ -184,7 +184,7 @@
     font-weight: 400;
     color: #878788;
     text-align: center;
-    z-index: 100; 
+    z-index: 100;
 }
 
 .bs4-step-tracking li:first-child:before {
@@ -200,7 +200,7 @@
 }
 
 .bs4-step-tracking li> div {
-    color: #fff; 
+    color: #fff;
     width: 38px;
     text-align: center;
     line-height: 38px;
@@ -221,7 +221,7 @@
     right: 0%;
     top: 20px;
     /* z-index: -1; */
-     z-index: -2; 
+     z-index: -2;
 }
 
 .bs4-step-tracking li:first-child:after {
@@ -266,7 +266,7 @@
     .summary-card .form-control[disabled] {
         border: 0;
         background-color: rgb(252, 252, 252) ;
-    } 
+    }
 
     .amount-selection input[type=radio] {
         width: 18px;
@@ -310,10 +310,13 @@
 
 $(function () {
 
+    // First load
+    var first_load = true;
+
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
     var submit_count = 0;
-   
+
     $(".next").on("click", function() {
         var nextstep = false;
         if (step == 1) {
@@ -361,11 +364,11 @@ $(function () {
         //     .css("width", percent + "%")
         //     .html(percent + "%");
         //
-        $('.bs4-step-tracking li').map( function (index, item) { 
+        $('.bs4-step-tracking li').map( function (index, item) {
             if (index < currstep) {
-                $(item).addClass('active');   
+                $(item).addClass('active');
             } else {
-                $(item).removeClass('active');   
+                $(item).removeClass('active');
             }
         });
     };
@@ -394,9 +397,9 @@ $(function () {
     // Validation when click on 'next' button
     function checkForm() {
 
-        // reset submission count 
+        // reset submission count
         submit_count = 0;
-        
+
         var valid = true;
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
@@ -407,7 +410,7 @@ $(function () {
                 fields = ['pay_period_amount_other', 'one_time_amount_other'];
             }
             if (step == 3) {
-                fields = ['pool_option', 'pool_id'];                
+                fields = ['pool_option', 'pool_id'];
             }
 
             $.each( fields, function( index, field_name ) {
@@ -415,38 +418,51 @@ $(function () {
                 $('#admin-pldege-campaign-form [name='+ field_name +']').removeClass('is-invalid');
             });
             $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="charities[]"]').removeClass('is-invalid');
             $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="percentages[]"]').removeClass('is-invalid');
+            $('#admin-pldege-campaign-form [name="additional[]"]').nextAll('span.text-danger').remove();
+            $('#admin-pldege-campaign-form [name="additional[]"]').removeClass('is-invalid');
+            // Amount field 
+            $('.pay_period_amount_error').html('');
+            $('.one_time_amount_error').html('');
 
             var form = $('#admin-pldege-campaign-form');
             $('#admin-pldege-campaign-form input[name=step]').val( step );
 
             $.ajax({
                 method: "POST",
-                url:  '/admin-pledge/campaign/' , 
-                //data: form.serialize(), 
+                url : "{{ route('admin-pledge.campaign.store') }}",
+                //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
                 cache: false,
                 timeout: 30000,
                 success: function(data)
                 {
-                    // console.log(data ); 
+                    // console.log(data );
                     if (step == 3)  {
-                            $('#summary-page').html(data); 
+                            $('#summary-page').html(data);
                     }
                 },
                 error: function(response) {
                     valid = false;
-                    if (response.status == 422) {   
+                    if (response.status == 422) {
                         $.each(response.responseJSON.errors, function(field_name,error){
-                            if ( field_name.includes('.') ) {   
+                            if ( field_name.includes('.') ) {
                                 items = field_name.split(".");
                                 pos = Number(items[ items.length -1 ]);
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
                             } else {
-                                $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
-                                $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                                if (field_name.includes('pay_period_amount_error')) {
+                                    $('.pay_period_amount_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                } else if (field_name.includes('one_time_amount_error')) {
+                                    $('.one_time_amount_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                } else {
+                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                    $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                                }
                             }
 
                             // additional checking for pledge existence
@@ -456,8 +472,8 @@ $(function () {
 
                                 pledge_id = get_campaign_pledge_id();
                                 if (pledge_id > 0) {
-                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="d-block text-strong text-danger">' + 
-                                        'There is an existing pledge for this donor. Would you like to change it? Click <a ' + 
+                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="d-block text-strong text-danger">' +
+                                        'There is an existing pledge for this donor. Would you like to change it? Click <a ' +
                                         'href="/admin-pledge/campaign/'+pledge_id+'/edit">here</a> to proceed.' + '</span>');
                                 }
                             }
@@ -480,7 +496,16 @@ $(function () {
         $('#user_dept').val('');
         $('#user_bu').val('');
         $('#user_org').val('');
-        $('#user_region').val('');  
+        $('#user_region').val('');
+    }
+
+    function reset_pecsf_profile_info() {
+        $('#pecsf_id').val('');
+        $('#pecsf_first_name').val('');
+        $('#pecsf_last_name').val('');
+        $('#pecsf_city').val('');
+        $('#pecsf_bu').val('');
+        $('#pecsf_region').val('');
     }
 
     $('#organization_id').change( function() {
@@ -489,15 +514,24 @@ $(function () {
         if (!pledge_id) {
             reset_user_profile_info();
         }
-        $('#user_id').val(null).trigger('change');
-        
+
         code = $("select[name='organization_id']").find(":selected").attr('code');
         if (code == 'GOV') {
-            $('.emplid_section').show();   
+            $('.emplid_section').show();
             $('.pecsf_id_section').hide();
+
+            $('#user_id').val(null).trigger('change');            
         } else {
-            $('.emplid_section').hide();   
+            $('.emplid_section').hide();
             $('.pecsf_id_section').show();
+
+            if (pledge_id && first_load) {
+                // No action
+            } else {
+                reset_pecsf_profile_info();
+                get_nongov_user_detail();
+            }
+            first_load = false;
         }
 
     });
@@ -527,7 +561,7 @@ $(function () {
 
     $('#user_id').on('select2:select', function (e) {
         var data = e.params.data;
-            
+
         reset_user_profile_info();
         if (data.emplid) {
             $('#user_first_name').val( data.first_name );
@@ -543,14 +577,19 @@ $(function () {
 
     $('#user_id').on('select2:unselect', function (e) {
         var data = e.params.data;
-            reset_user_profile_info();            
+            reset_user_profile_info();
+    });
+
+    $('#pecsf_city').change( function() {
+        region = $('#pecsf_city option:selected').attr('data-region');
+        $("#pecsf_region").val( region );
     });
 
     function get_campaign_pledge_id()
     {
         pledge_id = 0;
         $.get({
-            url: '{{ route('admin-pledge.administrators.pledgeid') }}' + 
+            url: '{{ route('admin-pledge.administrators.pledgeid') }}' +
                         '?org_id=' + $('#organization_id').val() +
                         '&campaign_year_id=' + $('#campaign_year_id').val() +
                         '&user_id=' + $('#user_id').val() +
@@ -569,19 +608,22 @@ $(function () {
             }
         });
 
-        return pledge_id;        
+        return pledge_id;
 
     }
 
     function get_nongov_user_detail() {
 
-        // clean up the old values 
+        // clean up the old values
         $('#pecsf_first_name').val('');
         $('#pecsf_last_name').val('');
         $('#pecsf_city').val('');
+        $('#pecsf_bu').val('');
+        $('#pecsf_region').val('');
         
+
         $.get({
-            url: '{{ route('admin-pledge.administrators.nongovuser') }}' + 
+            url: '{{ route('admin-pledge.administrators.nongovuser') }}' +
                         '?org_id=' + $('#organization_id').val() +
                         '&pecsf_id=' + $('#pecsf_id').val(),
             dataType: 'json',
@@ -595,6 +637,8 @@ $(function () {
                     $('#pecsf_first_name').val( data.first_name );
                     $('#pecsf_last_name').val( data.last_name );
                     $('#pecsf_city').val( data.city );
+                    $('#pecsf_bu').val(data.pecsf_bu);
+                    $('#pecsf_region').val(data.pecsf_region);
                 }
             },
             error: function(response) {
@@ -619,7 +663,7 @@ $(function () {
     })
 
 
-    // Page 2 -- Amount
+
     function reallocate_charity_amount( elem ) {
 
         // Calculate bi-weekly amount
@@ -640,7 +684,7 @@ $(function () {
         one_time_amount_other = $("input[name='one_time_amount_other']").val();
         one_time_amt = Math.max(one_time_amount, one_time_amount_other);
         $('#one_time_figure').html( parseFloat(one_time_amt).toFixed(2) );
-        
+
         if($.isNumeric(one_time_amt)){
                 one_time_amt_allocated = parseFloat( one_time_amt * elem.value / 100).toFixed(2) ;
                 $(elem).closest('div.form-row').find("input[name='one_time_allocated_amount[]']").val( one_time_amt_allocated );
@@ -706,7 +750,7 @@ $(function () {
         });
     }
 
-    // Page 4 -- summary (handle single submission only )
+
     $(document).on("click", "button[type='submit']", function(e) {
 
         // this.disabled = true;
@@ -716,9 +760,9 @@ $(function () {
             }
             submit_count++;
         });
-    });        
+    });
 
-    //onload: call the above function 
+    //onload: call the above function
     $("select[name='charities[]']").each(function() {
         initializeSelect2($(this));
     });
@@ -731,7 +775,7 @@ $(function () {
         $(e.target).closest('td').find("input[name='additional[]']").val('');
     });
 
-    // variable for keep track detail lines 
+    // variable for keep track detail lines
     let row_number = {{ (isset($pledge)) ? $pledge->distinct_charities->count() + 1 : 1 }};
 
     $("#add_row").click(function(e){

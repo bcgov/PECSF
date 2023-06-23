@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\User;
 use App\Models\Pledge;
 use App\Models\PayCalendar;
@@ -11,6 +12,7 @@ use App\Models\ExportAuditLog;
 use App\Models\DonateNowPledge;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
 use App\Models\SpecialCampaignPledge;
 
@@ -25,7 +27,7 @@ class ExportPledgesToPSFT extends Command
      *
      * @var string
      */
-    protected $signature = 'command:ExportPledgesToPSFT'; 
+    protected $signature = 'command:ExportPledgesToPSFT {--now=0}'; 
 
     /**
      * The console command description.
@@ -35,9 +37,10 @@ class ExportPledgesToPSFT extends Command
     protected $description = 'Sending pledge transactions to PeopleSoft via ODS';
 
     /* Source Type is HCM */
+    protected $task;
     protected $message;
     protected $status;
-    
+    protected $bypass_rule_for_testing_purpose;
 
     /**
      * Create a new command instance.
@@ -53,6 +56,8 @@ class ExportPledgesToPSFT extends Command
         $this->skip = 0;
         $this->failure = 0;
 
+        $this->bypass_rule_for_testing_purpose = false;
+
         $this->message = '';
         $this->status = 'Completed';
 
@@ -66,33 +71,69 @@ class ExportPledgesToPSFT extends Command
     public function handle()
     {
 
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+        // This flag use for testing purpose, by pass business rule when to send data to PSFT
+        $this->bypass_rule_for_testing_purpose = false;
+        if ($this->option('now') && $this->option('now') == 1 && (!(App::environment('prod')) )) {
+            $this->bypass_rule_for_testing_purpose = true;
+        }
 
-        // Step 1 : Send Campiagn Type data to PeopleSoft access endpoint 
-        $this->LogMessage( now() );        
-        $this->LogMessage("1) Sending Annual Campaign Type pledge data to PeopleSoft");
-        $this->sendCampaignDonationToPeopleSoft();
-        
-        // Step 2 : Send Donate Now Pledge data to PeopleSoft access endpoint 
-        $this->LogMessage( "" );        
-        $this->LogMessage("2) Sending Donate Now Type pledge data to PeopleSoft");
-        $this->sendDonateNowToPeopleSoft();
+        try {
 
-        // Step 3 : Send Special Campaign Pledge data to PeopleSoft access endpoint 
-        $this->LogMessage( "" );        
-        $this->LogMessage("3) Sending Special Campaign Type pledge data to PeopleSoft");
-        $this->sendSpecialCampaignToPeopleSoft();
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
-        // Update the Task Audit log
-        $this->task->end_time = Carbon::now();
-        $this->task->status = $this->status;
-        $this->task->message = $this->message;
-        $this->task->save();
 
+            $this->LogMessage("Process run on " . today()->format('Y-m-d'));
+            if (!(App::environment('prod'))) {
+                $this->LogMessage("Bypass Rule (when to send to PSFT) for testing purpose is " . ($this->bypass_rule_for_testing_purpose ? 'Yes' : 'No'));
+            }
+            $this->LogMessage( "" );        
+
+            // Step 1 : Send Campiagn Type data to PeopleSoft access endpoint 
+            $this->LogMessage( now() );        
+            $this->LogMessage("1) Sending Annual Campaign Type pledge data to PeopleSoft");
+            $this->sendCampaignDonationToPeopleSoft();
+            
+            // Step 2 : Send Donate Now Pledge data to PeopleSoft access endpoint 
+            $this->LogMessage( "" );        
+            $this->LogMessage("2) Sending Donate Now Type pledge data to PeopleSoft");
+            $this->sendDonateNowToPeopleSoft();
+
+            // Step 3 : Send Special Campaign Pledge data to PeopleSoft access endpoint 
+            $this->LogMessage( "" );        
+            $this->LogMessage("3) Sending Special Campaign Type pledge data to PeopleSoft");
+            $this->sendSpecialCampaignToPeopleSoft();
+
+            // Update the Task Audit log
+            $this->task->end_time = Carbon::now();
+            $this->task->status = $this->status;
+            $this->task->message = $this->message;
+            $this->task->save();
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message = $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
+        }        
 
             
     }
@@ -120,24 +161,32 @@ class ExportPledgesToPSFT extends Command
 
             // validation -- GUID 
             $user = User::where('id', $pledge->user_id)->first();
-            if (!$user->guid ) {
-                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
-                $pledge_skip_count += 1;
-                continue;
-            }
+            // if (!$user->guid ) {
+            //     $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
+            //     $pledge_skip_count += 1;
+            //     continue;
+            // }
 
-            if ($user->source_type == 'LCL') {
+            if (App::environment('prod') && $user->source_type == 'LCL') {
                 $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $pledge_skip_count += 1;
                 continue;
             }
 
-            // check whether the campaign is not open or active
-            $campaign_year = CampaignYear::where('id',   $pledge->campaign_year_id )->first();
-            if (!($campaign_year->canSendToPSFT() )) {
-                $this->LogMessage( "(SKIP) Campaign Year is not allow to send to PSFT in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
+            if (!($pledge->emplid)) {
+                $this->LogMessage( "(SKIP) The emplid of this transaction is empty - " . json_encode( $pledge->only(['id','organization_id','emplid','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $pledge_skip_count += 1;
                 continue;
+            }
+
+            if (!($this->bypass_rule_for_testing_purpose)) {
+                // check whether the campaign is not open or active
+                $campaign_year = CampaignYear::where('id',   $pledge->campaign_year_id )->first();
+                if (!($campaign_year->canSendToPSFT() )) {
+                    $this->LogMessage( "(SKIP) Campaign Year is not allow to send to PSFT in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
+                    $pledge_skip_count += 1;
+                    continue;
+                }
             }
 
             // Calculate the deduct pay from 
@@ -164,7 +213,8 @@ class ExportPledgesToPSFT extends Command
                     'transaction_id' => $pledge->id,
                     'frequency' => 'One-Time',
 
-                    "GUID" => $pledge->user->guid,
+                    // "GUID" => $pledge->user->guid,
+                    "EMPLID" => $pledge->emplid,
                     "Employee_Name" => $pledge->user->name,    
                     "Amount" =>  $pledge->one_time_amount,
 
@@ -198,7 +248,8 @@ class ExportPledgesToPSFT extends Command
                     'transaction_id' => $pledge->id,
                     'frequency' => 'Bi-Weekly', 
 
-                    "GUID" => $pledge->user->guid,
+                    // "GUID" => $pledge->user->guid,
+                    "EMPLID" => $pledge->emplid,
                     "Employee_Name" => $pledge->user->name,    
                     "Amount" =>  $pledge->pay_period_amount,
 
@@ -249,9 +300,9 @@ class ExportPledgesToPSFT extends Command
         $this->LogMessage("Total number of pledge sent      - " . $pledge_success_count);
 
         $this->logMessage("");
-        $this->LogMessage("ODS Processed - " . $this->row_count);
-        $this->LogMessage("ODS Success   - " . $this->success);
-        $this->LogMessage("ODS failure   - " . $this->failure);
+        $this->LogMessage("ODS transactions (Biweekly and/or One-Time) Processed - " . $this->row_count);
+        $this->LogMessage("ODS transactions (Biweekly and/or One-Time) Success   - " . $this->success);
+        $this->LogMessage("ODS transactions (Biweekly and/or One-Time) failure   - " . $this->failure);
         $this->LogMessage( now() );
         
         return 0;
@@ -268,8 +319,8 @@ class ExportPledgesToPSFT extends Command
 
         $pledgeData = DonateNowPledge::join('organizations', 'donate_now_pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
-                            ->where('donate_now_pledges.ods_export_status', null)
-                            ->where('donate_now_pledges.cancelled', null)
+                            ->whereNull('donate_now_pledges.ods_export_status')
+                            ->whereNull('donate_now_pledges.cancelled_at')
                             ->select('donate_now_pledges.*')
                             ->orderBy('donate_now_pledges.id')->get();
 
@@ -277,17 +328,41 @@ class ExportPledgesToPSFT extends Command
 
             $this->row_count += 1;
 
-            if (!($pledge->canSendToPSFT())) {
+            // if (!($pledge->canSendToPSFT())) {
                 
-                $this->LogMessage( "(SKIP) date to send is not reached - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
-                $this->skip += 1;
-                continue;
+            //     $this->LogMessage( "(SKIP) date to send is not reached - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
+            //     $this->skip += 1;
+            //     continue;
+            // }
+
+            if (!($this->bypass_rule_for_testing_purpose)) {
+                if (!( today() >= $pledge->deduct_pay_from->subDays(8) )) {
+                    $this->LogMessage( "(SKIP) The deduct_pay_from (" . $pledge->deduct_pay_from->format('Y-m-d') . ") on this transaction is not reached yet (8 days rule) - " . 
+                                json_encode( $pledge->only(['id','organization_id','emplid', 'pecsf_id','yearcd','seqno','type','region_id',
+                                        'fs_pool_id','charity_id','sepcial program',
+                                        'one_time_amount','deduct_pay_from', 'ods_export_status','ods_export_at']))
+                                 );
+                    $this->skip += 1;
+                    continue;
+                }
             }
 
             // validation -- GUID 
             $user = User::where('id', $pledge->user_id)->first();
-            if (!$user->guid ) {
-                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at']) );
+            // if (!$user->guid ) {
+            //     $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at']) );
+            //     $this->skip += 1;
+            //     continue;
+            // }
+
+            if (App::environment('prod') && $user->source_type == 'LCL') {
+                $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
+                $this->skip += 1;
+                continue;
+            }
+
+            if (!($pledge->emplid)) {
+                $this->LogMessage( "(SKIP) The emplid of this transaction is empty - " . json_encode( $pledge->only(['id','organization_id','emplid','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $this->skip += 1;
                 continue;
             }
@@ -303,7 +378,8 @@ class ExportPledgesToPSFT extends Command
                     'transaction_id' => $pledge->id,
                     'frequency' => 'One-Time',
 
-                    "GUID" => $pledge->user->guid,
+                    // "GUID" => $pledge->user->guid,
+                    "EMPLID" => $pledge->emplid,
                     "Employee_Name" => $pledge->user->name,    
                     "Amount" =>  $pledge->one_time_amount,
 
@@ -332,7 +408,7 @@ class ExportPledgesToPSFT extends Command
                     $pledge->save();
 
                     // Log Message                 
-                    $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at']) );
+                    $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
                 }
             }
         }
@@ -358,7 +434,8 @@ class ExportPledgesToPSFT extends Command
 
         $pledgeData = SpecialCampaignPledge::join('organizations', 'special_campaign_pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
-                            ->where('special_campaign_pledges.ods_export_status', null)
+                            ->whereNull('special_campaign_pledges.ods_export_status')
+                            ->whereNull('special_campaign_pledges.cancelled_at')
                             ->select('special_campaign_pledges.*')
                             ->orderBy('special_campaign_pledges.id')
                             ->get();
@@ -367,19 +444,44 @@ class ExportPledgesToPSFT extends Command
             
             $this->row_count += 1;
 
-            if (!($pledge->canSendToPSFT())) {
-                $this->LogMessage( "(SKIP) date to send is not reached - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
-                $this->skip += 1;
-                continue;
+            // if (!($pledge->canSendToPSFT())) {
+            //     $this->LogMessage( "(SKIP) date to send is not reached - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
+            //     $this->skip += 1;
+            //     continue;
+            // }
+
+            if (!($this->bypass_rule_for_testing_purpose)) {
+                if (!( today() >= $pledge->deduct_pay_from->subDays(8) )) {
+                    $this->LogMessage( "(SKIP) The deduct_pay_from (" . $pledge->deduct_pay_from->format('Y-m-d') . ") on this transaction is not reached yet (8 days rule) - " . 
+                                json_encode( $pledge->only(['id','organization_id','emplid', 'pecsf_id','yearcd','seqno', 'special_campaign_id',
+                                    'one_time_amount','deduct_pay_from', 'ods_export_status','ods_export_at']))
+                                );
+                    $this->skip += 1;
+                    continue;
+                }
             }
 
             // validation -- GUID 
             $user = User::where('id', $pledge->user_id)->first();
-            if (!$user->guid ) {
-                $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
+            // if (!$user->guid ) {
+            //     $this->LogMessage( "(SKIP) No GUID found in Transaction {$pledge->id} - " . json_encode( $pledge->only(['id', 'organization_id','user_id','pecsf_id', 'yearcd', 'seqno', 'deduct_pay_from', 'cancelled_at'])) );
+            //     $this->skip += 1;
+            //     continue;
+            // }
+
+            if (App::environment('prod') && $user->source_type == 'LCL') {
+                $this->LogMessage( "(SKIP) The user of this transaction is {$user->source_type} - " . json_encode( $pledge->only(['id','organization_id','user_id','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
                 $this->skip += 1;
                 continue;
             }
+
+            if (!($pledge->emplid)) {
+                $this->LogMessage( "(SKIP) The emplid of this transaction is empty - " . json_encode( $pledge->only(['id','organization_id','emplid','campaign_year_id', 'type', 'f_s_pool_id','one_time_amount','pay_period_amount','goal_amount','ods_export_status','ods_export_at'])) );
+                $this->skip += 1;
+                continue;
+            }
+
+
 
             // One-time
             if ($pledge->one_time_amount != 0) { 
@@ -392,7 +494,8 @@ class ExportPledgesToPSFT extends Command
                     'transaction_id' => $pledge->id,
                     'frequency' => 'One-Time',
 
-                    "GUID" => $pledge->user->guid,
+                    // "GUID" => $pledge->user->guid,
+                    "EMPLID" => $pledge->emplid,
                     "Employee_Name" => $pledge->user->name,    
                     "Amount" =>  $pledge->one_time_amount,
 
@@ -439,41 +542,29 @@ class ExportPledgesToPSFT extends Command
 
     protected function sendData($pushdata) {
 
-        try {
+        $response = Http::withBasicAuth(
+            env('ODS_USERNAME'),
+            env('ODS_TOKEN')
+        )->withBody( json_encode($pushdata), 'application/json')
+        ->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
 
-            $response = Http::withBasicAuth(
-                env('ODS_USERNAME'),
-                env('ODS_TOKEN')
-            )->withBody( json_encode($pushdata), 'application/json')
-            ->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
+        if ($response->successful()) {
+            $this->success += 1;
+            return true;
 
-            if ($response->successful()) {
-                $this->success += 1;
-                return true;
-
-            } else {
-
-                // log message in system
-                $this->status = 'Error';
-                $this->LogMessage( "(Error) - Data - " . json_encode($pushdata) );
-                $this->LogMessage( "        - " . $response->status() . ' - ' . $response->body() );
-
-                $this->failure += 1;
-
-                return false;
-            }
-
-        } catch (\Exception $ex) {
+        } else {
 
             // log message in system
-            $this->status = 'Error';
-            $this->LogMessage( "(Error) - " . json_encode($pushdata) );
-            $this->LogMessage( "          " - $ex->getMessage() );
+            // $this->status = 'Error';
+            $this->LogMessage( "(Error) - Data - " . json_encode($pushdata) );
+            $this->LogMessage( "        - " . $response->status() . ' - ' . $response->body() );
             
-            throw new Exception($ex);
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
 
+            $this->failure += 1;
+
+            return false;
         }
-
       
     }
 
@@ -487,7 +578,7 @@ class ExportPledgesToPSFT extends Command
         $this->message .= $text . PHP_EOL;
 
         $this->task->message = $this->message;
-        $this->task->save();
+        // $this->task->save();
         
     }
 

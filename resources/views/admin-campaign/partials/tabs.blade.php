@@ -95,8 +95,7 @@
     </li>
 
     <li class="nav-item">
-          <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.administrators') ? 'active' : ''}}"
-                href="{{ route('settings.administrators.index') }}">PECSF Administrators</a>
+        <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.challenge') ? 'active' : ''}}"
+           href="{{ route('settings.challenge') }}">Challenge Updates</a>
     </li>
-
   </ul>

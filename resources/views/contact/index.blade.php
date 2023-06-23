@@ -17,7 +17,11 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h2>FAQ</h2>
+            <h2 aria-expanded="false">FAQ
+
+                <button style="cursor:pointer" onclick="toggle();" id="toggle_all_hook" class="btn-primary  btn-sm btn float-right">Expand All</button>
+            </h2>
+<div style="clear:both;"></div>
             <section>
                 @foreach($sections as $section => $qnas)
                 <h5>
@@ -25,19 +29,19 @@
                     PECSF program
                 @else
                     {{$section}}
-                @endif    
+                @endif
                 </h5>
                 <div id="accordion{{$section}}">
                     @foreach($qnas as $i => $qna)
                     <div class="card">
                         <div class="card-header" id="heading{{$i}}{{$section}}">
-                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
+                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;"  data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
                                 <button class="btn btn-link">
                                     {{$qna['question']}}
                                 </button>
                                 <div class="flex-fill"></div>
                                 <div class="expander">
-                                    
+
                                 </div>
                             </h5>
                         </div>
@@ -55,4 +59,50 @@
         </div>
     </div>
 </div>
+@push('js')
+    <script>
+
+        var toggleCount = $(".expander").length;
+
+        function toggle(){
+            if($("#toggle_all_hook").text() == "Collapse All"){
+                $(".card-header h2").attr("aria-expanded",false);
+                $(".card-header h5").attr("aria-expanded",false);
+                $(".collapse").hide();
+                $("#toggle_all_hook").text("Expand All");
+                $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
+
+
+            }
+            else if($("#toggle_all_hook").text() == "Expand All"){
+                $(".card-header h2").attr("aria-expanded",true);
+                $(".card-header h5").attr("aria-expanded",true);
+                $(".collapse").show();
+                $("#toggle_all_hook").text("Collapse All");
+                $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
+
+            }
+        }
+
+
+        $(".card-header").click(function(){
+            $($(this).children("h5").attr("data-target")).toggle();
+            $(this).children("h5").attr("aria-expanded",$(this).children("h5").attr("aria-expanded") == "true" ? "false" : "true");
+            $(this).children("h2").attr("aria-expanded",$(this).children("h2").attr("aria-expanded") == "true" ? "false" : "true");
+            open = $("[aria-expanded='true']").length;
+            closed = toggleCount - open;
+            if(open == toggleCount){
+                $("#toggle_all_hook").text("Collapse All");
+
+                $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
+
+            }
+            if(toggleCount == (toggleCount - open)){
+                $("#toggle_all_hook").text("Expand All");
+
+                $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
+            }
+        });
+    </script>
+@endpush
 @endsection

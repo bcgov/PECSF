@@ -3,7 +3,7 @@
     @csrf
     <br>
 
-    <input type="hidden" name="form_id" id="form_id" value="" />
+    <input type="hidden" name="form_id" id="form_id" value="0" />
 
     <div class="form-row" style="left: 5px;
     position: relative;width:100%;border-top-left-radius:5px;border-top-right-radius:5px;background:#1a5a96;color:#fff;padding-left:15px;padding-top:10px;">
@@ -38,7 +38,7 @@
         </div>
         <div class="form-group col-md-4">
             <label for="campaign_year">Campaign year</label>
-            <div id="campaign_year">{{$campaign_year->calendar_year}}</div>
+            <div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>
             <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
                        @error('form_submitter')
@@ -147,10 +147,10 @@
 
         <div class="form-group col-md-4">
             <label for="event_type">Employment city</label>
-            <select class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
+            <select onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');" class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
                 <option value="">Select a city</option>
                 @foreach($cities as $city)
-                    <option value="{{$city->city}}">{{$city->city}}</option>
+                    <option region="{{$city->TGB_REG_DISTRICT}}" value="{{$city->city}}">{{$city->city}}</option>
                     @endforeach
             </select>
 
@@ -166,7 +166,7 @@
             <select class="form-control search_icon" id="region" name="region">
                 <option value="">Select a region</option>
             @foreach($regions as $region)
-                    <option value="{{$region->id}}">{{$region->name}}</option>
+                    <option  code="{{$region->code}}" value="{{$region->id}}">{{$region->name}}</option>
                 @endforeach
             </select>
             <span class="region_errors errors">
@@ -340,7 +340,7 @@
         <div class="form-group  org_hook col-md-6">
             <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
         </div>
-        <div class="form-group org_hook col-md-12">
+        <div class="form-group col-md-12">
             <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered charitable organizations.
                 Our system uses the official name of the charity registered with the CRA. You can use the View CRA Charity List link to confirm if the organization you would like to support is registered. You can also support a specific branch or program name.</p>
 
@@ -359,24 +359,26 @@
                 <h3 class="blue">File(s)</h3>
 
             </div>
-
+            <div class="form-row form-header">
+                <span class="attachment_errors errors">
+                       @error('attachments')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                            @enderror
+                        </span>
+            </div>
             <div class="form-row form-body">
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
-                    <i style="color:#1a5a96;margin-left:155px;" class="fas fa-file-upload fa-5x"></i>
+                    <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;margin-left: 75px;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
+                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">
 
                 </table>
             </div>
-            <span class="attachment_errors errors">
-                       @error('attachments')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                            @enderror
-                        </span>
+
     </div>
 
 
@@ -387,7 +389,7 @@
 
 <br>
     <br>
-    <input type="submit" style="margin-left:20px;" onclick="$('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');"  class="col-md-2 btn btn-primary" value="Submit" />
+    <input type="submit" style="margin-left:20px;"   class="col-md-2 btn btn-primary" value="Submit" />
     <br>
     <br>
     <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are possible through eForm. Please contact pecsf@gov.bc.ca</p>
@@ -415,7 +417,7 @@
             <div class="modal-body pledgeDetail">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+                <button type="button" style="color:#000;" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

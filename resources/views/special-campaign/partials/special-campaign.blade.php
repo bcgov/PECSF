@@ -4,7 +4,7 @@
     {{-- <p class="p-1"></p> --}}
     {{-- <div class="card mx-1 pl-1 bg-primary">
         <div class="card-body bg-light">
-          By choosing this oprion your donation will support the designated programs of the regional 
+          By choosing this option your donation will support the designated programs of the regional
           Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
 
         </div>

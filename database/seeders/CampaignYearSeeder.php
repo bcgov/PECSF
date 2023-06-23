@@ -17,7 +17,7 @@ class CampaignYearSeeder extends Seeder
     public function run()
     {
 
-        for ($x = 2005; $x <= 2023; $x++) {
+        for ($x = 2005; $x <= 2024; $x++) {
           
           $periods = 26;
           if ($x == 2015 or $x == 2027) {
@@ -29,7 +29,7 @@ class CampaignYearSeeder extends Seeder
           ],[  
             'calendar_year' => $x,
             'number_of_periods' => $periods,
-            'status' => $x == 2023 ? 'A' : 'I',
+            'status' => $x == 2024 ? 'A' : 'I',
             'start_date' => Carbon::create($x -1, '09', '01'),
             'end_date' => Carbon::create($x -1, '11', '30'),
             'close_date' => Carbon::create($x , '12', '31'),

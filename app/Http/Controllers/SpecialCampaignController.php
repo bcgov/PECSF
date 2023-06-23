@@ -37,9 +37,6 @@ class SpecialCampaignController extends Controller
      */
     public function create()
     {
-        // forget the session for banner text
-        // session()->forget('special-campaign-banner-text');
-
 
         //
         // $pool_option = 'P';
@@ -353,7 +350,7 @@ class SpecialCampaignController extends Controller
     public function dismissSpecialCampaignBanner() {
 
         // forget the session for banner text
-        session()->forget('special-campaign-banner-text');
+        session()->forget('has-active-special-campaign');
 
         return response()->noContent();
     }

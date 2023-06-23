@@ -23,10 +23,10 @@
     </div>
 
     @isset($fund_support_pool_list)
-        <div class="form-group col-md-4">
-            <label for="pool_selection_id">Search by Fund Support Pool</label>
+        <div class="form-group col-md-4 org_hook">
+            <label for="pool_selection_id">Search by Fund Supported Pool</label>
             <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
-                <option value="">Choose a Fund Support Pool</option>
+                <option value="">Choose a Fund Supported Pool</option>
                 @foreach($fund_support_pool_list as $pool)
                     <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
                 @endforeach
@@ -47,7 +47,7 @@
 <div class="charity-error-hook  {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
         <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
-    <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
+    <div class="error max-charities-error" style="display:none;color:#D8292F;"><i style="color:black;" class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
         <table class="" id="organizations" style="display:block;width:100%">
            @if(count($selected_charities) > 0)
@@ -57,7 +57,7 @@
             @endforeach
             @else
                 <h5 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
-                <span class="charity_errors"></span>
+                <span class="charity_errors errors"></span>
             @endif
         </table>
 </div>
@@ -67,13 +67,13 @@
             <div class="modal-header bg-blue">
                 <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" style="color:#000;" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
 
-                <table class="table">
+                <table class="table charity">
                     <tr>
                         <td>Business/Registration Number</td>
                         <td id="registration_number"></td>
@@ -125,6 +125,20 @@
                     <tr>
                         <td>Charitable Programs</td>
                         <td id="charitable_programs"></td>
+                    </tr>
+                </table>
+                <table style="border:none;" class="table fsp">
+                    <tr style="border:none;">
+                        <td style="border:none;" rowspan="3"><img id="pool_image" /></td>
+                        <td style="border:none;" id="pool_name"></td>
+                    </tr>
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="pool_description"></td>
+                    </tr>
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="pool_registration_number"></td>
                     </tr>
                 </table>
             </div>

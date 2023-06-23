@@ -83,6 +83,7 @@ class CampaignYearController extends Controller
             'end_date' => $request->end_date,
             'close_date' => $request->close_date,
             'created_by_id' => Auth::id(),
+            'modified_by_id' => Auth::id(),
         ]);
 
         return redirect()->route('settings.campaignyears.index')
@@ -131,16 +132,10 @@ class CampaignYearController extends Controller
      */
     public function update(CampaignYearRequest $request, $id)
     {
-    
-        CampaignYear::where('id',$id)->update([
-        
-            'number_of_periods' =>  $request->number_of_periods,
-            'status' => $request->status,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'close_date' => $request->close_date,
-            'modified_by_id' => Auth::id(),
-        ]);
+        $cy = CampaignYear::where('id',$id)->first();
+        $cy->fill( $request->except(['calendar_year']) );
+        $cy->modified_by_id = Auth::id();
+        $cy->save();
 
         return redirect()->route('settings.campaignyears.index')
                 ->with('success','Campaign Year ' . CampaignYear::find($id)->calendar_year . ' updated successfully');

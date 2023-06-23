@@ -26,7 +26,7 @@
                         <select name="organization_id" id="" class="form-control" required>
                             <option value="">Please select</option>
                             @foreach($organizations as $org)
-                                <option {{$is_registered->organization_id == $org->id? "selected":""}} value="{{$org->id}}">{{$org->name}}</option>
+                                <option {{$is_registered->business_unit_id == $org->id? "selected":""}} value="{{$org->id}}">{{$org->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -121,7 +121,10 @@
                     <label>City</label>
                     <select name="city" class="form-control">
                         <option value="">Select a City</option>
-                        @foreach($cities as $city)
+                        <option value="Vancouver" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower("Vancouver")) ? "selected" : "") }}>Vancouver</option>
+                        <option value="Victoria" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower("Victoria")) ? "selected" : "") }}>Victoria</option>
+
+                    @foreach($cities as $city)
                             <option value="{{$city->city}}" {{ ((str_replace(" ","",strtolower(explode(",",$is_registered->new_address)[1])) == strtolower($city->city)) ? "selected" : "") }}>{{$city->city}}</option>
                         @endforeach
                     </select>

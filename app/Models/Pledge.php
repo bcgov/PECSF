@@ -7,10 +7,12 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Pledge extends Model
+class Pledge extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'organization_id',
@@ -67,6 +69,14 @@ class Pledge extends Model
         }
     }
 
+    public function one_time_charities() {
+        return $this->charities()->where('frequency', 'one-time');
+    }
+
+    public function bi_weekly_charities() {
+        return $this->charities()->where('frequency', 'bi-weekly');
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
     }
@@ -92,6 +102,21 @@ class Pledge extends Model
         ]);
     }
 
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_id', 'id');
+    }
+
+    public function current_fund_supported_pool_by_region() {
+
+        if ($this->type == 'P') {
+            $region = Region::where('id', $this->region_id)->first();
+            return FSPool::current()->where('region_id', $region->id)->first();
+        } else {
+            return null;
+        }
+    }
+
+
     public function fund_supported_pool() {
        
             return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id')->withDefault();
@@ -102,6 +127,31 @@ class Pledge extends Model
         return $this->belongsTo(Organization::class)->withDefault([
             'name' => '',
         ]);
+    }
+
+    public function pecsf_user_region() {
+
+        $region = Region::where('code', '=', function ($query) {
+            $query->select('TGB_REG_DISTRICT')
+                ->from('cities')
+                ->where('cities.city', $this->city)
+                ->limit(1);
+        })->first();
+        
+        return $region;
+
+    }
+
+    public function pecsf_user_bu() {
+
+        $bu = BusinessUnit::where('code', '=', function ($query) {
+            $query->select('bu_code')
+                ->from('organizations')
+                ->where('id', $this->organization_id)
+                ->limit(1);
+        })->first();
+
+        return $bu;
     }
 
     // public function scopeOnlyCampaignYear($query, $campaign_year) {

@@ -2,8 +2,8 @@
     <div class="card m-0">
         <div class="card-header bg-light">
             <div class="custom-control custom-radio">
-                <input data-toggle="collapse" data-target="#method-selection-1" type="radio" 
-                  name="pool_option" id="pool-option-1" value="P" class="custom-control-input" 
+                <input data-toggle="collapse" data-target="#method-selection-1" type="radio"
+                  name="pool_option" id="pool-option-1" value="P" class="custom-control-input"
                       {{ $pool_option == "P" ? 'checked' : '' }}/>
                 <label class="custom-control-label" for="pool-option-1">Select a regional Fund Supported Pool</label>
             </div>
@@ -17,7 +17,7 @@
                         <label for="pool_id">Fund Supported Pool</label>
                         <select class="form-control" name="pool_id" id="pool_id">
                             <option value="" selected>Choose a pool</option>
-                            @foreach ($fspools as $fspool) 
+                            @foreach ($fspools as $fspool)
                                 <option value="{{ $fspool->id }}"
                                     @if (isset($pledge) && $pool_option == "P")
                                         {{  $pledge->fund_supported_pool->id == $fspool->id ? 'selected' : ''  }}
@@ -85,7 +85,7 @@
 <h3 class="mt-1">1. Select your preferred method for choosing charities</h3>
 <div id="preferred-method-area">
     <p class="p-1"></p>
-    <div class="card mx-3 p-0 pl-2 bg-primary" >
+    <div class="card p-0 pl-2 bg-primary" >
         <div class="card-body bg-light">
             If you select the CRA charity list option, you can support up to 1  charity of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
 
@@ -110,8 +110,10 @@
             <div class="form-check ">
                 <input class="form-check-input" type="radio" name="pool_option" id="pool1" value="C"
                     {{ $pool_option == "C" ? 'checked' : '' }}>
-                <label class="form-check-label h5" for="pool1">
-                    Select one charity from the CRA List
+                <label style="font-size:16px;line-height:25.6px;" class="form-check-label" for="pool1">
+                    <strong>Select one charity from the CRA List</strong><br>
+                    <span>Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Fund Supported Pools.
+                    </span>
                 </label>
             </div>
         </div>
@@ -122,8 +124,9 @@
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="pool_option" id="pool2" value="P"
                     {{ $pool_option == "P" ? 'checked' : '' }}>
-                <label class="form-check-label h5" for="pool2">
-                    Select a Regional Fund Supported Pool
+                <label style="font-size:16px;line-height:25.6px;" class="form-check-label h5" for="pool2">
+                    <strong>Select a regional Fund Supported Pool</strong><br>
+                    <span>Charities and distribution amounts are pre-determined.</span>
                 </label>
             </div>
         </div>

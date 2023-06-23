@@ -55,16 +55,16 @@
                             <label for="yearcd">Calendar Year</label>
                             @if ($is_new_pledge)
                                 <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;">
-                                    @foreach ($campaignYears as $cy)
-                                        <option value="{{ $cy->calendar_year }}"
-                                            {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>
-                                            {{ $cy->calendar_year }}
+                                    @foreach ($years as $year)
+                                        <option value="{{ $year }}"
+                                            {{ ($year == date('Y')) ? 'selected' : '' }}>
+                                            {{ $year }}
                                         </option>
                                     @endforeach
                                 </select>
                             @else
                                 <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;" {{ $is_new_pledge ? '' : 'readonly' }}>
-                                <option value="{{ $pledge->calendar_year }}" selected>{{ $pledge->yearcd }}</option>
+                                <option value="{{ $pledge->yearcd }}" selected>{{ $pledge->yearcd }}</option>
                                 </select>
                             @endif
                         </div>
@@ -215,12 +215,18 @@
 
             {{-- <div class="card-body "> --}}
                 <div id="special-campaign-area">
-                    <h6 class="pt3">&nbsp;</h6>
-                    <div class="row justify-content-around">
-                        @foreach ($special_campaigns as $special_campaign)  
-                            <div class="col-sm-12 col-md-5">
+                    <div class="special_campaign_id_error p-3">
+                    </div>
+                    {{-- <h6 class="pt3">&nbsp;</h6> --}}
+                    {{-- <div class="row justify-content-around"> --}}
+                    <div class="d-flex justify-content-around flex-wrap">
+                        @foreach ($special_campaigns->sortBy('status') as $special_campaign)  
+                            {{-- <div class="col-sm-12 col-md-5"> --}}
                                 <div class="card {{ $special_campaign->id == $pledge->special_campaign_id ? 'active' : '' }}" 
-                                    data-id="{{ $special_campaign->id }}">
+                                    data-id="{{ $special_campaign->id }}" 
+                                        data-status="{{ $special_campaign->status }}"
+                                        data-start_year="{{ $special_campaign->start_date->format('Y') }}"    
+                                        data-end_year="{{ $special_campaign->end_date->format('Y') }}">
                                     <div class="card-body">
                                         <figure class="logo_image">
                                             <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="80">
@@ -238,7 +244,7 @@
                                     <a href="#" class="btn btn-primary">Go somewhere</a> --}}
                                     </div>
                                 </div>
-                            </div>
+                            {{-- </div> --}}
                         @endforeach     
                     </div>
                     <h6 class="pb-3"></h6>
@@ -291,6 +297,12 @@
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 <style>
+
+    #special-campaign-area .card {
+        width: 49%;
+        min-width: 30em;
+    }
+
     .select2-selection--multiple{
         overflow: hidden !important;
         height: auto !important;
@@ -550,6 +562,39 @@ $(function () {
         }
     })
 
+    // 
+    $("select[name='yearcd']").change(function(e) {
+        // Check input( $( this ).val() ) for validity here
+        // select_year = $("select[name='yearcd']").val();
+        select_year = $(this).val();
+
+        first = 0;
+        $('input[name="special_campaign_id"]').prop('checked', false);
+        $('#special-campaign-area').find('.card').each( function(index) {
+            status = $(this).data('status');
+            start_year = $(this).data('start_year');
+            end_year = $(this).data('end_year');
+console.log( index + ' - ' + select_year + ' - ' + start_year + ' - '  + end_year);            
+
+            if (select_year >= start_year && select_year <= end_year) {
+                $(this).css("display", "block");               
+                @if ($is_new_pledge)                
+                    if (first == 0) {
+                        $(this).find('input[name="special_campaign_id"]').prop('checked',true);
+                        $(this).addClass('active');
+                        first = 1;
+                    }
+                @endif
+            } else {
+                $(this).css("display", "none");               
+            }
+        })
+    });
+    
+    $("select[name='yearcd']").trigger("change");
+    @if (!($is_new_pledge))
+        $('#special_campaign_{{$pledge->special_campaign_id}}').prop('checked',true);
+    @endif
 
     // 
     $('#special-campaign-area .card').click( function(event) {
@@ -626,6 +671,8 @@ $(function () {
                 $('#admin-pldege-special-campaign-form [name='+ field_name +']').nextAll('span.text-danger').remove();
                 $('#admin-pldege-special-campaign-form [name='+ field_name +']').removeClass('is-invalid');
             });
+            $('.special_campaign_id_error').html('');
+            $('.special_campaign_id_error').parent().parent().removeClass('border border-danger');
             // $('#admin-pldege-campaign-form [name="charities[]"]').nextAll('span.text-danger').remove();
             // $('#admin-pldege-campaign-form [name="percentages[]"]').nextAll('span.text-danger').remove();
 
@@ -663,6 +710,11 @@ $(function () {
                                 pos = Number(items[ items.length -1 ]);
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
+                            } else if (field_name == 'special_campaign_id') {
+                                console.log('error found');
+                                $('.special_campaign_id_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                // $('.special_campaign_id_error').addClass('is-invalid');
+                                $('.special_campaign_id_error').parent().parent().addClass('border border-danger');
                             } else {
                                 $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
                                 $(document).find('[name=' + field_name + ']').addClass('is-invalid');
@@ -734,13 +786,14 @@ $(function () {
                             window.location = '{{ route("admin-pledge.special-campaign.index") }}';
 
                         },
-                        error: function(response) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: response.responseJSON.error,
-                            })
-                            console.log(response.responseJSON.error);
+                        error: function (data) {
+                                Swal.fire({
+                                        icon: 'error',
+                                        title: data.responseJSON.title, // data.responseJSON.title,
+                                        text: data.responseJSON.message,
+                                });
+
+                                console.log(data.responseJSON.message);
                         }
                     });
                 } else if (result.isCancelledDenied) {

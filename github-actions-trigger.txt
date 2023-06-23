@@ -1,3 +1,4 @@
 Trigger the GA pipeline
 Trigger build
 Trigger build on TEST 
+Trigger build on Prod

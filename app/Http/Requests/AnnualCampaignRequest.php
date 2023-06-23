@@ -27,57 +27,59 @@ class AnnualCampaignRequest extends FormRequest
      */
     public function rules()
     {
-        
+
         $my_rules = [];
 
-        if ($this->step >= 1) { 
+        if ($this->step >= 1) {
 
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
             [
                 'step'         => ['required'],
                 'pool_option'  => ['required', Rule::in(['C', 'P']) ],
                 'number_of_periods' => ['required'],
             ]);
 
-        } 
+        }
 
         if ($this->step >= 2) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     'regional_pool_id'    => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', [ Rule::exists("f_s_pools", "id")->whereNull("deleted_at"), ]) ],
-                    'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1']) ], 
-                    'charities.*' =>  [ Rule::when( $this->pool_option == 'C', ['exists:charities,id']) ],
+                    'charities'   =>  [ Rule::when( $this->pool_option == 'C', ['required', 'min:1']) ],
+                    'charities.*' =>  [ Rule::when( $this->pool_option == 'C', [
+                        // 'exists:charities,id'
+                        Rule::exists("charities", "id")->where('charity_status','Registered')
+                        ]) ],
 
                 ]
             );
         }
 
         if ($this->step >= 3) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
-                    "frequency" => "required|in:bi-weekly,one-time,both",                    
-
-                    'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount) && 
-                                                        ($this->frequency == 'one-time' || $this->frequency == 'both'), 
-                                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                    "frequency" => "required|in:bi-weekly,one-time,both",
+                    'one_time_amount_custom'  => [ Rule::when( empty($this->one_time_amount) &&
+                                                        ($this->frequency == 'one-time' || $this->frequency == 'both'),
+                                                        ['required','numeric','min:1', 'regex:/^(-?\w+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                                                         // ^(\d{1,5}\.?\d{1,2}|\d{1,5}\.?\d{1,2})$
                     'bi_weekly_amount_custom'  => [ Rule::when( $this->bi_weekly_amount =='' &&
-                                                        ($this->frequency == 'bi-weekly' || $this->frequency == 'both'),                             
-                                                        ['required','numeric','min:1', 'regex:/^(\d+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
+                                                        ($this->frequency == 'bi-weekly' || $this->frequency == 'both'),
+                                                        ['required','numeric','min:1', 'regex:/^(-?\w+\.?\d{0,2}|\d*\.?\d{0,2})$/']) ],
                 ]
             );
         }
 
         if ($this->step >= 4) {
 
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
 
                     'oneTimeAmount.*' => Rule::when($this->pool_option == 'C', ['required', 'numeric', 'min:0.01']),
-                    'oneTimePercent.*' => Rule::when($this->pool_option == 'C', ['required', 'numeric', 
+                    'oneTimePercent.*' => Rule::when($this->pool_option == 'C', ['required', 'numeric',
                                                 'between:0.01,100.00']),
                     'biWeeklyAmount.*'  => Rule::when($this->pool_option == 'C', ['required', 'numeric', 'min:0.01']),
-                    'biWeeklyPercent.*' => Rule::when($this->pool_option == 'C', ['required', 'numeric', 
+                    'biWeeklyPercent.*' => Rule::when($this->pool_option == 'C', ['required', 'numeric',
                                                 'between:0.01,100.00']),
                     // 'percentages.*' => $this->pool_option == 'C' ?
                     //             'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/' :  '',
@@ -88,7 +90,7 @@ class AnnualCampaignRequest extends FormRequest
         }
 
         if ($this->step >= 5) {
-            $my_rules = array_merge($my_rules, 
+            $my_rules = array_merge($my_rules,
                 [
                     'charityOneTimeAmount' => Rule::when($this->pool_option == 'C', ['required','array']),
                     'charityBiWeeklyAmount' => Rule::when($this->pool_option == 'C', ['required','array']),
@@ -122,7 +124,7 @@ class AnnualCampaignRequest extends FormRequest
 
             if ($charities && $this->pool_option == 'C' && $step >= 2) {
 
-                // Check duplicate charity id 
+                // Check duplicate charity id
                 $dups = array_count_values(
                         array_filter($charities, fn($value) => !is_null($value) && $value !== '')
                 );
@@ -132,7 +134,7 @@ class AnnualCampaignRequest extends FormRequest
                         $validator->errors()->add('organization_name.' .$i, 'The duplicated charity is entered.');
                     }
                 }
-    
+
                 // check max number of charities
                 $max = 10;
                 if ( count($charities) > $max) {
@@ -169,7 +171,7 @@ class AnnualCampaignRequest extends FormRequest
                         }
                     }
                     if ( round($sum,2) != 100) {
-                        foreach ($oneTimePercents as $key => $percentage) {    
+                        foreach ($oneTimePercents as $key => $percentage) {
                         // for ($i=0; $i < count($charities); $i++) {
                                 $validator->errors()->add('oneTimePercent.' .$key, 'The sum of percentage is not 100.');
                         }
@@ -179,7 +181,7 @@ class AnnualCampaignRequest extends FormRequest
             }
         });
     }
-    
+
 
     /**
      * Get the error messages for the defined validation rules.
@@ -189,18 +191,17 @@ class AnnualCampaignRequest extends FormRequest
     public function messages()
     {
         return [
-
             'charities.required' => 'At least one charity must be specified.',
             'charities.min' => 'At least one charity must be specified.',
             'charities.*.exists' =>  'The invalid charity entered.',
-
             'one_time_amount_custom.required' => 'The amount is required.',
-            'one_time_amount_custom.min'      => 'The min amount is $ 1.0.',
-            'one_time_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
+            'one_time_amount_custom.min'      => 'The minimum One-time custom amount is $1.',
+            'one_time_amount_custom.regex' => ' The One-time custom amount must have maximum of 2 decimal places.',
+            'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
             'bi_weekly_amount_custom.required' => 'The amount is required.',
-            'bi_weekly_amount_custom.min' => 'The min amount is $ 1.0.',
-            'bi_weekly_amount_custom.regex' => 'The invalid amount, max 2 decimal places.',
- 
+            'bi_weekly_amount_custom.min' => 'The minimum Bi-weekly custom amount is $1.',
+            'bi_weekly_amount_custom.regex' => ' The Bi-weekly custom amount must have maximum of 2 decimal places.',
+            'bi_weekly_amount_custom.numeric' => ' The Bi-weekly custom amount must be a number.',
             'biWeeklyPercent.*.required' => 'The Percentage field is required.',
             'biWeeklyPercent.*.numeric' => 'The Percentage must be a number.',
             'biWeeklyPercent.*.between' => 'The percentage must be between 0.01 and 100.',

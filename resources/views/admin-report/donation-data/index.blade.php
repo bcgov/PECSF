@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h2>Reporting</h2>
+    {{-- <h2>Reporting</h2> --}}
     @include('admin-report.partials.tabs')
     <div class="d-flex mt-3">
         <h4>PECSF - Donation Data</h4>
@@ -171,6 +171,11 @@
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
+
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 5%;
+    }
+    
 </style>
 @endpush
 
@@ -194,6 +199,9 @@
             retrieve: true,
             "searching": true,
             processing: true,
+            "language": {
+               processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
+            },
             serverSide: true,
             select: true,
             'order': [[0, 'desc']],
@@ -212,7 +220,14 @@
                     data.frequency = $("select[name='frequency']").val();
                     data.amount_from = $("input[name='amount_from']").val();
                     data.amount_to = $("input[name='amount_to']").val();
-                }
+                },
+                error: function(xhr, resp, text) {
+                        if (xhr.status == 401) {
+                            { // session expired 
+                                window.location.href = '/login'; 
+                            }
+                        }
+                },
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},

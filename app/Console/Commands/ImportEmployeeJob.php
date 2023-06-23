@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\EmployeeJob;
 use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
@@ -30,6 +31,7 @@ class ImportEmployeeJob extends Command
     const MAX_UPDATE_COUNT = 1000;
 
     /* attributes for share in the command */
+    protected $task;
     protected $total_count;
     protected $created_count;
     protected $updated_count;
@@ -64,27 +66,51 @@ class ImportEmployeeJob extends Command
     {
         ini_set('memory_limit', '4096M');
 
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+        try {
 
-        $this->LogMessage( now() );
-        $this->LogMessage("Update/Create - Employee Job Information");
-        $this->UpdateEmployeeJob();
-        $this->LogMessage( now() );
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
-        if  ($this->created_count > self::MAX_CREATE_COUNT)  {
-            $this->LogMessage( '' );
-            $this->LogMessage( '*NOTE: more than ' . self::MAX_CREATE_COUNT . ' new row found, only the first ' . self::MAX_CREATE_COUNT . ' lines detail were shown in the log');
-            $this->LogMessage( '' );
-        }
+            $this->LogMessage( now() );
+            $this->LogMessage("Update/Create - Employee Job Information");
+            $this->UpdateEmployeeJob();
+            $this->LogMessage( now() );
 
-        if  ($this->updated_count > self::MAX_UPDATE_COUNT)  {
-            $this->LogMessage( '' );
-            $this->LogMessage( '*NOTE: more than ' . self::MAX_UPDATE_COUNT . ' changes found, only the first ' . self::MAX_UPDATE_COUNT . ' lines detail were shown in the log');
-            $this->LogMessage( '' );
+            if  ($this->created_count > self::MAX_CREATE_COUNT)  {
+                $this->LogMessage( '' );
+                $this->LogMessage( '*NOTE: more than ' . self::MAX_CREATE_COUNT . ' new row found, only the first ' . self::MAX_CREATE_COUNT . ' lines detail were shown in the log');
+                $this->LogMessage( '' );
+            }
+
+            if  ($this->updated_count > self::MAX_UPDATE_COUNT)  {
+                $this->LogMessage( '' );
+                $this->LogMessage( '*NOTE: more than ' . self::MAX_UPDATE_COUNT . ' changes found, only the first ' . self::MAX_UPDATE_COUNT . ' lines detail were shown in the log');
+                $this->LogMessage( '' );
+            }
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message .= $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
         }
 
         $this->LogMessage( 'Total Row count     : ' . $this->total_count  );
@@ -114,20 +140,20 @@ class ImportEmployeeJob extends Command
         $filter = "";  // Disabled the filter due to process timimg issue
         $orderBy = 'EMPLID asc, EMPL_RCD asc, EFFDT desc, EFFSEQ desc, date_updated desc';
 
-        try {
+        // try {
             // Validate the value...
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                 ->get(env('ODS_INBOUND_REPORT_EMPLOYEE_DEMO_BI_ENDPOINT').'?$count=true&$top=1'.
                                 '&$filter='.$filter.'&$orderBy='.$orderBy);
-        } catch (\Exception $ex) {
+        // } catch (\Exception $ex) {
 
-            // write to log message 
-            $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+        //     // write to log message 
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
 
-            return 1;
-        }
+        //     return 1;
+        // }
 
         $row_count = json_decode($response->body())->{'@odata.count'};
         $this->total_count = $row_count;
@@ -148,7 +174,7 @@ class ImportEmployeeJob extends Command
             $top  = $size;
             $skip = $size * $i;
 
-            try {
+            // try {
                 // Loading pledge history data
                 $response = Http::withHeaders(['Content-Type' => 'application/json'])
                     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
@@ -286,19 +312,25 @@ class ImportEmployeeJob extends Command
                     // write to log message 
                     $this->status = 'Error';
                     $this->LogMessage( 'Status: ' . $response->status() . ' Response Body: ' .  $response->body() );
+                    
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
 
                 }
 
-            } catch (\Exception $ex) {
+            // } catch (\Exception $ex) {
 
-                // write to log message 
-                $this->status = 'Error';
-                $this->LogMessage( $ex->getMessage() );
+            //     // write to log message 
+            //     $this->status = 'Error';
+            //     $this->LogMessage( $ex->getMessage() );
 
-                return 1;
-            }
+            //     return 1;
+            // }
 
         }
+
+        // Purge the old audit data for more than 30 days old
+        EmployeeJobAudit::whereRaw("audit_stamp < DATE_SUB(CURDATE(), INTERVAL 30 DAY)")->delete();
+        
     }
 
     protected function LogMessage($text) 
@@ -311,7 +343,7 @@ class ImportEmployeeJob extends Command
 
         if (time() - $this->last_refresh_time > 5) {
             $this->task->message = $this->message;
-            $this->task->save();
+            // $this->task->save();
 
             $this->last_refresh_time = time();
         }

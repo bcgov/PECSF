@@ -116,7 +116,7 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
 
         $sql = NonGovPledgeHistorySummary::select('org_code', 'emplid', 'pecsf_id', 'yearcd', 'source', 'pledge_type', 
                             DB::raw("case when source = 'P' then region else null end as region"),
-                            DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
+                            DB::raw("sum(case when frequency = 'Bi-Weekly' then per_pay_amt else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
                             DB::raw("sum(pledge) as goal_amount"),
                             DB::raw("min(pledge_history_id) as pledge_history_id")
@@ -161,12 +161,12 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                     continue;
                 }
           
-                $bi_pledge_detail = $bi_pledge->details->first();
+                $bi_pledge_detail = $bi_pledge->first_detail;
                 
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -197,8 +197,8 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                     'pay_period_amount' => $bi_pledge->pay_period_amount,
                     'goal_amount' => $bi_pledge->goal_amount,
 
-                    'ods_export_status' => null,
-                    'ods_export_at' => null,
+                    'ods_export_status' => 'C',
+                    'ods_export_at' => $this->campaign_year . '-12-31 00:00:00',
                 ]); 
 
                 if ($pledge->wasRecentlyCreated) {
@@ -287,7 +287,7 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
         if ( $bi_pledge->source == 'P') {
 
             $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                            ->where('regions.name', '=', $bi_pledge->region )
+                            ->where('regions.code', '=', $bi_pledge->region )
                             ->first();
             if (!$pool) {
                 $valid = false;
@@ -295,7 +295,9 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
 
         } else {
 
-            $charity = Charity::where('registration_number', $bi_pledge->details->first()->charity_bn)->first();
+            $bi_pledge_detail = $bi_pledge->first_detail;           
+
+            $charity = Charity::where('registration_number', $bi_pledge_detail->charity_bn)->first();
             if (!$charity) {
                 echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
                 $vendor_charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();

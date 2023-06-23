@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\BusinessUnit;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -30,7 +31,7 @@ class OrganizationController extends Controller
 
         if($request->ajax()) {
 
-            $orgs = Organization::select(['id', 'code', 'name', 'status', 'effdt']);
+            $orgs = Organization::select('*');
 
             return Datatables::of($orgs)
                 ->addColumn('action', function ($org) {
@@ -43,7 +44,10 @@ class OrganizationController extends Controller
             ->make(true);
         }
 
-        return view('admin-campaign.organizations.index');
+        // Business Units
+        $business_units = BusinessUnit::orderBy('name')->get();
+
+        return view('admin-campaign.organizations.index', compact('business_units'));
 
     }
 
@@ -62,6 +66,7 @@ class OrganizationController extends Controller
                 'name' => $request->name,
                 'status' => $request->status,
                 'effdt' => $request->effdt,
+                'bu_code' => $request->bu_code,
                 'created_by_id' => Auth::id(),
                 'updated_by_id' => Auth::id(),
             ]);
@@ -117,9 +122,11 @@ class OrganizationController extends Controller
      */
     public function update(OrganizationRequest $request, $id)
     {
+
         if ($request->ajax()) {
             $org = Organization::where('id', $id)->first();
             $org->fill( $request->all() );
+            $org->updated_by_id = Auth::id();
             $org->save();
         
             return response()->json($org);
@@ -131,15 +138,28 @@ class OrganizationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $org = Organization::where('id', $id)->first();
-        $org->updated_by_id = Auth::Id();
-        $org->save();
-        
-        $org->delete();
+        if($request->ajax()) {
+            $org = Organization::where('id', $id)->first();
 
-        return response()->noContent();
+            if ($org->hasPledge() ) {
+                return response()->json([
+                    'title'  => "Invalid delete!",
+                    'message' => 'The Business unit "' .$org->code . ' - '. $org->name . '" cannot be deleted, it is being referenced on the pledge(s).'], 403);
+            }
+
+            // Delete the specified organization
+            $org->updated_by_id = Auth::Id();
+            $org->save();
+            
+            $org->delete();
+
+            return response()->noContent();
+        
+        } else {
+            abort(404);
+        }
     }
 
 }

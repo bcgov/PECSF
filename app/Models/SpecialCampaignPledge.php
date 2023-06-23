@@ -6,10 +6,12 @@ use App\Models\SpecialCampaign;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class SpecialCampaignPledge extends Model
+class SpecialCampaignPledge extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
     
     protected $fillable = [
         'organization_id', 
@@ -51,7 +53,7 @@ class SpecialCampaignPledge extends Model
 
     public function special_campaign() 
     {
-        return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withDefault();
+        return $this->belongsTo(SpecialCampaign::Class, 'special_campaign_id', 'id')->withTrashed()->withDefault();
     }
 
     public function campaign_year() {

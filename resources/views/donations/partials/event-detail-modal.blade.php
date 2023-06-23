@@ -8,7 +8,7 @@
         <p>{{ $year }}</p>
       </div>
 </div>    
-<div class="row">
+{{-- <div class="row">
     <div class="col-4 text-right">
           @if ($frequency == 'One-Time')
             <p class="font-weight-bold">One Time Payroll Deduction</p> 
@@ -19,6 +19,14 @@
       <div class="col-1">
         <p>${{ number_format($pledge_amt,2) }}</p>
       </div>
+</div>     --}}
+<div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Event Type</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->event_type }}</p>
+    </div>
 </div>    
 <div class="row">
     <div class="col-4 text-right">
@@ -27,8 +35,24 @@
       <div class="col-1">
         <p>${{ number_format($total_amount,2) }}</p>
       </div>
+</div>
+<div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Deposit Date</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->deposit_date->format('Y-m-d') }}</p>
+    </div>
 </div>    
-@if ($pledge->type == 'P')
+{{-- <div class="row">
+  <div class="col-4 text-right">
+  <p class="font-weight-bold">Event Sub-type</p> 
+    </div>
+    <div class="col-6">
+      <p>{{ $pledge->sub_type }}</p>
+    </div>
+</div>     --}}
+@if ($pledge->regional_pool_id)
 <div class="row">
     <div class="col-4 text-right">
      <p class="font-weight-bold">Fund Supported Pool</p> 
@@ -49,7 +73,7 @@
       </tr>
     </thead>
     <tbody>
-        @if ($pledge->type == 'P')
+        @if ($pledge->regional_pool_id)
             @foreach($pledge->fund_supported_pool->charities as $pool_charity)
                 <tr>
                     <td scope="row">{{ $loop->index +1 }}</td>

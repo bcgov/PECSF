@@ -74,7 +74,7 @@
 </head>
 
 <body class="@yield('classes_body')" @yield('body_data')>
-    @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+    @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
         {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
         <div class="top-message-bar p-2  bg-warning   XXsticky-top">
@@ -150,7 +150,7 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
-    @if( session()->has('special-campaign-banner-text') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
+    @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
         <style>
             .v-slider-frame {
                 border: none;
@@ -174,7 +174,7 @@
             var vsOpts = {
                 $slides: $('.v-slide'),
                 $list: $('.v-slides'),
-                duration: 15,
+                duration: 8,
                 lineHeight: 30
             }
 
@@ -186,7 +186,7 @@
             vsOpts.$slides.each(function(i) {
                 vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
                     y: i * -1 * vsOpts.lineHeight,
-                    ease: Elastic.easeOut.config(1, 0.6)
+                    ease: Elastic.easeOut.config(1, 0.7)
                 })
             })
             vSlide.play();
@@ -215,6 +215,18 @@
             });
         </script>
     @endif
+    {{-- Global AjaxError event to redirect to login page when the session was expired --}}
+    <script>
+        $(function() {
+            $(document).ajaxError(function(event, jqxhr, settings, exception) {
+                if (jqxhr.status == 401 || jqxhr.status == 419) {
+                   // session expired 
+                   window.location.href = '/login'; 
+                }
+                console.log('global ajaxError handler -- status ' + jqxhr.status + ' | ' + exception);
+            });
+        });
+    </script>
 </body>
 
 </html>

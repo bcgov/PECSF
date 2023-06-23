@@ -36,8 +36,8 @@ class RegionController extends Controller
 
             return Datatables::of($regions)
                 ->addColumn('action', function ($region) {
-                return '<a class="btn btn-info btn-sm  show-region" data-id="'. $region->id .'" >Show</a>' . 
-                       '<a class="btn btn-primary btn-sm ml-2 edit-region" data-id="'. $region->id .'" >Edit</a>' . 
+                return '<a class="btn btn-info btn-sm  show-region" data-id="'. $region->id .'" >Show</a>' .
+                       '<a class="btn btn-primary btn-sm ml-2 edit-region" data-id="'. $region->id .'" >Edit</a>' .
                        '<a class="btn btn-danger btn-sm ml-2 delete-region" data-id="'. $region->id .
                        '" data-code="'. $region->code . '">Delete</a>';
             })
@@ -71,7 +71,7 @@ class RegionController extends Controller
 
             return response()->json($region);
         }
-        
+
     }
 
     /**
@@ -90,12 +90,12 @@ class RegionController extends Controller
             $region->updated_by_name = $region->updated_by ? $region->updated_by->name : '';
             $region->formatted_created_at = $region->created_at->format('Y-m-d H:i:s');
             $region->formatted_updated_at = $region->updated_at->format('Y-m-d H:i:s');
-            // $region->updated_at = date_timezone_set($region->updated_at, timezone_open('America/Vancouver')); 
+            // $region->updated_at = date_timezone_set($region->updated_at, timezone_open('America/Vancouver'));
             unset($region->created_by );
             unset($region->updated_by );
             return response()->json($region);
         }
-        
+
     }
 
     /**
@@ -125,7 +125,7 @@ class RegionController extends Controller
             $region = Region::where('id', $id)->first();
             $region->fill( $request->all() );
             $region->save();
-        
+
             return response()->json($region);
         }
     }
@@ -135,15 +135,27 @@ class RegionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $region = Region::where('id', $id)->first();
-        $region->updated_by_id = Auth::Id();
-        $region->save();
-        
-        $region->delete();
+        if($request->ajax()) {
+            $region = Region::where('id', $id)->first();
 
-        return response()->noContent();
+            if ($region->hasFSPool) {
+                return response()->json([
+                    'title'  => "Invalid delete!",
+                    'message' => 'The Region "' . $region->code . ' - ' . $region->name . '" cannot be deleted, it is being referenced on the Fund Supported Pool(s).'], 403);
+            }
+
+            $region->updated_by_id = Auth::Id();
+            $region->save();
+
+            $region->delete();
+
+            return response()->noContent();
+
+        } else {
+            abort(404);
+        }
     }
 
 

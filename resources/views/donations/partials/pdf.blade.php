@@ -43,9 +43,11 @@
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <span>PECSF Donation Summary</span>
+    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>
+<br>
 <hr>
 
 <span><i>Please note that this is not a Tax Receipt</i></span>
@@ -80,13 +82,53 @@
                             <tr class="">
                                 <td>{{ $pledge->donation_type }}</td>
                                 @if ($pledge->type == 'P')
-                                    <td>{{ $pledge->region }}
-                                    </td>
+                                    {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
+                                    <td>{{ $pledge->region }}   </td>
                                 @else
-                                    <td>{{ '' }} </td>
+                                    <td>
+                                        @if ($pledge->source == 'GF')
+                                            @switch($pledge->donation_type)
+                                                @case('Special Campaign')
+                                                    {{ $pledge->region }}
+                                                    @break
+                                                @case('Donate Now')
+                                                    {{ $pledge->region }}
+                                                    @break
+                                                @default
+                                                    @foreach(explode(",",$pledge->number_of_charities) as $charity)
+                                                        <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                            data-source="{{ $pledge->source }}"
+                                                            data-type="{{ $pledge->donation_type }}"
+                                                            data-id="{{ $pledge->id }}"
+                                                            data-frequency="{{ $pledge->frequency }}"
+                                                            data-yearcd="{{ $pledge->yearcd }}">
+                                                            {{$charity}}
+                                                        </a>
+                                                        <br>
+                                                    @endforeach
+
+                                            @endswitch
+                                        @else
+                                            @if ($pledge->donation_type == 'Donate Today')
+                                                {{ $pledge->number_of_charities }}
+                                            @else
+                                                @foreach(explode(",",$pledge->number_of_charities) as $charity)
+                                                    <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                        data-source="{{ $pledge->source }}"
+                                                        data-type="{{ $pledge->donation_type }}"
+                                                        data-id="{{ $pledge->id }}"
+                                                        data-frequency="{{ $pledge->frequency }}"
+                                                        data-yearcd="{{ $pledge->yearcd }}">
+                                                        {{$charity}}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
+                                            @endif
+                                        @endif
+                                    </td>
                                 @endif
                                 <td>{{ $pledge->frequency }} </td>
-                                
+
                                 <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
                                 {{-- <td class="text-right">$ {{ $pledge->frequency == 'Bi-Weekly' ?
                                         number_format($pledge->pay_period_amount * $pledge->campaign_year->number_of_periods,2) :

@@ -12,19 +12,19 @@
     <h1>Daily Campaign</h1>
     <ul class="menu nav nav-pills" id="pills-tab">
         <li class="nav-item nav-center-4">
-            <a style="text-align:center;" class="nav-link <?php echo (Route::current()->getName() == 'challege.index') ? 'active' : ''; ?>"
-               href="<?php echo e(route('challege.index')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">
+            <a style="text-align:center;" class="nav-link <?php echo (Route::current()->getName() == 'challenge.index') ? 'active' : ''; ?>"
+               href="<?php echo e(route('challenge.index')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">
                 Leaderboard</a>
         </li>
         <li class="nav-item nav-center-4">
-            <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challege.daily_campaign') ? 'active' : ''); ?>"
-               href="<?php echo e(route('challege.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
+            <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challenge.daily_campaign') ? 'active' : ''); ?>"
+               href="<?php echo e(route('challenge.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
         </li>
     </ul>
 @endsection
 @section('content')
 
-    <form id="download_report" method="GET" enctype="multipart/form-data" action="{{ route("challege.download") }}" >
+    <form id="download_report" method="GET" enctype="multipart/form-data" action="{{ route("challenge.download") }}" >
         @csrf
         <div class="form-row">
             <div class="form-group col-md-12">
@@ -50,9 +50,17 @@
                 <label for="sort">
                     Specify dates (Optional)
                 </label>
-                <input class="form-control" type="date" id="start_date" name="start_date" />
+                <select class="form-control" id="start_date" name="start_date">
+                    <option value=""></option>
+                    @foreach ($date_options as $date) 
+                        <option value="{{ $date }}">{{ $date }}</option>
+                    @endforeach
+                </select>                
+                {{-- <input class="form-control" type="date" id="start_date" name="start_date" /> --}}
             </div>
             <div class="form-group col-md-1">
+                <input type="hidden" name="excel" value = '1' />
+
                 <input type="submit" style="margin-top:30px;" class="btn btn-primary" value="Download Report" />
             </div>
         </div>

@@ -42,6 +42,22 @@
             	</div>
             </div>
 
+			<span class="bu_code_area">
+				<hr/>
+				<h6 class="font-weight-bold pb-2">For Non-Government Org only</h6>
+				<div class="form-group row">
+					<label for="bu_code" class="col-sm-4 col-form-label">Business Unit:</label>
+					<div class="col-sm-8">
+						<select name="bu_code" value="" class="form-control">
+							<option value="">None</option>
+							@foreach( $business_units as $key => $bu)
+								<option value="{{ $bu->code }}">{{ $bu->name }} ({{ $bu->code }})</option>
+							@endforeach 
+						</select>
+					</div>
+				</div>
+			</span>
+
 		  </form>
 		</div>
 		<div class="modal-footer">

@@ -58,7 +58,7 @@ class GeneratePledgeFromHistory extends Command
         $this->validation_pass  = true;
 
         $this->yearcd       = '2022';
-        $this->created_date = '2022-06-30';
+        $this->created_date = '2022-12-31';
         
         $this->message = '';
         $this->status = 'Completed';
@@ -182,7 +182,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
 
@@ -265,7 +265,7 @@ class GeneratePledgeFromHistory extends Command
                     $this->LogMessage('   Exception -- Organization not found - ' . $bi_pledge->org_code . ' (id - ' . $bi_pledge->id . ')' );
                 }
 
-                $region = Region::where('name', $bi_pledge->region)->first();
+                $region = Region::where('code', $bi_pledge->region)->first();
                 if ($bi_pledge->region && (!$region)) {
                     $valid = false;
                     $this->LogMessage('   Exception -- Region not found - ' . $bi_pledge->tgb_reg_district . ' (id - ' . $bi_pledge->id . ')' );
@@ -294,7 +294,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                     if (!$pool) {
@@ -365,7 +365,7 @@ class GeneratePledgeFromHistory extends Command
 
         $sql = PledgeHistorySummary::select('emplid', 'yearcd', 'source', 'campaign_type', 
                             DB::raw("case when source = 'P' then region else null end as region"),
-                            DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
+                            DB::raw("sum(case when frequency = 'Bi-Weekly' then per_pay_amt else 0 end) as pay_period_amount"),
                             DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
                             DB::raw("sum(pledge) as goal_amount"),
                             DB::raw("min(pledge_history_id) as pledge_history_id")
@@ -415,7 +415,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')                                       
                                        ->first();
                 }
@@ -426,94 +426,106 @@ class GeneratePledgeFromHistory extends Command
                                                 ->where('campaign_year_id', $campaign_year->id)
                                                 ->first();       
 
-                $pledge = Pledge::updateOrCreate([
-                    'organization_id' => $user->organization_id,
-                    'emplid' => $user->emplid,
-                    // 'user_id' => $user->id,
-                    // 'pecsf_id' => 
-                    'campaign_year_id' => $campaign_year->id,
-                ],[
-                    // 'first_name',
-                    // 'last_name',
-                    // 'city',
-                    'user_id' => $user->id,
-                    'type' => $bi_pledge->source,
-                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : null,
-                    'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
+                // determine the change based on diffrence created_at and created_at
+// dd([$old_pledge->created_at, $bi_pledge_detail->created_date
+//                 , $old_pledge->created_at->toDateString()
+//                 , $old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date]);
 
-                    'one_time_amount' => $bi_pledge->one_time_amount,
-                    'pay_period_amount' => $bi_pledge->pay_period_amount,
-                    'goal_amount' => $bi_pledge->goal_amount,
+                if ((!$old_pledge) 
+                            || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))
+                            || (!($old_pledge->pay_period_amount == $bi_pledge->pay_period_amount))) {
 
-                    'ods_export_status' => 'C',
-                    'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
+                    $pledge = Pledge::updateOrCreate([
+                        'organization_id' => $user->organization_id,
+                        'emplid' => $user->emplid,
+                        // 'user_id' => $user->id,
+                        // 'pecsf_id' => 
+                        'campaign_year_id' => $campaign_year->id,
+                    ],[
+                        // 'first_name',
+                        // 'last_name',
+                        // 'city',
+                        'user_id' => $user->id,
+                        'type' => $bi_pledge->source,
+                        'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : null,
+                        'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
 
-                    'created_at' => $bi_pledge_detail->created_date,
-                ]); 
+                        'one_time_amount' => $bi_pledge->one_time_amount,
+                        'pay_period_amount' => $bi_pledge->pay_period_amount,
+                        'goal_amount' => $bi_pledge->goal_amount,
 
-                if ($pledge->wasRecentlyCreated) {
+                        'ods_export_status' => 'C',
+                        'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
 
-                    $created_count += 1;
+                        'created_at' => $bi_pledge_detail->created_date,
+                    ]); 
 
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->campaign_year_id );
+                    if ($pledge->wasRecentlyCreated) {
 
-                } elseif ($pledge->wasChanged() ) {
+                        $created_count += 1;
 
-                    $updated_count += 1;
+                        $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->campaign_year_id );
 
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->campaign_year_id );
-                    $changes = $pledge->getChanges();
-                    unset($changes["updated_at"]);
+                    } elseif ($pledge->wasChanged() ) {
 
-                    $original = array_intersect_key($old_pledge->toArray(),$changes);
-                    $this->LogMessage('  summary => ' );
-                    $this->LogMessage('      original : '. json_encode( $original ) );
-                    $this->LogMessage('      change   : '. json_encode( $changes ) );
+                        $updated_count += 1;
 
-                } else {
-                    // No Action
-                    $no_change_count += 1;
-                }
+                        $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->campaign_year_id );
+                        $changes = $pledge->getChanges();
+                        unset($changes["updated_at"]);
 
-                // Update the created_at to match with created_date when the record already created
-                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
-                    $pledge->created_at = $bi_pledge_detail->created_date;
-                    $pledge->save(['timestamps' => false]);
-                }  
+                        $original = array_intersect_key($old_pledge->toArray(),$changes);
+                        $this->LogMessage('  summary => ' );
+                        $this->LogMessage('      original : '. json_encode( $original ) );
+                        $this->LogMessage('      change   : '. json_encode( $changes ) );
 
-                // echo json_encode($pledge) . PHP_EOL;
-                
-                if ($bi_pledge->source == 'P') {
-                    // No action required
-                } else {
-
-                    $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
-                                                ->where('yearcd', $bi_pledge->yearcd)
-                                                ->where('source', 'Non-Pool')
-                                                ->where('campaign_type', $bi_pledge->campaign_type)
-                                                ->orderBy('frequency')
-                                                ->get();
-
-                    $pledge->charities()->delete();         
-
-                    foreach ($bi_pledge_charites as $bi_pledge_charity) {
-                        
-                        $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
-
-                        PledgeCharity::create([
-                            'charity_id' => $charity->id,
-                            'pledge_id' => $pledge->id,
-                            'frequency' => strtolower($bi_pledge_charity->frequency), // === 'BiWeekly' ? 'bi-weekly' : 'one-time',
-                            'additional' => $bi_pledge_charity->name1,
-                            'percentage' => $bi_pledge_charity->percent,
-                            'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
-                            /* 'cheque_pending' => $multiplier, */
-                            'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
-                        ]);
+                    } else {
+                        // No Action
+                        $no_change_count += 1;
                     }
 
-                }
+                    // Update the created_at to match with created_date when the record already created
+                    if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                        $pledge->created_at = $bi_pledge_detail->created_date;
+                        $pledge->save(['timestamps' => false]);
+                    }  
 
+                    // echo json_encode($pledge) . PHP_EOL;
+                    
+                    if ($bi_pledge->source == 'P') {
+                        // No action required
+                    } else {
+
+                        $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                    ->where('yearcd', $bi_pledge->yearcd)
+                                                    ->where('source', 'Non-Pool')
+                                                    ->where('campaign_type', $bi_pledge->campaign_type)
+                                                    ->orderBy('frequency')
+                                                    ->get();
+
+                        $pledge->charities()->delete();         
+
+                        foreach ($bi_pledge_charites as $bi_pledge_charity) {
+                            
+                            $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+
+                            PledgeCharity::create([
+                                'charity_id' => $charity->id,
+                                'pledge_id' => $pledge->id,
+                                'frequency' => strtolower($bi_pledge_charity->frequency), // === 'BiWeekly' ? 'bi-weekly' : 'one-time',
+                                'additional' => $bi_pledge_charity->name1,
+                                'percentage' => $bi_pledge_charity->percent,
+                                'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
+                                /* 'cheque_pending' => $multiplier, */
+                                'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
+                            ]);
+                        }
+
+                    }
+                
+                } else {
+                    $no_change_count += 1;
+                }
             }
 
         });
@@ -569,7 +581,7 @@ class GeneratePledgeFromHistory extends Command
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -594,59 +606,69 @@ class GeneratePledgeFromHistory extends Command
                                     ->where('seqno', $seqno)
                                     ->first();         
 
+                // determine the change based on diffrence created_at and created_at
+// dd([$old_pledge->created_at, $bi_pledge->created_date
+//                 , $old_pledge->created_at->toDateString()
+//                 , $old_pledge->created_at->toDateString() == $bi_pledge->created_date]);
 
-                $pledge = DonateNowPledge::updateOrCreate([
-                    'organization_id' => $user->organization_id,
-                    'emplid'  => $user->emplid,
-                    'yearcd'  => $bi_pledge->yearcd,
-                    'seqno'   => $seqno,
-                ],[
-                    'user_id' => $user->id,
-                    'type'    => $bi_pledge->source == 'Pool' ? 'P' : 'C', 
-                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
-                    'f_s_pool_id' => $bi_pledge->source == 'Pool' ? $pool->id : null,
-                    'charity_id' =>  $bi_pledge->source == 'Non-Pool' ? $charity->id : null,
-                    'one_time_amount' => $bi_pledge->pledge,
-                    'deduct_pay_from' => strtr(substr($bi_pledge->additional_info,18),'/','-'),
-                    'special_program' => $bi_pledge->name2,
+                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge->created_date))) {                    
 
-                    'ods_export_status' => 'C',
-                    'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
+                    $pledge = DonateNowPledge::updateOrCreate([
+                        'organization_id' => $user->organization_id,
+                        'emplid'  => $user->emplid,
+                        'yearcd'  => $bi_pledge->yearcd,
+                        'seqno'   => $seqno,
+                    ],[
+                        'user_id' => $user->id,
+                        'type'    => $bi_pledge->source == 'Pool' ? 'P' : 'C', 
+                        'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
+                        'f_s_pool_id' => $bi_pledge->source == 'Pool' ? $pool->id : null,
+                        'charity_id' =>  $bi_pledge->source == 'Non-Pool' ? $charity->id : null,
+                        'one_time_amount' => $bi_pledge->pledge,
+                        'deduct_pay_from' => strtr(substr($bi_pledge->additional_info,18),'/','-'),
+                        'special_program' => $bi_pledge->name2,
 
-                    'created_at' => $bi_pledge->created_date,
-                ]);
+                        'ods_export_status' => 'C',
+                        'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
 
-                if ($pledge->wasRecentlyCreated) {
+                        'created_at' => $bi_pledge->created_date,
+                    ]);
 
-                    $created_count += 1;
+                    if ($pledge->wasRecentlyCreated) {
 
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
-                    
+                        $created_count += 1;
 
-                } elseif ($pledge->wasChanged() ) {
+                        $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
+                        
 
-                    $updated_count += 1;
+                    } elseif ($pledge->wasChanged() ) {
 
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
-                    $changes = $pledge->getChanges();
-                    unset($changes["updated_at"]);
+                        $updated_count += 1;
 
-                    $original = array_intersect_key($old_pledge->toArray(),$changes);
-                    $this->LogMessage('  summary => ' );
-                    $this->LogMessage('      original : '. json_encode( $original ) );
-                    $this->LogMessage('      change   : '. json_encode( $changes ) );
+                        $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->user->emplid . ' | ' . $pledge->yearcd . ' | ' .  $pledge->seqno );
+                        $changes = $pledge->getChanges();
+                        unset($changes["updated_at"]);
+
+                        $original = array_intersect_key($old_pledge->toArray(),$changes);
+                        $this->LogMessage('  summary => ' );
+                        $this->LogMessage('      original : '. json_encode( $original ) );
+                        $this->LogMessage('      change   : '. json_encode( $changes ) );
+
+                    } else {
+                        // No Action
+                        $no_change_count += 1;
+                    }
+
+                    // Update the created_at to match with created_date when the record already created
+                    if (!($pledge->created_at == $bi_pledge->created_date)) {
+                        $pledge->created_at = $bi_pledge->created_date;
+                        $pledge->save(['timestamps' => false]);
+                    }  
+    // echo json_encode($pledge) . PHP_EOL;
 
                 } else {
-                    // No Action
                     $no_change_count += 1;
                 }
-
-                // Update the created_at to match with created_date when the record already created
-                if (!($pledge->created_at == $bi_pledge->created_date)) {
-                    $pledge->created_at = $bi_pledge->created_date;
-                    $pledge->save(['timestamps' => false]);
-                }  
-// echo json_encode($pledge) . PHP_EOL;
 
             }
 
@@ -717,7 +739,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
 
@@ -730,110 +752,121 @@ class GeneratePledgeFromHistory extends Command
 
                 $old_pledge = BankDepositForm::where('organization_code',  'GOV')
                                     ->where('form_submitter_id', 999)
+                                    ->where('campaign_year_id', $campaign_year->id)
                                     ->where('bc_gov_id', $bi_pledge->emplid)
                                     ->where('pecsf_id', null)
                                     ->where('event_type', $event_type)
                                     ->where('sub_type', $sub_type)
                                     ->where('deposit_date', $bi_pledge->event_deposit_date)
                                     ->first();         
-          
-                $pledge = BankDepositForm::updateOrCreate([
-                        'organization_code' => 'GOV',
-                        'form_submitter_id' => 999,
-                        'bc_gov_id' => $bi_pledge->emplid,
-                        'pecsf_id' => null,
-                        'event_type' => $event_type, 
-                        'sub_type' => $sub_type,
-                        'deposit_date' => $bi_pledge->event_deposit_date,
-                    ],[
-                        'business_unit' => $bi_pledge_detail->bu->id,
-                        'deposit_amount' => $bi_pledge->goal_amount,
-                        'description' => $bi_pledge_detail->event_descr,
 
-                        'employment_city' => $bi_pledge_detail->city, // $user->primary_job->office_city,
-                        'region_id' => $bi_pledge_detail->region->id,
-                        'regional_pool_id' =>  $bi_pledge->source == 'P' ? $bi_pledge_detail->fund_supported_pool->id : null,
-                        'address_line_1' => 'Address 1',
-                        'address_line_2' => 'Address 2',
-                        'address_city' => 'City',
-                        'address_province' => 'BC',
-                        'address_postal_code' => 'Postal',
+                // determine the change based on diffrence created_at and created_at
+// dd([$old_pledge->created_at, $bi_pledge_detail->created_date
+//                 , $old_pledge->created_at->toDateString()
+//                 , $old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date]);
 
-                        'approved' => 1,            // Always approved
+                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))) {                    
 
-                        'created_at' => $bi_pledge_detail->created_date,
-                    ]);
+                    $pledge = BankDepositForm::updateOrCreate([
+                            'organization_code' => 'GOV',
+                            'form_submitter_id' => 999,
+                            'campaign_year_id' => $campaign_year->id,
+                            'bc_gov_id' => $bi_pledge->emplid,
+                            'pecsf_id' => null,
+                            'event_type' => $event_type, 
+                            'sub_type' => $sub_type,
+                            'deposit_date' => $bi_pledge->event_deposit_date,
+                        ],[
+                            'business_unit' => $bi_pledge_detail->bu->id,
+                            'deposit_amount' => $bi_pledge->goal_amount,
+                            'description' => $bi_pledge_detail->event_descr,
 
+                            'employment_city' => $bi_pledge_detail->city, // $user->primary_job->office_city,
+                            'region_id' => $bi_pledge_detail->region->id,
+                            'regional_pool_id' =>  $bi_pledge->source == 'P' ? $bi_pledge_detail->fund_supported_pool->id : null,
+                            'address_line_1' => 'Address 1',
+                            'address_line_2' => 'Address 2',
+                            'address_city' => 'City',
+                            'address_province' => 'BC',
+                            'address_postal_code' => 'Postal',
 
-                if ($pledge->wasRecentlyCreated) {
+                            'approved' => 1,            // Always approved
 
-                    $created_count += 1;
-
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->bc_gov_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->event_sub_type . ' | ' . $pledge->event_deposit_date );
-                    // $this->LogMessage('    New record : '. json_encode( $pledge ) );
-
-                } elseif ($pledge->wasChanged() ) {
-
-                    $updated_count += 1;
-
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->bc_gov_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->event_sub_type . ' | ' . $pledge->event_deposit_date );
-                    $changes = $pledge->getChanges();
-                    unset($changes["updated_at"]);
-
-                    $original = array_intersect_key($old_pledge->toArray(),$changes);
-                    $this->LogMessage('  summary => ' );
-                    $this->LogMessage('      original : '. json_encode( $original ) );
-                    $this->LogMessage('      change   : '. json_encode( $changes ) );
-
-                } else {
-                    // No Action
-                    $no_change_count += 1;
-                }
-
-                // echo json_encode($pledge) . PHP_EOL;
-                // Update the created_at to match with created_date when the record already created
-                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
-                    $pledge->created_at = $bi_pledge_detail->created_date;
-                    $pledge->save(['timestamps' => false]);
-                }  
-                
-                if ($bi_pledge->source == 'P') {
-                    // No action required
-                } else {
-
-                    // $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
-                    $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
-                                                ->where('yearcd', $bi_pledge->yearcd)
-                                                ->where('source', 'Non-Pool')
-                                                ->where('campaign_type', $bi_pledge->campaign_type)
-                                                ->where('event_type', $bi_pledge->event_type)
-                                                ->where('event_sub_type', $bi_pledge->event_sub_type)
-                                                ->where('event_deposit_date', $bi_pledge->event_deposit_date)
-                                                ->orderBy('frequency')
-                                                ->get();
-
-                    BankDepositFormOrganizations::where("bank_deposit_form_id",$pledge->id)->delete();
-
-                    foreach ($bi_pledge_charites as $bi_pledge_charity) {
-                        
-                        $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
-
-                        BankDepositFormOrganizations::create([
-                            'bank_deposit_form_id' => $pledge->id,
-
-                            'vendor_id' => $charity->id,
-                            'organization_name' => $charity->charity_name,
-                            'donation_percent' => $bi_pledge_charity->percent,
-                            // 'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
-                            /* 'cheque_pending' => $multiplier, */
-                            // 'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
-                            'specific_community_or_initiative' => $bi_pledge_charity->vendor_name2,
+                            'created_at' => $bi_pledge_detail->created_date,
                         ]);
+
+
+                    if ($pledge->wasRecentlyCreated) {
+
+                        $created_count += 1;
+
+                        $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->bc_gov_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->event_sub_type . ' | ' . $pledge->event_deposit_date );
+                        // $this->LogMessage('    New record : '. json_encode( $pledge ) );
+
+                    } elseif ($pledge->wasChanged() ) {
+
+                        $updated_count += 1;
+
+                        $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->bc_gov_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->event_sub_type . ' | ' . $pledge->event_deposit_date );
+                        $changes = $pledge->getChanges();
+                        unset($changes["updated_at"]);
+
+                        $original = array_intersect_key($old_pledge->toArray(),$changes);
+                        $this->LogMessage('  summary => ' );
+                        $this->LogMessage('      original : '. json_encode( $original ) );
+                        $this->LogMessage('      change   : '. json_encode( $changes ) );
+
+                    } else {
+                        // No Action
+                        $no_change_count += 1;
                     }
 
+                    // echo json_encode($pledge) . PHP_EOL;
+                    // Update the created_at to match with created_date when the record already created
+                    if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                        $pledge->created_at = $bi_pledge_detail->created_date;
+                        $pledge->save(['timestamps' => false]);
+                    }  
+                    
+                    if ($bi_pledge->source == 'P') {
+                        // No action required
+                    } else {
+
+                        // $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
+                        $bi_pledge_charites = PledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                    ->where('yearcd', $bi_pledge->yearcd)
+                                                    ->where('source', 'Non-Pool')
+                                                    ->where('campaign_type', $bi_pledge->campaign_type)
+                                                    ->where('event_type', $bi_pledge->event_type)
+                                                    ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                                    ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                                    ->orderBy('frequency')
+                                                    ->get();
+
+                        BankDepositFormOrganizations::where("bank_deposit_form_id",$pledge->id)->delete();
+
+                        foreach ($bi_pledge_charites as $bi_pledge_charity) {
+                            
+                            $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+
+                            BankDepositFormOrganizations::create([
+                                'bank_deposit_form_id' => $pledge->id,
+
+                                'vendor_id' => $charity->id,
+                                'organization_name' => $charity->charity_name,
+                                'donation_percent' => $bi_pledge_charity->percent,
+                                // 'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
+                                /* 'cheque_pending' => $multiplier, */
+                                // 'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
+                                'specific_community_or_initiative' => $bi_pledge_charity->vendor_name2,
+                            ]);
+                        }
+
+                    }
+
+                } else {
+                    $no_change_count += 1;
                 }
-
-
 
             }
 
@@ -856,7 +889,7 @@ class GeneratePledgeFromHistory extends Command
 
         $sql = NonGovPledgeHistorySummary::select('org_code', 'emplid', 'pecsf_id', 'yearcd', 'source', 'pledge_type', 
                     DB::raw("case when source = 'P' then region else null end as region"),
-                    DB::raw("sum(case when frequency = 'Bi-Weekly' then pledge else 0 end) as pay_period_amount"),
+                    DB::raw("sum(case when frequency = 'Bi-Weekly' then per_pay_amt else 0 end) as pay_period_amount"),
                     DB::raw("sum(case when frequency = 'One-time' then pledge else 0 end) as one_time_amount"),
                     DB::raw("sum(pledge) as goal_amount"),
                     DB::raw("min(pledge_history_id) as pledge_history_id")
@@ -898,7 +931,7 @@ class GeneratePledgeFromHistory extends Command
                 if ( $bi_pledge->source == 'P') {
 
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -912,95 +945,106 @@ class GeneratePledgeFromHistory extends Command
                                     ->where('campaign_year_id', $campaign_year->id)
                                     ->first();                     
 // echo ( json_encode([ $bi_pledge->GUID, $user->id])) . PHP_EOL;
-                
-                $pledge = Pledge::updateOrCreate([
-                    'organization_id' => $organization->id,
-                    'user_id' => 0,
-                    'pecsf_id' => $bi_pledge->pecsf_id,
-                    'campaign_year_id' => $campaign_year->id,
-                ],[
-                    'first_name' => $bi_pledge_detail->first_name,
-                    'last_name' => $bi_pledge_detail->last_name,
-                    'city' => $bi_pledge_detail->city,
-                    'type' => $bi_pledge->source,
-                    'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
-                    'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
+  
+                // determine the change based on diffrence created_at and created_at
+// dd([$old_pledge->created_at, $bi_pledge_detail->created_date
+//                 , $old_pledge->created_at->toDateString()
+//                 , $old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date]);
 
-                    'one_time_amount' => $bi_pledge->one_time_amount,
-                    'pay_period_amount' => $bi_pledge->pay_period_amount,
-                    'goal_amount' => $bi_pledge->goal_amount,
+                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))
+                                || (!($old_pledge->pay_period_amount == $bi_pledge->pay_period_amount)))  {                    
 
-                    'ods_export_status' => 'C',
-                    'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
+                    $pledge = Pledge::updateOrCreate([
+                        'organization_id' => $organization->id,
+                        'user_id' => 0,
+                        'pecsf_id' => $bi_pledge->pecsf_id,
+                        'campaign_year_id' => $campaign_year->id,
+                    ],[
+                        'first_name' => $bi_pledge_detail->first_name,
+                        'last_name' => $bi_pledge_detail->last_name,
+                        'city' => $bi_pledge_detail->city,
+                        'type' => $bi_pledge->source,
+                        'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : 0,
+                        'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,
 
-                    'created_at' => $bi_pledge_detail->created_date,
-                ]); 
+                        'one_time_amount' => $bi_pledge->one_time_amount,
+                        'pay_period_amount' => $bi_pledge->pay_period_amount,
+                        'goal_amount' => $bi_pledge->goal_amount,
 
-                if ($pledge->wasRecentlyCreated) {
+                        'ods_export_status' => 'C',
+                        'ods_export_at' => $this->yearcd . '-12-31 00:00:00',
 
-                    $created_count += 1;
+                        'created_at' => $bi_pledge_detail->created_date,
+                    ]); 
 
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->campaign_year_id );
+                    if ($pledge->wasRecentlyCreated) {
 
-                } elseif ($pledge->wasChanged() ) {
+                        $created_count += 1;
 
-                    $updated_count += 1;
+                        $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->campaign_year_id );
 
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->campaign_year_id );
-                    $changes = $pledge->getChanges();
-                    unset($changes["updated_at"]);
+                    } elseif ($pledge->wasChanged() ) {
 
-                    $original = array_intersect_key($old_pledge->toArray(),$changes);
-                    $this->LogMessage('  summary => ' );
-                    $this->LogMessage('      original : '. json_encode( $original ) );
-                    $this->LogMessage('      change   : '. json_encode( $changes ) );
+                        $updated_count += 1;
 
-                } else {
-                    // No Action
-                    $no_change_count += 1;
-                    //$this->LogMessage(' NO CHANGE : '. json_encode( $pledge ) );
-                }
+                        $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_id . ' | ' . $pledge->user_id . ' | ' . $pledge->campaign_year_id );
+                        $changes = $pledge->getChanges();
+                        unset($changes["updated_at"]);
 
-                // echo json_encode($pledge) . PHP_EOL;
-                // Update the created_at to match with created_date when the record already created
-                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
-                    $pledge->created_at = $bi_pledge_detail->created_date;
-                    $pledge->save(['timestamps' => false]);
-                }  
-                
-                if ($bi_pledge->source == 'P') {
-                    // No action required
-                } else {
+                        $original = array_intersect_key($old_pledge->toArray(),$changes);
+                        $this->LogMessage('  summary => ' );
+                        $this->LogMessage('      original : '. json_encode( $original ) );
+                        $this->LogMessage('      change   : '. json_encode( $changes ) );
 
-                    $bi_pledge_charites = NonGovPledgeHistory::where('org_code',  $bi_pledge->org_code)
-                                                ->where('emplid', $bi_pledge->emplid)
-                                                ->where('pecsf_id', $bi_pledge->pecsf_id)
-                                                ->where('yearcd', $bi_pledge->yearcd)
-                                                ->where('source', 'Non-Pool')
-                                                ->where('pledge_type', $bi_pledge->pledge_type)
-                                                ->orderBy('frequency')
-                                                ->get();
-
-                    $pledge->charities()->delete();         
-
-                    foreach ($bi_pledge_charites as $bi_pledge_charity) {
-                        
-                        $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
-
-                         PledgeCharity::create([
-                            'charity_id' => $charity->id,
-                            'pledge_id' => $pledge->id,
-                            'frequency' => strtolower($bi_pledge_charity->frequency), // === 'BiWeekly' ? 'bi-weekly' : 'one-time',
-                            'additional' => $bi_pledge_charity->vendor_name2,
-                            'percentage' => $bi_pledge_charity->percent,
-                            'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
-                            /* 'cheque_pending' => $multiplier, */
-                            'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
-                        ]);
+                    } else {
+                        // No Action
+                        $no_change_count += 1;
+                        //$this->LogMessage(' NO CHANGE : '. json_encode( $pledge ) );
                     }
 
-                }
+                    // echo json_encode($pledge) . PHP_EOL;
+                    // Update the created_at to match with created_date when the record already created
+                    if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                        $pledge->created_at = $bi_pledge_detail->created_date;
+                        $pledge->save(['timestamps' => false]);
+                    }  
+                    
+                    if ($bi_pledge->source == 'P') {
+                        // No action required
+                    } else {
 
+                        $bi_pledge_charites = NonGovPledgeHistory::where('org_code',  $bi_pledge->org_code)
+                                                    ->where('emplid', $bi_pledge->emplid)
+                                                    ->where('pecsf_id', $bi_pledge->pecsf_id)
+                                                    ->where('yearcd', $bi_pledge->yearcd)
+                                                    ->where('source', 'Non-Pool')
+                                                    ->where('pledge_type', $bi_pledge->pledge_type)
+                                                    ->orderBy('frequency')
+                                                    ->get();
+
+                        $pledge->charities()->delete();         
+
+                        foreach ($bi_pledge_charites as $bi_pledge_charity) {
+                            
+                            $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+
+                            PledgeCharity::create([
+                                'charity_id' => $charity->id,
+                                'pledge_id' => $pledge->id,
+                                'frequency' => strtolower($bi_pledge_charity->frequency), // === 'BiWeekly' ? 'bi-weekly' : 'one-time',
+                                'additional' => $bi_pledge_charity->vendor_name2,
+                                'percentage' => $bi_pledge_charity->percent,
+                                'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
+                                /* 'cheque_pending' => $multiplier, */
+                                'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
+                            ]);
+                        }
+
+                    }
+
+                } else {
+                    $no_change_count += 1;
+                }
             }
 
         });
@@ -1058,7 +1102,7 @@ class GeneratePledgeFromHistory extends Command
                 $pool = null;
                 if ( $bi_pledge->source == 'P') {
                     $pool = FSPool::join('regions', 'regions.id', 'f_s_pools.region_id')
-                                       ->where('regions.name', '=', $bi_pledge->region )
+                                       ->where('regions.code', '=', $bi_pledge->region )
                                        ->select('f_s_pools.*')
                                        ->first();
                 }
@@ -1070,6 +1114,7 @@ class GeneratePledgeFromHistory extends Command
 
                 $old_pledge = BankDepositForm::where('organization_code', $bi_pledge->org_code)
                                     ->where('form_submitter_id', 999)
+                                    ->where('campaign_year_id', $campaign_year->id)
                                     ->where('bc_gov_id', $bi_pledge->emplid)
                                     ->where('pecsf_id', $bi_pledge->pecsf_id)
                                     ->where('event_type', $event_type)
@@ -1078,110 +1123,117 @@ class GeneratePledgeFromHistory extends Command
                                     ->first();         
 
 // dd([$bi_pledge_detail->business_unit, $bi_pledge_detail->bu->id]);
-                $pledge = BankDepositForm::updateOrCreate([
-                        'organization_code' => $bi_pledge->org_code,
-                        'form_submitter_id' => 999,
-                        'bc_gov_id' => $bi_pledge->emplid,
-                        'pecsf_id' => $bi_pledge->pecsf_id,
-                        'event_type' => $event_type,
-                        'sub_type' => $sub_type,
-                        'deposit_date' => $bi_pledge->event_deposit_date,
-                    ],[
-                        'business_unit' => $bi_pledge_detail->bu ? $bi_pledge_detail->bu->id : 0,
-                        'deposit_amount' => $bi_pledge->goal_amount,
-                        'description' => $bi_pledge_detail->event_descr,
 
-                        'employment_city' => $bi_pledge_detail->city,
-                        'region_id' => $bi_pledge_detail->region->id,
-                        'regional_pool_id' =>  $bi_pledge->source == 'P' && $pool ? $pool->id : null,
-                        'address_line_1' => 'Address 1',
-                        'address_line_2' => 'Address 2',
-                        'address_city' => 'City',
-                        'address_province' => 'BC',
-                        'address_postal_code' => 'Postal',
+                // determine the change based on diffrence created_at and created_at          
+                if ((!$old_pledge) || (!($old_pledge->created_at->toDateString() == $bi_pledge_detail->created_date))) {
 
-                        'approved' => 1,            // Always approved
+                    $pledge = BankDepositForm::updateOrCreate([
+                            'organization_code' => $bi_pledge->org_code,
+                            'form_submitter_id' => 999,
+                            'campaign_year_id' => $campaign_year->id,
+                            'bc_gov_id' => $bi_pledge->emplid,
+                            'pecsf_id' => $bi_pledge->pecsf_id,
+                            'event_type' => $event_type,
+                            'sub_type' => $sub_type,
+                            'deposit_date' => $bi_pledge->event_deposit_date,
+                        ],[
+                            'business_unit' => $bi_pledge_detail->bu ? $bi_pledge_detail->bu->id : 0,
+                            'deposit_amount' => $bi_pledge->goal_amount,
+                            'description' => $bi_pledge_detail->event_descr,
 
-                        'created_at' => $bi_pledge_detail->created_date,
-                    ]);
+                            'employment_city' => $bi_pledge_detail->city,
+                            'region_id' => $bi_pledge_detail->region->id,
+                            'regional_pool_id' =>  $bi_pledge->source == 'P' && $pool ? $pool->id : null,
+                            'address_line_1' => 'Address 1',
+                            'address_line_2' => 'Address 2',
+                            'address_city' => 'City',
+                            'address_province' => 'BC',
+                            'address_postal_code' => 'Postal',
 
+                            'approved' => 1,            // Always approved
 
-                if ($pledge->wasRecentlyCreated) {
-
-                    $created_count += 1;
-
-                    $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_code . ' | ' . $pledge->bc_gov_id . ' | ' .  $pledge->pecsf_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->sub_type . ' | ' . $pledge->deposit_date );
-                    // $this->LogMessage('    New record : '. json_encode( $pledge ) );
-
-                } elseif ($pledge->wasChanged() ) {
-
-                    $updated_count += 1;
-
-                    $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_code . ' | ' . $pledge->bc_gov_id . ' | ' .  $pledge->pecsf_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->sub_type . ' | ' . $pledge->deposit_date );
-                    $changes = $pledge->getChanges();
-                    unset($changes["updated_at"]);
-
-                    $original = array_intersect_key($old_pledge->toArray(),$changes);
-                    $this->LogMessage('  summary => ' );
-                    $this->LogMessage('      original : '. json_encode( $original ) );
-                    $this->LogMessage('      change   : '. json_encode( $changes ) );
-
-                } else {
-                    // No Action
-                    $no_change_count += 1;
-                }
-
-                // echo json_encode($pledge) . PHP_EOL;
-                // Update the created_at to match with created_date when the record already created
-                if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
-                    $pledge->created_at = $bi_pledge_detail->created_date;
-                    $pledge->save(['timestamps' => false]);
-                }  
-                
-                if ($bi_pledge->source == 'P') {
-                    // No action required
-                } else {
-
-                    // $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
-                    // PledgeHistory::where('GUID', $bi_pledge->GUID)
-                    //                             ->where('yearcd', $bi_pledge->yearcd)
-                    //                             ->where('source', 'Non-Pool')
-                    //                             ->where('campaign_type', $bi_pledge->campaign_type)
-                    //                             ->orderBy('frequency')
-                    //                             ->get();
-                    $bi_pledge_charities = NonGovPledgeHistory::where('emplid', $bi_pledge->emplid)
-                                                ->where('pecsf_id', $bi_pledge->pecsf_id)
-                                                ->where('yearcd', $bi_pledge->yearcd)
-                                                ->where('source', 'Non-Pool')
-                                                ->where('pledge_type', $bi_pledge->pledge_type)
-                                                ->where('event_type', $bi_pledge->event_type)
-                                                ->where('event_sub_type', $bi_pledge->event_sub_type)
-                                                ->where('event_deposit_date', $bi_pledge->event_deposit_date)
-                                                ->orderBy('frequency')
-                                                ->get();
-
-                    BankDepositFormOrganizations::where("bank_deposit_form_id",$pledge->id)->delete();
-
-                    foreach ($bi_pledge_charities as $bi_pledge_charity) {
-                        
-                        $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
-
-                        BankDepositFormOrganizations::create([
-                            'bank_deposit_form_id' => $pledge->id,
-
-                            'vendor_id' => $charity->id,
-                            'organization_name' => $charity->charity_name,
-                            'donation_percent' => $bi_pledge_charity->percent,
-                            // 'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
-                            /* 'cheque_pending' => $multiplier, */
-                            // 'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
-                            'specific_community_or_initiative' => $bi_pledge_charity->vendor_name2,
+                            'created_at' => $bi_pledge_detail->created_date,
                         ]);
+
+
+                    if ($pledge->wasRecentlyCreated) {
+
+                        $created_count += 1;
+
+                        $this->LogMessage('(CREATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_code . ' | ' . $pledge->bc_gov_id . ' | ' .  $pledge->pecsf_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->sub_type . ' | ' . $pledge->deposit_date );
+                        // $this->LogMessage('    New record : '. json_encode( $pledge ) );
+
+                    } elseif ($pledge->wasChanged() ) {
+
+                        $updated_count += 1;
+
+                        $this->LogMessage('(UPDATED) => ID | ' . $pledge->id . ' | ' . $pledge->organization_code . ' | ' . $pledge->bc_gov_id . ' | ' .  $pledge->pecsf_id . ' | ' . $pledge->event_type . ' | ' .  $pledge->sub_type . ' | ' . $pledge->deposit_date );
+                        $changes = $pledge->getChanges();
+                        unset($changes["updated_at"]);
+
+                        $original = array_intersect_key($old_pledge->toArray(),$changes);
+                        $this->LogMessage('  summary => ' );
+                        $this->LogMessage('      original : '. json_encode( $original ) );
+                        $this->LogMessage('      change   : '. json_encode( $changes ) );
+
+                    } else {
+                        // No Action
+                        $no_change_count += 1;
                     }
 
+                    // echo json_encode($pledge) . PHP_EOL;
+                    // Update the created_at to match with created_date when the record already created
+                    if (!($pledge->created_at == $bi_pledge_detail->created_date)) {
+                        $pledge->created_at = $bi_pledge_detail->created_date;
+                        $pledge->save(['timestamps' => false]);
+                    }  
+                    
+                    if ($bi_pledge->source == 'P') {
+                        // No action required
+                    } else {
+
+                        // $bi_pledge_charites = $bi_pledge->details->where('source', 'Non-pool');
+                        // PledgeHistory::where('GUID', $bi_pledge->GUID)
+                        //                             ->where('yearcd', $bi_pledge->yearcd)
+                        //                             ->where('source', 'Non-Pool')
+                        //                             ->where('campaign_type', $bi_pledge->campaign_type)
+                        //                             ->orderBy('frequency')
+                        //                             ->get();
+                        $bi_pledge_charities = NonGovPledgeHistory::where('emplid', $bi_pledge->emplid)
+                                                    ->where('pecsf_id', $bi_pledge->pecsf_id)
+                                                    ->where('yearcd', $bi_pledge->yearcd)
+                                                    ->where('source', 'Non-Pool')
+                                                    ->where('pledge_type', $bi_pledge->pledge_type)
+                                                    ->where('event_type', $bi_pledge->event_type)
+                                                    ->where('event_sub_type', $bi_pledge->event_sub_type)
+                                                    ->where('event_deposit_date', $bi_pledge->event_deposit_date)
+                                                    ->orderBy('frequency')
+                                                    ->get();
+
+                        BankDepositFormOrganizations::where("bank_deposit_form_id",$pledge->id)->delete();
+
+                        foreach ($bi_pledge_charities as $bi_pledge_charity) {
+                            
+                            $charity = $this->getCharity($bi_pledge_charity->charity_bn, $bi_pledge_charity->vendor_bn );
+
+                            BankDepositFormOrganizations::create([
+                                'bank_deposit_form_id' => $pledge->id,
+
+                                'vendor_id' => $charity->id,
+                                'organization_name' => $charity->charity_name,
+                                'donation_percent' => $bi_pledge_charity->percent,
+                                // 'amount' => $bi_pledge_charity->frequency == 'One-Time' ? $bi_pledge_charity->amount : $bi_pledge_charity->per_pay_amt,            // pay per period
+                                /* 'cheque_pending' => $multiplier, */
+                                // 'goal_amount' => $bi_pledge_charity->amount,        // amount * 26
+                                'specific_community_or_initiative' => $bi_pledge_charity->vendor_name2,
+                            ]);
+                        }
+
+                    }
+
+                } else {
+                    $no_change_count += 1;
                 }
-
-
 
             }
 

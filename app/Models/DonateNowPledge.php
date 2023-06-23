@@ -5,17 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class DonateNowPledge extends Model
+class DonateNowPledge extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'organization_id', 
         'emplid',
         'user_id',  // Not in use in the near future due to multiple GUID to emplid issue
         'pecsf_id', 'yearcd', 'seqno',
-        'type', 'f_s_pool_id', 'charity_id', 'special_program',
+        'type', 'region_id', 'f_s_pool_id', 'charity_id', 'special_program',
         'one_time_amount', 'deduct_pay_from',
         'first_name', 'last_name', 'city', 'cancelled', 'cancelled_by_id', 'cancelled_at',
         'ods_export_status', 'ods_export_at',
@@ -51,6 +53,20 @@ class DonateNowPledge extends Model
 
     public function user() {
         return $this->belongsTo(User::class)->withDefault();
+    }
+
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_id', 'id');
+    }
+
+    public function current_fund_supported_pool_by_region() {
+
+        if ($this->type == 'P') {
+            $region = Region::where('id', $this->region_id)->first();
+            return FSPool::current()->where('region_id', $region->id)->first();
+        } else {
+            return null;
+        }
     }
 
     public function fund_supported_pool() {

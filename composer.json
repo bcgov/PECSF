@@ -7,6 +7,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "axlon/laravel-postal-code-validation": "^3.3",
+        "barryvdh/laravel-debugbar": "3.7",
         "barryvdh/laravel-dompdf": "^1.0",
         "barryvdh/laravel-snappy": "^0.4.8",
         "doctrine/dbal": "^3.3",
@@ -23,10 +24,13 @@
         "league/oauth2-client": "^2.6",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.52",
+        "owen-it/laravel-auditing": "^13.1",
         "socialiteproviders/keycloak": "^5.1",
         "socialiteproviders/microsoft-azure": "^4.2",
         "spatie/laravel-permission": "^4.2",
-        "yajra/laravel-datatables": "^1.5"
+        "yajra/laravel-datatables": "^1.5",
+
+        "phpoffice/phpspreadsheet" : "~1.28.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -3,18 +3,22 @@
 namespace App\Jobs;
 
 use App\Imports\CharitiesImport;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ProcessCharityList implements ShouldQueue, ShouldBeUniqueUntilProcessing
+class ProcessCharityList implements ShouldQueue, ShouldBeUnique
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $uploadFilePath;
+    protected $history_id;
 
     /**
      * The number of times the job may be attempted.
@@ -24,38 +28,16 @@ class ProcessCharityList implements ShouldQueue, ShouldBeUniqueUntilProcessing
     public $tries = 3;
 
     /**
-     * The Unique Name of the File.
-     *
-     * @string FileName
-     */
-    public $file_name;
-
-    /**
-     * The Path of the File.
-     *
-     * @string FileName
-     */
-    public $file_path;
-
-    /**
-     * The Size of the File.
-     *
-     * @string FileName
-     */
-    public $file_size;
-
-    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($file_path,$file_name,$file_size)
+    public function __construct($uploadFilePath, $history_id)    
     {
-        $this->file_name = $file_name;
-        $this->file_path = $file_path;
-        $this->file_size = $file_size;
 
-        //
+        $this->uploadFilePath = $uploadFilePath;
+        $this->history_id = $history_id;
+
     }
 
     /**
@@ -67,25 +49,52 @@ class ProcessCharityList implements ShouldQueue, ShouldBeUniqueUntilProcessing
     {
 
         try {
-            Excel::import(new CharitiesImport, $this->file_path);
+            Excel::import(new CharitiesImport($this->history_id), $this->uploadFilePath);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
 
+            $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+
+            $text = 'Process ID : ' . $this->history_id . PHP_EOL;
+            $text .= 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
+            $text .= PHP_EOL;
+
             foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
+                $text .= 'Row : ' . $failure->row(); // row that went wrong
+                $text .= ' - ' . $failure->attribute(); // either heading key (if using heading row concern) or column index
+                $text .= ' - ' . implode(', ', $failure->errors()) ; // Actual error messages from Laravel validator
+                $text .= ' - ' . implode(', ', $failure->values()); // The values of the row that has failed.
+                $text .= PHP_EOL;
             }
+
+            \App\Models\ProcessHistory::UpdateOrCreate([
+                    'id' => $this->history_id,
+            ],[                    
+                   'status' => 'Error',
+                   'message' => $text,
+                   'end_at'  => now(),
+            ]);
+
+
         }
-        echo now() . PHP_EOL;
 
-        return 0;
     }
-
 
     public function uniqueId()
     {
-        return $this->file_name;
+        return $this->history_id;
     }
+
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array
+     */
+    public function middleware()
+    {
+        echo "The job (ProcessCharityList) with process history id " . $this->history_id . " started at " . now() . PHP_EOL;
+        // If you don’t want any overlapping jobs to be released back onto the queue, you can use the dontRelease method
+        return [(new WithoutOverlapping($this->history_id))->dontRelease()];
+    }
+
 }
