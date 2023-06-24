@@ -70,7 +70,7 @@ class MaintainEventPledgeController extends Controller
                             ->when( $request->emplid, function($query) use($request) {
                                 $query->where( function($q) use($request) {
                                     return $q->where('bank_deposit_forms.bc_gov_id', 'like', '%'. $request->emplid .'%')
-                                             ->orWhere('employee_jobs.name', 'like', '%' . $request->name . '%');
+                                             ->orWhere('employee_jobs.name', 'like', '%' . $request->emplid . '%');
                                 });             
                             })
                             ->when( $request->description, function($query) use($request) {
