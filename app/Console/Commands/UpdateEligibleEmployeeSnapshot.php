@@ -104,7 +104,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
                                     })
                                     ->orWhereNull('employee_jobs.empl_rcd');
                             })
-                            ->where('employee_jobs.empl_status', 'A')
+                            // ->where('employee_jobs.empl_status', 'A')
                             ->whereNull('date_deleted');
                 
             $n = 0;
