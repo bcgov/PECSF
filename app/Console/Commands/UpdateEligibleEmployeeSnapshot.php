@@ -126,7 +126,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
                                         $q->from('employee_jobs as J2') 
                                             ->whereColumn('J2.emplid', 'employee_jobs.emplid')
                                             ->whereNull('date_deleted')
-                                            ->where('J2.empl_status', 'A')
+                                            // ->where('J2.empl_status', 'A')
                                             ->selectRaw('min(J2.empl_rcd)');
                                     })
                                     ->orWhereNull('employee_jobs.empl_rcd');
