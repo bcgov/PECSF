@@ -256,14 +256,14 @@
             columns: [
 
                 {data: 'id',  className: "dt-nowrap"},
-                {data: 'organization_code',  className: "dt-nowrap"},
+                {data: 'organization_code'  },
                 {data: 'form_submitted_by.name', defaultContent: '', className: "dt-nowrap"},
                 {data: 'bc_gov_id', defaultContent: '' },
                 {data: 'pecsf_id', defaultContent: '' },
                 {data: 'campaign_year.calendar_year', defaultContent: '', className: "dt-nowrap", className: "dt-center"},
-                {data: 'event_type', defaultContent: '' },
+                {data: 'event_type', defaultContent: '',className: "dt-nowrap" },
                 {data: 'deposit_amount', name: 'deposit_amount', className: 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '') },
-                {data: 'sub_type', defaultContent: '', 
+                {data: 'sub_type', defaultContent: '', className: "dt-nowrap", 
                         render: function (data, type, row) {
                             return data == 'false' ? '' : data;
                         }
