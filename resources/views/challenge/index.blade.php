@@ -43,7 +43,7 @@
         </div>
         <div class="form-row p-1" id="last_update_section">
             <p><span class="text-secondary font-weight-bold pr-2">Data updated as of : </span>
-                <span class="text-danger">{{ $last_update ? $last_update->format('l, M jS Y  g:ia') : '' }}</span></p> 
+                <span class="text-primary">{{ $last_update ? $last_update->format('l, M jS Y - g:ia') : '' }}</span></p> 
         </div>
 
     {{-- <br> --}}

@@ -122,6 +122,8 @@ class UpdateDailyCampaign extends Command
                 $campaign_year,
                 $campaign_year,
                 $campaign_year,
+                $campaign_year,
+                $prior_year,
             ];
 
             $sql = DailyCampaignView::dynamicSqlForChallengePage();     // Shared sql
@@ -143,10 +145,13 @@ class UpdateDailyCampaign extends Command
                     'participation_rate' => round($row->participation_rate,2),
                     'previous_participation_rate' => $row->previous_participation_rate,
                     'change_rate' => round($row->change_rate,2),
+                    'rank' => $row->rank,
 
                     'eligible_employee_count' => $row->ee_count,
                     'donors'  => $row->donors,
                     "dollars" => $row->dollars,
+
+
                 ]);
             }                          
             $this->LogMessage('Total rows created count : ' . sizeof($challenges)  );
