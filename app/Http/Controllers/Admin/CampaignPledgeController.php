@@ -208,7 +208,8 @@ class CampaignPledgeController extends Controller
                 $pool  = FSPool::current()->where('id', $request->pool_id)->first() ?? null;
                 $charities = Charity::whereIn('id', $request->charities)->get() ?? [];
 
-                $pay_period_amount = $request->pay_period_amount;
+                $pay_period_amount = $request->pay_period_amount  ? 
+                            $request->pay_period_amount : $request->pay_period_amount_other ;
                 $pay_period_total_amount = $request->pay_period_amount > 0 ? 
                             $request->pay_period_amount * $campaign_year->number_of_periods :
                             $request->pay_period_amount_other * $campaign_year->number_of_periods;
