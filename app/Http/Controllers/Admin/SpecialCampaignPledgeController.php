@@ -203,13 +203,19 @@ class SpecialCampaignPledgeController extends Controller
     public function store(SpecialCampaignPledgeRequest $request)
     {
 
+        $gov_organization = Organization::where('code', 'GOV')->first();
         $user = User::where('id', $request->user_id )->first();
         
         // Create a new Pledge
         $last_seqno = SpecialCampaignPledge::where('organization_id', $request->organization_id)
-                        ->where('emplid', $user->emplid)
-                        // ->where('user_id', $request->user_id)
-                        ->where('pecsf_id', $request->pecsf_id)
+                        ->when( $request->organization_id == $gov_organization->id, function($query) use($user){
+                            $query->where('emplid', $user->emplid)
+                                ->whereNull('pecsf_id');
+                        })
+                        ->when( $request->organization_id != $gov_organization->id, function($query) use($request){
+                            $query->whereNull('emplid')
+                                ->where('pecsf_id', $request->pecsf_id);
+                        })
                         ->where('yearcd', $request->yearcd)
                         ->max('seqno');
 
