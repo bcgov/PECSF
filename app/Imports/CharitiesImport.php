@@ -20,6 +20,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 {
 
     protected $history_id;
+    protected $history;
 
     protected $row_count;
     protected $done_count;
@@ -27,16 +28,21 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
     protected $updated_count;
     protected $skipped_count;
     protected $created_by_id;
+    
+    protected $last_refresh_time;
 
     public function __construct($history_id)
     {
 
         $this->history_id = $history_id;
+        $this->history = \App\Models\ProcessHistory::where('id', $history_id)->first();
 
         $this->row_count = 0;
         $this->created_count = 0;
         $this->updated_count = 0;
         $this->skipped_count = 0;
+        
+        $this->last_refresh_time = time();
 
     }
 
@@ -79,7 +85,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                                     ->first();
 
                 if ($old_charity && $old_charity->charity_status == 'Pending-Dissolution') {
-                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 500) {
+                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 1000) {
                         $this->logMessage('[SKIPPED - Pending-Dissolution] ' . json_encode($old_charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])) );
                     }
                     $this->skipped_count += 1;
@@ -106,7 +112,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
                 if ($charity->wasRecentlyCreated) {
                     // $this->logMessage('[CREATED] ' . json_encode($row) );
-                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 500) {
+                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 1000) {
                         $this->logMessage('[CREATED] ' . json_encode( $charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])));
                     }
                     $this->created_count += 1;
@@ -117,15 +123,16 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
                 } elseif ($charity->wasChanged() ) {
 
-                    $charity->updated_by_id = $this->created_by_id;
-                    $charity->save();
-
                     $changes = $charity->getChanges();
                     unset($changes["updated_at"]);
-                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 500) {
+                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 1000) {
                         $this->logMessage('[UPDATED] on RN# ' . $charity->registration_number . ' - ' . json_encode($changes) );
                     }
                     $this->updated_count += 1;
+
+                    $charity->updated_by_id = $this->created_by_id;
+                    $charity->save();
+
                 } else {
                     // No Action
                 }
@@ -141,11 +148,11 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
             }
             catch(Exception $ex){
 
-                $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
-                $history->status = 'Error';
-                $history->message .= $ex->getMessage() . PHP_EOL;
-                $history->end_at = now();
-                $history->save();
+
+                $this->history->status = 'Error';
+                $this->history->message .= $ex->getMessage() . PHP_EOL;
+                $this->history->end_at = now();
+                $this->history->save();
 
                 // write message to the log  
                 throw new Exception($ex);
@@ -182,21 +189,19 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
                     $this->row_count = array_values($totalRows)[0] - 1;  // Note: first row is heading
 
-                    $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
-
-                    $this->created_by_id = $history->created_by_id;
+                    $this->created_by_id = $this->history->created_by_id;
 
                     $message = 'Process ID : ' . $this->history_id  . PHP_EOL;
-                    $message .= 'Process parameters : ' . ($history ?  $history->parameters : '')  . PHP_EOL;
+                    $message .= 'Process parameters : ' . ($this->history ?  $this->history->parameters : '')  . PHP_EOL;
                     $message .= PHP_EOL;
                     $message .= 'Import process started at : ' . now()  . PHP_EOL;
     
-                    $history->total_count = $this->row_count;
-                    $history->done_count = 0;
-                    $history->status = 'Processing';
-                    $history->message = $history->message . $message;
-                    $history->start_at = now();
-                    $history->save();
+                    $this->history->total_count = $this->row_count;
+                    $this->history->done_count = 0;
+                    $this->history->status = 'Processing';
+                    $this->history->message = $this->history->message . $message;
+                    $this->history->start_at = now();
+                    $this->history->save();
 
                 }
             },
@@ -261,20 +266,20 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 $message .= 'Total Updated (Not-in-CRA) count : ' . $not_in_cra_count . PHP_EOL;
                 $message .= 'Total Skipped count              : ' . $this->skipped_count . PHP_EOL;
 
-                if (($this->created_count + $this->updated_count + $this->skipped_count) > 500) {
+                if (($this->created_count + $this->updated_count + $this->skipped_count) > 1000) {
                     $message .= PHP_EOL;
-                    $message .= 'Note: more than 500 changes found, only first 500 detail were logged in the file.' . PHP_EOL;
+                    $message .= 'Note: more than 1,000 changes found, only first 1,000 detail were logged in the log message.' . PHP_EOL;
                     $message .= PHP_EOL;
                 }
 
 
-                $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+                
 
-                $history->message = $history->message . $message;
-                $history->status = $status;
-                $history->done_count = $this->row_count;
-                $history->end_at = now();
-                $history->save();
+                $this->history->message = $this->history->message . $message;
+                $this->history->status = $status;
+                $this->history->done_count = $this->row_count;
+                $this->history->end_at = now();
+                $this->history->save();
 
             },
         ];
@@ -286,9 +291,12 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
         // write to log message 
         $message = $text . PHP_EOL;
 
-        $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
-        $history->message = $history->message . $message;
-        $history->save();
+        $this->history->message = $this->history->message . $message;
+
+        if (time() - $this->last_refresh_time > 30) {
+            $this->history->save();
+            $this->last_refresh_time = time();
+        }
 
     }
 
