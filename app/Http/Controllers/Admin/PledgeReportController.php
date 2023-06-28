@@ -78,9 +78,14 @@ class PledgeReportController extends Controller
                 //     return substr($process->message, 0, 255);
                 // })
                 ->addColumn('download_file_link', function ($process) {
+                    $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
                     if ($process->status == 'Completed') {
-                        $url = route('reporting.pledges.download-export-file', $process->id);
-                        $link = '<a class="" href="'.$url.'">'. $process->original_filename . '</a>';
+                        if ($process->updated_at >= today()->subdays($retention_days) ) {
+                            $url = route('reporting.pledges.download-export-file', $process->id);
+                            $link = '<a class="" href="'.$url.'">'. $process->original_filename . '</a>';
+                        } else {
+                            $link = $process->original_filename;    
+                        }
                     } else {
                         // $link = $process->original_filename;
                         $link = '';

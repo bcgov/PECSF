@@ -9,11 +9,12 @@ use App\Models\ProcessHistory;
 use App\Models\BankDepositForm;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeExport;
-use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -49,17 +50,17 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
     public function headings(): array
     {
         return [    
+                    // [
+                    //     'Report title : Annual Pledges and Events',
+                    // ],
+                    // [
+                    //     'Run at : ' . now(),
+                    // ],
+                    // [
+                    //     '',
+                    // ],
                     [
-                        'Report title : Annual Pledges and Events',
-                    ],
-                    [
-                        'Run at : ' . now(),
-                    ],
-                    [
-                        '',
-                    ],
-                    [
-                        'Calander Year',
+                        'Calandar Year',
                         'Name',
                         'Org Code',
                         'Org Descr',
@@ -158,6 +159,21 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                     'end_at' => now(),
                 ]);
 
+                // Clean up Staging table 
+                PledgeStaging::where('history_id', $this->history_id)
+                                ->orWhere('updated_at', '<', today() )
+                                ->delete(); 
+
+                // Clean Up files over 14 days
+                $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
+                $prcs = ProcessHistory::where('id', $this->history_id)->first();
+
+                $file_names = ProcessHistory::where('process_name', $prcs->process_name)
+                                ->whereBetween('updated_at', [ today()->subdays( $retention_days + 90), today()->subdays( $retention_days + 1), ])
+                                ->pluck('filename')
+                                ->toArray();
+
+                Storage::disk('public')->delete( $file_names );
             },
 
         ];
@@ -192,8 +208,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                     THEN employee_jobs.office_city
                                     ELSE pledges.city
                             END as city
-                            ,'Bi-Weekly'   AS type
-                            ,''            AS sub_type
+                            ,'Pledge'   AS type
+                            ,'Bi-Weekly' AS sub_type
                             ,pledges.type  AS pool_type
                             ,pledges.region_id
                             ,pledges.pay_period_amount AS pledge
@@ -245,8 +261,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                     THEN employee_jobs.office_city
                                     ELSE pledges.city
                             END as city
-                            ,'One-Time'   AS type
-                            ,''            AS sub_type
+                            ,'Pledge'  AS type
+                            ,'One-Time'  AS sub_type
                             ,pledges.type  AS pool_type
                             ,pledges.region_id
                             ,pledges.one_time_amount 
@@ -283,7 +299,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
         ],
 
             BankDepositForm::selectRaw(" ?, 'Event', bank_deposit_forms.id
-                            ,year(bank_deposit_forms.created_at)
+                            ,campaign_years.calendar_year
                             ,bank_deposit_forms.organization_code
                             ,bank_deposit_forms.bc_gov_id
                             ,bank_deposit_forms.pecsf_id
