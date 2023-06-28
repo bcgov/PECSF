@@ -257,14 +257,14 @@ class ImportEmployeeJob extends Command
                                 'level2_division' => trim($row->level2_division),
                                 'level3_branch' => trim($row->level3_branch),
                                 'level4' => trim($row->level4),
-                                'supervisor_emplid' => $row->supervisor_emplid,
-                                'supervisor_name' => $row->supervisor_name,
-                                'supervisor_email' => $row->supervisor_email,
-                                'date_updated' => $row->date_updated ? (substr($row->date_updated,0,10).' '.substr($row->date_updated,11,8)) : null,
+                                // 'supervisor_emplid' => $row->supervisor_emplid,
+                                // 'supervisor_name' => $row->supervisor_name,
+                                // 'supervisor_email' => $row->supervisor_email,
+                                // 'date_updated' => $row->date_updated ? (substr($row->date_updated,0,10).' '.substr($row->date_updated,11,8)) : null,
                                 'date_deleted' => $row->date_deleted ? (substr($row->date_deleted,0,10).' '.substr($row->date_deleted,11,8)) : null,
 
-                                'created_by_id' => null,
-                                'updated_by_id' => null,
+                                // 'created_by_id' => null,
+                                // 'updated_by_id' => null,
 
                             ]);
 
@@ -278,6 +278,9 @@ class ImportEmployeeJob extends Command
                                 if  ($this->created_count <= self::MAX_CREATE_COUNT)  {
                                     $this->LogMessage('(CREATED) => emplid | ' . $job->emplid . ' | ' . $job->empl_rcd . ' | ' . $job->guid . ' | ' . $job->idir );
                                 }                                    
+                                
+                                $job->date_updated = $row->date_updated ? (substr($row->date_updated,0,10).' '.substr($row->date_updated,11,8)) : null;
+                                $job->save();
 
                             } elseif ($job->wasChanged() ) {
 
@@ -297,6 +300,9 @@ class ImportEmployeeJob extends Command
                                     $this->LogMessage('      original : '. json_encode( $original ) );
                                     $this->LogMessage('      change   : '. json_encode( $changes ) );
                                 }
+
+                                $job->date_updated = $row->date_updated ? (substr($row->date_updated,0,10).' '.substr($row->date_updated,11,8)) : null;
+                                $job->save();
 
                             } else {
                                 // No Action

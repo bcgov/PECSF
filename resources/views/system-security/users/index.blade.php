@@ -149,13 +149,16 @@
                     <th>Sign On Count</th>
                     <th>Active Job Count</th>
 
+                    <th>Empl Status</th>
+                    <th>Date Update</th>
+                    <th>Date Delete</th>
+
                     <th>Bus Unit</th>
                     <th>Dept ID</th>
                     <th>Dept Name</th>
                     <th>Region</th>
                     <th>Region Name</th>
                     <th>City</th>
-
                     <th>Last Signon at</th>
                     <th>Last Sync at</th>
                     <th>Created at</th>
@@ -325,6 +328,9 @@
                         }
                     }
                 },
+                {data: 'primary_job.empl_status', name: 'primary_job.empl_status', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.date_updated', name: 'primary_job.date_updated', defaultContent: '', className: "dt-nowrap" },
+                {data: 'primary_job.date_deleted', name: 'primary_job.date_deleted', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.business_unit', name: 'primary_job.business_unit', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.deptid', name: 'primary_job.deptid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'primary_job.dept_name', name: 'primary_job.dept_name', defaultContent: '', className: "dt-nowrap" },
