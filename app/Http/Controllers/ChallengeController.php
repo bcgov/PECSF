@@ -152,7 +152,7 @@ class ChallengeController extends Controller
                             --                                     )
                             and as_of_date = ?
                             and daily_type = 0     
-                            and eligible_employee_count >= 5
+                            and donors >= 5
                             order by participation_rate desc, abs(change_rate);     
                         SQL;
 
