@@ -145,7 +145,7 @@ class UpdateDailyCampaign extends Command
                     'participation_rate' => round($row->participation_rate,2),
                     'previous_participation_rate' => $row->previous_participation_rate,
                     'change_rate' => round($row->change_rate,2),
-                    'rank' => $row->rank,
+                    // 'rank' => $row->rank,
 
                     'eligible_employee_count' => $row->ee_count,
                     'donors'  => $row->donors,

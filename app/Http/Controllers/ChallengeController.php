@@ -139,33 +139,34 @@ class ChallengeController extends Controller
                             today()->format('Y-m-d'),
                         ];
 
-                        // $sql = <<<SQL
-                        //     select 0 as current, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
-                        //                 donors, dollars, (@row_number:=@row_number + 1) AS rank,
-                        //                 eligible_employee_count as ee_count
-                        //     from daily_campaigns, (SELECT @row_number:=0) AS temp
-                        //     where campaign_year = ?
-                        //     and as_of_date = (select max(as_of_date) from daily_campaigns D1
-                        //                                         where D1.campaign_year = daily_campaigns.campaign_year
-                        //                                         and D1.daily_type = daily_campaigns.daily_type
-                        //                                         and D1.as_of_date <= ?
-                        //                                         )
-                        //     and daily_type = 0     
-                        //     and eligible_employee_count >= 5
-                        //     order by participation_rate desc, abs(change_rate);     
-                        // SQL;
-
                         $sql = <<<SQL
                             select 0 as current, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
-                                        donors, dollars, rank,
+                                        donors, dollars, (@row_number:=@row_number + 1) AS rank,
                                         eligible_employee_count as ee_count
-                            from daily_campaigns
+                            from daily_campaigns, (SELECT @row_number:=0) AS temp
                             where campaign_year = ?
+                            -- and as_of_date = (select max(as_of_date) from daily_campaigns D1
+                            --                                     where D1.campaign_year = daily_campaigns.campaign_year
+                            --                                     and D1.daily_type = daily_campaigns.daily_type
+                            --                                     and D1.as_of_date <= ?
+                            --                                     )
                             and as_of_date = ?
                             and daily_type = 0     
-                            and donors >= 5
-                            order by rank ;
+                            and eligible_employee_count >= 5
+                            order by participation_rate desc, abs(change_rate);     
                         SQL;
+
+                        // $sql = <<<SQL
+                        //     select 0 as current, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
+                        //                 donors, dollars, rank,
+                        //                 eligible_employee_count as ee_count
+                        //     from daily_campaigns
+                        //     where campaign_year = ?
+                        //     and as_of_date = ?
+                        //     and daily_type = 0     
+                        //     and donors >= 5
+                        //     order by rank ;
+                        // SQL;
 
                         $challenges = DB::select($sql, $parameters);
                 // }
