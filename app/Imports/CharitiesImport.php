@@ -293,7 +293,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
         $this->history->message = $this->history->message . $message;
 
-        if (time() - $this->last_refresh_time > 30) {
+        if (time() - $this->last_refresh_time > 60) {
             $this->history->save();
             $this->last_refresh_time = time();
         }
