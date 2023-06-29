@@ -133,7 +133,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
                             })
                             ->where('employee_jobs.empl_status', 'A')
                             ->whereNull('date_deleted');
-                
+
             $n = 0;
             $row_count = 0;
 

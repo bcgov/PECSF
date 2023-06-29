@@ -23,6 +23,7 @@ class DailyCampaign extends Model
             'participation_rate',
             'previous_participation_rate',
             'change_rate',
+            'rank',
             'eligible_employee_count',
             'donors',
             "dollars",

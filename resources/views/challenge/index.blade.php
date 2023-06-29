@@ -41,6 +41,11 @@
                 <input type="text" id="organization_name" value="" name="organization_name" class="form-control " />
             </div>
         </div>
+        <div class="form-row p-1" id="last_update_section">
+            <p><span class="text-secondary font-weight-bold pr-2">Data updated as of : </span>
+                <span class="text-primary">{{ $last_update ? $last_update->format('l, M jS Y - g:ia') : '' }}</span></p> 
+        </div>
+
     {{-- <br> --}}
 
         <table class="table table-bordered" id="dashboard-table" style="width:100%">
@@ -209,7 +214,7 @@ $(function() {
         select: true,
         paging: false,
         "initComplete": function(settings, json) {
-            min_height = $(".wrapper").height();
+            min_height = $(".wrapper").outerHeight();
             $(".main-sidebar").css('min-height', min_height);
         },
         ajax: {
@@ -228,7 +233,7 @@ $(function() {
         },
         columns: [
             {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
-            {data: 'organization_name', name: 'organization_name', searchable: false },
+            {data: 'organization_name', name: 'organization_name', className: "dt-nowrap", searchable: false },
             {data: 'participation_rate', className: "dt-nowrap dt-right", searchable: false },
             {data: 'previous_participation_rate', className: 'dt-nowrap dt-right', searchable: false},
             {data: 'change_rate', className: 'dt-nowrap dt-right', searchable: false},
@@ -264,7 +269,16 @@ $(function() {
 
     //  year
     $(document).on('change', '#year', function () {
-            oTable.ajax.reload();
+        oTable.ajax.reload();
+
+        // Update the last update datetime
+        current_year =  new Date().getFullYear();
+        if ($("select[name='year']").val() == current_year ) {
+            $('#last_update_section').show();
+        } else {
+            $('#last_update_section').hide();
+        }
+
     });
 
     $(document).on('keyup', '#organization_name', function() {
@@ -284,56 +298,4 @@ $(function() {
 
 </script>
 
-
-{{-- <script>
-    var year = '{{ $request->year ? $request->year : "2021" }}';
-    var orgNameTimer;
-
-    $("#organization_name").keyup(function(){
-        clearTimeout(orgNameTimer);
-        orgNameTimer = setTimeout(orgFilter,800);
-    });
-
-    function orgFilter(){
-        window.location = "/challenge?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
-    }
-
-    $("#sort,#start_date").change(function(){
-        $.ajax({
-            method: "GET",
-            url:  '/challenge/preview?sort=' + $("#sort").val() + '&start_date=' + new Date($("#start_date").val()).getFullYear(),
-            success: function(data)
-            {
-                $("#preview").html(data);
-            },
-            error: function(data) {
-                $("#preview").html(data);
-            }
-        });
-    });
-
-    $("select[name='year']").change(function(){
-        if($('#year').val() > 2021)
-        {
-            window.location = "/challenge/currentyear?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
-        }
-        else{
-            window.location = "/challenge?year="+$('#year').val()+"&organization_name="+$("#organization_name").val();
-        }
-    });
-
-    var new_sort = '{{ $request->sort == "ASC" ? "DESC" : "ASC" }}';
-
-    function sortTable(field='participation_rate')
-    {
-        @if($year > 2021)
-            window.location = "/challenge/currentyear?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
-        $(".sort-hook").attr("src",);
-            @else
-                window.location = "/challenge?field="+field+"&sort="+new_sort+"&year="+year+"&organization_name="+$("#organization_name").val();
-        $(".sort-hook").attr("src",);
-            @endif
-
-    } --}}
-</script>
 @endpush
