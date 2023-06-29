@@ -29,7 +29,6 @@
         "socialiteproviders/microsoft-azure": "^4.2",
         "spatie/laravel-permission": "^4.2",
         "yajra/laravel-datatables": "^1.5",
-
         "maennchen/zipstream-php" : "^2.1"
     },
     "require-dev": {
