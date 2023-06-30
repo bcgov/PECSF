@@ -23,7 +23,8 @@
         "svg-spritemap-webpack-plugin": "^4.4.0",
         "vue": "^2.5.17",
         "vue-loader": "^15.9.5",
-        "vue-template-compiler": "^2.6.10"
+        "vue-template-compiler": "^2.6.10",
+        "sweetalert2": "^10.16.9"
     },
     "dependencies": {
         "@bcgov/bc-sans": "^1.0.1",
