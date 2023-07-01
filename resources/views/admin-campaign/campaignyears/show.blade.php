@@ -73,7 +73,7 @@
                 <div class="row no-gutters">
                     <div class="col-3">
                         <p>Created by: 
-                            {{ $campaign_year->created_by->name }} </p>
+                            {{  isset($campaign_year->created_by) ? $campaign_year->created_by->name : '' }} </p>
                     </div>
                     <div class="col-3">
                         <p>Created at: 
