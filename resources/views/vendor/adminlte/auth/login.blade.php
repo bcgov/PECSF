@@ -6,6 +6,10 @@
         .card.card-outline.card-primary {
             border: none;
         }
+
+        .login-box {
+            width: 480px !important;
+        }
     </style>    
 @stop
 
@@ -42,7 +46,7 @@
                     <p class="my-4 ">
                         <form action="{{ '/login/keycloak' }}" method="get">
                             @csrf
-                            <button type="submit" class="btn btn-success">Login with Your BC Govt login ID </button>
+                            <button type="submit" class="btn btn-primary">Login with Your BC Govt login ID </button>
                         </form>
                     </p>
         </div>
@@ -53,7 +57,9 @@
             <div>Email: <a href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
 
             {{-- @if (!str_contains(Request::url(), 'pecsf-test.apps.silver.devops.gov.bc.ca'))   --}}
+            @if (Request::is('admin/login'))
                 <div class="py-4 small"><a class="sysadmin-login" href="">Log in as a System Administrator</a></div>
+            @endif
             {{-- @endif --}}
 
         </div>

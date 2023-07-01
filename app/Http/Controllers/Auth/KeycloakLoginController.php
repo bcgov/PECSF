@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use Auth;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class KeycloakLoginController extends Controller
 {
@@ -39,6 +40,20 @@ class KeycloakLoginController extends Controller
             $isUser = $this->getUserByGuidOrIDir($request, $keycloak_user, $identity_provider);
 
             if ($isUser) {
+
+                if (!($this->isAllowLoginDuringMaintenance($isUser))) {
+
+                    $guid = $keycloak_user->user['idir_user_guid'];
+                    $idir  = $keycloak_user->user['idir_username'];
+                    $email = $keycloak_user->user['email'];
+                    $name = $keycloak_user->user['name'];
+    
+                    Log::error("User tried to login during system maintenance in progress : {$idir} - {$guid} - {$email} - {$name}");
+
+                    $back = urlencode(url('/login'));
+                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_uri='.$back; // Redirect to Keycloak
+                    return redirect($back_url);
+                }
 
                 // cache the token information in session
                 session([
@@ -179,6 +194,21 @@ class KeycloakLoginController extends Controller
             return null;
         }
         
+    }
+
+    private function isAllowLoginDuringMaintenance($login_user) 
+    {
+        $bAllow = true;
+
+        $setting = Setting::first();
+        if ($setting->is_system_lockdown) {
+            if ($login_user->hasRole(['admin'])) {
+                // allow to sign if administrator
+            } else {
+                $bAllow = false;
+            }
+        }
+        return $bAllow;
     }
 
 }
