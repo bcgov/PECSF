@@ -2,7 +2,7 @@
 <script>
     $("#sub_type").select2();
     $("#event_type").select2();
-    $(".org_hook").hide();
+    $(".org_hook,#pecsfid,#bcgovid,#employeename,.address_hook").hide();
 
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
@@ -21,9 +21,17 @@ $("#pool_filter").parents(".form-group").hide();
 }
 });
 
+    $("#event_type").change(function(){
+        if($("[name='organization_code']").val() == "GOV"){
+            if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+                $("#employeename").show();
+            }
+        }
+    });
 
 $("[name='event_type'],[name='organization_code']").change(function(){
 $("#sub_type").attr("disabled",false);
+$("#employeename").hide();
 
 
 if($(this).val()=="Fundraiser"){
@@ -55,6 +63,9 @@ else{
         $("#bcgovid").show();
         $("#event_type>option[value='Fundraiser']").prop('disabled',false);
         $("#event_type>option[value='Gaming']").prop('disabled',false);
+        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+            $("#employeename").show();
+        }
     }
     else if($("[name='organization_code']").val() == "RET"){
         $("#pecsfid").find("label").hide();
@@ -69,7 +80,6 @@ else{
         }
         $("#event_type>option[value='Fundraiser']").prop('disabled',true);
         $("#event_type>option[value='Gaming']").prop('disabled',true);
-
 
     }
     else{
@@ -492,16 +502,17 @@ $("#attachment_input_1").val("");
                 $("#employment_city").val(response.office_city).select2();
                 $("#region").val($("#region option[code='"+response.tgb_reg_district+"']").val()).select2();
                 $("#business_unit").val(response.business_unit_id).select2();
+                $("#employee_name").val(response.first_name+","+response.last_name);
                 setTimeout(function(){
                     $("#employment_city").parents(".form-body").fadeTo("slow",1);
                 },500);
             },
             error: function(response) {
                 Swal.fire({
-                    title: '<strong>Not Found!</strong>',
+                    title:'Employee Id '+ $("#bc_gov_id").val() +' not Found!' ,
                     icon: 'error',
                     html:
-                        'Employee Id not Found!',
+                        '<strong>'+ $("#bc_gov_id").val() +' Not Found!</strong>',
                     showCloseButton: true,
                     showCancelButton: true,
                     focusConfirm: false,
