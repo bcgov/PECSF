@@ -32,12 +32,16 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        border:#ccc 1px solid;
+
     }
 
     table td{
         text-align:center;
         font-weight:normal;
         padding:10px;
+        background:#f2f2f2;
+        border:#ccc 1px solid;
     }
 </style>
 
@@ -96,7 +100,7 @@
                                                     @break
                                                 @default
                                                     @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                        <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                        <a  style="cursor:pointer;" class="more-info"
                                                             data-source="{{ $pledge->source }}"
                                                             data-type="{{ $pledge->donation_type }}"
                                                             data-id="{{ $pledge->id }}"

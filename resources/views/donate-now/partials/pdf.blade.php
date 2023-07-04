@@ -38,6 +38,11 @@
         text-align:left;
     }
 
+    table td{
+        border:#ccc 1px solid;
+        padding-left:8px;
+    }
+
     table td:last-child{
         text-align:right;
         font-weight:normal;
@@ -69,7 +74,7 @@
 
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h2 class="mt-5">{{ $date }}</h2>
+            <h3 class="mt-5">{{ $date }}</h3>
             <div class="card bg-light p-3">
                 <h3 class="card-title">Deductions</h3>
                 <hr>
