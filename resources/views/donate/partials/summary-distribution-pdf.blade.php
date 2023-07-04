@@ -1,5 +1,5 @@
 <div id="{{$keyCase}}Section" class="amountDistributionSection">
-    <p class="mt-4"><h1>Disbursement</h1></p>
+    <p class="mt-4"><h3>Disbursement</h3></p>
     <div class="card mt-3">
         <div class="card-body">
             <h2>Bi-Weekly donation disbursement</h2>

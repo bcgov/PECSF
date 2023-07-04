@@ -43,7 +43,7 @@
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
     <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>
@@ -58,9 +58,9 @@
             <div class="card-header" id="heading0{{ $loop->index }}">
                 <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                     aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
-                    <h1 class="">
+                    <h3 class="">
                         {{  $key }}
-                    </h1>
+                    </h3>
                     <div class="flex-fill"></div>
                     <div class="expander">
                     </div>
@@ -113,7 +113,7 @@
                                                 {{ $pledge->number_of_charities }}
                                             @else
                                                 @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                    <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                    <a  style="cursor:pointer;" class="more-info"
                                                         data-source="{{ $pledge->source }}"
                                                         data-type="{{ $pledge->donation_type }}"
                                                         data-id="{{ $pledge->id }}"

@@ -236,7 +236,7 @@ ul.custom.pagination li:nth-child(n+2) {
 
 ul.custom.pagination li.active {
     background-color: #1a5a96;
-    color: white; 
+    color: white;
     border: #1a5a96 2px solid;
 }
 
@@ -248,5 +248,9 @@ ul.custom.pagination li.active {
     font-family:"BCSans";
     font-weight:400;
     color:#D8292F;
+}
+
+.table-border table,.table-border td,.table-border tr{
+    border:#ccc 1px solid;
 }
 
