@@ -461,14 +461,20 @@ class BankDepositFormController extends Controller
           if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
                 {
                     if(!empty($request->pecsf_id)){
-                        if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
+
+                        $existingPecsfId = BankDepositForm::where("organization_code","=","GOV")
+                            ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
+                            ->where("pecsf_id","=",$request->pecsf_id)
+                            ->orWhere("pecsf_id","=",substr($request->pecsf_id,1))
+                            ->get();
+
+                        if((strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1))) && !empty($exsitingPecsfId))
                         {
                             $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
                         }
                     }
                  else{
                      $validator->errors()->add('pecsf_id','The PECSF ID is required.');
-
                  }
                 }
                 else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
