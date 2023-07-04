@@ -53,7 +53,7 @@ class UserMaintenanceController extends Controller
                         ->when($request->emplid, function($query) use($request) {
                             return $query->where('employee_jobs.emplid', 'like', $request->emplid.'%');
                         })
-                        ->when($request->acctlock, function($query) use($request) {
+                        ->when($request->acctlock != '' , function($query) use($request) {
                             return $query->where('users.acctlock', $request->acctlock);
                         })
                         ->when($request->organization_id, function($query) use($request) {
