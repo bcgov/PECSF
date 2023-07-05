@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use Carbon\Carbon;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -40,6 +42,18 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function showLoginForm(Request $request) 
+    {
+        $setting = Setting::first();
+        $system_lockdown = $setting->is_system_lockdown;
+
+        if ( ($request->path() != 'admin/login') && $system_lockdown) {
+            return view('system-security.lockdown.index', compact('setting'));
+        }
+
+        return view('vendor.adminlte.auth.login', compact('setting'));
+    }
+
     public function credentials(Request $request)
     {
         return [
@@ -59,6 +73,15 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
+
+        if (!($this->isAllowLoginDuringMaintenance($user))) {
+            // same as AuthenticatedSessionController::logout();
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect('/login')->with('error-psft', 'Maintenace In Progress.');
+        }
 
         // Set Special Campaign Banner when activated special campaign
         // $banner_texts = \App\Models\SpecialCampaign::activeBannerText();
@@ -84,4 +107,19 @@ class LoginController extends Controller
     }
 
     
+    private function isAllowLoginDuringMaintenance($login_user) 
+    {
+        $bAllow = true;
+
+        $setting = Setting::first();
+        if ($setting->is_system_lockdown) {
+            if ($login_user->hasRole(['admin'])) {
+                // allow to sign if administrator
+            } else {
+                $bAllow = false;
+            }
+        }
+        return $bAllow;
+    }
+
 }

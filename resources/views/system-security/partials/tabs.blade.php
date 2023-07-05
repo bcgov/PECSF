@@ -9,14 +9,18 @@
         href="{{ route('system.auditing.index') }}">Auditing</a>
     </li> --}}
 
-    <li class="nav-item">
-      <a class="nav-link {{ str_contains( Route::current()->getName(), 'system.administrators') ? 'active' : ''}}"
+    <li class="nav-item dropdown">
+      @php $active =  ( str_contains(Route::current()->getName(), 'system.users') ||
+                        str_contains(Route::current()->getName(), 'system.administrators')
+                      ) ? 'active' : ''
+      @endphp
+      <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage Users</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.users') ? 'active' : ''}}"
+            href="{{ route('system.users.index') }}">Users</a>
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.administrators') ? 'active' : ''}}"
             href="{{ route('system.administrators.index') }}">Administrators</a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link  {{ str_contains( Route::current()->getName(), 'system.users') ? 'active' : ''}}"
-        href="{{ route('system.users.index') }}">Users</a>
+      </div>
     </li>
 
     <li class="nav-item dropdown">
@@ -36,6 +40,11 @@
     <li class="nav-item">
       <a class="nav-link  {{ str_contains( Route::current()->getName(), 'system.access-logs') ? 'active' : ''}}"
         href="{{ route('system.access-logs') }}">Access Logs</a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link  {{ str_contains( Route::current()->getName(), 'system.settings') ? 'active' : ''}}"
+        href="{{ route('system.settings.index') }}">Settings</a>
     </li>
 
   </ul>

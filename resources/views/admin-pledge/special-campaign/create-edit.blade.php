@@ -680,7 +680,7 @@ console.log( index + ' - ' + select_year + ' - ' + start_year + ' - '  + end_yea
                 // method: "PUT",
                 //     url:  '/settings/business-units/' + id,
                 method: "POST",
-                url: "/admin-pledge/special-campaign/{{ $pledge->id ? $pledge->id : '' }}", 
+                url: "/admin-pledge/special-campaign{{ $pledge->id ? '/'.$pledge->id : '' }}", 
                 //data: form.serialize(), 
                 @if ($is_new_pledge) 
                     data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
