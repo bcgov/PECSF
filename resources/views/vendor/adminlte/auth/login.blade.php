@@ -42,11 +42,11 @@
 
     <div id="idir-login" style="{{  $errors->has('email')  ? 'display:none;' : '' }}" >
         <div class="text-center py-3">
-                <p class="h6 font-weight-bold">Log in to start your session<p>
+                <p class="h5 font-weight-bold">Log in to start your session<p>
                     <p class="my-4 ">
                         <form action="{{ '/login/keycloak' }}" method="get">
                             @csrf
-                            <button type="submit" class="btn btn-primary">Login with Your BC Govt login ID </button>
+                            <button type="submit" class="btn btn-primary btn-lg">Login with Your BC Govt login ID </button>
                         </form>
                     </p>
         </div>
@@ -57,7 +57,7 @@
             <div>Email: <a href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
 
             {{-- @if (!str_contains(Request::url(), 'pecsf-test.apps.silver.devops.gov.bc.ca'))   --}}
-            @if (Request::is('admin/login'))
+            @if ((Request::is('admin/login')) || (in_array(env('APP_ENV'), ['dev', 'local'])))
                 <div class="py-4 small"><a class="sysadmin-login" href="">Log in as a System Administrator</a></div>
             @endif
             {{-- @endif --}}
