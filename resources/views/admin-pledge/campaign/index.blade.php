@@ -9,8 +9,12 @@
 
     @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-2">
-        <div class="flex-fill"><p><a href="/administrators/dashboard">Back</a></p></div>
+    <div class="d-flex mt-3">
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
 
         <div class="d-flex">
             <div class="mr-2">
