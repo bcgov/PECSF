@@ -4,23 +4,27 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <div class="d-flex mt-3">
-        <h4>Organizations</h4>
-        <div class="flex-fill"></div>
+    <h4 class="mx-1 mt-3">Organizations</h4>
 
+    <div class="d-flex mt-3">
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>
+        </div>
 
         <div class="d-flex">
             <div class="mr-2">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#organization-create-modal">
-                    Add a New Value
-                  </button>
+                    Add a New Organization
+                </button>
             </div>
         </div>
     </div>
+
 @endsection
 @section('content')
 
-<p><a href="/administrators/dashboard">Back</a></p>
 <div class="card">
 	<div class="card-body">
 

@@ -12,7 +12,7 @@
     <a href="/admin-pledge/maintain-event">Event Pledge List ></a> <span><strong>Event Submission Queue</strong></span>
     <br>
     <br>
-    <p><a href="/admin-pledge/maintain-event"><button class="btn btn-primary" role="button"  >Back To List</button></a></p>
+    <p><a href="/admin-pledge/maintain-event"><button class="btn btn-outline-primary" role="button"  >Back To List</button></a></p>
     <div style="clear:both;float:none;"></div>
     <br>
     <br>

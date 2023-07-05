@@ -4,10 +4,14 @@
 
 @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-3">
-        <h4 class="pl-2 font-weight-bold">Create a Campaign Pledge</h4>
-        <div class="flex-fill"></div>
+    <h4 class="mx-1 mt-3">{{ isset($pledge) ? 'Edit ' : 'Create '}} a Campaign Pledge</h4>
+
+    <div class="mx-1 pt-2">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('admin-pledge.campaign.index') }}'">
+            Back    
+        </button> 
     </div>
+
 @endsection
 
 @section('content')
