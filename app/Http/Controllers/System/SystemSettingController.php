@@ -29,7 +29,8 @@ class SystemSettingController extends Controller
     public function store(Request $request){
 
         $validator = Validator::make(request()->all(), [
-            'system_lockdown_start'      => 'required|date_format:Y-m-d\TH:i|after:' . date(DATE_ATOM, strtoTime("-10 min")),
+            // 'system_lockdown_start'      => 'required|date_format:Y-m-d\TH:i|after:' . date(DATE_ATOM, strtoTime("-10 min")),
+            'system_lockdown_start'      => 'required|date_format:Y-m-d\TH:i|after:' . now()->format('Y-m-d 00:00'),
             'system_lockdown_end'        => 'required|date_format:Y-m-d\TH:i|after:system_lockdown_start',
         ],[
 
