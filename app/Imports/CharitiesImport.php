@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\CharityStaging;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
@@ -28,8 +29,6 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
     protected $updated_count;
     protected $skipped_count;
     protected $created_by_id;
-    
-    protected $last_refresh_time;
 
     public function __construct($history_id)
     {
@@ -42,7 +41,6 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
         $this->updated_count = 0;
         $this->skipped_count = 0;
         
-        $this->last_refresh_time = time();
 
     }
 
@@ -291,12 +289,10 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
         // write to log message 
         $message = $text . PHP_EOL;
 
-        $this->history->message = $this->history->message . $message;
+        $this->history->message .= $message;
 
-        if (time() - $this->last_refresh_time > 60) {
-            $this->history->save();
-            $this->last_refresh_time = time();
-        }
+        // log to the file to share with the front end
+        Storage::disk('local')->put('staging/charities_import_' .  $this->history_id, $this->history->message);
 
     }
 
