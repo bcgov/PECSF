@@ -95,7 +95,7 @@
                     <th>End Time</th>
                     <th>Status</th>
                     <th>Action</th>
-                    <th>Message</th>
+                    {{-- <th>Message</th> --}}
                     <th>Delete by</th>
                     <th>Delete at</th>
 				</tr>
@@ -201,7 +201,13 @@
             serverSide: true,
             // select: true,
             'order': [[ 0, 'desc']],
-            fixedHeader: true,            
+            fixedHeader: true,
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw(false);
+
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height -240);
+            },
             ajax: {
                 url: '{!! route('system.schedule-job-audits.index') !!}',
                 data: function (data) {
@@ -228,7 +234,7 @@
                 {data: 'end_time',  name: 'end_time',  className: "dt-nowrap" },
                 {data: 'status',  name: 'status',  className: "dt-nowrap" },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
-                {data: 'message_text', name: 'message_text', },
+                // {data: 'message_text', name: 'message_text', },
                 {data: 'deleted_by', name: 'delete_by', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'deleted_at', name: 'delete_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 
