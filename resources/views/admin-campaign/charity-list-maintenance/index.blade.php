@@ -107,7 +107,7 @@
                         <th>End At</th>
                         <th>Status</th>
                         <th>Action</th>
-                        <th>Message</th>
+                        {{-- <th>Message</th> --}}
                     </tr>
                 </thead>
             </table>
@@ -241,7 +241,7 @@
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},
                 {data: 'action'},
-                {data: 'message_text', className: "dt-nowrap"},
+                // {data: 'message_text', className: "dt-nowrap"},
             ],
             columnDefs: [
                     {
