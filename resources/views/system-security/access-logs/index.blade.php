@@ -197,7 +197,12 @@
             serverSide: true,
             // select: true,
             'order': [[ 0, 'desc']],
-            
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw(false);
+
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('height', min_height - 240);
+            },
             ajax: {
                 url: '{!! route('system.access-logs') !!}',
                 data: function (data) {

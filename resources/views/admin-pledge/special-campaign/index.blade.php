@@ -286,7 +286,10 @@
 
                 @if (!(str_contains( url()->previous(), 'admin-pledge/special-campaign')))
                     oTable.page( 'first' ).draw( 'page' );
-                @endif    
+                @endif  
+                
+                min_height = $(".wrapper").outerHeight();
+                $(".main-sidebar").css('min-height', min_height);
             },
             ajax: {
                 url: '{!! route('admin-pledge.special-campaign.index') !!}',

@@ -245,6 +245,9 @@
                     @if (!(str_contains( url()->previous(), 'admin-pledge/maintain-event')))
                         oTable.page( 'first' ).draw( 'page' );
                     @endif
+
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
             },
             ajax: {
                 url: '{!! route('admin-pledge.maintain-event.index') !!}',

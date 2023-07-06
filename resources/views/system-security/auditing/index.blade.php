@@ -235,7 +235,14 @@
             // select: true,
             'order': [[ 0, 'desc']],
             fixedHeader: true,   
-            fixedColumn: true,         
+            fixedColumn: true,
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw(false);
+
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
+
+            },
             ajax: {
                 url: '{!! route('system.auditing.index') !!}',
                 data: function (data) {

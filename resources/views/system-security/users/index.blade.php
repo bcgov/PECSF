@@ -265,7 +265,13 @@
             serverSide: true,
             // select: true,
             'order': [[0, 'asc']],
-            fixedHeader: true,            
+            fixedHeader: true,
+            "initComplete": function(settings, json) {
+                    oTable.columns.adjust().draw(false);
+
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height - 240);
+            },            
             ajax: {
                 url: '{!! route('system.users.index') !!}',
                 data: function (data) {

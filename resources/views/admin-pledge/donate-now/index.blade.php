@@ -109,7 +109,7 @@
         <div class="form-row">
             <div class="form-group col-md-2">
                 <label for="campaign_year">
-                    Campaign Year
+                    Calendar Year
                 </label>
                 <select id="campaign_year_id" class="form-control" name="campaign_year_id">
                     <option value="">All</option>
@@ -268,6 +268,10 @@
                 @if (!(str_contains( url()->previous(), 'admin-pledge/donate-now')))
                     oTable.page( 'first' ).draw( 'page' );
                 @endif
+
+                min_height = $(".wrapper").outerHeight();
+                $(".main-sidebar").css('min-height', min_height);
+
             },
             ajax: {
                 url: '{!! route('admin-pledge.donate-now.index') !!}',
