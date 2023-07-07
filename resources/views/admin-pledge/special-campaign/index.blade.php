@@ -7,12 +7,15 @@
         <h2>Pledge Administration</h2>
         <div class="flex-fill"></div>
     </div>
-<br>
-    <br>
+
     @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-2">
-        <div class="flex-fill"><p><a href="/administrators/dashboard">Back</a></p></div>
+    <div class="d-flex mt-3">
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
 
         <div class="d-flex">
             <div class="mr-2">
@@ -283,7 +286,10 @@
 
                 @if (!(str_contains( url()->previous(), 'admin-pledge/special-campaign')))
                     oTable.page( 'first' ).draw( 'page' );
-                @endif    
+                @endif  
+                
+                min_height = $(".wrapper").outerHeight();
+                $(".main-sidebar").css('min-height', min_height);
             },
             ajax: {
                 url: '{!! route('admin-pledge.special-campaign.index') !!}',

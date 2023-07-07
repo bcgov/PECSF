@@ -4,10 +4,14 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <div class="d-flex mt-3">
-        <h4>PECSF Campaign Year</h4>
-        <div class="flex-fill"></div>       
+    <h4 class="mx-1 mt-3">{{ isset($campaign_year) ? 'Edit ' : 'Create ' }} Campaign Year</h4>
+
+    <div class="mx-1 pt-2">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('settings.campaignyears.index') }}'">
+            Back    
+        </button> 
     </div>
+
 @endsection
 @section('content')
 <div class="card">

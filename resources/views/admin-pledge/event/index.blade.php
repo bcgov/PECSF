@@ -9,8 +9,23 @@
 
     @include('admin-pledge.partials.tabs')
 
-    <div class="pt-4 pb-2">
-        @include('admin-pledge.partials.menu')
+    <div class="d-flex mt-3">
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+                <div class="button-group">
+                    <a href="/admin-pledge/create" class="btn btn-primary">Add a New Event Pledge</a>
+                    <a id="pills-home-tab" style="color:#1a5a96;background:transparent;font-weight:bold;text-decoration: none;" 
+                        class="{{ str_contains(Route::current()->getName(), 'admin-pledge.submission-queue') ? 'active' : '' }} btn btn-secondary activewhite"  
+                        href="{{ route('admin-pledge.submission-queue.index') }}">PECSF Event Submission Queue</a>
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
@@ -230,6 +245,9 @@
                     @if (!(str_contains( url()->previous(), 'admin-pledge/maintain-event')))
                         oTable.page( 'first' ).draw( 'page' );
                     @endif
+
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
             },
             ajax: {
                 url: '{!! route('admin-pledge.maintain-event.index') !!}',
