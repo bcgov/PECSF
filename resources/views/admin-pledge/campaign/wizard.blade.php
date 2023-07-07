@@ -4,10 +4,14 @@
 
 @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-3">
-        <h4 class="pl-2 font-weight-bold">Create a Campaign Pledge</h4>
-        <div class="flex-fill"></div>
+    <h4 class="mx-1 mt-3">{{ isset($pledge) ? 'Edit ' : 'Create '}} a Campaign Pledge</h4>
+
+    <div class="mx-1 pt-2">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('admin-pledge.campaign.index') }}'">
+            Back    
+        </button> 
     </div>
+
 @endsection
 
 @section('content')
@@ -317,6 +321,22 @@ $(function () {
     var step = 1;
     var submit_count = 0;
 
+    // treat browser back button like the 'back' button in this wizard page
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', function(event) {
+        url = this.location.href;
+        if (url.indexOf('admin-pledge/campaign')) {
+            current_step = $("input[type=hidden][name='step']").val();
+            if (current_step == 1) {
+                // back
+                $(".cancel").trigger("click");
+            } else {
+                history.pushState(null, null, location.href);
+                $(".back").trigger("click");
+            }
+        }
+    });
+
     $(".next").on("click", function() {
         var nextstep = false;
         if (step == 1) {
@@ -375,6 +395,9 @@ $(function () {
 
     // DISPLAY AND HIDE "NEXT", "BACK" AND "SUMBIT" BUTTONS
     hideButtons = function(step) {
+        // sync variable and the hidden variable
+        $("input[type=hidden][name='step']").val( step );
+
         var limit = parseInt($(".step").length);
         $(".action").hide();
         $(".cancel").hide();
@@ -392,6 +415,8 @@ $(function () {
             $(".submit").show();
         }
 
+        // scroll to top
+        $(window).scrollTop(0);
     };
 
     // Validation when click on 'next' button

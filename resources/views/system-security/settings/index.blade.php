@@ -3,10 +3,12 @@
 @section('content_header')
     {{-- <h2>Reporting</h2> --}}
     @include('system-security.partials.tabs')
+
     <div class="d-flex mt-3">
         <h4>System Settings</h4>
         <div class="flex-fill"></div>
     </div>
+
 @endsection
 @section('content')
 
@@ -26,7 +28,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row pb-2">
-                <div class="col-md-12"><h4 class="text-primary">System Lock Down (Scheduled Maintenance Time Range)</h4></div>
+                <div class="col-md-12"><h4 class="text-primary">System Lock Down (Scheduled Maintenance Time Frame)</h4></div>
             </div>
             <div class="form-row px-4">
                 <div class="form-group col-md-3">
