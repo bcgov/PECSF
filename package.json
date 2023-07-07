@@ -23,12 +23,14 @@
         "svg-spritemap-webpack-plugin": "^4.4.0",
         "vue": "^2.5.17",
         "vue-loader": "^15.9.5",
-        "vue-template-compiler": "^2.6.10"
+        "vue-template-compiler": "^2.6.10",
+        "sweetalert2": "^10.16.9"
     },
     "dependencies": {
         "@bcgov/bc-sans": "^1.0.1",
         "@fortawesome/fontawesome-free": "^5.15.4",
-        "admin-lte": "^3.1.0",
+        "admin-lte": "~3.1.0",
+        "font-awesome": "^4.7.0",
         "icheck-bootstrap": "^3.0.1"
     }
 }
