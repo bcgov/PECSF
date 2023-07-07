@@ -16,6 +16,14 @@
   svg { width: 75px; margin-top: 1em; }
   p { padding-top: 0.5em;
       padding-bottom: 0.5em;  }
+
+  .hidden-button {
+    background-color: transparent ; 
+    border: none; 
+    color: #fff; 
+    font-size: 20px;
+    font-weight: normal;
+  }      
  
 </style>
 
@@ -37,17 +45,14 @@
             We apologize for any inconvenience.
         <p>            
         <div>
-            <div>&mdash; <a href="admin/login" style="cursor: default !important; text-decoration: none; font-weight: normal;">The PECSF Team</a> &mdash;</div>
+            <div>&mdash; <button class="hidden-button"
+                onclick="window.location.href='admin/login'">The PECSF Team</button> &mdash;</div>
             <p><img class="center" src="{{ asset('img/pecsf-logo.png') }}" height="120px"></p>
         <div>
         
     </div>
 
 </article>
-    
-{{-- <div class="bottomright">
-    <img class="mb-3" src="{{ asset('img/pecsf-logo.png') }}" height="40px">
-</div> --}}
 
 </body>
 </html>
