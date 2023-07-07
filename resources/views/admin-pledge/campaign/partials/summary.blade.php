@@ -78,7 +78,16 @@
                 <input type="text" class="form-control"  value="{{ $request->pecsf_city }}" disabled>
             </div>
         </div>
-
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="">Business unit</label>
+                <input type="text" class="form-control" value="{{ $request->pecsf_bu }}" disabled>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="">Region</label>
+                <input type="text" class="form-control" value="{{ $request->pecsf_region }}" disabled>
+            </div>
+        </div>
 
 @endif
     </div>

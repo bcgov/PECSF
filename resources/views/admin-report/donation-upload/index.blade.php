@@ -3,10 +3,22 @@
 @section('content_header')
     {{-- <h2>Reporting</h2> --}}
     @include('admin-report.partials.tabs')
+
+    <h4 class="mx-1 mt-3">Upload Donation Data</h4>
+    
     <div class="d-flex mt-3">
-        <h4>PECSF - Donation Upload</h4>
-        <div class="flex-fill"></div>
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+            </div>
+        </div>
     </div>
+
 @endsection
 @section('content')
 
@@ -18,8 +30,6 @@
                 </button>
             </div>
         @endif --}}
-
-<p><a href="/administrators/dashboard">Back</a></p>        
 
     <h6>Select the relevant organization, upload PECSF Donation files for non BC Gov entities below, then click "Submit" to send reports to PECSF administration.</h6>
     <div class="card">

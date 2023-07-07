@@ -115,8 +115,12 @@ class Charity extends Model implements Auditable
                     ->pluck('charity_status')
                     ->toArray();
         
-        array_push($arr, 'No-CRA-match');
-        array_push($arr, 'Pending-Dissolution');
+        $new_values = ['No-CRA-match', 'Pending-Dissolution'];
+        foreach($new_values as $value){
+            if(!in_array($value, $arr, true)){
+                array_push($arr, $value);
+            }
+        }
 
         return $arr;
     }

@@ -44,172 +44,109 @@ class MaintainEventPledgeController extends Controller
     {
         if($request->ajax()) {
 
-            $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
-                            'distinct_charities', 'distinct_charities.charity')
-                            ->select('pledges.*');
+            // store the filter 
+            $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
+            session(['admin_pledge_event_pledge_filter' => $filter]);
+
+            $pledges = BankDepositForm::with('campaign_year','form_submitted_by')
+                            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
+                            ->where( function($query) {
+                                $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                        $q->from('employee_jobs as J2') 
+                                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                            ->selectRaw('min(J2.empl_rcd)');
+                                    })
+                                    ->orWhereNull('employee_jobs.empl_rcd');
+                            })
+                            ->when($request->tran_id, function($query) use($request) {
+                                return $query->where('bank_deposit_forms.id', 'like', $request->tran_id);
+                            })
+                            ->when( $request->organization_code, function($query) use($request) {
+                                $query->where('bank_deposit_forms.organization_code', $request->organization_code);
+                            })
+                            ->when( $request->pecsf_id, function($query) use($request) {
+                                $query->where('bank_deposit_forms.pecsf_id', 'like', '%'. $request->pecsf_id .'%');
+                            })
+                            ->when( $request->emplid, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('bank_deposit_forms.bc_gov_id', 'like', '%'. $request->emplid .'%')
+                                             ->orWhere('employee_jobs.name', 'like', '%' . $request->emplid . '%');
+                                });             
+                            })
+                            ->when( $request->description, function($query) use($request) {
+                                $query->where('bank_deposit_forms.description', 'like', '%'. $request->description .'%');
+                            })
+                            ->when( $request->employment_city, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('employee_jobs.city', 'like', '%'. $request->employment_city .'%')
+                                             ->orWhere('bank_deposit_forms.employment_city', 'like', '%'. $request->employment_city .'%');
+                                });
+                            })
+                            ->when( $request->campaign_year_id, function($query) use($request) {
+                                $query->where('bank_deposit_forms.campaign_year_id', $request->campaign_year_id);
+                            })
+                            ->when( $request->event_type, function($query) use($request) {
+                                $query->where('bank_deposit_forms.event_type', $request->event_type);
+                            })
+                            ->when( $request->sub_type, function($query) use($request) {
+                                $query->where('bank_deposit_forms.sub_type', $request->sub_type);
+                            })
+                            ->select('bank_deposit_forms.*');
 
             return Datatables::of($pledges)
-                ->addColumn('description', function($pledge) {
-                    $text =  $pledge->type == 'P' ? $pledge->fund_supported_pool->region->name :
-                                       $pledge->distinct_charities->count() . ' chartites'  ;
-                    //   $title = implode(', ',  $pledge->distinct_charities->pluck('charity.charity_name')->toArray());
-                    return "<span>" . $text . '</span>' ;
-                })
                 ->addColumn('action', function ($pledge) {
-                    return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
-                        '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>';
-            })->rawColumns(['action','description'])
-            ->make(true);
+                    return  '<a href="#" class="more-info-pledge fas fa-info-circle fa-2x bottom-right" data-id="' . $pledge->id . '"></a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-        // get all the record
-        //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
+         // restore filter if required 
+         $filter = null;
+         if (str_contains( url()->previous(), 'admin-pledge/create') ||
+             str_contains( url()->previous(), 'admin-pledge/submission-queue') ||
+             str_contains( url()->previous(), 'admin-pledge/maintain-event')) {
+             $filter = session('admin_pledge_event_pledge_filter');
+         }
 
-        $pools = FSPool::where('start_date', '=', function ($query) {
-            $query->selectRaw('max(start_date)')
-                ->from('f_s_pools as A')
-                ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                ->whereNull('A.deleted_at')
-                ->where('A.start_date', '<=', today());
-        })
-            ->where('status', 'A')
-            ->get();
-        $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::all();
-        $regions = Region::where("status","=","A")->get();
-        $departments = Department::all();
-        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-            ->first();
-        $current_user = User::where('id', Auth::id() )->first();
-        $cities = City::all();
-        if(!empty(request("search_by")) && !empty(request("begins_with"))){
-            if(request("search_by") == "calendar_year"){
-                $event_pledges = BankDepositForm::join("campaign_years","campaign_years.id","bank_deposit_forms.campaign_year_id");
-                $event_pledges =  $event_pledges->where("calendar_year","=",request("begins_with"));
-            }
-            else if($request->search_by == "id"){
-                $event_pledges = BankDepositForm::where($request->search_by,"=",$request->begins_with);
-            }
-            else if($request->search_by == "employee_id"){
-                $event_pledges = BankDepositForm::where("bc_gov_id","like","%".$request->begins_with."%");
-            }
-            else if($request->search_by == "pecsf_id"){
-                $event_pledges =  BankDepositForm::where("pecsf_id","like","%".$request->begins_with."%");
-            }
-            else{
-                $event_pledges = BankDepositForm::where($request->search_by,"=",$request->begins_with);
+        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
+        $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
+        $cities = City::orderBy('city')->get();
 
-            }
+        $event_types = ['Cash One-Time Donation', 'Cheque One-Time Donation', 'Fundraiser', 'Gaming'];
+        $sub_types = ['Auction', 'Entertainment', 'Food', 'Other', 'Sports', '50/50 Draw'];
 
-            if(!empty($request->event_type))
-            {
-                $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
-            }
+        return view('admin-pledge.event.index',compact(
+                         'filter', 'organizations', 'campaign_years', 'cities', 'event_types', 'sub_types'));
 
-            if(!empty($request->sub_type))
-            {
-                $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
-            }
-            $event_pledges = $event_pledges->orderBy("bank_deposit_forms.created_at","desc")->limit(request("limit"))->get();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, $id)
+    {
+
+        if ($request->ajax()) {
+
+            $pledge = BankDepositForm::where('id', $id)->first();
+
+            $pledge->formatted_deposit_amount = number_format($pledge->deposit_amount,2);
+
+            $pledge->created_by_name = $pledge->created_by ? $pledge->created_by->name : '';
+            $pledge->updated_by_name = $pledge->updated_by ? $pledge ->updated_by->name : '';
+            $pledge->approved_by_name = $pledge->approved_by ? $pledge ->approved_by->name : '';
+            $pledge->formatted_created_at = $pledge->created_at->format('Y-m-d H:i:s');
+            $pledge->formatted_updated_at = $pledge->updated_at->format('Y-m-d H:i:s');
+            
+            unset($pledge->created_by );
+            unset($pledge->updated_by );
+            unset($pledge->approved_by );
+            return response()->json($pledge);
         }
-        else{
-            $event_pledges = BankDepositForm::orderBy("bank_deposit_forms.created_at","desc");
-            if(!empty($request->event_type))
-            {
-                $event_pledges = $event_pledges->where("event_type","=", $request->event_type);
-            }
-            if(!empty($request->sub_type))
-            {
-                $event_pledges = $event_pledges->where("sub_type","=", $request->sub_type);
-            }
-
-            $event_pledges->where("approved","=",1);
-
-            $event_pledges->join("users","form_submitter_id","users.id");
-               $event_pledges = $event_pledges->limit(30)->get();
-        }
-        $charities=Charity::when($request->has("title"),function($q)use($request){
-
-            $searchValues = preg_split('/\s+/', $request->get("title"), -1, PREG_SPLIT_NO_EMPTY);
-
-            if ($request->get("designation_code")) {
-                $q->where('designation_code', $request->get("designation_code"));
-            }
-            if ($request->get("category_code")) {
-                $q->where('category_code', $request->get("category_code"));
-            }
-            if ($request->get("province")) {
-                $q->where('province', $request->get("province"));
-            }
-
-            foreach ($searchValues as $term) {
-                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
-            }
-            return $q->orderby('charity_name','asc');
-
-        })->where('charity_status','Registered')->paginate(10);
-        $designation_list = Charity::DESIGNATION_LIST;
-        $category_list = Charity::CATEGORY_LIST;
-        $province_list = Charity::PROVINCE_LIST;
-        $terms = explode(" ", $request->get("title") );
-
-        $selected_charities = [];
-        if (Session::has('charities')) {
-            $selectedCharities = Session::get('charities');
-
-            $_charities = Charity::whereIn('id', $selectedCharities['id'])
-                ->get(['id', 'charity_name as text']);
-
-            foreach ($_charities as $charity) {
-                $charity['additional'] = $selectedCharities['additional'][array_search($charity['id'], $selectedCharities['id'])];
-                if (!$charity['additional']) {
-                    $charity['additional'] = '';
-                }
-
-                array_push($selected_charities, $charity);
-            }
-        } else {
-
-            // reload the existig pledge
-            $errors = session('errors');
-
-            if (!$errors) {
-
-                $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-                    ->first();
-                $pledge = Pledge::where('user_id', Auth::id())
-                    ->whereHas('campaign_year', function($q){
-                        $q->where('calendar_year','=', today()->year + 1 );
-                    })->first();
-
-                if ( $campaignYear->isOpen() && $pledge && count($pledge->charities) > 0 )  {
-
-                    $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
-
-                    $_charities = Charity::whereIn('id', $_ids )
-                        ->get(['id', 'charity_name as text']);
-
-                    foreach ($_charities as $charity) {
-                        $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
-
-                        $charity['additional'] = '';
-                        if ($pledge_charity) {
-                            $charity['additional'] = $pledge_charity->additional ?? '';
-                        }
-
-                        array_push($selected_charities, $charity);
-                    }
-                }
-            }
-        }
-        $multiple = 'false';
-        // load the view and pass
-        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
-        $organizations = [];
-        return view('admin-pledge.event.index',compact('fund_support_pool_list','organizations','multiple','selected_charities','terms','charities','province_list','category_list','designation_list','cities','current_user','campaign_year','departments','regions','business_units','regional_pool_id','pools','event_pledges','request'));
-
 
     }
 
@@ -225,7 +162,7 @@ class MaintainEventPledgeController extends Controller
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')

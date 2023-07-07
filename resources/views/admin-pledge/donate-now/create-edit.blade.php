@@ -4,18 +4,14 @@
 
 @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-3">
-        <h3>{{ $is_new_pledge ? 'Create' : 'Edit' }} a Donate Now Pledge</h3>
-        <div class="flex-fill"></div>
-    
-        <div class="d-flex">
-            <div class="mr-2">
-                <x-button class="btn-primary mr-2" :href="route('admin-pledge.donate-now.index')"> Back </x-button>        
-            </div>
-        </div>
+    <h4 class="mx-1 mt-3">{{ $is_new_pledge ? 'Create' : 'Edit' }} a Donate Now Pledge</h4>
 
-
+    <div class="mx-1 pt-2">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('admin-pledge.donate-now.index') }}'">
+            Back    
+        </button> 
     </div>
+
 @endsection
 
 @section('content')
@@ -663,7 +659,7 @@ $(function () {
                 // method: "PUT",
                 //     url:  '/settings/business-units/' + id,
                 method: "POST",
-                url: "/admin-pledge/donate-now/{{ $pledge->id ? $pledge->id : '' }}", 
+                url: "/admin-pledge/donate-now{{ $pledge->id ? '/'.$pledge->id : '' }}", 
                 //data: form.serialize(), 
                 @if ($is_new_pledge) 
                     data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.

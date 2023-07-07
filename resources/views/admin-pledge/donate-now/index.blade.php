@@ -7,12 +7,15 @@
         <h2>Pledge Administration</h2>
         <div class="flex-fill"></div>
     </div>
-<br>
-    <br>
+
     @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-2">
-        <div class="flex-fill"><p><a href="/administrators/dashboard">Back</a></p></div>
+    <div class="d-flex mt-3">
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>
+        </div>
 
         <div class="d-flex">
             <div class="mr-2">
@@ -106,7 +109,7 @@
         <div class="form-row">
             <div class="form-group col-md-2">
                 <label for="campaign_year">
-                    Campaign Year
+                    Calendar Year
                 </label>
                 <select id="campaign_year_id" class="form-control" name="campaign_year_id">
                     <option value="">All</option>
@@ -265,6 +268,10 @@
                 @if (!(str_contains( url()->previous(), 'admin-pledge/donate-now')))
                     oTable.page( 'first' ).draw( 'page' );
                 @endif
+
+                min_height = $(".wrapper").outerHeight();
+                $(".main-sidebar").css('min-height', min_height);
+
             },
             ajax: {
                 url: '{!! route('admin-pledge.donate-now.index') !!}',

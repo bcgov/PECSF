@@ -162,6 +162,30 @@ class BankDepositFormController extends Controller
                 else if(strlen($request->bc_gov_id) != 6){
                     $validator->errors()->add('bc_gov_id','The Employee ID must be 6 digits.');
                 }
+
+                if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+                {
+                    if(strlen($request->employee_name) < 1){
+                        $validator->errors()->add('employee_name','Employee name required.');
+                    }
+                    else if(strpos($request->employee_name,",") == FALSE){
+                        $validator->errors()->add('employee_name','Employee name must be your first and last name seperated by a comma. "Jack,Johnson".');
+                    }
+                    else{
+                        $names = explode(",",$request->employee_name);
+
+                        if(strlen($names[0]) < 1){
+                            $validator->errors()->add('employee_name','First name before the comma must be more than 1 character.');
+                        }
+                        else if(strlen($names[1]) < 1){
+                            $validator->errors()->add('employee_name','Last name after the comma must be more than 1 character.');
+                        }
+                        else if($names[1][0] == " "){
+                            $validator->errors()->add('employee_name','Enter first and last name without any spaces. "Jack,Johnson".');
+                        }
+                    }
+                }
+
             }
             }
             if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
@@ -293,7 +317,7 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
-
+                'employee_name' => $request->employee_name,
                 'created_by_id' => Auth::id(),
                 'updated_by_id' => Auth::id(),
             ]
@@ -461,14 +485,20 @@ class BankDepositFormController extends Controller
           if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
                 {
                     if(!empty($request->pecsf_id)){
-                        if(strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1)))
+
+                        $existingPecsfId = BankDepositForm::where("organization_code","=","GOV")
+                            ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
+                            ->where("pecsf_id","=",$request->pecsf_id)
+                            ->orWhere("pecsf_id","=",substr($request->pecsf_id,1))
+                            ->get();
+
+                        if((strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1))) && !empty($exsitingPecsfId))
                         {
                             $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
                         }
                     }
                  else{
                      $validator->errors()->add('pecsf_id','The PECSF ID is required.');
-
                  }
                 }
                 else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
@@ -487,6 +517,7 @@ class BankDepositFormController extends Controller
             if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
                 $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
                     ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+                    ->where("approved","=",1)
                     ->get();
                 if(count($existing_pecsf_id) > 0)
                 {
@@ -627,7 +658,7 @@ class BankDepositFormController extends Controller
     }
 
     function bc_gov_id(Request $request){
-        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district")->first();
+        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district, employee_jobs.first_name, employee_jobs.last_name")->first();
         if(!empty($record)){
             return response()->json($record, 200);
         }

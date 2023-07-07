@@ -39,11 +39,12 @@ use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
-use App\Http\Controllers\Admin\CRACharityReportController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
+use App\Http\Controllers\System\SystemSettingController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
 use App\Http\Controllers\System\ExportAuditLogController;
+use App\Http\Controllers\Admin\CRACharityReportController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
@@ -74,6 +75,9 @@ Route::get('login/{provider}', [KeycloakLoginController::class, 'redirectToProvi
 Route::get('login/{provider}/callback', [KeycloakLoginController::class, 'handleProviderCallback']);
 Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
                 ->middleware('auth')->name('logout');
+
+// For Administrator login                 
+Route::get('admin/login', [LoginController::class, 'showLoginForm'])->name('admin-login');                
 //Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
 //Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
 //Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
@@ -258,12 +262,14 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
     Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
 
-    // Event Pledges
-    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index']);
+    // Event Maintainance Listing
+    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index','show']);
+    Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
+
+    // Event Submission Queue
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->only(['status','details','index']);
     Route::get('/details', [EventSubmissionQueueController::class,"details"])->name('details');
     Route::post('/status', [EventSubmissionQueueController::class,"status"])->name('status');
-    Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
 });
 
 
@@ -324,6 +330,9 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
 
 Route::middleware(['auth'])->prefix('system')->name('system.')->group(function() {
+
+    // System Security Control
+    Route::resource('/settings', SystemSettingController::class)->only(['index','store']);
 
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);

@@ -32,18 +32,22 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        border:#ccc 1px solid;
+
     }
 
     table td{
         text-align:center;
         font-weight:normal;
         padding:10px;
+        background:#f2f2f2;
+        border:#ccc 1px solid;
     }
 </style>
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
     <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>
@@ -58,9 +62,9 @@
             <div class="card-header" id="heading0{{ $loop->index }}">
                 <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                     aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
-                    <h1 class="">
+                    <h3 class="">
                         {{  $key }}
-                    </h1>
+                    </h3>
                     <div class="flex-fill"></div>
                     <div class="expander">
                     </div>
@@ -95,28 +99,34 @@
                                                     {{ $pledge->region }}
                                                     @break
                                                 @default
-                                                    <a type="button" class="more-info"
-                                                       data-source="{{ $pledge->source }}"
-                                                       data-type="{{ $pledge->donation_type }}"
-                                                       data-id="{{ $pledge->id }}"
-                                                       data-frequency="{{ $pledge->frequency }}"
-                                                       data-yearcd="{{ $pledge->yearcd }}">
-                                                        {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
-                                                    </a>
+                                                    @foreach(explode(",",$pledge->number_of_charities) as $charity)
+                                                        <a  style="cursor:pointer;" class="more-info"
+                                                            data-source="{{ $pledge->source }}"
+                                                            data-type="{{ $pledge->donation_type }}"
+                                                            data-id="{{ $pledge->id }}"
+                                                            data-frequency="{{ $pledge->frequency }}"
+                                                            data-yearcd="{{ $pledge->yearcd }}">
+                                                            {{$charity}}
+                                                        </a>
+                                                        <br>
+                                                    @endforeach
 
                                             @endswitch
                                         @else
                                             @if ($pledge->donation_type == 'Donate Today')
                                                 {{ $pledge->number_of_charities }}
                                             @else
-                                                <a type="button" class="more-info "
-                                                   data-source="{{ $pledge->source  }}"
-                                                   data-type="{{ $pledge->donation_type }}"
-                                                   data-id="{{ $pledge->id }}"
-                                                   data-frequency="{{ $pledge->frequency }}"
-                                                   data-yearcd="{{ $pledge->yearcd }}">
-                                                    {{ $pledge->number_of_charities }} {{ $pledge->number_of_charities > 1 ? 'charities' : 'charity' }}
-                                                </a>
+                                                @foreach(explode(",",$pledge->number_of_charities) as $charity)
+                                                    <a  style="cursor:pointer;" class="more-info"
+                                                        data-source="{{ $pledge->source }}"
+                                                        data-type="{{ $pledge->donation_type }}"
+                                                        data-id="{{ $pledge->id }}"
+                                                        data-frequency="{{ $pledge->frequency }}"
+                                                        data-yearcd="{{ $pledge->yearcd }}">
+                                                        {{$charity}}
+                                                    </a>
+                                                    <br>
+                                                @endforeach
                                             @endif
                                         @endif
                                     </td>

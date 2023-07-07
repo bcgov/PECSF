@@ -825,7 +825,8 @@ class AnnualCampaignController extends Controller
 
     public function summaryPdf(Request $request, $id) {
 
-        $pledge = Pledge::where('pledges.id', $id)->join("campaign_years","campaign_year_id","campaign_years.id")->first();
+
+        $pledge = Pledge::select("pledges.*")->with("campaign_year")->where('pledges.id', $id)->first();
 
         // Make sure this transaction is for the current logged user
         if (!$pledge) {
@@ -958,7 +959,7 @@ class AnnualCampaignController extends Controller
             $date = date("Y-m-d");
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
                  'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
-            return $pdf->download('Annual Campaign Summary - '.$pledge->calendar_year.'.pdf');
+            return $pdf->download('Annual Campaign Summary - '.(intval($pledge->calendar_year) - 1).'.pdf');
         }
 
     }

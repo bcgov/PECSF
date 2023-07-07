@@ -4,18 +4,14 @@
 
 @include('admin-pledge.partials.tabs')
 
-    <div class="d-flex mt-3">
-        <h4>Review a Campaign Pledge</h4>
-        <div class="flex-fill"></div>
-    
-        <div class="d-flex">
-            <div class="mr-2">
-                <x-button class="btn-primary mr-2" :href="route('admin-pledge.campaign.index')"> Back </x-button>        
-            </div>
-        </div>
+    <h4 class="mx-1 mt-3">Review a Campaign Pledge</h4>
 
-
+    <div class="mx-1 pt-2">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('admin-pledge.campaign.index') }}'">
+            Back    
+        </button> 
     </div>
+
 @endsection
 
 @section('content')
@@ -101,7 +97,21 @@
                         <label for="">City</label>
                         <input type="text" class="form-control"  value="{{ $pledge->city }}" disabled>
                     </div>
-                </div>                
+                </div>
+                <div class="form-row">
+                    <div class="col-md-4 mb-4">
+                        <label for="">Business Unit</label>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu() ? 
+                                ($pledge->pecsf_user_bu() ? $pledge->pecsf_user_bu()->name . ' (' . 
+                                $pledge->pecsf_user_bu()->code . ')' : '' ) : '' }}" disabled>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label for="">Region</label>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_region() ?
+                                ($pledge->pecsf_user_region() ? $pledge->pecsf_user_region()->name . ' (' . 
+                                                    $pledge->pecsf_user_region()->code . ')' : '' ) : '' }}" disabled>
+                    </div>
+                </div>                   
             @endif
             </div>
         </div>
