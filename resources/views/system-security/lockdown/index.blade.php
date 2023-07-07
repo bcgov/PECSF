@@ -45,7 +45,7 @@
             We apologize for any inconvenience.
         <p>            
         <div>
-            <div>&mdash; <button class="hidden-button"
+            <div>&mdash; <button class="hidden-button" aria-label="This button will let the admin login to the system"
                 onclick="window.location.href='admin/login'">The PECSF Team</button> &mdash;</div>
             <p><img class="center" src="{{ asset('img/pecsf-logo.png') }}" height="120px"></p>
         <div>
