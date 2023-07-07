@@ -47,7 +47,7 @@
 
 <div class="header">
     <img src="img/brand/1.png"/>
-    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
+    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
     <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
     <div class="clear"></div>
 </div>

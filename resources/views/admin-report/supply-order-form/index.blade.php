@@ -3,6 +3,23 @@
     {{-- <h2>Reporting</h2> --}}
     @include('admin-report.partials.tabs')
 
+    <h4 class="mx-1 mt-3">Supply Order Form Reporting</h4>
+  
+    <div class="d-flex mt-3">
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+                <button type="button" class="active btn btn-primary">Find a Report</button>
+                <button type="button" class="btn btn-outline-primary">Edit Supply Order Form</button>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @section('content')
 
@@ -30,14 +47,7 @@
         </div>
     </div>
 
-    <h1 style="main-blue">Supply Order Form Reporting</h1>
-    <div class="btn-group mt-5" role="group" aria-label="Basic example">
-        <button type="button" class="active btn btn-primary"><h2>Find a Report</h2></button>
-        <button type="button" class="btn btn-outline-primary"><h2>Edit Supply Order Form</h2></button>
-    </div>
-
-
-    <div class="card mt-5">
+    <div class="card">
 
         <div class="row">
             <div class="col-md-12 justify-content-start">

@@ -68,10 +68,10 @@
     </header>
     <div class="container">
         <h2 class="mt-5">Donation Summary</h2>
-        <p class="mt-3">Generated on: {{\Carbon\Carbon::now()}}</p>
+        <h3 class="mt-3">Generated on: {{\Carbon\Carbon::now()}}</h3>
 
         <div class="card bg-light p-3">
-            <p class="card-title"><b>Deductions</b></p>
+            <h3 class="card-title"><b>Deductions</b></h3>
 
             <div class="card">
                 <div class="card-body">
