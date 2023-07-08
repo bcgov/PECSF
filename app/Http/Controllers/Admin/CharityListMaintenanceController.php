@@ -170,7 +170,7 @@ class CharityListMaintenanceController extends Controller
             $process = \App\Models\ProcessHistory::where('id', $id)->first();
 
             if ($process->status == 'Processing') {
-                $process->message = Storage::disk('local')->get('staging/charities_import_' .  $id);
+                $process->message = Storage::disk('logs')->get('charities_import_' .  $id . '.log');
             }
 
             return response()->json($process);
