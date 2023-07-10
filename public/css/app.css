@@ -12101,7 +12101,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 @media (prefers-reduced-motion: reduce) {
   .spinner-border,
-.spinner-grow {
+  .spinner-grow {
     animation-duration: 1.5s;
   }
 }
