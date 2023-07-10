@@ -254,3 +254,13 @@ ul.custom.pagination li.active {
     border:#ccc 1px solid;
 }
 
+a:focus{
+    font-weight:bold;
+    text-decoration: underline;
+}
+
+button:focus{
+    border: #000 5px solid;
+    font-weight: bold;
+    text-decoration: underline;
+}
