@@ -8,7 +8,7 @@
     @php( $dashboard_url = $dashboard_url ? url($dashboard_url) : '' )
 @endif
 
-<a href="{{ $dashboard_url }}"
+<a
     @if($layoutHelper->isLayoutTopnavEnabled())
         class="navbar-brand logo-switch {{ config('adminlte.classes_brand') }}"
     @else
