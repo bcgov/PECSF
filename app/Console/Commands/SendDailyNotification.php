@@ -48,18 +48,27 @@ class SendDailyNotification extends Command
         $subject = '(from region: '. env('APP_ENV') .') ' . env('APP_NAME') . ' - schedule daily notification testing (Ver 2.0)';
         $body = "Test message -- daily notification send out from server for testing purpose, please ignore. (from region: " . env('APP_ENV') .')';
 
-        Mail::raw( $body , function($message) use($subject, $toAddresses) {
-            $message->to( $toAddresses );
-            $message->subject(  $subject );
-        });  
+        try {
+            Mail::raw( $body , function($message) use($subject, $toAddresses) {
+                $message->to( $toAddresses );
+                $message->subject(  $subject );
+            });  
 
-         // check for failures
-        if (Mail::failures()) {
-            // return response showing failed emails
-            $this->info('Error. Failed to sent daily test notification to eligible people.');
-        } else {
             $this->info('Successfully sent daily test notification  to eligible people.');
-        }
+
+        } catch (Exception $ex) {
+
+            $this->info('Error. Failed to sent daily test notification to eligible people.');
+
+        }            
+
+        // check for failures
+        // if (Mail::failures()) {
+        //     // return response showing failed emails
+        //     $this->info('Error. Failed to sent daily test notification to eligible people.');
+        // } else {
+        //     $this->info('Successfully sent daily test notification  to eligible people.');
+        // }
 
         return 0;
 
