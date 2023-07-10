@@ -4,6 +4,11 @@
     $("#event_type").select2();
     $(".org_hook,#pecsfid,#bcgovid,#employeename,.address_hook").hide();
 
+
+    $("#pecsf_id").change(function(){
+        nongovuserinfo();
+    });
+
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
 $("#organizations").show();
@@ -121,6 +126,26 @@ e.preventDefault();
     attachment_number++;
 
 });
+
+function nongovuserinfo(){
+    $.get({
+        url: 'https://pecsf-dev.apps.silver.devops.gov.bc.ca/admin-pledge/campaign-nongov-user' +
+            '?org_id=' + $('#organization_code').val() +
+            '&pecsf_id=' + $('#pecsf_id').val(),
+        dataType: 'json',
+        async: false,
+        cache: false,
+        timeout: 30000,
+        success: function(data)
+        {
+            if(data) {
+                $('#employee_name').val( data.first_name +","+ data.last_name );
+            }
+        },
+        error: function(response) {
+        }
+    });
+}
 
 
 var formData = new FormData();
