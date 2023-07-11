@@ -129,7 +129,7 @@ e.preventDefault();
 
 function nongovuserinfo(){
     $.get({
-        url: 'https://pecsf-dev.apps.silver.devops.gov.bc.ca/admin-pledge/campaign-nongov-user' +
+        url: '/admin-pledge/campaign-nongov-user' +
             '?org_id=' + $('#organization_code').val() +
             '&pecsf_id=' + $('#pecsf_id').val(),
         dataType: 'json',
@@ -138,7 +138,7 @@ function nongovuserinfo(){
         timeout: 30000,
         success: function(data)
         {
-            if(data) {
+            if(data && data.first_name != undefined && data.last_name != undefined) {
                 $('#employee_name').val( data.first_name +","+ data.last_name );
             }
         },
