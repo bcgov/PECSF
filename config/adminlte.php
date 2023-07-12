@@ -49,7 +49,7 @@ return [
     'logo_img_class' => 'brand-image float-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'PECSF',
+    'logo_img_alt' => 'PECSF Logo',
 
     /*
     |--------------------------------------------------------------------------

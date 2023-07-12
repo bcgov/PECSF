@@ -4,6 +4,11 @@
     $("#event_type").select2();
     $(".org_hook,#pecsfid,#bcgovid,#employeename,.address_hook").hide();
 
+
+    $("#pecsf_id").change(function(){
+        nongovuserinfo();
+    });
+
 $("input[name='charity_selection']").click(function(){
 if($(this).val() == "dc"){
 $("#organizations").show();
@@ -22,7 +27,7 @@ $("#pool_filter").parents(".form-group").hide();
 });
 
     $("#event_type").change(function(){
-        if($("[name='organization_code']").val() == "GOV"){
+        if($("[name='organization_code']").val() != "GOV"){
             if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
                 $("#employeename").show();
             }
@@ -63,9 +68,7 @@ else{
         $("#bcgovid").show();
         $("#event_type>option[value='Fundraiser']").prop('disabled',false);
         $("#event_type>option[value='Gaming']").prop('disabled',false);
-        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-            $("#employeename").show();
-        }
+        $("#employeename").hide();
     }
     else if($("[name='organization_code']").val() == "RET"){
         $("#pecsfid").find("label").hide();
@@ -80,7 +83,9 @@ else{
         }
         $("#event_type>option[value='Fundraiser']").prop('disabled',true);
         $("#event_type>option[value='Gaming']").prop('disabled',true);
-
+        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+            $("#employeename").show();
+        }
     }
     else{
         $("#pecsfid").find("label").show();
@@ -91,6 +96,9 @@ else{
         $("#bcgovid").hide();
         $("#event_type>option[value='Fundraiser']").prop('disabled',false);
         $("#event_type>option[value='Gaming']").prop('disabled',false);
+        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+            $("#employeename").show();
+        }
     }
 
 $(".address_hook").show();
@@ -118,6 +126,26 @@ e.preventDefault();
     attachment_number++;
 
 });
+
+function nongovuserinfo(){
+    $.get({
+        url: '/admin-pledge/campaign-nongov-user' +
+            '?org_id=' + $('#organization_code').val() +
+            '&pecsf_id=' + $('#pecsf_id').val(),
+        dataType: 'json',
+        async: false,
+        cache: false,
+        timeout: 30000,
+        success: function(data)
+        {
+            if(data && data.first_name != undefined && data.last_name != undefined) {
+                $('#employee_name').val( data.first_name +","+ data.last_name );
+            }
+        },
+        error: function(response) {
+        }
+    });
+}
 
 
 var formData = new FormData();
