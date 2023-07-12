@@ -262,7 +262,7 @@ return [
         [
             'text' => 'FAQs',
             'url' => '/contact',
-            'icon' => 'FAQs'
+            'icon' => 'nav-icon fa fa-question-circle', 
         ],
         [
             'text'    => 'Administration',
@@ -337,6 +337,8 @@ return [
             'text' => 'PECSF',
             'url' => 'https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf',
             'icon' => 'external-link',
+            'icon' => 'nav-icon fa fa-external-link-alt',
+            
             'target' => '_blank'
         ],
     ],
