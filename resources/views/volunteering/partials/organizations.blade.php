@@ -36,7 +36,7 @@
     @endforeach
 
 </table>
-<div class="col-md-12">
+<div class="col-md-12 p-0">
     @if($organizations)
         {{$organizations->onEachSide(1)->links('volunteering.partials.pagination')}}
     @else

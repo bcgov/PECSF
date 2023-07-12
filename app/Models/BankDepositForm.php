@@ -35,6 +35,11 @@ class BankDepositForm extends Model implements Auditable
         'business_unit',
         'approved',
         'created_at',
+        'update_at',
+        'created_by_id',
+        'updated_by_id',
+        'approved_by_id',
+        'approved_at',
     ];
 
     protected $casts = [
@@ -63,4 +68,24 @@ class BankDepositForm extends Model implements Auditable
         return $this->belongsTo(CampaignYear::class, 'campaign_year_id', 'id');
     }
 
+    public function form_submitted_by()
+    {
+        return $this->belongsTo(User::Class, 'form_submitter_id', 'id')->withDefault();
+    }
+    
+    public function created_by()
+    {
+        return $this->belongsTo(User::Class, 'created_by_id', 'id')->withDefault();
+    }
+
+    public function updated_by()
+    {
+        return $this->belongsTo(User::Class, 'updated_by_id', 'id')->withDefault();
+    }
+
+    public function approved_by()
+    {
+        return $this->belongsTo(User::Class,  'approved_by_id', 'id')->withDefault();
+    }
+    
 }

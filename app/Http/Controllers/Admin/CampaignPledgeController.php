@@ -217,14 +217,12 @@ class CampaignPledgeController extends Controller
 
                 //
                 $selected_charities =[];
-                $_charities = Charity::whereIn('id', $request->charities)->get() ?? [];
-
-                foreach ($_charities as $key => $charity) {
-                    $idx = array_search( $charity->id,  $request->charities);
-                    $charity['additional'] = $request->additional[$idx];
-                    $charity['percentage'] = $request->percentages[$idx];
+                for ($i=0; $i < count($request->charities); $i++) {
+                    $charity = Charity::where('id', $request->charities[$i])->first();
+                    $charity['additional'] = $request->additional[$i];
+                    $charity['percentage'] = $request->percentages[$i];
                     array_push($selected_charities, $charity);
-                }
+                }                
 
                 return view('admin-pledge.campaign.partials.summary', compact('user', 'organization', 'campaign_year',
                             'pool_option', 'pool', 'charities', 'selected_charities', 
@@ -699,42 +697,49 @@ class CampaignPledgeController extends Controller
      
         if($request->ajax()) {
 
+            // Get Region from Org
+            $org = Organization::where('id', $request->org_id)->first();
+            $pecsf_bu = $org ? ($org->business_unit ? $org->business_unit->name : '') : ''; 
+            $formatted_result = (object) [
+                'pecsf_bu' => $pecsf_bu,
+            ];
+
             // Search for the Non-Gov History
             $pledge = Pledge::join('campaign_years', 'pledges.campaign_year_id', 'campaign_years.id')
                             ->where('pledges.organization_id', $request->org_id )
                             ->where('pledges.pecsf_id', $request->pecsf_id)
+                            ->orderBy('pledges.id', 'desc')
                             ->orderBy('campaign_years.calendar_year', 'desc')
                             ->first();
 
             if ($pledge) {
-                $formatted_result = (object) [
-                        'first_name' => $pledge->first_name,
-                        'last_name' => $pledge->last_name,
-                        'city' => $pledge->city,
-                    ];
+                $formatted_result->first_name = $pledge->first_name;
+                $formatted_result->last_name = $pledge->last_name;
+                $formatted_result->city = $pledge->city;
 
-                return json_encode( $formatted_result );
-            }
-            
+            } else {
+                // Search Non-Gov History
+                $history = NonGovPledgeHistory::leftJoin('organizations', 'non_gov_pledge_histories.org_code', 'organizations.code')
+                                ->where('organizations.id', $request->org_id )
+                                ->where('non_gov_pledge_histories.pecsf_id', $request->pecsf_id)
+                                ->orderBy('non_gov_pledge_histories.yearcd', 'desc')
+                                ->first();
 
-            // Search Non-Gov History
-            $history = NonGovPledgeHistory::leftJoin('organizations', 'non_gov_pledge_histories.org_code', 'organizations.code')
-                            ->where('organizations.id', $request->org_id )
-                            ->where('non_gov_pledge_histories.pecsf_id', $request->pecsf_id)
-                            ->orderBy('non_gov_pledge_histories.yearcd', 'desc')
-                            ->first();
-
-            if ($history) {
-                $formatted_result = (object) [
-                        'first_name' => $history->first_name,
-                        'last_name' => $history->last_name,
-                        'city' => $history->city,
-                    ];
-
-                return json_encode( $formatted_result );
+                if ($history) {
+                    $formatted_result->first_name = $history->first_name;
+                    $formatted_result->last_name = $history->last_name;
+                    $formatted_result->city = $history->city;
+                }
             }
                 
-            return response()->noContent();    
+            if (isset($formatted_result->city)) {
+                $city = City::where('city', trim($formatted_result->city) )->first();
+                $formatted_result->pecsf_region = $city ? ($city->region ? $city->region->name : '') : '';
+            }
+
+            return json_encode( $formatted_result );
+            
+            // return response()->noContent();    
 
         }
     }

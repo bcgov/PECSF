@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Charity;
 use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class CRACharityRequest extends FormRequest
 {
@@ -24,18 +25,23 @@ class CRACharityRequest extends FormRequest
      */
     public function rules()
     {
+
+        $charity_status_list = Charity::charity_status_list();
+        
         return [
             //
             // 'alt_address1'    => ['required','numeric','regex:/[0-9][0-9][0-9]/',
             //                 Rule::when($this->getMethod() == 'POST', ['unique:App\Models\Region,code']) 
             //              ],
+            'charity_status' => ['required', Rule::in($charity_status_list)],
             
             'alt_address1'   => [ Rule::when( $this->exists('use_alt_address'), ['required','max:60']) ],
             'alt_address2'   => [ Rule::when( $this->exists('use_alt_address'), ['max:60']) ],
             'alt_city'       => [ Rule::when( $this->exists('use_alt_address'), ['required']) ],
             'alt_province'       => [ Rule::when( $this->exists('use_alt_address'), ['required', 'max:2']) ],
-            'alt_postal_code'       => [ Rule::when( $this->exists('use_alt_address'), ['required']),
+            'alt_postal_code'       => [ Rule::when( $this->exists('use_alt_address'), ['required',
                                             'regex:/^([A-Z]\d[A-Z])\ {1}(\d[A-Z]\d)$/',
+                                        ]),
                                 ],
             'alt_country'   => [ Rule::when( $this->exists('use_alt_address'), ['required']) ],
             'financial_contact_name'  => 'nullable|max:60',

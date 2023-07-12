@@ -54,7 +54,7 @@ class AdministratorController extends Controller
         }
 
         // load the view and pass the sharks
-        return view('admin-campaign.administrators.index');
+        return view('system-security.administrators.index');
         
     }
 
@@ -92,7 +92,7 @@ class AdministratorController extends Controller
         $user->is_admin = 1;
         $user->save();
         
-        return redirect()->route('settings.administrators.index')
+        return redirect()->route('system.administrators.index')
             ->with('success','User ' . $user->name . ' was assigned to Administrator role.');
 
     }
@@ -157,7 +157,7 @@ class AdministratorController extends Controller
         $user->is_admin = 0;
         $user->save();
 
-        return redirect()->route('settings.administrators.index')
+        return redirect()->route('system.administrators.index')
           ->with('success','User ' . $user->name . '  was removed from Administrator role.');
 
     }

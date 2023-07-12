@@ -54,8 +54,9 @@ class DonationController extends Controller {
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                                case when type = 'P' then 0 else (select count(*) from pledge_charities
-                                            where pledge_charities.pledge_id = pledges.id
+                                case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
+                                            where pledge_charities.charity_id = charities.id
+                                              and pledge_charities.pledge_id = pledges.id
                                               and pledge_charities.frequency = 'bi-weekly'
                                               and pledge_charities.deleted_at is null) end");
 
@@ -67,8 +68,9 @@ class DonationController extends Controller {
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                            case when type = 'P' then 0 else (select count(*) from pledge_charities
-                                        where pledge_charities.pledge_id = pledges.id
+                            case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
+                                        where pledge_charities.charity_id = charities.id
+                                          and pledge_charities.pledge_id = pledges.id
                                           and pledge_charities.frequency = 'one-time'
                                           and pledge_charities.deleted_at is null) end");
 
@@ -114,11 +116,12 @@ class DonationController extends Controller {
                                          case when source = 'P' then 0 else
                                             case when campaign_type = 'Donate Today'
                                                 then (select charity_name from charities a, pledge_histories b where a.registration_number = b.charity_bn and b.id = pledge_history_summaries.pledge_history_id)
-                                                else (select count(*) from pledge_histories where emplid = pledge_history_summaries.emplid
+                                                else (select GROUP_CONCAT(vendor_name1) from pledge_histories where emplid = pledge_history_summaries.emplid
                                                     and yearcd = pledge_history_summaries.yearcd
                                                     and source = 'Non-Pool'
                                                     and campaign_type = pledge_history_summaries.campaign_type
-                                                    and frequency = pledge_history_summaries.frequency)
+                                                    and frequency = pledge_history_summaries.frequency
+                                                    )
                                             end
                                         end as number_of_charities")
                             ->unionAll($annual_pay_period_pledges)
@@ -135,6 +138,13 @@ class DonationController extends Controller {
         $totalPledgedDataTillNow = 0;
         foreach ($all_pledges as $pledge) {
             $totalPledgedDataTillNow += $pledge->pledge;
+        }
+
+        foreach($pledges_by_yearcd as $yearcd => $pledges){
+            foreach($pledges as $index => $pledge){
+                $pledges_by_yearcd[$yearcd][$index]->charities = PledgeHistory::join("pledge_history_summaries","pledge_histories.id","pledge_history_summaries.pledge_history_id")->select("vendor_name1")->where("pledge_history_summaries.emplid","=",$user->emplid)->where("pledge_history_summaries.yearcd","=",$yearcd)->where("pledge_history_summaries.source","=","Non-Pool")->where("pledge_history_summaries.campaign_type","=",$pledge->donation_type)->where("pledge_history_summaries.frequency","=",$pledge->frequency)->get();
+
+            }
         }
 
         // download PDF file with download method

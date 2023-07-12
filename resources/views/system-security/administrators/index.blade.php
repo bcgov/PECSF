@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 @section('content_header')
 
-    @include('admin-campaign.partials.tabs')
+    @include('system-security.partials.tabs')
     <div class="d-flex mt-3">
         <h4>Security - PECSF Administrators</h4>
         <div class="flex-fill"></div>
@@ -31,7 +31,7 @@
                 <h4></h4>
                 <div class="px-4">
                     
-                    <form action="{{ route('settings.administrators.store') }}" class="form-inline" method="post">
+                    <form action="{{ route('system.administrators.store') }}" class="form-inline" method="post">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <div class="col-auto">
@@ -150,7 +150,7 @@
             select: true,
             'order': [[1, 'asc']],
             ajax: {
-                url: '{!! route('settings.administrators.store') !!}',
+                url: '{!! route('system.administrators.store') !!}',
                 data: function (d) {
                 },
                 error: function(xhr, resp, text) {
@@ -185,7 +185,7 @@
 
         $('#user_id').select2({
             ajax: {
-                url: '/settings/administrators/users'
+                url: '/system/administrators/users'
                 , dataType: 'json'
                 , delay: 250
                 , data: function(params) {
@@ -227,7 +227,7 @@
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                    $('#delete-administrator-form').attr('action', '/settings/administrators/' + id );
+                    $('#delete-administrator-form').attr('action', '/system/administrators/' + id );
                     $('#delete-administrator-form').submit();
                 } else if (result.isCancelledDenied) {
                     // Do nothing

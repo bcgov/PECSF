@@ -9,6 +9,16 @@
         href="{{ route('system.auditing.index') }}">Auditing</a>
     </li> --}}
 
+    <li class="nav-item">
+      <a class="nav-link {{ str_contains( Route::current()->getName(), 'system.administrators') ? 'active' : ''}}"
+            href="{{ route('system.administrators.index') }}">Administrators</a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link  {{ str_contains( Route::current()->getName(), 'system.users') ? 'active' : ''}}"
+        href="{{ route('system.users.index') }}">Users</a>
+    </li>
+
     <li class="nav-item dropdown">
       @php $active =  ( str_contains(Route::current()->getName(), 'system.auditing') ||
                         str_contains(Route::current()->getName(), 'system.export-audits')
@@ -21,11 +31,6 @@
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.export-audits') ? 'active' : ''}}"
             href="{{ route('system.export-audits.index') }}">Export Audit Log</a>
       </div>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link  {{ str_contains( Route::current()->getName(), 'system.users') ? 'active' : ''}}"
-        href="{{ route('system.users.index') }}">Users</a>
     </li>
 
     <li class="nav-item">

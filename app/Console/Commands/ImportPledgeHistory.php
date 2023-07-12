@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
 // use App\Models\RegionalDistrict;
@@ -29,6 +30,7 @@ class ImportPledgeHistory extends Command
     protected $description = 'Import the Pledge Hostory data from BI';
 
     /* Variable for logging */
+    protected $task;
     protected $message;
     protected $status;
     protected $reload_start_year;
@@ -56,40 +58,66 @@ class ImportPledgeHistory extends Command
     public function handle()
     {
 
-        // Determine the start year
-        $last_task = ScheduleJobAudit::where('job_name', $this->signature)
-                            ->where('status', 'Completed')
-                            ->first();
+        try {
 
-        $start_year = 2005;
-        if ($last_task) {
-            $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
-        }
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+            // Determine the start year
+            $last_task = ScheduleJobAudit::where('job_name', $this->signature)
+                                ->where('status', 'Completed')
+                                ->first();
 
-        // $this->LogMessage( now() );
-        // $this->LogMessage("Step - 1 : Update/Create - Region District");
-        // $this->UpdateRegionalDistrict();
+            $start_year = 2005;
+            if ($last_task) {
+                $start_year = (now()->month <= 3) ? now()->year - 2 : now()->year - 1;
+            }
+
         
-        $this->LogMessage( now() );
-        $this->LogMessage("Step - 1 : Reload - Pledge History Vendor");
-        $this->UpdatePledgeHistoryVendor();
 
-        $this->LogMessage( now() );    
-        $this->LogMessage("Step - 2 : Reload - Pledge History");
-        for ($yr = $start_year; $yr <= now()->year; $yr++) {
-            $this->UpdatePledgeHistory($yr);
+            // $this->LogMessage( now() );
+            // $this->LogMessage("Step - 1 : Update/Create - Region District");
+            // $this->UpdateRegionalDistrict();
+            
+            $this->LogMessage( now() );
+            $this->LogMessage("Step - 1 : Reload - Pledge History Vendor");
+            $this->UpdatePledgeHistoryVendor();
+
+            $this->LogMessage( now() );    
+            $this->LogMessage("Step - 2 : Reload - Pledge History");
+            for ($yr = $start_year; $yr <= now()->year; $yr++) {
+                $this->UpdatePledgeHistory($yr);
+            }
+            $this->LogMessage( now() );    
+            $this->LogMessage("Step - 3 : Reload - Pledge History Summary");
+            $this->UpdatePledgeHistorySummary();
+
+            $this->LogMessage( now() );    
+
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message = $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
         }
-        $this->LogMessage( now() );    
-        $this->LogMessage("Step - 3 : Reload - Pledge History Summary");
-        $this->UpdatePledgeHistorySummary();
-
-        $this->LogMessage( now() );    
 
         // Update the Task Audit log
         $this->task->end_time = Carbon::now();
@@ -157,13 +185,14 @@ class ImportPledgeHistory extends Command
     protected function UpdatePledgeHistoryVendor() 
     {
 
-        try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-            ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_VNDR_BI_ENDPOINT') .'?$count=true&$top=1');
+        // try {
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+        ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+        ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_VNDR_BI_ENDPOINT') .'?$count=true&$top=1');
 
+        if ($response->successful()) {
             $row_count = json_decode($response->body())->{'@odata.count'};
-           
+            
             if ($row_count > 0) {
                 // Truncate Pledge History table when records returned from BI
                 PledgeHistoryVendor::truncate();
@@ -219,18 +248,27 @@ class ImportPledgeHistory extends Command
                     $this->status = 'Error';
                     $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
                 }
 
             }
 
-        } catch (\Exception $ex) {
+        } else {
 
             $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+            $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
-            return 1;
-
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
         }
+
+        // } catch (\Exception $ex) {
+
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
+
+        //     return 1;
+
+        // }
     }
 
 
@@ -242,11 +280,12 @@ class ImportPledgeHistory extends Command
         $this->LogMessage( 'Loading pledge history data for '. $in_year);
         $filter = '(yearcd eq '. $in_year .')';
 
-        try {
-            $response = Http::withHeaders(['Content-Type' => 'application/json'])
-                ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
-                ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
+        // try {
+        $response = Http::withHeaders(['Content-Type' => 'application/json'])
+            ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
+            ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$count=true&$top=1&$filter='.$filter);
 
+        if ($response->successful()) {                
             $row_count = json_decode($response->body())->{'@odata.count'};
             
             $size = 10000;
@@ -344,19 +383,25 @@ class ImportPledgeHistory extends Command
                     $this->status = 'Error';
                     $this->LogMessage( $response->status() . ' - ' . $response->body() );
 
-                }
+                    throw new Exception( $response->status() . ' - ' . $response->body()   );
 
+                }
             }
 
-        } catch (\Exception $ex) {
-        
-            // write to log message 
-            $this->status = 'Error';
-            $this->LogMessage( $ex->getMessage() );
+        } else {
 
-            return 1;
-
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
         }
+
+        // } catch (\Exception $ex) {
+        
+        //     // write to log message 
+        //     $this->status = 'Error';
+        //     $this->LogMessage( $ex->getMessage() );
+
+        //     return 1;
+
+        // }
     }
 
     protected function UpdatePledgeHistorySummary() {
@@ -442,7 +487,7 @@ class ImportPledgeHistory extends Command
         $this->message .= $text . PHP_EOL;
 
         $this->task->message = $this->message;
-        $this->task->save();
+        // $this->task->save();
         
     }
 

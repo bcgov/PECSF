@@ -20,7 +20,7 @@
                         <p class="card-text text-left">
                             To make changes to your proposed pledge, click into the box below where your {{ $campaignYear->calendar_year }} choices are shown.
                         </p>
-                        <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make change to your PECSF pledge</a>
+                        <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make a change to your PECSF pledge</a>
                     @else
                         <p class="card-text text-left">
                             To make a pledge click the Donate button, copy a prior year's choices from your Donation History.
@@ -137,38 +137,38 @@
 
 <script>
 
-$(function () {    
-    $('#learn-more-modal').on('slide.bs.carousel', function (e) {
+$(function () {
+    // $('#learn-more-modal').on('slide.bs.carousel', function (e) {
 
-        movie_id = $('#movie_player').attr('movie-id');
-        $('#movie_player').attr('src', movie_id);
-        
-        if(e.to == 0) {
-            $(this).find(".prev-btn").addClass("d-none");
-            $(this).find(".start-btn").removeClass("d-none");
-            $(this).find(".next-btn").addClass("d-none");
-        }
-        else if (e.to === 8) {
-            $(this).find(".next-btn").addClass("d-none");
-            $(this).find(".ready-btn").removeClass("d-none");
-        } else {
-            $(this).find(".start-btn").addClass("d-none");
-            $(this).find(".prev-btn").removeClass("d-none");
-            $(this).find(".next-btn").removeClass("d-none")
-            $(this).find(".ready-btn").addClass("d-none");
-        }
+    //     movie_id = $('#movie_player').attr('movie-id');
+    //     $('#movie_player').attr('src', movie_id);
 
-    })
-    
-    $('#learn-more-modal').on('show.bs.modal', function (event) {
-        $('#donateGuideCarousel').carousel(0);
-        movie_id = $('#movie_player').attr('movie-id');
-        $('#movie_player').attr('src', movie_id);
-    })
+    //     if(e.to == 0) {
+    //         $(this).find(".prev-btn").addClass("d-none");
+    //         $(this).find(".start-btn").removeClass("d-none");
+    //         $(this).find(".next-btn").addClass("d-none");
+    //     }
+    //     else if (e.to === 8) {
+    //         $(this).find(".next-btn").addClass("d-none");
+    //         $(this).find(".ready-btn").removeClass("d-none");
+    //     } else {
+    //         $(this).find(".start-btn").addClass("d-none");
+    //         $(this).find(".prev-btn").removeClass("d-none");
+    //         $(this).find(".next-btn").removeClass("d-none")
+    //         $(this).find(".ready-btn").addClass("d-none");
+    //     }
 
-    $("#learn-more-modal").on("hidden.bs.modal", function () {
-        $('#movie_player').attr('src', '')
-    });
+    // })
+
+    // $('#learn-more-modal').on('show.bs.modal', function (event) {
+    //     $('#donateGuideCarousel').carousel(0);
+    //     movie_id = $('#movie_player').attr('movie-id');
+    //     $('#movie_player').attr('src', movie_id);
+    // })
+
+    // $("#learn-more-modal").on("hidden.bs.modal", function () {
+    //     $('#movie_player').attr('src', '')
+    // });
 
     $('.more-info').click( function(event) {
         event.stopPropagation();

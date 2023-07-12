@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Exception;
 use App\Models\User;
 use App\Models\Pledge;
 use App\Models\PayCalendar;
@@ -36,6 +37,7 @@ class ExportPledgesToPSFT extends Command
     protected $description = 'Sending pledge transactions to PeopleSoft via ODS';
 
     /* Source Type is HCM */
+    protected $task;
     protected $message;
     protected $status;
     protected $bypass_rule_for_testing_purpose;
@@ -75,40 +77,63 @@ class ExportPledgesToPSFT extends Command
             $this->bypass_rule_for_testing_purpose = true;
         }
 
-        $this->task = ScheduleJobAudit::Create([
-            'job_name' => $this->signature,
-            'start_time' => Carbon::now(),
-            'status' => 'Processing',
-        ]);
+        try {
+
+            $this->task = ScheduleJobAudit::Create([
+                'job_name' => $this->signature,
+                'start_time' => Carbon::now(),
+                'status' => 'Processing',
+            ]);
 
 
-        $this->LogMessage("Process run on " . today()->format('Y-m-d'));
-        if (!(App::environment('prod'))) {
-            $this->LogMessage("Bypass Rule (when to send to PSFT) for testing purpose is " . ($this->bypass_rule_for_testing_purpose ? 'Yes' : 'No'));
-        }
-        $this->LogMessage( "" );        
+            $this->LogMessage("Process run on " . today()->format('Y-m-d'));
+            if (!(App::environment('prod'))) {
+                $this->LogMessage("Bypass Rule (when to send to PSFT) for testing purpose is " . ($this->bypass_rule_for_testing_purpose ? 'Yes' : 'No'));
+            }
+            $this->LogMessage( "" );        
 
-        // Step 1 : Send Campiagn Type data to PeopleSoft access endpoint 
-        $this->LogMessage( now() );        
-        $this->LogMessage("1) Sending Annual Campaign Type pledge data to PeopleSoft");
-        $this->sendCampaignDonationToPeopleSoft();
-        
-        // Step 2 : Send Donate Now Pledge data to PeopleSoft access endpoint 
-        $this->LogMessage( "" );        
-        $this->LogMessage("2) Sending Donate Now Type pledge data to PeopleSoft");
-        $this->sendDonateNowToPeopleSoft();
+            // Step 1 : Send Campiagn Type data to PeopleSoft access endpoint 
+            $this->LogMessage( now() );        
+            $this->LogMessage("1) Sending Annual Campaign Type pledge data to PeopleSoft");
+            $this->sendCampaignDonationToPeopleSoft();
+            
+            // Step 2 : Send Donate Now Pledge data to PeopleSoft access endpoint 
+            $this->LogMessage( "" );        
+            $this->LogMessage("2) Sending Donate Now Type pledge data to PeopleSoft");
+            $this->sendDonateNowToPeopleSoft();
 
-        // Step 3 : Send Special Campaign Pledge data to PeopleSoft access endpoint 
-        $this->LogMessage( "" );        
-        $this->LogMessage("3) Sending Special Campaign Type pledge data to PeopleSoft");
-        $this->sendSpecialCampaignToPeopleSoft();
+            // Step 3 : Send Special Campaign Pledge data to PeopleSoft access endpoint 
+            $this->LogMessage( "" );        
+            $this->LogMessage("3) Sending Special Campaign Type pledge data to PeopleSoft");
+            $this->sendSpecialCampaignToPeopleSoft();
 
-        // Update the Task Audit log
-        $this->task->end_time = Carbon::now();
-        $this->task->status = $this->status;
-        $this->task->message = $this->message;
-        $this->task->save();
+            // Update the Task Audit log
+            $this->task->end_time = Carbon::now();
+            $this->task->status = $this->status;
+            $this->task->message = $this->message;
+            $this->task->save();
 
+        } catch (\Exception $ex) {
+
+            // log message in system
+            if ($this->task) {
+                $this->task->status = 'Error';
+                $this->task->end_time = Carbon::now();
+                $this->task->message = $ex->getMessage() . PHP_EOL;
+                $this->task->save();
+            }
+
+            // send out email notification
+            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify->job_id =  $this->task ? $this->task->id : null;
+            $notify->job_name =  $this->signature;
+            $notify->error_message = $ex->getMessage();
+            $notify->send(); 
+
+            // write message to the log  
+            throw new Exception($ex);
+
+        }        
 
             
     }
@@ -295,7 +320,7 @@ class ExportPledgesToPSFT extends Command
         $pledgeData = DonateNowPledge::join('organizations', 'donate_now_pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
                             ->whereNull('donate_now_pledges.ods_export_status')
-                            ->whereNull('donate_now_pledges.cancelled')
+                            ->whereNull('donate_now_pledges.cancelled_at')
                             ->select('donate_now_pledges.*')
                             ->orderBy('donate_now_pledges.id')->get();
 
@@ -410,7 +435,7 @@ class ExportPledgesToPSFT extends Command
         $pledgeData = SpecialCampaignPledge::join('organizations', 'special_campaign_pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
                             ->whereNull('special_campaign_pledges.ods_export_status')
-                            ->whereNull('special_campaign_pledges.cancelled')
+                            ->whereNull('special_campaign_pledges.cancelled_at')
                             ->select('special_campaign_pledges.*')
                             ->orderBy('special_campaign_pledges.id')
                             ->get();
@@ -517,41 +542,29 @@ class ExportPledgesToPSFT extends Command
 
     protected function sendData($pushdata) {
 
-        try {
+        $response = Http::withBasicAuth(
+            env('ODS_USERNAME'),
+            env('ODS_TOKEN')
+        )->withBody( json_encode($pushdata), 'application/json')
+        ->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
 
-            $response = Http::withBasicAuth(
-                env('ODS_USERNAME'),
-                env('ODS_TOKEN')
-            )->withBody( json_encode($pushdata), 'application/json')
-            ->post( env('ODS_OUTBOUND_PLEDGE_PSFT_ENDPOINT') );
+        if ($response->successful()) {
+            $this->success += 1;
+            return true;
 
-            if ($response->successful()) {
-                $this->success += 1;
-                return true;
-
-            } else {
-
-                // log message in system
-                $this->status = 'Error';
-                $this->LogMessage( "(Error) - Data - " . json_encode($pushdata) );
-                $this->LogMessage( "        - " . $response->status() . ' - ' . $response->body() );
-
-                $this->failure += 1;
-
-                return false;
-            }
-
-        } catch (\Exception $ex) {
+        } else {
 
             // log message in system
-            $this->status = 'Error';
-            $this->LogMessage( "(Error) - " . json_encode($pushdata) );
-            $this->LogMessage( "          " - $ex->getMessage() );
+            // $this->status = 'Error';
+            $this->LogMessage( "(Error) - Data - " . json_encode($pushdata) );
+            $this->LogMessage( "        - " . $response->status() . ' - ' . $response->body() );
             
-            throw new Exception($ex);
+            throw new Exception( $response->status() . ' - ' . $response->body()   );
 
+            $this->failure += 1;
+
+            return false;
         }
-
       
     }
 
@@ -565,7 +578,7 @@ class ExportPledgesToPSFT extends Command
         $this->message .= $text . PHP_EOL;
 
         $this->task->message = $this->message;
-        $this->task->save();
+        // $this->task->save();
         
     }
 

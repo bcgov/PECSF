@@ -294,6 +294,8 @@ class BankDepositFormController extends Controller
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
 
+                'created_by_id' => Auth::id(),
+                'updated_by_id' => Auth::id(),
             ]
         );
 
@@ -485,6 +487,7 @@ class BankDepositFormController extends Controller
             if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
                 $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
                     ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+                    ->where("approved","=",1)
                     ->get();
                 if(count($existing_pecsf_id) > 0)
                 {
@@ -513,7 +516,9 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
-                'business_unit' => $request->business_unit
+                'business_unit' => $request->business_unit,
+
+                'updated_by_id' => Auth::id(),
             ]
         );
 
