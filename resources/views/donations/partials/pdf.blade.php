@@ -32,24 +32,30 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        text-align:left;
+
     }
 
     table td{
-        text-align:center;
+        text-align:left;
         font-weight:normal;
         padding:10px;
     }
 </style>
 
 <div class="header">
-    <img src="img/brand/1.png"/>
-    <img style="width:150px;float:right;" src="img/brand/4.bmp"/><br>
-    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
+    <img  src="img/brand/1.png"/>
+    <img style="height:80px;float:right;width:150px;" src="img/brand/5.png"/><br>
+
     <div class="clear"></div>
 </div>
 <br>
 <hr>
+<h4 style="text-align:center;width:100%;">PECSF Donation History Summary</h4>
 
+<h5>Date @php
+    echo date("d-m-Y",time());
+@endphp</h5>
 <span><i>Please note that this is not a Tax Receipt</i></span>
 <div id="accordion">
 
@@ -58,9 +64,9 @@
             <div class="card-header" id="heading0{{ $loop->index }}">
                 <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                     aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
-                    <h1 class="">
-                        {{  $key }}
-                    </h1>
+                    <h4 class="">
+                        Campaign Year {{  $key }}
+                    </h4>
                     <div class="flex-fill"></div>
                     <div class="expander">
                     </div>
@@ -71,10 +77,10 @@
                 <div class="card-body">
                     <table class="table  rounded">
                         <tr class="bg-light">
-                            <th>Donation Type</th>
-                            <th>Benefitting Charity</th>
-                            <th>Frequency</th>
-                            <th>Amount</th>
+                            <th style="width:20%;">Donation Type</th>
+                            <th style="width:40%;">Benefitting Charity</th>
+                            <th style="width:20%;">Frequency</th>
+                            <th style="width:20%;">Amount</th>
 
                         </tr>
                         @php $total = 0; @endphp
