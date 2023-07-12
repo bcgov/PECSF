@@ -270,12 +270,12 @@ $(function() {
         },
         columns: [
             {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
-            {data: 'organization_name', name: 'organization_name', className: "dt-nowrap", searchable: false },
-            {data: 'participation_rate', className: "dt-nowrap dt-right", searchable: false },
-            {data: 'previous_participation_rate', className: 'dt-nowrap dt-right', searchable: false},
-            {data: 'change_rate', className: 'dt-nowrap dt-right', searchable: false},
-            {data: 'donors', className: "dt-nowrap dt-right",  searchable: false},
-            {data: 'dollars', className: "dt-nowrap dt-right", searchable: false},
+            {data: 'organization_name', name: 'organization_name', className: "", searchable: false },
+            {data: 'participation_rate', className: '', searchable: false },
+            {data: 'previous_participation_rate', className: '', searchable: false},
+            {data: 'change_rate', className: 'dt-nowrap', searchable: false},
+            {data: 'donors', className: "dt-nowrap",  searchable: false},
+            {data: 'dollars', className: "dt-nowrap", searchable: false},
         ],
         columnDefs: [
             {
