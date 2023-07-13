@@ -34,17 +34,30 @@
         href="{{ route('settings.campaignyears.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Campaign Years</a>
     </li>
 
-    <li class="nav-item">
+    <li class="nav-item dropdown">
+        @php $active =  ( str_contains(Route::current()->getName(), 'special-campaigns') ||
+                          str_contains(Route::current()->getName(), 'settings.fund-supported-pools') 
+                        ) ? 'active' : ''
+        @endphp
+        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Core Setup</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.special-campaigns') ? 'active' : ''}}"
+                href="{{ route('settings.special-campaigns.index') }}">Special Campaigns</a>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.fund-supported-pools') ? 'active' : ''}}"
+                href="{{ route('settings.fund-supported-pools.index') }}">Fund Supported Pools</a>
+        </div>
+    </li>
+
+
+    {{-- <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.special-campaigns') ? 'active' : '' }}"
-          {{-- id="pills-profile-tab"  --}}
-          href="{{ route('settings.special-campaigns.index') }}"  aria-controls="pills-profile" aria-selected="false">Special Campaigns</a>
+            href="{{ route('settings.special-campaigns.index') }}"  aria-controls="pills-profile" aria-selected="false">Special Campaigns</a>
     </li>
 
     <li class="nav-item">
       <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.fund-supported-pools') ? 'active' : '' }}"
-        {{-- id="pills-profile-tab"  --}}
-        href="{{ route('settings.fund-supported-pools.index') }}"  aria-controls="pills-profile" aria-selected="false">Fund Supported Pools</a>
-    </li>
+            href="{{ route('settings.fund-supported-pools.index') }}"  aria-controls="pills-profile" aria-selected="false">Fund Supported Pools</a>
+    </li> --}}
 
     <li class="nav-item dropdown">
         @php $active =  ( str_contains(Route::current()->getName(), 'settings.business-units') ||
@@ -94,8 +107,23 @@
         </div>
     </li>
 
-    <li class="nav-item">
-        <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.challenge') ? 'active' : ''}}"
-           href="{{ route('settings.challenge') }}">Challenge Updates</a>
+    <li class="nav-item dropdown">
+        @php $active =  ( str_contains(Route::current()->getName(), 'settings.challenge') ||
+                          str_contains(Route::current()->getName(), 'settings.challenge-summary')
+                        ) ? 'active' : ''
+        @endphp
+        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Challenge Setup</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.challenge') ? 'active' : ''}}"
+                href="{{ route('settings.challenge') }}">Challenge Updates</a>
+
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.challenge-summary') ? 'active' : ''}}"
+                href="{{ route('settings.challenge-summary.index') }}">Challenge Summary Update</a>
+        </div>
     </li>
+
+    {{-- <li class="nav-item">
+        <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.challenge') ? 'active' : ''}}"
+           href="{{ route('settings.challenge-summary') }}">Challenge Updates</a>
+    </li> --}}
   </ul>

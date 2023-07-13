@@ -39,11 +39,12 @@ use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
-use App\Http\Controllers\Admin\CRACharityReportController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
+use App\Http\Controllers\System\SystemSettingController;
 use App\Http\Controllers\Admin\DonateNowPledgeController;
 use App\Http\Controllers\System\ExportAuditLogController;
+use App\Http\Controllers\Admin\CRACharityReportController;
 use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
+use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -74,6 +76,9 @@ Route::get('login/{provider}', [KeycloakLoginController::class, 'redirectToProvi
 Route::get('login/{provider}/callback', [KeycloakLoginController::class, 'handleProviderCallback']);
 Route::post('/logout', [KeycloakLoginController::class, 'destroy'])
                 ->middleware('auth')->name('logout');
+
+// For Administrator login                 
+Route::get('admin/login', [LoginController::class, 'showLoginForm'])->name('admin-login');                
 //Route::get('/login/microsoft', [AzureLoginController::class, 'login'])->name('ms-login');
 //Route::POST('logout', [LoginController::class, 'logout'])->name('logout');
 //Route::get('/login/microsoft/callback', [AzureLoginController::class, 'handleCallback'])->name('callback');
@@ -186,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
+    Route::post('/', [ChallengeController::class, 'index']);
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
     // Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
@@ -245,6 +251,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
     Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
+
+    // Challenge Summary Maintenance
+    Route::resource('/challenge-summary', ChallengeSummaryMaintenanceController::class);
 
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
@@ -326,6 +335,9 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
 
 Route::middleware(['auth'])->prefix('system')->name('system.')->group(function() {
+
+    // System Security Control
+    Route::resource('/settings', SystemSettingController::class)->only(['index','store']);
 
     // Schedule Job Audit
     Route::resource('/schedule-job-audits', ScheduleJobAuditController::class)->only(['index','show', 'destroy']);

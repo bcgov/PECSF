@@ -38,6 +38,11 @@
         text-align:left;
     }
 
+    table td{
+        border:#ccc 1px solid;
+        padding-left:8px;
+    }
+
     table td:last-child{
         text-align:right;
         font-weight:normal;
@@ -57,22 +62,21 @@
 <div class="header">
     <img  src="img/brand/1.png"/>
     <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
-
     <div class="clear"></div>
 </div>
 <br>
 <hr>
 <h4 style="text-align:center;width:100%;">PECSF Donate Now Summary</h4>
 
-<span>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August for payroll deductions from January - June, and in March for payroll deductions from July - December</span>
+<span>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August, for payroll deductions from January - June, and in March, for payroll deductions from July - December.</span>
 
 <div class="container">
 
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h2 class="mt-5">{{ $date }}</h2>
+            <h3 class="mt-5">{{ $date }}</h3>
             <div class="card bg-light p-3">
-                <h1 class="card-title">Deductions</h1>
+                <h3 class="card-title">Deductions</h3>
                 <hr>
                 <div class="card">
                     <div class="card-body">
@@ -83,7 +87,6 @@
                         <p class="text-right"><b>Total :</b> ${{ number_format($one_time_amount ,2) }}</p>
                     </div>
                 </div>
-
 
                 @foreach(['one-time'] as $key)
                     @php $viewMode = 'pdf'; @endphp

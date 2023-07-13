@@ -72,17 +72,17 @@ class CharityListMaintenanceController extends Controller
                 // ->addColumn('short_message', function ($process) {
                 //     return substr($process->message, 0, 255);
                 // })
-                ->addColumn('message_text', function ($process) {
-                    $more_link = ' ... <br><a class="more-link text-danger" data-id="'. $process->id .'" >click here for more detail</a>';
-                    $maxline = 3;
-                    $lines = preg_split('#\r?\n#', $process->message);
-                    if ( count($lines) > $maxline) {
-                        // return nl2br( substr($audit->message, 0, $maxline)) . $more_link;
-                        return nl2br( implode( PHP_EOL , array_slice( $lines, 0, 3) ) . $more_link );
-                    } else {   
-                        return nl2br( $process->message);
-                    }
-                })
+                // ->addColumn('message_text', function ($process) {
+                //     $more_link = ' ... <br><a class="more-link text-danger" data-id="'. $process->id .'" >click here for more detail</a>';
+                //     $maxline = 3;
+                //     $lines = preg_split('#\r?\n#', $process->message);
+                //     if ( count($lines) > $maxline) {
+                //         // return nl2br( substr($audit->message, 0, $maxline)) . $more_link;
+                //         return nl2br( implode( PHP_EOL , array_slice( $lines, 0, 3) ) . $more_link );
+                //     } else {   
+                //         return nl2br( $process->message);
+                //     }
+                // })
                 ->addColumn('action', function ($process) {
                     return '<a class="btn btn-info btn-sm  show-process" data-id="'. $process->id .'" >Show</a>';
                 })
@@ -168,6 +168,10 @@ class CharityListMaintenanceController extends Controller
         if ($request->ajax()) {
 
             $process = \App\Models\ProcessHistory::where('id', $id)->first();
+
+            if ($process->status == 'Processing') {
+                $process->message = Storage::disk('logs')->get('charities_import_' .  $id . '.log');
+            }
 
             return response()->json($process);
         }

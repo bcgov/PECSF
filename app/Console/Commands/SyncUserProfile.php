@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use DateTime;
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\EmployeeJob;
 use App\Models\Organization;
@@ -12,6 +12,7 @@ use App\Models\JobSchedAudit;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -155,7 +156,7 @@ class SyncUserProfile extends Command
             //         ->orWhere('date_deleted', '>=', $last_start_time);
             ->where(function ($query)  {
                 $query->whereNull('date_deleted')
-                    ->orWhereBetween('date_deleted',['2021-09-01','2022-12-31']);    // To create 2022 donatiion in Greenfield for testing purpose (User Profile required)
+                      ->orWhereBetween('date_deleted',['2021-09-01','2022-12-31']);    // To create 2022 donatiion in Greenfield for testing purpose (User Profile required)
             })
             ->orderBy('guid','asc')                // 
             ->orderBy('job_indicator','desc')      // Job indicator -- Secondary, then Primary 
@@ -170,12 +171,18 @@ class SyncUserProfile extends Command
         $organization = Organization::where('code', 'GOV')->first();
         $password = Hash::make(env('SYNC_USER_PROFILE_SECRET'));
 
-        $sql->chunk(1000, function($chuck) use($new_sync_at, $organization, $password, &$n) {
+        $prev_guid = '';
+
+        $sql->chunk(1000, function($chuck) use($new_sync_at, $organization, $password, &$n, &$prev_guid) {
 
             $this->LogMessage( "batch (1000) - " . ++$n );
 
             // foreach ($employees as $employee) {
             foreach($chuck as $employee) {
+
+                if ($prev_guid == $employee->guid) {
+                    continue;
+                }
 
                 $target_email = trim($employee->guid . '@gov');
 
@@ -190,18 +197,22 @@ class SyncUserProfile extends Command
             
                 if ($user) {
 
-                    $acctlock = $employee->date_deleted ? 1 : 0;
+                    $acctlock = $user->acctlock;
+                    if (App::environment('prod')) {
+                        $acctlock = $employee->date_deleted ? 1 : 0;
+                    }
 
-                    if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) and
-                         (trim($user->email) == $target_email ) and 
-                         ($user->source_type == self::SOURCE_TYPE) and   
-                         ($user->emplid == $employee->emplid) and 
+                    if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) &&
+                         (trim($user->email) == $target_email ) && 
+                         ($user->source_type == self::SOURCE_TYPE) &&   
+                         ($user->emplid == $employee->emplid) &&
                          ($user->acctlock == $acctlock)  
                         ) {
                             // reach here mean No Differece found -- no action required
                     } else {                
 
                             $user->source_type = self::SOURCE_TYPE;
+                            $user->emplid = $employee->emplid;
                             $user->email  = $target_email;
                             $user->idir = $employee->idir;
                             $user->last_sync_at = $new_sync_at;
@@ -211,7 +222,7 @@ class SyncUserProfile extends Command
                             $this->updated_count += 1;
 
                             if  ($this->updated_count <= self::MAX_UPDATE_COUNT)  {
-                                $this->LogMessage('(UPDATED) => emplid | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
+                                $this->LogMessage('(UPDATED) => emplid | ' . $user->emplid . ' | ' . $user->id . ' | ' . $user->name . ' | ' . $user->guid . ' | ' . $user->source_type . ' | ' . $user->email  . ' | ' . $user->idir );
                                 $changes = $user->getChanges();
                                 unset($changes["updated_at"]);
                                 $this->LogMessage('  summary => '. json_encode( $changes ) );
@@ -221,6 +232,12 @@ class SyncUserProfile extends Command
 
                 } else {
 
+                        // Always lock users on lower regions
+                        $acctlock = 1;
+                        if (App::environment('prod')) {
+                            $acctlock = $employee->date_deleted ? 1 : 0;
+                        }
+
                         $user = User::updateOrCreate([
                             'email' => $target_email,     // key
                         ],[ 
@@ -229,7 +246,7 @@ class SyncUserProfile extends Command
                             'idir' => $employee->idir,
                             'source_type' => self::SOURCE_TYPE,    
                             'password' => $password,
-                            'acctlock' => 0,
+                            'acctlock' => $acctlock,
                             'last_sync_at' => $new_sync_at,
                             'organization_id' => $organization->id,
                             'emplid' => $employee->emplid,
@@ -243,6 +260,9 @@ class SyncUserProfile extends Command
 
                 }
             
+                //
+                $prev_guid = $employee->guid;
+
             }
 
         });

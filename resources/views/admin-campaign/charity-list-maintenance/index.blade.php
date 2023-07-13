@@ -1,16 +1,25 @@
 @extends('adminlte::page')
 @section('content_header')
-    @include('admin-campaign.partials.tabs')
+
+@include('admin-campaign.partials.tabs')
+
+    <h4 class="mx-1 mt-3">Charity List Maintenance</h4>
+
     <div class="d-flex mt-3">
-        <h4>PECSF - Charity List Maintenance</h4>
-        <div class="flex-fill"></div>
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+            </div>
+        </div>
     </div>
+
 @endsection
 @section('content')
-
-<p><a href="/administrators/dashboard">Back</a></p>        
-
-
 
         {{-- <div class="card-body">
                 <h5>Charity List Upload</h5>
@@ -98,7 +107,7 @@
                         <th>End At</th>
                         <th>Status</th>
                         <th>Action</th>
-                        <th>Message</th>
+                        {{-- <th>Message</th> --}}
                     </tr>
                 </thead>
             </table>
@@ -232,7 +241,7 @@
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},
                 {data: 'action'},
-                {data: 'message_text', className: "dt-nowrap"},
+                // {data: 'message_text', className: "dt-nowrap"},
             ],
             columnDefs: [
                     {

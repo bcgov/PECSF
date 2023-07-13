@@ -1,16 +1,26 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    {{-- <h2>Reporting</h2> --}}
+ 
     @include('admin-report.partials.tabs')
+
+    <h4 class="mx-1 mt-3">Amount by Charity Report</h4>
+    
     <div class="d-flex mt-3">
-        <h4>Amount by charity report</h4>
-        <div class="flex-fill"></div>
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+            </div>
+        </div>
     </div>
+
 @endsection
 @section('content')
-
-<p><a href="/administrators/dashboard" class="BC-Gov-SecondaryButton">Back</a></p>
 
 <form id="pledge-form" method="post">
 <div class="card search-filter">

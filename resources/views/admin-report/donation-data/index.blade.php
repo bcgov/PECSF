@@ -1,18 +1,26 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    {{-- <h2>Reporting</h2> --}}
+
     @include('admin-report.partials.tabs')
+
+    <h4 class="mx-1 mt-3">Review Donation Data</h4>
+    
     <div class="d-flex mt-3">
-        <h4>PECSF - Donation Data</h4>
-        <div class="flex-fill"></div>
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>    
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+            </div>
+        </div>
     </div>
-@endsection
+
+    @endsection
 @section('content')
-
-
-
-<p><a href="/administrators/dashboard">Back</a></p>
 
 <div class="card">
 <form class="filter">
