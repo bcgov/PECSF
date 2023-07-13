@@ -43,6 +43,13 @@
             </div>
 
 			<div class="form-group row">
+                <label for="linked_bu_code" class="col-sm-2 col-form-label">Associated BU:</label>
+                <div class="col-sm-4">
+					<input type="text" class="form-control" name="linked_bu_code" value="">
+                </div>
+            </div>
+			
+			<div class="form-group row">
                 <label for="notes" class="col-sm-2 col-form-label">Notes:</label>
                 <div class="col-sm-10">
 					<textarea type="text" class="form-control" id="notes" name="notes"></textarea>

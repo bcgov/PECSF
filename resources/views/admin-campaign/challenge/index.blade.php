@@ -1,17 +1,26 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    {{-- <h2>Reporting</h2> --}}
-    @include('admin-campaign.partials.tabs')
+
+@include('admin-campaign.partials.tabs')
+
+    <h4 class="mx-1 mt-3">Challenge Updates</h4>
+
     <div class="d-flex mt-3">
-        <h4>Challenge Updates</h4>
-        <div class="flex-fill"></div>
+        <div class="flex-fill">
+            <p><button class="ml-2 btn btn-outline-primary" onclick="window.location.href='/administrators/dashboard'">
+                Back    
+            </button></p>
+        </div>
+
+        <div class="d-flex">
+            <div class="mr-2">
+            </div>
+        </div>
     </div>
+
 @endsection
 @section('content')
-
-<p><a href="/administrators/dashboard" class="BC-Gov-SecondaryButton">Back</a></p>
-
 
 
 <form id="setting-edit-form">

@@ -64,26 +64,8 @@
                     @enderror
                   </span>
         </div>
-        <div id="pecsfid" class="form-group col-md-6" style="">
-            <label for="pecsf_id">PECSF ID</label>
-            <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
-            <span class="pecsf_id_errors errors">
-                       @error('pecsf_id')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-        </div>
-        <div id="bcgovid" class="form-group col-md-6" style="display:none;">
-            <label for="bc_gov_id">Employee ID</label>
-            <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
-            <span class="bc_gov_id_errors errors">
-                       @error('bc_gov_id')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-        </div>
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-3 event_type">
             <label for="event_type">Event type</label>
             <select class="form-control" type="text" id="event_type" name="event_type">
                 <option value="">Select an event type</option>
@@ -134,6 +116,36 @@
                   </span>
 
         </div>
+
+        <div id="pecsfid" class="form-group col-md-3" style="">
+            <label for="pecsf_id">PECSF ID</label>
+            <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
+            <span class="pecsf_id_errors errors">
+                       @error('pecsf_id')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+        </div>
+        <div id="bcgovid" class="form-group col-md-3" style="display:none;">
+            <label for="bc_gov_id">Employee ID</label>
+            <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
+            <span class="bc_gov_id_errors errors">
+                       @error('bc_gov_id')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+        </div>
+
+        <div id="employeename" class="form-group col-md-3" style="">
+            <label for="employee_name">Employee Name</label>
+            <input class="form-control" type="text" name="employee_name" id="employee_name" />
+            <span class="employee_name_errors errors">
+                       @error('employee_name')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+        </div>
+
 
     </div>
 <br>

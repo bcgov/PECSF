@@ -1,5 +1,4 @@
 const mix = require('laravel-mix');
-const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,17 +11,10 @@ const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
  |
  */
 
- mix.webpackConfig({
-    plugins: [
-        new SVGSpritemapPlugin('resources/svgs/*.svg', {
-            output: {
-                filename: 'img/icons/sprite.svg'
-            }
-        })
-    ]
-});
+
 
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .css('resources/css/app.css', 'public/css/web.css')
-    .css('resources/css/custom-switch.css', 'public/css/custom-switch.css');
+    .css('resources/css/custom-switch.css', 'public/css/custom-switch.css')
+    .version();

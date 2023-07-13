@@ -49,7 +49,7 @@ return [
     'logo_img_class' => 'brand-image float-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'PECSF',
+    'logo_img_alt' => 'PECSF Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -243,16 +243,15 @@ return [
             'submenu' => [
                 [
                     'text' => 'Dashboard',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
+                    'icon' => 'nav-icon fa fa-wave-square',
                     'url'  => '/volunteering',
-                ]
-                ,
+                ],
                 [
                     'text' => 'Forms',
-                    'icon' => 'nav-icon fa fa-circle fa-sm',
+                    'icon' => 'nav-icon far fa-newspaper',
                     'url'  => '/bank_deposit_form',
                 ],
-                ]
+            ]
         ],
         [
             'text' => 'Challenge',
@@ -263,7 +262,7 @@ return [
         [
             'text' => 'FAQs',
             'url' => '/contact',
-            'icon' => 'FAQs'
+            'icon' => 'nav-icon fa fa-question-circle', 
         ],
         [
             'text'    => 'Administration',
@@ -295,7 +294,7 @@ return [
             ],
         ],
         [
-            'text' => 'System Security',
+            'text' => 'System',
             'icon' => 'nav-icon fa fa-shield-alt',
             'url'  => '/system/schedule-job-audits',
             'can'  => ['setting'],
@@ -326,6 +325,11 @@ return [
                     'icon' => 'nav-icon far fa-id-card',
                     'url'  => '/system/access-logs',
                 ],
+                [
+                    'text' => 'Settings',
+                    'icon' => 'nav-icon fa fa-cogs',
+                    'url'  => '/system/settings',
+                ],
 
             ],
         ],
@@ -333,6 +337,8 @@ return [
             'text' => 'PECSF',
             'url' => 'https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf',
             'icon' => 'external-link',
+            'icon' => 'nav-icon fa fa-external-link-alt',
+            
             'target' => '_blank'
         ],
     ],

@@ -34,13 +34,15 @@
         font-size:14px;
         padding:10px;
         text-align:left;
-
+        border:#ccc 1px solid;
     }
 
     table td{
         text-align:left;
         font-weight:normal;
         padding:10px;
+        background:#f2f2f2;
+        border:#ccc 1px solid;
     }
 
     table tr{
@@ -52,7 +54,6 @@
 <div class="header">
     <img  src="img/brand/1.png"/>
     <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
-
     <div class="clear"></div>
 </div>
 <br>
@@ -70,9 +71,11 @@
             <div class="card-header" id="heading0{{ $loop->index }}">
                 <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                     aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
+
                     <h4 class="">
                         Campaign Year {{  $key }}
                     </h4>
+
                     <div class="flex-fill"></div>
                     <div class="expander">
                     </div>
@@ -125,7 +128,8 @@
                                                 {{ $pledge->number_of_charities }}
                                             @else
                                                 @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                    <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
+                                               <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
+
                                                         data-source="{{ $pledge->source }}"
                                                         data-type="{{ $pledge->donation_type }}"
                                                         data-id="{{ $pledge->id }}"

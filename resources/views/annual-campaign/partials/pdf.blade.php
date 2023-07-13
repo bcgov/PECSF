@@ -24,6 +24,12 @@
 
     table{
         width:100%;
+
+    }
+
+    table td{
+        border:#ccc 1px solid;
+        padding-left:8px;
     }
 
     table th{
@@ -54,7 +60,6 @@
 <div class="header">
     <img  src="img/brand/1.png"/>
     <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
-
     <div class="clear"></div>
 </div>
 <br>
@@ -67,9 +72,9 @@
 
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h2 class="mt-5">{{ $date }}</h2>
-            <div class="card bg-light p-3">
-                <h1 class="card-title">Deductions</h1>
+            <h3 class="mt-5">{{ $date }}</h3>
+            <div class="table-border card bg-light p-3">
+                <h3 class="card-title">Deductions</h3>
                 <hr>
                 <div class="card">
                     <div class="card-body">
@@ -85,9 +90,9 @@
                     </div>
                 </div>
 
+
                 @foreach(['bi-weekly','one-time'] as $key)
                     @php $viewMode = 'pdf'; @endphp
-
                     @if($key === 'one-time' && ($frequency === 'one-time' || $frequency === 'both'))
                         @php $key_ = $key; @endphp
                         @php $keyCase = 'oneTime'; @endphp

@@ -71,6 +71,7 @@
             <h5 class="modal-title text-light" id="regionalPoolModalTitle">Regional Charity Pool -
                     <span class="text-light font-weight-bold"></span></h5>
             <button type="button" class="close" style="color:#fff;" data-dismiss="modal" aria-label="Close">
+
             <span aria-hidden="true">&times;</span>
             </button>
         </div>

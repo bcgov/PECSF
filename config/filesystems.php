@@ -50,6 +50,16 @@ return [
             'url' => env('APP_URL').'/storage/uploads',
             'visibility' => 'public',
         ],
+        'sessions' => [
+            'driver' => 'local',
+            'root' => storage_path('framework/sessions'),
+            'url' => env('APP_URL').'/storage/sessions',
+        ],
+        'logs' => [
+            'driver' => 'local',
+            'root' => storage_path('logs'),
+            'url' => env('APP_URL').'/storage/logs',
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
