@@ -20,7 +20,7 @@
 
 
     @push('css')
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet">
 
 
         <style>
@@ -51,7 +51,8 @@
 
 
     @push('js')
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <script src="{{ asset('vendor/select2/js/select2.min.js') }}" ></script>
         <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
         <script type="x-tmpl" id="organization-tmpl">

@@ -13,7 +13,7 @@ const mix = require('laravel-mix');
 
 
 
-mix.js('resources/js/app.js', 'public/js')
+mix.js('resources/js/app.js', 'public/js').sourceMaps()
     .sass('resources/sass/app.scss', 'public/css')
     .css('resources/css/app.css', 'public/css/web.css')
     .css('resources/css/custom-switch.css', 'public/css/custom-switch.css')
