@@ -32,6 +32,7 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        text-align:left;
     }
 
     table td:first-child {
@@ -49,9 +50,7 @@
         font-weight:normal;
     }
 
-    *{
-        font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
-    }
+   
 </style>
 
 <div class="header">
@@ -64,7 +63,7 @@
 <hr>
 <h4 style="text-align:center;width:100%;">PECSF Donate Now Summary</h4>
 
-<span>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August for payroll deductions from January - June, and in March for payroll deductions from July - December</span>
+<span><i>Please note that this is not a tax receipt. </i></span>
 
 <div class="container">
 
@@ -80,7 +79,7 @@
                         {{-- <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span> --}}
                         <span class="float-right">${{ number_format($one_time_amount ,2) }}</span>
                         <hr>
-                        <p class="text-right"><b>Total :</b> ${{ number_format($one_time_amount ,2) }}</p>
+
                     </div>
                 </div>
 

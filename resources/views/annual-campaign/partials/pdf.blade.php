@@ -49,9 +49,6 @@
         font-weight:normal;
     }
 
-    *{
-        font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
-    }
 </style>
 
 <div class="header">

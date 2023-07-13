@@ -46,6 +46,7 @@
     table tr{
         border-bottom:#ccc 1px solid;
     }
+
 </style>
 
 <div class="header">

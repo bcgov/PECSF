@@ -69,17 +69,11 @@
                     <td></td>
                     @if (($viewMode ?? '') !== 'pdf')
                     <td class="by-percent">
-                        <div class="input-group input-group-sm mb-3 text-right" style="flex-direction:column;">
-                            <input type="hidden" class="form-control form-control-sm total-percent" readonly>
-                            <label class="total-percent-text float-right" style="width:250px;"><b>Total:</b> 100%</label>
-                        </div>
+
                     </td>
                     @endif
                     <td class="by-amount d-none">
-                        <div class="input-group input-group-sm mb-3 text-right" style="flex-direction:column;">
-                            <input type="hidden" class="form-control form-control-sm total-amount" value="{{ ${'annual'.ucfirst($keyCase).'Amount'} }}" readonly>
-                            <label class="total-amount-text float-right" style="width:250px;" ><b>Total:</b> ${{ number_format( round(${'annual'.ucfirst($keyCase).'Amount'},2) ,2) }}</label>
-                        </div>
+
                     </td>
                 </tr>
             </table>
