@@ -435,12 +435,12 @@ return [
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/sweetalert2/sweetalert2.min.js',
                 ],
                 [
                     'type' => 'css',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css',
                 ],
             ],
