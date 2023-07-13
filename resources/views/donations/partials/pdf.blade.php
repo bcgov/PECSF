@@ -24,6 +24,7 @@
 
     table{
         width:100%;
+        border-collapse: collapse;
     }
 
     table th{
@@ -32,28 +33,35 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        text-align:left;
         border:#ccc 1px solid;
-
     }
 
     table td{
-        text-align:center;
+        text-align:left;
         font-weight:normal;
         padding:10px;
         background:#f2f2f2;
         border:#ccc 1px solid;
     }
+
+    table tr{
+        border-bottom:#ccc 1px solid;
+    }
 </style>
 
 <div class="header">
-    <img src="img/brand/1.png"/>
-    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
-    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
+    <img  src="img/brand/1.png"/>
+    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
     <div class="clear"></div>
 </div>
 <br>
 <hr>
+<h4 style="text-align:center;width:100%;">PECSF Donation History Summary</h4>
 
+<h5>Date @php
+    echo date("d-m-Y",time());
+@endphp</h5>
 <span><i>Please note that this is not a Tax Receipt</i></span>
 <div id="accordion">
 
@@ -62,9 +70,11 @@
             <div class="card-header" id="heading0{{ $loop->index }}">
                 <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                     aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
-                    <h3 class="">
-                        {{  $key }}
-                    </h3>
+
+                    <h4 class="">
+                        Campaign Year {{  $key }}
+                    </h4>
+
                     <div class="flex-fill"></div>
                     <div class="expander">
                     </div>
@@ -75,10 +85,10 @@
                 <div class="card-body">
                     <table class="table  rounded">
                         <tr class="bg-light">
-                            <th>Donation Type</th>
-                            <th>Benefitting Charity</th>
-                            <th>Frequency</th>
-                            <th>Amount</th>
+                            <th style="width:18%;">Donation Type</th>
+                            <th style="width:62%;">Benefitting Charity</th>
+                            <th style="width:10%;">Frequency</th>
+                            <th style="width:10%;">Amount</th>
 
                         </tr>
                         @php $total = 0; @endphp
@@ -89,7 +99,7 @@
                                     {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                     <td>{{ $pledge->region }}   </td>
                                 @else
-                                    <td>
+                                    <td style="text-overflow: ellipsis;">
                                         @if ($pledge->source == 'GF')
                                             @switch($pledge->donation_type)
                                                 @case('Special Campaign')
@@ -100,7 +110,7 @@
                                                     @break
                                                 @default
                                                     @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                        <a  style="cursor:pointer;" class="more-info"
+                                                        <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
                                                             data-source="{{ $pledge->source }}"
                                                             data-type="{{ $pledge->donation_type }}"
                                                             data-id="{{ $pledge->id }}"
@@ -117,7 +127,8 @@
                                                 {{ $pledge->number_of_charities }}
                                             @else
                                                 @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                    <a  style="cursor:pointer;" class="more-info"
+                                               <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
+
                                                         data-source="{{ $pledge->source }}"
                                                         data-type="{{ $pledge->donation_type }}"
                                                         data-id="{{ $pledge->id }}"

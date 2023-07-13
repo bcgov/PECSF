@@ -27,18 +27,28 @@
     <div class="card mt-3">
         <div class="card-body">
             @if (($viewMode ?? '') == 'pdf')
-                <h2>{{ $key == 'one-time' ? 'One Time' : 'Bi-Weekly' }} donation disbursement</h2>
+                <h1>{{ $key == 'one-time' ? 'One-Time' : 'Bi-Weekly' }} donation disbursement</h1>
                 <hr>
             @endif
+
             <table class="table table-sm">
+                <tr>
+                    <th>Donation Type</th>
+                    <th>Benefitting Charity</th>
+                    <th>Frequency</th>
+                    <th>Amount</th>
+                </tr>
                 @foreach ($charities as $charity)
                 <tr>
+                    <td>{{ $key == 'one-time' ? 'One-Time' : 'Annual' }}</td>
                     <td class="p-2">
+
                         {{ $charity['text'] }} <br>
                         <small>
                             {{ $charity['additional']}}
                         </small>
                     </td>
+                    <td>{{ $key == 'one-time' ? 'One-Time' : 'Bi-weekly' }}</td>
                     @if (($viewMode ?? '') !== 'pdf')
                     <td style="width:130px" class="by-percent ">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">

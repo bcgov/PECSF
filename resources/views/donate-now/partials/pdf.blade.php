@@ -60,13 +60,13 @@
 </style>
 
 <div class="header">
-    <img src="img/brand/1.png"/>
-    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
-    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
+    <img  src="img/brand/1.png"/>
+    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
     <div class="clear"></div>
 </div>
 <br>
 <hr>
+<h4 style="text-align:center;width:100%;">PECSF Donate Now Summary</h4>
 
 <span>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August, for payroll deductions from January - June, and in March, for payroll deductions from July - December.</span>
 
@@ -88,7 +88,6 @@
                     </div>
                 </div>
 
-                <p class="mt-4"><h3>Disbursement</h3></p>
                 @foreach(['one-time'] as $key)
                     @php $viewMode = 'pdf'; @endphp
                     @if($key === 'one-time')
