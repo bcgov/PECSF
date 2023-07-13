@@ -57,6 +57,7 @@ use App\Http\Controllers\Admin\SpecialCampaignSetupController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
+use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -190,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(function () {
     Route::get('/', [ChallengeController::class, 'index'])->name('index');
+    Route::post('/', [ChallengeController::class, 'index']);
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
     // Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
@@ -249,6 +251,9 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
     Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
+
+    // Challenge Summary Maintenance
+    Route::resource('/challenge-summary', ChallengeSummaryMaintenanceController::class);
 
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');

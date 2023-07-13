@@ -19,8 +19,9 @@ Every contribution makes a huge impact in your community</b></p>
 </div>
 @endsection
 @push('css')
-<link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css" />
+
+<link href="{{ asset('vendor/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
+
 <style>
 
 </style>
