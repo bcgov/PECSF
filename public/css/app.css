@@ -25,6 +25,9 @@
 }
 
 @charset "UTF-8";
+/*
+VERSION: 3.0.0
+*/
 /*!
  * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
@@ -47891,4 +47894,19 @@ ul.custom.pagination li.active {
 
 .table-border table, .table-border td, .table-border tr {
   border: #ccc 1px solid;
+}
+
+a:focus {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+button:focus {
+  border: #000 5px solid;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.teststyle {
+  background: none;
 }
