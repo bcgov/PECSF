@@ -31,7 +31,16 @@ class UserMaintenanceController extends Controller
     
         if($request->ajax()) {
 
-            $users = User::select('users.*')
+            $users = User::select('users.*',
+                    'employee_jobs.empl_status',
+                    'employee_jobs.date_updated',
+                    'employee_jobs.date_deleted',
+                    'employee_jobs.business_unit',
+                    'employee_jobs.deptid',
+                    'employee_jobs.dept_name',
+                    'employee_jobs.tgb_reg_district',
+                    'regions.name as region_name',
+                    'employee_jobs.city')
                         ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
                         ->where( function($query) {
                             $query->where('employee_jobs.empl_rcd', '=', function($q) {
@@ -41,7 +50,7 @@ class UserMaintenanceController extends Controller
                                 })
                                 ->orWhereNull('employee_jobs.empl_rcd');
                         })
-                        ->leftJoin('regions', 'employee_jobs.region_id', '=', 'regions.id')
+                        ->leftJoin('regions', 'employee_jobs.tgb_reg_district', '=', 'regions.code')
                         ->when($request->source_type, function($query) use($request) {
                             return $query->where('users.source_type',  $request->source_type);
                         })
@@ -87,7 +96,8 @@ class UserMaintenanceController extends Controller
                             $to = $request->last_sync_to ?? '2099-12-31';
                             return  $query->whereBetween('last_sync_at',[ $from, $to]);
                         })
-                        ->with('organization', 'primary_job','primary_job.region')
+                        // ->with('organization', 'primary_job','primary_job.region')
+                        ->with('organization')
                         ->withCount('access_logs')
                         ->withCount('active_employee_jobs')
                         // ->having('access_logs_count', '>', 3)
