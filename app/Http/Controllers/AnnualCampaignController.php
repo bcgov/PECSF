@@ -825,7 +825,7 @@ class AnnualCampaignController extends Controller
 
     public function summaryPdf(Request $request, $id) {
 
-        $pledge = Pledge::where('pledges.id', $id)->join("campaign_years","campaign_year_id","campaign_years.id")->first();
+        $pledge = Pledge::select("pledges.*")->where('pledges.id', $id)->join("campaign_years","campaign_year_id","campaign_years.id")->first();
 
         // Make sure this transaction is for the current logged user
         if (!$pledge) {

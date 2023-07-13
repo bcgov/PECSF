@@ -24,6 +24,7 @@
 
     table{
         width:100%;
+        border-collapse: collapse;
     }
 
     table th{
@@ -41,11 +42,15 @@
         font-weight:normal;
         padding:10px;
     }
+
+    table tr{
+        border-bottom:#ccc 1px solid;
+    }
 </style>
 
 <div class="header">
     <img  src="img/brand/1.png"/>
-    <img style="height:80px;float:right;width:150px;" src="img/brand/5.png"/><br>
+    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
 
     <div class="clear"></div>
 </div>
@@ -77,10 +82,10 @@
                 <div class="card-body">
                     <table class="table  rounded">
                         <tr class="bg-light">
-                            <th style="width:20%;">Donation Type</th>
-                            <th style="width:40%;">Benefitting Charity</th>
-                            <th style="width:20%;">Frequency</th>
-                            <th style="width:20%;">Amount</th>
+                            <th style="width:18%;">Donation Type</th>
+                            <th style="width:62%;">Benefitting Charity</th>
+                            <th style="width:10%;">Frequency</th>
+                            <th style="width:10%;">Amount</th>
 
                         </tr>
                         @php $total = 0; @endphp
@@ -91,7 +96,7 @@
                                     {{-- <td>{{ $pledge->fund_supported_pool->region->name ?? '' }}  --}}
                                     <td>{{ $pledge->region }}   </td>
                                 @else
-                                    <td>
+                                    <td style="text-overflow: ellipsis;">
                                         @if ($pledge->source == 'GF')
                                             @switch($pledge->donation_type)
                                                 @case('Special Campaign')
@@ -102,7 +107,7 @@
                                                     @break
                                                 @default
                                                     @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                        <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                        <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
                                                             data-source="{{ $pledge->source }}"
                                                             data-type="{{ $pledge->donation_type }}"
                                                             data-id="{{ $pledge->id }}"
@@ -119,7 +124,7 @@
                                                 {{ $pledge->number_of_charities }}
                                             @else
                                                 @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                                    <a  style="cursor:pointer;font-size:10px;" class="more-info"
+                                                    <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
                                                         data-source="{{ $pledge->source }}"
                                                         data-type="{{ $pledge->donation_type }}"
                                                         data-id="{{ $pledge->id }}"
