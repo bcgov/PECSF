@@ -299,10 +299,10 @@
                 {data: 'id', name: 'id', className: "dt-nowrap" },
                 {data: 'source_type', name: 'source_type', className: "dt-nowrap" },
                 {data: 'name', name: 'name', className: "dt-nowrap" },
-                {data: 'primary_job.email', name: 'primary_job.email', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.idir', name: 'primary_job.idir', defaultContent: '', className: "dt-nowrap" },
+                {data: 'email', name: 'email', defaultContent: '', className: "dt-nowrap" },
+                {data: 'idir', name: 'idir', defaultContent: '', className: "dt-nowrap" },
                 {data: 'organization.code',  name: 'organization.code', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.emplid', name: 'primary_job.emplid', defaultContent: '', className: "dt-nowrap" },
+                {data: 'emplid', name: 'emplid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'acctlock', render: function ( data, type, row, meta ) {
                         icon_name = (data == 0) ? 'fa-user-check' : 'fa-user-times';
                         icon_color = (data == 0) ? 'text-primary' : 'text-danger';
@@ -332,15 +332,15 @@
                         }
                     }
                 },
-                {data: 'primary_job.empl_status', name: 'primary_job.empl_status', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.date_updated', name: 'primary_job.date_updated', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.date_deleted', name: 'primary_job.date_deleted', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.business_unit', name: 'primary_job.business_unit', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.deptid', name: 'primary_job.deptid', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.dept_name', name: 'primary_job.dept_name', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.tgb_reg_district', name: 'primary_job.tgb_reg_district', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.region.name', name: 'primary_job.region.name', defaultContent: '', className: "dt-nowrap" },
-                {data: 'primary_job.city', name: 'primary_job.city', defaultContent: '', className: "dt-nowrap" },                
+                {data: 'empl_status', name: 'employee_jobs.empl_status', defaultContent: '', className: "dt-nowrap" },
+                {data: 'date_updated', name: 'employee_jobs.date_updated', defaultContent: '', className: "dt-nowrap" },
+                {data: 'date_deleted', name: 'employee_jobs.date_deleted', defaultContent: '', className: "dt-nowrap" },
+                {data: 'business_unit', name: 'employee_jobs.business_unit', defaultContent: '', className: "dt-nowrap" },
+                {data: 'deptid', name: 'employee_jobs.deptid', defaultContent: '', className: "dt-nowrap" },
+                {data: 'dept_name', name: 'employee_jobs.dept_name', defaultContent: '', className: "dt-nowrap" },
+                {data: 'tgb_reg_district', name: 'employee_jobs.tgb_reg_district', defaultContent: '', className: "dt-nowrap" },
+                {data: 'region_name', name: 'regions.name', defaultContent: '', className: "dt-nowrap" },
+                {data: 'city', name: 'employee_jobs.city', defaultContent: '', className: "dt-nowrap" },                
                 {data: 'last_signon_at', name: 'last_signon_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'last_sync_at', name: 'last_sync_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'created_at', name: 'created_at', orderable: false, searchable: false, className: "dt-nowrap"},
@@ -355,6 +355,14 @@
                     },
             ],
 
+        });
+
+        $(document).on('keydown', '.search-filter input', function (e) {
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                oTable.ajax.reload();
+                return false;
+            }
         });
 
         $('#refresh-btn').on('click', function() {
