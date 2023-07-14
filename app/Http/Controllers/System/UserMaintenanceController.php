@@ -41,7 +41,10 @@ class UserMaintenanceController extends Controller
                     'employee_jobs.tgb_reg_district',
                     'regions.name as region_name',
                     'employee_jobs.city')
-                        ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'users.emplid')
+                        ->leftJoin('employee_jobs', function($join) {
+                            $join->on('employee_jobs.organization_id', '=', 'users.organization_id')
+                                 ->on('employee_jobs.emplid', '=', 'users.emplid');
+                        })
                         ->where( function($query) {
                             $query->where('employee_jobs.empl_rcd', '=', function($q) {
                                     $q->from('employee_jobs as J2') 
