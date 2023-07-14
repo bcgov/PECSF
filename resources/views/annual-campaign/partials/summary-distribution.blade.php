@@ -30,7 +30,9 @@
                 <h3>{{ $key == 'one-time' ? 'One-Time' : 'Bi-Weekly' }} donation disbursement</h3>
                 <hr>
             @endif
-
+            @if($fsp_name)
+                <h5>{{$fsp_name}} Fund Supported Pool</h5>
+                @endif
             <table class="table table-sm">
                 <tr>
                     <th style="width:18%;">Donation Type</th>

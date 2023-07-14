@@ -376,16 +376,18 @@ class DonateNowController extends Controller
         }
 
         // download PDF file with download method
+        $fsp_name = false;
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
             $date = date("Y-m-d");
             $charities = [!empty($charity) ? $charity : $pool];
             $annualOneTimeAmount = $one_time_amount;
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('annualOneTimeAmount','charities','date','user', 'one_time_amount', 'in_support_of'));
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('fsp_name','annualOneTimeAmount','charities','date','user', 'one_time_amount', 'in_support_of'));
             return $pdf->download('Donate Now Summary - '.date("Y-m-d").'.pdf');
         } else {
-            return view('donate-now.partials.pdf', compact('user', 'one_time_amount', 'in_support_of'));
+            return view('donate-now.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of'));
         }
 
     }
