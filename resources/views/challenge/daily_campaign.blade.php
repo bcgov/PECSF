@@ -12,15 +12,18 @@
 
 <h1 class="mt-2">Daily Campaign</h1>
 
-<div class="mt-3 btn-group btn-group-lg" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ route('challenge.index') }}';">
-            <span class="mx-2 px-5">Leaderboard</span>
-    </button>
-    <button type="button" class="btn btn-dark mx-0 px-0"></button>
-    <button type="button" class="btn btn-success"  onclick="window.location.href='{{ route('challenge.daily_campaign') }}';">
-            <span class="px-2">Daily Campaign Update<span>
-    </button>
-</div>
+<ul class="mt-3 menu nav nav-pills" id="pills-tab">
+    <li class="nav-item nav-center-4">
+        <a  class="nav-link"
+           href="{{ route('challenge.index') }}" role="tab" aria-controls="pills-home" aria-selected="false">
+            Leaderboard</a>
+    </li>
+    <li class="nav-item nav-center-4">
+        <a  class="nav-link active disabled"
+           href="{{  route('challenge.daily_campaign') }}" role="tab" aria-controls="pills-profile" aria-selected="true">
+            Daily Campaign Update</a>
+    </li>
+</ul>
     
 @endsection
 @section('content')
