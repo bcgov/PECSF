@@ -83,7 +83,7 @@
         </div>
         <div class="form-group col-md-3 sub_type">
             <label for="sub_type">Sub type</label>
-            <select class="form-control" type="text" id="sub_type" name="sub_type" disabled="true">
+            <select class="form-control" type="text" id="sub_type" name="sub_type">
                 <option value="false">Disabled</option>
             </select>
             <span class="sub_type_errors errors">
