@@ -24,7 +24,8 @@
                 data-id="{{ $special_campaign->id }}">
             <div class="card-body">
                 <figure class="logo_image pt-2">
-                    <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="150">
+                    {{-- <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="150"> --}}
+                    <img src="{{  asset("storage/special_campaign").'/'. $special_campaign->image }}" width="auto" height="150">
                 </figure> 
                 <h4 class="card-text font-weight-bold">{{ $special_campaign->name }}</h4>
                 <h6 class="card-text">{{ $special_campaign->charity->charity_name  }}</h6>

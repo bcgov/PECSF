@@ -443,7 +443,8 @@
                     
 
                     $("#bu-edit-model-form").find('div.remove-upload-area').show();
-                    $("#bu-edit-model-form").find(".upload-logo-image").attr('src', '{{asset("img/uploads/special_campaign")}}/'+data.image);
+                    // $("#bu-edit-model-form").find(".upload-logo-image").attr('src', '{{asset("img/uploads/special_campaign")}}/'+data.image);
+                    $("#bu-edit-model-form").find(".upload-logo-image").attr('src', '{{asset("storage/special_campaign")}}/'+data.image);
                     $("#bu-edit-model-form").find(".upload-logo-image").css("display","block");
                  
 
@@ -545,7 +546,8 @@
                     $(document).find("#bu-show-model-form [name='charity_name']").val( data.charity.charity_name);
                     $(document).find("#bu-show-model-form [name='registration_number']").val( data.charity.registration_number);
 
-                    $(document).find("#bu-show-model-form figure.logo_image img").attr('src', '{{asset("img/uploads/special_campaign")}}/'+data.image);
+                    // $(document).find("#bu-show-model-form figure.logo_image img").attr('src', '{{asset("img/uploads/special_campaign")}}/'+data.image);
+                    $(document).find("#bu-show-model-form figure.logo_image img").attr('src', '{{asset("storage/special_campaign")}}/'+data.image);
                     $(document).find("#bu-show-model-form figure.logo_image span.logo_image_filename").html( data.image );
                     $('#bu-show-modal').modal('show');
                 },

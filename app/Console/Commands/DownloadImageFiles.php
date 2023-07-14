@@ -117,7 +117,7 @@ class DownloadImageFiles extends Command
 
                 if ($res->getStatusCode() == 200 ) {
                     $res = $client->request('GET',  $baseUrl . $filename, 
-                        ['sink' => 'public/img/uploads/fspools/' . $filename ]
+                        ['sink' => 'storage/app/public/fspools/' . $filename ]
                     );
                 }
     
