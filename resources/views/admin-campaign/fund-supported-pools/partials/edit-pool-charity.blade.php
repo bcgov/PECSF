@@ -133,7 +133,8 @@
                     <input name="current_images[]" type="hidden" value="{{ $image_name  }}">
                     @if ( $image_name ) 
                     <figure>
-                        <img src="{{asset('img/uploads/fspools')}}/{{ $image_name }}" width="auto" height="150">
+                        {{-- <img src="{{asset('img/uploads/fspools')}}/{{ $image_name }}" width="auto" height="150"> --}}
+                        <img src="{{asset('storage/fspools')}}/{{ $image_name }}" width="auto" height="150"> 
                         <figcaption ><span class="font-weight-bold">Current file name: </span>{{ $image_name }}</figcaption>
                     </figure>    
                     <button class='delete-current-image-button btn btn-sm btn-outline-danger ml-4' 
