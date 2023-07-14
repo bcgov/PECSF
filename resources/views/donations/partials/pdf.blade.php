@@ -34,15 +34,12 @@
         font-size:14px;
         padding:10px;
         text-align:left;
-        border:#ccc 1px solid;
     }
 
     table td{
         text-align:left;
         font-weight:normal;
         padding:10px;
-        background:#f2f2f2;
-        border:#ccc 1px solid;
     }
 
     table tr{

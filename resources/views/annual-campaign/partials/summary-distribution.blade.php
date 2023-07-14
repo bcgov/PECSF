@@ -33,10 +33,10 @@
 
             <table class="table table-sm">
                 <tr>
-                    <th>Donation Type</th>
-                    <th>Benefitting Charity</th>
-                    <th>Frequency</th>
-                    <th>Amount</th>
+                    <th style="width:18%;">Donation Type</th>
+                    <th style="width:62%;">Benefitting Charity</th>
+                    <th style="width:10%;">Frequency</th>
+                    <th style="width:10%;text-align:right;">Amount</th>
                 </tr>
                 @foreach ($charities as $charity)
                 <tr>
@@ -65,17 +65,7 @@
                     </td>
                 </tr>
                 @endforeach
-                <tr>
-                    <td></td>
-                    @if (($viewMode ?? '') !== 'pdf')
-                    <td class="by-percent">
 
-                    </td>
-                    @endif
-                    <td class="by-amount d-none">
-
-                    </td>
-                </tr>
             </table>
         </div>
     </div>
