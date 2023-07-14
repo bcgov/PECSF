@@ -204,7 +204,7 @@ class ChallengeController extends Controller
 
             if ($request->organization_name) {
                 $challenges = array_filter($challenges, function($v, $k) use($request) {
-                    return str_contains($v->organization_name, $request->organization_name);
+                    return str_contains(strtolower($v->organization_name), strtolower($request->organization_name));
                 }, ARRAY_FILTER_USE_BOTH);
             }
 
