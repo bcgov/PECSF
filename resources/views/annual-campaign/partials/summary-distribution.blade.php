@@ -27,7 +27,7 @@
     <div class="card mt-3">
         <div class="card-body">
             @if (($viewMode ?? '') == 'pdf')
-                <h1>{{ $key == 'one-time' ? 'One-Time' : 'Bi-Weekly' }} donation disbursement</h1>
+                <h3>{{ $key == 'one-time' ? 'One-Time' : 'Bi-Weekly' }} donation disbursement</h3>
                 <hr>
             @endif
 
