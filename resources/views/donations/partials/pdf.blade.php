@@ -86,7 +86,7 @@
                             <th style="width:18%;">Donation Type</th>
                             <th style="width:62%;">Benefitting Charity</th>
                             <th style="width:10%;">Frequency</th>
-                            <th style="width:10%;">Amount</th>
+                            <th style="width:10%;text-align:right;">Amount</th>
 
                         </tr>
                         @php $total = 0; @endphp
