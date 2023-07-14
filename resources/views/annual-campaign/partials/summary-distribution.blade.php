@@ -27,16 +27,16 @@
     <div class="card mt-3">
         <div class="card-body">
             @if (($viewMode ?? '') == 'pdf')
-                <h1>{{ $key == 'one-time' ? 'One-Time' : 'Bi-Weekly' }} donation disbursement</h1>
+                <h3>{{ $key == 'one-time' ? 'One-Time' : 'Bi-Weekly' }} donation disbursement</h3>
                 <hr>
             @endif
 
             <table class="table table-sm">
                 <tr>
-                    <th>Donation Type</th>
-                    <th>Benefitting Charity</th>
-                    <th>Frequency</th>
-                    <th>Amount</th>
+                    <th style="width:18%;">Donation Type</th>
+                    <th style="width:62%;">Benefitting Charity</th>
+                    <th style="width:10%;">Frequency</th>
+                    <th style="width:10%;text-align:right;">Amount</th>
                 </tr>
                 @foreach ($charities as $charity)
                 <tr>
@@ -65,23 +65,7 @@
                     </td>
                 </tr>
                 @endforeach
-                <tr>
-                    <td></td>
-                    @if (($viewMode ?? '') !== 'pdf')
-                    <td class="by-percent">
-                        <div class="input-group input-group-sm mb-3 text-right" style="flex-direction:column;">
-                            <input type="hidden" class="form-control form-control-sm total-percent" readonly>
-                            <label class="total-percent-text float-right" style="width:250px;"><b>Total:</b> 100%</label>
-                        </div>
-                    </td>
-                    @endif
-                    <td class="by-amount d-none">
-                        <div class="input-group input-group-sm mb-3 text-right" style="flex-direction:column;">
-                            <input type="hidden" class="form-control form-control-sm total-amount" value="{{ ${'annual'.ucfirst($keyCase).'Amount'} }}" readonly>
-                            <label class="total-amount-text float-right" style="width:250px;" ><b>Total:</b> ${{ number_format( round(${'annual'.ucfirst($keyCase).'Amount'},2) ,2) }}</label>
-                        </div>
-                    </td>
-                </tr>
+
             </table>
         </div>
     </div>

@@ -24,11 +24,10 @@
 
     table{
         width:100%;
-
+border-collapse:collapse;
     }
 
     table td{
-        border:#ccc 1px solid;
         padding-left:8px;
     }
 
@@ -38,6 +37,7 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        text-align:left;
     }
 
     table td:first-child {
@@ -54,9 +54,9 @@
         font-size:10px;
         font-weight:normal;
     }
+    table tr{
+        border-bottom:#ccc 1px solid;
 
-    *{
-        font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
     }
 </style>
 
@@ -75,7 +75,9 @@
 
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h3 class="mt-5">{{ $date }}</h3>
+            <h5>Date @php
+                    echo date("d-m-Y",time());
+                @endphp</h5>
             <div class="table-border card bg-light p-3">
                 <h3 class="card-title">Deductions</h3>
                 <hr>
