@@ -209,10 +209,10 @@ function nongovuserinfo(){
         {
             if(data && data.first_name != undefined && data.last_name != undefined) {
                 $('#employee_name').val( data.last_name +","+ data.first_name );
-                $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
                 $("#employment_city").val(data.city).select2();
-                $("#region").val($('#employment_city option[value="'+data.city+'"]').attr("region")).select2();
-                $("#business_unit").val(data.pecsfbu).select2();
+                $("#region").val($("#region [code="+$('#employment_city option[value="'+data.city+'"]').attr("region")+"]").val());
+                $("#region").val().select2();
+                $("#business_unit").val( $("option:contains('"+data.pecsfbu+"')").val()).select2();
             }
         },
         error: function(response) {
