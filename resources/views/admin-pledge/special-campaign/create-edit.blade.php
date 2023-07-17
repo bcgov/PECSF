@@ -225,8 +225,7 @@
                                         data-end_year="{{ $special_campaign->end_date->format('Y') }}">
                                     <div class="card-body">
                                         <figure class="logo_image">
-                                            {{-- <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="80"> --}}
-                                            <img src="{{  asset("storage/special_campaign").'/'. $special_campaign->image }}" width="auto" height="80">
+                                            <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="80">
                                         </figure> 
 
                                         <h4 class="card-text font-weight-bold">{{ $special_campaign->name }}</h4>

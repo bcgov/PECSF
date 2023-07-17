@@ -31,8 +31,7 @@ class FundSupportedPoolController extends Controller
     {
          $this->middleware('permission:setting');
 
-        //  $this->image_folder = "img/uploads/fspools/";
-        $this->image_folder = "app/public/fspools/";
+        $this->image_folder = "img/uploads/fspools/";
     }
 
     /**
@@ -299,8 +298,7 @@ class FundSupportedPoolController extends Controller
                         $file= $upload_images[$i];
                         $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
 
-                        // $file->move(public_path( $this->image_folder ), $filename);
-                        $file->storeAs(  "public/fspools" , $filename);
+                        $file->move(public_path( $this->image_folder ), $filename);
 
 
                     }
@@ -516,7 +514,8 @@ class FundSupportedPoolController extends Controller
             for ($i=0; $i < count($charities); $i++) {
                 if ($charities[$i] != '') {
 
-                    $old_pool_charity = FSPoolCharity::where('charity_id', $charities[$i])->first();
+                    $old_pool_charity = FSPoolCharity::where('f_s_pool_id', $id)
+                                            ->where('charity_id', $charities[$i])->first();
 
                     $payload =  [
                         'percentage'    => $percentages[$i],
@@ -535,11 +534,12 @@ class FundSupportedPoolController extends Controller
                         $payload['image'] = $new_filename;
 
                         // Save the new image file on folder 
-                        $file->storeAs(  "public/fspools" , $new_filename);
+                        $file->move(public_path( $this->image_folder ), $new_filename);
+
 
                         // Clean up old file on the folder
                         if ($old_pool_charity->image) {
-                            $old_filename = storage_path( $this->image_folder ) . $old_pool_charity->image;
+                            $old_filename = public_path( $this->image_folder ) . $old_pool_charity->image;                            
                             if (File::exists( $old_filename )) {
                                 File::delete( $old_filename );
                             }
@@ -563,7 +563,7 @@ class FundSupportedPoolController extends Controller
                 array_push($dels, $charity->id);
 
                 // delete the image file from image folder
-                $filename = storage_path( $this->image_folder ) . $charity->image;
+                $filename = public_path( $this->image_folder ) . $charity->image;
                 if (File::exists( $filename )) {
                     File::delete( $filename );
                 }
@@ -625,7 +625,7 @@ class FundSupportedPoolController extends Controller
             foreach ($pool->charities as $pool_charity) {
                 // Clean up old file
                 if ($pool_charity->image) {
-                    $old_filename =  storage_path( $this->image_folder ) .$pool_charity->image;
+                    $old_filename =  public_path( $this->image_folder ) .$pool_charity->image;
                     if (File::exists( $old_filename )) {
                         File::delete( $old_filename );
                     }
@@ -702,8 +702,8 @@ class FundSupportedPoolController extends Controller
            $old_image = $charity->image;
            $new_image = now()->format('YmdHisu'). substr($charity->image, 12);
 
-           $old_filename = storage_path( $this->image_folder ).$old_image;
-           $new_filename = storage_path( $this->image_folder ).$new_image;
+           $old_filename = public_path( $this->image_folder ).$old_image;
+           $new_filename = public_path( $this->image_folder ).$new_image;
            if (File::exists( $old_filename )) {
                File::copy( $old_filename, $new_filename );
            }
