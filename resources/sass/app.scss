@@ -263,12 +263,12 @@ a:focus{
     text-decoration: underline;
 }
 
-button:focus{
-    border: #000 5px solid;
-    font-weight: bold;
-    text-decoration: underline;
+button:focus, .btn:focus{
+    padding: 4px 12px;
+    border: #000 5px solid!important;
 }
 
 .teststyle{
     background: none;
 }
+
