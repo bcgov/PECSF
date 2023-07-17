@@ -962,7 +962,7 @@ class AnnualCampaignController extends Controller
             $date = date("Y-m-d");
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('fsp_name','date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
                  'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
-            return $pdf->download('Annual Campaign Summary - '.(intval($pledge->calendar_year) - 1).'.pdf');
+            return $pdf->download('Annual Campaign Summary - '.(intval($pledge->campaign_year->calendar_year) - 1).'.pdf');
         }
 
     }
