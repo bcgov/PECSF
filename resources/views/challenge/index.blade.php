@@ -54,7 +54,7 @@
 
         {{-- <br> --}}
         @if ($summary)
-            <div class="text-center h2 text-secondary font-weight-bold pb-1">{{ $summary->as_of_date->format('l, M jS Y ') }}</div> 
+            <div class="text-center h2 font-weight-bold pb-1 as-of-date">{{ $summary->as_of_date->format('l, F jS Y ') }}</div> 
 
             <div class="row justify-content-md-center">
                 <div class="col-sm-4">
@@ -176,12 +176,16 @@
     }
    
     .table-donors {
-        border-left: 5px solid #3272d9;
+        border-left: 5px solid #1A5A96;
        
     }   
     .table-donors .h1 {
-        color: #3272d9;
+        color: #1A5A96;
         font-size: 2.3em;
+    }
+
+    .as-of-date {
+        color: #313132 !important;
     }
 
     .table-amount {
