@@ -360,12 +360,55 @@ class DonateNowController extends Controller
         $one_time_amount = $pledge->one_time_amount;
         $in_support_of = "";
         if ($pledge->type == 'P')  {
-            $pool  = FSPool::current()->where('f_s_pools.id', $pledge->f_s_pool_id)->join("regions","f_s_pools.region_id","regions.id")->first();
+            $pool  = FSPool::current()->selectRaw("regions.*,f_s_pools.*")->where('f_s_pools.id', $pledge->f_s_pool_id)->join("regions","f_s_pools.region_id","regions.id")->first();
             $pool['text'] = $pool->name;
             $pool['additional'] = $pool->notes;
             $pool['one-time-percentage-distribution'] = 100;
             $pool['one-time-amount-distribution'] = $one_time_amount;
             $in_support_of = $pool ? $pool->region->name : '';
+
+            $pool_charities = $pool ? $pool->charities : [];
+            $oneTimeAmount = $pledge->one_time_amount;
+
+            $annualOneTimeAmount = $oneTimeAmount;
+
+            $calculatedTotalPercentOneTime = 0;
+            $calculatedTotalAmountOneTime = 0;
+            $calculatedTotalPercentBiWeekly = 0;
+            $calculatedTotalAmountBiWeekly = 0;
+            $grandTotal = 0;
+            $charities = [];
+            $number_of_periods = 1;
+            foreach ($pool_charities as $key => $pool_charity) {
+                $charity = $pool_charity->charity->toArray();
+                $charity['text'] = $pool_charity->charity->charity_name;
+                $charity['additional'] = '';
+
+                $percentage = $pool_charity->percentage;
+
+                if ($key === count($pool_charities) - 1  ) {
+
+                    $charity['one-time-amount-distribution'] = $oneTimeAmount - $calculatedTotalAmountOneTime ;
+                    $charity['one-time-percentage-distribution'] = $pool_charity->percentage;
+                    $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                    $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                    $grandTotal += $charity['one-time-amount-distribution'];
+                   // $grandTotal += ($charity['bi-weekly-amount-distribution'] );
+
+                    array_push($charities, $charity);
+
+                } else {
+                    $charity['one-time-amount-distribution'] = round(($pool_charity->percentage * $annualOneTimeAmount) / 100 , 2);
+                    $charity['one-time-percentage-distribution'] = $pool_charity->percentage;
+                    $calculatedTotalPercentOneTime += $charity['one-time-percentage-distribution'];
+                    $calculatedTotalAmountOneTime += $charity['one-time-amount-distribution'];
+                    $grandTotal += $charity['one-time-amount-distribution'];
+                    // $grandTotal += ($charity['bi-weekly-amount-distribution'] );
+                    array_push($charities, $charity);
+
+                };
+            }
+
         } else {
             $charity = Charity::where('id', $pledge->charity_id)->first();
             $charity['text'] = $charity->charity_name;
@@ -376,12 +419,12 @@ class DonateNowController extends Controller
         }
 
         // download PDF file with download method
-        $fsp_name = false;
+        $fsp_name = empty($in_support_of) ? false : $in_support_of;
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
             $date = date("Y-m-d");
-            $charities = [!empty($charity) ? $charity : $pool];
+            $charities = !empty($charities) ? $charities : [$charity];
             $annualOneTimeAmount = $one_time_amount;
 
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('donate-now.partials.pdf', compact('fsp_name','annualOneTimeAmount','charities','date','user', 'one_time_amount', 'in_support_of'));
