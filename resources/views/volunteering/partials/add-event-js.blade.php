@@ -211,7 +211,8 @@ function nongovuserinfo(){
                 $('#employee_name').val( data.last_name +","+ data.first_name );
                 $("#employment_city").val(data.city).select2();
                 $("#region").val($("#region [code="+$('#employment_city option[value="'+data.city+'"]').attr("region")+"]").val());
-                $("#business_unit").val( $("option:contains('"+data.pecsfbu+"')").val()).select2();
+                $("#business_unit").val( $("option:contains('"+data.pecsf_bu+"')").val()).select2();
+                $("#region").select2();
             }
         },
         error: function(response) {
