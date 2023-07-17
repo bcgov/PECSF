@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+/public/img/uploads/*
 /public/charities/*
 /public/bank_deposit_form_attachments/*
 /storage/*.key
