@@ -591,10 +591,10 @@ class BankDepositFormController extends Controller
             $organizations = Organization::where("code", "LIKE", $request->term . "%")->where("status","=","A")->get();
         }
         $response = ['results' => []];
-        $response['results'][] = ["id" => "false", "text" => "Choose an Org Code"];
+        $response['results'][] = ["id" => "false", "text" => "Choose an organization"];
         foreach ($organizations as $organization) {
             if(!empty($organization->code)){
-                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->code];
+                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->name];
             }
         }
         echo json_encode($response);
