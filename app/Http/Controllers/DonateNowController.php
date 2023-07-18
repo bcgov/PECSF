@@ -435,11 +435,15 @@ class DonateNowController extends Controller
 
     }
 
-    public function regionalPoolDetail($id)
+    public function regionalPoolDetail(Request $request, $id)
     {
-        $pool = FSPool::where('id', $id)->first();
-        $charities = $pool ? $pool->charities : [];
-        return view('donate-now.partials.pool-detail', compact('charities') )->render();
+        if ($request->ajax()) {
+            $pool = FSPool::where('id', $id)->first();
+            $charities = $pool ? $pool->charities : [];
+            return view('donate-now.partials.pool-detail', compact('charities') )->render();
+        } else {
+            return redirect('/');
+        }
     }
 
 }
