@@ -1,6 +1,6 @@
 
 <div id="step-regional-pools-area" class="p-3">
- 
+
     @if(str_contains(Route::current()->getName(), 'donate-now'))
         <h3>2. Choose your regional fund supported pool></h3>
     @else
@@ -85,7 +85,6 @@
     #step-regional-pools-area .card:hover {
         /* background-color: darkgray; */
         background-color: #1a5a96;
-        opacity: 0.7;
         color: white;
     }
     #step-regional-pools-area .card.active {
