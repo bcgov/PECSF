@@ -366,3 +366,7 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
 
 });
+
+Route::group(['middleware' => ['can:setting']], function () {
+    Route::get('system/phpinfo-page', function () { phpinfo(); });
+});
