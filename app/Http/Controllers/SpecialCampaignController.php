@@ -44,7 +44,7 @@ class SpecialCampaignController extends Controller
         //     return $pool->region->name;
         // });
 
-        // Sepcial Campaign 
+        // Sepcial Campaign
         $special_campaigns = SpecialCampaign::where('start_date', '<=', today())
                                                 ->where('end_date', '>=', today())
                                                 ->orderBy('start_date')
@@ -53,7 +53,7 @@ class SpecialCampaignController extends Controller
         // $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
         $special_campaign_id = $special_campaigns->count() > 0 ? $special_campaigns->first()->id : null;
 
-        // Self service 
+        // Self service
         $yearcd = Carbon::now()->format('Y');
         $amount_options =  [
                             6 => '$6',
@@ -62,7 +62,7 @@ class SpecialCampaignController extends Controller
                             50 => '$50',
                             '' => 'Custom',
                         ];
-    
+
         $one_time_amount = 20;
         $one_time_amount_custom = null;
 
@@ -86,8 +86,8 @@ class SpecialCampaignController extends Controller
 
         // $pool_option = $request->pool_option;
         $one_time_amount = $request->one_time_amount ? $request->one_time_amount : $request->one_time_amount_custom ;
-        
-        // Calculate the deduct pay from 
+
+        // Calculate the deduct pay from
         $current = PayCalendar::whereRaw(" ( date(SYSDATE()) between pay_begin_dt and pay_end_dt) ")->first();
 
         $check_dt = '';
@@ -98,7 +98,7 @@ class SpecialCampaignController extends Controller
 
         if ($request->ajax()) {
 
-            // Generate Summary Page 
+            // Generate Summary Page
             if ($request->step == 2)  {
 
                 // $organization = Organization::where('id', $request->organization_id)->first() ?? null;
@@ -113,12 +113,12 @@ class SpecialCampaignController extends Controller
             }
             return response()->noContent();
         }
-       
-        
+
+
         /* Final submission -- form submission (non-ajax call) */
         $organization_id = $user->organization_id;
 
-        // Make sure that there is no pledge transaction setup yet 
+        // Make sure that there is no pledge transaction setup yet
         $message_text = '';
 
         // Create a new Pledge
@@ -146,7 +146,7 @@ class SpecialCampaignController extends Controller
 
         $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
 
-        Session::flash('pledge_id', $pledge->id ); 
+        Session::flash('pledge_id', $pledge->id );
         return redirect()->route('special-campaign.thank-you')
                 ->with('success', $message_text);
     }
@@ -174,14 +174,14 @@ class SpecialCampaignController extends Controller
         //
         $pledge = SpecialCampaignPledge::where('id', $id)->first();
 
-        // Make sure this transaction is for the current logged user 
+        // Make sure this transaction is for the current logged user
         if (!$pledge) {
             return abort(404);
         } elseif  (!($pledge->user_id == Auth::id())) {
             return abort(403);
         }
-     
-         // Sepcial Campaign 
+
+         // Sepcial Campaign
          $special_campaigns = SpecialCampaign::where('start_date', '<=', today())
                                 ->where('end_date', '>=', today())
                                 ->orderBy('start_date')
@@ -191,7 +191,7 @@ class SpecialCampaignController extends Controller
         $special_campaign_id = $pledge->special_campaign_id;
 
         $yearcd = $pledge->yearcd;
-        
+
         $one_time_amount = $pledge->one_time_amount ?? 0;
 
         $amount_options =  [
@@ -202,7 +202,7 @@ class SpecialCampaignController extends Controller
             '' => 'Custom',
         ];
 
-       
+
         if (in_array($pledge->one_time_amount, [6, 12, 20, 50]))  {
             $one_time_amount = $pledge->one_time_amount ?? null;
             $one_time_amount_custom = null;
@@ -210,7 +210,7 @@ class SpecialCampaignController extends Controller
             $one_time_amount = null;
             $one_time_amount_custom = $pledge->one_time_amount;
         }
-       
+
         return view('special-campaign.wizard', compact('pledge', 'special_campaigns', 'special_campaign_id',  'yearcd',
                     'amount_options', 'one_time_amount','one_time_amount_custom'));
     }
@@ -231,7 +231,7 @@ class SpecialCampaignController extends Controller
         $user = User::where('id', Auth::Id() )->first();
 
 
-        // Make sure this transaction is for the current logged user 
+        // Make sure this transaction is for the current logged user
         if (!$pledge) {
             return abort(404);
         } elseif  (!($pledge->emplid == $user->emplid)) {
@@ -248,7 +248,7 @@ class SpecialCampaignController extends Controller
         $pledge->updated_by_id = $user->id;
         $pledge->save();
 
-       Session::flash('pledge_id', $pledge->id ); 
+       Session::flash('pledge_id', $pledge->id );
        return redirect()->route('special-campaign.thank-you')
                     ->with(['success' => 'Pledge with Transaction ID ' . $pledge->id . ' have been updated successfully'
                            ]);
@@ -312,7 +312,7 @@ class SpecialCampaignController extends Controller
 
         $user = User::where('id', $pledge->user_id )->first();
 
-        // Make sure this transaction is for the current logged user 
+        // Make sure this transaction is for the current logged user
         if (!$pledge) {
             return abort(404);
         } elseif  (!($pledge->emplid == $user->emplid)) {
@@ -327,16 +327,17 @@ class SpecialCampaignController extends Controller
 
         $check_dt = $pledge->deduct_pay_from;
 
+        $fsp_name = false;
         // download PDF file with download method
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('special-campaign.partials.pdf', compact('user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'check_dt'));
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'check_dt'));
             return $pdf->download('Donation Summary.pdf');
         } else {
-            return view('special-campaign.partials.pdf', compact('user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'deduct_pay_from'));
+            return view('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'deduct_pay_from'));
         }
-     
+
     }
 
     // public function regionalPoolDetail($id)

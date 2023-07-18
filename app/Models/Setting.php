@@ -44,4 +44,13 @@ class Setting extends Model implements Auditable
         return $system_lockdown;
     }
 
+    public static function challenge_page_campaign_year() {
+
+        $year = today()->year;
+        if (today()->month < 4 ) {
+            $year = today()->year - 1;
+        }
+
+        return $year;
+    }
 }
