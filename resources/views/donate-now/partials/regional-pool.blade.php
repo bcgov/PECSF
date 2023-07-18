@@ -161,20 +161,20 @@ $( function() {
                 // data: $("#notify-form").serialize(),
                 dataType: 'html',
                 success: function (result) {
+                    if(result.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login';
+                    }
+
                     $('.modal-title span').html(name);
                     target = '.modal-body';
                     $(target).html('');
                     $(target).html(result);
-                },
-                complete: function() {
+                    $('#regionalPoolModal').modal('show')
                 },
                 error: function () {
-                    alert("error");
-                    $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
                 }
             })
 
-            $('#regionalPoolModal').modal('show')
         }
     });
 

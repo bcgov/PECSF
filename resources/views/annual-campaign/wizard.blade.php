@@ -533,6 +533,10 @@ $(function () {
                 timeout: 30000,
                 success: function(data)
                 {
+                    if(data.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login';
+                    }
+
                     // console.log(data );
                     if (step == 3 && pool_option == 'P' || step == 4)  {
                         $('#summary-page').html(data);
@@ -586,6 +590,12 @@ $(function () {
 
                         })
                     }
+
+                    if (response.status == 401 || response.status == 419) {
+                        // session expired 
+                        window.location.href = '/login'; 
+                    }
+                    
                     console.log('Error');
                 }
             });

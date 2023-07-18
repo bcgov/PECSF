@@ -296,6 +296,10 @@
                 dataType: 'html',
                 success: function(data)
                 {
+                    if(data.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login';
+                    }
+
                     $('#userModalLabel').html('User : ' + title );
 
                     $('#user-detail-modal div.modal-body').html(data); 
