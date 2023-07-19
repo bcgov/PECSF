@@ -200,8 +200,14 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                     THEN employee_jobs.name
                                     ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
                             END as name
-                            ,employee_jobs.business_unit as business_unit_code
-                            ,employee_jobs.tgb_reg_district
+                            ,CASE WHEN organizations.code = 'GOV' 
+                                THEN employee_jobs.business_unit 
+                                ELSE organizations.bu_code
+                            END as business_unit_code
+                            ,CASE WHEN organizations.code = 'GOV' 
+                                THEN employee_jobs.tgb_reg_district
+                                ELSE (select TGB_REG_DISTRICT from cities where cities.city = pledges.city limit 1)
+                            END as tgb_reg_district
                             ,employee_jobs.deptid
                             ,employee_jobs.dept_name
                             ,CASE WHEN organizations.code = 'GOV'
@@ -253,8 +259,14 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                     THEN employee_jobs.name
                                     ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
                             END as name
-                            ,employee_jobs.business_unit as business_unit_code
-                            ,employee_jobs.tgb_reg_district
+                            ,CASE WHEN organizations.code = 'GOV' 
+                                THEN employee_jobs.business_unit 
+                                ELSE organizations.bu_code
+                            END as business_unit_code
+                            ,CASE WHEN organizations.code = 'GOV' 
+                                THEN employee_jobs.tgb_reg_district
+                                ELSE (select TGB_REG_DISTRICT from cities where cities.city = pledges.city limit 1)
+                            END as tgb_reg_district
                             ,employee_jobs.deptid
                             ,employee_jobs.dept_name
                             ,CASE WHEN organizations.code = 'GOV'
@@ -307,7 +319,10 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                 THEN employee_jobs.name
                                 ELSE ''
                             END
-                            ,employee_jobs.business_unit
+                            ,CASE WHEN organization_code = 'GOV' 
+                                THEN employee_jobs.business_unit 
+                                ELSE (select code from business_units where id = bank_deposit_forms.business_unit limit 1)
+                            END as business_unit_code
                             ,regions.code
                             ,employee_jobs.deptid
                             ,employee_jobs.dept_name
