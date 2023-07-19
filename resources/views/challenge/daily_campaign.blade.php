@@ -9,18 +9,22 @@
 @endphp
 @extends('adminlte::page')
 @section('content_header')
-    <h1>Daily Campaign</h1>
-    <ul class="menu nav nav-pills" id="pills-tab">
-        <li class="nav-item nav-center-4">
-            <a style="text-align:center;" class="nav-link <?php echo (Route::current()->getName() == 'challenge.index') ? 'active' : ''; ?>"
-               href="<?php echo e(route('challenge.index')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">
-                Leaderboard</a>
-        </li>
-        <li class="nav-item nav-center-4">
-            <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challenge.daily_campaign') ? 'active' : ''); ?>"
-               href="<?php echo e(route('challenge.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
-        </li>
-    </ul>
+
+<h1 class="mt-2">Daily Campaign</h1>
+
+<ul class="mt-3 menu nav nav-pills" id="pills-tab">
+    <li class="nav-item nav-center-4">
+        <a  class="nav-link"
+           href="{{ route('challenge.index') }}" role="tab" aria-controls="pills-home" aria-selected="false">
+            Leaderboard</a>
+    </li>
+    <li class="nav-item nav-center-4">
+        <a  class="nav-link active disabled"
+           href="{{  route('challenge.daily_campaign') }}" role="tab" aria-controls="pills-profile" aria-selected="true">
+            Daily Campaign Update</a>
+    </li>
+</ul>
+    
 @endsection
 @section('content')
 
@@ -39,24 +43,26 @@
                     View by
                 </label>
                 <select id="sort" class="select form-control" name="sort">
-                    <option type="radio" style="position: relative;top: 2px;" name="sort" value="region"> By Region</option>
-                    <option type="radio" style="position: relative;top: 2px;" checked name="sort" value="organization"> By Organization</option>
-                    <option type="radio" style="position: relative;top: 2px;" name="sort" value="department"> By Department</option>
+                    <option value="region"> By Region</option>
+                    <option value="organization"> By Organization</option>
+                    <option value="department"> By Department</option>
                 </select>
-
-
             </div>
+
             <div class="form-group col-md-3">
                 <label for="sort">
                     Specify dates (Optional)
                 </label>
                 <select class="form-control" id="start_date" name="start_date">
                     <option value=""></option>
+                    @foreach ($final_date_options as $date) 
+                        <option final="1" value="{{ $date }}">{{ $date }}</option>
+                    @endforeach
                     @foreach ($date_options as $date) 
                         <option value="{{ $date }}">{{ $date }}</option>
                     @endforeach
                 </select>                
-                {{-- <input class="form-control" type="date" id="start_date" name="start_date" /> --}}
+                
             </div>
             <div class="form-group col-md-1">
                 <input type="hidden" name="excel" value = '1' />
@@ -75,3 +81,24 @@
 
 @endsection
 
+@push('js')
+
+<script>
+
+$(function() {
+
+    $(document).on('change', 'select[name="sort"]', function (e) {
+        // oTable.ajax.reload();
+        if ((this.value) == 'department') {
+            $('select[name="start_date"] option[final="1"]').hide();
+        } else {
+            $('select[name="start_date"] option[final="1"]').show();
+        }
+
+    });
+
+});            
+
+</script>
+
+@endpush
