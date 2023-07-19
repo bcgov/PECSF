@@ -52,7 +52,7 @@ class CampaignPledgeController extends Controller
 
         if($request->ajax()) {
 
-            // store the filter 
+            // store the filter
             $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
             session(['admin_pledge_campaign_filter' => $filter]);
 
@@ -62,7 +62,7 @@ class CampaignPledgeController extends Controller
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                                        $q->from('employee_jobs as J2') 
+                                        $q->from('employee_jobs as J2')
                                             ->whereColumn('J2.emplid', 'employee_jobs.emplid')
                                             ->selectRaw('min(J2.empl_rcd)');
                                     })
@@ -110,19 +110,19 @@ class CampaignPledgeController extends Controller
 
             return Datatables::of($pledges)
                 ->addColumn('description', function($pledge) {
-                    $text =  $pledge->type == 'P' ? $pledge->fund_supported_pool->region->name : 
+                    $text =  $pledge->type == 'P' ? $pledge->fund_supported_pool->region->name :
                                        $pledge->distinct_charities()->count() . ' charities'  ;
                     //   $title = implode(', ',  $pledge->distinct_charities()->pluck('charity.charity_name')->toArray());
                     return "<span>" . $text . '</span>' ;
                 })
                 ->addColumn('action', function ($pledge) use($gov) {
-                    $delete = ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null )  ? 
+                    $delete = ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null )  ?
                                     '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
                                     $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
-                    $edit = ($pledge->ods_export_status == null )  ? 
+                    $edit = ($pledge->ods_export_status == null )  ?
                             '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>' : '';
                     return  '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
-                        $edit . 
+                        $edit .
                         // '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.donate-now.edit',$pledge->id) . '">Edit</a>'
                         $delete;
 
@@ -132,24 +132,24 @@ class CampaignPledgeController extends Controller
                 })
                 ->editColumn('updated_at', function ($user) {
                     return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
-                })                        
+                })
                 ->rawColumns(['action','description'])
                 ->make(true);
         }
 
-        // restore filter if required 
+        // restore filter if required
         $filter = null;
         if (str_contains( url()->previous(), 'admin-pledge/campaign')) {
             $filter = session('admin_pledge_campaign_filter');
         }
 
-        // get all the record 
+        // get all the record
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
         $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
-        // load the view and pass 
+        // load the view and pass
         return view('admin-pledge.campaign.index', compact('organizations', 'campaign_years','cities', 'filter'));
 
     }
@@ -195,7 +195,7 @@ class CampaignPledgeController extends Controller
 
         if ($request->ajax()) {
 
-            // Generate Summary Page 
+            // Generate Summary Page
             if ($request->step == 3)  {
 
                 $pool_option = $request->pool_option;
@@ -208,12 +208,12 @@ class CampaignPledgeController extends Controller
                 $pool  = FSPool::current()->where('id', $request->pool_id)->first() ?? null;
                 $charities = Charity::whereIn('id', $request->charities)->get() ?? [];
 
-                $pay_period_amount = $request->pay_period_amount  ? 
+                $pay_period_amount = $request->pay_period_amount  ?
                             $request->pay_period_amount : $request->pay_period_amount_other ;
-                $pay_period_total_amount = $request->pay_period_amount > 0 ? 
+                $pay_period_total_amount = $request->pay_period_amount > 0 ?
                             $request->pay_period_amount * $campaign_year->number_of_periods :
                             $request->pay_period_amount_other * $campaign_year->number_of_periods;
-                $one_time_amount = $request->one_time_amount > 0 ? 
+                $one_time_amount = $request->one_time_amount > 0 ?
                             $request->one_time_amount : $request->one_time_amount_other;
 
                 //
@@ -223,20 +223,20 @@ class CampaignPledgeController extends Controller
                     $charity['additional'] = $request->additional[$i];
                     $charity['percentage'] = $request->percentages[$i];
                     array_push($selected_charities, $charity);
-                }                
+                }
 
                 return view('admin-pledge.campaign.partials.summary', compact('user', 'organization', 'campaign_year',
-                            'pool_option', 'pool', 'charities', 'selected_charities', 
+                            'pool_option', 'pool', 'charities', 'selected_charities',
                             'pay_period_amount', 'pay_period_total_amount', 'one_time_amount',
                              'request'))->render();
 
             }
-            
+
             return response()->noContent();
 
         }
-       
-        
+
+
         /* Final submission -- form submission (non-ajax call) */
         $user = User::where('id', $request->user_id)->first();
 
@@ -244,29 +244,29 @@ class CampaignPledgeController extends Controller
         $gov_organization = Organization::where('code', 'GOV')->first();
         $is_GOV = ($request->organization_id == $gov_organization->id);
 
-        $pay_period_amount = $request->pay_period_amount  ? 
+        $pay_period_amount = $request->pay_period_amount  ?
                     $request->pay_period_amount : $request->pay_period_amount_other ;
-        $one_time_amount = $request->one_time_amount ? 
+        $one_time_amount = $request->one_time_amount ?
                     $request->one_time_amount : $request->one_time_amount_other;
         $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
 
         // Pool
         $pool = FSPool::where('id', $request->pool_id)->first();
 
-        // Make sure that there is no pledge transaction setup yet 
+        // Make sure that there is no pledge transaction setup yet
         $message_text = '';
         $pledge = Pledge::where('organization_id', $request->organization_id)
                             ->when( $is_GOV, function($query) use($user) {
                                 // ->where('user_id', $request->user_id)
-                                $query->where('emplid', $user->emplid);                                
+                                $query->where('emplid', $user->emplid);
                             })
                             ->when( !($is_GOV), function($query) use($request) {
-                                $query->where('pecsf_id', $request->pecsf_id);                                
+                                $query->where('pecsf_id', $request->pecsf_id);
                             })
                             ->where('campaign_year_id', $request->campaign_year_id)
                             ->first();
         if ($pledge) {
-            // Update the esiting one 
+            // Update the esiting one
             $pledge->type = $request->pool_option;
             $pledge->region_id = $request->pool_option == 'P' ? $pool->region_id : null;
             $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
@@ -310,7 +310,7 @@ class CampaignPledgeController extends Controller
             $pledge_charity->delete();
         }
 
-        if ( $request->pool_option == 'C' ) 
+        if ( $request->pool_option == 'C' )
         {
             foreach( ['one-time', 'bi-weekly'] as $frequency) {
 
@@ -335,7 +335,7 @@ class CampaignPledgeController extends Controller
                         $new_pay_period_goal = round($pay_period_annual_amt - $pay_period_goal_sum, 2);
                     }
 
-                    // One-Time 
+                    // One-Time
                     if ($frequency == 'one-time' && $one_time_amount) {
                         PledgeCharity::create([
                             'charity_id' => $charity,
@@ -350,7 +350,7 @@ class CampaignPledgeController extends Controller
 
                     // Bi-weekly
                     if ($frequency == 'bi-weekly' && $pay_period_amount) {
-                        
+
                         PledgeCharity::create([
                             'charity_id' => $charity,
                             'pledge_id' => $pledge->id,
@@ -364,18 +364,18 @@ class CampaignPledgeController extends Controller
 
                     $one_time_sum += $new_one_time;
                     $one_time_goal_sum += $new_one_time_goal;
-                    $pay_period_sum += $new_pay_period; 
-                    $pay_period_goal_sum += $new_pay_period_goal; 
+                    $pay_period_sum += $new_pay_period;
+                    $pay_period_goal_sum += $new_pay_period_goal;
 
                 }
             }
-            
+
         }
 
         // return response()->noContent();
         return redirect()->route('admin-pledge.campaign.index')
                 ->with('success', $message_text);
-        
+
     }
 
     /**
@@ -407,8 +407,8 @@ class CampaignPledgeController extends Controller
             $pool_charities = FSPool::asOfDate($pledge->created_at)->where('region_id', $pledge->region_id)->first()->charities;
         }
 
-    
-        
+
+
         return view('admin-pledge.campaign.show', compact('pledge', 'pledges_charities', 'pool_charities'));
 
     }
@@ -429,7 +429,7 @@ class CampaignPledgeController extends Controller
         if (!($pledge)) {
             return abort(404);      // 404 Not Found
         }
-     
+
         $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
@@ -448,9 +448,9 @@ class CampaignPledgeController extends Controller
         $pay_period_amount_other = in_array($pay_period_amount, $amt_choices) ? '' :   $pay_period_amount;
         $one_time_amount_other = in_array($one_time_amount, $amt_choices) ? '' :   $one_time_amount;
 
-        // For Non-Government 
+        // For Non-Government
         $edit_pecsf_allow = false;
-        
+
         if ($pledge->pecsf_id) {
             $count = Donation::where('org_code', $organization->code)
                                 ->where('pecsf_id', $pledge->pecsf_id)
@@ -463,7 +463,7 @@ class CampaignPledgeController extends Controller
 
         return view('admin-pledge.campaign.wizard', compact('edit_pecsf_allow', 'pledge', 'pool_option', 'fspools', 'organization', 'organizations','campaignYears',
                     'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other'));
-    
+
     }
 
     /**
@@ -475,7 +475,7 @@ class CampaignPledgeController extends Controller
      */
     public function update(CampaignPledgeRequest $request, $id)
     {
-        
+
         // dd([$request, $id]);
 
         $pledge = Pledge::where('id', $id)->first();
@@ -485,9 +485,9 @@ class CampaignPledgeController extends Controller
         $is_GOV = ($request->organization_id == $gov_organization->id);
 
 
-        $pay_period_amount = $request->pay_period_amount ? 
+        $pay_period_amount = $request->pay_period_amount ?
                     $request->pay_period_amount : $request->pay_period_amount_other ;
-        $one_time_amount = $request->one_time_amount ? 
+        $one_time_amount = $request->one_time_amount ?
                     $request->one_time_amount : $request->one_time_amount_other;
         $pay_period_annual_amt = $pay_period_amount * $campaign_year->number_of_periods;
 
@@ -515,7 +515,7 @@ class CampaignPledgeController extends Controller
             $pledge_charity->delete();
         }
 
-        if ( $request->pool_option == 'C' ) 
+        if ( $request->pool_option == 'C' )
         {
             foreach( ['one-time', 'bi-weekly'] as $frequency) {
 
@@ -541,7 +541,7 @@ class CampaignPledgeController extends Controller
                         $new_pay_period_goal = round($pay_period_annual_amt - $pay_period_goal_sum, 2);
                     }
 
-                    // One-Time 
+                    // One-Time
                     if ($frequency == 'one-time' && $one_time_amount) {
                         PledgeCharity::create([
                             'charity_id' => $charity,
@@ -556,7 +556,7 @@ class CampaignPledgeController extends Controller
 
                     // Bi-weekly
                     if ($frequency == 'bi-weekly' && $pay_period_amount) {
-                        
+
                         PledgeCharity::create([
                             'charity_id' => $charity,
                             'pledge_id' => $pledge->id,
@@ -570,12 +570,12 @@ class CampaignPledgeController extends Controller
 
                     $one_time_sum += $new_one_time;
                     $one_time_goal_sum += $new_one_time_goal;
-                    $pay_period_sum += $new_pay_period; 
-                    $pay_period_goal_sum += $new_pay_period_goal; 
+                    $pay_period_sum += $new_pay_period;
+                    $pay_period_goal_sum += $new_pay_period_goal;
 
                 }
             }
-            
+
         }
 
        return redirect()->route('admin-pledge.campaign.index')
@@ -597,8 +597,8 @@ class CampaignPledgeController extends Controller
         $gov = Organization::where('code', 'GOV')->first();
 
         if ($pledge->organization_id == $gov->id) {
-            return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422); 
-        }       
+            return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . " which was created for 'Gov' organization."], 422);
+        }
 
         // Check whether there is transactions exists
         $sql = Donation::whereExists(function ($query) use($id) {
@@ -613,9 +613,9 @@ class CampaignPledgeController extends Controller
                   });
 
         if ($sql->count() > 0) {
-            return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . ', has donation transactions loaded.'], 422); 
-        }       
-        
+            return response()->json(['error' => "You are not allowed to delete this pledge " . $pledge->id . ', has donation transactions loaded.'], 422);
+        }
+
         // Delete the pledge and pledge charities
         if ($pledge->type == 'C' ) {
             // $pledge->charities()->delete();
@@ -628,7 +628,7 @@ class CampaignPledgeController extends Controller
         $pledge->delete();
 
         return response()->noContent();
-        
+
 
 
     }
@@ -640,7 +640,7 @@ class CampaignPledgeController extends Controller
         $term = trim($request->q);
 
         $users = User::where('users.organization_id', $request->org_id)
-             ->when($term, function($query) use($term) { 
+             ->when($term, function($query) use($term) {
                 return $query->where( function($q) use($term) {
                       $q->whereRaw( "lower(users.name) like '%".$term."%'")
                        //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
@@ -648,59 +648,60 @@ class CampaignPledgeController extends Controller
                });
             })
             ->with('primary_job')
-            ->with('primary_job.region') 
-            ->with('primary_job.bus_unit') 
+            ->with('primary_job.region')
+            ->with('primary_job.bus_unit')
             ->limit(50)
             ->orderby('users.name','asc')
             ->get();
 
          $formatted_users = [];
          foreach ($users as $user) {
-            $formatted_users[] = ['id' => $user->id, 
+            $formatted_users[] = ['id' => $user->id,
                     'text' => $user->name . ' ('. $user->emplid .')',
-                    'email' =>  $user->primary_job->email, 
-                    'emplid' => $user->emplid,  
-                    'first_name' =>  $user->primary_job->first_name ?? '', 
-                    'last_name' =>  $user->primary_job->last_name ?? '', 
-                    'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',               
-                    'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',                                        
-                    'region' => $user->primary_job->region->name ? $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')' : '',                    
+                    'email' =>  $user->primary_job->email,
+                    'emplid' => $user->emplid,
+                    'first_name' =>  $user->primary_job->first_name ?? '',
+                    'last_name' =>  $user->primary_job->last_name ?? '',
+                    'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',
+                    'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',
+                    'region' => $user->primary_job->region->name ? $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')' : '',
                     'organization' => $user->primary_job->organization_name ?? '',
             ];
         }
 
         return response()->json($formatted_users);
 
-    }    
+    }
 
     public function getCampaignPledgeID(Request $request) {
 
         if($request->ajax()) {
 
             $gov = Organization::where('code', 'GOV')->first();
-       
+
             $pledge = Pledge::where('campaign_year_id', $request->campaign_year_id)
                             ->where('organization_id', $request->org_id)
                             ->when($request->org_id == $gov->id, function($q) use($request) {
                                     return $q->where('user_id', $request->user_id);
-                            }) 
+                            })
                             ->when($request->org_id != $gov->id, function($q) use($request) {
                                 return $q->where('pecsf_id', $request->pecsf_id);
                             })
-                            ->first(); 
+                            ->first();
 
-            $result = (object) [ 'id' => ($pledge ? $pledge->id : null) ]; 
+            $result = (object) [ 'id' => ($pledge ? $pledge->id : null) ];
             return json_encode( $result );
         }
     }
 
     public function getNonGovUserDetail(Request $request) {
-     
+
         if($request->ajax()) {
 
             // Get Region from Org
-            $org = Organization::where('id', $request->org_id)->first();
-            $pecsf_bu = $org ? ($org->business_unit ? $org->business_unit->name : '') : ''; 
+            $org = Organization::where('id', $request->org_id)->orWhere("code",$request->org_id)->first();
+            $request->org_id = $org->id;
+            $pecsf_bu = $org ? ($org->business_unit ? $org->business_unit->name : '') : '';
             $formatted_result = (object) [
                 'pecsf_bu' => $pecsf_bu,
             ];
@@ -732,15 +733,15 @@ class CampaignPledgeController extends Controller
                     $formatted_result->city = $history->city;
                 }
             }
-                
+
             if (isset($formatted_result->city)) {
                 $city = City::where('city', trim($formatted_result->city) )->first();
                 $formatted_result->pecsf_region = $city ? ($city->region ? $city->region->name : '') : '';
             }
 
             return json_encode( $formatted_result );
-            
-            // return response()->noContent();    
+
+            // return response()->noContent();
 
         }
     }

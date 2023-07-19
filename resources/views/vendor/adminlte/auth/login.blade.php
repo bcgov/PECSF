@@ -10,7 +10,7 @@
         .login-box {
             width: 480px !important;
         }
-    </style>    
+    </style>
 @stop
 
 @php( $login_url = View::getSection('login_url') ?? config('adminlte.login_url', 'login') )
@@ -42,7 +42,7 @@
 
     <div id="idir-login" style="{{  $errors->has('email')  ? 'display:none;' : '' }}" >
         <div class="text-center py-3">
-                <p class="h5 font-weight-bold">Log in to start your session<p>
+                <h3 class="font-weight-bold">Log in to start your session<h1>
                     <p class="my-4 ">
                         <form action="{{ '/login/keycloak' }}" method="get">
                             @csrf
@@ -53,8 +53,8 @@
         <div class="py-2 border-top">
             <div class="pt-4 h6 font-weight-bold">Need Help?</div>
             <div class="">Contact your IDIR security administrator or the 7-7000 Service Desk at:</div>
-            <div class="pt-2">Phone: <a href="tel:0612345678">250-387-7000</a></div>
-            <div>Email: <a href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
+            <div class="pt-2">Phone: <a style="text-decoration:underline;" href="tel:0612345678">250-387-7000</a></div>
+            <div>Email: <a style="text-decoration:underline;" href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
 
             {{-- @if (!str_contains(Request::url(), 'pecsf-test.apps.silver.devops.gov.bc.ca'))   --}}
             @if ((Request::is('admin/login')) || (in_array(env('APP_ENV'), ['dev', 'local'])))
@@ -63,11 +63,11 @@
             {{-- @endif --}}
 
         </div>
-    </div>    
+    </div>
 
-    <div id="admin-login" style="{{  Session::get('error-psft') || $has_admin_error == false ? 'display:none;' : '' }}"">
+    <div id="admin-login" style="{{  Session::get('error-psft') || $has_admin_error == false ? 'display:none;' : '' }}">
         <div class="text-center py-3">
-            <p class="h5 font-weight-bold">Log in to start your session<p>
+            <h3 class="font-weight-bold">Log in to start your session</h3>
         </div>
 
         <form action="{{ $login_url }}" method="post">
@@ -75,7 +75,7 @@
 
             {{-- Email field --}}
             <div class="input-group mb-3">
-                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                <input type="email" title="PECSF email login field" name="email" class="form-control @error('email') is-invalid @enderror"
                     value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
 
                 <div class="input-group-append">
@@ -93,7 +93,7 @@
 
             {{-- Password field --}}
             <div class="input-group mb-3">
-                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                <input type="password" title="PECSF password login field" name="password" class="form-control @error('password') is-invalid @enderror"
                     placeholder="{{ __('adminlte::adminlte.password') }}">
 
                 <div class="input-group-append">
@@ -131,9 +131,9 @@
 
         </form>
 
-        <div class="py-3"><a class="idir-login" >Back</a></div>
+        <div class="py-3"><button style="background:none;border:none;"><a class="idir-login" >Back</a></button></div>
 
-    </div>    
+    </div>
 @stop
 
 @section('auth_footer')
@@ -178,10 +178,10 @@
         $(document).on("click",".idir-login",function(event) {
             event.preventDefault();
             $('#idir-login').show();
-            $('#admin-login').hide();   
+            $('#admin-login').hide();
         });
 
     });
-    
+
     </script>
 @endpush

@@ -292,9 +292,8 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
         $this->history->message .= $message;
 
         // log to the file to share with the front end
-        Storage::disk('local')->put('staging/charities_import_' .  $this->history_id, $this->history->message);
+        Storage::disk('logs')->put('charities_import_' .  $this->history_id . '.log', $this->history->message);
 
     }
-
 
 }
