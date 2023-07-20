@@ -50,14 +50,14 @@
     </div>
 <br>
     <div class="form-row form-header">
-            <h3 class="blue">Event details</h3>
+            <h3 class="blue">Donation or event details</h3>
     </div>
 
     <div class="form-row form-body">
         <div class="form-group col-md-6">
-            <label for="description">Event name</label>
+            <label for="description">Donation or event name</label>
             <input class="form-control" type="text" name="description" id="description" />
-            <span>Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator</span>
+            <span>Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator<br>For Cash or Cheque, write CASH or Cheque – Cheque #</span>
             <span class="description_errors errors">
                        @error('description')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -66,7 +66,7 @@
         </div>
 
         <div class="form-group col-md-3 event_type">
-            <label for="event_type">Event type</label>
+            <label for="event_type">Donation or event type</label>
             <select class="form-control" type="text" id="event_type" name="event_type">
                 <option value="">Select an event type</option>
                 <option value="Cash One-Time Donation">Cash one-time donation</option>
