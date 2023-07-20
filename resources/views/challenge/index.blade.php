@@ -3,17 +3,19 @@
 @section('content_header')
 <div class="mt-3">
 <h1>Challenge</h1>
-    <ul class="menu nav nav-pills" id="pills-tab">
-        <li class="nav-item nav-center-4">
-            <a style="text-align:center;" class="nav-link <?php echo (Route::current()->getName() == 'challenge.index') ? 'active' : ''; ?>"
-               href="<?php echo e(route('challenge.index')); ?>" role="tab" aria-controls="pills-home" aria-selected="true">
-                Leaderboard</a>
-        </li>
-        <li class="nav-item nav-center-4">
-            <a style="text-align:center;" class="nav-link <?php echo e(str_contains( Route::current()->getName(), 'challenge.daily_campaign') ? 'active' : ''); ?>"
-               href="<?php echo e(route('challenge.daily_campaign')); ?>"  aria-controls="pills-profile" aria-selected="false">Daily Campaign Update</a>
-        </li>
-    </ul>
+
+<ul class="mt-3 menu nav nav-pills" id="pills-tab">
+    <li class="nav-item nav-center-4">
+        <a  class="nav-link active disabled"
+           href="{{ route('challenge.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">
+            Leaderboard</a>
+    </li>
+    <li class="nav-item nav-center-4">
+        <a class="nav-link" href="{{  route('challenge.daily_campaign') }}" role="tab" aria-controls="pills-profile" aria-selected="false">
+            Daily Campaign Update</a>
+    </li>
+</ul>
+
 <h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
     If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
@@ -23,34 +25,79 @@
 
 <div class="card">
     <div class="card-body">
-        <div class="form-row pb-2">
-            <div class="form-group col-md-2">
-                <label>
-                    Campaign Year
-                </label>
-                <select name="year" id="year" class="form-control ">
-                    @foreach($year_options as $annum)
-                        <option {{$year==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group col-md-4">
+        <form id="search-form" action="{{ route('challenge.index') }}" method="post">
+            @csrf
+            <div class="form-row pb-2">
+                <div class="form-group col-md-2">
+                    <label>
+                        Campaign Year
+                    </label>
+                    <select name="year" id="year" class="form-control ">
+                        @foreach($year_options as $annum)
+                            <option {{ old('year')==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
                 <label >
-                    Organization Name
+                Organization Name
                 </label>
                 <input type="text" id="organization_name" value="" name="organization_name" class="form-control " />
             </div>
-        </div>
-        <div class="form-row p-1" id="last_update_section">
+        </form>
+    </div>
+
+        {{-- <div class="form-row p-1" id="last_update_section">
             <p><span class="text-secondary font-weight-bold pr-2">Data updated as of : </span>
                 <span class="text-primary">{{ $last_update ? $last_update->format('l, M jS Y - g:ia') : '' }}</span></p> 
-        </div>
+        </div> --}}
 
-    {{-- <br> --}}
+        {{-- <br> --}}
+        @if ($summary)
+            <div class="text-center h2 text-secondary font-weight-bold pb-1">{{ $summary->as_of_date->format('l, M jS Y ') }}</div> 
 
+            <div class="row justify-content-md-center">
+                <div class="col-sm-4">
+                <div class="card p-0">
+                    <div class="card-body p-0">
+                    <table class="table table-donors">
+                        <tbody>
+                        <tr>
+                            <td class="text-center align-middle border-0"><i class="far fa-user custom-icon-style"></i>
+                            </td>
+                            <td class="text-left align-middle border-0"><span class="h1">{{ number_format($summary->donors) }}</span>
+                                    <h6>Total Donors<h6>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                </div>
+                <div class="col-sm-4">
+                <div class="card p-0">
+                    <div class="card-body p-0">
+                    <table class="table table-amount">
+                        <tbody>
+                        <tr>
+                            <td class="text-center align-middle border-0"><i class="fa fa-donate custom-icon-style" ></i>
+                            </td>
+                            <td class="text-left align-middle border-0"><span class="h1">{{ number_format($summary->dollars) }}</span>
+                                        <h6>Total Dollars</h6>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                </div>
+            </div>
+        @endif
+
+    
         <table class="table table-bordered" id="dashboard-table" style="width:100%">
             <thead>
-                <tr>
+                <tr class="bg-light">
                     <th>Rank</th>
                     <th>Organization name</th>
                     <th>Participation rate</th>
@@ -62,75 +109,14 @@
             </thead>
         </table>
 
-    {{-- @if(!empty($totals[0]))
-    <table class="table table-bordered rounded" id="myTable3">
-        <thead>
-        <tr class="bg-light">
-            <th>Date</th>
-            <th>Donors</th>
-            <th>Dollars</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>{{$date}}</td>
-            <td>{{$totals[0]->donors}}</td>
-            <td>${{number_format($totals[0]->dollars,2)}}</td>
-        </tr>
-        </tbody>
-    </table>
-    @else
-        <p>We could not calculate totals for the currently selected active year ({{$year}})</p>
-    @endif --}}
-
-{{-- <br> --}}
-{{-- <table class="table table-bordered rounded" id="myTable2">
-    <thead>
-    <tr class="bg-light">
-        <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Rank <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
-        <th onclick="sortTable('name')" style="cursor: pointer;">Organization name <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
-        <th onclick="sortTable('participation_rate')" style="cursor: pointer;">Participation rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
-        <th onclick="sortTable('previous_participation_rate')" style="cursor: pointer;">Previous rate <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"):asset("img/icons/FilterAscending.png") @endphp" /></th>
-        <th onclick="sortTable('change')" style="cursor: pointer;">Change <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
-        <th onclick="sortTable('donors')" style="cursor: pointer;">Donors <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
-        <th onclick="sortTable('dollars')" style="cursor: pointer;">Dollars <img style="width:16px;height:16px;" class="sort-hook float-right" src="@php echo  ($request->sort == "ASC") ? asset("img/icons/FilterDescending.png"): asset("img/icons/FilterAscending.png") @endphp" /></th>
-    </tr>
-    </thead>
-
-
-<tbody id="charities">
-@foreach($charities as $index => $charity)
-<tr>
-<td>{{ordinal($count)}}</td>
-@php
-                        if($request->sort == "ASC"){
-                            $count--;
-                        }
-                        else{
-                            $count++;
-                        }
-                    @endphp
-                    <td>{{$charity['organization_name']}}</td>
-                    <td>{{ number_format($charity['participation_rate'] ? $charity['participation_rate'] : ($charity->participation_rate ? $charity->participation_rate : 0 ),2)}}%</td>
-                    <td>{{number_format($charity['previous_participation_rate'] ? $charity['previous_participation_rate'] : 0,2)}}%</td>
-                    <td>{{number_format($charity['change'] ? $charity['change'] : 0,2)}}%</td>
-                    <td>{{$charity['donors']}}</td>
-                    <td>${{number_format(floatval(str_replace("$","",$charity['dollars'])),2)}}</td>
-                </tr>
-            @endforeach
-</tbody>
-        </table> --}}
-<br>
     </div>
 </div>
-<br>
-<br>
+
 @endsection
 
 @push('css')
 
-    
-    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">    
 
 	<style>
 	/* #dashboard-table_filter label {
@@ -153,13 +139,66 @@
       top: 5%;
     }
 
+    table.dataTable  {
+        border: none;
+    }
+
+    table.dataTable thead tr {
+        border-left: none;
+        border-right: none;
+    }
+    table.dataTable thead tr th {
+        border-left: none;
+        border-right: none;
+    }
+    table.dataTable tbody tr {
+        border-left: none;
+        border-right: none;
+    }
+
+    table.dataTable tbody tr.highlight {
+        color: #2e8540;
+        font-weight: bold;
+    }
+    table.dataTable tbody tr td {
+        border-left: none;
+        border-right: none;
+    }
+
+    div.dataTables_filter {
+        display: none;
+    }
+
+    .custom-icon-style {
+        font-size: 3.0em; 
+         color: #616161;
+    }
+   
+    .table-donors {
+        border-left: 5px solid #3272d9;
+       
+    }   
+    .table-donors .h1 {
+        color: #3272d9;
+        font-size: 2.3em;
+    }
+
+    .table-amount {
+        border-left: 5px solid #2a854e;
+    }     
+    .table-amount .h1 {
+        color: #2a854e ;
+        font-size: 2.3em;
+    }
+
 </style>
 @endpush
 
 @push('js')
 
-<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
+<script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
+
 <script>
 
 $(function() {
@@ -202,7 +241,7 @@ $(function() {
 
      // Datatables
     var oTable = $('#dashboard-table').DataTable({
-        dom: 'lrt',
+        // dom: 'lrt',
         // "scrollX": true,
         retrieve: true,
         "searching": true,
@@ -212,7 +251,7 @@ $(function() {
             },
         serverSide: true,
         select: true,
-        paging: false,
+        // paging: false,
         "initComplete": function(settings, json) {
             min_height = $(".wrapper").outerHeight();
             $(".main-sidebar").css('min-height', min_height);
@@ -233,12 +272,12 @@ $(function() {
         },
         columns: [
             {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
-            {data: 'organization_name', name: 'organization_name', className: "dt-nowrap", searchable: false },
-            {data: 'participation_rate', className: "dt-nowrap dt-right", searchable: false },
-            {data: 'previous_participation_rate', className: 'dt-nowrap dt-right', searchable: false},
-            {data: 'change_rate', className: 'dt-nowrap dt-right', searchable: false},
-            {data: 'donors', className: "dt-nowrap dt-right",  searchable: false},
-            {data: 'dollars', className: "dt-nowrap dt-right", searchable: false},
+            {data: 'organization_name', name: 'organization_name', className: "", searchable: false },
+            {data: 'participation_rate', className: '', searchable: false },
+            {data: 'previous_participation_rate', className: '', searchable: false},
+            {data: 'change_rate', className: 'dt-nowrap', searchable: false},
+            {data: 'donors', className: "dt-nowrap",  searchable: false},
+            {data: 'dollars', className: "dt-nowrap", searchable: false},
         ],
         columnDefs: [
             {
@@ -265,11 +304,19 @@ $(function() {
                 targets: [6],
             },
         ],
+        rowCallback: function (row, data) {
+            if ( data.change_rate > 0  ) {
+                $(row).addClass('highlight');
+            }
+        }
     });
 
     //  year
     $(document).on('change', '#year', function () {
-        oTable.ajax.reload();
+        // oTable.ajax.reload();
+        event.preventDefault();
+
+        $("#search-form").submit();
 
         // Update the last update datetime
         current_year =  new Date().getFullYear();

@@ -25,6 +25,7 @@
 
 <form id="setting-edit-form" action="{{ route('system.settings.store') }}"  method="post">
     @csrf
+    <input type="hidden" name="task" value="save" />
     <div class="card">
         <div class="card-body">
             <div class="row pb-2">
@@ -57,10 +58,11 @@
 
                 <div class="form-group col-md-3">
                     <label for="signout_all">&nbsp;</label>
-
-                    <button name="signout_all" value="1" class="signout-all btn form-control btn-danger" {{ $allow_signout_all ? '' : 'disabled'}}>
-                        Signout all current logged in users 
-                    </button>
+                    @if ($allow_signout_all)
+                        <button type="button" name="signout_all" value="1" class="signout-all btn form-control btn-danger">
+                            Signout all current logged in users 
+                        </button>
+                    @endif
                 </div>
         
             </div>
@@ -69,7 +71,7 @@
 
     <div class="row pt-4 pl-2">
         <div>
-            <button name="save" value="1" class="save btn form-control btn-primary">Save</button>
+            <button type="button" name="save" value="1" class="save btn form-control btn-primary">Save</button>
         </div>
     </div>
 
@@ -80,41 +82,57 @@
 
 
 @push('css')
+    <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 @endpush
 
 @push('js')
-    {{-- <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script> --}}
+<script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
-    <script>
+<script>
 
-    window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove(); 
+    $(function() {
+
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 5000);
+
+        $(document).on("click", ".save, .signout-all" , function(e) {
+            e.preventDefault();
+
+            title_text = 'Are you sure to update this setting ?';
+            if (this.name == 'signout_all') {
+                title_text = 'Are you sure to sign out all current logged in users?';
+            }
+
+            Swal.fire( {
+                    title: title_text,
+                    text: 'This action cannot be undone.',
+                    icon: 'info',   
+                    showDenyButton: true,
+                    // showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    denyButtonText: 'No',
+                    buttonsStyling: false,
+                    //confirmButtonClass: 'btn btn-danger',
+                    customClass: {
+                        confirmButton: 'btn btn-primary px-4', //insert class here
+                        cancelButton: 'btn btn-danger ml-2', //insert class here
+                        denyButton: 'btn btn-outline-secondary px-4 ml-2',
+                    }
+                    //denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+            
+                        $("input[name='task']").val(this.name)
+                        $('#setting-edit-form').submit();
+                    } 
+                });
         });
-    }, 6000);
 
-    $(document).on("click", ".save, .signout-all" , function(e) {
-        // e.preventDefault();
-
-        var form = $('#setting-edit-form');
-
-        info = 'Confirm to update this record?';
-        if (this.name == 'signout_all') {
-            info = 'Confirm to sign out all current logged in users?';
-        }
-
-        if (confirm(info))
-        {
-            // var fields = ['system_lockdown_start', 'system_lockdown_end'];
-            // $.each( fields, function( index, field_name ) {
-            //      $('#setting-edit-form [name='+field_name+']').nextAll('span.text-danger').remove();
-            // });
-
-            $('#setting-edit-form').submit();
-
-        };
     });
-
-    </script>
+</script>
 @endpush

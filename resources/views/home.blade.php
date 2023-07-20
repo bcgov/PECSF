@@ -40,11 +40,11 @@
 <div class="container mb-4">
   <div class="row">
     <div class="col-12 col-xl-12 ">
-        <h1 class="text-center text-secondary">Welcome, {{ Auth::user()->name }}</h1>
-        <p class="text-center h5 text-secondary"><b>Choose from the options below:</b></p>
+        <h1 class="text-center" style="color:#687278;">Welcome, {{ Auth::user()->name }}</h1>
+        <p class="text-center h5"  style="color:#687278;"><b>Choose from the options below:</b></p>
     </div>
   </div>
-</div>  
+</div>
 
 
 <div class="container home-tiles px-0">
@@ -60,7 +60,7 @@
                 <i class="nav-icon fa fa-hand-holding-heart fa-2x"></i><br>
                 <p class="font-weight-bold"> <span>Donations</span></p>
                 <p >Support the charities of your choice with payroll deductions in any amount.</p>
-              </div>  
+              </div>
           </div>
         </a>
       </div>
@@ -70,7 +70,7 @@
       <div class="container h-100 px-0" >
           <div class="row h-50 pb-2">
             <div class="col col-md-6">
-              <a href="#" data-toggle="modal" data-target="#learn-more-modal">                  
+              <a href="#" data-toggle="modal" data-target="#learn-more-modal">
                 <div class="card px-2 d-table" style="height: 100%">
                     <div class="card-body d-table-cell align-middle text-center">
                       {{-- <span  class="card-body text-center" data-toggle="modal" data-target="#learn-more-modal">                   --}}
@@ -82,7 +82,7 @@
                     </div>
 
                 </div>
-              </a>                    
+              </a>
             </div>
             <div class="col col-md-6">
               <a href="{{route('volunteering.index')}}">
@@ -116,7 +116,7 @@
             </div>
 
             <div class="col col-md-6">
-              <a href="{{route('contact')}}">              
+              <a href="{{route('contact')}}">
                 <div class="card px-2 d-table" style="height: 100%">
                   <div class="card-body d-table-cell align-middle text-center">
                     {{-- <a href="{{route('contact')}}" class="card-body"> --}}
@@ -133,7 +133,7 @@
         </div>
     </div>
   </div>
-  
+
 </div>
 
 {{-- <div class="container mt-5">
@@ -228,12 +228,16 @@
               </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Back</span>
+             <button style="border:none;background:none;">
+                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                 <span class="sr-only">Back</span>
+             </button>
             </a>
             <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <button style="border:none;background:none;">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="sr-only">Next</span>
+                </button>
             </a>
           </div>
         </div>
@@ -264,6 +268,6 @@
 
 @push('js')
 <script>
-  
+
 </script>
 @endpush

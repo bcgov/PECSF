@@ -51,6 +51,7 @@ class DonationController extends Controller {
                 ->whereNull('pledges.deleted_at')
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
+                ->whereNotNull('pledges.emplid')
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
@@ -64,7 +65,9 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.one_time_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
+                ->whereNotNull('pledges.emplid')
                 ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
@@ -76,7 +79,9 @@ class DonationController extends Controller {
 
         $donate_now_pledges = DB::table('donate_now_pledges')
                 ->whereNull('donate_now_pledges.deleted_at')
+                ->where('donate_now_pledges.organization_id', $user->organization_id)
                 ->where('donate_now_pledges.emplid', $user->emplid)
+                ->whereNotNull('donate_now_pledges.emplid')
                 ->selectRaw("'GF', donate_now_pledges.user_id, donate_now_pledges.id, donate_now_pledges.emplid, yearcd, type,
                             'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount,
                             case when type = 'P' then
@@ -87,7 +92,9 @@ class DonationController extends Controller {
 
         $special_campaign_pledges = DB::table('special_campaign_pledges')
                 ->whereNull('special_campaign_pledges.deleted_at')
+                ->where('special_campaign_pledges.organization_id', $user->organization_id)
                 ->where('special_campaign_pledges.emplid', $user->emplid)
+                ->whereNotNull('special_campaign_pledges.emplid')
                 ->selectRaw("'GF', special_campaign_pledges.user_id, special_campaign_pledges.id, special_campaign_pledges.emplid, yearcd, 'C',
                             'Special Campaign', 'One-Time', special_campaign_pledges.one_time_amount, special_campaign_pledges.one_time_amount,
                             (select special_campaigns.name from special_campaigns where special_campaign_pledges.special_campaign_id = special_campaigns.id)
@@ -95,11 +102,12 @@ class DonationController extends Controller {
 
         $event_pledges = DB::table('bank_deposit_forms')
                 ->join('campaign_years', 'campaign_years.id', 'bank_deposit_forms.campaign_year_id')
-                ->where('bank_deposit_forms.organization_code', 'GOV')
                 ->whereIn('bank_deposit_forms.event_type', ['Cash One-Time Donation','Cheque One-Time Donation'])
                 ->where('bank_deposit_forms.approved', 1)
                 ->whereNull('bank_deposit_forms.deleted_at')
+                ->where('bank_deposit_forms.organization_code', $user->organization ? $user->organization->code : null)
                 ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
+                ->whereNotNull('bank_deposit_forms.bc_gov_id')
                 ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, campaign_years.calendar_year,
                             case when regional_pool_id is null then 'C' else 'P' end,
                             'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount,
@@ -110,6 +118,7 @@ class DonationController extends Controller {
 
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
+                            ->whereNotNull('emplid')
                             ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type,
                                          campaign_type as donation_type, frequency, per_pay_amt as amount, pledge,
                                          (select regions.name from regions where regions.code = pledge_history_summaries.region) as region,

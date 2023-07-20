@@ -1,8 +1,6 @@
 {
-    "/js/spritemap.js": "/js/spritemap.js",
-    "/img/icons/sprite.svg": "/img/icons/sprite.svg",
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css?v=1.0",
-    "/css/custom-switch.css": "/css/custom-switch.css",
-    "/css/web.css": "/css/web.css"
+    "/js/app.js": "/js/app.js?id=e0cc06a9fbc4b8860328c0fd3bef2461",
+    "/css/app.css": "/css/app.css?id=c7095a3b7575bb8368a63d3d68b94b2a",
+    "/css/custom-switch.css": "/css/custom-switch.css?id=35218070d0de1baaa2e9e41f80cf39af",
+    "/css/web.css": "/css/web.css?id=6df98c197ba06614ecf2826a2831539f"
 }
