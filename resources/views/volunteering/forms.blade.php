@@ -87,7 +87,7 @@
                          <br>
                         </div>
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-primary" data-dismiss="modal" aria-label="Close">Complete eForm</button>
                             </div>
                             <div class="col-md-2">
