@@ -1,6 +1,6 @@
 
 <div id="step-regional-pools-area" class="p-3">
- 
+
     @if(str_contains(Route::current()->getName(), 'donate-now'))
         <h3>2. Choose your regional fund supported pool></h3>
     @else
@@ -85,7 +85,6 @@
     #step-regional-pools-area .card:hover {
         /* background-color: darkgray; */
         background-color: #1a5a96;
-        opacity: 0.7;
         color: white;
     }
     #step-regional-pools-area .card.active {
@@ -148,20 +147,23 @@ $(function () {
                 // data: $("#notify-form").serialize(),
                 dataType: 'html',
                 success: function (result) {
+                    if(result.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login';
+                    }
+
                     $('.modal-title span').html(name);
                     target = '.modal-body';
                     $(target).html('');
                     $(target).html(result);
+                    $('#regionalPoolModal').modal('show')
                 },
-                complete: function() {
-                },
-                error: function () {
-                    alert("error");
-                    $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+                // complete: function() {
+                // },
+                error: function(xhr, resp, text) {
                 }
             })
 
-            $('#regionalPoolModal').modal('show')
+            
         }
     });
 

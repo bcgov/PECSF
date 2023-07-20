@@ -24,11 +24,10 @@
 
     table{
         width:100%;
-
+border-collapse:collapse;
     }
 
     table td{
-        border:#ccc 1px solid;
         padding-left:8px;
     }
 
@@ -38,6 +37,7 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        text-align:left;
     }
 
     table td:first-child {
@@ -54,28 +54,30 @@
         font-size:10px;
         font-weight:normal;
     }
+    table tr{
+        border-bottom:#ccc 1px solid;
 
-    *{
-        font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
     }
 </style>
 
 <div class="header">
-    <img src="img/brand/1.png"/>
-    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
-    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
+    <img  src="img/brand/1.png"/>
+    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
     <div class="clear"></div>
 </div>
 <br>
 <hr>
+<h4 style="text-align:center;width:100%;">PECSF Annual Campaign Summary</h4>
 
-<span>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August for payroll deductions from January - June, and in March for payroll deductions from July - December</span>
+<span><i>Please note that this is not a tax receipt. Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August for payroll deductions from January - June, and in March for payroll deductions from July - December</span>
 
 <div class="container">
 
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h3 class="mt-5">{{ $date }}</h3>
+            <h5>Date @php
+                    echo date("d-m-Y",time());
+                @endphp</h5>
             <div class="table-border card bg-light p-3">
                 <h3 class="card-title">Deductions</h3>
                 <hr>
@@ -83,7 +85,7 @@
                     <div class="card-body">
                         <span><b>Your Bi-weekly payroll deductions:</b></span>
                         {{-- <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly*26 }}</span><br> --}}
-                        <span class="float-right mb-2">${{ number_format($annualBiWeeklyAmount,2) }}</span><br>
+                        <span class="float-right mb-2">${{ number_format($annualBiWeeklyAmount,2) / 26 }}</span><br>
                         <h6>AND / OR</h6>
                         <span><b>Your One-time payroll deductions:</b></span>
                         {{-- <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span> --}}
@@ -93,10 +95,9 @@
                     </div>
                 </div>
 
-                <p class="mt-4"><h3>Disbursement</h3></p>
-                @foreach(['one-time', 'bi-weekly'] as $key)
-                    @php $viewMode = 'pdf'; @endphp
 
+                @foreach(['bi-weekly','one-time'] as $key)
+                    @php $viewMode = 'pdf'; @endphp
                     @if($key === 'one-time' && ($frequency === 'one-time' || $frequency === 'both'))
                         @php $key_ = $key; @endphp
                         @php $keyCase = 'oneTime'; @endphp

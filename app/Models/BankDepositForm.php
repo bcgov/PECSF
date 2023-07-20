@@ -10,7 +10,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class BankDepositForm extends Model implements Auditable
 {
     use HasFactory, SoftDeletes;
-    use \OwenIt\Auditing\Auditable;    
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable =[
         'organization_code',
@@ -40,12 +40,13 @@ class BankDepositForm extends Model implements Auditable
         'updated_by_id',
         'approved_by_id',
         'approved_at',
+        'employee_name'
     ];
 
     protected $casts = [
         'deposit_date' => 'date:Y-m-d',
     ];
-    
+
     function attachments(){
         $this->hasMany(BankDepositFormAttachments::class);
     }
@@ -55,10 +56,10 @@ class BankDepositForm extends Model implements Auditable
     }
 
     public function fund_supported_pool() {
-       
+
         return $this->belongsTo(FSPool::class, 'regional_pool_id', 'id')->withDefault();
-        
-    } 
+
+    }
 
     public function charities() {
         return $this->hasMany(BankDepositFormOrganizations::class, 'bank_deposit_form_id', 'id');
@@ -72,7 +73,7 @@ class BankDepositForm extends Model implements Auditable
     {
         return $this->belongsTo(User::Class, 'form_submitter_id', 'id')->withDefault();
     }
-    
+
     public function created_by()
     {
         return $this->belongsTo(User::Class, 'created_by_id', 'id')->withDefault();
@@ -87,5 +88,5 @@ class BankDepositForm extends Model implements Auditable
     {
         return $this->belongsTo(User::Class,  'approved_by_id', 'id')->withDefault();
     }
-    
+
 }

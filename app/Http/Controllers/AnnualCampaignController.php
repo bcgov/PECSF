@@ -319,8 +319,9 @@ class AnnualCampaignController extends Controller
         $multiple = true;
         $organizations = [];
 
+        $fsp_name = false;
 // dd([ $is_duplicate, $duplicate_pledge, $pool_option, $pledge, $fspools, $regional_pool_id, $campaign_year ]);
-        return view('annual-campaign.wizard', compact('step', 'pool_option',
+        return view('annual-campaign.wizard', compact('fsp_name','step', 'pool_option',
                         'fspools', 'regional_pool_id',
                         'campaign_year',
 
@@ -822,8 +823,9 @@ class AnnualCampaignController extends Controller
 
         $pool_option = $request->pool_option;
         $regional_pool_id = $request->regional_pool_id;
+        $fsp_name = false;
 
-        $viewData = compact('charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+        $viewData = compact('fsp_name','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
              'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id');
         return view('annual-campaign.partials.summary', $viewData)->render();
 
@@ -832,8 +834,8 @@ class AnnualCampaignController extends Controller
 
     public function summaryPdf(Request $request, $id) {
 
-
         $pledge = Pledge::select("pledges.*")->with("campaign_year")->where('pledges.id', $id)->first();
+
 
         // Make sure this transaction is for the current logged user
         if (!$pledge) {
@@ -846,7 +848,7 @@ class AnnualCampaignController extends Controller
         $frequency = $pledge->frequency;
 
         if ($pledge->type == 'C') {
-
+            $fsp_name = false;
             $selectedCharities = $pledge->distinct_charities; //Session::get('charities');
 
             $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ? $pledge->one_time_amount : 0;
@@ -892,7 +894,7 @@ class AnnualCampaignController extends Controller
             }
 
         } else {
-
+            $fsp_name = $pledge->region->name;
             $pool_id = $pledge->f_s_pool_id;
             $pool = FSPool::where('id', $pool_id)->first();
             $pool_charities = $pool ? $pool->charities : [];
@@ -962,21 +964,28 @@ class AnnualCampaignController extends Controller
         $pool_option = $pledge->pool_option;
         $regional_pool_id = $pledge->regional_pool_id;
 
+
         if($request->download_pdf){
             $date = date("Y-m-d");
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('fsp_name','date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
                  'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
-            return $pdf->download('Annual Campaign Summary - '.(intval($pledge->calendar_year) - 1).'.pdf');
+            return $pdf->download('Annual Campaign Summary - '.(intval($pledge->campaign_year->calendar_year) - 1).'.pdf');
         }
 
     }
 
-    public function regionalPoolDetail($id)
+    public function regionalPoolDetail(Request $request, $id)
     {
-        $pool = FSPool::where('id', $id)->first();
-        $charities = $pool ? $pool->charities : [];
 
-        return view('annual-campaign.partials.pool-detail', compact('charities') )->render();
+        if ($request->ajax()) {
+            $pool = FSPool::where('id', $id)->first();
+            $charities = $pool ? $pool->charities : [];
+
+            return view('annual-campaign.partials.pool-detail', compact('charities') )->render();
+        } else {
+            return redirect('/');
+        }
+
     }
 
     public function validDuplicate(Request $request, $id)

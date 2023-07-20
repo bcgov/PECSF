@@ -35,3 +35,12 @@ setInterval(function() {
 
 },100);
 
+$("button").click(function(){
+    $(this).blur();
+});
+$(".btn").click(function(){
+    $(this).blur();
+});
+
+
+

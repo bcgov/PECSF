@@ -24,7 +24,7 @@ class SpecialCampaignSetupController extends Controller
     {
          $this->middleware('permission:setting');
 
-         $this->image_folder = "img/uploads/special_campaign";
+         $this->image_folder = "img/uploads/special_campaign/";
 
     }
 
@@ -172,6 +172,7 @@ class SpecialCampaignSetupController extends Controller
                 $file = $request->file('logo_image_file');
                 $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                 $file->move(public_path( $this->image_folder ), $new_filename);
+
             }
 
             $special_campaign = SpecialCampaign::where('id', $id)->first();
@@ -181,8 +182,8 @@ class SpecialCampaignSetupController extends Controller
 
                 // Clean up old file
                 if ($special_campaign->image) {
-                    $old_filename = public_path( $this->image_folder ).'/'.$special_campaign->image;
-                    if (File::exists( $old_filename )) {
+                    $old_filename = public_path( $this->image_folder ).$special_campaign->image;
+                                        if (File::exists( $old_filename )) {
                         File::delete( $old_filename );
                     }
                 }
@@ -216,7 +217,7 @@ class SpecialCampaignSetupController extends Controller
 
             // Clean up old file
             if ($special_campaign->image) {
-                $old_filename = public_path( $this->image_folder ).'/'.$special_campaign->image;
+                $old_filename = public_path( $this->image_folder ).$special_campaign->image;
                 if (File::exists( $old_filename )) {
                     File::delete( $old_filename );
                 }
