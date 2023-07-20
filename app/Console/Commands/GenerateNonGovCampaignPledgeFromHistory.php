@@ -180,6 +180,9 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                                     ->where('campaign_year_id', $campaign_year->id)
                                     ->first();                
 
+                $city = City::where('city', trim($request->pecsf_city) )->first();
+                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;                                    
+
                 $pledge = Pledge::updateOrCreate([
                     'organization_id' => $organization->id,
                     'user_id' => 0,
@@ -189,6 +192,11 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                     'first_name' => $bi_pledge_detail->first_name,
                     'last_name' => $bi_pledge_detail->last_name,
                     'city' => $bi_pledge_detail->city,
+
+                    'business_unit' => $organizatins->bu_code,
+                    'tgb_reg_district' => $tgb_reg_district,
+    
+
                     'type' => $bi_pledge->source,
 
                     'f_s_pool_id' => $bi_pledge->source == 'P' ? $pool->id : 0,

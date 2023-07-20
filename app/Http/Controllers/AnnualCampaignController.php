@@ -375,6 +375,9 @@ class AnnualCampaignController extends Controller
         $organization = Organization::where('code', 'GOV')->first();
         $pool = FSPool::where('id', $request->regional_pool_id)->first();
 
+        $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
+        $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
             // 'user_id' => Auth::id(),
@@ -382,6 +385,10 @@ class AnnualCampaignController extends Controller
             'campaign_year_id' => $request->campaign_year_id,
         ],[
             'user_id' => Auth::id(),
+            
+            'business_unit' => $business_unit,
+            'tgb_reg_district' => $tgb_reg_district,
+            
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,

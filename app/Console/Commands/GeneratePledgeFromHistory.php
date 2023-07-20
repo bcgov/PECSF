@@ -401,7 +401,12 @@ class GeneratePledgeFromHistory extends Command
                 $row_count += 1;
 
                 $user = User::where('source_type', 'HCM')
-                        ->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
+                        ->where('emplid', $bi_pledge->emplid )
+                        ->where('id', '>=', 1000)
+                        ->orderby('id')->first();
+
+                $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
+                $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
           
                 // $charity = Charity::where('registration_number', $bi_pledge->first_detail->charity_bn)->first();
 
@@ -445,6 +450,9 @@ class GeneratePledgeFromHistory extends Command
                         // 'first_name',
                         // 'last_name',
                         // 'city',
+                        'business_unit' => $business_unit,
+                        'tgb_reg_district' => $tgb_reg_district,
+
                         'user_id' => $user->id,
                         'type' => $bi_pledge->source,
                         'region_id' => $bi_pledge->source == 'P' ? $pool->region_id : null,
