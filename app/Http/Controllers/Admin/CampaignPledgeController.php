@@ -29,7 +29,7 @@ class CampaignPledgeController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:setting');
+         $this->middleware('permission:setting', ['except' => ['getNonGovUserDetail']]);
     }
 
     /**
