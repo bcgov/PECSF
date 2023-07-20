@@ -13,9 +13,9 @@
             <p class="mt-5 font-weight-bold text-center"><b>Thank you, {{Auth::user()->name}} for your generous donation to PECSF. <br>
             Every contribution makes a huge impact in your community</b></p>
             <p class=' mt-5'>Please Note all PECSF payroll deductions will automatically show on your T4 received each spring. <br> Should you require an additional copy, click the button below.</p>
-            <a class="btn btn-primary mb-5" href="{{route('annual-campaign.summary-pdf',$pledge_id)}}?download_pdf=true">Download Donation Summary</a>            
+            <a class="btn btn-primary btn-md mb-5" href="{{route('annual-campaign.summary-pdf',$pledge_id)}}?download_pdf=true">Download Donation Summary</a>
             {{-- <a class="btn btn-primary mb-5" href="{{route('annual-campaign.summary')}}?download_pdf=true">Download Donation Summary</a> --}}
-            <a class="btn btn-outline-primary mb-5" href="{{ route('donations.list')}}">View Donation History</a>
+            <a class="btn btn-outline-primary mb-5 btn-md" href="{{ route('donations.list')}}">View Donation History</a>
             <br>
         </div>
 

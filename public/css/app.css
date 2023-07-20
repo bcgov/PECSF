@@ -47901,9 +47901,16 @@ a:focus {
   text-decoration: underline;
 }
 
-button:focus, .btn:focus {
+.btn-lg:focus, .btn-group-lg > .btn:focus {
   padding: 4px 12px;
-  border: #000 5px solid;
+  border: #000 5px solid !important;
+  font-weight: normal;
+}
+
+.btn-md:focus {
+  padding: 1px 7px;
+  border: #000 5px solid !important;
+  font-weight: normal;
 }
 
 .teststyle {
