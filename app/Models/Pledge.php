@@ -24,6 +24,9 @@ class Pledge extends Model implements Auditable
         "last_name",
         "city",
 
+        'business_unit',
+        'tgb_reg_district',
+
         'campaign_year_id',
         'type',
         'region_id',
@@ -131,27 +134,32 @@ class Pledge extends Model implements Auditable
 
     public function pecsf_user_region() {
 
-        $region = Region::where('code', '=', function ($query) {
-            $query->select('TGB_REG_DISTRICT')
-                ->from('cities')
-                ->where('cities.city', $this->city)
-                ->limit(1);
-        })->first();
+        // $region = Region::where('code', '=', function ($query) {
+        //     $query->select('TGB_REG_DISTRICT')
+        //         ->from('cities')
+        //         ->where('cities.city', $this->city)
+        //         ->limit(1);
+        // })->first();
         
-        return $region;
+        // return $region;
+
+        return $this->belongsTo(Region::class, 'tgb_reg_district', 'code')->withDefault();
 
     }
 
     public function pecsf_user_bu() {
 
-        $bu = BusinessUnit::where('code', '=', function ($query) {
-            $query->select('bu_code')
-                ->from('organizations')
-                ->where('id', $this->organization_id)
-                ->limit(1);
-        })->first();
+        // $bu = BusinessUnit::where('code', '=', function ($query) {
+        //     $query->select('bu_code')
+        //         ->from('organizations')
+        //         ->where('id', $this->organization_id)
+        //         ->limit(1);
+        // })->first();
 
-        return $bu;
+        // return $bu;
+
+        return $this->belongsTo(BusinessUnit::class, 'business_unit', 'code')->withDefault();
+
     }
 
     // public function scopeOnlyCampaignYear($query, $campaign_year) {

@@ -281,6 +281,16 @@ class CampaignPledgeController extends Controller
         } else {
             // Create a new Pledge
 
+            if ($is_GOV) {
+                $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
+                $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+            } else {
+                $org = Organization::where('id', $request->organization_id)->first();
+                $business_unit = $org ? $org->bu_code : null;
+                $city = City::where('city', trim($request->pecsf_city) )->first();
+                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+            }
+
             $pledge = Pledge::Create([
                 'organization_id' => $request->organization_id,
                 'emplid' =>     $is_GOV ? $user->emplid : null,
@@ -290,6 +300,9 @@ class CampaignPledgeController extends Controller
                 "first_name" => $is_GOV ? null : $request->pecsf_first_name,
                 "last_name" =>  $is_GOV ? null : $request->pecsf_last_name,
                 "city" =>       $is_GOV ? null : $request->pecsf_city,
+
+                'business_unit' => $business_unit,
+                'tgb_reg_district' => $tgb_reg_district,
 
                 'campaign_year_id' => $request->campaign_year_id,
                 'type' => $request->pool_option,
@@ -497,6 +510,15 @@ class CampaignPledgeController extends Controller
             $pledge->first_name = $request->pecsf_first_name;
             $pledge->last_name  = $request->pecsf_last_name;
             $pledge->city       = $request->pecsf_city;
+
+            $org = Organization::where('id', $request->organization_id)->first();
+            $business_unit = $org ? $org->bu_code : null;
+            $city = City::where('city', trim($request->pecsf_city) )->first();
+            $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+            
+            $pledge->business_unit = $business_unit;
+            $pledge->tgb_reg_district = $tgb_reg_district;
+
         }
 
         $pool = FSPool::where('id', $request->pool_id)->first();
