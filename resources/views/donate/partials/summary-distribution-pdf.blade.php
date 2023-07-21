@@ -2,12 +2,14 @@
     <p class="mt-4"><h3>Disbursement</h3></p>
     <div class="card mt-3">
         <div class="card-body">
-            <h2>Bi-Weekly donation disbursement</h2>
+            <h1>Bi-Weekly donation disbursement</h1>
             <hr>
             <table class="table table-sm">
+                {{var_dump($charities)}}
                 @foreach ($charities as $charity)
                     <tr>
                         <td class="p-2">
+                            {{var_dump($charity)}}
                             {{ $charity['text'] }} <br>
                             <small>
                                 {{ $charity['additional']}}

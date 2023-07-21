@@ -441,39 +441,44 @@ class DonateNowPledgeController extends Controller
     public function getUsers(Request $request)
     {
 
-        $term = trim($request->q);
+        if($request->ajax()) {
+            $term = trim($request->q);
 
-        $users = User::where('users.organization_id', $request->org_id)
-             ->when($term, function($query) use($term) { 
-                return $query->where( function($q) use($term) {
-                      $q->whereRaw( "lower(users.name) like '%".$term."%'")
-                       //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
-                        ->orWhere( "users.emplid", 'like', '%'.$term.'%');
-               });
-            })
-            ->with('primary_job')
-            ->with('primary_job.region') 
-            ->with('primary_job.bus_unit') 
-            ->limit(50)
-            ->orderby('users.name','asc')
-            ->get();
+            $users = User::where('users.organization_id', $request->org_id)
+                ->when($term, function($query) use($term) { 
+                    return $query->where( function($q) use($term) {
+                        $q->whereRaw( "lower(users.name) like '%".$term."%'")
+                        //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
+                            ->orWhere( "users.emplid", 'like', '%'.$term.'%');
+                });
+                })
+                ->with('primary_job')
+                ->with('primary_job.region') 
+                ->with('primary_job.bus_unit') 
+                ->limit(50)
+                ->orderby('users.name','asc')
+                ->get();
 
-         $formatted_users = [];
-         foreach ($users as $user) {
-            $formatted_users[] = ['id' => $user->id, 
-                    'text' => $user->name . ' ('. $user->emplid .')',
-                    'email' =>  $user->primary_job->email, 
-                    'emplid' => $user->emplid,  
-                    'first_name' =>  $user->primary_job->first_name ?? '', 
-                    'last_name' =>  $user->primary_job->last_name ?? '', 
-                    'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
-                    'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
-                    'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',                    
-                    'organization' => $user->primary_job->organization_name ?? '',
-            ];
+            $formatted_users = [];
+            foreach ($users as $user) {
+                $formatted_users[] = ['id' => $user->id, 
+                        'text' => $user->name . ' ('. $user->emplid .')',
+                        'email' =>  $user->primary_job->email, 
+                        'emplid' => $user->emplid,  
+                        'first_name' =>  $user->primary_job->first_name ?? '', 
+                        'last_name' =>  $user->primary_job->last_name ?? '', 
+                        'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
+                        'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
+                        'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',                    
+                        'organization' => $user->primary_job->organization_name ?? '',
+                ];
+            }
+
+            return response()->json($formatted_users);
+
+        } else {
+            return redirect('/');
         }
-
-        return response()->json($formatted_users);
 
     }    
 
@@ -495,6 +500,8 @@ class DonateNowPledgeController extends Controller
 
             $result = (object) [ 'id' => ($pledge ? $pledge->id : null) ]; 
             return json_encode( $result );
+        } else {
+            return redirect('/');
         }
     }
 
@@ -539,6 +546,8 @@ class DonateNowPledgeController extends Controller
                 
             return response()->noContent();    
 
+        } else {
+            return redirect('/');
         }
     }
 
