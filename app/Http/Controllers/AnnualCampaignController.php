@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
 use App\Models\Charity;
+use App\Models\City;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
@@ -389,10 +390,10 @@ class AnnualCampaignController extends Controller
             'campaign_year_id' => $request->campaign_year_id,
         ],[
             'user_id' => Auth::id(),
-            
+
             'business_unit' => $business_unit,
             'tgb_reg_district' => $tgb_reg_district,
-            
+
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
