@@ -377,7 +377,10 @@ class AnnualCampaignController extends Controller
         $pool = FSPool::where('id', $request->regional_pool_id)->first();
 
         $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
-        $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+        // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+        $office_city = $user->primary_job ? $user->primary_job->office_city : null;
+        $city = City::where('city', trim( $office_city )  )->first();
+        $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
 
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
