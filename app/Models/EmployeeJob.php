@@ -81,6 +81,11 @@ class EmployeeJob extends Model
         return $this->belongsTo(Region::Class, 'tgb_reg_district', 'code')->withDefault();
     }
 
+    public function city_by_office_city() 
+    {
+        return $this->belongsTo(City::Class, 'office_city', 'city')->withDefault();
+    }
+
     public function bus_unit() 
     {
         return $this->belongsTo(BusinessUnit::Class, 'business_unit_id', 'id')->withDefault();
