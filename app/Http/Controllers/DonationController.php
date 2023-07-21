@@ -152,7 +152,7 @@ class DonationController extends Controller {
         foreach($pledges_by_yearcd as $yearcd => $pledges){
             foreach($pledges as $index => $pledge){
                 if(!empty(Pledge::where("id","=",$pledge->id)->first())){
-                    $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->charities;
+                    $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->distinct_charities;
                 }
                 else{
                     $pledges_by_yearcd[$yearcd][$index]->charities = [];
