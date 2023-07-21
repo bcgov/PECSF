@@ -159,20 +159,21 @@ class DonationController extends Controller {
                 }
             }
         }
-
+        $fsp_name = false;
         // download PDF file with download method
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
+
             $pdf = PDF::loadView('donations.partials.pdf', compact(//'pledges',
                 'currentYear', 'totalPledgedDataTillNow', 'campaignYear', 'current_pledge',
-                'pledges_by_yearcd'));
+                'pledges_by_yearcd','fsp_name'));
             return $pdf->download('Donation History Summary.pdf');
         }
         else{
             return view('donations.index', compact(//'pledges',
                 'currentYear',  'totalPledgedDataTillNow','campaignYear', 'current_pledge',
-                'pledges_by_yearcd'));
+                'pledges_by_yearcd','fsp_name'));
         }
     }
 
