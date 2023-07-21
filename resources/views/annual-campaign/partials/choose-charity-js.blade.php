@@ -200,6 +200,8 @@
                 $("#uri").html($(this).attr("website"));
                 $("#charity_type").html($(this).attr("charity_type"));
                 $("#charity_name").html($(this).attr("charity_name"));
+                $("#employee_name").html($(this).attr("employee_name"));
+
                 $("#charityDetails").modal("show");
             }
         });

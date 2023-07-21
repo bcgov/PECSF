@@ -151,8 +151,12 @@ class DonationController extends Controller {
 
         foreach($pledges_by_yearcd as $yearcd => $pledges){
             foreach($pledges as $index => $pledge){
-                $pledges_by_yearcd[$yearcd][$index]->charities = PledgeHistory::join("pledge_history_summaries","pledge_histories.id","pledge_history_summaries.pledge_history_id")->select("vendor_name1")->where("pledge_history_summaries.emplid","=",$user->emplid)->where("pledge_history_summaries.yearcd","=",$yearcd)->where("pledge_history_summaries.source","=","Non-Pool")->where("pledge_history_summaries.campaign_type","=",$pledge->donation_type)->where("pledge_history_summaries.frequency","=",$pledge->frequency)->get();
-
+                if(!empty(Pledge::where("id","=",$pledge->id)->first())){
+                    $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->charities;
+                }
+                else{
+                    $pledges_by_yearcd[$yearcd][$index]->charities = [];
+                }
             }
         }
 

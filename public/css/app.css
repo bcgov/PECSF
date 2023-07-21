@@ -25,6 +25,9 @@
 }
 
 @charset "UTF-8";
+/*
+VERSION: 3.0.0
+*/
 /*!
  * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
@@ -150,13 +153,11 @@
 }
 
 .fa-spin {
-  -webkit-animation: fa-spin 2s infinite linear;
-          animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
 }
 
 .fa-pulse {
-  -webkit-animation: fa-spin 1s infinite steps(8);
-          animation: fa-spin 1s infinite steps(8);
+  animation: fa-spin 1s infinite steps(8);
 }
 
 @keyframes fa-spin {
@@ -10970,15 +10971,6 @@ a.badge-dark:focus, a.badge-dark.focus {
   color: #040505;
 }
 
-@-webkit-keyframes progress-bar-stripes {
-  from {
-    background-position: 1rem 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
-
 @keyframes progress-bar-stripes {
   from {
     background-position: 1rem 0;
@@ -11021,13 +11013,11 @@ a.badge-dark:focus, a.badge-dark.focus {
 }
 
 .progress-bar-animated {
-  -webkit-animation: 1s linear infinite progress-bar-stripes;
-          animation: 1s linear infinite progress-bar-stripes;
+  animation: 1s linear infinite progress-bar-stripes;
 }
 @media (prefers-reduced-motion: reduce) {
   .progress-bar-animated {
-    -webkit-animation: none;
-            animation: none;
+    animation: none;
   }
 }
 
@@ -11473,7 +11463,6 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 .modal-dialog-centered::before {
   display: block;
   height: calc(100vh - 1rem);
-  height: -webkit-min-content;
   height: -moz-min-content;
   height: min-content;
   content: "";
@@ -11583,7 +11572,6 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   }
   .modal-dialog-centered::before {
     height: calc(100vh - 3.5rem);
-    height: -webkit-min-content;
     height: -moz-min-content;
     height: min-content;
   }
@@ -11877,8 +11865,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   float: left;
   width: 100%;
   margin-right: -100%;
-  -webkit-backface-visibility: hidden;
-          backface-visibility: hidden;
+  backface-visibility: hidden;
   transition: transform 0.6s ease;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -12034,12 +12021,6 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   text-align: center;
 }
 
-@-webkit-keyframes spinner-border {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes spinner-border {
   to {
     transform: rotate(360deg);
@@ -12053,24 +12034,13 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   border: 0.25em solid currentcolor;
   border-right-color: transparent;
   border-radius: 50%;
-  -webkit-animation: 0.75s linear infinite spinner-border;
-          animation: 0.75s linear infinite spinner-border;
+  animation: 0.75s linear infinite spinner-border;
 }
 
 .spinner-border-sm {
   width: 1rem;
   height: 1rem;
   border-width: 0.2em;
-}
-
-@-webkit-keyframes spinner-grow {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 @keyframes spinner-grow {
@@ -12090,8 +12060,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   background-color: currentcolor;
   border-radius: 50%;
   opacity: 0;
-  -webkit-animation: 0.75s linear infinite spinner-grow;
-          animation: 0.75s linear infinite spinner-grow;
+  animation: 0.75s linear infinite spinner-grow;
 }
 
 .spinner-grow-sm {
@@ -12101,7 +12070,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 @media (prefers-reduced-motion: reduce) {
   .spinner-border,
-.spinner-grow {
+  .spinner-grow {
     animation-duration: 1.5s;
   }
 }
@@ -13216,7 +13185,6 @@ button.bg-dark:focus {
 }
 
 .position-sticky {
-  position: -webkit-sticky !important;
   position: sticky !important;
 }
 
@@ -13236,9 +13204,8 @@ button.bg-dark:focus {
   z-index: 1030;
 }
 
-@supports ((position: -webkit-sticky) or (position: sticky)) {
+@supports (position: sticky) {
   .sticky-top {
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1020;
@@ -15468,27 +15435,6 @@ a.text-dark:hover, a.text-dark:focus {
     border-color: #dee2e6;
   }
 }
-@-webkit-keyframes flipInX {
-  0% {
-    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    transition-timing-function: ease-in;
-    opacity: 0;
-  }
-  40% {
-    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    transition-timing-function: ease-in;
-  }
-  60% {
-    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
-    opacity: 1;
-  }
-  80% {
-    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
-  }
-  100% {
-    transform: perspective(400px);
-  }
-}
 @keyframes flipInX {
   0% {
     transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
@@ -15510,14 +15456,6 @@ a.text-dark:hover, a.text-dark:focus {
     transform: perspective(400px);
   }
 }
-@-webkit-keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -15526,55 +15464,12 @@ a.text-dark:hover, a.text-dark:focus {
     opacity: 1;
   }
 }
-@-webkit-keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
 @keyframes fadeOut {
   from {
     opacity: 1;
   }
   to {
     opacity: 0;
-  }
-}
-@-webkit-keyframes shake {
-  0% {
-    transform: translate(2px, 1px) rotate(0deg);
-  }
-  10% {
-    transform: translate(-1px, -2px) rotate(-2deg);
-  }
-  20% {
-    transform: translate(-3px, 0) rotate(3deg);
-  }
-  30% {
-    transform: translate(0, 2px) rotate(0deg);
-  }
-  40% {
-    transform: translate(1px, -1px) rotate(1deg);
-  }
-  50% {
-    transform: translate(-1px, 2px) rotate(-1deg);
-  }
-  60% {
-    transform: translate(-3px, 1px) rotate(0deg);
-  }
-  70% {
-    transform: translate(2px, 1px) rotate(-2deg);
-  }
-  80% {
-    transform: translate(-1px, -1px) rotate(4deg);
-  }
-  90% {
-    transform: translate(2px, 2px) rotate(0deg);
-  }
-  100% {
-    transform: translate(1px, -2px) rotate(-1deg);
   }
 }
 @keyframes shake {
@@ -15610,29 +15505,6 @@ a.text-dark:hover, a.text-dark:focus {
   }
   100% {
     transform: translate(1px, -2px) rotate(-1deg);
-  }
-}
-@-webkit-keyframes wobble {
-  0% {
-    transform: none;
-  }
-  15% {
-    transform: translate3d(-25%, 0, 0) rotate3d(0, 0, 1, -5deg);
-  }
-  30% {
-    transform: translate3d(20%, 0, 0) rotate3d(0, 0, 1, 3deg);
-  }
-  45% {
-    transform: translate3d(-15%, 0, 0) rotate3d(0, 0, 1, -3deg);
-  }
-  60% {
-    transform: translate3d(10%, 0, 0) rotate3d(0, 0, 1, 2deg);
-  }
-  75% {
-    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -1deg);
-  }
-  100% {
-    transform: none;
   }
 }
 @keyframes wobble {
@@ -15689,12 +15561,10 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .animation__shake {
-  -webkit-animation: shake 1500ms;
-          animation: shake 1500ms;
+  animation: shake 1500ms;
 }
 .animation__wobble {
-  -webkit-animation: wobble 1500ms;
-          animation: wobble 1500ms;
+  animation: wobble 1500ms;
 }
 
 .preloader {
@@ -16888,8 +16758,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .hold-transition .control-sidebar *,
 .hold-transition .main-footer {
   transition: none !important;
-  -webkit-animation-duration: 0s !important;
-          animation-duration: 0s !important;
+  animation-duration: 0s !important;
 }
 
 .dark-mode {
@@ -17574,12 +17443,9 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 }
 
 .sidebar-is-opening .nav-sidebar .nav-link p {
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
 }
 
 #sidebar-overlay {
@@ -18191,35 +18057,24 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 }
 
 .nav-collapse-hide-child .menu-open > .nav-treeview {
-  max-height: -webkit-min-content;
   max-height: -moz-min-content;
   max-height: min-content;
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
 }
 .sidebar-collapse .nav-collapse-hide-child .menu-open > .nav-treeview {
   max-height: 0;
-  -webkit-animation-name: fadeOut;
-          animation-name: fadeOut;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
 }
 .sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused .nav-collapse-hide-child .menu-open > .nav-treeview, .sidebar-mini.sidebar-collapse .main-sidebar:not(.sidebar-no-expand):hover .nav-collapse-hide-child .menu-open > .nav-treeview, .sidebar-mini-md.sidebar-collapse .main-sidebar.sidebar-focused .nav-collapse-hide-child .menu-open > .nav-treeview, .sidebar-mini-md.sidebar-collapse .main-sidebar:not(.sidebar-no-expand):hover .nav-collapse-hide-child .menu-open > .nav-treeview, .sidebar-mini-xs.sidebar-collapse .main-sidebar.sidebar-focused .nav-collapse-hide-child .menu-open > .nav-treeview, .sidebar-mini-xs.sidebar-collapse .main-sidebar:not(.sidebar-no-expand):hover .nav-collapse-hide-child .menu-open > .nav-treeview {
-  max-height: -webkit-min-content;
   max-height: -moz-min-content;
   max-height: min-content;
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
 }
 
 .nav-compact .nav-link,
@@ -18720,31 +18575,22 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   .sidebar-mini.sidebar-collapse .nav-sidebar .nav-link p,
   .sidebar-mini.sidebar-collapse .brand-text {
     margin-left: -10px;
-    -webkit-animation-name: fadeOut;
-            animation-name: fadeOut;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeOut;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: hidden;
   }
   .sidebar-mini.sidebar-collapse .logo-xl {
-    -webkit-animation-name: fadeOut;
-            animation-name: fadeOut;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeOut;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: hidden;
   }
   .sidebar-mini.sidebar-collapse .logo-xs {
     display: inline-block;
-    -webkit-animation-name: fadeIn;
-            animation-name: fadeIn;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: visible;
   }
   .sidebar-mini.sidebar-collapse .main-sidebar {
@@ -18778,21 +18624,15 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   .sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused .logo-xl {
     display: inline-block;
     margin-left: 0;
-    -webkit-animation-name: fadeIn;
-            animation-name: fadeIn;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: visible;
   }
   .sidebar-mini.sidebar-collapse .main-sidebar:hover .logo-xs, .sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused .logo-xs {
-    -webkit-animation-name: fadeOut;
-            animation-name: fadeOut;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeOut;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: hidden;
   }
   .sidebar-mini.sidebar-collapse .main-sidebar:hover .brand-image, .sidebar-mini.sidebar-collapse .main-sidebar.sidebar-focused .brand-image {
@@ -18848,31 +18688,22 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   .sidebar-mini-md.sidebar-collapse .nav-sidebar .nav-link p,
   .sidebar-mini-md.sidebar-collapse .brand-text {
     margin-left: -10px;
-    -webkit-animation-name: fadeOut;
-            animation-name: fadeOut;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeOut;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: hidden;
   }
   .sidebar-mini-md.sidebar-collapse .logo-xl {
-    -webkit-animation-name: fadeOut;
-            animation-name: fadeOut;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeOut;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: hidden;
   }
   .sidebar-mini-md.sidebar-collapse .logo-xs {
     display: inline-block;
-    -webkit-animation-name: fadeIn;
-            animation-name: fadeIn;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: visible;
   }
   .sidebar-mini-md.sidebar-collapse .main-sidebar {
@@ -18906,21 +18737,15 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
   .sidebar-mini-md.sidebar-collapse .main-sidebar.sidebar-focused .logo-xl {
     display: inline-block;
     margin-left: 0;
-    -webkit-animation-name: fadeIn;
-            animation-name: fadeIn;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeIn;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: visible;
   }
   .sidebar-mini-md.sidebar-collapse .main-sidebar:hover .logo-xs, .sidebar-mini-md.sidebar-collapse .main-sidebar.sidebar-focused .logo-xs {
-    -webkit-animation-name: fadeOut;
-            animation-name: fadeOut;
-    -webkit-animation-duration: 0.3s;
-            animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
+    animation-name: fadeOut;
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
     visibility: hidden;
   }
   .sidebar-mini-md.sidebar-collapse .main-sidebar:hover .brand-image, .sidebar-mini-md.sidebar-collapse .main-sidebar.sidebar-focused .brand-image {
@@ -18975,31 +18800,22 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .sidebar-mini-xs.sidebar-collapse .nav-sidebar .nav-link p,
 .sidebar-mini-xs.sidebar-collapse .brand-text {
   margin-left: -10px;
-  -webkit-animation-name: fadeOut;
-          animation-name: fadeOut;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: hidden;
 }
 .sidebar-mini-xs.sidebar-collapse .logo-xl {
-  -webkit-animation-name: fadeOut;
-          animation-name: fadeOut;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: hidden;
 }
 .sidebar-mini-xs.sidebar-collapse .logo-xs {
   display: inline-block;
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: visible;
 }
 .sidebar-mini-xs.sidebar-collapse .main-sidebar {
@@ -19033,21 +18849,15 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .sidebar-mini-xs.sidebar-collapse .main-sidebar.sidebar-focused .logo-xl {
   display: inline-block;
   margin-left: 0;
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: visible;
 }
 .sidebar-mini-xs.sidebar-collapse .main-sidebar:hover .logo-xs, .sidebar-mini-xs.sidebar-collapse .main-sidebar.sidebar-focused .logo-xs {
-  -webkit-animation-name: fadeOut;
-          animation-name: fadeOut;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: hidden;
 }
 .sidebar-mini-xs.sidebar-collapse .main-sidebar:hover .brand-image, .sidebar-mini-xs.sidebar-collapse .main-sidebar.sidebar-focused .brand-image {
@@ -19340,24 +19150,18 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .sidebar-collapse.sidebar-mini .sidebar-no-expand.main-sidebar:hover .logo-xs, .sidebar-collapse.sidebar-mini-md .sidebar-no-expand.main-sidebar.sidebar-focused .logo-xs,
 .sidebar-collapse.sidebar-mini-md .sidebar-no-expand.main-sidebar:hover .logo-xs, .sidebar-collapse.sidebar-mini-xs .sidebar-no-expand.main-sidebar.sidebar-focused .logo-xs,
 .sidebar-collapse.sidebar-mini-xs .sidebar-no-expand.main-sidebar:hover .logo-xs {
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: visible;
 }
 .sidebar-collapse.sidebar-mini .sidebar-no-expand.main-sidebar.sidebar-focused .logo-xl,
 .sidebar-collapse.sidebar-mini .sidebar-no-expand.main-sidebar:hover .logo-xl, .sidebar-collapse.sidebar-mini-md .sidebar-no-expand.main-sidebar.sidebar-focused .logo-xl,
 .sidebar-collapse.sidebar-mini-md .sidebar-no-expand.main-sidebar:hover .logo-xl, .sidebar-collapse.sidebar-mini-xs .sidebar-no-expand.main-sidebar.sidebar-focused .logo-xl,
 .sidebar-collapse.sidebar-mini-xs .sidebar-no-expand.main-sidebar:hover .logo-xl {
-  -webkit-animation-name: fadeOut;
-          animation-name: fadeOut;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: hidden;
 }
 .sidebar-collapse.sidebar-mini .sidebar-no-expand.main-sidebar.sidebar-focused .nav-sidebar.nav-child-indent .nav-treeview,
@@ -19383,12 +19187,9 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 .sidebar-collapse.sidebar-mini-xs .sidebar-no-expand.main-sidebar:hover .user-panel > .info,
 .sidebar-collapse.sidebar-mini-xs .sidebar-no-expand.main-sidebar:hover .nav-sidebar .nav-link p {
   margin-left: -10px;
-  -webkit-animation-name: fadeOut;
-          animation-name: fadeOut;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeOut;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: hidden;
   width: 0;
 }
@@ -19660,10 +19461,8 @@ body.text-sm .control-sidebar {
 }
 
 .open:not(.dropup) > .animated-dropdown-menu {
-  -webkit-animation: flipInX 0.7s both;
-          animation: flipInX 0.7s both;
-  -webkit-backface-visibility: visible !important;
-          backface-visibility: visible !important;
+  animation: flipInX 0.7s both;
+  backface-visibility: visible !important;
 }
 
 .navbar-custom-menu > .navbar-nav > li {
@@ -31991,7 +31790,6 @@ html.maximized-card {
   background-color: #fff;
   border-bottom: 0;
   box-shadow: inset 0 1px 0 #dee2e6, inset 0 -1px 0 #dee2e6;
-  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -33843,12 +33641,9 @@ body.iframe-mode-fullscreen {
   visibility: hidden;
 }
 .content-wrapper.iframe-mode .btn-iframe-close:hover, .content-wrapper.iframe-mode .btn-iframe-close:focus {
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: visible;
 }
 @media (hover: none) and (pointer: coarse) {
@@ -33867,12 +33662,9 @@ body.iframe-mode-fullscreen {
   position: relative;
 }
 .content-wrapper.iframe-mode .navbar-nav .nav-item:hover .btn-iframe-close, .content-wrapper.iframe-mode .navbar-nav .nav-item:focus .btn-iframe-close {
-  -webkit-animation-name: fadeIn;
-          animation-name: fadeIn;
-  -webkit-animation-duration: 0.3s;
-          animation-duration: 0.3s;
-  -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
   visibility: visible;
 }
 @media (hover: none) and (pointer: coarse) {
@@ -33929,8 +33721,7 @@ body.iframe-mode-fullscreen .content-wrapper.iframe-mode {
 }
 
 .permanent-btn-iframe-close .btn-iframe-close {
-  -webkit-animation: none !important;
-          animation: none !important;
+  animation: none !important;
   visibility: visible !important;
   opacity: 1;
 }
@@ -33949,7 +33740,6 @@ body.iframe-mode-fullscreen .content-wrapper.iframe-mode {
 .content-wrapper.kanban .content .container-md,
 .content-wrapper.kanban .content .container-lg,
 .content-wrapper.kanban .content .container-xl {
-  width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
   display: flex;
@@ -48048,7 +47838,6 @@ div.border-primary a {
 
 .card {
   padding: 10px;
-  height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
 }
@@ -48105,4 +47894,25 @@ ul.custom.pagination li.active {
 
 .table-border table, .table-border td, .table-border tr {
   border: #ccc 1px solid;
+}
+
+a:focus {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.btn-lg:focus, .btn-group-lg > .btn:focus {
+  padding: 4px 12px;
+  border: #000 5px solid !important;
+  font-weight: normal;
+}
+
+.btn-md:focus {
+  padding: 1px 7px;
+  border: #000 5px solid !important;
+  font-weight: normal;
+}
+
+.teststyle {
+  background: none;
 }

@@ -1,3 +1,7 @@
+/*
+VERSION: 3.0.0
+*/
+
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito:wght@400;600;700&display=swap');
 @import "@bcgov/bc-sans/css/BCSans.css";
@@ -254,3 +258,23 @@ ul.custom.pagination li.active {
     border:#ccc 1px solid;
 }
 
+a:focus{
+    font-weight:bold;
+    text-decoration: underline;
+}
+
+.btn-lg:focus{
+    padding: 4px 12px;
+    border: #000 5px solid!important;
+    font-weight:normal;
+}
+
+.btn-md:focus{
+    padding: 1px 7px;
+    border: #000 5px solid!important;
+    font-weight:normal;
+}
+
+.teststyle{
+    background: none;
+}

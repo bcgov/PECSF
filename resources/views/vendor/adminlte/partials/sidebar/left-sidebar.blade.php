@@ -11,11 +11,11 @@
     <div class="sidebar">
 
         <div class="image text-center">
-          <img src="{{asset('img/profile-pic.png')}}" style="max-width:90px; max-height:90px" class="img-circle elevation-2 mt-4">
+          <img src="{{asset('img/profile-pic.png')}}" alt="User profile picture" style="max-width:90px; max-height:90px" class="img-circle elevation-2 mt-4">
         </div>
         <div class="info text-center mt-4 mb-5">
         <h5 class="text-light" style="font-weight:700;">Welcome back,</h5>
-          <h4  style="color:#4C81AF !important;font-weight:400;">{{ Auth::user()->name }}</h4>
+          <h4  style="color:#FFFFFF !important;font-weight:400;">{{ Auth::user()->name }}</h4>
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column {{ config('adminlte.classes_sidebar_nav', '') }}"

@@ -17,10 +17,8 @@
 @endsection
 @push('css')
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-<link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css" />
+<link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet">
+<link href="{{ asset('public/vendor/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
 
 <style>
     #selected-charity-list {
@@ -43,7 +41,7 @@
 </style>
 @endpush
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('vendor/select2/js/select2.min.js') }}" ></script>
 
     @include('donate.partials.choose-charity-js')
     <script type="x-tmpl" id="organization-tmpl">

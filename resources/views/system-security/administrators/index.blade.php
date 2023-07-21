@@ -89,9 +89,9 @@
 
 @push('css')
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css">
-<link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 <style>
@@ -124,9 +124,10 @@
 @endpush
 
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="{{ asset('vendor/select2/js/select2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
+    <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
@@ -170,10 +171,10 @@
             columns: [
                 {data: 'source_type', name: 'source_type', className: 'dt-nowrap'},
                 {data: 'name', name: 'name', className: 'dt-nowrap'},
-                {data: 'employee_email', className: 'dt-nowrap', orderable: false, searchable: false },
+                {data: 'employee_email', defaultContent: '', className: 'dt-nowrap', orderable: false, searchable: false },
                 {data: 'idir', className: 'dt-nowrap'},
-                {data: 'organization.code', name: 'organization.code', className: 'dt-nowrap'},
-                {data: 'emplid', name: 'emplid', className: 'dt-nowrap'},
+                {data: 'organization.code', name: 'organization.code', defaultContent: '', className: 'dt-nowrap'},
+                {data: 'emplid', name: 'emplid', defaultContent: '', className: 'dt-nowrap'},
                 {data: 'acctlock',  orderable: false, searchable: false, render: function ( data, type, row, meta ) {
                         icon_name = (data == 0) ? 'fa-user-check' : 'fa-user-times';
                         icon_color = (data == 0) ? 'text-primary' : 'text-danger';
