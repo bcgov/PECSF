@@ -637,8 +637,11 @@ class CampaignPledgeController extends Controller
     public function getUsers(Request $request)
     {
 
+
         if($request->ajax()) {
+
             $term = trim($request->q);
+
 
             $users = User::where('users.organization_id', $request->org_id)
                 ->when($term, function($query) use($term) { 
@@ -675,8 +678,8 @@ class CampaignPledgeController extends Controller
         } else {
             return redirect('/');
         }
-
     }    
+
 
     public function getCampaignPledgeID(Request $request) {
 

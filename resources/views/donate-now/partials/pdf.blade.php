@@ -32,6 +32,7 @@
         color:#000;
         font-size:14px;
         padding:10px;
+        text-align:left;
     }
 
     table td:first-child {
@@ -39,7 +40,7 @@
     }
 
     table td{
-        border:#ccc 1px solid;
+
         padding-left:8px;
     }
 
@@ -54,27 +55,29 @@
         font-weight:normal;
     }
 
-    *{
-        font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
-    }
+
 </style>
 
 <div class="header">
-    <img src="img/brand/1.png"/>
-    <img style="width:100px;float:right;" src="img/brand/5.png"/><br>
-    <div style="float:right;font-weight:bold;font-size:18px;" >PECSF Donation Summary</div>
+    <img  src="img/brand/1.png"/>
+    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
     <div class="clear"></div>
 </div>
 <br>
 <hr>
+<h4 style="text-align:center;width:100%;">PECSF Donate Now Summary</h4>
 
-<span>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August, for payroll deductions from January - June, and in March, for payroll deductions from July - December.</span>
+
+<span><i>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August, for payroll deductions from January - June, and in March, for payroll deductions from July - December.</i></span>
+
 
 <div class="container">
 
     <div class="row">
         <div class="col-12 col-sm-7">
-            <h3 class="mt-5">{{ $date }}</h3>
+            <h5>Date @php
+                    echo date("d-m-Y",time());
+                @endphp</h5>
             <div class="card bg-light p-3">
                 <h3 class="card-title">Deductions</h3>
                 <hr>
@@ -84,11 +87,10 @@
                         {{-- <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span> --}}
                         <span class="float-right">${{ number_format($one_time_amount ,2) }}</span>
                         <hr>
-                        <p class="text-right"><b>Total :</b> ${{ number_format($one_time_amount ,2) }}</p>
+
                     </div>
                 </div>
 
-                <p class="mt-4"><h3>Disbursement</h3></p>
                 @foreach(['one-time'] as $key)
                     @php $viewMode = 'pdf'; @endphp
                     @if($key === 'one-time')
