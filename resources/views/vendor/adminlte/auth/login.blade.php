@@ -42,7 +42,7 @@
 
     <div id="idir-login" style="{{  $errors->has('email')  ? 'display:none;' : '' }}" >
         <div class="text-center py-3">
-                <h1 class="font-weight-bold">Log in to start your session<h1>
+                <h3 class="font-weight-bold">Log in to start your session<h1>
                     <p class="my-4 ">
                         <form action="{{ '/login/keycloak' }}" method="get">
                             @csrf
@@ -53,8 +53,8 @@
         <div class="py-2 border-top">
             <div class="pt-4 h6 font-weight-bold">Need Help?</div>
             <div class="">Contact your IDIR security administrator or the 7-7000 Service Desk at:</div>
-            <div class="pt-2">Phone: <a href="tel:0612345678">250-387-7000</a></div>
-            <div>Email: <a href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
+            <div class="pt-2">Phone: <a style="text-decoration:underline;" href="tel:0612345678">250-387-7000</a></div>
+            <div>Email: <a style="text-decoration:underline;" href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
 
             {{-- @if (!str_contains(Request::url(), 'pecsf-test.apps.silver.devops.gov.bc.ca'))   --}}
             @if ((Request::is('admin/login')) || (in_array(env('APP_ENV'), ['dev', 'local'])))
@@ -67,7 +67,7 @@
 
     <div id="admin-login" style="{{  Session::get('error-psft') || $has_admin_error == false ? 'display:none;' : '' }}">
         <div class="text-center py-3">
-            <h1 class="font-weight-bold">Log in to start your session</h1>
+            <h3 class="font-weight-bold">Log in to start your session</h3>
         </div>
 
         <form action="{{ $login_url }}" method="post">

@@ -113,13 +113,13 @@
             <div class="col-md-4 mb-4">
                 <label for="pecsf_bu">Business Unit</label>
                 <input type="text" class="form-control border-0" id="pecsf_bu" name="pecsf_bu"
-                    value="{{ (isset($pledge) && $pledge->pecsf_user_bu() ) ? $pledge->pecsf_user_bu()->name . ' (' . $pledge->pecsf_user_bu()->code . ')' : '' }}"
+                    value="{{ (isset($pledge) && $pledge->pecsf_user_bu ) ? $pledge->pecsf_user_bu->name . ' (' . $pledge->pecsf_user_bu->code . ')' : '' }}"
                     readonly>
             </div>
             <div class="col-md-4 mb-4">
                 <label for="pecsf_region">Region</label>
                 <input type="text" class="form-control border-0" id="pecsf_region" name="pecsf_region"
-                    value="{{ (isset($pledge) && $pledge->pecsf_user_region() ) ? $pledge->pecsf_user_region()->name . ' (' . $pledge->pecsf_user_region()->code . ')' : '' }}"
+                    value="{{ (isset($pledge) && $pledge->pecsf_user_region ) ? $pledge->pecsf_user_region->name . ' (' . $pledge->pecsf_user_region->code . ')' : '' }}"
                     readonly>
             </div>
         </div>

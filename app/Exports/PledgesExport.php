@@ -80,7 +80,9 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                         'Subtype',
                         'Created At',
                         'Updated At',
-                        'Amount',
+                        'One-Time Amount',
+                        'Bi-Weekly Amount',
+                        'Total Amount',
                     ],
                 ];
     }
@@ -109,6 +111,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
             $employee->sub_type,
             $employee->created_at,
             $employee->updated_at,
+            $employee->one_time_amount,
+            $employee->biweekly_amount,
             $employee->amount,
         ];
     }
@@ -187,7 +191,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
         PledgeStaging::insertUsing([
                 'history_id','pledge_type','pledge_id','calendar_year','organization_code','emplid','pecsf_id',
                 'name','business_unit_code','tgb_reg_district','deptid','dept_name','city',
-                'type','sub_type','pool_type','region_id','pledge','amount',
+                'type','sub_type','pool_type','region_id','pledge','one_time_amount', 'biweekly_amount', 'amount',
                 'created_by_id','created_at','updated_at',
         ],
 
@@ -200,8 +204,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                     THEN employee_jobs.name
                                     ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
                             END as name
-                            ,employee_jobs.business_unit as business_unit_code
-                            ,employee_jobs.tgb_reg_district
+                            ,pledges.business_unit  
+                            ,pledges.tgb_reg_district
                             ,employee_jobs.deptid
                             ,employee_jobs.dept_name
                             ,CASE WHEN organizations.code = 'GOV'
@@ -213,7 +217,9 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                             ,pledges.type  AS pool_type
                             ,pledges.region_id
                             ,pledges.pay_period_amount AS pledge
-                            ,pledges.goal_amount - one_time_amount
+                            ,pledges.one_time_amount 
+                            ,pledges.goal_amount - pledges.one_time_amount
+                            ,pledges.goal_amount
                             ,pledges.created_by_id
                             ,pledges.created_at
                             ,pledges.updated_at
@@ -229,7 +235,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                     })
                     ->orWhereNull('employee_jobs.empl_rcd');
             })
-            ->where('pledges.pay_period_amount', '<>', 0)
+            // ->where('pledges.pay_period_amount', '<>', 0)
             ->whereNull('pledges.deleted_at')
             ->when( $filters['year'], function($query) use($filters) {
                 $query->where('campaign_years.calendar_year', $filters['year']);
@@ -238,63 +244,63 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
         );
 
         // Step 2 -- Annual One-Time
-        PledgeStaging::insertUsing([
-            'history_id','pledge_type','pledge_id','calendar_year','organization_code','emplid','pecsf_id',
-            'name','business_unit_code','tgb_reg_district','deptid','dept_name','city',
-            'type','sub_type','pool_type','region_id','pledge','amount',
-            'created_by_id','created_at','updated_at',
-        ],
-            Pledge::selectRaw(" ?, 'Annual', pledges.id
-                            ,campaign_years.calendar_year
-                            ,organizations.code as organization_code
-                            ,pledges.emplid
-                            ,pledges.pecsf_id
-                            ,CASE WHEN organizations.code = 'GOV'
-                                    THEN employee_jobs.name
-                                    ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
-                            END as name
-                            ,employee_jobs.business_unit as business_unit_code
-                            ,employee_jobs.tgb_reg_district
-                            ,employee_jobs.deptid
-                            ,employee_jobs.dept_name
-                            ,CASE WHEN organizations.code = 'GOV'
-                                    THEN employee_jobs.office_city
-                                    ELSE pledges.city
-                            END as city
-                            ,'Pledge'  AS type
-                            ,'One-Time'  AS sub_type
-                            ,pledges.type  AS pool_type
-                            ,pledges.region_id
-                            ,pledges.one_time_amount 
-                            ,pledges.one_time_amount 
-                            ,pledges.created_by_id
-                            ,pledges.created_at
-                            ,pledges.updated_at
-                    ", [ $this->history_id] )
-            ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
-            ->join('organizations', 'organizations.id', 'pledges.organization_id')
-            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
-            ->where( function($query) {
-                $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                        $q->from('employee_jobs as J2') 
-                            ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-                            ->selectRaw('min(J2.empl_rcd)');
-                    })
-                    ->orWhereNull('employee_jobs.empl_rcd');
-            })
-            ->where('pledges.one_time_amount', '<>', 0)
-            ->whereNull('pledges.deleted_at')
-            ->when( $filters['year'], function($query) use($filters) {
-                $query->where('campaign_years.calendar_year', $filters['year']);
-            })
+        // PledgeStaging::insertUsing([
+        //     'history_id','pledge_type','pledge_id','calendar_year','organization_code','emplid','pecsf_id',
+        //     'name','business_unit_code','tgb_reg_district','deptid','dept_name','city',
+        //     'type','sub_type','pool_type','region_id','pledge','amount',
+        //     'created_by_id','created_at','updated_at',
+        // ],
+        //     Pledge::selectRaw(" ?, 'Annual', pledges.id
+        //                     ,campaign_years.calendar_year
+        //                     ,organizations.code as organization_code
+        //                     ,pledges.emplid
+        //                     ,pledges.pecsf_id
+        //                     ,CASE WHEN organizations.code = 'GOV'
+        //                             THEN employee_jobs.name
+        //                             ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
+        //                     END as name
+        //                     ,pledges.business_unit  
+        //                     ,pledges.tgb_reg_district
+        //                     ,employee_jobs.deptid
+        //                     ,employee_jobs.dept_name
+        //                     ,CASE WHEN organizations.code = 'GOV'
+        //                             THEN employee_jobs.office_city
+        //                             ELSE pledges.city
+        //                     END as city
+        //                     ,'Pledge'  AS type
+        //                     ,'One-Time'  AS sub_type
+        //                     ,pledges.type  AS pool_type
+        //                     ,pledges.region_id
+        //                     ,pledges.one_time_amount 
+        //                     ,pledges.one_time_amount 
+        //                     ,pledges.created_by_id
+        //                     ,pledges.created_at
+        //                     ,pledges.updated_at
+        //             ", [ $this->history_id] )
+        //     ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
+        //     ->join('organizations', 'organizations.id', 'pledges.organization_id')
+        //     ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
+        //     ->where( function($query) {
+        //         $query->where('employee_jobs.empl_rcd', '=', function($q) {
+        //                 $q->from('employee_jobs as J2') 
+        //                     ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+        //                     ->selectRaw('min(J2.empl_rcd)');
+        //             })
+        //             ->orWhereNull('employee_jobs.empl_rcd');
+        //     })
+        //     ->where('pledges.one_time_amount', '<>', 0)
+        //     ->whereNull('pledges.deleted_at')
+        //     ->when( $filters['year'], function($query) use($filters) {
+        //         $query->where('campaign_years.calendar_year', $filters['year']);
+        //     })
 
-        );
+        // );
 
         // Step 3 -- Event 
         PledgeStaging::insertUsing([
             'history_id','pledge_type','pledge_id','calendar_year','organization_code','emplid','pecsf_id',
             'name','business_unit_code','tgb_reg_district','deptid','dept_name','city',
-            'type','sub_type','pool_type','region_id','pledge','amount',
+            'type','sub_type','pool_type','region_id','pledge','one_time_amount', 'biweekly_amount', 'amount',
             'created_by_id','created_at','updated_at',
         ],
 
@@ -307,10 +313,16 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                                 THEN employee_jobs.name
                                 ELSE ''
                             END
-                            ,employee_jobs.business_unit
+                            ,(select code from business_units where id = bank_deposit_forms.business_unit limit 1)
                             ,regions.code
-                            ,employee_jobs.deptid
-                            ,employee_jobs.dept_name
+                            ,CASE WHEN organization_code = 'GOV' 
+                                THEN employee_jobs.deptid
+                                ELSE null
+                            END
+                            ,CASE WHEN organization_code = 'GOV'  
+                                THEN employee_jobs.dept_name
+                                ELSE null
+                            END
                             ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
                                 THEN employee_jobs.office_city
                                 ELSE bank_deposit_forms.address_city
@@ -323,6 +335,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                             END                             
                             ,regions.id                              
                             ,bank_deposit_forms.deposit_amount
+                            ,bank_deposit_forms.deposit_amount
+                            ,0.0
                             ,bank_deposit_forms.deposit_amount
                             ,bank_deposit_forms.form_submitter_id      
                             ,bank_deposit_forms.created_at

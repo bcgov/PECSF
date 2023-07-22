@@ -5,7 +5,9 @@
     </div>
 @endsection
 @section('content')
+
     <div class="content p-5">
+
     @if($is_registered && $show)
         <div class="modal fade" id="edit-event-modal">
             <div class="modal-dialog modal-lg">
@@ -469,6 +471,7 @@
 @push('js')
 
 <script>
+
 
     $('.save-btn').on('click', function (e) {
         e.preventDefault();
