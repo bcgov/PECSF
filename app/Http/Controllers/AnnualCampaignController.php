@@ -40,7 +40,7 @@ class AnnualCampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {  
         return redirect()->route('annual-campaign.create');
     }
 
@@ -376,6 +376,12 @@ class AnnualCampaignController extends Controller
         $organization = Organization::where('code', 'GOV')->first();
         $pool = FSPool::where('id', $request->regional_pool_id)->first();
 
+        $old_pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id)
+                            ->where('emplid', $user->emplid)
+                            ->where('campaign_year_id', $request->campaign_year_id)
+                            ->first();
+        $created_by_id = $old_pledge ? $old_pledge->created_by_id :  Auth::id();                           
+
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
             // 'user_id' => Auth::id(),
@@ -390,13 +396,9 @@ class AnnualCampaignController extends Controller
             'pay_period_amount' => $input['annualBiWeeklyAmount'] / $number_of_periods,
             'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount']
                                  : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ),
+            'created_by_id' => $created_by_id,
             'updated_by_id' => Auth::id(),
         ]);
-
-        if (!$pledge->created_by_id) {
-            $pledge->created_by_id = Auth::id();
-            $pledge->save();
-        }
 
         // $pledge->charities()->delete();
         foreach ($pledge->charities as $pledge_charity) {

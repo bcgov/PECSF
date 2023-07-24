@@ -55,6 +55,7 @@ class User extends Authenticatable implements Auditable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_signon_at' => 'datetime',
     ];
 
     // Static function for gettig the list of status
