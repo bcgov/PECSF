@@ -29,7 +29,7 @@ class CampaignPledgeController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:setting');
+         $this->middleware('permission:setting', ['except' => ['getNonGovUserDetail']]);
     }
 
     /**
@@ -281,6 +281,19 @@ class CampaignPledgeController extends Controller
         } else {
             // Create a new Pledge
 
+            if ($is_GOV) {
+                $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
+                // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+                $office_city = $user->primary_job ? $user->primary_job->office_city : null;
+                $city = City::where('city', trim( $office_city )  )->first();
+                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+            } else {
+                $org = Organization::where('id', $request->organization_id)->first();
+                $business_unit = $org ? $org->bu_code : null;
+                $city = City::where('city', trim($request->pecsf_city) )->first();
+                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+            }
+
             $pledge = Pledge::Create([
                 'organization_id' => $request->organization_id,
                 'emplid' =>     $is_GOV ? $user->emplid : null,
@@ -290,6 +303,9 @@ class CampaignPledgeController extends Controller
                 "first_name" => $is_GOV ? null : $request->pecsf_first_name,
                 "last_name" =>  $is_GOV ? null : $request->pecsf_last_name,
                 "city" =>       $is_GOV ? null : $request->pecsf_city,
+
+                'business_unit' => $business_unit,
+                'tgb_reg_district' => $tgb_reg_district,
 
                 'campaign_year_id' => $request->campaign_year_id,
                 'type' => $request->pool_option,
@@ -497,6 +513,15 @@ class CampaignPledgeController extends Controller
             $pledge->first_name = $request->pecsf_first_name;
             $pledge->last_name  = $request->pecsf_last_name;
             $pledge->city       = $request->pecsf_city;
+
+            $org = Organization::where('id', $request->organization_id)->first();
+            $business_unit = $org ? $org->bu_code : null;
+            $city = City::where('city', trim($request->pecsf_city) )->first();
+            $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+
+            $pledge->business_unit = $business_unit;
+            $pledge->tgb_reg_district = $tgb_reg_district;
+
         }
 
         $pool = FSPool::where('id', $request->pool_id)->first();
@@ -644,7 +669,7 @@ class CampaignPledgeController extends Controller
 
 
             $users = User::where('users.organization_id', $request->org_id)
-                ->when($term, function($query) use($term) { 
+                ->when($term, function($query) use($term) {
                     return $query->where( function($q) use($term) {
                         $q->whereRaw( "lower(users.name) like '%".$term."%'")
                         //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
@@ -652,24 +677,28 @@ class CampaignPledgeController extends Controller
                 });
                 })
                 ->with('primary_job')
-                ->with('primary_job.region') 
-                ->with('primary_job.bus_unit') 
+                ->with('primary_job.region')
+                ->with('primary_job.bus_unit')
+            ->with('primary_job.city_by_office_city.region')
                 ->limit(50)
                 ->orderby('users.name','asc')
                 ->get();
 
             $formatted_users = [];
             foreach ($users as $user) {
-                $formatted_users[] = ['id' => $user->id, 
+                $formatted_users[] = ['id' => $user->id,
                         'text' => $user->name . ' ('. $user->emplid .')',
-                        'email' =>  $user->primary_job->email, 
-                        'emplid' => $user->emplid,  
-                        'first_name' =>  $user->primary_job->first_name ?? '', 
-                        'last_name' =>  $user->primary_job->last_name ?? '', 
-                        'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',               
-                        'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',                                        
-                        'region' => $user->primary_job->region->name ? $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')' : '',                    
+
+                        'email' =>  $user->primary_job->email,
+                        'emplid' => $user->emplid,
+                        'first_name' =>  $user->primary_job->first_name ?? '',
+                        'last_name' =>  $user->primary_job->last_name ?? '',
+                        'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',
+                        'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',
+                        'region' => $user->primary_job->city_by_office_city ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',
+
                         'organization' => $user->primary_job->organization_name ?? '',
+                    'office_city' => $user->primary_job->office_city ?? '',
                 ];
             }
 
@@ -678,7 +707,7 @@ class CampaignPledgeController extends Controller
         } else {
             return redirect('/');
         }
-    }    
+    }
 
 
     public function getCampaignPledgeID(Request $request) {

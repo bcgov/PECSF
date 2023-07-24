@@ -4,7 +4,7 @@
     @if(str_contains(Route::current()->getName(), 'donate-now'))
         <h3>2. Choose your regional fund supported pool></h3>
     @else
-        <h3>2. Select your regional charity pool</h3>
+        <h3>2. Select your regional charity pool (up to 10)</h3>
     @endif
     <div class="card p-0 pl-2 bg-primary">
         <div class="card-body bg-light">
@@ -163,7 +163,7 @@ $(function () {
                 }
             })
 
-            
+
         }
     });
 
