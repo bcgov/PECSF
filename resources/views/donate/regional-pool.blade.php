@@ -1,7 +1,7 @@
 @extends('donate.layout.main')
 
 @section ("step-content")
-<h3 class="mt-5">2. Select your regional charity pool</h3>
+<h3 class="mt-5">2. Select your regional charity pool (up to 10)</h3>
 <div>
     {{-- <p class="p-1"></p> --}}
     {{-- <div class="card mx-3 pl-3 bg-primary">

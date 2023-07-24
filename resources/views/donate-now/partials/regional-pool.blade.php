@@ -5,6 +5,7 @@
     @else
         <h3>2. Select your regional charity pool</h3>
     @endif
+        <p class="p-1"></p>
 </h3>
 <div>
     <p class="p-1"></p>
@@ -15,7 +16,7 @@
           {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
         </div>
     </div>
-    <p class="p-1"></p>
+
     @if($errors->any())
         <div class="alert alert-warning">
             @foreach (array_unique($errors->all()) as $error)

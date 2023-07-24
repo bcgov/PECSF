@@ -518,7 +518,7 @@ class CampaignPledgeController extends Controller
             $business_unit = $org ? $org->bu_code : null;
             $city = City::where('city', trim($request->pecsf_city) )->first();
             $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
-            
+
             $pledge->business_unit = $business_unit;
             $pledge->tgb_reg_district = $tgb_reg_district;
 
@@ -667,13 +667,14 @@ class CampaignPledgeController extends Controller
 
             $term = trim($request->q);
 
+
             $users = User::where('users.organization_id', $request->org_id)
-                 ->when($term, function($query) use($term) {
+                ->when($term, function($query) use($term) {
                     return $query->where( function($q) use($term) {
-                          $q->whereRaw( "lower(users.name) like '%".$term."%'")
-                           //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
+                        $q->whereRaw( "lower(users.name) like '%".$term."%'")
+                        //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
                             ->orWhere( "users.emplid", 'like', '%'.$term.'%');
-                   });
+                });
                 })
                 ->with('primary_job')
                 ->with('primary_job.region')
@@ -683,10 +684,11 @@ class CampaignPledgeController extends Controller
                 ->orderby('users.name','asc')
                 ->get();
 
-             $formatted_users = [];
-             foreach ($users as $user) {
+            $formatted_users = [];
+            foreach ($users as $user) {
                 $formatted_users[] = ['id' => $user->id,
                         'text' => $user->name . ' ('. $user->emplid .')',
+
                         'email' =>  $user->primary_job->email,
                         'emplid' => $user->emplid,
                         'first_name' =>  $user->primary_job->first_name ?? '',
@@ -694,17 +696,19 @@ class CampaignPledgeController extends Controller
                         'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',
                         'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',
                         'region' => $user->primary_job->city_by_office_city ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',
+
                         'organization' => $user->primary_job->organization_name ?? '',
                     'office_city' => $user->primary_job->office_city ?? '',
                 ];
             }
+
             return response()->json($formatted_users);
 
         } else {
             return redirect('/');
         }
-
     }
+
 
     public function getCampaignPledgeID(Request $request) {
 

@@ -42,14 +42,12 @@
         {{-- <h4 class="blue" style="padding-left:8px;">Search Results</h4> --}}
         @include("volunteering.partials.organizations")
     </div>
-    <div class="col-md-3"></div>
-        <br>
-        <br>
 
 
     <div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
 
-        <h4 class="blue" style="padding-left:5px;">Your Charities</h4>
+        <h4 class="blue" style="padding-left: 25px;
+    padding-top: 20px;">Your Charities</h4>
     {{-- <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i>
          Please select a maximum of 10 charities</div> --}}
         <div class="min-charities-error mx-2"></div>
@@ -58,8 +56,8 @@
         <div id="selectedcountresults" class="float-right mr-2 text-secondary font-weight-bold"
             style="display:none;">0 item(s) selected
         </div>
-        <h5 style="width:100%;text-align:center;"
-            id="noselectedresults" class="align-content-center">You have not chosen any charities</h5>
+        <h3 style="width:100%;text-align:center;"
+            id="noselectedresults" class="align-content-center">You have not chosen any charities</h3>
         <span class="charity_errors errors"></span>
 
         {{-- @if(count($selected_charities) > 0) --}}
