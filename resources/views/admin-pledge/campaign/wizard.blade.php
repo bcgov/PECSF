@@ -529,6 +529,7 @@ $(function () {
         $('#user_dept').val('');
         $('#user_bu').val('');
         $('#user_org').val('');
+        $('#user_office_city').val('');
         $('#user_region').val('');
     }
 
@@ -604,6 +605,7 @@ $(function () {
             $('#user_dept').val( data.department );
             $('#user_bu').val( data.business_unit );
             $('#user_org').val( data.organization);
+            $('#user_office_city').val( data.office_city);
             $('#user_region').val(data.region);
         }
     });

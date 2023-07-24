@@ -177,6 +177,12 @@
                     value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->organization_name : '' }}"
                     disabled>
             </div>
+            <div class="col-md-4 mb-3">
+                <label for="user_office_city">Office City</label>
+                <input type="text" class="form-control border-0" id="user_office_city"
+                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->office_city : '' }}"
+                    disabled>
+            </div>
         </div>
 
     </div>

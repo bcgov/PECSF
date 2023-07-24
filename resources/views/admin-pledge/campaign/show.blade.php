@@ -72,6 +72,10 @@
                         <label for="user_org">Organization</label>
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->organization }}" disabled>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_office_city">Office City</label>
+                        <input type="text" class="form-control" value="{{ $pledge->user->primary_job->office_city  }}" disabled>
+                    </div>
                 </div>
             @else
                 <div class="form-row">
