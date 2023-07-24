@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
 use App\Models\Charity;
+use App\Models\City;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
@@ -376,6 +377,12 @@ class AnnualCampaignController extends Controller
         $organization = Organization::where('code', 'GOV')->first();
         $pool = FSPool::where('id', $request->regional_pool_id)->first();
 
+        $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
+        // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+        $office_city = $user->primary_job ? $user->primary_job->office_city : null;
+        $city = City::where('city', trim( $office_city )  )->first();
+        $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
             // 'user_id' => Auth::id(),
@@ -383,6 +390,10 @@ class AnnualCampaignController extends Controller
             'campaign_year_id' => $request->campaign_year_id,
         ],[
             'user_id' => Auth::id(),
+
+            'business_unit' => $business_unit,
+            'tgb_reg_district' => $tgb_reg_district,
+
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
