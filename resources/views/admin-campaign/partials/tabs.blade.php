@@ -62,7 +62,9 @@
     <li class="nav-item dropdown">
         @php $active =  ( str_contains(Route::current()->getName(), 'settings.business-units') ||
                           str_contains(Route::current()->getName(), 'settings.organizations') ||
-                          str_contains(Route::current()->getName(), 'settings.regions')
+                          str_contains(Route::current()->getName(), 'settings.regions') ||
+                          str_contains(Route::current()->getName(), 'settings.cites') ||
+                          str_contains(Route::current()->getName(), 'settings.pay-calendars') 
                         ) ? 'active' : ''
         @endphp
         <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Foundation Tables</a>
@@ -73,6 +75,9 @@
                 href="{{ route('settings.organizations.index') }}">Organization</a>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.regions') ? 'active' : ''}}"
                 href="{{ route('settings.regions.index') }}">Regions</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.cities') ? 'active' : ''}}"
+            href="{{ route('settings.cities.index') }}">Cities</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.pay-calendars') ? 'active' : ''}}"
             href="{{ route('settings.pay-calendars.index') }}">Pay Calendars</a>
