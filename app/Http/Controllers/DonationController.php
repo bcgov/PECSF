@@ -165,7 +165,7 @@ class DonationController extends Controller {
                 else if($pledge->model == "donate_now_pledges"){
                     if(!empty(DonateNowPledge::where("id","=",$pledge->id)->first()))
                     {
-                        $pledges_by_yearcd[$yearcd][$index]->charities = DonateNowPledge::where("id","=",$pledge->id)->first()->charity;
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
                     }
                     else
                     {
@@ -175,7 +175,7 @@ class DonationController extends Controller {
                 else if($pledge->model == "special_campaign_pledges"){
                     if(!empty(SpecialCampaignPledge::where("id","=",$pledge->id)->first()))
                     {
-                        $pledges_by_yearcd[$yearcd][$index]->charities = SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization;
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization];
                     }
                     else
                     {
@@ -197,7 +197,7 @@ class DonationController extends Controller {
                 {
                     if(!empty(PledgeHistory::where("id","=",$pledge->id)->first()))
                     {
-                        $pledges_by_yearcd[$yearcd][$index]->charities = PledgeHistory::where("id","=",$pledge->id)->first()->charity;
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [PledgeHistory::where("id","=",$pledge->id)->first()->charity];
                     }
                     else
                     {
