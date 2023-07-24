@@ -197,7 +197,15 @@ class DonationController extends Controller {
                 {
                     if(!empty(PledgeHistory::where("id","=",$pledge->id)->first()))
                     {
-                        $pledges_by_yearcd[$yearcd][$index]->charities = [PledgeHistory::where("id","=",$pledge->id)->first()->charity];
+                        $pledges_by_yearcd[$yearcd][$index]->charities = PledgeHistory::where('emplid', $pledge->emplid)
+                            ->where('campaign_type', $pledge->donation_type)
+                            ->where('yearcd', $pledge->yearcd)
+                            ->where('frequency', $pledge->frequency)
+                            ->when( $pledge->donation_type == 'Donate Today', function($query) use($pledge) {
+                                return $query->where('id', $pledge->id);
+                            })
+                            ->orderBy('name1')
+                            ->get();;
                     }
                     else
                     {
