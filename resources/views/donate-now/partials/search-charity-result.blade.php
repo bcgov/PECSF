@@ -1,8 +1,8 @@
-<h4 class="blue" style="padding-left:8px;">Search Results</h4>
+<h4 style="padding-left:8px;">Search Results</h4>
 @if($charities)
-    <h5 id="charity_count" class="noresults pl-2" style="width:100%;text-align:left;">{{$charities->total()}} results</h5>
+    <p id="charity_count" class="noresults pl-2" style="width:100%;text-align:left;"><b>{{$charities->total()}} results</b></p>
 @else
-    <h5 id="charity_count" class="noresults pl-2" style="width:100%;text-align:center" class="align-content-center">No results</h5>
+    <h3 id="charity_count" class="noresults pl-2" style="width:100%;text-align:center" class="align-content-center">No results</h3>
 @endif
 
 <table id="charities">

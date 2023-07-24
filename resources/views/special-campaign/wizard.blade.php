@@ -9,9 +9,9 @@
     <div class="row">
         <div class="col-9 col-sm-9">
             <h1>Donate to a special campaign</h1>
-            <p class="text-muted">When you give through PECSF 100% of your donated dollars goes to the organizations you choose to support.</p>
+            <p class="text-muted">When you give through PECSF 100% of your donated dollars goes to the organizations you<br>choose to support.</p>
 
-            
+
             {{-- Main Content --}}
             <div class="pb-4">
 
@@ -31,12 +31,12 @@
                         </ul>
                     </div>
                 </div>
-            
+
             <div id="error-message" class="m-4 p-3 alert alert-warning" style="display:none"></div>
 
 
               <div class="card-body py-0">
-                <form action="{{ isset($pledge) ? route("special-campaign.update", $pledge->id) : route("special-campaign.store") }}" 
+                <form action="{{ isset($pledge) ? route("special-campaign.update", $pledge->id) : route("special-campaign.store") }}"
                         id="special-campaign-pledge-form" method="POST">
                     @csrf
                     @isset($pledge)
@@ -45,7 +45,7 @@
                     @endisset
                     <input type="hidden" id="step" name="step" value="">
                     <input type="hidden" id="yearcd" name="yearcd" value="{{ $yearcd }}">
-                    
+
                     {{-- Nav Items --}}
                     <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
                         <li class="nav-item ">
@@ -54,11 +54,11 @@
                         <li class="nav-item">
                             <a class="nav-link" id="nav-amount-tab" data-toggle="tab" href="#nav-amount" data-id="2" role="tab" aria-controls="nav-amount" aria-selected="false">Amount</a>
                         </li>
-                        <li class="nav-item">  
+                        <li class="nav-item">
                           <a class=" nav-link " id="nav-summary-tab" data-toggle="tab" href="#nav-summary" data-id="3" role="tab" aria-controls="nav-summary" aria-selected="false">Summary</a>
                         </li>
                     </ul>
-                
+
                     <div class="tab-content pb-3 px-1" id="nav-tabContent">
                         <div class="tab-pane fade step show active" id="nav-in-support-of" role="tabpanel" aria-labelledby="nav-in-support-of-tab">
                             {{-- Step 1 --}}
@@ -72,7 +72,7 @@
                         <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
                             {{-- Step 2 --}}
                             @include('special-campaign.partials.amount')
-            
+
                         </div>
                         <div class="tab-pane fade step" id="nav-summary" role="tabpanel" aria-labelledby="nav-summary-tab">
                             <div id="summary-page">
@@ -80,8 +80,8 @@
                             </div>
                         </div>
                     </div>
-            
-            
+
+
                     <div class="p-2 ">
                         <button type="button" class="action cancel btn btn-lg btn-outline-secondary"
                             onclick="window.location='{{ route('donations.list') }}'"
@@ -149,7 +149,7 @@
     font-weight: 400;
     color: #b2b2b2;
     text-align: center;
-    z-index: 100; 
+    z-index: 100;
 }
 
 .bs4-step-tracking li:first-child:before {
@@ -165,7 +165,7 @@
 }
 
 .bs4-step-tracking li> div {
-    color: #fff; 
+    color: #fff;
     width: 38px;
     text-align: center;
     line-height: 38px;
@@ -186,7 +186,7 @@
     right: 0%;
     top: 20px;
     /* z-index: -1; */
-     z-index: -2; 
+     z-index: -2;
 }
 
 .bs4-step-tracking li:first-child:after {
@@ -231,7 +231,7 @@
     .summary-card .form-control[disabled] {
         border: 0;
         background-color: rgb(252, 252, 252) ;
-    } 
+    }
 
     .amount-selection input[type=radio] {
         width: 18px;
@@ -271,7 +271,7 @@ $(function () {
 
     $('#special-campaign-pledge-form').on('keyup keypress', function(e) {
         var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) { 
+        if (keyCode === 13) {
             e.preventDefault();
             return false;
         }
@@ -280,7 +280,7 @@ $(function () {
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
     var submit_count = 0;
-   
+
     $(".next").on("click", function() {
         var nextstep = false;
         if (step == 1) {
@@ -327,11 +327,11 @@ $(function () {
         //     .css("width", percent + "%")
         //     .html(percent + "%");
         //
-        $('.bs4-step-tracking li').map( function (index, item) { 
+        $('.bs4-step-tracking li').map( function (index, item) {
             if (index < currstep) {
-                $(item).addClass('active');   
+                $(item).addClass('active');
             } else {
-                $(item).removeClass('active');   
+                $(item).removeClass('active');
             }
         });
     };
@@ -370,9 +370,9 @@ $(function () {
     // Validation when click on 'next' button
     function checkForm() {
 
-        // reset submission count 
+        // reset submission count
         submit_count = 0;
-        
+
         var valid = true;
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
@@ -383,7 +383,7 @@ $(function () {
                 fields = ['special_campaign'];  // pool_id', 'charity_id', 'special_program'];
             }
             if (step == 2) {
-                fields = ['one_time_amount', 'one_time_amount_custom'];                
+                fields = ['one_time_amount', 'one_time_amount_custom'];
             }
 
             $.each( fields, function( index, field_name ) {
@@ -399,24 +399,24 @@ $(function () {
 
             $.ajax({
                 method: "POST",
-                url:  '{{ route("special-campaign.store") }}', 
-                //data: form.serialize(), 
+                url:  '{{ route("special-campaign.store") }}',
+                //data: form.serialize(),
                 data: form.find(':not(input[name=_method])').serialize(),  // serializes the form's elements exclude _method.
                 async: false,
                 cache: false,
                 timeout: 30000,
                 success: function(data)
                 {
-                    // console.log(data ); 
+                    // console.log(data );
                     if (step == 2)  {
-                            $('#summary-page').html(data); 
+                            $('#summary-page').html(data);
                     }
 
                 },
                 error: function(response) {
                     valid = false;
-                    if (response.status == 422) {   
-                        
+                    if (response.status == 422) {
+
                         // $('#error-message').html( response.responseJSON.errors );
                         // $('#error-message').html('');
                         // $.each(response.responseJSON.errors, function( field_name, error){
@@ -425,7 +425,7 @@ $(function () {
                         // $('#error-message').show();
                         // $("html, body").animate({ scrollTop: 0 }, 500);
                         $.each(response.responseJSON.errors, function(field_name,error){
-                            if ( field_name.includes('.') ) {   
+                            if ( field_name.includes('.') ) {
                                 items = field_name.split(".");
                                 pos = Number(items[ items.length -1 ]);
                                 $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
@@ -445,16 +445,16 @@ $(function () {
 
     // On page 1 - Select Special Campaign
 
-    // On Page 2 -- Amount  
+    // On Page 2 -- Amount
 
     // On Page 3 -- summary (handle single submission only )
     $('#special-campaign-pledge-form').on('submit', function () {
-        $("#special-campaign-pledge-form button[type='submit']").attr('disabled', 'true'); 
+        $("#special-campaign-pledge-form button[type='submit']").attr('disabled', 'true');
         $("#special-campaign-pledge-form button[type='submit']").html('Pledge submitted');
     });
 
     // $(document).on("click", "button[type='submit']", function(e) {
-        
+
     //     // this.disabled = true;
     //     $("#special-campaign-pledge-form").submit(function(e){
     //         if(submit_count > 0){
@@ -462,7 +462,7 @@ $(function () {
     //         }
     //         submit_count++;
     //     });
-    // });        
+    // });
 
 });
 
