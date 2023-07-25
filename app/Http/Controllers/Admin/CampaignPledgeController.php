@@ -285,7 +285,7 @@ class CampaignPledgeController extends Controller
                 $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
                 // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
                 $city = City::where('city', trim( $request->user_office_city )  )->first();
-                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : $user->primary_job->tgb_reg_district;
             } else {
                 $org = Organization::where('id', $request->organization_id)->first();
                 $business_unit = $org ? $org->bu_code : null;
@@ -685,6 +685,12 @@ class CampaignPledgeController extends Controller
 
             $formatted_users = [];
             foreach ($users as $user) {
+
+                $region = $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')';
+                if ($user->primary_job->city_by_office_city->city != '') {
+                    $region = $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')'; 
+                }
+
                 $formatted_users[] = ['id' => $user->id,
                         'text' => $user->name . ' ('. $user->emplid .')',
 
@@ -694,7 +700,8 @@ class CampaignPledgeController extends Controller
                         'last_name' =>  $user->primary_job->last_name ?? '',
                         'department' =>  $user->primary_job->dept_name ? $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')' : '',
                         'business_unit' => $user->primary_job->bus_unit->name ? $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' : '',
-                        'region' => $user->primary_job->city_by_office_city ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',
+                        // 'region' => $user->primary_job->city_by_office_city ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',
+                        'region' => $region,
 
                         'organization' => $user->primary_job->organization_name ?? '',
                     'office_city' => $user->primary_job->office_city ?? '',
