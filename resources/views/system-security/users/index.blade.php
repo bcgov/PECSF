@@ -338,7 +338,7 @@
                 {data: 'business_unit', name: 'employee_jobs.business_unit', defaultContent: '', className: "dt-nowrap" },
                 {data: 'deptid', name: 'employee_jobs.deptid', defaultContent: '', className: "dt-nowrap" },
                 {data: 'dept_name', name: 'employee_jobs.dept_name', defaultContent: '', className: "dt-nowrap" },
-                {data: 'tgb_reg_district', name: 'employee_jobs.tgb_reg_district', defaultContent: '', className: "dt-nowrap" },
+                {data: 'tgb_reg_district', name: 'regions.code', defaultContent: '', className: "dt-nowrap" },
                 {data: 'region_name', name: 'regions.name', defaultContent: '', className: "dt-nowrap" },
                 {data: 'office_city', name: 'employee_jobs.office_city', defaultContent: '', className: "dt-nowrap" },                
                 {data: 'last_signon_at', name: 'last_signon_at', orderable: false, searchable: false, className: "dt-nowrap"},

@@ -160,7 +160,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
                     $linked_bu = BusinessUnit::where('code', $business_unit_code)->first();
                     
                     $city = City::where('city', trim( $row->office_city )  )->first();
-                    $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+                    $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : $row->tgb_reg_district;
 
                     $row_count++;
 

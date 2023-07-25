@@ -381,7 +381,7 @@ class AnnualCampaignController extends Controller
         // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
         $office_city = $user->primary_job ? $user->primary_job->office_city : null;
         $city = City::where('city', trim( $office_city )  )->first();
-        $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
+        $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : $user->primary_job->tgb_reg_district ;
 
         $old_pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id)
                             ->where('emplid', $user->emplid)
