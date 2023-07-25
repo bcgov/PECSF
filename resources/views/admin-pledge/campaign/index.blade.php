@@ -307,7 +307,7 @@
                     }
                 },
                 {data: 'business_unit', defaultContent: '', className: "dt-nowrap", },
-                {data: 'region.name', defaultContent: '', className: "dt-nowrap", },
+                {data: 'pecsf_user_region.name', defaultContent: '', className: "dt-nowrap", },
                 {data: 'city', defaultContent: '', className: "dt-nowrap",
                     // render: function ( data, type, row, meta ) {
                     //         if(row.pecsf_id) {
