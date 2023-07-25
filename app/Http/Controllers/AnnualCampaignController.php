@@ -400,6 +400,7 @@ class AnnualCampaignController extends Controller
 
             'business_unit' => $business_unit,
             'tgb_reg_district' => $tgb_reg_district,
+            'city' => $office_city,
 
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,

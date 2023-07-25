@@ -22,7 +22,7 @@
             </div>
             <div class="col-md-3 mb-3">
                 <label for="user_region">Region</label>
-                <input type="text" class="form-control" value="{{ $user->primary_job->region->name }}" disabled>
+                <input type="text" class="form-control" value="{{ $user->primary_job->city_by_office_city->region->name }}" disabled>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="user_dept">Department</label>
@@ -49,8 +49,12 @@
                 <input type="text" class="form-control" value="{{ $user->primary_job->bus_unit->name }}" disabled>
             </div>
             <div class="col-md-4 mb-3">
-                <label for="user_org">Organization</label>
+                <label for="user_org">Organization (job)</label>
                 <input type="text" class="form-control" value="{{ $user->primary_job->organization }}" disabled>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="user_office_city">Office City</label>
+                <input type="text" class="form-control"  value="{{ $request->user_office_city }}" disabled>
             </div>
         </div>
 @else
