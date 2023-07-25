@@ -24,6 +24,14 @@ class EmployeeJobMissing extends Seeder
 
         foreach ($missed_jobs as $row) {
 
+            $old_job = \App\Models\EmployeeJob::where('emplid',  $row->employee_id)
+                           ->where('empl_rcd', $row->empl_record)
+                            ->first();
+
+            if ($old_job) {
+                continue;
+            }
+
              // $regional_district = RegionalDistrict::where('tgb_reg_district', $row->tgb_reg_district)->first();
 
             \App\Models\EmployeeJob::updateOrCreate([
