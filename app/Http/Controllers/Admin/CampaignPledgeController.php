@@ -56,7 +56,7 @@ class CampaignPledgeController extends Controller
             $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
             session(['admin_pledge_campaign_filter' => $filter]);
 
-            $pledges = Pledge::with('organization', 'region', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
+            $pledges = Pledge::with('organization', 'pecsf_user_region', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'distinct_charities', 'distinct_charities.charity')
                             // ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
