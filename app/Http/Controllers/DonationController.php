@@ -165,7 +165,15 @@ class DonationController extends Controller {
                 else if($pledge->model == "donate_now_pledges"){
                     if(!empty(DonateNowPledge::where("id","=",$pledge->id)->first()))
                     {
-                        $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
+                        $dnp = DonateNowPledge::where("id","=",$pledge->id)->first();
+
+                        if($dnp->f_s_pool_id > 0){
+                            $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
+                        }
+                        else{
+                            $pledges_by_yearcd[$yearcd][$index]->charities = DonateNowPledge::where("id","=",$pledge->id)->first()->charities;
+                        }
+
                     }
                     else
                     {
