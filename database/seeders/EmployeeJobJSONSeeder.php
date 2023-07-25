@@ -34,6 +34,14 @@ class EmployeeJobJSONSeeder extends Seeder
 
         foreach ($in_jobs as $job) {
 
+            $old_job = \App\Models\EmployeeJob::where('emplid',  $job->emplid)
+                           ->where('empl_rcd', $job->empl_rcd)
+                            ->first();
+
+            if ($old_job) {
+                continue;
+            }
+
             $total_count += 1;
 
             $new_job = EmployeeJob::updateOrCreate([
