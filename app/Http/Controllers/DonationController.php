@@ -82,7 +82,7 @@ class DonationController extends Controller {
                 ->where('donate_now_pledges.organization_id', $user->organization_id)
                 ->where('donate_now_pledges.emplid', $user->emplid)
                 ->whereNotNull('donate_now_pledges.emplid')
-                ->selectRaw("'GF' as source, donate_now_pledges.user_id,donate_now_pledges.id,, 'donate_now_pledges' as model,  donate_now_pledges.emplid, yearcd, type,
+                ->selectRaw("'GF' as source, donate_now_pledges.user_id,donate_now_pledges.id, 'donate_now_pledges' as model,  donate_now_pledges.emplid, yearcd, type,
                             'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount,
                             case when type = 'P' then
                                 (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = donate_now_pledges.f_s_pool_id)
