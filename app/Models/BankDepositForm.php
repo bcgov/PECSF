@@ -45,6 +45,7 @@ class BankDepositForm extends Model implements Auditable
 
     protected $casts = [
         'deposit_date' => 'date:Y-m-d',
+        'approved_at' => 'datetime',
     ];
 
     function attachments(){
