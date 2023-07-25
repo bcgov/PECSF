@@ -56,7 +56,7 @@ class CampaignPledgeController extends Controller
             $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
             session(['admin_pledge_campaign_filter' => $filter]);
 
-            $pledges = Pledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
+            $pledges = Pledge::with('organization', 'region', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'distinct_charities', 'distinct_charities.charity')
                             // ->leftJoin('users', 'users.id', '=', 'pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
@@ -87,7 +87,7 @@ class CampaignPledgeController extends Controller
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
-                                    return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
+                                    return $q->where('employee_jobs.office_city', 'like', '%'. $request->city .'%')
                                              ->orWhere('pledges.city', 'like', '%'. $request->city .'%');
                                 });
                             })
@@ -266,7 +266,7 @@ class CampaignPledgeController extends Controller
                             ->where('campaign_year_id', $request->campaign_year_id)
                             ->first();
         if ($pledge) {
-            // Update the esiting one
+  
             $pledge->type = $request->pool_option;
             $pledge->region_id = $request->pool_option == 'P' ? $pool->region_id : null;
             $pledge->f_s_pool_id = $request->pool_option == 'P' ? $request->pool_id : 0;
@@ -284,8 +284,7 @@ class CampaignPledgeController extends Controller
             if ($is_GOV) {
                 $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
                 // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
-                $office_city = $user->primary_job ? $user->primary_job->office_city : null;
-                $city = City::where('city', trim( $office_city )  )->first();
+                $city = City::where('city', trim( $request->user_office_city )  )->first();
                 $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
             } else {
                 $org = Organization::where('id', $request->organization_id)->first();
@@ -302,7 +301,7 @@ class CampaignPledgeController extends Controller
                 "pecsf_id" =>   $is_GOV ? null : $request->pecsf_id,
                 "first_name" => $is_GOV ? null : $request->pecsf_first_name,
                 "last_name" =>  $is_GOV ? null : $request->pecsf_last_name,
-                "city" =>       $is_GOV ? null : $request->pecsf_city,
+                "city" =>       $is_GOV ? $request->user_office_city : $request->pecsf_city,
 
                 'business_unit' => $business_unit,
                 'tgb_reg_district' => $tgb_reg_district,

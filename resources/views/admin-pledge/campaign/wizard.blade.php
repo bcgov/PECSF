@@ -429,7 +429,7 @@ $(function () {
             // array for the fields in the form (for clean up previous errors)
             var fields = [];
             if (step == 1) {
-                fields = ['campaign_year_id','organization_id', 'user_id', 'pecsf_id', 'pecsf_first_name', 'pecsf_last_name', 'pecsf_city'];
+                fields = ['campaign_year_id','organization_id', 'user_id', 'pecsf_id', 'pecsf_first_name', 'pecsf_last_name', 'pecsf_city','user_office_city'];
             }
             if (step == 2) {
                 fields = ['pay_period_amount_other', 'one_time_amount_other'];

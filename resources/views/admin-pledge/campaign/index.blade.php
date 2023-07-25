@@ -172,12 +172,14 @@
 			<thead>
 				<tr>
                     <th>Tran ID</th>
+                    <th>Calendar Year</th>
                     <th>Org</th>
 					<th>Empl ID</th>
                     <th>PECSF ID</th>
                     <th>Name</th>
-                    <th>City</th>
-                    <th>Calendar Year</th>
+                    <th>Business Unit</th>
+                    <th>Region</th>
+                    <th>Office City</th>
                     <th>FS Pool / Charities</th>
                     <th>One Time Amount</th>
                     <th>Bi Weekly Amount</th>
@@ -291,6 +293,7 @@
             },
             columns: [
                 {data: 'id',  className: "dt-nowrap"},
+                {data: 'campaign_year.calendar_year', className: "dt-nowrap", className: "dt-center"},                
                 {data: 'organization.code',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'user.primary_job.emplid', defaultContent: '' },
                 {data: 'pecsf_id', defaultContent: '' },
@@ -303,16 +306,17 @@
                         }
                     }
                 },
-                {data: 'user.primary_job.city', defaultContent: '', className: "dt-nowrap",
-                    render: function ( data, type, row, meta ) {
-                            if(row.pecsf_id) {
-                                return row.city;
-                            } else {
-                                return data;
-                            }
-                        }
+                {data: 'business_unit', defaultContent: '', className: "dt-nowrap", },
+                {data: 'region.name', defaultContent: '', className: "dt-nowrap", },
+                {data: 'city', defaultContent: '', className: "dt-nowrap",
+                    // render: function ( data, type, row, meta ) {
+                    //         if(row.pecsf_id) {
+                    //             return row.city;
+                    //         } else {
+                    //             return data;
+                    //         }
+                    //     }
                 },
-                {data: 'campaign_year.calendar_year', className: "dt-nowrap", className: "dt-center"},
                 {data: 'description', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'one_time_amount', name: 'one_time_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'pay_period_amount', name: 'pay_period_amount',  'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},

@@ -48,7 +48,7 @@ class MaintainEventPledgeController extends Controller
             $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
             session(['admin_pledge_event_pledge_filter' => $filter]);
 
-            $pledges = BankDepositForm::with('campaign_year','form_submitted_by')
+            $pledges = BankDepositForm::with('region', 'bu', 'campaign_year','form_submitted_by')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
