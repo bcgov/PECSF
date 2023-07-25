@@ -38,9 +38,9 @@ class UserMaintenanceController extends Controller
                     'employee_jobs.business_unit',
                     'employee_jobs.deptid',
                     'employee_jobs.dept_name',
-                    'employee_jobs.tgb_reg_district',
+                    'regions.code as tgb_reg_district',
                     'regions.name as region_name',
-                    'employee_jobs.city')
+                    'employee_jobs.office_city')
                         ->leftJoin('employee_jobs', function($join) {
                             $join->on('employee_jobs.organization_id', '=', 'users.organization_id')
                                  ->on('employee_jobs.emplid', '=', 'users.emplid');
@@ -53,7 +53,8 @@ class UserMaintenanceController extends Controller
                                 })
                                 ->orWhereNull('employee_jobs.empl_rcd');
                         })
-                        ->leftJoin('regions', 'employee_jobs.tgb_reg_district', '=', 'regions.code')
+                        ->leftJoin('cities', 'employee_jobs.office_city', '=', 'cities.city')
+                        ->leftJoin('regions', 'cities.tgb_reg_district', '=', 'regions.code')
                         ->when($request->source_type, function($query) use($request) {
                             return $query->where('users.source_type',  $request->source_type);
                         })
