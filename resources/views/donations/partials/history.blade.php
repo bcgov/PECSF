@@ -111,7 +111,6 @@
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">Details
                                 </button>
-                                {{var_dump($pledge)}}
                                 {{-- @endif --}}
                             </td>
                         </tr>
