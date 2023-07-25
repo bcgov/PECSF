@@ -108,7 +108,7 @@ class DonationController extends Controller {
                 ->where('bank_deposit_forms.organization_code', $user->organization ? $user->organization->code : null)
                 ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
                 ->whereNotNull('bank_deposit_forms.bc_gov_id')
-                ->selectRaw("'GF' as source, null, bank_deposit_forms.id,'bank_deposit_forms' as model bc_gov_id, campaign_years.calendar_year,
+                ->selectRaw("'GF' as source, null, bank_deposit_forms.id,'bank_deposit_forms' as model, bc_gov_id, campaign_years.calendar_year,
                             case when regional_pool_id is null then 'C' else 'P' end,
                             'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
