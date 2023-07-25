@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
+use App\Models\City;
 use App\Models\Setting;
 use App\Models\EmployeeJob;
 use App\Models\BusinessUnit;
@@ -157,6 +158,9 @@ class UpdateEligibleEmployeeSnapshot extends Command
                         $business_unit_code  = 'BGCPE';
                     }
                     $linked_bu = BusinessUnit::where('code', $business_unit_code)->first();
+                    
+                    $city = City::where('city', trim( $row->office_city )  )->first();
+                    $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
 
                     $row_count++;
 
@@ -175,7 +179,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
                         'deptid' => $row->deptid,
                         'dept_name' => $row->dept_name,
 
-                        'tgb_reg_district' => $row->tgb_reg_district,
+                        'tgb_reg_district' => $tgb_reg_district,
                         
                         'office_address1' => $row->office_address1,
                         'office_address2' => $row->office_address2,
