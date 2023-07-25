@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
 use App\Models\Charity;
+use App\Models\City;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class AnnualCampaignController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {  
         return redirect()->route('annual-campaign.create');
     }
 
@@ -382,6 +383,13 @@ class AnnualCampaignController extends Controller
         $city = City::where('city', trim( $office_city )  )->first();
         $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
 
+        $old_pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id)
+                            ->where('emplid', $user->emplid)
+                            ->where('campaign_year_id', $request->campaign_year_id)
+                            ->first();
+        $created_by_id = $old_pledge ? $old_pledge->created_by_id :  Auth::id();                           
+
+
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
             // 'user_id' => Auth::id(),
@@ -389,11 +397,11 @@ class AnnualCampaignController extends Controller
             'campaign_year_id' => $request->campaign_year_id,
         ],[
             'user_id' => Auth::id(),
-            
+
             'business_unit' => $business_unit,
             'tgb_reg_district' => $tgb_reg_district,
             'city' => $office_city,
-            
+
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
             'f_s_pool_id' => $input['pool_option'] == 'P' ? $input['regional_pool_id'] : 0,
@@ -401,13 +409,9 @@ class AnnualCampaignController extends Controller
             'pay_period_amount' => $input['annualBiWeeklyAmount'] / $number_of_periods,
             'goal_amount' => $frequency === 'both' ? $input['annualBiWeeklyAmount'] + $input['annualOneTimeAmount']
                                  : ($frequency === 'one-time'  ? $input['annualOneTimeAmount']  : $input['annualBiWeeklyAmount'] ),
+            'created_by_id' => $created_by_id,
             'updated_by_id' => Auth::id(),
         ]);
-
-        if (!$pledge->created_by_id) {
-            $pledge->created_by_id = Auth::id();
-            $pledge->save();
-        }
 
         // $pledge->charities()->delete();
         foreach ($pledge->charities as $pledge_charity) {

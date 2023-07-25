@@ -38,7 +38,7 @@ class EventSubmissionQueueController extends Controller
 
             if($form->event_type == "Gaming")
             {
-                BankDepositForm::where("id",$request->submission_id)->update([
+                BankDepositForm::find($request->submission_id)->update([
                     'approved' => $request->status,
                     'approved_by_id' =>  Auth::id(),
                     'approved_at' => now(),
@@ -46,7 +46,7 @@ class EventSubmissionQueueController extends Controller
             }
             else if($form->event_type == "Fundraiser")
             {
-                BankDepositForm::where("id",$request->submission_id)->update([
+                BankDepositForm::find($request->submission_id)->update([
                     'approved' => $request->status,
                     'approved_by_id' =>  Auth::id(),
                     'approved_at' => now(),
@@ -60,7 +60,7 @@ class EventSubmissionQueueController extends Controller
                     $id.= "0";
                 }
                 $id .= $count;
-                BankDepositForm::where("id",$request->submission_id)->update([
+                BankDepositForm::find($request->submission_id)->update([
                     'approved' => $request->status,
                     'pecsf_id' => $id,
                     'approved_by_id' =>  Auth::id(),
@@ -69,7 +69,7 @@ class EventSubmissionQueueController extends Controller
             }
 
 
-                BankDepositForm::where("id",$request->submission_id)->update([
+                BankDepositForm::find($request->submission_id)->update([
                         'approved' => $request->status,
                         'approved_by_id' =>  Auth::id(),
                         'approved_at' => now(),
@@ -93,7 +93,8 @@ class EventSubmissionQueueController extends Controller
         }
 
         if($request->status == 2){
-            BankDepositForm::where("id",$request->submission_id)->update(['approved' => $request->status]);
+            BankDepositForm::find($request->submission_id)->update(['approved' => $request->status]);
+            
         }
     }
 

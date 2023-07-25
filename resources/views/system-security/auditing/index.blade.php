@@ -222,7 +222,7 @@
  
         // Datatables
         var oTable = $('#audit-table').DataTable({
-            // "scrollX": true,
+            "scrollX": true,
             retrieve: true,
             "searching": true,
             processing: true,

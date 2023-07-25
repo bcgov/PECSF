@@ -39,25 +39,25 @@ class Pledge extends Model implements Auditable
         'ods_export_status', 'ods_export_at',
         'created_by_id',
         'updated_by_id',
-
+'selected_table'
 
     ];
 
     protected $appends = [
-        'frequency',  
+        'frequency',
     ];
 
     public function getFrequencyAttribute() {
 
-        $frequency = 'both'; 
+        $frequency = 'both';
         if ($this->one_time_amount > 0 && $this->pay_period_amount == 0) {
-            $frequency = 'one-time';    
+            $frequency = 'one-time';
         } if ($this->one_time_amount == 0 && $this->pay_period_amount > 0) {
-            $frequency = 'bi-weekly';    
-        } 
+            $frequency = 'bi-weekly';
+        }
         return $frequency;
-        
-    } 
+
+    }
 
     public function charities() {
         return $this->hasMany(PledgeCharity::class);
@@ -121,9 +121,9 @@ class Pledge extends Model implements Auditable
 
 
     public function fund_supported_pool() {
-       
+
             return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id')->withDefault();
-            
+
     }
 
     public function organization() {
@@ -133,6 +133,7 @@ class Pledge extends Model implements Auditable
     }
 
     public function pecsf_user_region() {
+
 
         // $region = Region::where('code', '=', function ($query) {
         //     $query->select('TGB_REG_DISTRICT')
@@ -144,6 +145,7 @@ class Pledge extends Model implements Auditable
         // return $region;
 
         return $this->belongsTo(Region::class, 'tgb_reg_district', 'code')->withDefault();
+
 
     }
 
@@ -166,7 +168,7 @@ class Pledge extends Model implements Auditable
 
     //     $cy = CampaignYear::where('calendar_year', $campaign_year )->first();
 
-    //     return $query->whereBetween('created_at', 
+    //     return $query->whereBetween('created_at',
     //             [$cy->start_date, $cy->end_date->add(1,'day') ]);
     // }
 
