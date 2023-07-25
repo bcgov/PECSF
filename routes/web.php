@@ -54,6 +54,7 @@ use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
 use App\Http\Controllers\Admin\SpecialCampaignSetupController;
+use App\Http\Controllers\Admin\CityRegionInformationController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
@@ -227,6 +228,10 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Business Units
     Route::resource('/business-units', BusinessUnitController::class)->except(['create']);
+
+    // Cities
+    Route::resource('/cities', CityRegionInformationController::class)->only(['index']);
+
 
     // Pay Calendars
     Route::resource('/pay-calendars', PayCalendarController::class)->only(['index']);
