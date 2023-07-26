@@ -39,6 +39,15 @@ class EmployeeJobInactive2021_2023JSON extends Seeder
 
         foreach ($missed_jobs as $key => $job) {
 
+
+            $old_job = \App\Models\EmployeeJob::where('emplid',  $job->emplid)
+                                ->where('empl_rcd', $job->empl_rcd)
+                                ->first();
+
+            if ($old_job) {
+                continue;
+            }
+
             $new_job = \App\Models\EmployeeJob::updateOrCreate([
                 'emplid' => $job->emplid,
                 'empl_rcd' => $job->empl_rcd,

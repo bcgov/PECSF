@@ -543,7 +543,7 @@ class BankDepositFormController extends Controller
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
 
-        $form = BankDepositForm::where("id","=",$request->form_id)->update(
+        $form = BankDepositForm::find($request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
                 'event_type' =>  $request->event_type,
