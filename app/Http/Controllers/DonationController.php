@@ -52,7 +52,7 @@ class DonationController extends Controller {
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->whereNotNull('pledges.emplid')
-                ->selectRaw("'GF' as source, pledges.user_id, 'pledge' as model,  pledges.id, pledges.emplid, campaign_years.calendar_year, type,
+                ->selectRaw("'GF' as source, pledges.user_id,  pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                                 case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
@@ -82,7 +82,7 @@ class DonationController extends Controller {
                 ->where('donate_now_pledges.organization_id', $user->organization_id)
                 ->where('donate_now_pledges.emplid', $user->emplid)
                 ->whereNotNull('donate_now_pledges.emplid')
-                ->selectRaw("'GF' as source, donate_now_pledges.user_id, 'donate_now_pledges' as model, donate_now_pledges.id, donate_now_pledges.emplid, yearcd, type,
+                ->selectRaw("'GF' as source, donate_now_pledges.user_id,donate_now_pledges.id, 'donate_now_pledges' as model,  donate_now_pledges.emplid, yearcd, type,
                             'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount,
                             case when type = 'P' then
                                 (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = donate_now_pledges.f_s_pool_id)
@@ -95,7 +95,7 @@ class DonationController extends Controller {
                 ->where('special_campaign_pledges.organization_id', $user->organization_id)
                 ->where('special_campaign_pledges.emplid', $user->emplid)
                 ->whereNotNull('special_campaign_pledges.emplid')
-                ->selectRaw("'GF' as source, special_campaign_pledges.user_id,'special_campaign_pledges' as model, special_campaign_pledges.id, special_campaign_pledges.emplid, yearcd, 'C',
+                ->selectRaw("'GF' as source, special_campaign_pledges.user_id, special_campaign_pledges.id,'special_campaign_pledges' as model, special_campaign_pledges.emplid, yearcd, 'C',
                             'Special Campaign', 'One-Time', special_campaign_pledges.one_time_amount, special_campaign_pledges.one_time_amount,
                             (select special_campaigns.name from special_campaigns where special_campaign_pledges.special_campaign_id = special_campaigns.id)
                             , 1");
@@ -108,7 +108,7 @@ class DonationController extends Controller {
                 ->where('bank_deposit_forms.organization_code', $user->organization ? $user->organization->code : null)
                 ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
                 ->whereNotNull('bank_deposit_forms.bc_gov_id')
-                ->selectRaw("'GF' as source, null, 'bank_deposit_forms' as model,bank_deposit_forms.id, bc_gov_id, campaign_years.calendar_year,
+                ->selectRaw("'GF' as source, null, bank_deposit_forms.id,'bank_deposit_forms' as model, bc_gov_id, campaign_years.calendar_year,
                             case when regional_pool_id is null then 'C' else 'P' end,
                             'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
@@ -119,7 +119,7 @@ class DonationController extends Controller {
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
                             ->whereNotNull('emplid')
-                            ->selectRaw("'BI' as source, NULL as user_id, 'pledge_history_summaries' as model, pledge_history_id as id, emplid, yearcd, source as type,
+                            ->selectRaw("'BI' as source, NULL as user_id,  pledge_history_id as id,'pledge_history_summaries' as model, emplid, yearcd, source as type,
                                          campaign_type as donation_type, frequency, per_pay_amt as amount, pledge,
                                          (select regions.name from regions where regions.code = pledge_history_summaries.region) as region,
                                          case when source = 'P' then 0 else
@@ -165,7 +165,16 @@ class DonationController extends Controller {
                 else if($pledge->model == "donate_now_pledges"){
                     if(!empty(DonateNowPledge::where("id","=",$pledge->id)->first()))
                     {
-                        $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
+                        $dnp = DonateNowPledge::where("id","=",$pledge->id)->first();
+
+                        if($dnp->f_s_pool_id > 0){
+                            $pledges_by_yearcd[$yearcd][$index]->charities = DonateNowPledge::where("id","=",$pledge->id)->first()->charities;
+                        }
+                        else{
+                            $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
+
+                        }
+
                     }
                     else
                     {
