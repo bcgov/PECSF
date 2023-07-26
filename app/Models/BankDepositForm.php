@@ -56,6 +56,8 @@ class BankDepositForm extends Model implements Auditable
         return $this->hasMany(BankDepositFormOrganizations::class,'bank_deposit_form_id','id');
     }
 
+
+
     public function fund_supported_pool() {
 
         return $this->belongsTo(FSPool::class, 'regional_pool_id', 'id')->withDefault();
@@ -69,6 +71,15 @@ class BankDepositForm extends Model implements Auditable
     public function campaign_year() {
         return $this->belongsTo(CampaignYear::class, 'campaign_year_id', 'id');
     }
+
+    public function region() {
+        return $this->belongsTo(Region::class, 'region_id', 'id');
+    }
+
+    public function bu() {
+        return $this->belongsTo(BusinessUnit::class, 'business_unit', 'id');
+    }
+
 
     public function form_submitted_by()
     {

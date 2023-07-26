@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use DateTime;
 use Carbon\Carbon;
+use App\Models\City;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
@@ -180,8 +181,8 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                                     ->where('campaign_year_id', $campaign_year->id)
                                     ->first();                
 
-                $city = City::where('city', trim($request->pecsf_city) )->first();
-                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;                                    
+                $city = City::where('city', trim( $bi_pledge_detail->city ) )->first();
+                $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : null;
 
                 $pledge = Pledge::updateOrCreate([
                     'organization_id' => $organization->id,
@@ -193,7 +194,7 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
                     'last_name' => $bi_pledge_detail->last_name,
                     'city' => $bi_pledge_detail->city,
 
-                    'business_unit' => $organizatins->bu_code,
+                    'business_unit' => $organization->bu_code,
                     'tgb_reg_district' => $tgb_reg_district,
     
 
@@ -307,8 +308,8 @@ class GenerateNonGovCampaignPledgeFromHistory extends Command
 
             $charity = Charity::where('registration_number', $bi_pledge_detail->charity_bn)->first();
             if (!$charity) {
-                echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
-                $vendor_charity = Charity::where('registration_number', $bi_pledge->details->first()->vendor_bn)->first();
+                // echo $bi_pledge->details->first()->vendor_bn . PHP_EOL;
+                $vendor_charity = Charity::where('registration_number', $bi_pledge_detail->vendor_bn)->first();
     
                 if (!$vendor_charity) {
                     $valid = false;
