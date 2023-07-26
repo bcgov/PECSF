@@ -83,6 +83,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                         'One-Time Amount',
                         'Bi-Weekly Amount',
                         'Total Amount',
+                        'Tran ID',
                     ],
                 ];
     }
@@ -114,6 +115,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
             $employee->one_time_amount,
             $employee->biweekly_amount,
             $employee->amount,
+            $employee->pledge_id,
         ];
     }
 
