@@ -94,20 +94,43 @@
             </div>
         @endif
 
+        <div class="d-flex mt-3">
+            <div class="flex-fill">
+            </div>
     
-        <table class="table table-bordered" id="dashboard-table" style="width:100%">
-            <thead>
-                <tr class="bg-light">
-                    <th>Rank</th>
-                    <th>Organization name</th>
-                    <th>Participation rate</th>
-                    <th>Previous rate</th>
-                    <th>Change</th>
-                    <th>Donors</th>
-                    <th>Dollars</th>
-                </tr>
-            </thead>
-        </table>
+            <div class="d-flex">
+                <div class="mr-2">
+                    <div class="mt-3 btn-group btn-group" role="group" aria-label="Basic example">
+                        <button id="list-mode-btn" type="button" class="btn btn-success">
+                                <span class="mx-2 px-2">List</span>
+                        </button>
+                        <button type="button" class="btn btn-dark mx-0 px-0"></button>
+                        <button id="chart-mode-btn" type="button" class="btn btn-secondary">
+                                <span class="px-2">Chart<span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="list-section"> 
+            <table class="table table-bordered" id="dashboard-table" style="width:100%">
+                <thead>
+                    <tr class="bg-light">
+                        <th>Rank</th>
+                        <th>Organization name</th>
+                        <th>Participation rate</th>
+                        <th>Previous rate</th>
+                        <th>Change</th>
+                        <th>Donors</th>
+                        <th>Dollars</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="chart-section" data-load="0"> 
+            <div id="main" class="pt-2" style="width: auto;height:700px;"></div>
+        </div>
 
     </div>
 </div>
@@ -202,6 +225,8 @@
 
 <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
 <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script>
 
 <script>
 
@@ -344,6 +369,97 @@ $(function() {
         $(this).data('timer', wait);
     });
 
+    // Charting Mode 
+    var myChart = echarts.init(document.getElementById('main'));
+
+    $(document).on('click', '#list-mode-btn', function() {
+        console.log('list-mode clicked');
+
+        $('#list-section').show();
+        $('#chart-section').hide();
+
+        $('#list-mode-btn').removeClass('btn-secondary').addClass('btn-success');
+        $('#chart-mode-btn').removeClass('btn-success').addClass('btn-secondary');
+
+    });
+
+    $(document).on('click', '#chart-mode-btn', function() {
+        console.log('chart-mode clicked');
+        $('#list-section').hide();
+        $('#chart-section').show();
+
+        $('#list-mode-btn').removeClass('btn-success').addClass('btn-secondary');
+        $('#chart-mode-btn').removeClass('btn-secondary').addClass('btn-success');
+        
+        year = $('select[name="year"]').val();
+
+        if ($('#chart-section').data('load') == 0) {
+            // Asynchronous Data Loading
+            $.ajax({
+                url: '{{  route('challenge.index') }}',
+                type: 'GET',
+                data : {
+                    'year': year,
+                    'chart': 1,
+                },
+                // data: $("#notify-form").serialize(),
+                dataType: 'json',
+                success: function (data) {
+
+                    myChart.setOption({
+                        title: {
+                            text: 'Challenge Page Charting Example',
+                            subtext: '纯属虚构',
+                            left: 'center',
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: function (params) {
+                                console.log(params);
+                                 return  `${params.seriesName}<br/>${params.name}: ${params.data.value} (${params.data.change}%)`;
+                            }
+                            // formatter: '{a} <br/>{b} : {c}%'
+                        },
+                        legend: {
+                            type: 'scroll',
+                            orient: 'vertical',
+                            right: 10,
+                            top: 120,
+                            bottom: 20,
+                            data: data.regions,
+                        },
+                        series: [
+                            {
+                                name: 'Participation Rate',
+                                type: 'pie',
+                                radius: ['30%', '70%'],
+                                center: ['40%', '50%'],
+                                data:  data.values,
+                                emphasis: {
+                                    itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    });
+
+                    $('#chart-section').data('load', 1);
+
+                },
+                complete: function() {
+                },
+                error: function (result) {
+                    console.log('error to get the chart data');
+                    console.log( result );
+                }
+            });
+
+        }
+
+    });
 
 });            
 

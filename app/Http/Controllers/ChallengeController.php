@@ -202,6 +202,31 @@ class ChallengeController extends Controller
 
             }
 
+            // Charting 
+            if ($request->has('chart')) {
+                $data = new \stdClass();
+                $data->regions = [];
+                $data->values = [];
+    
+                foreach ($challenges as $row) {
+                    // Structure of data:
+                    // {
+                    //     regions: ["region 1","region 2","region 3"];
+                    //     values: [ ['name': "region 1", "value" = 20],
+                    //               ['name': "region 2", "value" = 40],
+                    //               ['name': "region 3", "value" = 50],
+                    //             ];
+                    // }
+                    array_push( $data->regions, $row->organization_name );
+                    array_push( $data->values, [ 'name' => $row->organization_name , 
+                                                 'value' => round($row->participation_rate,2),
+                                                 'change' =>  round($row->change_rate,2) ] );
+                }
+    
+                return json_encode($data);
+            }
+
+
             if ($request->organization_name) {
                 $challenges = array_filter($challenges, function($v, $k) use($request) {
                     return str_contains(strtolower($v->organization_name), strtolower($request->organization_name));
@@ -247,6 +272,74 @@ class ChallengeController extends Controller
 
         return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary'));
     }
+
+    public function chart(Request $request) {
+
+        if($request->ajax()) {
+
+dd([ $request->all(), $request->has('chart') ] );            
+            // Structure of data:
+            // {
+            //     categories: ["Shirt","Wool sweater","Chiffon shirt","Pants","High-heeled shoes","socks"],
+            //     values: [5, 20, 36, 10, 10, 20]
+            // }
+            $campaign_year = 2023;
+
+            $as_of_day = DailyCampaign::where('campaign_year', $campaign_year)
+                    ->where('daily_type', 0)
+                    ->where('as_of_date', '<=', today()->format('Y-m-d') )
+                    ->max('as_of_date');
+
+            $parameters = [
+                $campaign_year,
+                $as_of_day,
+            ];
+
+            $sql = <<<SQL
+                select 0 as current, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
+                            donors, dollars, (@row_number:=@row_number + 1) AS rank,
+                            eligible_employee_count as ee_count
+                from daily_campaigns, (SELECT @row_number:=0) AS temp
+                where campaign_year = ?
+                -- and as_of_date = (select max(as_of_date) from daily_campaigns D1
+                --                                     where D1.campaign_year = daily_campaigns.campaign_year
+                --                                     and D1.daily_type = daily_campaigns.daily_type
+                --                                     and D1.as_of_date <= ?
+                --                                     )
+                and as_of_date = ?
+                and daily_type = 0     
+                and donors >= 5
+                order by participation_rate desc, abs(change_rate) ;     
+            SQL;
+
+            $challenges = DB::select($sql, $parameters);
+
+            $data = new \stdClass();
+            $data->regions = [];
+            $data->values = [];
+
+            foreach ($challenges as $row) {
+                // Structure of data:
+                // {
+                //     regions: ["region 1","region 2","region 3"];
+                //     values: [ ['name': "region 1", "value" = 20],
+                //               ['name': "region 2", "value" = 40],
+                //               ['name': "region 3", "value" = 50],
+                //             ];
+                // }
+                array_push( $data->regions, $row->organization_name );
+                array_push( $data->values, [ 'name' => $row->organization_name , 'value' => $row->participation_rate ] );
+            }
+
+            return json_encode($data);
+
+        }
+
+        return view('challenge.chart');
+
+    }
+
+
 
     public function daily_campaign(Request $request){
 
