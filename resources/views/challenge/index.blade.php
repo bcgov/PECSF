@@ -226,7 +226,8 @@
 <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
 <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script>
+<script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script> --}}
 
 <script>
 
@@ -402,29 +403,29 @@ $(function() {
                     'year': year,
                     'chart': 1,
                 },
-                // data: $("#notify-form").serialize(),
                 dataType: 'json',
                 success: function (data) {
 
                     myChart.setOption({
                         title: {
                             text: 'Challenge Page Charting Example',
+                            textStyle: { fontSize: 40, fontWeight: 'bold' }, 
                             subtext: '纯属虚构',
+                            subtextStyle: { fontSize: 20, fontWeight: 'bold' }, 
                             left: 'center',
                         },
                         tooltip: {
                             trigger: 'item',
                             formatter: function (params) {
                                 console.log(params);
-                                 return  `${params.seriesName}<br/>${params.name}: ${params.data.value} (${params.data.change}%)`;
+                                 return  `<b>${params.name}</b><br/>${params.seriesName} : ${params.data.value}% </br>Change: ${params.data.change}%`;
                             }
-                            // formatter: '{a} <br/>{b} : {c}%'
                         },
                         legend: {
                             type: 'scroll',
                             orient: 'vertical',
                             right: 10,
-                            top: 120,
+                            top: 100,
                             bottom: 20,
                             data: data.regions,
                         },
