@@ -25,6 +25,7 @@ class RolePermissionTableSeeder extends Seeder
         //
         $data = [
             'setting',
+            'security_setting'
         ];
         foreach ($data as $permission) {
             Permission::updateOrCreate(['name' => $permission], []);
@@ -37,6 +38,7 @@ class RolePermissionTableSeeder extends Seeder
         //
         $data = [
             'admin',
+            'sysadmin'
         ];
         foreach ($data as $role_name) {
             $role = Role::updateOrCreate(['name' => $role_name], []);
@@ -46,6 +48,10 @@ class RolePermissionTableSeeder extends Seeder
                     $permissions = Permission::wherein('name', ['setting'])->get()->pluck('id', 'id');
                     $role->syncPermissions($permissions);
                     break;
+                case 'sysadmin':
+                        $permissions = Permission::wherein('name', ['setting', 'security_setting'])->get()->pluck('id', 'id');
+                        $role->syncPermissions($permissions);
+                        break;
             }
         }
     }
