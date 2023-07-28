@@ -27,14 +27,15 @@ use App\Http\Controllers\System\AuditingController;
 use App\Http\Controllers\Admin\CRACharityController;
 use App\Http\Controllers\System\AccessLogController;
 
+use App\Http\Controllers\System\LogViewerController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\System\UploadFileController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\DonationDataController;
+
+
 use App\Http\Controllers\Admin\OrganizationController;
-
-
 use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
@@ -367,11 +368,15 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     // Export Audit Log
     Route::resource('/export-audits', ExportAuditLogController::class)->only(['index']);
 
-    // Upload and download file (seed)
-    Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
-
 });
 
-Route::group(['middleware' => ['can:setting']], function () {
-    Route::get('system/phpinfo-page', function () { phpinfo(); });
+Route::middleware(['role:sysadmin'])->prefix('system')->name('system.')->group(function() {
+
+        // Log files 
+        Route::resource('/log-files', LogViewerController::class)->only(['index','show']);
+        // Upload and download file (seed)
+        Route::resource('/upload-files', UploadFileController::class)->only(['index','store','show']);
+        // phpinfo page
+        Route::get('/phpinfo-page',  [LogViewerController::class,'phpinfo_page'])->name('phpinfo_page');
+
 });
