@@ -264,10 +264,41 @@
 
 @include('donations.partials.learn-more-modal')
 
+@if( session()->has('has-announcement') )
+  @include('system-security.announcements.partials.modal')
+@endif
+
 @endsection
 
 @push('js')
-<script>
 
-</script>
+@if( session()->has('has-announcement') )
+  <script src="{{ asset('vendor/ckeditor5/build/ckeditor.js') }}" ></script>
+  <script>
+      $(function() {    
+          ClassicEditor
+              .create( document.querySelector( '.announcement_preview' ), {
+                  licenseKey: ''
+              })
+              .then( editor => {
+                  window.editor = editor;
+                  const toolbarElement = editor.ui.view.toolbar.element;
+                  
+                  editor.enableReadOnlyMode( 'my-feature-id' );
+                  toolbarElement.style.display = 'none';
+              })
+              .catch( error => {
+                  console.error( 'Oops, something went wrong!' );
+                  console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+                  console.warn( 'Build id: lu84jocs3y82-nohdljl880ze' );
+                  console.error( error );
+              });    
+
+          // alert('testing');
+          $('#announcementModal').modal('show');
+          
+      });
+  </script>
+@endif
+
 @endpush
