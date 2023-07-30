@@ -5,6 +5,7 @@ namespace App\Http\Controllers\System;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AnnouncementRequest;
 
 class AnnouncementController extends Controller
@@ -42,21 +43,36 @@ class AnnouncementController extends Controller
     public function store(AnnouncementRequest $request)
     {
 
-        $announcement = Announcement::updateOrCreate(
-            ['id' => 1
-            ],
-            [   
+        $announcement = Announcement::first();
+
+        if ($announcement) {
+
+            $announcement->title = $request->title;
+            $announcement->status = $request->status;
+            $announcement->start_date = $request->start_date;
+            $announcement->end_date = $request->end_date;
+            $announcement->body = $request->body;
+
+            $announcement->updated_by_id = Auth::id();
+
+            $announcement->save();
+
+        } else {
+
+            $announcement = Announcement::Create([   
                 'title' => $request->title,  
                 'status' => $request->status, 
                 'start_date' => $request->start_date, 
                 'end_date' => $request->end_date, 
-                'body' => $request->body, 
-            ]
-        );
+                'body' => $request->body,
+                'created_by_id' => Auth::id(),
+                'updated_by_id' => Auth::id(), 
+            ]);
+
+        }
 
         return redirect()->route('system.announcement.index')
                 ->with('success','The announcement was successfully saved.');
-
 
     }
 
@@ -109,10 +125,10 @@ class AnnouncementController extends Controller
     public function storeImage(Request $request)
     {
         if ($request->hasFile('upload')) {
-            $originName = $request->file('upload')->getClientOriginalName();
-            $fileName = pathinfo($originName, PATHINFO_FILENAME);
-            $extension = $request->file('upload')->getClientOriginalExtension();
-            $fileName = $fileName . '_' . time() . '.' . $extension;
+            $fileName = $request->file('upload')->getClientOriginalName();
+            // $fileName = pathinfo($originName, PATHINFO_FILENAME);
+            // $extension = $request->file('upload')->getClientOriginalExtension();
+            // $fileName = $fileName . '_' . time() . '.' . $extension;
     
             $request->file('upload')->move(public_path('img/uploads/announcement'), $fileName);
     
