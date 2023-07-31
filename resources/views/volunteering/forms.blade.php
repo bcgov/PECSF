@@ -48,10 +48,65 @@
         <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
     @endpush
+    <div class="modal fade" id="info-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-charity-name text-light" id="charity-modal-label">Have you deposited your funds and scanned your completed PECSF Bank Deposit Form? </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="info-modal-body">
+                        <div class="row">
+                            <div  class="col-md-12">
+                                Before you complete this eForm you need to:
+                                <br>
+                            </div>
+                        </div>
 
+                        <div class="row">
+                            <br>
+                        </div>
+
+                        <div class="row">
+                            <ol>
+                                <li>Print the PECSF Event Bank Deposit Attachment Form.</li>
+                                <li>Take the money to the bank or Service BC and ensure that it gets deposited into the appropriate account (see the PECSF Event Bank Deposit Attachment Form for account numbers).</li>
+                                <li>Attach the bank deposit receipt to the PECSF Event Bank Deposit Attachment Form and scan it.</li>
+                            </ol>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                If you have any questions, please contact the <a href="mailto:pecsf@gov.bc.ca" target="_blank">PECSF HQ team.</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                         <br>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-primary" data-dismiss="modal" aria-label="Close">Complete eForm</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-secondary" onclick="window.location='/';">Cancel</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     @push('js')
+<script>
+    $("#info-modal").modal();
 
+</script>
         <script src="{{ asset('vendor/select2/js/select2.min.js') }}" ></script>
         <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 

@@ -175,6 +175,9 @@ class UpdateDailyCampaign extends Command
             $sql = DailyCampaignView::dynamicSqlForChallengePage();     // Shared sql
             $challenges = DB::select($sql, $parameters);
 
+            $donor_count = 0;
+            $total_dollar = 0;
+
             foreach( $challenges as $row)  {
 
                 DailyCampaign::create([
@@ -198,13 +201,33 @@ class UpdateDailyCampaign extends Command
                     "dollars" => $row->dollars,
                 ]);
 
+                $donor_count += $row->donors;
+                $total_dollar += $row->dollars;    
 
             }                          
             $this->LogMessage('Total rows created count : ' . sizeof($challenges)  );
 
+            // Step 1B -- Update Daily Campaign Summary 
+            $this->LogMessage("");
+            $this->LogMessage("Updating daily campaign summary for campaign year " . $campaign_year); 
+            $this->LogMessage("                 Donor Count  : " . $donor_count); 
+            $this->LogMessage("                 Total Amount : " . $total_dollar); 
+            
+            DailyCampaignSummary::updateOrCreate([
+                    'campaign_year' => $campaign_year,
+            ],[
+                'as_of_date' => $as_of_date,
+                
+                'donors' => $donor_count,
+                'dollars' => $total_dollar,
+
+                'created_by_id' => null,
+                'updated_by_id' => null,
+            ]);
+
             if (today() >= $setting->challenge_final_date && (!($challenge_finalize))) {
 
-                // Step 1B -- Update Challenge History when final date reached
+                // Step 1C -- Update Challenge History when final date reached
                 $this->LogMessage("");
                 $this->LogMessage("Updating Historical challenge page for campaign year " . $campaign_year); 
 
@@ -240,23 +263,7 @@ class UpdateDailyCampaign extends Command
 
                 $this->LogMessage('Total rows created/updated count : ' . sizeof($rows)  );
 
-                // Step 1C -- Update Daily Campaign Summary 
-                $this->LogMessage("");
-                $this->LogMessage("Updating daily campaign summary for campaign year " . $campaign_year); 
-                $this->LogMessage("                 Donor Count  : " . $donor_count); 
-                $this->LogMessage("                 Total Amount : " . $total_dollar); 
-                
-                DailyCampaignSummary::updateOrCreate([
-                        'campaign_year' => $campaign_year,
-                    ],[
-                        'as_of_date' => $as_of_date,
-                        
-                        'donors' => $donor_count,
-                        'dollars' => $total_dollar,
-
-                        'created_by_id' => null,
-                        'updated_by_id' => null,
-                    ]);
+               
             }
 
             // Step 2

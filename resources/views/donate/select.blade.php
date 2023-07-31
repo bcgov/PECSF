@@ -2,7 +2,7 @@
 
 @section ("step-content")
     <div style="">
-<h2 class="mt-5">2. Choose your charities (up to 10)</h2>
+<h2 class="mt-5 step-charities-error-header">2. Choose your charities (up to 10)</h2>
         <form action="{{route('donate.save.select')}}" method="post">
 <div class=" form-row">
     @include('donate.partials.choose-charity')

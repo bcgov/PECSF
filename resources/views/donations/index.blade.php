@@ -20,7 +20,7 @@
                         <p class="card-text text-left">
                             To make changes to your proposed pledge, click into the box below where your {{ $campaignYear->calendar_year }} choices are shown.
                         </p>
-                        <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Make a change to your PECSF pledge</a>
+                        <a href="{{ route('annual-campaign.index') }}" class="btn btn-md btn-primary">Make a change to your PECSF pledge</a>
                     @else
                         <p class="card-text text-left">
                             To make a pledge click the Donate button, copy a prior year's choices from your Donation History.

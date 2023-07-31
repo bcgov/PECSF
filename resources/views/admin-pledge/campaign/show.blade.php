@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="user_region">Region</label>
-                        <input type="text" class="form-control" value="{{ $pledge->user->primary_job->region->name }}" disabled>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_region ? $pledge->pecsf_user_region->name : ''  }}" disabled>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="user_dept">Department</label>
@@ -66,11 +66,15 @@
                 <div class="form-row">
                     <div class="col-md-4 mb-3">
                         <label for="user_bu">Business Unit</label>
-                        <input type="text" class="form-control" value="{{ $pledge->user->primary_job->bus_unit->name }}" disabled>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu ? $pledge->pecsf_user_bu->name : '' }}" disabled>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="user_org">Organization</label>
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->organization }}" disabled>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_office_city">Office City</label>
+                        <input type="text" class="form-control" value="{{ $pledge->city ?? ''  }}" disabled>
                     </div>
                 </div>
             @else
@@ -101,15 +105,15 @@
                 <div class="form-row">
                     <div class="col-md-4 mb-4">
                         <label for="">Business Unit</label>
-                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu() ? 
-                                ($pledge->pecsf_user_bu() ? $pledge->pecsf_user_bu()->name . ' (' . 
-                                $pledge->pecsf_user_bu()->code . ')' : '' ) : '' }}" disabled>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu ? 
+                                ($pledge->pecsf_user_bu ? $pledge->pecsf_user_bu->name . ' (' . 
+                                $pledge->pecsf_user_bu->code . ')' : '' ) : '' }}" disabled>
                     </div>
                     <div class="col-md-4 mb-4">
                         <label for="">Region</label>
-                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_region() ?
-                                ($pledge->pecsf_user_region() ? $pledge->pecsf_user_region()->name . ' (' . 
-                                                    $pledge->pecsf_user_region()->code . ')' : '' ) : '' }}" disabled>
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_region ?
+                                ($pledge->pecsf_user_region ? $pledge->pecsf_user_region->name . ' (' . 
+                                                    $pledge->pecsf_user_region->code . ')' : '' ) : '' }}" disabled>
                     </div>
                 </div>                   
             @endif

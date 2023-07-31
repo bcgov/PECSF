@@ -1,4 +1,4 @@
-<div id="step-summary-area">                            
+<div id="step-summary-area">
 
     <div class="row">
         <div class="col-12">
@@ -10,7 +10,9 @@
                         <div class="card-body">
                             <span><b>Your Bi-weekly payroll deductions:</b></span>
                             {{-- <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly*26 }}</span><br> --}}
-                            <span class="float-right mb-2">${{ number_format($annualBiWeeklyAmount,2) }}</span><br>
+
+                            <span class="float-right mb-2">${{ number_format($annualBiWeeklyAmount / 26,2) }}</span><br>
+
                             <h6>AND / OR</h6>
                             <span><b>Your One-time payroll deductions:</b></span>
                             {{-- <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span> --}}
@@ -75,16 +77,18 @@
         </div> --}}
     </div>
     <div class="row">
-        <div class="col">
+
             <div>
                 <strong>Freedom of Information and Protection of Privacy Act</strong>
                 <p>Personal information on this form is collected under sections 26(c) and (e) of FOIPPA by the BC Public Service Agency for the purposes of processing and reporting on your pledge for charitable contributions to the Community Fund, administering your participation in your organization’s incentive draws for the current campaign, producing general campaign statistics, and identifying donor and giving trends to guide data-driven program improvements.</p>
                 <p>Questions about the collection of your personal information can be directed to the Campaign Manager, Provincial Employees Community Services Fund, at 250 356-1736, <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> or PO Box 9564 Stn Prov Govt, Victoria, BC V8W 9C5.
-                </p>        
+                </p>
+
         </div>
+
     </div>
 
-</div>    
+</div>
 
 
 <script>

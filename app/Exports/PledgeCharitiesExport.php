@@ -365,8 +365,8 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             THEN employee_jobs.name
                             ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
                     END as name
-                    ,employee_jobs.business_unit as business_unit_code
-                    ,employee_jobs.tgb_reg_district
+                    ,pledges.business_unit as business_unit_code
+                    ,pledges.tgb_reg_district
                     ,employee_jobs.deptid
                     ,employee_jobs.dept_name
                     ,CASE WHEN organizations.code = 'GOV'
@@ -607,14 +607,8 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                                 THEN employee_jobs.name
                                 ELSE ''
                             END as name
-                            ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
-                                THEN employee_jobs.business_unit
-                                ELSE (select code from business_units where business_units.id = bank_deposit_forms.business_unit)
-                            END as business_unit_code
-                            ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
-                                THEN employee_jobs.tgb_reg_district
-                                ELSE (select code from regions where regions.id = bank_deposit_forms.region_id)
-                            END as tgb_reg_district
+                            ,(select code from business_units where business_units.id = bank_deposit_forms.business_unit) as business_unit_code
+                            ,(select code from regions where regions.id = bank_deposit_forms.region_id) as tgb_reg_district
                             ,employee_jobs.deptid as deptid
                             ,employee_jobs.dept_name as dept_name
                             ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
