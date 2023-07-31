@@ -31,13 +31,13 @@
         <div class="form-row">
             <div class="form-group col-md-3">
                 <label for="year">
-                    Year
+                    Calendar Year
                 </label>
                 <select name="year" value="" class="form-control">
                     {{-- <option value="">All</option> --}}
                     @foreach( $years as $row)
-                        <option value="{{ $row->year }}" {{  $loop->index == 0 ? 'selected' : '' }}
-                                as_of_date="{{ $row->as_of_date }}">{{ $row->year }} [Snapshot on : {{ $row->as_of_date }}]</option>
+                        <option value="{{ ($row->year + 1) }}" {{  $loop->index == 0 ? 'selected' : '' }}
+                                as_of_date="{{ $row->as_of_date }}">{{ $row->year + 1 }} [Snapshot on : {{ $row->as_of_date }}]</option>
                     @endforeach 
                 </select>
                 <input type="hidden" id="as_of_date" name="as_of_date" value="" class="form-control" />
@@ -271,6 +271,7 @@
                 data: function (data) {
                     // data.term = $('#user').val();
                     data.year = $("select[name='year']").val();
+                    data.as_of_date = $("input[name='as_of_date'").val();
                     data.emplid = $("input[name='emplid']").val();
                     data.name = $("input[name='name']").val();
                     // data.empl_status = $("select[name='empl_status']").val();
@@ -337,6 +338,13 @@
 
             oTable.search( '' ).columns().search( '' ).draw();
         });
+
+        $("select[name='year']").on('change', function() {
+            as_of_date = $("select[name='year']").find('option:selected').attr('as_of_date');
+            $("input[name='as_of_date'").val( as_of_date );
+        });
+
+        $("select[name='year']").trigger( "change" );
 
         // For auto-refresh 
         var intervalID = null;
