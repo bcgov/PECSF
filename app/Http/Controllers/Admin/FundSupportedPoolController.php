@@ -14,6 +14,7 @@ use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -30,7 +31,7 @@ class FundSupportedPoolController extends Controller
     {
          $this->middleware('permission:setting');
 
-         $this->image_folder = "img/uploads/fspools/";
+        $this->image_folder = "img/uploads/fspools/";
     }
 
     /**
@@ -298,6 +299,8 @@ class FundSupportedPoolController extends Controller
                         $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
 
                         $file->move(public_path( $this->image_folder ), $filename);
+
+
                     }
 
                     $pool->charities()->create([
@@ -511,6 +514,9 @@ class FundSupportedPoolController extends Controller
             for ($i=0; $i < count($charities); $i++) {
                 if ($charities[$i] != '') {
 
+                    $old_pool_charity = FSPoolCharity::where('f_s_pool_id', $id)
+                                            ->where('charity_id', $charities[$i])->first();
+
                     $payload =  [
                         'percentage'    => $percentages[$i],
                         'status'        => $status[$i],
@@ -522,8 +528,22 @@ class FundSupportedPoolController extends Controller
                         'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null,
                     ];
 
-                    if(!empty($upload_images[$i])){
-                        $payload['image'] = $upload_images[$i]->getClientOriginalName();
+                    if (array_key_exists($i, $upload_images)) {
+                        $file= $upload_images[$i];
+                        $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+                        $payload['image'] = $new_filename;
+
+                        // Save the new image file on folder 
+                        $file->move(public_path( $this->image_folder ), $new_filename);
+
+
+                        // Clean up old file on the folder
+                        if ($old_pool_charity->image) {
+                            $old_filename = public_path( $this->image_folder ) . $old_pool_charity->image;                            
+                            if (File::exists( $old_filename )) {
+                                File::delete( $old_filename );
+                            }
+                        }
                     }
 
                     $pool_charity = $pool->charities()->updateOrCreate([
@@ -531,23 +551,7 @@ class FundSupportedPoolController extends Controller
                     ],$payload);
 
                     // copy and delete the file in folder
-                    if (array_key_exists($i, $upload_images)) {
-                        // dd ( $request->file('images') );
-                        $file= $upload_images[$i];
-                        $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
-                        $file->move(public_path( $this->image_folder ), $new_filename);
-
-                        // Clean up old file
-                        if ($pool_charity->image) {
-                            $old_filename = public_path( $this->image_folder ).$pool_charity->image;
-                            if (File::exists( $old_filename )) {
-                                File::delete( $old_filename );
-                            }
-                        }
-                        // Store the new filename in record
-                        $pool_charity->image = $new_filename;
-                        $pool_charity->save();
-                    }
+                    
 
                 }
             }
@@ -621,7 +625,7 @@ class FundSupportedPoolController extends Controller
             foreach ($pool->charities as $pool_charity) {
                 // Clean up old file
                 if ($pool_charity->image) {
-                    $old_filename = public_path( $this->image_folder ).$pool_charity->image;
+                    $old_filename =  public_path( $this->image_folder ) .$pool_charity->image;
                     if (File::exists( $old_filename )) {
                         File::delete( $old_filename );
                     }

@@ -84,9 +84,13 @@ class AccessLogController extends Controller
 
     public function show(Request $request, $id) {
 
-        $user = User::where('id', $id)->with('primary_job')->first();
+        if ($request->ajax()) {
+            $user = User::where('id', $id)->with('primary_job')->first();
 
-        return view('system-security.access-logs.partials.user-detail', compact('user') )->render();
+            return view('system-security.access-logs.partials.user-detail', compact('user') )->render();
+        } else {
+            return redirect('/');
+        }
 
     }
 

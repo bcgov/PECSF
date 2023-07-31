@@ -52,7 +52,7 @@ class DonationController extends Controller {
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->whereNotNull('pledges.emplid')
-                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
+                ->selectRaw("'GF' as source, pledges.user_id,  pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                                 case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
@@ -68,7 +68,7 @@ class DonationController extends Controller {
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->whereNotNull('pledges.emplid')
-                ->selectRaw("'GF', pledges.user_id, pledges.id, pledges.emplid, campaign_years.calendar_year, type,
+                ->selectRaw("'GF' as source, pledges.user_id, pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
                             case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
@@ -82,7 +82,7 @@ class DonationController extends Controller {
                 ->where('donate_now_pledges.organization_id', $user->organization_id)
                 ->where('donate_now_pledges.emplid', $user->emplid)
                 ->whereNotNull('donate_now_pledges.emplid')
-                ->selectRaw("'GF', donate_now_pledges.user_id, donate_now_pledges.id, donate_now_pledges.emplid, yearcd, type,
+                ->selectRaw("'GF' as source, donate_now_pledges.user_id,donate_now_pledges.id, 'donate_now_pledges' as model,  donate_now_pledges.emplid, yearcd, type,
                             'Donate Now', 'One-Time', donate_now_pledges.one_time_amount, donate_now_pledges.one_time_amount,
                             case when type = 'P' then
                                 (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = donate_now_pledges.f_s_pool_id)
@@ -95,7 +95,7 @@ class DonationController extends Controller {
                 ->where('special_campaign_pledges.organization_id', $user->organization_id)
                 ->where('special_campaign_pledges.emplid', $user->emplid)
                 ->whereNotNull('special_campaign_pledges.emplid')
-                ->selectRaw("'GF', special_campaign_pledges.user_id, special_campaign_pledges.id, special_campaign_pledges.emplid, yearcd, 'C',
+                ->selectRaw("'GF' as source, special_campaign_pledges.user_id, special_campaign_pledges.id,'special_campaign_pledges' as model, special_campaign_pledges.emplid, yearcd, 'C',
                             'Special Campaign', 'One-Time', special_campaign_pledges.one_time_amount, special_campaign_pledges.one_time_amount,
                             (select special_campaigns.name from special_campaigns where special_campaign_pledges.special_campaign_id = special_campaigns.id)
                             , 1");
@@ -108,7 +108,7 @@ class DonationController extends Controller {
                 ->where('bank_deposit_forms.organization_code', $user->organization ? $user->organization->code : null)
                 ->where('bank_deposit_forms.bc_gov_id', $user->emplid)
                 ->whereNotNull('bank_deposit_forms.bc_gov_id')
-                ->selectRaw("'GF', null, bank_deposit_forms.id, bc_gov_id, campaign_years.calendar_year,
+                ->selectRaw("'GF' as source, null, bank_deposit_forms.id,'bank_deposit_forms' as model, bc_gov_id, campaign_years.calendar_year,
                             case when regional_pool_id is null then 'C' else 'P' end,
                             'Event', 'One-Time', bank_deposit_forms.deposit_amount, bank_deposit_forms.deposit_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = bank_deposit_forms.regional_pool_id),
@@ -119,7 +119,7 @@ class DonationController extends Controller {
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
                             ->whereNotNull('emplid')
-                            ->selectRaw("'BI' as source, NULL as user_id, pledge_history_id as id, emplid, yearcd, source as type,
+                            ->selectRaw("'BI' as source, NULL as user_id,  pledge_history_id as id,'pledge_history_summaries' as model, emplid, yearcd, source as type,
                                          campaign_type as donation_type, frequency, per_pay_amt as amount, pledge,
                                          (select regions.name from regions where regions.code = pledge_history_summaries.region) as region,
                                          case when source = 'P' then 0 else
@@ -151,24 +151,99 @@ class DonationController extends Controller {
 
         foreach($pledges_by_yearcd as $yearcd => $pledges){
             foreach($pledges as $index => $pledge){
-                $pledges_by_yearcd[$yearcd][$index]->charities = PledgeHistory::join("pledge_history_summaries","pledge_histories.id","pledge_history_summaries.pledge_history_id")->select("vendor_name1")->where("pledge_history_summaries.emplid","=",$user->emplid)->where("pledge_history_summaries.yearcd","=",$yearcd)->where("pledge_history_summaries.source","=","Non-Pool")->where("pledge_history_summaries.campaign_type","=",$pledge->donation_type)->where("pledge_history_summaries.frequency","=",$pledge->frequency)->get();
+                if($pledge->model == "pledge")
+                {
+                    if(!empty(Pledge::where("id","=",$pledge->id)->first()))
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->distinct_charities;
+                    }
+                    else
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [];
+                    }
+                }
+                else if($pledge->model == "donate_now_pledges"){
+                    if(!empty(DonateNowPledge::where("id","=",$pledge->id)->first()))
+                    {
+                        $dnp = DonateNowPledge::where("id","=",$pledge->id)->first();
 
+                        if($dnp->f_s_pool_id > 0){
+                            $pledges_by_yearcd[$yearcd][$index]->charities = DonateNowPledge::where("id","=",$pledge->id)->first()->charities;
+                        }
+                        else{
+                            $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
+
+                        }
+
+                    }
+                    else
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [];
+                    }
+                }
+                else if($pledge->model == "special_campaign_pledges"){
+                    if(!empty(SpecialCampaignPledge::where("id","=",$pledge->id)->first()))
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization];
+                    }
+                    else
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [];
+                    }
+                }
+                else if($pledge->model == "bank_deposit_forms")
+                {
+                    if(!empty(BankDepositForm::where("id","=",$pledge->id)->first()))
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = BankDepositForm::where("id","=",$pledge->id)->first()->charities;
+                    }
+                    else
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [];
+                    }
+                }
+                else if($pledge->model == "pledge_history_summaries")
+                {
+                    if(!empty(PledgeHistory::where("id","=",$pledge->id)->first()))
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = PledgeHistory::where('emplid', $pledge->emplid)
+                            ->where('campaign_type', $pledge->donation_type)
+                            ->where('yearcd', $pledge->yearcd)
+                            ->where('frequency', $pledge->frequency)
+                            ->when( $pledge->donation_type == 'Donate Today', function($query) use($pledge) {
+                                return $query->where('id', $pledge->id);
+                            })
+                            ->orderBy('name1')
+                            ->get();;
+                    }
+                    else
+                    {
+                        $pledges_by_yearcd[$yearcd][$index]->charities = [];
+                    }
+                }
+                else{
+                    $pledges_by_yearcd[$yearcd][$index]->charities = [];
+
+                }
             }
         }
+
+        $fsp_name = false;
 
         // download PDF file with download method
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
+
             $pdf = PDF::loadView('donations.partials.pdf', compact(//'pledges',
                 'currentYear', 'totalPledgedDataTillNow', 'campaignYear', 'current_pledge',
-                'pledges_by_yearcd'));
+                'pledges_by_yearcd','fsp_name'));
             return $pdf->download('Donation History Summary.pdf');
         }
         else{
             return view('donations.index', compact(//'pledges',
                 'currentYear',  'totalPledgedDataTillNow','campaignYear', 'current_pledge',
-                'pledges_by_yearcd'));
+                'pledges_by_yearcd','fsp_name'));
         }
     }
 

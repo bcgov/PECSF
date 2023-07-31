@@ -113,13 +113,13 @@
             <div class="col-md-4 mb-4">
                 <label for="pecsf_bu">Business Unit</label>
                 <input type="text" class="form-control border-0" id="pecsf_bu" name="pecsf_bu"
-                    value="{{ (isset($pledge) && $pledge->pecsf_user_bu() ) ? $pledge->pecsf_user_bu()->name . ' (' . $pledge->pecsf_user_bu()->code . ')' : '' }}"
+                    value="{{ (isset($pledge) && $pledge->pecsf_user_bu ) ? $pledge->pecsf_user_bu->name . ' (' . $pledge->pecsf_user_bu->code . ')' : '' }}"
                     readonly>
             </div>
             <div class="col-md-4 mb-4">
                 <label for="pecsf_region">Region</label>
                 <input type="text" class="form-control border-0" id="pecsf_region" name="pecsf_region"
-                    value="{{ (isset($pledge) && $pledge->pecsf_user_region() ) ? $pledge->pecsf_user_region()->name . ' (' . $pledge->pecsf_user_region()->code . ')' : '' }}"
+                    value="{{ (isset($pledge) && $pledge->pecsf_user_region ) ? $pledge->pecsf_user_region->name . ' (' . $pledge->pecsf_user_region->code . ')' : '' }}"
                     readonly>
             </div>
         </div>
@@ -134,7 +134,7 @@
             <div class="col-md-5 mb-3">
                 <label for="user_region">Region</label>
                 <input type="text" class="form-control border-0" id="user_region"
-                        value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->region->name . ' (' . $pledge->user->primary_job->region->code . ')'  : '' }}"
+                        value="{{ (isset($pledge)) ? ($pledge->pecsf_user_region->name . ' (' . $pledge->pecsf_user_region->code . ')' ) : '' }}"
                      disabled>
             </div>
             <div class="col-md-5 mb-3">
@@ -168,7 +168,7 @@
             <div class="col-md-4 mb-3">
                 <label for="user_bu">Business Unit</label>
                 <input type="text" class="form-control border-0" id="user_bu"
-                    value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->bus_unit->name . ' (' . $pledge->user->primary_job->bus_unit->code . ')' : '' }}"
+                    value="{{ (isset($pledge)) ? ($pledge->pecsf_user_bu->name . ' (' . $pledge->pecsf_user_bu->code . ')' )  : '' }}"
                      disabled>
             </div>
             <div class="col-md-4 mb-3">
@@ -176,6 +176,12 @@
                 <input type="text" class="form-control border-0" id="user_org"
                     value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->organization_name : '' }}"
                     disabled>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="user_office_city">Office City</label>
+                <input type="text" class="form-control border-0" id="user_office_city" name="user_office_city"
+                    value="{{ (isset($pledge)) ? $pledge->city   : '' }}"
+                    readonly>
             </div>
         </div>
 

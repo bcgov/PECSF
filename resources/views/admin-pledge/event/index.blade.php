@@ -111,7 +111,7 @@
                             {{-- <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }} --}}
                                 <option value="{{ $cy->id }}" {{ 
                                     isset($filter['campaign_year_id']) ? ($filter['campaign_year_id'] == $cy->id ? 'selected' : '') :
-                                    ($cy->calendar_year == date('Y') ? 'selected' : '') }}>
+                                    ($cy->calendar_year == (date('Y') + 1) ? 'selected' : '') }}>
                                     {{ $cy->calendar_year }} 
                             </option>
                         @endforeach
@@ -166,11 +166,15 @@
                 <thead>
                     <tr>
                         <th>Tran ID</th>
+                        <th>Calendar Year</th>
                         <th>Organization Code</th>
                         <th>Form Submitter</th>
                         <th>Employee ID</th>
                         <th>PECSF Identifier</th>
-                        <th>Calendar Year</th>
+                        <th>Employee Name</th>
+                        <th>Business Unit</th>
+                        <th>Region</th>
+                        <th>Office City</th>
                         <th>Event Type</th>
                         <th>Donation Amount</th>
                         <th>Sub Type</th>
@@ -275,11 +279,15 @@
             columns: [
 
                 {data: 'id',  className: "dt-nowrap"},
+                {data: 'campaign_year.calendar_year', defaultContent: '', className: "dt-nowrap", className: "dt-center"},
                 {data: 'organization_code'  },
                 {data: 'form_submitted_by.name', defaultContent: '', className: "dt-nowrap"},
                 {data: 'bc_gov_id', defaultContent: '' },
                 {data: 'pecsf_id', defaultContent: '' },
-                {data: 'campaign_year.calendar_year', defaultContent: '', className: "dt-nowrap", className: "dt-center"},
+                {data: 'employee_name', defaultContent: '', className: "dt-nowrap" },
+                {data: 'bu.code', defaultContent: '' },
+                {data: 'region.name', defaultContent: '' },
+                {data: 'employment_city', defaultContent: '' },
                 {data: 'event_type', defaultContent: '',className: "dt-nowrap" },
                 {data: 'deposit_amount', name: 'deposit_amount', className: 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '') },
                 {data: 'sub_type', defaultContent: '', className: "dt-nowrap", 

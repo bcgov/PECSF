@@ -17,7 +17,7 @@
   <div class="row">
     <div class="col-9 col-sm-9">
         <h1>Make a Donation</h1>
-        <p class="text-muted">When you give through PECSF 100% of your donated dollars goes to the organizations you choose to support.</p>
+        <p class="text-muted">When you give through PECSF 100% of your donated dollars goes to the organizations you<br> choose to support.</p>
 
         {{-- Wizard Progress bar (stepper) --}}
         <div class="card-header border-0 p-0">
@@ -93,7 +93,7 @@
                         @elseif(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) < 1))
                             @include('annual-campaign.partials.pools')
                         @else
-                            <p class="p-1"></p>
+
                             @include('annual-campaign.partials.pools')
                             @include('annual-campaign.partials.choose-charity')
                         @endif
@@ -533,6 +533,10 @@ $(function () {
                 timeout: 30000,
                 success: function(data)
                 {
+                    if(data.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login';
+                    }
+
                     // console.log(data );
                     if (step == 3 && pool_option == 'P' || step == 4)  {
                         $('#summary-page').html(data);
@@ -586,6 +590,12 @@ $(function () {
 
                         })
                     }
+
+                    if (response.status == 401 || response.status == 419) {
+                        // session expired
+                        window.location.href = '/login';
+                    }
+
                     console.log('Error');
                 }
             });

@@ -65,7 +65,11 @@
                                             data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">
-                                            {{ count(explode(",",$pledge->number_of_charities)) }} {{ count(explode(",",$pledge->number_of_charities)) > 1 ? 'charities' : 'charity' }}
+                                            {{ count($pledge->charities) }} {{ count($pledge->charities) > 1 ? 'charities' : 'charity' }}
+
+
+
+
                                         </a>
 
                                     @endswitch
@@ -79,7 +83,7 @@
                                             data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">
-                                                {{ count(explode(",",$pledge->number_of_charities)) }} {{ count(explode(",",$pledge->number_of_charities)) > 1 ? 'charities' : 'charity' }}
+                                            {{ count($pledge->charities) }} {{ count($pledge->charities) > 1 ? 'charities' : 'charity' }}
 
                                         </a>
                                     @endif

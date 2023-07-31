@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "halaxa/json-machine": "^1.1",
+        "jenssegers/agent": "^2.6",
         "jeroennoten/laravel-adminlte": "^3.5",
         "laravel/framework": "^9.0",
         "laravel/socialite": "^5.2",

@@ -112,6 +112,8 @@ class BankDepositFormController extends Controller
 
     public function store(Request $request) {
 
+
+
         $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
@@ -140,7 +142,10 @@ class BankDepositFormController extends Controller
                     $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
                 }
             }
-
+            if($request->organization_code == "false")
+            {
+                $validator->errors()->add('organization_code','An organization code is required.');
+            }
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             if($request->organization_code != "GOV" && $request->organization_code != "RET")
@@ -150,6 +155,16 @@ class BankDepositFormController extends Controller
                         $validator->errors()->add('pecsf_id','A PECSF ID is required.');
                     }
             }
+
+                if($request->event_type != "Fundraiser" && $request->event_type!= "Gaming")
+                {
+                    if(empty($request->employee_name))
+                    {
+                        $validator->errors()->add('employee_name','The employee name field is required.');
+                    }
+                }
+
+
             if($request->organization_code == "GOV"){
                 if(empty($request->bc_gov_id))
                 {
@@ -266,7 +281,7 @@ class BankDepositFormController extends Controller
                     ->get();
                 if (empty(!$existing) && !empty($request->pecsf_id)) {
                     if (strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id, 1))) {
-                        $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+                       // $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
                     }
                 }
             }
@@ -528,7 +543,7 @@ class BankDepositFormController extends Controller
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
 
-        $form = BankDepositForm::where("id","=",$request->form_id)->update(
+        $form = BankDepositForm::find($request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
                 'event_type' =>  $request->event_type,
@@ -586,10 +601,10 @@ class BankDepositFormController extends Controller
             $organizations = Organization::where("code", "LIKE", $request->term . "%")->where("status","=","A")->get();
         }
         $response = ['results' => []];
-        $response['results'][] = ["id" => "false", "text" => "Choose an Org Code"];
+        $response['results'][] = ["id" => "false", "text" => "Choose an organization"];
         foreach ($organizations as $organization) {
             if(!empty($organization->code)){
-                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->code];
+                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->name];
             }
         }
         echo json_encode($response);

@@ -72,6 +72,18 @@ class KeycloakLoginController extends Controller
                 Auth::loginUsingId($isUser->id);
                 $request->session()->regenerate();
 
+                $isUser->last_signon_at = now();
+                $isUser->save();
+
+                // Insert record into Access Log 
+                \App\Models\AccessLog::create([
+                    'user_id' => $isUser->id,
+                    'login_at' => Carbon::now(), 
+                    'login_ip' => $request->getClientIp(),
+                    'login_method' => 'Keycloak',
+                    'identity_provider' => $identity_provider,
+                    ]);
+
                 return redirect('/');
 
             } else {
@@ -175,18 +187,6 @@ class KeycloakLoginController extends Controller
                 $isUser->keycloak_id = $keycloak_user->getId();
                 $isUser->idir_email_addr = $keycloak_user->getEmail();
             }
-
-            $isUser->last_signon_at = now();
-            $isUser->save();
-
-            // Insert record into Access Log 
-            \App\Models\AccessLog::create([
-                'user_id' => $isUser->id,
-                'login_at' => Carbon::now(), 
-                'login_ip' => $request->getClientIp(),
-                'login_method' => 'Keycloak',
-                'identity_provider' => $identity_provider,
-           ]);
 
             return $isUser;
 

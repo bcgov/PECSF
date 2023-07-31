@@ -44,20 +44,21 @@ class MaintainEventPledgeController extends Controller
     {
         if($request->ajax()) {
 
-            // store the filter 
+            // store the filter
             $filter = $request->except("draw", "columns", "order", "start", "length", "search", "_");
             session(['admin_pledge_event_pledge_filter' => $filter]);
 
-            $pledges = BankDepositForm::with('campaign_year','form_submitted_by')
+            $pledges = BankDepositForm::with('region', 'bu', 'campaign_year','form_submitted_by')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
                             ->where( function($query) {
                                 $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                                        $q->from('employee_jobs as J2') 
+                                        $q->from('employee_jobs as J2')
                                             ->whereColumn('J2.emplid', 'employee_jobs.emplid')
                                             ->selectRaw('min(J2.empl_rcd)');
                                     })
                                     ->orWhereNull('employee_jobs.empl_rcd');
                             })
+                ->where("approved","=",1)
                             ->when($request->tran_id, function($query) use($request) {
                                 return $query->where('bank_deposit_forms.id', 'like', $request->tran_id);
                             })
@@ -71,7 +72,7 @@ class MaintainEventPledgeController extends Controller
                                 $query->where( function($q) use($request) {
                                     return $q->where('bank_deposit_forms.bc_gov_id', 'like', '%'. $request->emplid .'%')
                                              ->orWhere('employee_jobs.name', 'like', '%' . $request->emplid . '%');
-                                });             
+                                });
                             })
                             ->when( $request->description, function($query) use($request) {
                                 $query->where('bank_deposit_forms.description', 'like', '%'. $request->description .'%');
@@ -101,7 +102,7 @@ class MaintainEventPledgeController extends Controller
                 ->make(true);
         }
 
-         // restore filter if required 
+         // restore filter if required
          $filter = null;
          if (str_contains( url()->previous(), 'admin-pledge/create') ||
              str_contains( url()->previous(), 'admin-pledge/submission-queue') ||
@@ -141,7 +142,7 @@ class MaintainEventPledgeController extends Controller
             $pledge->approved_by_name = $pledge->approved_by ? $pledge ->approved_by->name : '';
             $pledge->formatted_created_at = $pledge->created_at->format('Y-m-d H:i:s');
             $pledge->formatted_updated_at = $pledge->updated_at->format('Y-m-d H:i:s');
-            
+
             unset($pledge->created_by );
             unset($pledge->updated_by );
             unset($pledge->approved_by );

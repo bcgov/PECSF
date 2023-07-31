@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use DateTime;
 use Carbon\Carbon;
+use App\Models\City;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
@@ -169,6 +170,10 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                 // $user = User::where('source_type', 'HCM')->where('guid', $bi_pledge->GUID )->first();
                 $user = User::where('source_type', 'HCM')->where('emplid', $bi_pledge->emplid )->orderby('id')->first();
 
+                $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
+                $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+               
+                          
                 if(!empty($user)){
                     if (!($user->acctlock == 0)) {
                         continue;
@@ -183,6 +188,12 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                 if (!($valid)) {
                     $error_count += 1;
                     continue;
+                }
+
+                $bi_pledge_detail = $bi_pledge->first_detail;
+                $city = City::where('city', trim( $bi_pledge->first_detail )  )->first();
+                if ($city) {
+                    $tgb_reg_district = $city->TGB_REG_DISTRICT;
                 }
           
                 $pool = null;
@@ -208,6 +219,9 @@ class GenerateGovCampaignPledgeForTestingChallengePage extends Command
                     // 'first_name',
                     // 'last_name',
                     // 'city',
+                    'business_unit' => $business_unit,
+                    'tgb_reg_district' => $tgb_reg_district,
+                    
                     'user_id' => $user->id,
                     'type' => $bi_pledge->source,
 

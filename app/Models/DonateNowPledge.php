@@ -13,7 +13,7 @@ class DonateNowPledge extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
-        'organization_id', 
+        'organization_id',
         'emplid',
         'user_id',  // Not in use in the near future due to multiple GUID to emplid issue
         'pecsf_id', 'yearcd', 'seqno',
@@ -42,11 +42,11 @@ class DonateNowPledge extends Model implements Auditable
             $charity = Charity::where('id', $this->charity_id)->first();
             $in_support_of = $charity ? $charity->charity_name : '';
         }
-    
+
         return $in_support_of;
 
     }
-  
+
     public function organization() {
         return $this->belongsTo(Organization::class)->withDefault();
     }
@@ -77,10 +77,14 @@ class DonateNowPledge extends Model implements Auditable
         return $this->belongsTo('App\Models\Charity')->withDefault();
     }
 
+    public function f_s_pool_charities() {
+        return $this->belongsTo('App\Models\FSPoolCharity',["f_s_pool_id",'f_s_pool_id'])->withDefault();
+    }
+
     public function campaign_year() {
         return $this->belongsTo(CampaignYear::class, 'yearcd', 'calendar_year');
     }
-    
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id')->withDefault();

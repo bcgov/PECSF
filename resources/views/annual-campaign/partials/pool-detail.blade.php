@@ -3,7 +3,8 @@
     @foreach ($charities as $pool_charity)    
         <li class="list-group-item">
             <div class="row">
-                <div class="col-1"><img src="{{ asset('img/uploads/fspools/'.$pool_charity->image ) }}" 
+                <div class="col-1">
+                    <img src="{{ asset('img/uploads/fspools/'.$pool_charity->image ) }}" 
                         class="card-img-top" alt="..."
                     min-height="100"></div>
                 <div class="col-11">
