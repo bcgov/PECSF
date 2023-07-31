@@ -46,7 +46,7 @@
                 <select name="year" value="" class="form-control">
                     {{-- <option value="">All</option> --}}
                     @foreach( $years as $year)
-                        <option value="{{ $year }}" {{ today()->year == $year ? 'selected' : '' }}>{{ $year }} </option>
+                        <option value="{{ $year }}" {{ (today()->year + 1) == $year ? 'selected' : '' }}>{{ $year }} </option>
                     @endforeach 
                 </select>
             </div>
