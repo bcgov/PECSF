@@ -76,6 +76,7 @@ class EligibleEmployeeReportController extends Controller
         if($request->ajax()) {
 
             $filters = $request->all(); 
+            $filters['year'] = $filters['year'] - 1;        // Calendar to campaign year
 
             $filename = 'export_eligible_employees_'.now()->format("Y-m-d-his").".xlsx";
 
@@ -183,8 +184,12 @@ class EligibleEmployeeReportController extends Controller
 
     function getEmployeeJobQuery(Request $request) {
 
+
         $sql = EligibleEmployeeDetail::when( $request->year, function($query) use($request) {
-                                $query->where('eligible_employee_details.year', $request->year);
+                                $query->where('eligible_employee_details.year', $request->year - 1);
+                            })
+                            ->when( $request->as_of_date, function($query) use($request) {
+                                $query->where('eligible_employee_details.as_of_date', $request->as_of_date );
                             })
                             ->when( $request->emplid, function($query) use($request) {
                                 $query->where('eligible_employee_details.emplid', 'like', '%'. $request->emplid .'%');
