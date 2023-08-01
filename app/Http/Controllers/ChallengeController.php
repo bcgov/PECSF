@@ -302,5 +302,4 @@ class ChallengeController extends Controller
 
     }
 
-
 }

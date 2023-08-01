@@ -75,6 +75,7 @@ class DailyCampaignView extends Model
                 SQL;
 
         return $sql;
+        
     }
 
 }
