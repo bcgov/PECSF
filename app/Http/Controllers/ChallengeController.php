@@ -152,11 +152,7 @@ class ChallengeController extends Controller
                                         eligible_employee_count as ee_count
                             from daily_campaigns, (SELECT @row_number:=0) AS temp
                             where campaign_year = ?
-                            -- and as_of_date = (select max(as_of_date) from daily_campaigns D1
-                            --                                     where D1.campaign_year = daily_campaigns.campaign_year
-                            --                                     and D1.daily_type = daily_campaigns.daily_type
-                            --                                     and D1.as_of_date <= ?
-                            --                                     )
+                        
                             and as_of_date = ?
                             and daily_type = 0     
                             and donors >= 5
@@ -305,6 +301,5 @@ class ChallengeController extends Controller
         } 
 
     }
-
 
 }
