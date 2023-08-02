@@ -34,29 +34,34 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        if (env('TASK_SCHEDULING_ENABLED')) 
+        // **************************
+        // *** Outbound Processes ***
+        // **************************
+
+        if (env('TASK_SCHEDULING_OUTBOUND_PSFT_ENABLED')) 
         { 
-
-                // **************************
-                // *** Outbound Processes ***
-                // **************************
-
                 // Note: The export processes are only execute in TEST and Production  
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->dailyAt('0:15')
                         ->environments(['TEST', 'prod'])
                         ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
-                        
+        }
+
+        if (env('TASK_SCHEDULING_OUTBOUND_BI_ENABLED')) 
+        {
                 $schedule->command('command:ExportDatabaseToBI')
                         ->weekdays()
                         ->at('0:30')
                         ->environments(['TEST', 'prod'])
                         ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
 
+        }
 
-                // **************************
-                // *** Inbound  Processes ***
-                // **************************
+        // **************************
+        // *** Inbound  Processes ***
+        // **************************
+        if (env('TASK_SCHEDULING_INBOUND_ENABLED')) 
+        { 
 
                 // Foundation table
                 $schedule->command('command:ImportPayCalendar')
