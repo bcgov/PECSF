@@ -4,10 +4,11 @@ namespace App\Exports;
 
 // use App\Models\EmployeeJob;
 use App\Models\Pledge;
+use App\Models\BusinessUnit;
 use App\Models\PledgeStaging;
 use App\Models\ProcessHistory;
-use App\Models\BankDepositForm;
 
+use App\Models\BankDepositForm;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -66,6 +67,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                         'Org Descr',
                         'Business Unit',
                         'Business Unit Descr',
+                        'Challenge Business Unit',
                         'Region',
                         'Region Descr',
                         'City',
@@ -98,6 +100,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
             $employee->organization->name,
             $employee->business_unit_code,
             $employee->business_unit ? $employee->business_unit->name : '',
+            $employee->challenge_bu_code,
             $employee->tgb_reg_district,
             $employee->region ? $employee->region->name : '',
             $employee->city,
@@ -362,6 +365,21 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                 })
 
         );
+
+        // Update Challenge Business Unit
+        $pledges = PledgeStaging::all();
+
+        foreach ($pledges as $pledge) {
+
+            $bu = BusinessUnit::where('code', $pledge->business_unit_code)->first();
+            $business_unit_code = $bu->linked_bu_code;
+            if ($business_unit_code == 'BC022' && str_starts_with($pledge->dept_name, 'GCPE')) {
+                $business_unit_code  = 'BGCPE';
+            }
+            $pledge->challenge_bu_code = $business_unit_code;
+            $pledge->save();
+
+        }
 
         // Total Count
         $this->total_count = PledgeStaging::where('history_id', $this->history_id)->count();    

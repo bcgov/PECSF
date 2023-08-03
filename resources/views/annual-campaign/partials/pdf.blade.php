@@ -62,7 +62,7 @@ border-collapse:collapse;
 
 <div class="header">
     <img  src="img/brand/1.png"/>
-    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
+    <img class="pdf-logo-image" style="float:right;width:150px;height:auto;" src="img/brand/PECSF_Logo_Vert_RGB.jpg"/><br>
     <div class="clear"></div>
 </div>
 <br>
@@ -85,7 +85,7 @@ border-collapse:collapse;
                     <div class="card-body">
                         <span><b>Your Bi-weekly payroll deductions:</b></span>
                         {{-- <span class="float-right mb-2">${{ $calculatedTotalAmountBiWeekly*26 }}</span><br> --}}
-                        <span class="float-right mb-2">${{ number_format($annualBiWeeklyAmount,2 /26)}}</span><br>
+                        <span class="float-right mb-2">${{ number_format($biWeeklyAmount,2)}}</span><br>
                         <h6>AND / OR</h6>
                         <span><b>Your One-time payroll deductions:</b></span>
                         {{-- <span class="float-right">${{ $calculatedTotalAmountOneTime }}</span> --}}

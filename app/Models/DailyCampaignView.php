@@ -53,6 +53,7 @@ class DailyCampaignView extends Model
                         (select organization_code, business_units.code as business_unit_code, name as organization_name, sum(donors) as donors, sum(dollars) as dollars 
                            from business_units left outer join daily_campaign_view on business_units.code = daily_campaign_view.business_unit_code
                           where (daily_campaign_view.campaign_year = ? or daily_campaign_view.campaign_year is null)
+                            and business_units.code in (select linked_bu_code from business_units)
                           group by business_units.code, organization_name
                           order by sum(donors) desc
                         ) as A, (SELECT @row_number:=0) AS temp
@@ -74,6 +75,7 @@ class DailyCampaignView extends Model
                 SQL;
 
         return $sql;
+        
     }
 
 }

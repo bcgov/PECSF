@@ -26,8 +26,10 @@
         </div>
         <div class="form-group col-md-4">
             <label for="form_submitter">Form submitter</label>
-            <div id="form_submitter">{{$current_user->name}}</div>
-            <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
+            <!--<div id="form_submitter">{{$current_user->name}}</div>-->
+            <input type="text" disabled class="form-control" value="{{$current_user->name}}" />
+
+            <input type="hidden" disabled value="{{$current_user->id}}" name="form_submitter" />
 
             <span class="form_submitter_errors errors">
                        @error('form_submitter')
@@ -38,8 +40,9 @@
         </div>
         <div class="form-group col-md-4">
             <label for="campaign_year">Campaign year</label>
-            <div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>
-            <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
+            <!--<div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>-->
+            <input type="text" disabled class="form-control" value="{{$campaign_year->calendar_year - 1}}" />
+            <input type="hidden"  value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -370,12 +373,10 @@
 
 
 
+
             <div class="form-row form-header">
-                <h3 class="blue">File(s)</h3>
-            </div>
-            
-            <div class="form-row form-header">
-                <h5>Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</h5>
+                            <h3 class="blue">File(s)</h3>
+
 
                 <span class="attachment_errors errors">
                        @error('attachments')
@@ -383,7 +384,11 @@
                             @enderror
                         </span>
             </div>
+
             <div class="form-row form-body">
+                <h5>Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</h5>
+
+
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
                     <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
