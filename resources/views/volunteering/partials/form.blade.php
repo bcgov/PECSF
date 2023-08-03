@@ -213,6 +213,9 @@
     <div class="form-row form-header address_hook" style="display:none;">
             <h3 class="blue">Mailing address for charitable receipt</h3>
     </div>
+            <div class="form-row form-header address_hook" style="display:none;">
+                <h5>A charitable donation receipt will be issued for cash and cheque donations in February following the calendar year in which the donation is received.</h5>
+            </div>
     <div class="form-row form-body address_hook" style="display:none;">
 
         <div class="form-group col-md-12" id="address_line_1" style="">
@@ -369,8 +372,12 @@
 
             <div class="form-row form-header">
                 <h3 class="blue">File(s)</h3>
-
             </div>
+
+            <div class="form-row form-header">
+                <h5>Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</h5>
+            </div>
+
             <div class="form-row form-header">
                 <span class="attachment_errors errors">
                        @error('attachments')
