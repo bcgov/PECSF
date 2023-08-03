@@ -47964,3 +47964,19 @@ input[name=keyword] {
 #organizations td {
   border-top: #ccc 1px solid;
 }
+
+.form-row.form-header {
+  background: #f2f2f2;
+  padding: 8px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding-left: 15px;
+  border: #d2d2d2 1px solid;
+  padding-top: 15px;
+}
+
+.form-row.form-body {
+  border: #d2d2d2 1px solid;
+  border-top: none;
+  padding: 15px;
+}
