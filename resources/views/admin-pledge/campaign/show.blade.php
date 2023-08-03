@@ -8,8 +8,8 @@
 
     <div class="mx-1 pt-2">
         <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('admin-pledge.campaign.index') }}'">
-            Back    
-        </button> 
+            Back
+        </button>
     </div>
 
 @endsection
@@ -24,13 +24,13 @@
                     <span><b class="pr-3">Transaction ID: </b>{{ $pledge->id }}</span>
             </div>
         </div>
-        
+
         <div class="card m-0 pb-3">
             <div class="card-header bg-primary">
                 <div class="h5"> Employee Information</div>
             </div>
             <div class="card-body ">
-            @if( $pledge->user_id )                        
+            @if( $pledge->user_id )
                 <div class="form-row">
                     <div class="col-md-3 mb-3">
                         <label for="">Organization</label>
@@ -105,17 +105,17 @@
                 <div class="form-row">
                     <div class="col-md-4 mb-4">
                         <label for="">Business Unit</label>
-                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu ? 
-                                ($pledge->pecsf_user_bu ? $pledge->pecsf_user_bu->name . ' (' . 
+                        <input type="text" class="form-control" value="{{ $pledge->pecsf_user_bu ?
+                                ($pledge->pecsf_user_bu ? $pledge->pecsf_user_bu->name . ' (' .
                                 $pledge->pecsf_user_bu->code . ')' : '' ) : '' }}" disabled>
                     </div>
                     <div class="col-md-4 mb-4">
                         <label for="">Region</label>
                         <input type="text" class="form-control" value="{{ $pledge->pecsf_user_region ?
-                                ($pledge->pecsf_user_region ? $pledge->pecsf_user_region->name . ' (' . 
+                                ($pledge->pecsf_user_region ? $pledge->pecsf_user_region->name . ' (' .
                                                     $pledge->pecsf_user_region->code . ')' : '' ) : '' }}" disabled>
                     </div>
-                </div>                   
+                </div>
             @endif
             </div>
         </div>
@@ -129,11 +129,11 @@
 
                 <div class="pb-1"><b>Calendar year: </b>{{ $pledge->campaign_year->calendar_year }}</div>
                 <span><b>Your Bi-weekly payroll deductions:</b></span>
-                
-                <span class="float-right mb-2">${{ number_format($pledge->goal_amount - $pledge->one_time_amount ,2) }}</span><br>
+
+                <span class="float-right mb-2">${{ number_format(($pledge->goal_amount - $pledge->one_time_amount) / 26,2)  }}</span><br>
                 <h6>AND / OR</h6>
                 <span><b>Your One-time payroll deductions:</b></span>
-                
+
                 <span class="float-right">${{ number_format($pledge->one_time_amount,2) }}</span>
                 <hr>
                 <p class="text-right"><b>Total :</b> ${{ number_format($pledge->goal_amount,2) }}</p>
@@ -143,7 +143,7 @@
                 @if ( $pledge->type == 'P')
                     <p class="mt-4"><b>Fund Supported Pool: </b>{{  $pledge->fund_supported_pool->region->name  }}</p>
                 @endif
-                
+
                 <table class="table">
                     <thead class="thead-light">
                         <tr>
@@ -168,15 +168,15 @@
                                     @if($loop->last)
                                         <td class="th-sm text-center">${{ number_format( ($pledge->goal_amount - $pledge->one_time_amount)  - $pay_period_sum, 2) }}</td>
                                         <td class="text-center">${{ number_format($pledge->one_time_amount - $one_time_sum, 2) }}</td>
-                                    @else 
-                                        <td class="text-center">${{ number_format( ($pledge->goal_amount - $pledge->one_time_amount) 
+                                    @else
+                                        <td class="text-center">${{ number_format( ($pledge->goal_amount - $pledge->one_time_amount)
                                                                 * $pool_charity->percentage / 100, 2) }}</td>
                                         <td class="text-center">${{ number_format($pledge->one_time_amount * $pool_charity->percentage / 100, 2) }}</td>
                                     @endif
                                     @php $pay_period_sum += round( ($pledge->goal_amount - $pledge->one_time_amount) * $pool_charity->percentage / 100, 2);
                                             $one_time_sum += round($pledge->one_time_amount * $pool_charity->percentage / 100, 2); @endphp
                                 </tr>
-                            @endforeach    
+                            @endforeach
                         @else
                             @foreach($pledges_charities as $pledge_charity)
                                 <tr>
@@ -190,9 +190,9 @@
                                     <td class="text-right">${{ number_format($pledge_charity->one_time_amount, 2) }}</td>
 
                                 </tr>
-                            @endforeach   
+                            @endforeach
                         @endif
-                
+
                     </tbody>
                 </table>
 
@@ -207,16 +207,16 @@
             <div class="card-body ">
                 <div class="row no-gutters">
                     <div class="col-3">
-                        <p><b>Send Status:</b> 
+                        <p><b>Send Status:</b>
                             {{ $pledge->ods_export_status == null ? 'Not Started' : 'Completed' }} </p>
                     </div>
                     <div class="col-3">
-                        <p><b>Send at:</b> 
+                        <p><b>Send at:</b>
                             {{ $pledge->ods_export_at ? $pledge->ods_export_at : ''  }} </p>
                                </p>
                     </div>
                   </div>
-  
+
             </div>
 
         </div>
@@ -239,7 +239,7 @@
                                </p>
                     </div>
                   </div>
-  
+
                 <div class="row">
                   <div class="col-3">
                     <p><b>Modified by:</b>
@@ -253,7 +253,7 @@
 
             </div>
         </div>
-    
+
   </div>
 </div>
 @endsection
