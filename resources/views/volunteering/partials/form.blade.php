@@ -373,12 +373,10 @@
             <div class="form-row form-header">
                 <h3 class="blue">File(s)</h3>
             </div>
-
+            
             <div class="form-row form-header">
                 <h5>Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</h5>
-            </div>
 
-            <div class="form-row form-header">
                 <span class="attachment_errors errors">
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
