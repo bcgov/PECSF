@@ -35,7 +35,7 @@ class ChallengePageDataReportController extends Controller
 
             $sql = <<<SQL
 
-                select 0 as current, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
+                select 0 as current, business_unit, business_unit_name as organization_name, participation_rate, previous_participation_rate, change_rate, 
                             donors, dollars, (@row_number:=@row_number + 1) AS rank,
                             eligible_employee_count as ee_count
                 from daily_campaigns, (SELECT @row_number:=0) AS temp

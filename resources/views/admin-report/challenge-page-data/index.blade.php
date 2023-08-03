@@ -56,6 +56,7 @@
             <thead>
                 <tr class="bg-light">
                     <th>Rank</th>
+                    <th>Business Unit</th>
                     <th>Organization name</th>
                     <th>Participation rate</th>
                     <th>Previous rate</th>
@@ -232,6 +233,7 @@ $(function() {
         },
         columns: [
             {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
+            {data: 'business_unit', name: 'business_unit', className: "", searchable: false },
             {data: 'organization_name', name: 'organization_name', className: "", searchable: false },
             {data: 'participation_rate', className: '', searchable: false },
             {data: 'previous_participation_rate', className: '', searchable: false},
@@ -259,11 +261,11 @@ $(function() {
                     //     "<p class='text-primary'>" + row.new_values + "</p></div>";
                     return formatAsPercentage( data );
                 },
-                targets: [2,3,4],
+                targets: [3,4,5],
             },
             {
                 render: DataTable.render.number(',', '.', 2, ''),
-                targets: [6],
+                targets: [7],
 
             },
         ],
