@@ -257,6 +257,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::get('/', [SettingsController::class,'index'])->name('others');
     Route::get('/challenge', [ChallengeSettingsController::class,'index'])->name('challenge');
     Route::post('/challenge', [ChallengeSettingsController::class,'store'])->name('challenge.update');
+    Route::post('/challenge/finalize_challenge_data', [ChallengeSettingsController::class,'finalizeChallengeData'])->name('challenge.finalize_challenge_data');
 
     // Challenge Summary Maintenance
     Route::resource('/challenge-summary', ChallengeSummaryMaintenanceController::class);
