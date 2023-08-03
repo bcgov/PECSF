@@ -377,7 +377,8 @@
                             <h3 class="blue">File(s)</h3>
 
 
-                <span class="attachment_errors errors">
+                <span class="pl-3 attachment_errors errors">
+
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
