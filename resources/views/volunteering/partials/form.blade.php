@@ -216,10 +216,9 @@
     <div class="form-row form-header address_hook" style="display:none;">
             <h3 class="blue">Mailing address for charitable receipt</h3>
     </div>
-            <div class="form-row form-header address_hook" style="display:none;">
-                <h5>A charitable donation receipt will be issued for cash and cheque donations in February following the calendar year in which the donation is received.</h5>
-            </div>
+       
     <div class="form-row form-body address_hook" style="display:none;">
+        <h5>A charitable donation receipt will be issued for cash and cheque donations in February following the calendar year in which the donation is received.</h5>
 
         <div class="form-group col-md-12" id="address_line_1" style="">
             <label for="event_type">Address line 1</label>
