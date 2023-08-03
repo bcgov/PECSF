@@ -205,6 +205,11 @@
 </div> --}}
 <div class="mx-n3 mt-5 bg-primary">
   <div class="container">
+      <div class="row">
+          <div class="col-12 col-md-12 d-flex justify-content-center pt-5">
+              <img class="mb-3 logo-image-header" src="{{ asset('img/brand/PECSF_Logo_Horiz_RGB.jpg') }}" alt="Provincial Employees Community Services Fund Logo" height="120px">
+          </div>
+      </div>
     <div class="row">
       <div class="col-12 col-md-5 offset-md-1 pt-5">
         <br><br>
