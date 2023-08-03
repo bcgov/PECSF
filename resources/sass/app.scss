@@ -325,9 +325,9 @@ margin-bottom:25px;
 }
 
 .logo-image-header {
-    border: 2px outset #ccc;
-    -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+  border-radius:5px;
+    -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.125);
+    -moz-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.125);
 }
     .pdf-logo-image{
 width:100px;

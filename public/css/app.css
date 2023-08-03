@@ -47964,3 +47964,15 @@ input[name=keyword] {
 #organizations td {
   border-top: #ccc 1px solid;
 }
+
+.logo-image-header {
+  border-radius: 5px;
+  -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.125);
+  -moz-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.125);
+}
+
+.pdf-logo-image {
+  width: 100px;
+  float: right;
+  height: auto;
+}

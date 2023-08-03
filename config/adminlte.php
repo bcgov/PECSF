@@ -45,7 +45,7 @@ return [
     */
 
     'logo' => '&nbsp;',
-    'logo_img' => 'img/pecsf-logo.png',
+    'logo_img' => 'img/brand/PECSF_Logo_Vert_RGB.jpg',
     'logo_img_class' => 'brand-image float-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -262,7 +262,7 @@ return [
         [
             'text' => 'FAQs',
             'url' => '/contact',
-            'icon' => 'nav-icon fa fa-question-circle', 
+            'icon' => 'nav-icon fa fa-question-circle',
         ],
         [
             'text'    => 'Administration',
@@ -338,7 +338,7 @@ return [
             'url' => 'https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf',
             'icon' => 'external-link',
             'icon' => 'nav-icon fa fa-external-link-alt',
-            
+
             'target' => '_blank'
         ],
     ],
