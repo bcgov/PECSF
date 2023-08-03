@@ -262,8 +262,9 @@ $(function() {
                 targets: [2,3,4],
             },
             {
-                render: DataTable.render.number(',', '', 0, ''),
+                render: DataTable.render.number(',', '.', 2, ''),
                 targets: [6],
+
             },
         ],
         rowCallback: function (row, data) {
