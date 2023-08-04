@@ -205,6 +205,31 @@ class ChallengeController extends Controller
 
             }
 
+            // Charting (POC)
+            if ($request->has('chart')) {
+                $data = new \stdClass();
+                $data->regions = [];
+                $data->values = [];
+    
+                foreach ($challenges as $row) {
+                    // Structure of data:
+                    // {
+                    //     regions: ["region 1","region 2","region 3"];
+                    //     values: [ ['name': "region 1", "value" = 20],
+                    //               ['name': "region 2", "value" = 40],
+                    //               ['name': "region 3", "value" = 50],
+                    //             ];
+                    // }
+                    array_push( $data->regions, $row->organization_name );
+                    array_push( $data->values, [ 'name' => $row->organization_name , 
+                                                 'value' => round($row->participation_rate,2),
+                                                 'change' =>  round($row->change_rate,2) ] );
+                }
+    
+                return json_encode($data);
+            }
+
+
             if ($request->organization_name) {
                 $challenges = array_filter($challenges, function($v, $k) use($request) {
                     return str_contains(strtolower($v->organization_name), strtolower($request->organization_name));
