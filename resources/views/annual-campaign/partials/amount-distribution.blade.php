@@ -31,7 +31,7 @@
             </td>
             <td style="width:140px" class="by-percent">
                 <div class="input-group input-group-sm mb-3">
-                    <input type="number" class="form-control form-control-sm percent-input" name="{{$keyCase}}Percent[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-percentage-distribution"],2) }}'>
+                    <input type="number" class="form-control form-control-sm percent-input" name="{{$keyCase}}Percent[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-percentage-distribution"],2,'.','') }}'>
                     <div class="input-group-append">
                         <span class="input-group-text">%</span>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" class="form-control form-control-sm amount-input" name="{{$keyCase}}Amount[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-amount-distribution"],2) }}'>
+                    <input type="number" class="form-control form-control-sm amount-input" name="{{$keyCase}}Amount[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-amount-distribution"],2,'.','') }}'>
                 </div>
             </td>
             {{-- <td>
@@ -58,7 +58,7 @@
             <td class="by-percent">
                 <div class="input-group input-group-sm mb-3">
                     <input type="text" class="form-control form-control-sm total-percent" placeholder="" 
-                        value='{{ (ucfirst($key_) == 'Bi-weekly') ? number_format($calculatedTotalPercentBiWeekly,2) : number_format($calculatedTotalPercentOneTime,2) }}' disabled>
+                        value='{{ (ucfirst($key_) == 'Bi-weekly') ? number_format($calculatedTotalPercentBiWeekly,2,'.','') : number_format($calculatedTotalPercentOneTime,2,'.','') }}' disabled>
                     <div class="input-group-append">
                         <span class="input-group-text">%</span>
                     </div>
@@ -72,7 +72,7 @@
                     {{-- <input type="number" class="form-control form-control-sm total-amount" data-expected-total='{{session("amount-step")["$key_-amount"]}}' placeholder="" disabled> --}}
                     <input type="number" class="form-control form-control-sm total-amount" 
                       data-expected-total='{{ (ucfirst($key_) == 'Bi-weekly') ? $last_bi_weekly_amount : $last_one_time_amount }}' 
-                      value='{{ (ucfirst($key_) == 'Bi-weekly') ? number_format($calculatedTotalAmountBiWeekly,2) : number_format($calculatedTotalAmountOneTime,2) }}' disabled>
+                      value='{{ (ucfirst($key_) == 'Bi-weekly') ? number_format($calculatedTotalAmountBiWeekly,2,'.','') : number_format($calculatedTotalAmountOneTime,2,'.','') }}' disabled>
                 </div>
             </td>
             {{-- <td></td> --}}
