@@ -55,6 +55,10 @@
                 </label>
                 <select class="form-control" id="start_date" name="start_date">
                     <option value=""></option>
+                    dept_date_options
+                    @foreach ($dept_date_options as $date) 
+                        <option final="2" value="{{ $date }}">{{ $date }}</option>
+                    @endforeach
                     @foreach ($final_date_options as $date) 
                         <option final="1" value="{{ $date }}">{{ $date }}</option>
                     @endforeach
@@ -91,11 +95,15 @@ $(function() {
         // oTable.ajax.reload();
         if ((this.value) == 'department') {
             $('select[name="start_date"] option[final="1"]').hide();
+            $('select[name="start_date"] option[final="2"]').show();
         } else {
             $('select[name="start_date"] option[final="1"]').show();
+            $('select[name="start_date"] option[final="2"]').hide();
         }
 
     });
+
+    $( 'select[name="sort"]' ).trigger( "change" );
 
 });            
 

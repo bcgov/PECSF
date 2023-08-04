@@ -25,8 +25,11 @@
 
 <form id="setting-edit-form">
 
+
     <div class="card">
         <div class="card-body">
+            <p class="font-italic  text-danger"><u>Note:</u> For final date before March 1, it will be considered a previous campaign year (e.g 2024-02-20, the campiagn year is still 2023)</p>
+
             <div class="row pb-2">
                 <div class="col-md-12"><h4 class="text-primary">Challenge Page Updates</h4></div>
             </div>
@@ -45,6 +48,13 @@
                     <label for="challenge_final_date">Final Date</label>
                     <input type="date" class="form-control input-control" name="challenge_final_date" 
                                 value="{{ $setting->challenge_final_date->toDateString() }}" />
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label for="finalize_challenge_data">&nbsp;</label>
+                        <button type="button" class="finalize_challenge_data btn form-control btn-danger">
+                            Finalize Challenge Page
+                        </button>
                 </div>
             </div>
   
@@ -67,6 +77,7 @@
                     <input type="date" class="form-control input-control" name="campaign_final_date" 
                                 value="{{ $setting->campaign_final_date->toDateString() }}" />
                 </div>
+
             </div>
 
             <div class="row pt-4 pl-2">
@@ -148,6 +159,39 @@
 
         };
     });
+
+    $(document).on("click", ".finalize_challenge_data" , function(e) {
+
+        var form = $('#setting-edit-form');
+
+        info = 'Confirm to finalize Challenge Page Data ?';
+        if (confirm(info))
+        {        
+
+            $.ajax({
+                    method: "POST",
+                    url:  '/settings/challenge/finalize_challenge_data',
+                    data: form.serialize(), // serializes the form's elements.
+                    success: function(data)
+                    {
+                        Toast('Success', 'The Challenge Page Data were successfully finalized.', 'bg-success' );
+                    },
+                    error: function(response) {
+                        if (response.status == 422) {
+
+                            text = "Failed: Unable to finalize the challenge page data with following error(s): \n\n";
+                            $.each(response.responseJSON.errors, function(field_name,errors){
+                                $.each(errors, function(idx, error_message){
+                                    text += error_message + "\n";
+                                })
+                            })
+                            alert( text );
+                        }
+                    }
+                });
+        }
+
+    }); 
 
     </script>
 @endpush

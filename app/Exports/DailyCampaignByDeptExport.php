@@ -37,10 +37,10 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
         $rows = DailyCampaign::where('daily_type', 2)
                             ->where('campaign_year', $this->campaign_year)
                             ->where('as_of_date', $this->as_of_date)
-                            ->where('eligible_employee_count', '>=', 5)
-                            ->select('business_unit_name', 'deptid', 'dept_name', 'donors', 'dollars')
+                            ->where('donors', '>=', 1)
+                            ->select('business_unit_name', 'deptid', 'dept_name', 'donors')
                             ->orderBy('business_unit_name')
-                            ->orderBy('dept_name')
+                            ->orderBy('deptid')
                             ->get();
 
         $total_row  = DailyCampaign::where('daily_type', 2)
@@ -50,8 +50,7 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
                                 DB::raw("'Total' as business_unit_name"),
                                 DB::raw("'' as deptid"),
                                 DB::raw("'' as dept_name"),
-                                DB::raw("SUM(donors) as donors"),
-                                DB::raw("SUM(dollars) as dollars")
+                                DB::raw("SUM(donors) as donors")
                             )
                             ->get();
                               
@@ -70,7 +69,6 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
                 'Dept ID',
                 'Department Name',
                 'Donors',
-                'Dollars',
             ]
         ];
     }
@@ -96,7 +94,7 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
         return [
             // 'A' => 60,
             'D' => 20,            
-            'E' => 20,            
+            // 'E' => 20,            
         ];
     }
 
@@ -104,7 +102,7 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
     {
         return [
             'D' => NumberFormat::FORMAT_NUMBER ,
-            'E' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,  // FORMAT_CURRENCY_USD,
+            // 'E' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,  // FORMAT_CURRENCY_USD,
         ];
     }
 
