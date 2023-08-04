@@ -34,7 +34,8 @@ class ChallengeController extends Controller
 
         $setting = Setting::first();
 
-        $campaign_year = $request->year ? $request->year : Setting::challenge_page_campaign_year();
+        $current_campaign_year = Setting::challenge_page_campaign_year();
+        $campaign_year = $request->year ? $request->year : $current_campaign_year;
 
         session()->flash('_old_input.year', $campaign_year);
 
@@ -61,7 +62,8 @@ class ChallengeController extends Controller
 
         if($request->ajax()) {
 
-            if ($as_of_day != $setting->challenge_final_date ) {
+            if ( $campaign_year == $current_campaign_year ) {
+            // if ($as_of_day != $setting->challenge_final_date ) {
 
                 // Use Dynamic data during the challenge period
                 // if ( today() >= $setting->challenge_start_date && today() < $setting->challenge_end_date ) {
