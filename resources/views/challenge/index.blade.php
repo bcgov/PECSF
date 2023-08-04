@@ -27,6 +27,7 @@
     <div class="card-body">
         <form id="search-form" action="{{ route('challenge.index') }}" method="post">
             @csrf
+            <input type="hidden" id="mode" value="list" name="mode" class="form-control " />
             <div class="form-row pb-2">
                 <div class="form-group col-md-2">
                     <label>
@@ -94,18 +95,18 @@
             </div>
         @endif
 
-        <div class="d-flex mt-3">
+        <div class="d-flex mt-1">
             <div class="flex-fill">
             </div>
     
             <div class="d-flex">
                 <div class="mr-2">
-                    <div class="mt-3 btn-group btn-group" role="group" aria-label="Basic example">
-                        <button id="list-mode-btn" type="button" class="btn btn-success">
+                    <div class="btn-group btn-group" role="group" aria-label="Basic example">
+                        <button id="list-mode-btn" type="button" class="btn btn-primary">
                                 <span class="mx-2 px-2">List</span>
                         </button>
                         <button type="button" class="btn btn-dark mx-0 px-0"></button>
-                        <button id="chart-mode-btn" type="button" class="btn btn-secondary">
+                        <button id="chart-mode-btn" type="button" class="btn btn-outline-secondary">
                                 <span class="px-2">Chart<span>
                         </button>
                     </div>
@@ -302,7 +303,7 @@ $(function() {
         },
         columns: [
             {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
-            {data: 'organization_name', name: 'organization_name', className: "", searchable: false },
+            {data: 'organization_name', name: 'organization_name', className: "dt-nowrap", searchable: false },
             {data: 'participation_rate', className: '', searchable: false },
             {data: 'previous_participation_rate', className: '', searchable: false},
             {data: 'change_rate', className: 'dt-nowrap', searchable: false},
@@ -376,21 +377,25 @@ $(function() {
     $(document).on('click', '#list-mode-btn', function() {
         console.log('list-mode clicked');
 
+        $('input[name="mode"]').val('list');
+
         $('#list-section').show();
         $('#chart-section').hide();
 
-        $('#list-mode-btn').removeClass('btn-secondary').addClass('btn-success');
-        $('#chart-mode-btn').removeClass('btn-success').addClass('btn-secondary');
+        $('#list-mode-btn').removeClass('btn-outline-secondary').addClass('btn-primary');
+        $('#chart-mode-btn').removeClass('btn-primary').addClass('btn-outline-secondary');
 
     });
 
     $(document).on('click', '#chart-mode-btn', function() {
-        console.log('chart-mode clicked');
+        // console.log('chart-mode clicked');
+        $('input[name="mode"]').val('chart');
+
         $('#list-section').hide();
         $('#chart-section').show();
 
-        $('#list-mode-btn').removeClass('btn-success').addClass('btn-secondary');
-        $('#chart-mode-btn').removeClass('btn-secondary').addClass('btn-success');
+        $('#list-mode-btn').removeClass('btn-primary').addClass('btn-outline-secondary');
+        $('#chart-mode-btn').removeClass('btn-outline-secondary').addClass('btn-primary');
         
         year = $('select[name="year"]').val();
 
@@ -408,10 +413,10 @@ $(function() {
 
                     myChart.setOption({
                         title: {
-                            text: 'Challenge Page Charting Example',
-                            textStyle: { fontSize: 40, fontWeight: 'bold' }, 
-                            subtext: '纯属虚构',
-                            subtextStyle: { fontSize: 20, fontWeight: 'bold' }, 
+                            text: 'Participation Rate Chart',
+                            textStyle: { fontSize: 20, fontWeight: 'bold' }, 
+                            // subtext: '纯属虚构',
+                            // subtextStyle: { fontSize: 20, fontWeight: 'bold' }, 
                             left: 'center',
                         },
                         tooltip: {
@@ -421,20 +426,21 @@ $(function() {
                                  return  `<b>${params.name}</b><br/>${params.seriesName} : ${params.data.value}% </br>Change: ${params.data.change}%`;
                             }
                         },
-                        legend: {
-                            type: 'scroll',
-                            orient: 'vertical',
-                            right: 10,
-                            top: 100,
-                            bottom: 20,
-                            data: data.regions,
-                        },
+                        // legend: {
+                        //     type: 'scroll',
+                        //     orient: 'vertical',
+                        //     right: 10,
+                        //     top: 100,
+                        //     bottom: 20,
+                        //     selectedMode : false,
+                        //     data: data.regions,
+                        // },
                         series: [
                             {
                                 name: 'Participation Rate',
                                 type: 'pie',
-                                radius: ['30%', '70%'],
-                                center: ['40%', '50%'],
+                                radius: ['15%', '70%'],
+                                center: ['50%', '45%'],
                                 data:  data.values,
                                 emphasis: {
                                     itemStyle: {
@@ -461,6 +467,16 @@ $(function() {
         }
 
     });
+
+    $(window).on('resize', function(){
+        if(myChart != null && myChart != undefined){
+            myChart.resize();
+        }
+    });
+
+    @if ($mode == 'chart') 
+        $('#chart-mode-btn').trigger('click');
+    @endif
 
 });            
 
