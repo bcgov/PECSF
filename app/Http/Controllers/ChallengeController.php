@@ -51,12 +51,17 @@ class ChallengeController extends Controller
 
         $as_of_day = DailyCampaign::where('campaign_year', $campaign_year)
                             ->where('daily_type', 0)
-                            ->where('as_of_date', '<=', today()->format('Y-m-d') )
+                            ->where('as_of_date', '<=', $setting->challenge_end_date )
                             ->max('as_of_date');
+        
+        if (today() >= $setting->challenge_end_date &&
+              ($setting->challenge_final_date == $setting->challenge_processed_final_date)) {
+            $as_of_day = $setting->challenge_final_date;
+        }
 
         if($request->ajax()) {
 
-            if ( $campaign_year == today()->year ) {
+            if ($as_of_day != $setting->challenge_final_date ) {
 
                 // Use Dynamic data during the challenge period
                 // if ( today() >= $setting->challenge_start_date && today() < $setting->challenge_end_date ) {
