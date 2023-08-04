@@ -275,7 +275,9 @@ class ChallengeController extends Controller
             $last_update = $daily_campaign->created_at;
         } 
 
-        return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary'));
+        $mode = $request->has('mode') ? $request->mode : 'list';
+
+        return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary', 'mode'));
     }
 
     public function daily_campaign(Request $request){
