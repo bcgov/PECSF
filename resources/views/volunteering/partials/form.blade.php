@@ -26,8 +26,10 @@
         </div>
         <div class="form-group col-md-4">
             <label for="form_submitter">Form submitter</label>
-            <div id="form_submitter">{{$current_user->name}}</div>
-            <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
+            <!--<div id="form_submitter">{{$current_user->name}}</div>-->
+            <input type="text" disabled class="form-control" value="{{$current_user->name}}" />
+
+            <input type="hidden" disabled value="{{$current_user->id}}" name="form_submitter" />
 
             <span class="form_submitter_errors errors">
                        @error('form_submitter')
@@ -38,8 +40,9 @@
         </div>
         <div class="form-group col-md-4">
             <label for="campaign_year">Campaign year</label>
-            <div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>
-            <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
+            <!--<div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>-->
+            <input type="text" disabled class="form-control" value="{{$campaign_year->calendar_year - 1}}" />
+            <input type="hidden"  value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -213,7 +216,9 @@
     <div class="form-row form-header address_hook" style="display:none;">
             <h3 class="blue">Mailing address for charitable receipt</h3>
     </div>
+       
     <div class="form-row form-body address_hook" style="display:none;">
+        <h5>A charitable donation receipt will be issued for cash and cheque donations in February following the calendar year in which the donation is received.</h5>
 
         <div class="form-group col-md-12" id="address_line_1" style="">
             <label for="event_type">Address line 1</label>
@@ -367,18 +372,23 @@
 
 
 
-            <div class="form-row form-header">
-                <h3 class="blue">File(s)</h3>
 
-            </div>
             <div class="form-row form-header">
-                <span class="attachment_errors errors">
+                            <h3 class="blue">File(s)</h3>
+
+
+                <span class="pl-3 attachment_errors errors">
+
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
                         </span>
             </div>
+
             <div class="form-row form-body">
+                <h5>Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</h5>
+
+
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
                     <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>

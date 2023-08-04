@@ -34,7 +34,8 @@ class ChallengeController extends Controller
 
         $setting = Setting::first();
 
-        $campaign_year = $request->year ? $request->year : Setting::challenge_page_campaign_year();
+        $current_campaign_year = Setting::challenge_page_campaign_year();
+        $campaign_year = $request->year ? $request->year : $current_campaign_year;
 
         session()->flash('_old_input.year', $campaign_year);
 
@@ -61,7 +62,8 @@ class ChallengeController extends Controller
 
         if($request->ajax()) {
 
-            if ($as_of_day != $setting->challenge_final_date ) {
+            if ( $campaign_year == $current_campaign_year ) {
+            // if ($as_of_day != $setting->challenge_final_date ) {
 
                 // Use Dynamic data during the challenge period
                 // if ( today() >= $setting->challenge_start_date && today() < $setting->challenge_end_date ) {
@@ -161,6 +163,7 @@ class ChallengeController extends Controller
                             and as_of_date = ?
                             and daily_type = 0     
                             and donors >= 5
+                            and participation_rate > 0
                             order by participation_rate desc, abs(change_rate);     
                         SQL;
 
@@ -196,12 +199,38 @@ class ChallengeController extends Controller
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
                        and donors >= 5
+                       and participation_rate > 0
                      order by participation_rate desc, abs(`change`);     
                 SQL;
                 
                 $challenges = DB::select($sql, $parameters);
 
             }
+
+            // Charting (POC)
+            if ($request->has('chart')) {
+                $data = new \stdClass();
+                $data->regions = [];
+                $data->values = [];
+    
+                foreach ($challenges as $row) {
+                    // Structure of data:
+                    // {
+                    //     regions: ["region 1","region 2","region 3"];
+                    //     values: [ ['name': "region 1", "value" = 20],
+                    //               ['name': "region 2", "value" = 40],
+                    //               ['name': "region 3", "value" = 50],
+                    //             ];
+                    // }
+                    array_push( $data->regions, $row->organization_name );
+                    array_push( $data->values, [ 'name' => $row->organization_name , 
+                                                 'value' => round($row->participation_rate,2),
+                                                 'change' =>  round($row->change_rate,2) ] );
+                }
+    
+                return json_encode($data);
+            }
+
 
             if ($request->organization_name) {
                 $challenges = array_filter($challenges, function($v, $k) use($request) {
@@ -246,7 +275,9 @@ class ChallengeController extends Controller
             $last_update = $daily_campaign->created_at;
         } 
 
-        return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary'));
+        $mode = $request->has('mode') ? $request->mode : 'list';
+
+        return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary', 'mode'));
     }
 
     public function daily_campaign(Request $request){
