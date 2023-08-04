@@ -255,29 +255,49 @@ class ChallengeController extends Controller
 
         $setting = Setting::first();
 
-        $final_date_options = DailyCampaign::select('as_of_date')
-                                    ->where('campaign_year', $campaign_year)
-                                    ->where(function($query) use($setting) {
-                                        return $query->where('as_of_date', '>=', $setting->campaign_final_date->format('Y-m-d'));
-                                    })
-                                    // ->where('as_of_date', '<>', today() )
-                                    ->distinct()
-                                    ->orderBy('as_of_date', 'desc')
-                                    ->pluck('as_of_date');
+        $final_date_options = [];
+        $date_options = [];
+        $dept_date_options = [];
 
-        
+        if (today() >= $setting->campaign_final_date) {
 
-        $date_options = DailyCampaign::select('as_of_date')
-                        ->where('campaign_year', $campaign_year)
-                        ->where(function($query) use($setting) {
-                            return $query->WhereBetween('as_of_date',[$setting->campaign_start_date->format('Y-m-d'), $setting->campaign_end_date->format('Y-m-d')]);
-                        })
-                        // ->where('as_of_date', '<>', today() )
-                        ->distinct()
-                        ->orderBy('as_of_date', 'desc')
-                        ->pluck('as_of_date');
+            $final_date_options = DailyCampaign::select('as_of_date')
+                                        ->where('campaign_year', $campaign_year)
+                                        ->where(function($query) use($setting) {
+                                            return $query->where('as_of_date', '=', $setting->campaign_final_date->format('Y-m-d'));
+                                        })
+                                        // ->where('as_of_date', '<>', today() )
+                                        ->distinct()
+                                        ->orderBy('as_of_date', 'desc')
+                                        ->pluck('as_of_date');
 
-        return view('challenge.daily_campaign', compact('final_date_options', 'date_options'));
+            $dept_date_options = DailyCampaign::select('as_of_date')
+                                        ->where('campaign_year', $campaign_year)
+                                        ->where('daily_type', 2)
+                                        ->where(function($query) use($setting) {
+                                            return $query->where('as_of_date', '=', $setting->campaign_end_date->format('Y-m-d'));
+                                        })
+                                        // ->where('as_of_date', '<>', today() )
+                                        ->distinct()
+                                        ->orderBy('as_of_date', 'desc')
+                                        ->pluck('as_of_date');
+
+        } else {
+
+            $date_options = DailyCampaign::select('as_of_date')
+                            ->where('campaign_year', $campaign_year)
+                            ->where(function($query) use($setting) {
+                                return $query->WhereBetween('as_of_date',[$setting->campaign_start_date->format('Y-m-d'), $setting->campaign_end_date->format('Y-m-d')]);
+                            })
+                            // ->where('as_of_date', '<>', today() )
+                            ->distinct()
+                            ->orderBy('as_of_date', 'desc')
+                            ->pluck('as_of_date');
+        }
+
+        // dd( [ $final_date_options , $date_options , $dept_date_options ]);
+
+        return view('challenge.daily_campaign', compact('final_date_options', 'date_options', 'dept_date_options'));
     }
 
     public function download(Request $request)
