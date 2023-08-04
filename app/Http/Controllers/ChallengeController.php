@@ -161,6 +161,7 @@ class ChallengeController extends Controller
                             and as_of_date = ?
                             and daily_type = 0     
                             and donors >= 5
+                            and participation_rate > 0
                             order by participation_rate desc, abs(change_rate);     
                         SQL;
 
@@ -196,6 +197,7 @@ class ChallengeController extends Controller
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
                        and donors >= 5
+                       and participation_rate > 0
                      order by participation_rate desc, abs(`change`);     
                 SQL;
                 
