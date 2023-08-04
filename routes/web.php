@@ -59,6 +59,7 @@ use App\Http\Controllers\Admin\CityRegionInformationController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
+use App\Http\Controllers\Admin\ChallengePageDataReportController;
 use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
 /*
 |--------------------------------------------------------------------------
@@ -313,6 +314,10 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
     Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
 
+    // Challenge Page Data 
+    Route::get('/challenge-page-data', [ChallengePageDataReportController::class,'index'])->name('challenge-page-data');
+    Route::get('/challenge-page-data/date-options', [ChallengePageDataReportController::class,'getDateOptions'])->name('challenge-page-data.date-options');
+    
     // Annual and Event Pledge Report
     Route::get('/pledges/export', [PledgeReportController::class,'export2csv'])->name('pledges.export2csv');
     Route::get('/pledges/export-progress/{id}', [PledgeReportController::class,'exportProgress'])->name('pledges.export2csv-progress');
