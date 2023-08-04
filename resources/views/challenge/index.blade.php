@@ -27,6 +27,7 @@
     <div class="card-body">
         <form id="search-form" action="{{ route('challenge.index') }}" method="post">
             @csrf
+            <input type="hidden" id="mode" value="list" name="mode" class="form-control " />
             <div class="form-row pb-2">
                 <div class="form-group col-md-2">
                     <label>
@@ -94,20 +95,43 @@
             </div>
         @endif
 
+        <div class="d-flex mt-1">
+            <div class="flex-fill">
+            </div>
     
-        <table class="table table-bordered" id="dashboard-table" style="width:100%">
-            <thead>
-                <tr class="bg-light">
-                    <th>Rank</th>
-                    <th>Organization name</th>
-                    <th>Participation rate</th>
-                    <th>Previous rate</th>
-                    <th>Change</th>
-                    <th>Donors</th>
-                    <th>Dollars</th>
-                </tr>
-            </thead>
-        </table>
+            <div class="d-flex">
+                <div class="mr-2">
+                    <div class="btn-group btn-group" role="group" aria-label="Basic example">
+                        <button id="list-mode-btn" type="button" class="btn btn-primary">
+                                <span class="mx-2 px-2">List</span>
+                        </button>
+                        <button type="button" class="btn btn-dark mx-0 px-0"></button>
+                        <button id="chart-mode-btn" type="button" class="btn btn-outline-secondary">
+                                <span class="px-2">Chart<span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="list-section"> 
+            <table class="table table-bordered" id="dashboard-table" style="width:100%">
+                <thead>
+                    <tr class="bg-light">
+                        <th>Rank</th>
+                        <th>Organization name</th>
+                        <th>Participation rate</th>
+                        <th>Previous rate</th>
+                        <th>Change</th>
+                        <th>Donors</th>
+                        <th>Dollars</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="chart-section" data-load="0"> 
+            <div id="main" class="pt-2" style="width: auto;height:700px;"></div>
+        </div>
 
     </div>
 </div>
@@ -203,6 +227,9 @@
 <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
 <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
 
+<script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script> --}}
+
 <script>
 
 $(function() {
@@ -276,7 +303,7 @@ $(function() {
         },
         columns: [
             {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
-            {data: 'organization_name', name: 'organization_name', className: "", searchable: false },
+            {data: 'organization_name', name: 'organization_name', className: "dt-nowrap", searchable: false },
             {data: 'participation_rate', className: '', searchable: false },
             {data: 'previous_participation_rate', className: '', searchable: false},
             {data: 'change_rate', className: 'dt-nowrap', searchable: false},
@@ -344,6 +371,112 @@ $(function() {
         $(this).data('timer', wait);
     });
 
+    // Charting Mode 
+    var myChart = echarts.init(document.getElementById('main'));
+
+    $(document).on('click', '#list-mode-btn', function() {
+        console.log('list-mode clicked');
+
+        $('input[name="mode"]').val('list');
+
+        $('#list-section').show();
+        $('#chart-section').hide();
+
+        $('#list-mode-btn').removeClass('btn-outline-secondary').addClass('btn-primary');
+        $('#chart-mode-btn').removeClass('btn-primary').addClass('btn-outline-secondary');
+
+    });
+
+    $(document).on('click', '#chart-mode-btn', function() {
+        // console.log('chart-mode clicked');
+        $('input[name="mode"]').val('chart');
+
+        $('#list-section').hide();
+        $('#chart-section').show();
+
+        $('#list-mode-btn').removeClass('btn-primary').addClass('btn-outline-secondary');
+        $('#chart-mode-btn').removeClass('btn-outline-secondary').addClass('btn-primary');
+        
+        year = $('select[name="year"]').val();
+
+        if ($('#chart-section').data('load') == 0) {
+            // Asynchronous Data Loading
+            $.ajax({
+                url: '{{  route('challenge.index') }}',
+                type: 'GET',
+                data : {
+                    'year': year,
+                    'chart': 1,
+                },
+                dataType: 'json',
+                success: function (data) {
+
+                    myChart.setOption({
+                        title: {
+                            text: 'Participation Rate Chart',
+                            textStyle: { fontSize: 20, fontWeight: 'bold' }, 
+                            // subtext: '纯属虚构',
+                            // subtextStyle: { fontSize: 20, fontWeight: 'bold' }, 
+                            left: 'center',
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: function (params) {
+                                console.log(params);
+                                 return  `<b>${params.name}</b><br/>${params.seriesName} : ${params.data.value}% </br>Change: ${params.data.change}%`;
+                            }
+                        },
+                        // legend: {
+                        //     type: 'scroll',
+                        //     orient: 'vertical',
+                        //     right: 10,
+                        //     top: 100,
+                        //     bottom: 20,
+                        //     selectedMode : false,
+                        //     data: data.regions,
+                        // },
+                        series: [
+                            {
+                                name: 'Participation Rate',
+                                type: 'pie',
+                                radius: ['15%', '70%'],
+                                center: ['50%', '45%'],
+                                data:  data.values,
+                                emphasis: {
+                                    itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    });
+
+                    $('#chart-section').data('load', 1);
+
+                },
+                complete: function() {
+                },
+                error: function (result) {
+                    console.log('error to get the chart data');
+                    console.log( result );
+                }
+            });
+
+        }
+
+    });
+
+    $(window).on('resize', function(){
+        if(myChart != null && myChart != undefined){
+            myChart.resize();
+        }
+    });
+
+    @if ($mode == 'chart') 
+        $('#chart-mode-btn').trigger('click');
+    @endif
 
 });            
 
