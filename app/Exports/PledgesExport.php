@@ -60,7 +60,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                     //     '',
                     // ],
                     [
-                        'Calandar Year',
+                        'Calendar Year',
                         'Name',
                         'Org Code',
                         'Org Descr',
@@ -83,6 +83,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                         'One-Time Amount',
                         'Bi-Weekly Amount',
                         'Total Amount',
+                        'Tran ID',
                     ],
                 ];
     }
@@ -114,6 +115,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
             $employee->one_time_amount,
             $employee->biweekly_amount,
             $employee->amount,
+            $employee->pledge_id,
         ];
     }
 
@@ -311,7 +313,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                             ,bank_deposit_forms.pecsf_id
                             ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
                                 THEN employee_jobs.name
-                                ELSE ''
+                                ELSE bank_deposit_forms.employee_name
                             END
                             ,(select code from business_units where id = bank_deposit_forms.business_unit limit 1)
                             ,regions.code

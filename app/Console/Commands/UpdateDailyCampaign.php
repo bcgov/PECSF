@@ -106,24 +106,25 @@ class UpdateDailyCampaign extends Command
 
         $as_of_date = today()->format('Y-m-d');
         $campaign_year = Setting::challenge_page_campaign_year();
-        
+
         $this->LogMessage("(This process run for Campaign Year : " . $campaign_year . ")");
         $this->LogMessage("");
 
         $setting = Setting::first();
-        $challenge_finalize = DailyCampaignSummary::where('campaign_year', $campaign_year)
-                                        ->where('as_of_date', '>=', $setting->challenge_final_date)
-                                        ->first();
+        // $challenge_finalize = DailyCampaignSummary::where('campaign_year', $campaign_year)
+        //                                 ->where('as_of_date', '>=', $setting->challenge_final_date)
+        //                                 ->first();
 
-        $campaign_finalize = DailyCampaignSummary::where('campaign_year', $campaign_year)
-                                        ->where('as_of_date', '>=', $setting->campaign_final_date)
-                                        ->first();
+        // $campaign_finalize = DailyCampaignSummary::where('campaign_year', $campaign_year)
+        //                                 ->where('as_of_date', '>=', $setting->campaign_final_date)
+        //                                 ->first();
 
+        $last_process_date = Carbon::createFromFormat('!Y-m-d',  ($campaign_year + 1) . '-03-01' );
 
-        if ((today() >= $setting->campaign_start_date && today() <= $setting->campaign_end_date) ||
-            (today() >= $setting->challenge_start_date && today() <= $setting->challenge_end_date) ||
-            (today() >= $setting->campaign_final_date && (!($campaign_finalize))) ||
-            (today() >= $setting->challenge_final_date && (!($challenge_finalize)))
+        if ((today() >= $setting->campaign_start_date && today() < $last_process_date) ||
+            (today() >= $setting->challenge_start_date && today() < $last_process_date) 
+            // (today() >= $setting->campaign_final_date && (!($campaign_finalize))) ||
+            // (today() >= $setting->challenge_final_date && (!($challenge_finalize)))
             ) {
 
             // check eligible employee data for the current campiagn year, run the process if required. 
@@ -175,6 +176,9 @@ class UpdateDailyCampaign extends Command
             $sql = DailyCampaignView::dynamicSqlForChallengePage();     // Shared sql
             $challenges = DB::select($sql, $parameters);
 
+            $donor_count = 0;
+            $total_dollar = 0;
+
             foreach( $challenges as $row)  {
 
                 DailyCampaign::create([
@@ -198,65 +202,80 @@ class UpdateDailyCampaign extends Command
                     "dollars" => $row->dollars,
                 ]);
 
+                $donor_count += $row->donors;
+                $total_dollar += $row->dollars;    
 
             }                          
             $this->LogMessage('Total rows created count : ' . sizeof($challenges)  );
 
-            if (today() >= $setting->challenge_final_date && (!($challenge_finalize))) {
-
-                // Step 1B -- Update Challenge History when final date reached
-                $this->LogMessage("");
-                $this->LogMessage("Updating Historical challenge page for campaign year " . $campaign_year); 
-
-                // $this->LogMessage("                 Donor Count  : " . $donor_count); 
-                // $this->LogMessage("                 Total Amount : " . $total_dollar); 
-
-                $rows = DailyCampaign::where('campaign_year', $campaign_year)
-                                ->where('as_of_date', $as_of_date)
-                                ->where('daily_type', 0)
-                                ->get();
-
-                // Clean up Old data 
-                HistoricalChallengePage::where('year', $campaign_year)->delete();
-
-                $donor_count = 0;
-                $total_dollar = 0;
-
-                foreach ($rows as $row) {
-                    HistoricalChallengePage::create([
-                        'business_unit_code' => $row->business_unit,
-                        'organization_name' => $row->business_unit_name,
-                        'participation_rate' => $row->participation_rate,
-                        'previous_participation_rate' => $row->previous_participation_rate,
-                        'change' => $row->change_rate, 
-                        'donors' => $row->donors,
-                        'dollars' => $row->dollars,
-                        'year' => $row->campaign_year, 
-                    ]);
-
-                    $donor_count += $row->donors;
-                    $total_dollar += $row->dollars;
-                }
-
-                $this->LogMessage('Total rows created/updated count : ' . sizeof($rows)  );
-
-                // Step 1C -- Update Daily Campaign Summary 
-                $this->LogMessage("");
-                $this->LogMessage("Updating daily campaign summary for campaign year " . $campaign_year); 
-                $this->LogMessage("                 Donor Count  : " . $donor_count); 
-                $this->LogMessage("                 Total Amount : " . $total_dollar); 
+            // Step 1B -- Update Daily Campaign Summary 
+            $this->LogMessage("");
+            $this->LogMessage("Updating daily campaign summary for campaign year " . $campaign_year); 
+            $this->LogMessage("                 Donor Count  : " . $donor_count); 
+            $this->LogMessage("                 Total Amount : " . $total_dollar); 
+            
+            DailyCampaignSummary::updateOrCreate([
+                    'campaign_year' => $campaign_year,
+            ],[
+                'as_of_date' => $as_of_date,
                 
-                DailyCampaignSummary::updateOrCreate([
-                        'campaign_year' => $campaign_year,
-                    ],[
-                        'as_of_date' => $as_of_date,
-                        
-                        'donors' => $donor_count,
-                        'dollars' => $total_dollar,
+                'donors' => $donor_count,
+                'dollars' => $total_dollar,
 
-                        'created_by_id' => null,
-                        'updated_by_id' => null,
-                    ]);
+                'created_by_id' => null,
+                'updated_by_id' => null,
+            ]);
+
+            if (today() >= $setting->challenge_final_date && 
+                    ($setting->challenge_final_date != $setting->challenge_processed_final_date) ) {
+
+                // Step 1C -- Update Challenge History when final date reached
+                $this->LogMessage("");
+                $this->LogMessage("Finalize Challenge Page Data -- transfer to Historical challenge page for campaign year " . $campaign_year); 
+
+                // Finalize -- Proceed to Copy to the historial data 
+                
+                // $as_of_date = $setting->challenge_final_date;
+                // $campaign_year = Setting::challenge_page_campaign_year( $as_of_date );   
+
+                DailyCampaign::finalize_challenge_page_data($campaign_year, $as_of_date);
+
+                $setting->challenge_processed_final_date = $as_of_date;
+                $setting->save();   
+
+                // $rows = DailyCampaign::where('campaign_year', $campaign_year)
+                //                 ->where('as_of_date', $as_of_date)
+                //                 ->where('daily_type', 0)
+                //                 ->get();
+
+                // // Clean up Old data 
+                // HistoricalChallengePage::where('year', $campaign_year)->delete();
+
+                // $donor_count = 0;
+                // $total_dollar = 0;
+
+                // foreach ($rows as $row) {
+                //     HistoricalChallengePage::create([
+                //         'business_unit_code' => $row->business_unit,
+                //         'organization_name' => $row->business_unit_name,
+                //         'participation_rate' => $row->participation_rate,
+                //         'previous_participation_rate' => $row->previous_participation_rate,
+                //         'change' => $row->change_rate, 
+                //         'donors' => $row->donors,
+                //         'dollars' => $row->dollars,
+                //         'year' => $row->campaign_year, 
+                //     ]);
+
+                //     $donor_count += $row->donors;
+                //     $total_dollar += $row->dollars;
+                // }
+
+                // $this->LogMessage('Total rows created/updated count : ' . sizeof($rows)  );
+               
+            } else {
+
+                $this->LogMessage("");
+                $this->LogMessage("Note: There is no 'Finalize Challenge Page Data' process run for campaign year " . $campaign_year); 
             }
 
             // Step 2

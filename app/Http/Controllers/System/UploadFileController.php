@@ -4,8 +4,10 @@ namespace App\Http\Controllers\System;
 
 use DateTime;
 use DateTimeZone;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
@@ -17,12 +19,15 @@ class UploadFileController extends Controller
     //
     function __construct()
     {
-         $this->middleware('permission:setting');
+        $this->middleware(['role:sysadmin']);
     }
 
     public function index(Request $request) {
 
-        $directory = 'seeds';
+        $user = User::where('id', Auth::id() )->first();
+        if ($user->source_type != 'HCM') {
+            abort(403);
+        }
 
         $path = storage_path('app/uploads');
         $files = File::files($path);
