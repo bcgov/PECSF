@@ -96,7 +96,7 @@ class ChallengeSettingsController extends Controller
                                     ->where('as_of_date', $request->challenge_final_date)
                                     ->first();
             if (!($challenge)) {
-                $validator->errors()->add('challenge_final_date', 'No Challenge Data for date ' . $request->$request->challenge_final_date . 
+                $validator->errors()->add('challenge_final_date', 'No Challenge Data for date ' . $request->challenge_final_date . 
                         ' yet.');
             }
 
