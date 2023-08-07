@@ -238,7 +238,17 @@ class ChallengeController extends Controller
                 }, ARRAY_FILTER_USE_BOTH);
             }
 
+            // $summary 
+            $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
+                            ->first();
+
+
             return Datatables::of($challenges)
+                ->with([
+                    'as_of_date' => $summary ? $summary->as_of_date->format('l, F jS Y ') : null,
+                    'total_donors' => $summary ? number_format($summary->donors) : '0.00',
+                    'total_dollars' => $summary ? number_format($summary->dollars) : '0.00',
+                ])
 
                     // ->addColumn('current_', function ($special_campaign) {
                     //     return '<button class="btn btn-info btn-sm  show-bu" data-id="'. $special_campaign->id .'" >Show</button>' .
@@ -247,12 +257,13 @@ class ChallengeController extends Controller
                     //         '" data-name="'. $special_campaign->name . '">Delete</button>';
                     // })
             // ->rawColumns(['action'])
+                    
                     ->make(true);
         }
 
-        // TODO - From daily summary  
-        $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
-                    ->first();
+        // // TODO - From daily summary  
+        // $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
+        //             ->first();
 
 
         $year_options = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
@@ -266,18 +277,16 @@ class ChallengeController extends Controller
         $year_options = array_unique($year_options);
 
         // Last update datetime of the current year
-        $last_update = null;
-        if ( $year == today()->year ) {
-            $daily_campaign = DailyCampaign::where('campaign_year', $year )
-                                    ->orderBy('campaign_year', 'desc')
-                                    ->orderBy('as_of_date', 'desc')
-                                    ->first();
-            $last_update = $daily_campaign->created_at;
-        } 
+        // $last_update = null;
+        // if ( $year == today()->year ) {
+        //     $daily_campaign = DailyCampaign::where('campaign_year', $year )
+        //                             ->orderBy('campaign_year', 'desc')
+        //                             ->orderBy('as_of_date', 'desc')
+        //                             ->first();
+        //     $last_update = $daily_campaign->created_at;
+        // } 
 
-        $mode = $request->has('mode') ? $request->mode : 'list';
-
-        return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary', 'mode'));
+        return view('challenge.index', compact('year_options', 'year'));
     }
 
     public function daily_campaign(Request $request){

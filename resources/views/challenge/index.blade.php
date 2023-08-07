@@ -2,22 +2,22 @@
 
 @section('content_header')
 <div class="mt-3">
-<h1>Challenge</h1>
+    <h1>Challenge</h1>
 
-<ul class="mt-3 menu nav nav-pills" id="pills-tab">
-    <li class="nav-item nav-center-4">
-        <a  class="nav-link active disabled"
-           href="{{ route('challenge.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">
-            Leaderboard</a>
-    </li>
-    <li class="nav-item nav-center-4">
-        <a class="nav-link" href="{{  route('challenge.daily_campaign') }}" role="tab" aria-controls="pills-profile" aria-selected="false">
-            Daily Campaign Update</a>
-    </li>
-</ul>
+    <ul class="mt-3 menu nav nav-pills" id="pills-tab">
+        <li class="nav-item nav-center-4">
+            <a  class="nav-link active disabled"
+            href="{{ route('challenge.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">
+                Leaderboard</a>
+        </li>
+        <li class="nav-item nav-center-4">
+            <a class="nav-link" href="{{  route('challenge.daily_campaign') }}" role="tab" aria-controls="pills-profile" aria-selected="false">
+                Daily Campaign Update</a>
+        </li>
+    </ul>
 
-<h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-    If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
+    <h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
+        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
 
@@ -25,27 +25,25 @@
 
 <div class="card">
     <div class="card-body">
-        <form id="search-form" action="{{ route('challenge.index') }}" method="post">
-            @csrf
-            <input type="hidden" id="mode" value="list" name="mode" class="form-control " />
-            <div class="form-row pb-2">
-                <div class="form-group col-md-2">
-                    <label>
-                        Campaign Year
-                    </label>
-                    <select name="year" id="year" class="form-control ">
-                        @foreach($year_options as $annum)
-                            <option {{ old('year')==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group col-md-4">
+        <input type="hidden" id="mode" value="list" name="mode" class="form-control " />
+        <div class="form-row pb-2">
+            <div class="form-group col-md-2">
+                <label>
+                    Campaign Year
+                </label>
+                <select name="year" id="year" class="form-control ">
+                    @foreach($year_options as $annum)
+                        <option {{ old('year')==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group col-md-4">
                 <label >
                 Organization Name
                 </label>
                 <input type="text" id="organization_name" value="" name="organization_name" class="form-control " />
             </div>
-        </form>
+        </div>
     </div>
 
         {{-- <div class="form-row p-1" id="last_update_section">
@@ -54,46 +52,44 @@
         </div> --}}
 
         {{-- <br> --}}
-        @if ($summary)
-            <div class="text-center h2 font-weight-bold pb-1 as-of-date">{{ $summary->as_of_date->format('l, F jS Y ') }}</div> 
+        <div class="text-center h2 font-weight-bold pb-1"><span class="as_of_date"></span></div> 
 
-            <div class="row justify-content-md-center">
-                <div class="col-sm-4">
+        <div class="row justify-content-md-center">
+            <div class="col-sm-4">
                 <div class="card p-0">
                     <div class="card-body p-0">
-                    <table class="table table-donors">
-                        <tbody>
-                        <tr>
-                            <td class="text-center align-middle border-0"><i class="far fa-user custom-icon-style"></i>
-                            </td>
-                            <td class="text-left align-middle border-0"><span class="h1">{{ number_format($summary->donors) }}</span>
-                                    <h6>Total Donors<h6>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                        <table class="table table-donors">
+                            <tbody>
+                            <tr>
+                                <td class="text-center align-middle border-0"><i class="far fa-user custom-icon-style"></i>
+                                </td>
+                                <td class="text-left align-middle border-0"><span class="total_donors h1">0.00</span>
+                                        <h6>Total Donors<h6>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                </div>
-                <div class="col-sm-4">
-                <div class="card p-0">
-                    <div class="card-body p-0">
-                    <table class="table table-amount">
-                        <tbody>
-                        <tr>
-                            <td class="text-center align-middle border-0"><i class="fa fa-donate custom-icon-style" ></i>
-                            </td>
-                            <td class="text-left align-middle border-0"><span class="h1">{{ number_format($summary->dollars) }}</span>
-                                        <h6>Total Dollars</h6>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    </div>
-                </div>
                 </div>
             </div>
-        @endif
+            <div class="col-sm-4">
+                <div class="card p-0">
+                    <div class="card-body p-0">
+                        <table class="table table-amount">
+                            <tbody>
+                            <tr>
+                                <td class="text-center align-middle border-0"><i class="fa fa-donate custom-icon-style" ></i>
+                                </td>
+                                <td class="text-left align-middle border-0"><span class="total_dollars h1">0.00</span>
+                                            <h6>Total Dollars</h6>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="d-flex mt-1">
             <div class="flex-fill">
@@ -133,7 +129,6 @@
             <div id="main" class="pt-2" style="width: auto;height:700px;"></div>
         </div>
 
-    </div>
 </div>
 
 @endsection
@@ -150,14 +145,6 @@
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
-
-    /* #dashboard-table_filter {
-        display: none;
-    }
-
-    table.dataTable.no-footer {
-        border-bottom: none;
-    } */
 
     div.dataTables_wrapper div.dataTables_processing {
       top: 5%;
@@ -226,9 +213,7 @@
 
 <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
 <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
-
 <script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script> --}}
 
 <script>
 
@@ -274,14 +259,14 @@ $(function() {
     var oTable = $('#dashboard-table').DataTable({
         // dom: 'lrt',
         // "scrollX": true,
-        retrieve: true,
+        retrieve: false,
         "searching": true,
         processing: true,
             "language": {
                 processing: '<i class="fa fa-spinner fa-pulse fa-3x fa-fw text-info"></i><span class="sr-only">Loading...</span>'
             },
-        serverSide: true,
-        select: true,
+        serverSide: false,
+        // select: true,
         // paging: false,
         "initComplete": function(settings, json) {
             min_height = $(".wrapper").outerHeight();
@@ -293,6 +278,14 @@ $(function() {
                 data.year = $("select[name='year']").val();
                 data.organization_name = $("input[name='organization_name']").val();
             },
+            "complete": function(response) {
+                // console.log(response.responseJSON);
+                data = response.responseJSON;
+                // Update the Total Donors and Total Dollars
+                $('span.as_of_date').html( data.as_of_date);
+                $('span.total_donors').html( data.total_donors);
+                $('span.total_dollars').html( data.total_dollars);
+            },
             error: function(xhr, resp, text) {
                     if (xhr.status == 401) {
                         { // session expired 
@@ -302,8 +295,8 @@ $(function() {
             },
         },
         columns: [
-            {data: 'rank', name: 'rank', className: "dt-nowrap", searchable: false},
-            {data: 'organization_name', name: 'organization_name', className: "dt-nowrap", searchable: false },
+            {data: 'rank', name: 'rank', "display": 'rank', "@data-order": 'rank',  className: "dt-nowrap", searchable: false},
+            {data: 'organization_name', name: 'organization_name', className: "", searchable: true },
             {data: 'participation_rate', className: '', searchable: false },
             {data: 'previous_participation_rate', className: '', searchable: false},
             {data: 'change_rate', className: 'dt-nowrap', searchable: false},
@@ -314,9 +307,12 @@ $(function() {
             {
                 render: function (data, type, row) {
 
-                    // return "<div style='min-width: 20em; max-width: 40em;'><p class='text-success'>" + row.old_values + "</p><hr/>" +
-                    //     "<p class='text-primary'>" + row.new_values + "</p></div>";
-                    return ordinal_suffix_of( data );
+                    if (type == 'display') {
+                        // return "<div style='min-width: 20em; max-width: 40em;'><p class='text-success'>" + row.old_values + "</p><hr/>" +
+                        //     "<p class='text-primary'>" + row.new_values + "</p></div>";
+                        return ordinal_suffix_of( data );
+                    }
+                    return data;
                 },
                 targets: [0]
 
@@ -344,29 +340,27 @@ $(function() {
 
     //  year
     $(document).on('change', '#year', function () {
-        // oTable.ajax.reload();
-        event.preventDefault();
+        
+        // clear up chart data 
+        $('#chart-section').data('load', 0);
 
-        $("#search-form").submit();
+        if ( ($('input[name="mode"]').val()) == 'chart') {
 
-        // Update the last update datetime
-        current_year =  new Date().getFullYear();
-        if ($("select[name='year']").val() == current_year ) {
-            $('#last_update_section').show();
-        } else {
-            $('#last_update_section').hide();
+            $('#chart-mode-btn').trigger('click');
         }
+        oTable.ajax.reload();
 
     });
 
     $(document).on('keyup', '#organization_name', function() {
 
-        var $this = $(this);
+        term = $('#organization_name').val();
 
         clearTimeout($.data(this, 'timer'));
-
         var wait = setTimeout(function() {
-            oTable.ajax.reload();
+            // oTable.ajax.reload();
+            $('#dashboard-table_filter input[type="search"]').val( term );
+            oTable.search( term ).draw();
         }, 500);
         $(this).data('timer', wait);
     });
@@ -375,7 +369,7 @@ $(function() {
     var myChart = echarts.init(document.getElementById('main'));
 
     $(document).on('click', '#list-mode-btn', function() {
-        console.log('list-mode clicked');
+        // console.log('list-mode clicked');
 
         $('input[name="mode"]').val('list');
 
@@ -422,7 +416,7 @@ $(function() {
                         tooltip: {
                             trigger: 'item',
                             formatter: function (params) {
-                                console.log(params);
+                                // console.log(params);
                                  return  `<b>${params.name}</b><br/>${params.seriesName} : ${params.data.value}% </br>Change: ${params.data.change}%`;
                             }
                         },
@@ -473,10 +467,6 @@ $(function() {
             myChart.resize();
         }
     });
-
-    @if ($mode == 'chart') 
-        $('#chart-mode-btn').trigger('click');
-    @endif
 
 });            
 
