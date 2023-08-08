@@ -13,7 +13,9 @@ class Setting extends Model implements Auditable
 
     protected $fillable =[
         'system_lockdown_start', 'system_lockdown_end',
-        'challenge_start_date', 'challenge_end_date', 'volunteer_start_date', 'volunteer_end_date','campaign_end_date','campaign_start_date',"campaign_final_date","challenge_final_date","volunteer_language"
+        'challenge_start_date', 'challenge_end_date', 'volunteer_start_date', 'volunteer_end_date','campaign_end_date','campaign_start_date',"campaign_final_date","challenge_final_date","volunteer_language",
+        "campaign_processed_final_date","challenge_processed_final_date",
+
     ];
 
     protected $casts = [
@@ -23,10 +25,13 @@ class Setting extends Model implements Auditable
         'challenge_start_date' => 'date:Y-m-d',
         'challenge_end_date' => 'date:Y-m-d',
         'challenge_final_date' => 'date:Y-m-d',
-
+        'challenge_processed_final_date' => 'date:Y-m-d',        
+        
         'campaign_start_date' => 'date:Y-m-d',
         'campaign_end_date' => 'date:Y-m-d',
         'campaign_final_date' => 'date:Y-m-d',
+        'campaign_processed_final_date' => 'date:Y-m-d',
+       
     ];
 
     protected $appends = [
@@ -44,11 +49,13 @@ class Setting extends Model implements Auditable
         return $system_lockdown;
     }
 
-    public static function challenge_page_campaign_year() {
+    public static function challenge_page_campaign_year( $in_date = null ) {
 
-        $year = today()->year;
-        if (today()->month < 4 ) {
-            $year = today()->year - 1;
+        $in_date = $in_date ?? today();
+
+        $year = $in_date->year;
+        if ($in_date->month < 3 ) {
+            $year = $in_date->year - 1;
         }
 
         return $year;

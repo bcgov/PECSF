@@ -34,7 +34,8 @@ class ChallengeController extends Controller
 
         $setting = Setting::first();
 
-        $campaign_year = $request->year ? $request->year : Setting::challenge_page_campaign_year();
+        $current_campaign_year = Setting::challenge_page_campaign_year();
+        $campaign_year = $request->year ? $request->year : $current_campaign_year;
 
         session()->flash('_old_input.year', $campaign_year);
 
@@ -51,12 +52,18 @@ class ChallengeController extends Controller
 
         $as_of_day = DailyCampaign::where('campaign_year', $campaign_year)
                             ->where('daily_type', 0)
-                            ->where('as_of_date', '<=', today()->format('Y-m-d') )
+                            ->where('as_of_date', '<=', $setting->challenge_end_date )
                             ->max('as_of_date');
+        
+        if (today() >= $setting->challenge_end_date &&
+              ($setting->challenge_final_date == $setting->challenge_processed_final_date)) {
+            $as_of_day = $setting->challenge_final_date;
+        }
 
         if($request->ajax()) {
 
-            if ( $campaign_year == today()->year ) {
+            if ( $campaign_year == $current_campaign_year ) {
+            // if ($as_of_day != $setting->challenge_final_date ) {
 
                 // Use Dynamic data during the challenge period
                 // if ( today() >= $setting->challenge_start_date && today() < $setting->challenge_end_date ) {
@@ -152,14 +159,11 @@ class ChallengeController extends Controller
                                         eligible_employee_count as ee_count
                             from daily_campaigns, (SELECT @row_number:=0) AS temp
                             where campaign_year = ?
-                            -- and as_of_date = (select max(as_of_date) from daily_campaigns D1
-                            --                                     where D1.campaign_year = daily_campaigns.campaign_year
-                            --                                     and D1.daily_type = daily_campaigns.daily_type
-                            --                                     and D1.as_of_date <= ?
-                            --                                     )
+                        
                             and as_of_date = ?
                             and daily_type = 0     
                             and donors >= 5
+                            and participation_rate > 0
                             order by participation_rate desc, abs(change_rate);     
                         SQL;
 
@@ -195,6 +199,7 @@ class ChallengeController extends Controller
                       from historical_challenge_pages, (SELECT @row_number:=0) AS temp
                      where year = ?                      
                        and donors >= 5
+                       and participation_rate > 0
                      order by participation_rate desc, abs(`change`);     
                 SQL;
                 
@@ -202,13 +207,48 @@ class ChallengeController extends Controller
 
             }
 
+            // Charting (POC)
+            if ($request->has('chart')) {
+                $data = new \stdClass();
+                $data->regions = [];
+                $data->values = [];
+    
+                foreach ($challenges as $row) {
+                    // Structure of data:
+                    // {
+                    //     regions: ["region 1","region 2","region 3"];
+                    //     values: [ ['name': "region 1", "value" = 20],
+                    //               ['name': "region 2", "value" = 40],
+                    //               ['name': "region 3", "value" = 50],
+                    //             ];
+                    // }
+                    array_push( $data->regions, $row->organization_name );
+                    array_push( $data->values, [ 'name' => $row->organization_name , 
+                                                 'value' => round($row->participation_rate,2),
+                                                 'change' =>  round($row->change_rate,2) ] );
+                }
+    
+                return json_encode($data);
+            }
+
+
             if ($request->organization_name) {
                 $challenges = array_filter($challenges, function($v, $k) use($request) {
                     return str_contains(strtolower($v->organization_name), strtolower($request->organization_name));
                 }, ARRAY_FILTER_USE_BOTH);
             }
 
+            // $summary 
+            $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
+                            ->first();
+
+
             return Datatables::of($challenges)
+                ->with([
+                    'as_of_date' => $summary ? $summary->as_of_date->format('l, F jS Y ') : null,
+                    'total_donors' => $summary ? number_format($summary->donors) : '0.00',
+                    'total_dollars' => $summary ? number_format($summary->dollars) : '0.00',
+                ])
 
                     // ->addColumn('current_', function ($special_campaign) {
                     //     return '<button class="btn btn-info btn-sm  show-bu" data-id="'. $special_campaign->id .'" >Show</button>' .
@@ -217,12 +257,13 @@ class ChallengeController extends Controller
                     //         '" data-name="'. $special_campaign->name . '">Delete</button>';
                     // })
             // ->rawColumns(['action'])
+                    
                     ->make(true);
         }
 
-        // TODO - From daily summary  
-        $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
-                    ->first();
+        // // TODO - From daily summary  
+        // $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
+        //             ->first();
 
 
         $year_options = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
@@ -236,16 +277,16 @@ class ChallengeController extends Controller
         $year_options = array_unique($year_options);
 
         // Last update datetime of the current year
-        $last_update = null;
-        if ( $year == today()->year ) {
-            $daily_campaign = DailyCampaign::where('campaign_year', $year )
-                                    ->orderBy('campaign_year', 'desc')
-                                    ->orderBy('as_of_date', 'desc')
-                                    ->first();
-            $last_update = $daily_campaign->created_at;
-        } 
+        // $last_update = null;
+        // if ( $year == today()->year ) {
+        //     $daily_campaign = DailyCampaign::where('campaign_year', $year )
+        //                             ->orderBy('campaign_year', 'desc')
+        //                             ->orderBy('as_of_date', 'desc')
+        //                             ->first();
+        //     $last_update = $daily_campaign->created_at;
+        // } 
 
-        return view('challenge.index', compact('year_options', 'year', 'last_update', 'summary'));
+        return view('challenge.index', compact('year_options', 'year'));
     }
 
     public function daily_campaign(Request $request){
@@ -254,29 +295,49 @@ class ChallengeController extends Controller
 
         $setting = Setting::first();
 
-        $final_date_options = DailyCampaign::select('as_of_date')
-                                    ->where('campaign_year', $campaign_year)
-                                    ->where(function($query) use($setting) {
-                                        return $query->where('as_of_date', '>=', $setting->campaign_final_date->format('Y-m-d'));
-                                    })
-                                    // ->where('as_of_date', '<>', today() )
-                                    ->distinct()
-                                    ->orderBy('as_of_date', 'desc')
-                                    ->pluck('as_of_date');
+        $final_date_options = [];
+        $date_options = [];
+        $dept_date_options = [];
 
-        
+        if (today() >= $setting->campaign_final_date) {
 
-        $date_options = DailyCampaign::select('as_of_date')
-                        ->where('campaign_year', $campaign_year)
-                        ->where(function($query) use($setting) {
-                            return $query->WhereBetween('as_of_date',[$setting->campaign_start_date->format('Y-m-d'), $setting->campaign_end_date->format('Y-m-d')]);
-                        })
-                        // ->where('as_of_date', '<>', today() )
-                        ->distinct()
-                        ->orderBy('as_of_date', 'desc')
-                        ->pluck('as_of_date');
+            $final_date_options = DailyCampaign::select('as_of_date')
+                                        ->where('campaign_year', $campaign_year)
+                                        ->where(function($query) use($setting) {
+                                            return $query->where('as_of_date', '=', $setting->campaign_final_date->format('Y-m-d'));
+                                        })
+                                        // ->where('as_of_date', '<>', today() )
+                                        ->distinct()
+                                        ->orderBy('as_of_date', 'desc')
+                                        ->pluck('as_of_date');
 
-        return view('challenge.daily_campaign', compact('final_date_options', 'date_options'));
+            $dept_date_options = DailyCampaign::select('as_of_date')
+                                        ->where('campaign_year', $campaign_year)
+                                        ->where('daily_type', 2)
+                                        ->where(function($query) use($setting) {
+                                            return $query->where('as_of_date', '=', $setting->campaign_end_date->format('Y-m-d'));
+                                        })
+                                        // ->where('as_of_date', '<>', today() )
+                                        ->distinct()
+                                        ->orderBy('as_of_date', 'desc')
+                                        ->pluck('as_of_date');
+
+        } else {
+
+            $date_options = DailyCampaign::select('as_of_date')
+                            ->where('campaign_year', $campaign_year)
+                            ->where(function($query) use($setting) {
+                                return $query->WhereBetween('as_of_date',[$setting->campaign_start_date->format('Y-m-d'), $setting->campaign_end_date->format('Y-m-d')]);
+                            })
+                            // ->where('as_of_date', '<>', today() )
+                            ->distinct()
+                            ->orderBy('as_of_date', 'desc')
+                            ->pluck('as_of_date');
+        }
+
+        // dd( [ $final_date_options , $date_options , $dept_date_options ]);
+
+        return view('challenge.daily_campaign', compact('final_date_options', 'date_options', 'dept_date_options'));
     }
 
     public function download(Request $request)
@@ -305,6 +366,5 @@ class ChallengeController extends Controller
         } 
 
     }
-
 
 }

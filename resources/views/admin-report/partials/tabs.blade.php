@@ -18,7 +18,8 @@
       @php $active =  ( 
                         str_contains(Route::current()->getName(), 'reporting.pledges') ||
                         str_contains(Route::current()->getName(), 'reporting.pledge-charities') ||
-                        str_contains(Route::current()->getName(), 'reporting.eligible-employees')
+                        str_contains(Route::current()->getName(), 'reporting.eligible-employees') ||
+                        str_contains(Route::current()->getName(), 'reporting.challenge-page-data')
                       ) ? 'active' : ''
       @endphp
       <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Program reports</a>
@@ -33,6 +34,9 @@
         <div class="dropdown-divider"></div>                              
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
               href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
+        <div class="dropdown-divider"></div>                                 
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.challenge-page-data') ? 'active' : ''}}"
+          href="{{ route('reporting.challenge-page-data') }}" role="tab" aria-controls="pills-home" aria-selected="true">Challenge Page Data</a>
       </div>
     </li>
 
