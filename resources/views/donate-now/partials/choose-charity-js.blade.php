@@ -67,6 +67,15 @@
             }
         }
 
+        function Toast( toast_title, toast_body, toast_class) {
+            $(document).Toasts('create', {
+                class: toast_class,
+                title: toast_title,
+                autohide: true,
+                delay: 3000,
+                body: toast_body
+            });
+        }
 
         $("body").on("click",".select",function(e){
             e.preventDefault();
@@ -107,13 +116,9 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
-            if ($(".organization").length == 2) {
-                    Swal.fire({
-                    icon: 'warning',
-                    title: 'More than one charity were specified',
-                    text: 'Please be aware, only one charity is required for Donate Now pledge.',
-                    animation: false,
-                    });
+            if ($(".organization").length > 2) {
+                    Toast('More than one charity were specified','Please be aware, only one charity is required for Donate Now pledge.',"bg-danger");
+                    return false;
             }
 
         });
