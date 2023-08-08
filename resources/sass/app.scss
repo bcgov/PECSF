@@ -265,7 +265,9 @@ a:focus{
 
 button:focus, .btn:focus{
     padding: 4px 12px;
-    border: #000 5px solid!important;
+    border: #000 2px solid!important;
+    outline: 4px solid #3b99fc;
+    outline-offset:1px;
 }
 
 .teststyle{
