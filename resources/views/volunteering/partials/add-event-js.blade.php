@@ -661,4 +661,15 @@ $("#attachment_input_1").val("");
            e.preventDefault();
         }
     });
+
+    $("#city").change(function(){
+        if($("#city option[value='"+$(this).val()+"']").attr("province") == "BC")
+        {
+            $("#province").val("British Columbia").select2();
+        }
+        else{
+            $("#province").val("Ontario").select2();
+        }
+    });
+
 </script>
