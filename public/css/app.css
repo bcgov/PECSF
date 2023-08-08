@@ -47903,6 +47903,7 @@ a:focus {
 
 .btn-lg:focus, .btn-group-lg > .btn:focus {
   padding: 4px 12px;
+<<<<<<< HEAD
   border: #000 5px solid;
   font-weight: normal;
 }
@@ -47911,6 +47912,11 @@ a:focus {
   padding: 2px 7px;
   border: #000 5px solid;
   font-weight: normal;
+=======
+  border: #000 2px solid !important;
+  outline: 4px solid #3b99fc;
+  outline-offset: 1px;
+>>>>>>> PG-bugfix-0053
 }
 
 .teststyle {
