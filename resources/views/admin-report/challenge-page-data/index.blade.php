@@ -58,9 +58,9 @@
                     <th>Rank</th>
                     <th>Business Unit</th>
                     <th>Organization name</th>
-                    <th>Participation rate</th>
-                    <th>Previous rate</th>
-                    <th>Change</th>
+                    <th>Participation rate (%)</th>
+                    <th>Previous rate (%)</th>
+                    <th>Change (%)</th>
                     <th>Donors</th>
                     <th>Dollars</th>
                     <th>Eligible EE Count</th>
@@ -255,13 +255,13 @@ $(function() {
 
             },
             {
-                render: function (data, type, row) {
+                // render: function (data, type, row) {
 
-                    // return "<div style='min-width: 20em; max-width: 40em;'><p class='text-success'>" + row.old_values + "</p><hr/>" +
-                    //     "<p class='text-primary'>" + row.new_values + "</p></div>";
-                    return formatAsPercentage( data );
-                },
-                targets: [3,4,5],
+                //     // return "<div style='min-width: 20em; max-width: 40em;'><p class='text-success'>" + row.old_values + "</p><hr/>" +
+                //     //     "<p class='text-primary'>" + row.new_values + "</p></div>";
+                //     return formatAsPercentage( data );
+                // },
+                // targets: [3,4,5],
             },
             {
                 render: DataTable.render.number(',', '.', 2, ''),
