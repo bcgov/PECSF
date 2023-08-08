@@ -29,7 +29,21 @@ class UploadFileController extends Controller
             abort(403);
         }
 
-        $path = storage_path('app/uploads');
+        
+        $location = $request->has('location') ? $request->location : 0;
+        if (session('location')) {
+            $location = session('location');
+        }
+
+
+        switch ($location) {
+            case 1:
+                $path = public_path();
+                break;
+            default:
+                $path = storage_path('app/uploads');
+        }
+
         $files = File::files($path);
 
         foreach($files as $file) {
@@ -51,7 +65,7 @@ class UploadFileController extends Controller
         
         // dd ($files);
 
-        return view('system-security.upload-files.index', compact('files') );
+        return view('system-security.upload-files.index', compact('files', 'location') );
     }
 
     public function store(Request $request)
@@ -70,6 +84,10 @@ class UploadFileController extends Controller
        //run validation which will redirect on failure
        $validated = $validator->validate();
 
+       if (env('APP_ENV') == 'prod' && $request->location != 0) {
+            abort(403);
+       }
+
        //  if ($validator->fails()) {
        //      return redirect()->route('reporting.donation-upload.index')
        //          ->withErrors($validator)
@@ -80,7 +98,13 @@ class UploadFileController extends Controller
         //  $filesize = $upload_file->getSize();
         $original_filename = $upload_file->getClientOriginalName();
         $filename= $original_filename ;
+
         $path = storage_path('app/uploads');
+        switch ($request->location) {
+            case 1:
+                $path = public_path();
+                break;
+        }
 
         if( File::exists($path.'/'.$filename)) {
             File::delete($path.'/'.$filename); 
@@ -93,7 +117,10 @@ class UploadFileController extends Controller
         // ]);
         // Session::flash('success', 'File ' . $original_filename . ' have been updated successfully' ); 
         // return response()->noContent();
-        return redirect('/system/upload-files')->with('success', 'File with name "' . $original_filename . '" have been updated successfully');
+        return redirect('/system/upload-files')
+                        ->with('success', 'File with name "' . $original_filename . '" have been updated successfully')
+                        ->with('location', $request->location);
+
 
         
     }
