@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-4 text-right">
-        <p class="font-weight-bold">Year</p>
+        <p class="font-weight-bold">Calendar Year</p>
       </div>
       <div class="col-1">
         <p>{{ $year }}</p>
