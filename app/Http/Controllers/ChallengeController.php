@@ -200,7 +200,7 @@ class ChallengeController extends Controller
                      where year = ?                      
                        and donors >= 5
                        and participation_rate > 0
-                     order by participation_rate desc, abs(`change`);     
+                     order by participation_rate desc, `change` desc;     
                 SQL;
                 
                 $challenges = DB::select($sql, $parameters);
