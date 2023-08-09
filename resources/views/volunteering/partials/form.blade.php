@@ -241,7 +241,6 @@
             @foreach($cities as $city)
                 <option value="{{$city->city}}" province="{{$city->province}}">{{$city->city}}</option>
             @endforeach
-                <option value="mississauga" province="ON">Mississauga</option>
 
             </select>
             <span class="city_errors errors">
