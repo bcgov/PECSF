@@ -137,7 +137,7 @@ class AnnualCampaignController extends Controller
                     $pos = $fspools->search(function ($item, $key) use($pledge){
                         return $item->region_id ==  $pledge->region_id;
                     });
-                    if ($pos) {
+                    if ($pos >= 0) {
                         $regional_pool_id = $fspools[$pos]->id;
                         $step = 3;
                     } else {
