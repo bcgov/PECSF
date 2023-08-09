@@ -212,7 +212,12 @@ class ChallengeController extends Controller
                 $data = new \stdClass();
                 $data->regions = [];
                 $data->values = [];
-    
+
+                // Sort by organization name 
+                usort($challenges, function ($item1, $item2) {
+                    return $item1->organization_name <=> $item2->organization_name;
+                });
+
                 foreach ($challenges as $row) {
                     // Structure of data:
                     // {
