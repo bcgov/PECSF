@@ -5,7 +5,7 @@
     <div class="row mt-5">
         <div class="col-md-6">
             <div class="py-3">
-                <img src="{{asset('img/pecsf-logo.png')}}" alt="">
+                <img src="{{asset('img/brand/PECSF_Logo_Vert_RGB.jpg')}}" alt="">
                 <div class="mt-4">
                     <h2>Engaging Header here</h2>
                     <p class="mt-4">
