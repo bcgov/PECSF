@@ -38,7 +38,7 @@
                                 {{ (env('APP_ENV') == 'prod') ? 'disabled' : ''}} >
                             <option value="0" {{ $location == 0 ? 'selected' : ''}}>storage/app/uploads</option>
                         @if (env('APP_ENV') <> 'prod')
-                            <option value="1" {{ $location == 1 ? 'selected' : ''}}>public</option>
+                            <option value="1" {{ $location == 1 ? 'selected' : ''}}>public/img/uploads/_adminer</option>
                         @endif
                         </select>
                     </div>
@@ -96,7 +96,7 @@
                     @foreach($files as $index => $file)
                     <tr>
                         <th scope="row">{{ $index + 1}}</th>
-                        <td><a href="{{ route('system.upload-files.show', $file->getFilename()) }}"> {{ $file->getFilename() }}</a></td>
+                        <td><a href="{{ route('system.upload-files.show', $location .'_'. $file->getFilename()) }}"> {{ $file->getFilename() }}</a></td>
                         <td class="text-right">{{ number_format(round($file->getSize() / 1024,0),0) }}</td>
                         <td>{{ $file->last_modified }}</td>
                     </tr>
