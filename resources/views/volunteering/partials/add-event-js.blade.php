@@ -211,7 +211,6 @@ function nongovuserinfo(){
                 $('#employee_name').val( data.last_name +","+ data.first_name );
                 $("#employment_city").val(data.city).select2();
                 $("#region").val($("#region [code="+$('#employment_city option[value="'+data.city+'"]').attr("region")+"]").val());
-                $("#business_unit").val( $("option:contains('"+data.pecsf_bu+"')").val()).select2();
                 $("#region").select2();
             }
         },
@@ -661,4 +660,15 @@ $("#attachment_input_1").val("");
            e.preventDefault();
         }
     });
+
+    $("#city").change(function(){
+        if($("#city option[value='"+$(this).val()+"']").attr("province") == "BC")
+        {
+            $("#province").val("British Columbia").select2();
+        }
+        else{
+            $("#province").val("Ontario").select2();
+        }
+    });
+
 </script>
