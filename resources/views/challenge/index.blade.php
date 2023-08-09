@@ -37,7 +37,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group col-md-4">
+            <div class="organization_name form-group col-md-4">
                 <label >
                 Organization Name
                 </label>
@@ -64,7 +64,7 @@
                                 <td class="text-center align-middle border-0"><i class="far fa-user custom-icon-style"></i>
                                 </td>
                                 <td class="text-left align-middle border-0"><span class="total_donors h1">0.00</span>
-                                        <h6>Total Donors<h6>
+                                        <h6>Donors<h6>
                                 </td>
                             </tr>
                             </tbody>
@@ -81,7 +81,7 @@
                                 <td class="text-center align-middle border-0"><i class="fa fa-donate custom-icon-style" ></i>
                                 </td>
                                 <td class="text-left align-middle border-0"><span class="total_dollars h1">0.00</span>
-                                            <h6>Total Dollars</h6>
+                                            <h6>Dollars</h6>
                                 </td>
                             </tr>
                             </tbody>
@@ -376,6 +376,8 @@ $(function() {
         $('#list-section').show();
         $('#chart-section').hide();
 
+        $('.organization_name').show();
+
         $('#list-mode-btn').removeClass('btn-outline-secondary').addClass('btn-primary');
         $('#chart-mode-btn').removeClass('btn-primary').addClass('btn-outline-secondary');
 
@@ -387,6 +389,8 @@ $(function() {
 
         $('#list-section').hide();
         $('#chart-section').show();
+
+        $('.organization_name').hide();
 
         $('#list-mode-btn').removeClass('btn-primary').addClass('btn-outline-secondary');
         $('#chart-mode-btn').removeClass('btn-outline-secondary').addClass('btn-primary');
@@ -413,6 +417,32 @@ $(function() {
                             // subtextStyle: { fontSize: 20, fontWeight: 'bold' }, 
                             left: 'center',
                         },
+                        color: [
+                            '#32C5E9',
+                            '#67E0E3',
+                            '#9FE6B8',
+                            '#FFDB5C',
+                            '#ff9f7f',
+                            '#fb7293',
+                            '#E062AE',
+                            '#E690D1',
+                            '#e7bcf3',
+                            '#9d96f5',
+                            '#8378EA',
+                            '#96BFFF',
+
+                            '#dd6b66',
+                            '#759aa0',
+                            '#e69d87',
+                            '#8dc1a9',
+                            '#ea7e53',
+                            '#eedd78',
+                            '#73a373',
+                            '#73b9bc',
+                            '#7289ab',
+                            '#91ca8c',
+                            '#f49f42'
+                            ],
                         tooltip: {
                             trigger: 'item',
                             formatter: function (params) {
