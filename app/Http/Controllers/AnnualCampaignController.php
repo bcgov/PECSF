@@ -52,6 +52,9 @@ class AnnualCampaignController extends Controller
      */
     public function create( Pledge $duplicate_pledge = null )
     {
+        // redirect with session data when using duplicating function
+        $duplicate_pledge = session()->has('new_pledge') ? session()->get('new_pledge') : $duplicate_pledge;
+
         // Only allow when the campaign pledge period is opened
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
                             ->orderBy('calendar_year', 'desc')->first();
@@ -1266,7 +1269,8 @@ class AnnualCampaignController extends Controller
 
             }
 
-            return $this->create($new_pledge);
+            // return $this->create($new_pledge);
+            return redirect()->route('annual-campaign.create')->with(['new_pledge' => $new_pledge]);
 
         }
         else{
