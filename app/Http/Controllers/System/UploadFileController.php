@@ -16,10 +16,17 @@ use Illuminate\Support\Facades\Validator;
 
 class UploadFileController extends Controller
 {
+
+    public  $PATH_OPTIONS = [
+                 0 => 'app/uploads',
+                 1 => 'img/uploads/_adminer',
+            ];
+
     //
     function __construct()
     {
         $this->middleware(['role:sysadmin']);
+
     }
 
     public function index(Request $request) {
@@ -38,10 +45,12 @@ class UploadFileController extends Controller
 
         switch ($location) {
             case 1:
-                $path = public_path();
+                // $path = public_path('img/uploads/_adminer');
+                $path = public_path ( $this->PATH_OPTIONS[1] );
                 break;
             default:
-                $path = storage_path('app/uploads');
+                // $path = storage_path('app/uploads');
+                $path = storage_path( $this->PATH_OPTIONS[0] );
         }
 
         $files = File::files($path);
@@ -99,10 +108,10 @@ class UploadFileController extends Controller
         $original_filename = $upload_file->getClientOriginalName();
         $filename= $original_filename ;
 
-        $path = storage_path('app/uploads');
+        $path = storage_path(  $this->PATH_OPTIONS[0] );
         switch ($request->location) {
             case 1:
-                $path = public_path();
+                $path = public_path( $this->PATH_OPTIONS[1] );
                 break;
         }
 
@@ -125,9 +134,20 @@ class UploadFileController extends Controller
         
     }
 
-    public function show(String $filename)
+    public function show(String $location_filename)
     {
-        $path = storage_path('app/uploads');
+
+        $location = substr($location_filename, 0, 1);
+        $filename = substr($location_filename, 2);
+
+        switch ($location) {
+            case 1:
+                $path = public_path( $this->PATH_OPTIONS[1] );
+                break;
+            default:
+                $path = storage_path( $this->PATH_OPTIONS[0] );
+        }
+
         $file= $path. "/". $filename;
 
         return Response::download($file, $filename, ['Content-Type: application/text']);                
