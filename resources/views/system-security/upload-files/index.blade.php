@@ -34,12 +34,8 @@
                 <div class="form-group row">
                     <label for="location" class="col-sm-2 col-form-label col-form-label-sm">File location :</label>
                     <div class="col-sm-10">
-                        <select class="form-control col-6" name="location" id="location" 
-                                {{ (env('APP_ENV') == 'prod') ? 'disabled' : ''}} >
+                        <select class="form-control col-6" name="location" id="location" disabled> 
                             <option value="0" {{ $location == 0 ? 'selected' : ''}}>storage/app/uploads</option>
-                        @if (env('APP_ENV') <> 'prod')
-                            <option value="1" {{ $location == 1 ? 'selected' : ''}}>public/img/uploads/_adminer</option>
-                        @endif
                         </select>
                     </div>
                 </div>
@@ -166,9 +162,9 @@
 
         });
 
-        $(document).on("change", "#location" , function(e) {
-            window.location.href = '/system/upload-files?location=' + $('#location').val(); 
-        });
+        // $(document).on("change", "#location" , function(e) {
+        //     window.location.href = '/system/upload-files?location=' + $('#location').val(); 
+        // });
 
     });
 

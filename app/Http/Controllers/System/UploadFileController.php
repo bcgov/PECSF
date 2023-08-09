@@ -19,7 +19,7 @@ class UploadFileController extends Controller
 
     public  $PATH_OPTIONS = [
                  0 => 'app/uploads',
-                 1 => 'img/uploads/_adminer',
+                //  1 => 'img/uploads/_adminer',
             ];
 
     //
@@ -92,10 +92,6 @@ class UploadFileController extends Controller
 
        //run validation which will redirect on failure
        $validated = $validator->validate();
-
-       if (env('APP_ENV') == 'prod' && $request->location != 0) {
-            abort(403);
-       }
 
        //  if ($validator->fails()) {
        //      return redirect()->route('reporting.donation-upload.index')
