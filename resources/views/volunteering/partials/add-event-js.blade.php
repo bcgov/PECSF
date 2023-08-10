@@ -82,7 +82,7 @@ $("#sub_type").select2();
     }
 }
 else if($(this).val()=="Gaming"){
-$("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
+$("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="">None</option>');
 $(".address_hook").hide();
 $("#sub_type").select2();
     $(".sub_type").show();
