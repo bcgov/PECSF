@@ -50,7 +50,7 @@
 
 <div class="header">
     <img  src="img/brand/1.png"/>
-    <img style="height:80px;float:right;width:130px;" src="img/brand/5.png"/><br>
+    <img class="pdf-logo-image" style="float:right;width:150px;height:auto;" src="img/brand/PECSF_Logo_Vert_RGB.jpg"/><br>
     <div class="clear"></div>
 </div>
 <br>
