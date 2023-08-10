@@ -88,15 +88,8 @@
                         @include('annual-campaign.partials.method-selection')
                     </div>
                     <div class="tab-pane fade step" id="nav-selection" role="tabpanel" aria-labelledby="nav-selection-tab">
-                        @if(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) > 0))
-                            @include('annual-campaign.partials.choose-charity')
-                        @elseif(str_contains(Route::current()->getName(), 'duplicate') && (count($selected_charities) < 1))
-                            @include('annual-campaign.partials.pools')
-                        @else
-
-                            @include('annual-campaign.partials.pools')
-                            @include('annual-campaign.partials.choose-charity')
-                        @endif
+                        @include('annual-campaign.partials.pools')
+                        @include('annual-campaign.partials.choose-charity')
                     </div>
                     <div class="tab-pane fade step" id="nav-amount" role="tabpanel" aria-labelledby="nav-amount-tab">
                         <h3>3. Decide on the frequency and amount</h3>
@@ -475,6 +468,18 @@ $(function () {
             $(".submit").show();
         }
 
+        // if on step 2, check whether to show pool or charities
+        if (step == 2) {
+            option = $('#method-selection-area input[name="pool_option"]:checked').val();
+            if (option == 'P') {
+                $('#step-regional-pools-area').show();
+                $('#step-charities-area').hide();
+            } else {
+                $('#step-regional-pools-area').hide();
+                $('#step-charities-area').show();
+            }
+        }
+
         // scroll to top
         $(window).scrollTop(0);
     };
@@ -533,7 +538,7 @@ $(function () {
                 timeout: 30000,
                 success: function(data)
                 {
-                    if(data.indexOf('body class="login-page"') != -1){
+                    if(data && data.indexOf('body class="login-page"') != -1){
                         window.location.href = '/login';
                     }
 
