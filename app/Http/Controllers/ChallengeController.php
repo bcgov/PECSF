@@ -200,7 +200,7 @@ class ChallengeController extends Controller
                      where year = ?                      
                        and donors >= 5
                        and participation_rate > 0
-                     order by participation_rate desc, abs(`change`);     
+                     order by participation_rate desc, `change` desc;     
                 SQL;
                 
                 $challenges = DB::select($sql, $parameters);
@@ -212,7 +212,12 @@ class ChallengeController extends Controller
                 $data = new \stdClass();
                 $data->regions = [];
                 $data->values = [];
-    
+
+                // Sort by organization name 
+                usort($challenges, function ($item1, $item2) {
+                    return $item1->organization_name <=> $item2->organization_name;
+                });
+
                 foreach ($challenges as $row) {
                     // Structure of data:
                     // {
