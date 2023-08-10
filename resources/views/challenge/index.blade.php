@@ -215,6 +215,9 @@
 <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
 <script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
 
+<script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script> --}}
+
 <script>
 
 $(function() {
@@ -370,6 +373,7 @@ $(function() {
 
     $(document).on('click', '#list-mode-btn', function() {
         // console.log('list-mode clicked');
+
 
         $('input[name="mode"]').val('list');
 
