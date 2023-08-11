@@ -1200,10 +1200,10 @@ class AnnualCampaignController extends Controller
                                 ->orderBy('source')
                                 ->get();
 
-                if ($hist_pledge->type == 'P') {
+                if ($hist_pledge->source == 'P') {
                     // $new_pledge->bi_weekly_pledges
                     if ( count($bi_weekly_pledges) ) {
-                        $new_pledge->pay_period_amount = $bi_weekly_pledges->first()->pledge / 26;
+                        $new_pledge->pay_period_amount = round(($bi_weekly_pledges->first()->pledge / 26), 2);
                     }
                     if ( count($one_time_pledges) ) {
                         $new_pledge->one_time_amount = $one_time_pledges->first()->pledge;
@@ -1215,10 +1215,11 @@ class AnnualCampaignController extends Controller
                 } else {
 
                     $row = 0;
+                    $total_amount = 0;
                     foreach( $bi_weekly_pledges as $index => $bi_weekly_pledge) {
-                        if ( $index == 0 ) {
-                            $new_pledge->pay_period_amount = $bi_weekly_pledge->pledge / 26;
-                        }
+                        // if ( $index == 0 ) {
+                        //     $new_pledge->pay_period_amount = round(($bi_weekly_pledge->pledge / 26),2);
+                        // }
 
                         if ($bi_weekly_pledge->charity) {
                             $new_pledge_charity = new PledgeCharity();
@@ -1226,16 +1227,18 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
                             $new_pledge_charity->additional = $bi_weekly_pledge->name2;
                             $new_pledge_charity->percentage = $bi_weekly_pledge->percent;
-                            $new_pledge_charity->amount = $bi_weekly_pledge->amount / 26;
+                            $new_pledge_charity->amount = round(($bi_weekly_pledge->amount / 26),2);
                             $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
                             $new_pledge_charity->goal_amount = $new_pledge_charity->amount * $campaignYear->number_of_periods;
 
                             $new_pledge->charities[$row] = $new_pledge_charity;
                             $row += 1;
 
+                            $total_amount += $new_pledge_charity->amount;
                         }
 
                     }
+                    $new_pledge->pay_period_amount = $total_amount;
 
                     foreach( $one_time_pledges as $index => $one_time_pledge) {
                         if ( $index == 0 ) {
