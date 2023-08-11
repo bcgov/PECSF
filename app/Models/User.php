@@ -15,6 +15,16 @@ class User extends Authenticatable implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     /**
+     * Attributes to exclude from the Audit.
+     *
+     * @var array
+     */
+    protected $auditExclude = [
+        'last_signon_at',
+        'remember_token',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
