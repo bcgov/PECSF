@@ -133,7 +133,7 @@ class SampleUsersSeeder extends Seeder
           ], [
             'id' => $user['id'],
             'name' => $user['name'],
-            'password' => '$2y$10$AyzSQf4vtA/sEFXG1OWdJ.OqoOmkTNpVl4m.u9np9UE/j1HnJa0Ti', 
+            'password' => '$2y$10$LujtZATxcumV7GkMqPfczOBbbzjKcnUQjzZH1kjEqY/Dk50XhTqSm',
             'source_type' => 'LCL',
             'organization_id' => $organization ? $organization->id : null,
             'emplid' => $user['emplid'],
