@@ -1020,7 +1020,7 @@ class AnnualCampaignController extends Controller
                 $pos = $fspools->search(function ($item, $key) use($pledge){
                     return $item->region_id ==  $pledge->region_id;
                 });
-                if (!$pos) {
+                if (!($pos >= 0)) {
                     $msg = "The Regional Pool you've selected is not available in the current campaign. Click here to see available regional pools, or alternatively you can select a different years choices from your donor history";
                 }
 
@@ -1054,7 +1054,7 @@ class AnnualCampaignController extends Controller
                 $pos = $fspools->search(function ($item, $key) use($hist_region){
                     return $item->region_id ==  $hist_region->id;
                 });
-                if (!$pos) {
+                if (!($pos >= 0)) {
                     $msg = "The Regional Pool you've selected is not available in the current campaign. Click 'Continue' to see available regional pools, or alternatively you can select a different years choices from your donor history";
                 }
 
