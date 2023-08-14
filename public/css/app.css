@@ -47946,7 +47946,10 @@ input[name=keyword] {
   margin-left: auto;
   margin-right: auto;
   margin-top: 25px;
-  width: 30%;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .min-charities-error {
