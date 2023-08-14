@@ -169,7 +169,7 @@ class MaintainEventPledgeController extends Controller
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
-        $cities = City::all();
+        $cities = City::all()->sortBy("city");
         $organizations = [];
         $selected_charities = [];
         if(empty($current_user)){

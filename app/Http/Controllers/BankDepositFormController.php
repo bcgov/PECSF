@@ -80,7 +80,7 @@ class BankDepositFormController extends Controller
             return $q->orderby('charity_name','asc');
 
         })->where('charity_status','Registered')->paginate(10);
-        $cities = City::all();
+        $cities = City::all()->sortBy("city");
         $designation_list = Charity::DESIGNATION_LIST;
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
