@@ -263,7 +263,7 @@ a:focus{
     text-decoration: underline;
 }
 
-.btn-lg:focus{
+.btn:focus, button:focus{
     padding: 4px 12px;
     border: #000 2px solid!important;
     outline: 4px solid #3b99fc;
@@ -302,7 +302,11 @@ margin-bottom:25px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 25px;
-    width: 30%;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .min-charities-error{

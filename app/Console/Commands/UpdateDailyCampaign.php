@@ -209,27 +209,36 @@ class UpdateDailyCampaign extends Command
             $this->LogMessage('Total rows created count : ' . sizeof($challenges)  );
 
             // Step 1B -- Update Daily Campaign Summary 
-            $this->LogMessage("");
-            $this->LogMessage("Updating daily campaign summary for campaign year " . $campaign_year); 
-            $this->LogMessage("                 Donor Count  : " . $donor_count); 
-            $this->LogMessage("                 Total Amount : " . $total_dollar); 
-            
-            DailyCampaignSummary::updateOrCreate([
-                    'campaign_year' => $campaign_year,
-            ],[
-                'as_of_date' => $as_of_date,
+            if ( (today() >= $setting->challenge_start_date && today() <= $setting->challenge_end_date) ||
+                 (today() >= $setting->challenge_final_date && 
+                    ($setting->challenge_final_date != $setting->challenge_processed_final_date) )
+            ) { 
+                $this->LogMessage("");
+                $this->LogMessage("Updating daily campaign summary for campaign year " . $campaign_year); 
+                $this->LogMessage("                 Donor Count  : " . $donor_count); 
+                $this->LogMessage("                 Total Amount : " . $total_dollar); 
                 
-                'donors' => $donor_count,
-                'dollars' => $total_dollar,
+                DailyCampaignSummary::updateOrCreate([
+                        'campaign_year' => $campaign_year,
+                ],[
+                    'as_of_date' => $as_of_date,
+                    
+                    'donors' => $donor_count,
+                    'dollars' => $total_dollar,
 
-                'created_by_id' => null,
-                'updated_by_id' => null,
-            ]);
+                    'created_by_id' => null,
+                    'updated_by_id' => null,
+                ]);
+            } else {
+                $this->LogMessage("");
+                $this->LogMessage("Note: There is no 'Daily Campaign Summary' update for campaign year " . $campaign_year); 
+            }
 
+            // Step 1C -- Update Challenge History when final date reached
             if (today() >= $setting->challenge_final_date && 
                     ($setting->challenge_final_date != $setting->challenge_processed_final_date) ) {
 
-                // Step 1C -- Update Challenge History when final date reached
+            
                 $this->LogMessage("");
                 $this->LogMessage("Finalize Challenge Page Data -- transfer to Historical challenge page for campaign year " . $campaign_year); 
 
