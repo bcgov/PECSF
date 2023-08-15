@@ -156,8 +156,10 @@ class DonationController extends Controller {
                     if(!empty(Pledge::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->distinct_charities;
-                        $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->region->name;
 
+                        if(!empty(Pledge::where("id","=",$pledge->id)->first()->region()->get()->first())){
+                            $pledges_by_yearcd[$yearcd][$index]->reion = Pledge::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+                        }
                     }
                     else
                     {
