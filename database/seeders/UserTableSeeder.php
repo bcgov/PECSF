@@ -307,7 +307,7 @@ class UserTableSeeder extends Seeder
             ], [
               'id' => $user['id'],
               'name' => $user['name'],
-              'password' => Hash::make($user['password']),
+              'password' => '$2y$10$LujtZATxcumV7GkMqPfczOBbbzjKcnUQjzZH1kjEqY/Dk50XhTqSm',
               'source_type' => 'LCL',
               'organization_id' => $organization ? $organization->id : null,
               'emplid' => $user['emplid'],
@@ -330,6 +330,7 @@ class UserTableSeeder extends Seeder
 
             // Note: is_admin field is used for triggering auditing, have to sync with model_has_roles table
             $user->is_admin = 1;
+            $user->password = '$2y$10$K3IitNH9hPxbSwl68e2cwOYSVV4e1jhMepieLUKMfzaRHXz6.gTpy';
             $user->save();
         }
 
