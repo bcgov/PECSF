@@ -303,23 +303,23 @@
         @foreach( $pools as $pool )
             <div class="form-group col-md-2 form-pool">
 
-                <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+                <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->region_id }}">
                     {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
 
                         <div class="form-check float-left">
-                            <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->id }}"
-                                   value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->region_id }}"
+                                   value="{{ $pool->region_id }}" {{ $pool->region_id == $regional_pool_id ? 'checked' : '' }}>
 
                         </div>
                         <br>
 
                         <label style="font-weight:bold;font-size:16px;text-align: center;
-    width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
+    width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->region_id }}">
                             {{ $pool->region->name }}
                         </label>
-                        <span style="font-size:16px;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
+                        <span style="font-size:16px;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->region_id }}"
                               data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}">View Details</span>
                     </div>
 
