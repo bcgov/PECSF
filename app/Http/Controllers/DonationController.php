@@ -156,6 +156,8 @@ class DonationController extends Controller {
                     if(!empty(Pledge::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->distinct_charities;
+                        $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->region->name;
+
                     }
                     else
                     {
@@ -169,10 +171,11 @@ class DonationController extends Controller {
 
                         if($dnp->f_s_pool_id > 0){
                             $pledges_by_yearcd[$yearcd][$index]->charities = DonateNowPledge::where("id","=",$pledge->id)->first()->charities;
+                            $pledges_by_yearcd[$yearcd][$index]->region = DonateNowPledge::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+
                         }
                         else{
                             $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
-
                         }
 
                     }
@@ -185,6 +188,8 @@ class DonationController extends Controller {
                     if(!empty(SpecialCampaignPledge::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = [SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization];
+                        $pledges_by_yearcd[$yearcd][$index]->region = [SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization];
+
                     }
                     else
                     {
@@ -196,6 +201,9 @@ class DonationController extends Controller {
                     if(!empty(BankDepositForm::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = BankDepositForm::where("id","=",$pledge->id)->first()->charities;
+                        if(!empty(BankDepositForm::where("id","=",$pledge->id)->first()->region()->get()->first())){
+                            $pledges_by_yearcd[$yearcd][$index]->region = BankDepositForm::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+                        }
                     }
                     else
                     {
@@ -214,7 +222,16 @@ class DonationController extends Controller {
                                 return $query->where('id', $pledge->id);
                             })
                             ->orderBy('name1')
-                            ->get();;
+                            ->get();
+                        $pledges_by_yearcd[$yearcd][$index]->region = PledgeHistory::where('emplid', $pledge->emplid)
+                            ->where('campaign_type', $pledge->donation_type)
+                            ->where('yearcd', $pledge->yearcd)
+                            ->where('frequency', $pledge->frequency)
+                            ->when( $pledge->donation_type == 'Donate Today', function($query) use($pledge) {
+                                return $query->where('id', $pledge->id);
+                            })
+                            ->orderBy('name1')
+                            ->get()->first()->region;
                     }
                     else
                     {
