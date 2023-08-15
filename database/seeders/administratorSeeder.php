@@ -25,7 +25,8 @@ class administratorSeeder extends Seeder
             ['id' => '008777', 'prod' => 1],
             ['id' => '159387', 'prod' => 1],
             ['id' => '177890', 'prod' => 1],
-
+            ['id' => '136308', 'prod' => 1],
+            
         ];
 
         // Assign Role to User 

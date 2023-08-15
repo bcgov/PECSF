@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel
         { 
                 // Note: The export processes are only execute in TEST and Production  
                 $schedule->command('command:ExportPledgesToPSFT')
-                        ->dailyAt('0:15')
+                        ->dailyAt('1:00')
                         ->environments(['TEST', 'prod'])
                         ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
         }
@@ -51,7 +51,7 @@ class Kernel extends ConsoleKernel
         {
                 $schedule->command('command:ExportDatabaseToBI')
                         ->weekdays()
-                        ->at('0:30')
+                        ->at('1:15')
                         ->environments(['TEST', 'prod'])
                         ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
 
