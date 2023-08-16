@@ -52,7 +52,38 @@ class ChallengeSettingsController extends Controller
         $validator->validate();
 
         $setting = Setting::first();
-    
+
+        $challenge_end_date = Carbon::create( $request->challenge_end_date );               
+
+        // Update the daily campaign summary if the challenge_end_date was changed when backdate 
+        if ($setting->challenge_end_date->format('Y-m-d') != $challenge_end_date->format('Y-m-d')) {
+
+            $campaign_year = Setting::challenge_page_campaign_year($challenge_end_date);
+
+            $last_process_date = DailyCampaign::where('campaign_year', $campaign_year)
+                                        ->where('daily_type',  0)
+                                        ->max('as_of_date');
+
+            $as_of_date = min( $last_process_date,  $request->challenge_end_date, today()->format('Y-m-d') );
+
+            $summary = DailyCampaign::where('campaign_year', $campaign_year)
+                            ->where('as_of_date', $as_of_date)
+                            ->where('daily_type',  0)
+                            ->selectRaw( 'sum(donors) as total_donors, sum(dollars) as total_dollars')
+                            ->first();
+
+            DailyCampaignSummary::updateOrCreate([
+                'campaign_year' => $campaign_year,
+            ],[
+                'as_of_date' => $as_of_date,
+
+                'donors' => $summary->total_donors,
+                'dollars' => $summary->total_dollars,
+
+                'updated_by_id' => Auth::id(),
+            ]);
+        }
+
         $setting->challenge_start_date = $request->challenge_start_date;
         $setting->challenge_end_date   = $request->challenge_end_date;
         $setting->challenge_final_date = $request->challenge_final_date;
@@ -60,7 +91,6 @@ class ChallengeSettingsController extends Controller
         $setting->campaign_start_date =  $request->campaign_start_date;
         $setting->campaign_end_date   =  $request->campaign_end_date;
         $setting->campaign_final_date =  $request->campaign_final_date;
-
         $setting->save();
         
         return response()->noContent();
