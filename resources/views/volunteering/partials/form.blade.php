@@ -239,8 +239,9 @@
             <select class="form-control search_icon" type="text" id="city" name="city" >
                 <option value="">Select a city</option>
             @foreach($cities as $city)
-                <option value="{{$city->city}}">{{$city->city}}</option>
+                <option value="{{$city->city}}" province="{{$city->province}}">{{$city->city}}</option>
             @endforeach
+
             </select>
             <span class="city_errors errors">
                        @error('city')
@@ -254,19 +255,7 @@
             <label for="sub_type">Province</label>
             <select class="form-control" type="text" id="province" name="province">
                 <option value="">Select a  province</option>
-
-                <option value="Alberta">Alberta</option>
                 <option value="British Columbia">British columbia</option>
-                <option value="Manitoba">Manitoba</option>
-                <option value="New Brunswick">New brunswick</option>
-                <option value="Newfoundland and Labrador">Newfoundland and labrador</option>
-                <option value="Nova Scotia">Nova scotia</option>
-                <option value="Nunavut">Nunavut</option>
-                <option value="Prince Edward Island">Prince edward island</option>
-                <option value="Quebec">Quebec</option>
-                <option value="Saskatchewan">Saskatchewan</option>
-                <option value="Yukon">Yukon</option>
-
                 <option value="Ontario">Ontario</option>
             </select>
             <span class="province_errors errors">

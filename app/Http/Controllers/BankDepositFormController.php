@@ -47,7 +47,9 @@ class BankDepositFormController extends Controller
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
                 ->where('A.start_date', '<=', today());
         })
-            ->where('status', 'A')
+            ->join("regions","regions.id","=","f_s_pools.region_id")
+            ->where('f_s_pools.status', 'A')
+            ->orderBy("name","asc")
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
         $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
@@ -78,7 +80,7 @@ class BankDepositFormController extends Controller
             return $q->orderby('charity_name','asc');
 
         })->where('charity_status','Registered')->paginate(10);
-        $cities = City::all();
+        $cities = City::all()->sortBy("city");
         $designation_list = Charity::DESIGNATION_LIST;
         $category_list = Charity::CATEGORY_LIST;
         $province_list = Charity::PROVINCE_LIST;
@@ -87,9 +89,7 @@ class BankDepositFormController extends Controller
         $selected_charities = [];
 
 
-        $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
-            return $pool->region->name;
-        });
+        $fund_support_pool_list = FSPool::current()->where('f_s_pools.status', 'A')->join("regions","regions.id","=","f_s_pools.region_id")->with('region')->orderBy("name",'asc')->get();
 
         return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
     }
