@@ -47901,16 +47901,11 @@ a:focus {
   text-decoration: underline;
 }
 
-.btn-lg:focus, .btn-group-lg > .btn:focus {
+.btn:focus, button:focus {
   padding: 4px 12px;
-  border: #000 5px solid;
-  font-weight: normal;
-}
-
-.btn-md:focus {
-  padding: 2px 7px;
-  border: #000 5px solid;
-  font-weight: normal;
+  border: #000 2px solid !important;
+  outline: 4px solid #3b99fc;
+  outline-offset: 1px;
 }
 
 .teststyle {
@@ -47946,7 +47941,10 @@ input[name=keyword] {
   margin-left: auto;
   margin-right: auto;
   margin-top: 25px;
-  width: 30%;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .min-charities-error {
@@ -47965,7 +47963,6 @@ input[name=keyword] {
   border-top: #ccc 1px solid;
 }
 
-
 .form-row.form-header {
   background: #f2f2f2;
   padding: 8px;
@@ -47977,10 +47974,11 @@ input[name=keyword] {
 }
 
 .form-row.form-body {
-    border: #d2d2d2 1px solid;
-    border-top: none;
-    padding: 15px;
+  border: #d2d2d2 1px solid;
+  border-top: none;
+  padding: 15px;
 }
+
 .logo-image-header {
   border-radius: 5px;
   -webkit-box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.125);
@@ -47991,5 +47989,4 @@ input[name=keyword] {
   width: 100px;
   float: right;
   height: auto;
-
 }
