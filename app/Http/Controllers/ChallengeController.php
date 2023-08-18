@@ -358,15 +358,15 @@ class ChallengeController extends Controller
         switch ($request->sort) {
             case 'region': 
                 return \Maatwebsite\Excel\Facades\Excel::download(new DailyCampaignByRegionExport($campaign_year, $as_of_date),
-                         'daily_campaign_update_region_'. $as_of_date .'.xlsx');
+                         'Daily_Cmpaign_Update_Region_'. $as_of_date .'.xlsx');
                 break;
             case 'organization':
                 return \Maatwebsite\Excel\Facades\Excel::download(new DailyCampaignByBUExport($campaign_year, $as_of_date),
-                         'daily_campaign_update_by_org_'. $as_of_date .'.xlsx');
+                         'Daily_Campaign_Update_By_Org_'. $as_of_date .'.xlsx');
                 break;
             case 'department':
                 return \Maatwebsite\Excel\Facades\Excel::download(new DailyCampaignByDeptExport($campaign_year, $as_of_date),
-                         'daily_campaign_update_by_dept_'. $as_of_date .'.xlsx');
+                         'Daily_Campaign_Update_By_Dept_'. $as_of_date .'.xlsx');
                 break;
         } 
 
