@@ -358,7 +358,7 @@ class ChallengeController extends Controller
         switch ($request->sort) {
             case 'region': 
                 return \Maatwebsite\Excel\Facades\Excel::download(new DailyCampaignByRegionExport($campaign_year, $as_of_date),
-                         'Daily_Cmpaign_Update_Region_'. $as_of_date .'.xlsx');
+                         'Daily_Campaign_Update_Region_'. $as_of_date .'.xlsx');
                 break;
             case 'organization':
                 return \Maatwebsite\Excel\Facades\Excel::download(new DailyCampaignByBUExport($campaign_year, $as_of_date),
