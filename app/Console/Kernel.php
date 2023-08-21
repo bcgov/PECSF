@@ -108,7 +108,7 @@ class Kernel extends ConsoleKernel
                         ->dailyAt('4:45')
                         ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
                 
-                $schedule->command('notify:SystemCleanUp')
+                $schedule->command('command:SystemCleanUp')
                         ->dailyAt('5:30')
                         ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
 
