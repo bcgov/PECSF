@@ -177,8 +177,8 @@
             if($(this).attr("pool_image").length > 21){
                 $("table.charity").hide();
                 $("table.fsp").show();
-                $(".modal-header").hide();
-                $(".modal-footer").hide();
+                // $(".modal-header").hide();
+                // $(".modal-footer").hide();
                 $("#pool_registration_number").html($(this).attr("registration_number"));
                 $("#pool_name").html($(this).attr("charity_name"));
                 $("#pool_image").attr("src",$(this).attr("pool_image"));
