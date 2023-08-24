@@ -654,7 +654,10 @@ class BankDepositFormController extends Controller
 
         if($request->keyword != "")
         {
-            $organizations->where("charity_name","LIKE","%".$request->keyword."%");
+            $organizations->where( function ($query) use($request) {
+                    $query->where("charity_name","LIKE","%".$request->keyword."%")
+                          ->orWhere('registration_number',"LIKE","%".$request->keyword."%");
+            });
         }
         if (is_numeric($request->pool_filter)){
             $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
