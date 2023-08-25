@@ -338,21 +338,31 @@ class BankDepositFormController extends Controller
             ]
         );
 
+        //var_dump($request->all());
+
         if($request->charity_selection == "dc"){
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
-            foreach($request->organization_name as $org){
+            $count = 0;
+            foreach($request->organization_name as $key => $org){
 
-                if($orgName <= ($orgCount - $request->org_count)){
-                    break;
+                if($key <= ($orgCount - $request->org_count)){
+                    continue;
                 }
-                BankDepositFormOrganizations::create([
-                    'organization_name' => $request->organization_name[$orgName],
-                    'vendor_id' => $request->vendor_id[$orgName],
-                    'donation_percent' => $request->donation_percent[$orgName],
-                    'specific_community_or_initiative' =>  (isset($request->additional[$orgName])?$request->additional[$orgName]:""),
+
+                $toSave = [
+                    'organization_name' => $request->organization_name[$key],
+                    'vendor_id' => $request->vendor_id[(count($request->vendor_id) - $request->org_count) + $count],
+                    'donation_percent' => $request->donation_percent[(count($request->donation_percent) - $request->org_count) + $count],
                     'bank_deposit_form_id' => $form->id
-                ]);
+                ];
+
+                if(isset($request->additional) && !empty($request->additional)){
+                    $toSave['specific_community_or_initiative'] =  $request->additional[(count($request->additional) - $request->org_count) + $count];
+                }
+
+                BankDepositFormOrganizations::create();
+                $count++;
                 $orgName--;
             }
         }
@@ -668,7 +678,7 @@ class BankDepositFormController extends Controller
             $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7)->onEachSide(1);
+        $organizations = $organizations->where("charity_status","=","Registered")->orderBy("charity_name","asc")->paginate(7)->onEachSide(1);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 
