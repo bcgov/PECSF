@@ -60,7 +60,15 @@
             }
         }
 
-
+        function Toast( toast_title, toast_body, toast_class) {
+            $(document).Toasts('create', {
+                class: toast_class,
+                title: toast_title,
+                autohide: true,
+                delay: 3000,
+                body: toast_body
+            });
+        }
         $("body").on("click",".select",function(e){
             e.preventDefault();
             // $("#noselectedresults").html("");
@@ -100,13 +108,9 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
-            if ($(".organization").length == 11) {
-                    Swal.fire({
-                    icon: 'warning',
-                    title: 'A maximum of 10 charities are reached',
-                    text: 'Please be aware, maximum 10 charities are allowed for Annual pledge.',
-                    animation: false,
-                });
+            if ($(".organization").length >= 11) {
+                Toast('A maximum of 10 charities are reached','Please be aware, maximum 10 charities are allowed for Annual pledge.',"bg-danger");
+                return false;
             }
 
         });
@@ -173,8 +177,8 @@
             if($(this).attr("pool_image").length > 21){
                 $("table.charity").hide();
                 $("table.fsp").show();
-                $(".modal-header").hide();
-                $(".modal-footer").hide();
+                // $(".modal-header").hide();
+                // $(".modal-footer").hide();
                 $("#pool_registration_number").html($(this).attr("registration_number"));
                 $("#pool_name").html($(this).attr("charity_name"));
                 $("#pool_image").attr("src",$(this).attr("pool_image"));

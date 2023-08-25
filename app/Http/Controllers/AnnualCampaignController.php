@@ -52,6 +52,9 @@ class AnnualCampaignController extends Controller
      */
     public function create( Pledge $duplicate_pledge = null )
     {
+        // redirect with session data when using duplicating function
+        $duplicate_pledge = session()->has('new_pledge') ? session()->get('new_pledge') : $duplicate_pledge;
+
         // Only allow when the campaign pledge period is opened
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
                             ->orderBy('calendar_year', 'desc')->first();
@@ -134,7 +137,7 @@ class AnnualCampaignController extends Controller
                     $pos = $fspools->search(function ($item, $key) use($pledge){
                         return $item->region_id ==  $pledge->region_id;
                     });
-                    if ($pos) {
+                    if ($pos >= 0) {
                         $regional_pool_id = $fspools[$pos]->id;
                         $step = 3;
                     } else {
@@ -976,7 +979,7 @@ class AnnualCampaignController extends Controller
         if($request->download_pdf){
             $date = date("Y-m-d");
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('annual-campaign.partials.pdf', compact('fsp_name','date','charities', 'calculatedTotalPercentOneTime', 'calculatedTotalPercentBiWeekly', 'calculatedTotalAmountOneTime', 'calculatedTotalAmountBiWeekly', 'grandTotal', 'annualOneTimeAmount', 'annualBiWeeklyAmount', 'oneTimeAmount',
-                 'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id'));
+                 'frequency', 'number_of_periods', 'pool_option', 'regional_pool_id', 'biWeeklyAmount'));
             return $pdf->download('Annual Campaign Summary - '.(intval($pledge->campaign_year->calendar_year) - 1).'.pdf');
         }
 
@@ -1017,7 +1020,7 @@ class AnnualCampaignController extends Controller
                 $pos = $fspools->search(function ($item, $key) use($pledge){
                     return $item->region_id ==  $pledge->region_id;
                 });
-                if (!$pos) {
+                if (!($pos >= 0)) {
                     $msg = "The Regional Pool you've selected is not available in the current campaign. Click here to see available regional pools, or alternatively you can select a different years choices from your donor history";
                 }
 
@@ -1051,7 +1054,7 @@ class AnnualCampaignController extends Controller
                 $pos = $fspools->search(function ($item, $key) use($hist_region){
                     return $item->region_id ==  $hist_region->id;
                 });
-                if (!$pos) {
+                if (!($pos >= 0)) {
                     $msg = "The Regional Pool you've selected is not available in the current campaign. Click 'Continue' to see available regional pools, or alternatively you can select a different years choices from your donor history";
                 }
 
@@ -1197,10 +1200,10 @@ class AnnualCampaignController extends Controller
                                 ->orderBy('source')
                                 ->get();
 
-                if ($hist_pledge->type == 'P') {
+                if ($hist_pledge->source == 'P') {
                     // $new_pledge->bi_weekly_pledges
                     if ( count($bi_weekly_pledges) ) {
-                        $new_pledge->pay_period_amount = $bi_weekly_pledges->first()->pledge / 26;
+                        $new_pledge->pay_period_amount = round(($bi_weekly_pledges->first()->pledge / 26), 2);
                     }
                     if ( count($one_time_pledges) ) {
                         $new_pledge->one_time_amount = $one_time_pledges->first()->pledge;
@@ -1212,10 +1215,11 @@ class AnnualCampaignController extends Controller
                 } else {
 
                     $row = 0;
+                    $total_amount = 0;
                     foreach( $bi_weekly_pledges as $index => $bi_weekly_pledge) {
-                        if ( $index == 0 ) {
-                            $new_pledge->pay_period_amount = $bi_weekly_pledge->pledge / 26;
-                        }
+                        // if ( $index == 0 ) {
+                        //     $new_pledge->pay_period_amount = round(($bi_weekly_pledge->pledge / 26),2);
+                        // }
 
                         if ($bi_weekly_pledge->charity) {
                             $new_pledge_charity = new PledgeCharity();
@@ -1223,16 +1227,18 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
                             $new_pledge_charity->additional = $bi_weekly_pledge->name2;
                             $new_pledge_charity->percentage = $bi_weekly_pledge->percent;
-                            $new_pledge_charity->amount = $bi_weekly_pledge->amount / 26;
+                            $new_pledge_charity->amount = round(($bi_weekly_pledge->amount / 26),2);
                             $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
                             $new_pledge_charity->goal_amount = $new_pledge_charity->amount * $campaignYear->number_of_periods;
 
                             $new_pledge->charities[$row] = $new_pledge_charity;
                             $row += 1;
 
+                            $total_amount += $new_pledge_charity->amount;
                         }
 
                     }
+                    $new_pledge->pay_period_amount = $total_amount;
 
                     foreach( $one_time_pledges as $index => $one_time_pledge) {
                         if ( $index == 0 ) {
@@ -1266,7 +1272,8 @@ class AnnualCampaignController extends Controller
 
             }
 
-            return $this->create($new_pledge);
+            // return $this->create($new_pledge);
+            return redirect()->route('annual-campaign.create')->with(['new_pledge' => $new_pledge]);
 
         }
         else{

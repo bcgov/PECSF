@@ -26,8 +26,10 @@
         </div>
         <div class="form-group col-md-4">
             <label for="form_submitter">Form submitter</label>
-            <div id="form_submitter">{{$current_user->name}}</div>
-            <input type="hidden" value="{{$current_user->id}}" name="form_submitter" />
+            <!--<div id="form_submitter">{{$current_user->name}}</div>-->
+            <input type="text" disabled class="form-control" value="{{$current_user->name}}" />
+
+            <input type="hidden" disabled value="{{$current_user->id}}" name="form_submitter" />
 
             <span class="form_submitter_errors errors">
                        @error('form_submitter')
@@ -38,8 +40,9 @@
         </div>
         <div class="form-group col-md-4">
             <label for="campaign_year">Campaign year</label>
-            <div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>
-            <input type="hidden" value="{{$campaign_year->id}}" name="campaign_year" />
+            <!--<div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>-->
+            <input type="text" disabled class="form-control" value="{{$campaign_year->calendar_year - 1}}" />
+            <input type="hidden"  value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
                        @error('form_submitter')
                         <span class="invalid-feedback">{{  $message  }}</span>
@@ -213,7 +216,9 @@
     <div class="form-row form-header address_hook" style="display:none;">
             <h3 class="blue">Mailing address for charitable receipt</h3>
     </div>
+
     <div class="form-row form-body address_hook" style="display:none;">
+        <span style="padding:10px;">A charitable donation receipt will be issued for cash and cheque donations in February following the calendar year in which the donation is received.</span>
 
         <div class="form-group col-md-12" id="address_line_1" style="">
             <label for="event_type">Address line 1</label>
@@ -234,8 +239,9 @@
             <select class="form-control search_icon" type="text" id="city" name="city" >
                 <option value="">Select a city</option>
             @foreach($cities as $city)
-                <option value="{{$city->city}}">{{$city->city}}</option>
+                <option value="{{$city->city}}" province="{{$city->province}}">{{$city->city}}</option>
             @endforeach
+
             </select>
             <span class="city_errors errors">
                        @error('city')
@@ -249,19 +255,7 @@
             <label for="sub_type">Province</label>
             <select class="form-control" type="text" id="province" name="province">
                 <option value="">Select a  province</option>
-
-                <option value="Alberta">Alberta</option>
                 <option value="British Columbia">British columbia</option>
-                <option value="Manitoba">Manitoba</option>
-                <option value="New Brunswick">New brunswick</option>
-                <option value="Newfoundland and Labrador">Newfoundland and labrador</option>
-                <option value="Nova Scotia">Nova scotia</option>
-                <option value="Nunavut">Nunavut</option>
-                <option value="Prince Edward Island">Prince edward island</option>
-                <option value="Quebec">Quebec</option>
-                <option value="Saskatchewan">Saskatchewan</option>
-                <option value="Yukon">Yukon</option>
-
                 <option value="Ontario">Ontario</option>
             </select>
             <span class="province_errors errors">
@@ -309,23 +303,23 @@
         @foreach( $pools as $pool )
             <div class="form-group col-md-2 form-pool">
 
-                <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
+                <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->region_id }}">
                     {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                              width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
 
                         <div class="form-check float-left">
-                            <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->id }}"
-                                   value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->region_id }}"
+                                   value="{{ $pool->region_id }}" {{ $pool->region_id == $regional_pool_id ? 'checked' : '' }}>
 
                         </div>
                         <br>
 
                         <label style="font-weight:bold;font-size:16px;text-align: center;
-    width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
+    width: 100%;" class="form-check-label pl-3" for="xxxpool{{ $pool->region_id }}">
                             {{ $pool->region->name }}
                         </label>
-                        <span style="font-size:16px;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->id }}"
+                        <span style="font-size:16px;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block" class="more-info bottom-center" data-id="{{ $pool->region_id }}"
                               data-name="{{ $pool->region->name }}" data-source="" data-type="" data-yearcd="{{date("Y",strtotime($pool->start_date))}}">View Details</span>
                     </div>
 
@@ -367,19 +361,28 @@
 
 
 
-            <div class="form-row form-header">
-                <h3 class="blue">File(s)</h3>
 
-            </div>
             <div class="form-row form-header">
-                <span class="attachment_errors errors">
+                            <h3 class="blue">File(s)</h3>
+
+
+                <span class="pl-3 attachment_errors errors">
+
                        @error('attachments')
                         <span class="invalid-feedback">{{  $message  }}</span>
                             @enderror
                         </span>
             </div>
+
             <div class="form-row form-body">
+
+                <div class="col-md-12"> <span style="display:block;padding:10px;">Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</span>
+                    </div>
+
+
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
+
+
                     <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
@@ -419,9 +422,9 @@
 <div class="modal fade" id="regionalPoolModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title text-dark" id="pledgeDetailModalTitle">Regional Charity Pool
-                    <span class="text-dark font-weight-bold"></span></h5>
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="pledgeDetailModalTitle">Regional Charity Pool
+                    <span class=""></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

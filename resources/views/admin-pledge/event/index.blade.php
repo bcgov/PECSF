@@ -171,6 +171,7 @@
                         <th>Form Submitter</th>
                         <th>Employee ID</th>
                         <th>PECSF Identifier</th>
+                        <th>Employee Name</th>
                         <th>Business Unit</th>
                         <th>Region</th>
                         <th>Office City</th>
@@ -283,6 +284,7 @@
                 {data: 'form_submitted_by.name', defaultContent: '', className: "dt-nowrap"},
                 {data: 'bc_gov_id', defaultContent: '' },
                 {data: 'pecsf_id', defaultContent: '' },
+                {data: 'employee_name', defaultContent: '', className: "dt-nowrap" },
                 {data: 'bu.code', defaultContent: '' },
                 {data: 'region.name', defaultContent: '' },
                 {data: 'employment_city', defaultContent: '' },

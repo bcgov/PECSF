@@ -82,7 +82,7 @@ $("#sub_type").select2();
     }
 }
 else if($(this).val()=="Gaming"){
-$("#sub_type").html('<option value="">None</option><option value="50/50 Draw">50/50 Draw</option>');
+$("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="">None</option>');
 $(".address_hook").hide();
 $("#sub_type").select2();
     $(".sub_type").show();
@@ -211,7 +211,6 @@ function nongovuserinfo(){
                 $('#employee_name').val( data.last_name +","+ data.first_name );
                 $("#employment_city").val(data.city).select2();
                 $("#region").val($("#region [code="+$('#employment_city option[value="'+data.city+'"]').attr("region")+"]").val());
-                $("#business_unit").val( $("option:contains('"+data.pecsf_bu+"')").val()).select2();
                 $("#region").select2();
             }
         },
@@ -444,8 +443,8 @@ type: 'GET',
 // data: $("#notify-form").serialize(),
 dataType: 'html',
 success: function (result) {
-$('.modal-title span').html(name);
-target = '.pledgeDetail';
+$('#regionalPoolModal  .modal-title span').html(name);
+target = '#regionalPoolModal .pledgeDetail';
 $(target).html('');
 $(target).html(result);
 },
@@ -661,4 +660,15 @@ $("#attachment_input_1").val("");
            e.preventDefault();
         }
     });
+
+    $("#city").change(function(){
+        if($("#city option[value='"+$(this).val()+"']").attr("province") == "BC")
+        {
+            $("#province").val("British Columbia").select2();
+        }
+        else{
+            $("#province").val("Ontario").select2();
+        }
+    });
+
 </script>

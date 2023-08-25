@@ -34,29 +34,34 @@ class Kernel extends ConsoleKernel
         // $schedule->command('generate:report')->hourly();
         // $schedule->command('que')->everyMinute();
 
-        if (env('TASK_SCHEDULING_ENABLED')) 
+        // **************************
+        // *** Outbound Processes ***
+        // **************************
+
+        if (env('TASK_SCHEDULING_OUTBOUND_PSFT_ENABLED')) 
         { 
-
-                // **************************
-                // *** Outbound Processes ***
-                // **************************
-
                 // Note: The export processes are only execute in TEST and Production  
                 $schedule->command('command:ExportPledgesToPSFT')
-                        ->dailyAt('0:15')
+                        ->dailyAt('1:00')
                         ->environments(['TEST', 'prod'])
                         ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
-                        
+        }
+
+        if (env('TASK_SCHEDULING_OUTBOUND_BI_ENABLED')) 
+        {
                 $schedule->command('command:ExportDatabaseToBI')
                         ->weekdays()
-                        ->at('0:30')
+                        ->at('1:15')
                         ->environments(['TEST', 'prod'])
                         ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
 
+        }
 
-                // **************************
-                // *** Inbound  Processes ***
-                // **************************
+        // **************************
+        // *** Inbound  Processes ***
+        // **************************
+        if (env('TASK_SCHEDULING_INBOUND_ENABLED')) 
+        { 
 
                 // Foundation table
                 $schedule->command('command:ImportPayCalendar')
@@ -108,6 +113,10 @@ class Kernel extends ConsoleKernel
                         ->dailyAt('4:45')
                         ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
                 
+                $schedule->command('command:SystemCleanUp')
+                        ->dailyAt('5:30')
+                        ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
+
                 // Daily Testing 
                 $schedule->command('notify:daily')
                         ->dailyAt('08:30')

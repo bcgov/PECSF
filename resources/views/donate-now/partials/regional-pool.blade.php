@@ -166,8 +166,8 @@ $( function() {
                         window.location.href = '/login';
                     }
 
-                    $('.modal-title span').html(name);
-                    target = '.modal-body';
+                    $('#regionalPoolModal .modal-title span').html(name);
+                    target = '#regionalPoolModal .modal-body';
                     $(target).html('');
                     $(target).html(result);
                     $('#regionalPoolModal').modal('show')
