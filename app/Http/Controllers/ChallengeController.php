@@ -348,12 +348,19 @@ class ChallengeController extends Controller
     public function download(Request $request)
     {
         
-        $campaign_year = today()->year;
+        $campaign_year = Setting::challenge_page_campaign_year();
+        $setting = Setting::first();
 
-        $as_of_date = DailyCampaign::where('campaign_year', $campaign_year)    
-                            ->where('as_of_date', '<=', today() ) 
-                            ->max('as_of_date');
-        $as_of_date = $request->start_date ? $request->start_date : $as_of_date;
+        $sort = $request->sort;
+        $as_of_date = $request->start_date ?? today()->format('Y-m-d');
+
+        if ( $as_of_date >= $setting->campaign_end_date->format('Y-m-d')) {
+            if ($sort == 'department')  {
+                $as_of_date = $setting->campaign_end_date->format('Y-m-d');
+            } else {
+                $as_of_date = $setting->campaign_final_date->format('Y-m-d');
+            }
+        }
 
         switch ($request->sort) {
             case 'region': 
