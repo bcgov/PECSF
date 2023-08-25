@@ -47991,6 +47991,7 @@ input[name=keyword] {
   height: auto;
 }
 
+
 /* .carousel */
 img.reload {
   padding: 0.25em;
@@ -48263,9 +48264,14 @@ img.reload {
 }
 
 .carousel-moreaccessible .carousel-item .carousel-caption a:focus {
-  padding: 4px;
-  border: 2px solid #005a9c;
-  background-color: transparent;
-  color: black;
-  outline: none;
+    padding: 4px;
+    border: 2px solid #005a9c;
+    background-color: transparent;
+    color: black;
+    outline: none;
+}
+.center {
+  margin-left: auto;
+  margin-right: auto;
+
 }
