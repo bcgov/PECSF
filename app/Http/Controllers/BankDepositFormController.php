@@ -660,7 +660,7 @@ class BankDepositFormController extends Controller
             });
         }
         if (is_numeric($request->pool_filter)){
-            $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
+            $pool = FSPool::current()->where('region_id', $request->get('pool_filter') )->first();
             $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
             $organizations->where("f_s_pool_charities.status","=","A");
