@@ -32,7 +32,7 @@
             <select class="select2 form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
                 <option value="">Choose a Fund Supported Pool</option>
                 @foreach($fund_support_pool_list as $pool)
-                    <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
+                    <option value="{{ $pool->region_id }}">{{ $pool->region->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -219,10 +219,10 @@
                     </tr>
                 </table>
             </div>
-                    
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
-            </div>  
+            </div>
         </div>
 
     </div>
