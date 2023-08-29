@@ -73,7 +73,7 @@ class BankDepositForm extends Model implements Auditable
     }
 
     public function region() {
-        return $this->belongsTo(Region::class, 'region_id', 'id');
+        return $this->belongsTo(Region::class, 'regional_pool_id', 'id');
     }
 
     public function bu() {

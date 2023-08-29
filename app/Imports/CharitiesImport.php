@@ -32,16 +32,12 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
     public function __construct($history_id)
     {
-
         $this->history_id = $history_id;
         $this->history = \App\Models\ProcessHistory::where('id', $history_id)->first();
-
         $this->row_count = 0;
         $this->created_count = 0;
         $this->updated_count = 0;
         $this->skipped_count = 0;
-        
-
     }
 
 
@@ -96,7 +92,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     'charity_name' => $row[1],
                     'charity_status' => $row[2],
                     'type_of_qualified_donee' => $row[3],
-                    'effective_date_of_status' => $row[4], 
+                    'effective_date_of_status' => $row[4],
                     'sanction' => $row[5],
                     'designation_code' => $row[6],
                     'charity_type' => $row[7],
@@ -140,7 +136,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     'registration_number' => $row[0],
                     'charity_name' => $row[1],
                     'charity_status' => $row[2],
-                    
+
                 ]);
 
             }
@@ -152,7 +148,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 $this->history->end_at = now();
                 $this->history->save();
 
-                // write message to the log  
+                // write message to the log
                 throw new Exception($ex);
             }
 
@@ -160,7 +156,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
         // Write to log file
         $this->logMessage('-- Importing charity -- ' . number_format( $this->done_count / $this->row_count * 100 ,2)  .
-                         '%  (' . number_format($this->done_count,0) . ' / ' . number_format($this->row_count,0) . ')' );            
+                         '%  (' . number_format($this->done_count,0) . ' / ' . number_format($this->row_count,0) . ')' );
 
     }
 
@@ -193,7 +189,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     $message .= 'Process parameters : ' . ($this->history ?  $this->history->parameters : '')  . PHP_EOL;
                     $message .= PHP_EOL;
                     $message .= 'Import process started at : ' . now()  . PHP_EOL;
-    
+
                     $this->history->total_count = $this->row_count;
                     $this->history->done_count = 0;
                     $this->history->status = 'Processing';
@@ -234,7 +230,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                         $not_in_cra_count += 1;
 
                     }
-                    
+
                 });
 
                 $this->logMessage('');
@@ -243,7 +239,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 CharityStaging::where('history_id', $history_id)->delete();
 
                 $message = 'Import process ended at : ' . now()  . PHP_EOL;
-                $message .= PHP_EOL;                
+                $message .= PHP_EOL;
 
                 if ($this->skipped_count ==  0) {
                     $status = 'Completed';
@@ -256,9 +252,9 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 $message .= PHP_EOL;
                 $message .= 'Total Row count        : ' . $this->row_count . PHP_EOL;
                 $message .= 'Total Process count    : ' . $this->done_count . PHP_EOL;
-                $message .= PHP_EOL;                
+                $message .= PHP_EOL;
 
-                $message .= PHP_EOL;                                
+                $message .= PHP_EOL;
                 $message .= 'Total Created count              : ' . $this->created_count . PHP_EOL;
                 $message .= 'Total Updated count              : ' . $this->updated_count . PHP_EOL;
                 $message .= 'Total Updated (Not-in-CRA) count : ' . $not_in_cra_count . PHP_EOL;
@@ -271,7 +267,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 }
 
 
-                
+
 
                 $this->history->message = $this->history->message . $message;
                 $this->history->status = $status;
@@ -283,10 +279,10 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
         ];
     }
 
-    protected function logMessage($text) 
+    protected function logMessage($text)
     {
 
-        // write to log message 
+        // write to log message
         $message = $text . PHP_EOL;
 
         $this->history->message .= $message;

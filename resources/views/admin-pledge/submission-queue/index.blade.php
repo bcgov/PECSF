@@ -140,7 +140,7 @@
     <script type="x-tmpl" id="attachment-tmpl">
         @include('volunteering.partials.add-attachment', ['index' => 'XXX'] )
     </script>
-    
+
     <script>
         $.ajaxSetup({
             headers: {

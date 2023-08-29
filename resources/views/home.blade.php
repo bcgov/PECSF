@@ -383,6 +383,7 @@
       });
   </script>
 @endif
+
 <script>
 
     var CarouselPreviousNext = function (node, options) {
