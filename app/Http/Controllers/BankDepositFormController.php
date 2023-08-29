@@ -41,7 +41,7 @@ class BankDepositFormController extends Controller
 
     public function index(Request $request)
     {
-        $pools = FSPool::where('start_date', '=', function ($query) {
+        $pools = FSPool::select("f_s_pools.*")->where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
