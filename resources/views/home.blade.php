@@ -218,7 +218,7 @@
         <div class="col-12 col-md-6">
             <section id="myCarousel" class=" carousel" aria-roledescription="carousel" aria-label="Highlighted television shows">
                 <div class="carousel-inner">
-                    <div class="controls">
+                    <div class="controls" style="display:none;">
                         <button type="button" class="rotation pause" aria-label="Stop automatic slide show">
                             <svg width="42" height="34" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                 <rect class="background" x="2" y="2" rx="5" ry="5" width="38" height="24"></rect>
@@ -383,6 +383,8 @@
       });
   </script>
 @endif
+
+<script>
 
     var CarouselPreviousNext = function (node, options) {
         // merge passed options with defaults
@@ -575,12 +577,14 @@
             this.pausePlayButtonNode.setAttribute('aria-label', this.pauseLabel);
             this.pausePlayButtonNode.classList.remove('play');
             this.pausePlayButtonNode.classList.add('pause');
-            this.liveRegionNode.setAttribute('aria-live', 'off');
+            // this.liveRegionNode.setAttribute('aria-live', 'off');
+            $(this.liveRegionNode).attr('aria-live', 'off');
         } else {
             this.pausePlayButtonNode.setAttribute('aria-label', this.playLabel);
             this.pausePlayButtonNode.classList.remove('pause');
             this.pausePlayButtonNode.classList.add('play');
-            this.liveRegionNode.setAttribute('aria-live', 'polite');
+            // this.liveRegionNode.setAttribute('aria-live', 'polite');
+            $(this.liveRegionNode).attr('aria-live', 'polite');
         }
     };
 
