@@ -55,7 +55,7 @@ class DonationController extends Controller {
                 ->selectRaw("'GF' as source, pledges.user_id,  pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                                case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
+                                case when type = 'P' then '' else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
                                             where pledge_charities.charity_id = charities.id
                                               and pledge_charities.pledge_id = pledges.id
                                               and pledge_charities.frequency = 'bi-weekly'
@@ -71,7 +71,7 @@ class DonationController extends Controller {
                 ->selectRaw("'GF' as source, pledges.user_id, pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                            case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
+                            case when type = 'P' then '' else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
                                         where pledge_charities.charity_id = charities.id
                                           and pledge_charities.pledge_id = pledges.id
                                           and pledge_charities.frequency = 'one-time'
@@ -116,6 +116,7 @@ class DonationController extends Controller {
                                 where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id
                                         and bank_deposit_form_organizations.deleted_at is null) else 0 end");
 
+        DB::statement("SET SESSION group_concat_max_len = 4096");
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
                             ->whereNotNull('emplid')
