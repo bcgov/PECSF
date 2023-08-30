@@ -47990,3 +47990,17 @@ input[name=keyword] {
   float: right;
   height: auto;
 }
+
+/* .carousel */
+img.reload {
+  padding: 0.25em;
+  display: block-inline;
+  position: relative;
+  top: 6px;
+  height: 0.9em;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
