@@ -124,9 +124,9 @@
                                             @if ($pledge->donation_type == 'Donate Today')
                                                 {{ $pledge->number_of_charities }}
                                             @else
-                                                @foreach(explode(",",$pledge->number_of_charities) as $charity)
-                                               <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
-
+                                                @foreach($pledge->charities as $charity)
+                                               @if(!empty($charity))
+                                                        <a  style="cursor:pointer;text-overflow: ellipsis;" class="more-info"
                                                         data-source="{{ $pledge->source }}"
                                                         data-type="{{ $pledge->donation_type }}"
                                                         data-id="{{ $pledge->id }}"
@@ -135,6 +135,7 @@
                                                         {{$charity}}
                                                     </a>
                                                     <br>
+                                                @endif
                                                 @endforeach
                                             @endif
                                         @endif
