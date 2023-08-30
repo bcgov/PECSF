@@ -116,7 +116,7 @@ class DonationController extends Controller {
                                 where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id
                                         and bank_deposit_form_organizations.deleted_at is null) else 0 end");
 
-        DB::statement("SET SESSION group_concat_max_len = 2048");
+        DB::statement("SET SESSION group_concat_max_len = 4096");
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
                             ->whereNotNull('emplid')
