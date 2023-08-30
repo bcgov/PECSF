@@ -96,11 +96,17 @@ $(function() {
         if ((this.value) == 'department') {
             $('select[name="start_date"] option[final="1"]').hide();
             $('select[name="start_date"] option[final="2"]').show();
+
+            choice = '';    // Always reset to blank
+
         } else {
             $('select[name="start_date"] option[final="1"]').show();
             $('select[name="start_date"] option[final="2"]').hide();
+
+            choice = $('select[name="start_date"]').find('option:checked').val();
         }
 
+        $('#start_date').val( choice ).change();
     });
 
     $( 'select[name="sort"]' ).trigger( "change" );
