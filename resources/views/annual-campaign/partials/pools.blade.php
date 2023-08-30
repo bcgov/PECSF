@@ -23,7 +23,7 @@
                 <div class="card-body m-1 p-2">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->region_id }}"
-                            value="{{ $pool->region_id }}" {{ $pool->region_id == $regional_pool_id ? 'checked' : '' }}>
+                            value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
                         <label class="form-check-label h5 pl-3" for="xxxpool{{ $pool->region_id }}">
                             {{ $pool->region->name }}
                         </label>
