@@ -55,7 +55,7 @@ class DonationController extends Controller {
                 ->selectRaw("'GF' as source, pledges.user_id,  pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                             'Annual' , 'Bi-Weekly', pledges.pay_period_amount, pledges.goal_amount - pledges.one_time_amount,
                             (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                                case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
+                                case when type = 'P' then '' else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
                                             where pledge_charities.charity_id = charities.id
                                               and pledge_charities.pledge_id = pledges.id
                                               and pledge_charities.frequency = 'bi-weekly'
@@ -71,7 +71,7 @@ class DonationController extends Controller {
                 ->selectRaw("'GF' as source, pledges.user_id, pledges.id, 'pledge' as model, pledges.emplid, campaign_years.calendar_year, type,
                           'Annual' , 'One-Time', pledges.one_time_amount, pledges.one_time_amount,
                              (select regions.name from f_s_pools, regions where f_s_pools.region_id = regions.id and f_s_pools.id = pledges.f_s_pool_id),
-                            case when type = 'P' then 0 else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
+                            case when type = 'P' then '' else (select GROUP_CONCAT(charity_name) from pledge_charities, charities
                                         where pledge_charities.charity_id = charities.id
                                           and pledge_charities.pledge_id = pledges.id
                                           and pledge_charities.frequency = 'one-time'
@@ -116,6 +116,7 @@ class DonationController extends Controller {
                                 where bank_deposit_form_organizations.bank_deposit_form_id = bank_deposit_forms.id
                                         and bank_deposit_form_organizations.deleted_at is null) else 0 end");
 
+        DB::statement("SET SESSION group_concat_max_len = 4096");
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
                             ->whereNotNull('emplid')
@@ -156,6 +157,10 @@ class DonationController extends Controller {
                     if(!empty(Pledge::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = Pledge::where("id","=",$pledge->id)->first()->distinct_charities;
+
+                        if(!empty(Pledge::where("id","=",$pledge->id)->first()->region()->get()->first())){
+                            $pledges_by_yearcd[$yearcd][$index]->region = Pledge::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+                        }
                     }
                     else
                     {
@@ -169,10 +174,11 @@ class DonationController extends Controller {
 
                         if($dnp->f_s_pool_id > 0){
                             $pledges_by_yearcd[$yearcd][$index]->charities = DonateNowPledge::where("id","=",$pledge->id)->first()->charities;
+                            $pledges_by_yearcd[$yearcd][$index]->region = DonateNowPledge::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+
                         }
                         else{
                             $pledges_by_yearcd[$yearcd][$index]->charities = [DonateNowPledge::where("id","=",$pledge->id)->first()->charity];
-
                         }
 
                     }
@@ -185,6 +191,8 @@ class DonationController extends Controller {
                     if(!empty(SpecialCampaignPledge::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = [SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization];
+                        $pledges_by_yearcd[$yearcd][$index]->region = [SpecialCampaignPledge::where("id","=",$pledge->id)->first()->organization];
+
                     }
                     else
                     {
@@ -196,6 +204,9 @@ class DonationController extends Controller {
                     if(!empty(BankDepositForm::where("id","=",$pledge->id)->first()))
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = BankDepositForm::where("id","=",$pledge->id)->first()->charities;
+                        if(!empty(BankDepositForm::where("id","=",$pledge->id)->first()->region()->get()->first())){
+                            $pledges_by_yearcd[$yearcd][$index]->region = BankDepositForm::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+                        }
                     }
                     else
                     {
@@ -214,7 +225,16 @@ class DonationController extends Controller {
                                 return $query->where('id', $pledge->id);
                             })
                             ->orderBy('name1')
-                            ->get();;
+                            ->get();
+                        $pledges_by_yearcd[$yearcd][$index]->region = PledgeHistory::where('emplid', $pledge->emplid)
+                            ->where('campaign_type', $pledge->donation_type)
+                            ->where('yearcd', $pledge->yearcd)
+                            ->where('frequency', $pledge->frequency)
+                            ->when( $pledge->donation_type == 'Donate Today', function($query) use($pledge) {
+                                return $query->where('id', $pledge->id);
+                            })
+                            ->orderBy('name1')
+                            ->get()->first()->region->name;
                     }
                     else
                     {

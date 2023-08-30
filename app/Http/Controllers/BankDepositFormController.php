@@ -41,7 +41,7 @@ class BankDepositFormController extends Controller
 
     public function index(Request $request)
     {
-        $pools = FSPool::where('start_date', '=', function ($query) {
+        $pools = FSPool::select("f_s_pools.*")->where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
                 ->whereColumn('A.region_id', 'f_s_pools.region_id')
@@ -338,21 +338,31 @@ class BankDepositFormController extends Controller
             ]
         );
 
+        //var_dump($request->all());
+
         if($request->charity_selection == "dc"){
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
-            foreach($request->organization_name as $org){
+            $count = 0;
+            foreach($request->organization_name as $key => $org){
 
-                if($orgName <= ($orgCount - $request->org_count)){
-                    break;
+                if($key <= ($orgCount - $request->org_count)){
+                    continue;
                 }
-                BankDepositFormOrganizations::create([
-                    'organization_name' => $request->organization_name[$orgName],
-                    'vendor_id' => $request->vendor_id[$orgName],
-                    'donation_percent' => $request->donation_percent[$orgName],
-                    'specific_community_or_initiative' =>  (isset($request->additional[$orgName])?$request->additional[$orgName]:""),
+
+                $toSave = [
+                    'organization_name' => $request->organization_name[$key],
+                    'vendor_id' => $request->vendor_id[(count($request->vendor_id) - $request->org_count) + $count],
+                    'donation_percent' => $request->donation_percent[(count($request->donation_percent) - $request->org_count) + $count],
                     'bank_deposit_form_id' => $form->id
-                ]);
+                ];
+
+                if(isset($request->additional) && !empty($request->additional)){
+                    $toSave['specific_community_or_initiative'] =  $request->additional[(count($request->additional) - $request->org_count) + $count];
+                }
+
+                BankDepositFormOrganizations::create();
+                $count++;
                 $orgName--;
             }
         }
@@ -654,10 +664,13 @@ class BankDepositFormController extends Controller
 
         if($request->keyword != "")
         {
-            $organizations->where("charity_name","LIKE","%".$request->keyword."%");
+            $organizations->where( function ($query) use($request) {
+                    $query->where("charity_name","LIKE","%".$request->keyword."%")
+                          ->orWhere('registration_number',"LIKE","%".$request->keyword."%");
+            });
         }
         if (is_numeric($request->pool_filter)){
-            $pool = FSPool::current()->where('id', $request->get('pool_filter') )->first();
+            $pool = FSPool::current()->where('region_id', $request->get('pool_filter') )->first();
             $organizations->whereIn('charities.id', $pool->charities->pluck('charity_id') );
             $organizations->join('f_s_pool_charities',"charities.id","f_s_pool_charities.charity_id");
             $organizations->where("f_s_pool_charities.status","=","A");
@@ -665,7 +678,7 @@ class BankDepositFormController extends Controller
             $organizations->groupBy("f_s_pool_charities.charity_id");
         }
 
-        $organizations = $organizations->where("charity_status","=","Registered")->paginate(7)->onEachSide(1);
+        $organizations = $organizations->where("charity_status","=","Registered")->orderBy("charity_name","asc")->paginate(7)->onEachSide(1);
         $total = $organizations->total();
         $selected_vendors = explode(",",$request->selected_vendors);
 

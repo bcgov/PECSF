@@ -443,8 +443,8 @@ type: 'GET',
 // data: $("#notify-form").serialize(),
 dataType: 'html',
 success: function (result) {
-$('.modal-title span').html(name);
-target = '.pledgeDetail';
+$('#regionalPoolModal  .modal-title span').html(name);
+target = '#regionalPoolModal .pledgeDetail';
 $(target).html('');
 $(target).html(result);
 },

@@ -126,6 +126,7 @@ class SampleUsersSeeder extends Seeder
 
         $organization = Organization::where('code','GOV')->first();
 
+        $password = env('SYNC_USER_PROFILE_SECRET') ? Hash::make( env('SYNC_USER_PROFILE_SECRET')) : '$2y$10$Qoiy/oe4.1bV/uqEi0uTteP.sYudg34zeC2mN7YLTs8ris0F5WskW';
         foreach ($users as $user) {
 
           User::updateOrCreate([
@@ -133,7 +134,7 @@ class SampleUsersSeeder extends Seeder
           ], [
             'id' => $user['id'],
             'name' => $user['name'],
-            'password' => '$2y$10$LujtZATxcumV7GkMqPfczOBbbzjKcnUQjzZH1kjEqY/Dk50XhTqSm',
+            'password' => $password,
             'source_type' => 'LCL',
             'organization_id' => $organization ? $organization->id : null,
             'emplid' => $user['emplid'],

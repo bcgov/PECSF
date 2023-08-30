@@ -93,6 +93,12 @@ class LoginController extends Controller
             session()->put('has-active-special-campaign', 'YES' );
         }
 
+        // Add a flash to display annoucement if required
+        $hasAnnouncement = \App\Models\Announcement::hasAnnouncement();
+        if ($hasAnnouncement) {
+            $request->session()->flash('has-announcement', 'YES');
+        }
+
         // Update the last signon datetime
         $user->last_signon_at = Carbon::now();
         $user->save();

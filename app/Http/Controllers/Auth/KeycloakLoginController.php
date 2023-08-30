@@ -84,6 +84,12 @@ class KeycloakLoginController extends Controller
                     'identity_provider' => $identity_provider,
                     ]);
 
+                // Add a flash to display annoucement if required
+                $hasAnnouncement = \App\Models\Announcement::hasAnnouncement();
+                if ($hasAnnouncement) {
+                    $request->session()->flash('has-announcement', 'YES');
+                }
+
                 return redirect('/');
 
             } else {

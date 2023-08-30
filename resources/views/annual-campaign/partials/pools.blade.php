@@ -17,19 +17,19 @@
         @foreach( $fspools as $pool )
         <div class="col mb-4">
 
-            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->id }}">
+            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->region_id }}">
                 {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                         width="50" height="50"> --}}
                 <div class="card-body m-1 p-2">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->id }}"
+                        <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->region_id }}"
                             value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
-                        <label class="form-check-label h5 pl-3" for="xxxpool{{ $pool->id }}">
+                        <label class="form-check-label h5 pl-3" for="xxxpool{{ $pool->region_id }}">
                             {{ $pool->region->name }}
                         </label>
                     </div>
 
-                    <div class=" text-right m-2 pt-2" data-id="{{ $pool->id }}">
+                    <div class=" text-right m-2 pt-2" data-id="{{ $pool->region_id }}">
                         <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}"
                             data-name="{{ $pool->region->name }}"></i>
                     </div>
@@ -151,8 +151,8 @@ $(function () {
                         window.location.href = '/login';
                     }
 
-                    $('.modal-title span').html(name);
-                    target = '.modal-body';
+                    $('#regionalPoolModal .modal-title span').html(name);
+                    target = '#regionalPoolModal .modal-body';
                     $(target).html('');
                     $(target).html(result);
                     $('#regionalPoolModal').modal('show')

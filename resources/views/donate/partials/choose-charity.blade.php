@@ -28,7 +28,7 @@
             <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
                 <option value="">Choose a Fund Supported Pool</option>
                 @foreach($fund_support_pool_list as $pool)
-                    <option value="{{ $pool->id }}">{{ $pool->region->name }}</option>
+                    <option value="{{ $pool->region_id }}">{{ $pool->region->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -62,15 +62,20 @@
             @endif
         </table>
 </div>
-<div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="charityDetails" tabindex="-1" role="dialog" aria-labelledby="charityDetailsModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-blue">
-                <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
-                </h5>
-                <button type="button" class="close" style="color:#000;" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-primary">
+                {{-- <h5 class="modal-title text-dark" id="regionalPoolModalTitle">Charity Details
+                </h5> --}}
+                <h5 class="modal-title" id="charityDetailsModalTitle">Charity Details
+                    <span class="text-dark font-weight-bold"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                {{-- <button type="button" class="close"  data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> --}}
             </div>
             <div class="modal-body">
 
