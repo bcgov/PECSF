@@ -42,9 +42,18 @@
         href="{{ route('system.access-logs') }}">Access Logs</a>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link  {{ str_contains( Route::current()->getName(), 'system.settings') ? 'active' : ''}}"
-        href="{{ route('system.settings.index') }}">Settings</a>
+    <li class="nav-item dropdown">
+      @php $active =  ( str_contains(Route::current()->getName(), 'system.settings') ||
+                        str_contains(Route::current()->getName(), 'system.announcement')
+                      ) ? 'active' : ''
+      @endphp
+      <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Settings</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.settings') ? 'active' : ''}}"
+            href="{{ route('system.settings.index') }}">Planned Maintenance</a>
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.announcement') ? 'active' : ''}}"
+            href="{{ route('system.announcement.index') }}">Announcement</a>
+      </div>
     </li>
 
   </ul>
