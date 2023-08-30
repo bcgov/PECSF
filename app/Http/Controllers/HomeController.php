@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Pledge;
+use App\Models\EmployeeJob;
+use App\Models\Announcement;
 use App\Models\BusinessUnit;
 use App\Models\CampaignYear;
-use App\Models\EmployeeJob;
-use App\Models\HistoricalChallengePage;
-use App\Models\Pledge;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\HistoricalChallengePage;
 
 class HomeController extends Controller
 {
@@ -35,7 +36,12 @@ class HomeController extends Controller
                             ->orderBy('calendar_year', 'desc')
                             ->first();
 
-        return view('home', compact('campaignYear'));
+        $announcement = new Announcement;
+        if ($request->session()->has('has-announcement') ) {
+            $announcement = Announcement::first();
+        }
+
+        return view('home', compact('campaignYear','announcement'));
 
     }
 }

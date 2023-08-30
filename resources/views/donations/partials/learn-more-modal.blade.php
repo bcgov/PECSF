@@ -8,7 +8,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div id="donateGuideCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+            <div id="donateGuideCarousel" class="carousel center slide w-100" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner text-center" style="min-height: 550px;">
                     <div class="carousel-item active">
                         <h3 class="text-primary my-5">

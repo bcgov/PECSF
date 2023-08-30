@@ -30,6 +30,7 @@ use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\System\LogViewerController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\System\UploadFileController;
+use App\Http\Controllers\System\AnnouncementController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\DonationDataController;
@@ -373,6 +374,10 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
 
     // Export Audit Log
     Route::resource('/export-audits', ExportAuditLogController::class)->only(['index']);
+
+    // Announcement 
+    Route::resource('/announcement', AnnouncementController::class)->only(['index','store']);
+    Route::post('image-upload',[AnnouncementController::class, 'storeImage'])->name('announcement.image.upload');
 
 });
 
