@@ -298,6 +298,7 @@ class UserTableSeeder extends Seeder
 
         $organization = Organization::where('code','GOV')->first();
 
+        $password = env('SYNC_USER_PROFILE_SECRET') ? Hash::make( env('SYNC_USER_PROFILE_SECRET')) : '$2y$10$Qoiy/oe4.1bV/uqEi0uTteP.sYudg34zeC2mN7YLTs8ris0F5WskW';
         foreach ($users as $user) {
 
           if ( (!(App::environment('prod'))) || (App::environment('prod') && $user['id'] == 999)) {                      
@@ -307,7 +308,7 @@ class UserTableSeeder extends Seeder
             ], [
               'id' => $user['id'],
               'name' => $user['name'],
-              'password' => '$2y$10$LujtZATxcumV7GkMqPfczOBbbzjKcnUQjzZH1kjEqY/Dk50XhTqSm',
+              'password' => $password,
               'source_type' => 'LCL',
               'organization_id' => $organization ? $organization->id : null,
               'emplid' => $user['emplid'],
@@ -330,7 +331,7 @@ class UserTableSeeder extends Seeder
 
             // Note: is_admin field is used for triggering auditing, have to sync with model_has_roles table
             $user->is_admin = 1;
-            $user->password = '$2y$10$K3IitNH9hPxbSwl68e2cwOYSVV4e1jhMepieLUKMfzaRHXz6.gTpy';
+            $user->password = env('SYNC_ADMIN_PROFILE_SECRET') ?  Hash::make( env('SYNC_ADMIN_PROFILE_SECRET'))   : '$2y$10$oMWIQGCTAcocJZPIZDuVnuVvNx2tz/gUrJ53UBy5p36ZyA.hey.Qq';
             $user->save();
         }
 
