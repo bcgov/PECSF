@@ -17,7 +17,7 @@
         @foreach( $fspools as $pool )
         <div class="col mb-4">
 
-            <div class="card h-100 {{ $pool->region_id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->region_id }}">
+            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->region_id }}">
                 {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                         width="50" height="50"> --}}
                 <div class="card-body m-1 p-2">
