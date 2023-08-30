@@ -30,7 +30,7 @@
                     </div>
 
                     <div class=" text-right m-2 pt-2" data-id="{{ $pool->region_id }}">
-                        <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->region_id }}"
+                        <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}"
                             data-name="{{ $pool->region->name }}"></i>
                     </div>
                 </div>
