@@ -165,7 +165,7 @@ class FundSupportedPoolController extends Controller
                                  ->whereNull('deleted_at');;
                 })
             ],
-            'charities.*'       => ['required'],
+            'charities.*'       => ['required', Rule::exists("charities", "id")->where('charity_status','Registered')],
             'status.*'          => ['required', Rule::in(['A', 'I'])],
             'names.*'           => 'required|max:50',
             'descriptions.*'    => 'required',
@@ -176,6 +176,7 @@ class FundSupportedPoolController extends Controller
         ],[
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.*.required' => 'The charity field is required.',
+            'charities.*.exists' =>  'The invalid charity entered.',
             'status.*.in' => 'The selected status is invalid.',
             'names.*.required' => 'Please enter a supported program name.',
             'descriptions.*.required' => 'Please enter a supported program description.',
@@ -401,8 +402,7 @@ class FundSupportedPoolController extends Controller
                 })->ignore($id),
             ],
             'pool_status'       => ['required', Rule::in(['A', 'I']) ],
-
-            'charities.*'       => ['required'],
+            'charities.*'       => ['required', Rule::exists("charities", "id")->where('charity_status','Registered')],
             'status.*'          => ['required', Rule::in(['A', 'I'])],
             'names.*'           => 'required|max:50',
             'descriptions.*'    => 'required',
@@ -415,6 +415,7 @@ class FundSupportedPoolController extends Controller
         ],[
             'start_date.required' => 'The date field is incomplete or has an invalid date.',
             'charities.*.required' => 'The charity field is required.',
+            'charities.*.exists' =>  'The invalid charity entered.',
             'status.*.in' => 'The selected status is invalid.',
             'names.*.required' => 'Please enter a supported program name.',
             'descriptions.*.required' => 'Please enter a supported program description.',
