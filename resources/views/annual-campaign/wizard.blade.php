@@ -296,6 +296,7 @@ $(function () {
                 $(".cancel").trigger("click");
             } else {
                 history.pushState(null, null, location.href);
+                $('.modal').modal('hide');
                 $(".back").trigger("click");
             }
         }
