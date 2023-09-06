@@ -2,13 +2,15 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
 use App\Models\EmployeeJob;
 use App\Models\PledgeHistory;
 use Illuminate\Console\Command;
 use App\Models\EmployeeJobAudit;
 use App\Models\ScheduleJobAudit;
+use App\Models\EmployeeJobStaging;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class ImportEmployeeJob extends Command
@@ -50,6 +52,7 @@ class ImportEmployeeJob extends Command
         $this->total_count = 0;
         $this->created_count = 0;
         $this->updated_count = 0;
+        $this->terminated_count = 0;
         $this->message = '';
         $this->status = 'Completed';
 
@@ -117,6 +120,8 @@ class ImportEmployeeJob extends Command
         $this->LogMessage( '' );
         $this->LogMessage( 'Total Created count : ' . $this->created_count  );
         $this->LogMessage( 'Total Updated count : ' . $this->updated_count  );
+        $this->LogMessage( 'Total Terminated count : ' . $this->terminated_count  );
+        
 
         $this->task->end_time = Carbon::now();
         $this->task->status = $this->status;
@@ -129,6 +134,8 @@ class ImportEmployeeJob extends Command
 
     protected function UpdateEmployeeJob()
     {
+
+        EmployeeJobStaging::truncate();
 
         // Get the latest success job's start time
         $last_job = ScheduleJobAudit::where('job_name', $this->signature)
@@ -268,6 +275,9 @@ class ImportEmployeeJob extends Command
 
                             ]);
 
+                            // Staging for comparison purpose
+                            EmployeeJobStaging::create( $job->toArray() );
+
                             if ($job->wasRecentlyCreated) {
 
                                 $this->created_count += 1;
@@ -331,6 +341,38 @@ class ImportEmployeeJob extends Command
 
             //     return 1;
             // }
+
+        }
+
+        // Additional Step : to mark the empl_status to 'T' when there is not exists in the listing from BI data 
+        $count = EmployeeJobStaging::count();
+        if ($count > 0) {
+            $this->LogMessage( "Additional Step -- Checking existing active employee status"  );
+            $jobs = EmployeeJob::where('empl_status', 'A')
+                                ->whereNull('date_deleted')
+                                ->whereNotExists(function ($query) {
+                                    $query->select(DB::raw(1))
+                                        ->from('employee_job_stagings')
+                                        ->whereColumn('employee_jobs.emplid', 'employee_job_stagings.emplid')
+                                        ->whereColumn('employee_jobs.empl_rcd', 'employee_job_stagings.empl_rcd');
+                                })
+                                ->get();
+
+            foreach( $jobs as $job) {
+
+                // Audit -- Before Change 
+                EmployeeJobAudit::create( array_merge(  ['audit_stamp' => now(), 'audit_action' => 'K'], $job->toArray() ) );
+
+                $job->empl_status = 'T';
+                $job->save();
+
+                // Audit -- After Change 
+                EmployeeJobAudit::create( array_merge(  ['audit_stamp' => now(), 'audit_action' => 'N'], $job->toArray() ) );
+
+                $this->terminated_count += 1;
+                $this->LogMessage( "  emplid " .  $job->emplid . " empl_rcd " . $job->empl_rcd  . " was set to 'Terminated'");
+
+            }
 
         }
 
