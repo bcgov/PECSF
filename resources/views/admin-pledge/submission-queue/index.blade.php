@@ -44,7 +44,7 @@
     </div>
 
     <div class="modal fade" id="edit-event-modal">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-charity-name" id="charity-modal-label">Submission Details</h5>
@@ -123,6 +123,9 @@
         table tr{
             background:#fff;
         }
+        .custom-modal {
+            max-width: 80%; /* Set the desired width */
+        }
     </style>
 
 @endpush
@@ -173,16 +176,19 @@
                     $("#campaign_year").html( (data[0].calendar_year - 1));
                     $("#employee_name").val(data[0].employee_name);
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
-                      $("#sub_type").attr("disabled",false);
-                      $("#sub_type").val(data[0].sub_type).select2();
+                        $("#sub_type").attr("disabled",false);
+                        $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
                         $("#bc_gov_id").val(data[0].bc_gov_id);
-                        $("#pecsfid").find("label").show();
-                        $("#pecsfid").find("input").show();
+
+                        //fundraiser and gaming are group donation types. no need idividual id
                         $("#bcgovid").find("label").hide();
                         $("#bcgovid").find("input").hide();
-                        $("#pecsfid").show();
                         $("#bcgovid").hide();
+
+                        $("#pecsfid").find("label").show();
+                        $("#pecsfid").find("input").show();                            
+                        $("#pecsfid").show();
                     }
                     else{
                         $("#address_1").val(data[0].address_line_1);
@@ -268,10 +274,23 @@
                     $("#edit-event-modal").nextAll("button").attr("disabled",true);
 
                     if(data[0].existing == true){
-                        $("#bcgovid").html($("#pecsfid").html());
-                        $("#pecsfid *,#pecsfid").show();
-                        $("#bcgovid").hide();
-                        $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                        if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
+                            $("#pecsfid").html($("#pecsfid").html());
+                            $("#pecsfid *,#pecsfid").show();
+                            $("#bcgovid").hide();
+                            $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                        } else {
+                            if(data[0].organization_code == "GOV"){
+                                $("#bcgovid *,#bcgovid").show();
+                                $("#bcgovid").show();
+                                $("#pecsfid").hide();
+                            }else{
+                                $("#pecsfid").html($("#pecsfid").html());
+                                $("#pecsfid *,#pecsfid").show();
+                                $("#bcgovid").hide();
+                                $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                            }
+                        }
                     }
 
                     $('#edit-event-modal').modal('show');
@@ -377,6 +396,6 @@
         });
 
     </script>
-    @include('volunteering.partials.add-event-js')
+    @include('admin-pledge.submission-queue.partials.add-event-js')
     @include('donate.partials.choose-charity-js')
 @endpush

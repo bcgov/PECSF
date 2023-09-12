@@ -523,7 +523,10 @@ class BankDepositFormController extends Controller
                         }
                     }
                  else{
-                     $validator->errors()->add('pecsf_id','The PECSF ID is required.');
+                     if($request->organization_code != "GOV") {
+                        $validator->errors()->add('pecsf_id','The PECSF ID is required.');
+                     }
+                     
                  }
                 }
                 else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
