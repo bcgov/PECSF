@@ -395,6 +395,12 @@
             $('#lock-event-modal').modal("hide");
         });
 
+        $(document).ready(function() {
+            $(".closeModalBtn").click(function() {
+                $("#regionalPoolModal").modal("hide"); // Close the modal with ID "myModal"
+            });
+        });
+
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')
     @include('donate.partials.choose-charity-js')
