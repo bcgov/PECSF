@@ -16,12 +16,12 @@
 @section('classes_body'){{ ($auth_type ?? 'login') . '-page' }}@stop
 
 @section('body')
-    <div class="{{ $auth_type ?? 'login' }}-box">
+    <div class="{{ $auth_type ?? 'login' }}-box text-center" >
 
         {{-- Logo --}}
-        <div class="{{ $auth_type ?? 'login' }}-logo">
+        <div class="{{ $auth_type ?? 'login' }}-logo text-center">
                 {{-- <img src="{{ asset(config('adminlte.logo_img_xl')) }}" height="100px"> --}}
-                <img class="mb-3 logo-image-header" src="{{ asset('img/brand/PECSF_Logo_Horiz_RGB.jpg') }}" alt="Provincial Employees Community Services Fund Logo" height="120px">
+                <img class="mb-3 logo-image-header mx-auto d-block" src="{{ asset('img/brand/PECSF_Logo_Horiz_RGB.png') }}" alt="Provincial Employees Community Services Fund Logo" height="120px" >
                 {!! config('adminlte.logo', '<b>Admin</b>LTE') !!}
         </div>
 

@@ -8,7 +8,7 @@
         }
 
         .login-box {
-            width: 480px !important;
+            width: 530px !important;
         }
     </style>
 @stop
