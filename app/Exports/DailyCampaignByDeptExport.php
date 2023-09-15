@@ -33,16 +33,21 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
     */
     public function collection()
     {
-        //
-        $rows = DailyCampaign::where('daily_type', 2)
-                            ->where('campaign_year', $this->campaign_year)
-                            ->where('as_of_date', $this->as_of_date)
-                            ->where('donors', '>=', 1)
-                            ->select('business_unit_name', 'deptid', 'dept_name', 'donors')
-                            ->orderBy('business_unit_name')
-                            ->orderBy('deptid')
-                            ->get();
-
+        //get business_unit_name
+        $business_rows = DailyCampaign::select('business_unit_name')
+                        ->where('campaign_year', $this->campaign_year)
+                        ->where('as_of_date', $this->as_of_date)
+                        ->where('donors', '>=', 1)
+                        ->distinct()
+                        ->orderBy('business_unit_name')
+                        ->get()->toArray();        
+        $allRows = collect([]);
+        foreach($business_rows as $item){
+            if($item['business_unit_name'] != ''){
+                $row = $this->deptSubTotal($item['business_unit_name']);
+                $allRows = $allRows->concat($row->get());
+            }
+        }
         $total_row  = DailyCampaign::where('daily_type', 2)
                             ->where('campaign_year', $this->campaign_year)
                             ->where('as_of_date', $this->as_of_date)
@@ -53,9 +58,48 @@ class DailyCampaignByDeptExport implements FromCollection, WithHeadings, WithCol
                                 DB::raw("SUM(donors) as donors")
                             )
                             ->get();
-                              
-        return $rows->mergeRecursive($total_row);
+
+            $allRows = $allRows->concat($total_row);
+        
+        return $allRows;
                             
+    }
+
+
+    private function deptSubTotal($business_unit_name){
+        $row = DailyCampaign::where('daily_type', 2)
+                            ->where('campaign_year', $this->campaign_year)
+                            ->where('as_of_date', $this->as_of_date)
+                            ->where('donors', '>=', 1)
+                            ->where('business_unit_name', $business_unit_name)
+                            ->select('business_unit_name', 'deptid', 'dept_name', 'donors')
+                            ->orderBy('business_unit_name')
+                            ->orderBy('deptid');
+        $sub_total_row  = DailyCampaign::where('daily_type', 2)
+                            ->where('campaign_year', $this->campaign_year)
+                            ->where('as_of_date', $this->as_of_date)
+                            ->where('business_unit_name', $business_unit_name)
+                            ->select( 
+                                //DB::raw("CONCAT('Sub Total Of ', business_unit_name) as business_unit_name"),
+                                DB::raw("'Sub Total' as business_unit_name"),
+                                DB::raw("'' as deptid"),
+                                DB::raw("'' as dept_name"),
+                                DB::raw("SUM(donors) as donors")
+                            );
+        $blank_row  = DailyCampaign::where('daily_type', 2)
+                            ->where('campaign_year', $this->campaign_year)
+                            ->where('as_of_date', $this->as_of_date)
+                            ->where('business_unit_name', $business_unit_name)
+                            ->select( 
+                                DB::raw("'' as business_unit_name"),
+                                DB::raw("'' as deptid"),
+                                DB::raw("'' as dept_name"),
+                                DB::raw("'' as donors")
+                            )
+                            ->distinct();                    
+          
+        $row = $row->unionAll($sub_total_row)->unionAll($blank_row); 
+        return $row;
     }
 
     public function headings(): array
