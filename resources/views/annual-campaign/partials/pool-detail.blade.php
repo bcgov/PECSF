@@ -9,12 +9,18 @@
                     min-height="100"></div>
                 <div class="col-11">
                     <div class="row text-primary">    
-                        <div class="col-10 h5">{{ $pool_charity->name }}</div>
+                        <div class="col-10 h5"><b>{{ $pool_charity->name }}</b></div>
                         
                     </div>
                     <div class="row text-dark">
                         <div class="col">{{ $pool_charity->description }}</div>
+                        <?php error_log(print_r($pool_charity->charity, true));?>
                     </div> 
+
+                    <div class="row justify-content-between pt-2 text-secondary">
+                        <div class="col-12"><b>Charity:</b> {{ $pool_charity->charity->charity_name}}</div>
+                    </div>
+
                     <div class="row justify-content-between pt-2 text-secondary">
                         <div class="col-sm">{{ $pool_charity->charity->registration_number }}</div>
                         <div class="col-3">Allocation: {{ number_format($pool_charity->percentage,2) }}%</div>
