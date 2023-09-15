@@ -13,12 +13,12 @@
                 <h5 class="card-title"></h5>
                 @if ( $campaignYear->isOpen() )
                     <p class="card-text text-left">
-                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrollment for the PECSF campaign. 
-                        The choices you make and save by the end of day on November 30th will begin being deducted on your first pay in January. 
+                        From {{ $campaignYear->start_date->format('F jS') }} - {{ $campaignYear->end_date->format('F jS') }} we are in a period of open enrollment for the PECSF Campaign.
+                        The choices you make and save by end of day {{ $campaignYear->end_date->format('F jS')}} will begin with your first pay period in January.
                     </p>
                     @if ($current_pledge)
                         <p class="card-text text-left">
-                            <!----To make changes to your proposed pledge, click into the box below where your {{ $campaignYear->calendar_year }} choices are shown.---->
+                            To make changes to your proposed pledge, click into the box below where your {{ $campaignYear->calendar_year }} choices are shown.
                         </p>
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-md btn-primary">Make a change to your PECSF pledge</a>
                     @else
