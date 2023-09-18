@@ -1,3 +1,14 @@
+<style>
+.modal-body {
+    overflow-y: auto; /* Add a vertical scrollbar when content overflows */
+}
+
+
+.modal-body{
+    max-height: 80vh; /* Set a maximum height for the modal content */
+}
+</style>    
+
 @extends('adminlte::page')
 @section('content_header')
     <div class="d-flex mt-3">
@@ -43,7 +54,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="edit-event-modal">
+    <div class="modal fade" id="edit-event-modal" tabindex="-1" >
         <div class="modal-dialog custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -56,7 +67,7 @@
                     <!-- content will be load here -->
                     <button class="btn btn-primary edit">Edit</button>
                     <div id="edit-event-modal-body">
-                        @include('volunteering.partials.form')
+                        @include('admin-pledge.submission-queue.partials.form')
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -65,6 +76,7 @@
             </div>
         </div>
     </div>
+    @include('admin-pledge.submission-queue.partials.reginal-pool')
     <div class="modal fade" id="lock-event-modal">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -283,7 +295,9 @@
                             if(data[0].organization_code == "GOV"){
                                 $("#bcgovid *,#bcgovid").show();
                                 $("#bcgovid").show();
-                                $("#pecsfid").hide();
+                                if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+                                    $("#pecsfid *,#pecsfid").show();
+                                }
                             }else{
                                 $("#pecsfid").html($("#pecsfid").html());
                                 $("#pecsfid *,#pecsfid").show();
@@ -294,7 +308,6 @@
                     }
 
                     $('#edit-event-modal').modal('show');
-                    console.log(data);
                 },"json");
         });
 
@@ -324,45 +337,44 @@
                         '<i class="fa fa-thumbs-up"></i> Approve!',
                     confirmButtonAriaLabel: 'Approved!',
                     cancelButtonText:
-                        '<i class="fa fa-thumbs-down"></i>',
-                    cancelButtonAriaLabel: 'Thumbs down'
+                        '<i class="fa fa-thumbs-down"></i> Maybe later',
+                    cancelButtonAriaLabel: 'Maybe later.'
                 }).then((result) => {
-                 if (result.isConfirmed) {
-                     $(this).parents("tr").remove();
-                     $.post("/admin-pledge/status",
-                         {
-                             submission_id: $("#submission_id").val(),
-                             status: 1
-                         },
-                         function (data, status) {
+                    if (result.isConfirmed) {
+                        $(this).parents("tr").remove();
+                        $.post("/admin-pledge/status",
+                            {
+                                submission_id: $("#submission_id").val(),
+                                status: 1
+                            },
+                            function (data, status) {
 
-                             Swal.fire({
-                                 title: '<strong>Success!</strong>',
-                                 icon: 'info',
-                                 html:
-                                     'The Event was successfully approved and can be viewed in the main list',
-                                 showCloseButton: true,
-                                 showCancelButton: true,
-                                 focusConfirm: false,
-                                 confirmButtonText:
-                                     '<i class="fa fa-thumbs-up"></i> Go To list',
-                                 confirmButtonAriaLabel: 'Go To list',
-                                 cancelButtonText:
-                                     'Close',
-                                 cancelButtonAriaLabel: 'Close'
-                             }).then((result) => {
-                                 if (result.isConfirmed) {
-                                     window.location.href = "/admin-pledge/maintain-event";
-                                 }
-                             });
-                         });
-                 } else {
-
-
-                     $(".status").val(0).trigger("change");
-
-                 }
-             });
+                                Swal.fire({
+                                    title: '<strong>Success!</strong>',
+                                    icon: 'info',
+                                    html:
+                                        'The Event was successfully approved and can be viewed in the main list',
+                                    showCloseButton: true,
+                                    showCancelButton: true,
+                                    focusConfirm: false,
+                                    confirmButtonText:
+                                        '<i class="fa fa-thumbs-up"></i> Go To list',
+                                    confirmButtonAriaLabel: 'Go To list',
+                                    cancelButtonText:
+                                        'Close',
+                                    cancelButtonAriaLabel: 'Close'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "/admin-pledge/maintain-event";
+                                    }
+                                });
+                            });                            
+                    } else {
+                        $(".status").val(0).trigger("change");
+                    }
+                    $('.modal').modal('hide');
+                    window.location.href = "/admin-pledge/submission-queue";                    
+                });
 
                }
 
@@ -395,11 +407,9 @@
             $('#lock-event-modal').modal("hide");
         });
 
-        $(document).ready(function() {
-            $(".closeModalBtn").click(function() {
-                $("#regionalPoolModal").modal("hide"); // Close the modal with ID "myModal"
+        $(".closeModalBtn").click(function() {
+                $("#regionalPoolModal").modal("hide"); 
             });
-        });
 
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')
