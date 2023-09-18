@@ -47,7 +47,7 @@ $("#pool_filter").parents(".form-group").hide();
             $("#pecsfid").show();
 
             $("#bcgovid").find("input").val("");
-            $("#employee_name").val("");
+            //$("#employee_name").val("");
 
         }
         else if($(this).val()=="Gaming"){
@@ -63,7 +63,7 @@ $("#pool_filter").parents(".form-group").hide();
             $("#pecsfid").show();
 
             $("#bcgovid").find("input").val("");
-            $("#employee_name").val("");
+            //$("#employee_name").val("");
         }
         else{
             if($("[name='organization_code']").val() == "GOV"){
@@ -71,14 +71,28 @@ $("#pool_filter").parents(".form-group").hide();
                 $("#event_type>option[value='Fundraiser']").prop('disabled',false);
                 $("#event_type>option[value='Gaming']").prop('disabled',false);
 
-                $("#pecsfid").find("input").hide();
-                $("#bcgovid").find("input").show();
-                $("#pecsfid").find("label").hide();
-                $("#bcgovid").find("label").show();
-                $("#bcgovid").show();
-                $("#employeename").show();
+                if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+                    $("#pecsfid").find("input").show();
+                    $("#bcgovid").find("input").show();
+                    $("#pecsfid").find("label").show();
+                    $("#bcgovid").find("label").show();
+                    $("#bcgovid").show();
+                    $("#employeename").show();
+                    $("#pecsfid").show();
 
-                $("#pecsfid").find("input").val("");
+                    //$("#pecsfid").find("input").val("");
+                } else {
+                    $("#pecsfid").find("input").hide();
+                    $("#bcgovid").find("input").show();
+                    $("#pecsfid").find("label").hide();
+                    $("#bcgovid").find("label").show();
+                    $("#bcgovid").show();
+                    $("#employeename").show();
+
+                    //$("#pecsfid").find("input").val("");
+                }    
+
+                
 
             }
             else if($("[name='organization_code']").val() == "RET"){
@@ -96,6 +110,9 @@ $("#pool_filter").parents(".form-group").hide();
                 $("#event_type>option[value='Gaming']").prop('disabled',true);
                 if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
                     $("#employeename").show();
+                    $("#pecsfid").find("input").show();
+                    $("#pecsfid").find("label").show();
+                    $("#pecsfid").show();
                 }
             }
             else{
@@ -109,7 +126,7 @@ $("#pool_filter").parents(".form-group").hide();
                 $("#pecsfid").show();
                 $("#employeename").show();
 
-                $("#bcgovid").find("input").val("");
+                //$("#bcgovid").find("input").val("");
                 
             }
 
