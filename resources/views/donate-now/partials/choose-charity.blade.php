@@ -113,7 +113,7 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-11">
-                                        <input class="form-control" type="text" id="special_program" name="special_program"
+                                        <input class="form-control specific_community_or_initiative" type="text" id="special_program" name="special_program"
                                                 value="{{ $pledge->special_program }}"
                                                 placeholder="Optional: If you have a specific community or initiative in mind, eneter it here.">
                                         <span class="specific_community_or_initiative_errors  errors">
@@ -212,6 +212,11 @@
                     <tr style="border:none;">
 
                         <td style="border:none;" id="pool_description"></td>
+                    </tr>
+                       
+                    <tr style="border:none;">
+
+                        <td style="border:none;" id="program_name"></td>
                     </tr>
                     <tr style="border:none;">
 

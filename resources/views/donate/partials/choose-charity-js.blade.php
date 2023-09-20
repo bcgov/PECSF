@@ -60,6 +60,8 @@
                 $('.organization').last().find(".organization_name").val($(this).attr("name"));
                 $('.organization').last().find("[name='id[]']").val($(this).attr('org_id'));
                 $('.organization').last().find("[name='vendor_id[]']").val($(this).attr('org_id'));
+                $('.organization').last().find(".specific_community_or_initiative").val($(this).attr("program_name"));
+                $('.organization').last().find(".specific_community_or_initiative").prop("readonly", true);
                 $(this).addClass("active");
                 $(this).html("Selected");
                 $(this).removeClass("select")
@@ -123,6 +125,7 @@
                 $("#pool_name").html($(this).attr("charity_name"));
                 $("#pool_image").attr("src",$(this).attr("pool_image"));
                 $("#pool_description").html($(this).attr("pool_description"));
+                $("#program_name").html("<b>Program:</b> " + $(this).attr("charitable_programs"));
                 $("#charityDetails").modal("show");
             }
             else{
