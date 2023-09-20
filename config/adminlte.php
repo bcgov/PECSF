@@ -45,7 +45,7 @@ return [
     */
 
     'logo' => '&nbsp;',
-    'logo_img' => 'img/brand/PECSF_Logo_Vert_White.png',
+    'logo_img' => 'img/brand/PECSF_Brand_Mark_RGB.png',
     'logo_img_class' => 'brand-image float-none',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
