@@ -151,6 +151,10 @@
                             </tr>
                             <tr style="border:none;">
 
+                                <td style="border:none;" id="program_name"></td>
+                            </tr>
+                            <tr style="border:none;">
+
                                 <td style="border:none;" id="pool_registration_number"></td>
                             </tr>
                         </table>
