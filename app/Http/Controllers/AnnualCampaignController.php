@@ -205,8 +205,9 @@ class AnnualCampaignController extends Controller
                     $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
                     $last_selected_charities = $_ids;
 
-                    $_charities = Charity::whereIn('id', $_ids )
-                                    ->get(['id', 'charity_name as text']);
+                    $_charities = Charity::whereIn('charities.id', $_ids )
+                                    ->join('f_s_pool_charities', 'charities.id', 'f_s_pool_charities.charity_id')
+                                    ->get(['charities.id', 'charity_name as text', 'f_s_pool_charities.name as program_name']);
 
                     foreach ($_charities as $charity) {
                         $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
@@ -599,6 +600,10 @@ class AnnualCampaignController extends Controller
             $charity = Charity::where('id', $selected_charity)
                             ->select(['id', 'charity_name as text'])->first();
 
+            $charity = Charity::where('charities.id', $selected_charity )
+                            ->join('f_s_pool_charities', 'charities.id', 'f_s_pool_charities.charity_id')
+                            ->select(['charities.id', 'charity_name as text', 'f_s_pool_charities.name as program_name'])->first();     
+
             $charity['additional'] = $request->additional[$index] ?? '';
 
             if ($index == count($selectedCharities) - 1 ) {
@@ -696,7 +701,6 @@ class AnnualCampaignController extends Controller
                 $grandTotal += ($charity['bi-weekly-amount-distribution'] * $request->number_of_periods); //26
                 array_push($selected_charities, $charity);
             }
-
         }
 
         $pool_option = $request->pool_option;
