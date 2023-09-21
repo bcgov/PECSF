@@ -206,8 +206,8 @@ class AnnualCampaignController extends Controller
                     $last_selected_charities = $_ids;
 
                     $_charities = Charity::whereIn('charities.id', $_ids )
-                                    ->join('f_s_pool_charities', 'charities.id', 'f_s_pool_charities.charity_id')
-                                    ->get(['charities.id', 'charity_name as text', 'f_s_pool_charities.name as program_name']);
+                                    ->join('pledge_charities', 'charities.id', 'pledge_charities.charity_id')
+                                    ->get(['charities.id', 'charity_name as text', 'pledge_charities.additional as program_name']);
 
                     foreach ($_charities as $charity) {
                         $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
