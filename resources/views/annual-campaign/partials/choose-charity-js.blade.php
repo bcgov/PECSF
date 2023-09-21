@@ -89,7 +89,10 @@
                 $('.organization').last().find("[name='vendor_id[]']").val($(this).attr('org_id'));
                 $('.organization').last().find("[name='charities[]']").val($(this).attr('org_id'));
                 $('.organization').last().find(".specific_community_or_initiative").val($(this).attr("program_name"));
-                $('.organization').last().find(".specific_community_or_initiative").prop("readonly", true);
+                if($(this).attr("program_name") != '') {
+                    $('.organization').last().find(".specific_community_or_initiative").prop("readonly", true);
+                }
+                
                 $(this).addClass("active");
                 $(this).html("Selected");
                 $(this).removeClass("select")
