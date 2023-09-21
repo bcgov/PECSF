@@ -30,7 +30,7 @@
 
             <div class="form-group col-md-12">
                 <label for="sub_type">Specific Community Or Initiative (Optional): </label>
-                <input class="form-control specific_community_or_initiative" type="text" id="specific_community_or_initiative" name="additional[]" value="{{ (($charity != "YYY") ? $charity->program_name : '') }}"/>
+                <input class="form-control specific_community_or_initiative" type="text" id="specific_community_or_initiative" name="additional[]" value="{{ ($charity != 'YYY') ? $charity->program_name : '' }}" readonly />
                 <span class="specific_community_or_initiative_errors  errors">
                        @error('specific_community_or_initiative.'.$index)
                         <span class="invalid-feedback">{{  $message  }}</span>
