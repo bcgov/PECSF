@@ -537,6 +537,7 @@ class AnnualCampaignController extends Controller
 
         // To recalculate the distributions
         $selectedCharities = $request->charities;
+
         $frequency =  $request->frequency;
 
         $oneTimeAmount = ($frequency === 'one-time' || $frequency === 'both') ?
@@ -598,13 +599,13 @@ class AnnualCampaignController extends Controller
         $grandTotal = 0;
 
         foreach ($selectedCharities as $index => $selected_charity) {
-
+            /*
             $charity = Charity::where('id', $selected_charity)
                             ->select(['id', 'charity_name as text'])->first();
-
+            */
             $charity = Charity::where('charities.id', $selected_charity )
-                            ->join('f_s_pool_charities', 'charities.id', 'f_s_pool_charities.charity_id')
-                            ->select(['charities.id', 'charity_name as text', 'f_s_pool_charities.name as program_name'])->first();     
+                            ->leftjoin('f_s_pool_charities', 'charities.id', 'f_s_pool_charities.charity_id')
+                            ->select(['charities.id', 'charity_name as text', 'f_s_pool_charities.name as program_name'])->first();  
 
             $charity['additional'] = $request->additional[$index] ?? '';
 

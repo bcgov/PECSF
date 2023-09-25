@@ -142,7 +142,7 @@
                         </table>
                         <table style="border:none;" class="table fsp">
                             <tr style="border:none;">
-                                <td style="border:none;" rowspan="3"><img id="pool_image" /></td>
+                                <td style="border:none;" rowspan="4"><img id="pool_image" /></td>
                                 <td style="border:none;" id="pool_name"></td>
                             </tr>
                             <tr style="border:none;">
