@@ -63,6 +63,8 @@
                 $('.organization').last().find(".specific_community_or_initiative").val($(this).attr("program_name"));
                 if($(this).attr("program_name") != '') {
                     $('.organization').last().find(".specific_community_or_initiative").prop("readonly", true);
+                } else {
+                    $('.organization').last().find(".specific_community_or_initiative").prop("readonly", false);
                 }
                 
                 $(this).addClass("active");
