@@ -205,11 +205,13 @@ class AnnualCampaignController extends Controller
                     $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
                     $last_selected_charities = $_ids;
 
-                    $_charities = Charity::whereIn('charities.id', $_ids )
-                                    ->join('pledge_charities', 'charities.id', 'pledge_charities.charity_id')
+                    $_charities = Charity::whereIn('charities.id', $_ids)
+                                    ->leftJoin('pledge_charities', 'charities.id', 'pledge_charities.charity_id')
                                     ->where('pledge_charities.pledge_id', $pledge->id)
                                     ->whereNull('pledge_charities.deleted_at')
-                                    ->get(['charities.id', 'charity_name as text', 'pledge_charities.additional as program_name']);            
+                                    ->distinct()
+                                    ->select(['charities.id', 'charity_name as text', 'pledge_charities.additional as program_name'])
+                                    ->get();          
 
                     foreach ($_charities as $charity) {
                         $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
@@ -327,6 +329,7 @@ class AnnualCampaignController extends Controller
         $organizations = [];
 
         $fsp_name = false;
+        
 // dd([ $is_duplicate, $duplicate_pledge, $pool_option, $pledge, $fspools, $regional_pool_id, $campaign_year ]);
         return view('annual-campaign.wizard', compact('fsp_name','step', 'pool_option',
                         'fspools', 'regional_pool_id',
