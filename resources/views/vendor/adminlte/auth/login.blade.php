@@ -8,7 +8,7 @@
         }
 
         .login-box {
-            width: 480px !important;
+            width: 530px !important;
         }
     </style>
 @stop
@@ -50,7 +50,7 @@
                         </form>
                     </p>
         </div>
-        <div class="py-2 border-top">
+        <div class="py-2 border-top text-left ">
             <div class="pt-4 h6 font-weight-bold">Need Help?</div>
             <div class="">Contact your IDIR security administrator or the 7-7000 Service Desk at:</div>
             <div class="pt-2">Phone: <a style="text-decoration:underline;" href="tel:0612345678">250-387-7000</a></div>

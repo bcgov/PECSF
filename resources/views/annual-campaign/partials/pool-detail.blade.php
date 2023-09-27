@@ -14,7 +14,6 @@
                     </div>
                     <div class="row text-dark">
                         <div class="col">{{ $pool_charity->description }}</div>
-                        <?php error_log(print_r($pool_charity->charity, true));?>
                     </div> 
 
                     <div class="row justify-content-between pt-2 text-secondary">
