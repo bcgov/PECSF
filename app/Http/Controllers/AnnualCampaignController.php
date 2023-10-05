@@ -780,6 +780,7 @@ class AnnualCampaignController extends Controller
             $pool_id = $request->regional_pool_id;
             $pool = FSPool::where('id', $pool_id)->first();
             $pool_charities = $pool ? $pool->charities : [];
+            $pool_charities = $pool_charities->sortBy('charity.charity_name');
 
             $frequency = $request->frequency;
 
@@ -1001,7 +1002,7 @@ class AnnualCampaignController extends Controller
         if ($request->ajax()) {
             $pool = FSPool::where('id', $id)->first();
             $charities = $pool ? $pool->charities : [];
-
+            $charities = $charities->sortBy('charity.charity_name');
             return view('annual-campaign.partials.pool-detail', compact('charities') )->render();
         } else {
             return redirect('/');

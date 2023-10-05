@@ -69,9 +69,10 @@
                             </tr>
                         </thead> --}}
                         <tbody id="accordion">
-                            @foreach ( $pool->charities->pluck('charity_id') as $index => $oldCharity)
+                            @foreach ( $charities->pluck('charity_id') as $index => $oldCharity)
+
                             <tr id="charity{{ $index }}">
-                                @php ( $pool_charity = $pool->charities[$index] )                                    
+                                @php ( $pool_charity = $charities[$index] )                                    
                                 @include('admin-campaign.fund-supported-pools.partials.show-pool-charity', ['index'=> $index, 'charity' => $oldCharity, 'pool_charity' => $pool_charity ])
                             {{-- <tr>
                                 <td>
@@ -90,7 +91,7 @@
                             --}}
                             </tr>
                             @endforeach
-                            <tr id="charity{{ count(old('charities', $pool->charities->pluck('charity_id') )) }}"></tr>
+                            <tr id="charity{{ count(old('charities', $charities->pluck('charity_id') )) }}"></tr>
                         </tbody>
                     </table>
 
