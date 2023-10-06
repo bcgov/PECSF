@@ -629,7 +629,7 @@ $(function () {
 
 </script>
 
-// Page 2 -- charities
+{{-- // Page 2 -- charities --}}
 @include('annual-campaign.partials.choose-charity-js')
 <script type="x-tmpl" id="organization-tmpl">
     @include('annual-campaign.partials.add-charity', ['index' => 'XXX', 'charity' => 'YYY'] )
@@ -638,7 +638,7 @@ $(function () {
     $(".org_hook").show();
 </script>
 
-// Page 4 -- distribution
+{{--  // Page 4 -- distribution --}}
 @include('annual-campaign.partials.distribution-js')
 
 <script>
