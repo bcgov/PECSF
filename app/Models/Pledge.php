@@ -26,6 +26,8 @@ class Pledge extends Model implements Auditable
 
         'business_unit',
         'tgb_reg_district',
+        'deptid',
+        'dept_name',
 
         'campaign_year_id',
         'type',

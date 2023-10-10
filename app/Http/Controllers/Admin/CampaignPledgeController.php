@@ -286,6 +286,8 @@ class CampaignPledgeController extends Controller
                 // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
                 $city = City::where('city', trim( $request->user_office_city )  )->first();
                 $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : $user->primary_job->tgb_reg_district;
+                $detpid = $user->primary_job ? $user->primary_job->deptid : null;
+                $dept_name = $user->primary_job ? $user->primary_job->dept_name : null;
             } else {
                 $org = Organization::where('id', $request->organization_id)->first();
                 $business_unit = $org ? $org->bu_code : null;
@@ -305,6 +307,8 @@ class CampaignPledgeController extends Controller
 
                 'business_unit' => $business_unit,
                 'tgb_reg_district' => $tgb_reg_district,
+                'deptid' => $deptid,
+                'dept_name' => $dept_name,
 
                 'campaign_year_id' => $request->campaign_year_id,
                 'type' => $request->pool_option,
