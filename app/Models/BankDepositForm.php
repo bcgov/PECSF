@@ -33,6 +33,8 @@ class BankDepositForm extends Model implements Auditable
         'bc_gov_id',
         'pecsf_id',
         'business_unit',
+        'deptid',
+        'dept_name',
         'approved',
         'created_at',
         'update_at',
