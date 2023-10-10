@@ -203,6 +203,7 @@ class SyncUserProfile extends Command
                     }
 
                     if ( (strtolower(trim($user->idir)) == strtolower(trim($employee->idir))) &&
+                         (trim($user->name) == ($employee->first_name . ' ' . $employee->last_name)) &&
                          (trim($user->email) == $target_email ) && 
                          ($user->source_type == self::SOURCE_TYPE) &&   
                          ($user->emplid == $employee->emplid) &&
@@ -215,6 +216,7 @@ class SyncUserProfile extends Command
                             $user->emplid = $employee->emplid;
                             $user->email  = $target_email;
                             $user->idir = $employee->idir;
+                            $user->name = $employee->first_name . ' ' . $employee->last_name;
                             $user->last_sync_at = $new_sync_at;
                             $user->acctlock = $acctlock;  
                             $user->save();
