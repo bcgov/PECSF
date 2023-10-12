@@ -211,8 +211,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                             END as name
                             ,pledges.business_unit  
                             ,pledges.tgb_reg_district
-                            ,employee_jobs.deptid
-                            ,employee_jobs.dept_name
+                            ,pledges.deptid
+                            ,pledges.dept_name
                             ,CASE WHEN organizations.code = 'GOV'
                                     THEN employee_jobs.office_city
                                     ELSE pledges.city
@@ -320,14 +320,8 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                             END
                             ,(select code from business_units where id = bank_deposit_forms.business_unit limit 1)
                             ,regions.code
-                            ,CASE WHEN organization_code = 'GOV' 
-                                THEN employee_jobs.deptid
-                                ELSE null
-                            END
-                            ,CASE WHEN organization_code = 'GOV'  
-                                THEN employee_jobs.dept_name
-                                ELSE null
-                            END
+                            ,bank_deposit_forms.deptid
+                            ,bank_deposit_forms.dept_name
                             ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
                                 THEN employee_jobs.office_city
                                 ELSE bank_deposit_forms.address_city

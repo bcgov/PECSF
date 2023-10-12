@@ -178,6 +178,8 @@
                     <th>PECSF ID</th>
                     <th>Name</th>
                     <th>Business Unit</th>
+                    <th>Dept ID</th>
+                    <th>Dept Name</th>
                     <th>Region</th>
                     <th>Office City</th>
                     <th>FS Pool / Charities</th>
@@ -307,6 +309,8 @@
                     }
                 },
                 {data: 'business_unit', defaultContent: '', className: "dt-nowrap", },
+                {data: 'deptid', defaultContent: '', className: "dt-nowrap", },
+                {data: 'dept_name', defaultContent: '', className: "dt-nowrap", },
                 {data: 'pecsf_user_region.name', defaultContent: '', className: "dt-nowrap", },
                 {data: 'city', defaultContent: '', className: "dt-nowrap",
                     // render: function ( data, type, row, meta ) {

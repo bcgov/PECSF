@@ -311,6 +311,24 @@ class BankDepositFormController extends Controller
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
 
+        // Get deptid and name from employee primary job if bc_gov_id entered
+        $deptid = null;
+        $dept_name = null;
+        if ($request->bc_gov_id) {
+            $job = EmployeeJob::where('emplid', $request->bc_gov_id)
+                        ->where( function($query) {
+                            $query->where('employee_jobs.empl_rcd', '=', function($q) {
+                                $q->from('employee_jobs as J2') 
+                                    ->whereColumn('J2.emplid', 'employee_jobs.emplid')
+                                    ->selectRaw('min(J2.empl_rcd)');
+                            });
+                        })->first();
+            if ($job) {
+                $deptid = $job->deptid;
+                $dept_name = $job->dept_name;
+            }
+        }
+
         $form = BankDepositForm::Create(
             [
                 'business_unit' => $request->business_unit,
@@ -332,6 +350,10 @@ class BankDepositFormController extends Controller
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
+
+                'deptid' => $deptid,
+                'dept_name'  => $dept_name,
+                
                 'employee_name' => $request->employee_name,
                 'created_by_id' => Auth::id(),
                 'updated_by_id' => Auth::id(),

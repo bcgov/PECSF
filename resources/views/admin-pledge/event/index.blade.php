@@ -173,6 +173,8 @@
                         <th>PECSF Identifier</th>
                         <th>Employee Name</th>
                         <th>Business Unit</th>
+                        <th>Dept ID</th>
+                        <th>Dept Name</th>
                         <th>Region</th>
                         <th>Office City</th>
                         <th>Event Type</th>
@@ -286,6 +288,8 @@
                 {data: 'pecsf_id', defaultContent: '' },
                 {data: 'employee_name', defaultContent: '', className: "dt-nowrap" },
                 {data: 'bu.code', defaultContent: '' },
+                {data: 'deptid', defaultContent: '', className: "dt-nowrap" },
+                {data: 'dept_name', defaultContent: '',className: "dt-nowrap" },
                 {data: 'region.name', defaultContent: '' },
                 {data: 'employment_city', defaultContent: '' },
                 {data: 'event_type', defaultContent: '',className: "dt-nowrap" },
