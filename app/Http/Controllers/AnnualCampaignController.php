@@ -205,13 +205,8 @@ class AnnualCampaignController extends Controller
                     $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
                     $last_selected_charities = $_ids;
 
-                    $_charities = Charity::whereIn('charities.id', $_ids)
-                                    ->leftJoin('pledge_charities', 'charities.id', 'pledge_charities.charity_id')
-                                    ->where('pledge_charities.pledge_id', $pledge->id)
-                                    ->whereNull('pledge_charities.deleted_at')
-                                    ->distinct()
-                                    ->select(['charities.id', 'charity_name as text', 'pledge_charities.additional as program_name'])
-                                    ->get();          
+                    $_charities = Charity::whereIn('id', $_ids )
+                        ->get(['id', 'charity_name as text']);
 
                     foreach ($_charities as $charity) {
                         $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
@@ -391,13 +386,16 @@ class AnnualCampaignController extends Controller
         $office_city = $user->primary_job ? $user->primary_job->office_city : null;
         $city = City::where('city', trim( $office_city )  )->first();
         $tgb_reg_district = $city ? $city->TGB_REG_DISTRICT : $user->primary_job->tgb_reg_district ;
+        $deptid = $user->primary_job ? $user->primary_job->deptid : null;
+        $dept_name = $user->primary_job ? $user->primary_job->dept_name : null;
 
         $old_pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id)
                             ->where('emplid', $user->emplid)
                             ->where('campaign_year_id', $request->campaign_year_id)
                             ->first();
         $created_by_id = $old_pledge ? $old_pledge->created_by_id :  Auth::id();                           
-
+        $deptid = $old_pledge ? $old_pledge->deptid : $deptid;              // deptid -- no update when edit  
+        $dept_name = $old_pledge ? $old_pledge->dept_name : $dept_name;     // dept_name -- no update when edit 
 
         $pledge = Pledge::updateOrCreate([
             'organization_id' => $user->organization_id ? $user->organization_id : $organization->id,
@@ -410,6 +408,8 @@ class AnnualCampaignController extends Controller
             'business_unit' => $business_unit,
             'tgb_reg_district' => $tgb_reg_district,
             'city' => $office_city,
+            'deptid' => $deptid,
+            'dept_name' => $dept_name,
 
             'type' => $input['pool_option'],
             'region_id' => $input['pool_option'] == 'P' ? $pool->region_id : null,
