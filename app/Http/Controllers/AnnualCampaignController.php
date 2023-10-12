@@ -205,13 +205,8 @@ class AnnualCampaignController extends Controller
                     $_ids = $pledge->charities->pluck(['charity_id'])->toArray();
                     $last_selected_charities = $_ids;
 
-                    $_charities = Charity::whereIn('charities.id', $_ids)
-                                    ->leftJoin('pledge_charities', 'charities.id', 'pledge_charities.charity_id')
-                                    ->where('pledge_charities.pledge_id', $pledge->id)
-                                    ->whereNull('pledge_charities.deleted_at')
-                                    ->distinct()
-                                    ->select(['charities.id', 'charity_name as text', 'pledge_charities.additional as program_name'])
-                                    ->get();          
+                    $_charities = Charity::whereIn('id', $_ids )
+                        ->get(['id', 'charity_name as text']);
 
                     foreach ($_charities as $charity) {
                         $pledge_charity = $pledge->charities->where('charity_id', $charity->id)->first();
