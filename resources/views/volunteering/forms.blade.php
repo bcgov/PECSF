@@ -91,7 +91,7 @@
                                 <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-primary" data-dismiss="modal" aria-label="Close">Complete eForm</button>
                             </div>
                             <div class="col-md-2">
-                                <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-secondary" onclick="window.location='/';">Cancel</button>
+                                <button type="button" id="cancel-btn" value="Refresh" class="form-control btn btn-secondary" onclick="window.location='/';">Cancel</button>
                             </div>
                         </div>
 
@@ -104,7 +104,25 @@
 
     @push('js')
 <script>
+    
+$(function () {
+
+    // treat browser back button like the 'back' button in this wizard page
+    history.pushState(null, null, this.location.href);
+    window.addEventListener('popstate', function(event) {
+        url = this.location.href;
+        if (url.indexOf('bank_deposit_form')) {
+            if ($('.modal').hasClass('show')) {
+                history.pushState(null, null, location.href);
+                $('.modal').modal('hide');
+            } else {
+                $("#cancel-btn").trigger("click");
+            }
+        }
+    });
+
     $("#info-modal").modal();
+});
 
 </script>
         <script src="{{ asset('vendor/select2/js/select2.min.js') }}" ></script>
