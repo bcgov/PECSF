@@ -70,7 +70,7 @@
                         <p>{{ $pledge_charity->additional  }}</p>
                     </td>
                     <td  style="text-align:right;">{{ number_format($pledge_charity->percentage,2) }}%</td>
-                    <td  style="text-align:right;">${{ number_format($total_amount * $pledge_charity->percentage / 100, 2) }}</td>
+                    <td  style="text-align:right;">${{ number_format($pledge_charity->amount, 2) }}</td>
                 </tr>
             @endforeach
         @endif
