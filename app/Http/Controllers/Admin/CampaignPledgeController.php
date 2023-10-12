@@ -420,6 +420,7 @@ class CampaignPledgeController extends Controller
         $pool_charities= null;
         if ($pledge->type =='P') {
             $pool_charities = FSPool::asOfDate($pledge->created_at)->where('region_id', $pledge->region_id)->first()->charities;
+            $pool_charities = $pool_charities->sortBy('charity.charity_name');            
         }
 
 
