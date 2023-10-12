@@ -134,7 +134,9 @@
             <tbody>
                 @php $pay_period_sum = 0; $one_time_sum = 0; @endphp
                 @if ($pool_option  == 'P')
-                    @foreach($pool->charities as $pool_charity)
+                    @php $pool_charities = $pool->charities->sortBy('charity.charity_name') 
+                    @endphp        
+                    @foreach($pool_charities as $pool_charity)
                         <tr>
                             <td scope="row">{{ $loop->index +1 }}</td>
                             <td>
