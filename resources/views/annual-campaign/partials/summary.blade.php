@@ -109,10 +109,12 @@ $(function () {
             $("body").find("#step-summary-area .by-amount").removeClass("d-none");
             $("body").find("#step-summary-area .by-percent").addClass("d-none");
             $("body").find("#step-summary-area .percent-amount-text").html("Distribute by Percentage");
+            $('.percentage-amount-head-title').html('Amount');
         } else {
             $("body").find("#step-summary-area .by-percent").removeClass("d-none");
             $("body").find("#step-summary-area .by-amount").addClass("d-none");
             $("body").find("#step-summary-area .percent-amount-text").html("Distribute by Dollar Amount");
+            $('.percentage-amount-head-title').html('Percentage');
         }
         $("#step-summary-area .percent-input").change();
         $("#step-summary-area .amount-input").change();

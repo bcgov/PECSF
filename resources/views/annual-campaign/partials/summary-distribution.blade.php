@@ -38,7 +38,7 @@
                     <th style="width:18%;">Donation Type</th>
                     <th style="width:62%;">Benefitting Charity</th>
                     <th style="width:10%;">Frequency</th>
-                    <th style="width:10%;text-align:right;">Amount</th>
+                    <th style="width:10%;text-align:right;" class="percentage-amount-head-title">Percentage</th>
                 </tr>
                 @foreach ($charities as $charity)
                 <tr>
@@ -55,14 +55,14 @@
                     <td style="width:130px" class="by-percent ">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm percent-input float-right text-right" name="{{$keyCase}}Percent[{{ $charity['id'] }}]" value='{{$charity["$key_-percentage-distribution"]}}' disabled>
-                            <label class="float-right text-right">{{ number_format($charity["$key_-percentage-distribution"],2) }}%</label>
+                            <span class="float-right text-right">{{ number_format($charity["$key_-percentage-distribution"],2) }}%</span>
                         </div>
                     </td>
                     @endif
                     <td style="width:130px" class="by-amount d-none">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm amount-input float-right text-right"  name="{{$keyCase}}Amount[{{ $charity['id'] }}]" value='{{$charity["$key_-amount-distribution"]}}' disabled>
-                            <label class="float-right text-right"> ${{ number_format( $charity["$key_-amount-distribution"] * $multiplier,2) }}</label>
+                            <span class="float-right text-right"> ${{ number_format( $charity["$key_-amount-distribution"] * $multiplier,2) }}</span>
                         </div>
                     </td>
                 </tr>
