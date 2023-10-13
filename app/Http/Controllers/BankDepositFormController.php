@@ -310,7 +310,7 @@ class BankDepositFormController extends Controller
 
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
-
+   
         // Get deptid and name from employee primary job if bc_gov_id entered
         $deptid = null;
         $dept_name = null;
@@ -363,29 +363,38 @@ class BankDepositFormController extends Controller
         //var_dump($request->all());
 
         if($request->charity_selection == "dc"){
-            $orgName = count($request->organization_name) -1;
-            $orgCount = $orgName;
-            $count = 0;
+            // $orgName = count($request->organization_name) -1;
+            // $orgCount = $orgName;
+            // $count = 0;
             foreach($request->organization_name as $key => $org){
 
-                if($key <= ($orgCount - $request->org_count)){
-                    continue;
-                }
+                BankDepositFormOrganizations::create([
+                    'bank_deposit_form_id' => $form->id,
+                    'organization_name' => $org,
+                    'vendor_id' =>  $request->vendor_id[$key],
+                    'donation_percent' => $request->donation_percent[$key],
+                    'specific_community_or_initiative' => $request->additional[$key] ?? '', 
+                ]);
 
-                $toSave = [
-                    'organization_name' => $request->organization_name[$key],
-                    'vendor_id' => $request->vendor_id[(count($request->vendor_id) - $request->org_count) + $count],
-                    'donation_percent' => $request->donation_percent[(count($request->donation_percent) - $request->org_count) + $count],
-                    'bank_deposit_form_id' => $form->id
-                ];
+                // if($key <= ($orgCount - $request->org_count)){
+                //     continue;
+                // }
 
-                if(isset($request->additional) && !empty($request->additional)){
-                    $toSave['specific_community_or_initiative'] =  $request->additional[(count($request->additional) - $request->org_count) + $count];
-                }
+                // $toSave = [
+                //     'organization_name' => $request->organization_name[$key],
+                //     'vendor_id' => $request->vendor_id[(count($request->vendor_id) - $request->org_count) + $count],
+                //     'donation_percent' => $request->donation_percent[(count($request->donation_percent) - $request->org_count) + $count],
+                //     'bank_deposit_form_id' => $form->id
+                // ];
 
-                BankDepositFormOrganizations::create();
-                $count++;
-                $orgName--;
+                // if(isset($request->additional) && !empty($request->additional)){
+                //     $toSave['specific_community_or_initiative'] =  $request->additional[(count($request->additional) - $request->org_count) + $count];
+                // }
+
+                // BankDepositFormOrganizations::create();
+                // $count++;
+                // $orgName--;
+
             }
         }
 
