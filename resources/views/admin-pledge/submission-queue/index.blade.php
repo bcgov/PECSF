@@ -23,11 +23,17 @@
             <table class="table">
                 <thead>
                 <tr>
+                    <th>Tran ID</th>
                     <th>Donation Type</th>
-                    <th>Employee Id</th>
-                    <th>Name</th>
+                    {{-- <th>Submitter ID</th> --}}
+                    <th>Form Submitter Name</th>
                     <th>Deposit Amount</th>
+                    <th>Org</th>
+                    <th>PECSF ID</th>
+                    <th>EMPLID</th>
                     <th>Business Unit</th>
+                    <th>Dept ID</th>
+                    <th>Dept Name</th>
                     <th>Status</th>
                     <th></th>
                 </tr>
