@@ -219,10 +219,11 @@ deduction plan.
                     </div>
                 </div>
                 <div class="modal-footer d-flex">
+                    <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
                     <button href="#donateGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                     <div class="flex-fill">
                         <div class="text-center ">
-                            <h6 class="font-weight-bold">Slide <span class="current_page"> 1 of 1 </span></h6>
+                            <h6 class="font-weight-bold">Slide <span class="current_page"> 1 of 9 </span></h6>
                         </div>
                     </div>
                     <x-button href="#donateGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to donate</x-button>
@@ -249,25 +250,28 @@ deduction plan.
             $('#movie_player').attr('src', movie_id);
             
             if(e.to == 0) {
+                $(this).find(".close-btn").removeClass("d-none");
                 $(this).find(".prev-btn").addClass("d-none");
                 $(this).find(".start-btn").removeClass("d-none");
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.current_page').html( "1 of 1");
+                $('.current_page').html( "1 of 9");
             }
             else if (e.to === 8) {
+                $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
-                $('.current_page').html( e.to + " of 8");
+                $('.current_page').html( (e.to + 1) + " of 9");
             } else {
+                $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".start-btn").addClass("d-none");
                 $(this).find(".prev-btn").removeClass("d-none");
                 $(this).find(".next-btn").removeClass("d-none")
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.current_page').html( e.to + " of 8");
+                $('.current_page').html( (e.to + 1) + " of 9");
             }
 
         })
