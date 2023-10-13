@@ -286,7 +286,7 @@
 
     <div class="form-row p-3" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
         <div class="form-group col-md-12">
-            <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
+            <input type="radio" id="charity_selection_1" name="charity_selection" value="fsp" />
             <label class="blue" for="charity_selection_1">Fund supported pool</label>
             <span class="charity_selection_errors errors">
                        @error('charity_selection')
@@ -419,23 +419,4 @@
         </div>
 
 </form>
-<!-- Modal -->
-<div class="modal fade" id="regionalPoolModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title" id="pledgeDetailModalTitle">Regional Charity Pool
-                    <span class=""></span></h5>
-                <button type="button" class="close closeModalBtn" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body pledgeDetail">
-            </div>
-            <div class="modal-footer">
-                <button type="button" style="color:#000;" class="btn btn-outline-primary closeModalBtn">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 

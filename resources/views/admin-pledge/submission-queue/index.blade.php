@@ -1,3 +1,14 @@
+<style>
+.modal-body {
+    overflow-y: auto; /* Add a vertical scrollbar when content overflows */
+}
+
+
+.modal-body{
+    max-height: 80vh; /* Set a maximum height for the modal content */
+}
+</style>    
+
 @extends('adminlte::page')
 @section('content_header')
     <div class="d-flex mt-3">
@@ -49,8 +60,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="edit-event-modal">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="edit-event-modal" tabindex="-1" >
+        <div class="modal-dialog custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-charity-name" id="charity-modal-label">Submission Details</h5>
@@ -62,7 +73,7 @@
                     <!-- content will be load here -->
                     <button class="btn btn-primary edit">Edit</button>
                     <div id="edit-event-modal-body">
-                        @include('volunteering.partials.form')
+                        @include('admin-pledge.submission-queue.partials.form')
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -71,6 +82,7 @@
             </div>
         </div>
     </div>
+    @include('admin-pledge.submission-queue.partials.reginal-pool')
     <div class="modal fade" id="lock-event-modal">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -129,6 +141,9 @@
         table tr{
             background:#fff;
         }
+        .custom-modal {
+            max-width: 80%; /* Set the desired width */
+        }
     </style>
 
 @endpush
@@ -179,16 +194,19 @@
                     $("#campaign_year").html( (data[0].calendar_year - 1));
                     $("#employee_name").val(data[0].employee_name);
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
-                      $("#sub_type").attr("disabled",false);
-                      $("#sub_type").val(data[0].sub_type).select2();
+                        $("#sub_type").attr("disabled",false);
+                        $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
                         $("#bc_gov_id").val(data[0].bc_gov_id);
-                        $("#pecsfid").find("label").show();
-                        $("#pecsfid").find("input").show();
+
+                        //fundraiser and gaming are group donation types. no need idividual id
                         $("#bcgovid").find("label").hide();
                         $("#bcgovid").find("input").hide();
-                        $("#pecsfid").show();
                         $("#bcgovid").hide();
+
+                        $("#pecsfid").find("label").show();
+                        $("#pecsfid").find("input").show();                            
+                        $("#pecsfid").show();
                     }
                     else{
                         $("#address_1").val(data[0].address_line_1);
@@ -274,14 +292,28 @@
                     $("#edit-event-modal").nextAll("button").attr("disabled",true);
 
                     if(data[0].existing == true){
-                        $("#bcgovid").html($("#pecsfid").html());
-                        $("#pecsfid *,#pecsfid").show();
-                        $("#bcgovid").hide();
-                        $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                        if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
+                            $("#pecsfid").html($("#pecsfid").html());
+                            $("#pecsfid *,#pecsfid").show();
+                            $("#bcgovid").hide();
+                            $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                        } else {
+                            if(data[0].organization_code == "GOV"){
+                                $("#bcgovid *,#bcgovid").show();
+                                $("#bcgovid").show();
+                                if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+                                    $("#pecsfid *,#pecsfid").show();
+                                }
+                            }else{
+                                $("#pecsfid").html($("#pecsfid").html());
+                                $("#pecsfid *,#pecsfid").show();
+                                $("#bcgovid").hide();
+                                $(".pecsf_id_errors").html("There is a previous Cash or Cheque One-time donation submission from this user. A PECSF ID pre-pended with an S is required for this field.");
+                            }
+                        }
                     }
 
                     $('#edit-event-modal').modal('show');
-                    console.log(data);
                 },"json");
         });
 
@@ -311,45 +343,44 @@
                         '<i class="fa fa-thumbs-up"></i> Approve!',
                     confirmButtonAriaLabel: 'Approved!',
                     cancelButtonText:
-                        '<i class="fa fa-thumbs-down"></i>',
-                    cancelButtonAriaLabel: 'Thumbs down'
+                        '<i class="fa fa-thumbs-down"></i> Maybe later',
+                    cancelButtonAriaLabel: 'Maybe later.'
                 }).then((result) => {
-                 if (result.isConfirmed) {
-                     $(this).parents("tr").remove();
-                     $.post("/admin-pledge/status",
-                         {
-                             submission_id: $("#submission_id").val(),
-                             status: 1
-                         },
-                         function (data, status) {
+                    if (result.isConfirmed) {
+                        $(this).parents("tr").remove();
+                        $.post("/admin-pledge/status",
+                            {
+                                submission_id: $("#submission_id").val(),
+                                status: 1
+                            },
+                            function (data, status) {
 
-                             Swal.fire({
-                                 title: '<strong>Success!</strong>',
-                                 icon: 'info',
-                                 html:
-                                     'The Event was successfully approved and can be viewed in the main list',
-                                 showCloseButton: true,
-                                 showCancelButton: true,
-                                 focusConfirm: false,
-                                 confirmButtonText:
-                                     '<i class="fa fa-thumbs-up"></i> Go To list',
-                                 confirmButtonAriaLabel: 'Go To list',
-                                 cancelButtonText:
-                                     'Close',
-                                 cancelButtonAriaLabel: 'Close'
-                             }).then((result) => {
-                                 if (result.isConfirmed) {
-                                     window.location.href = "/admin-pledge/maintain-event";
-                                 }
-                             });
-                         });
-                 } else {
-
-
-                     $(".status").val(0).trigger("change");
-
-                 }
-             });
+                                Swal.fire({
+                                    title: '<strong>Success!</strong>',
+                                    icon: 'info',
+                                    html:
+                                        'The Event was successfully approved and can be viewed in the main list',
+                                    showCloseButton: true,
+                                    showCancelButton: true,
+                                    focusConfirm: false,
+                                    confirmButtonText:
+                                        '<i class="fa fa-thumbs-up"></i> Go To list',
+                                    confirmButtonAriaLabel: 'Go To list',
+                                    cancelButtonText:
+                                        'Close',
+                                    cancelButtonAriaLabel: 'Close'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "/admin-pledge/maintain-event";
+                                    }
+                                });
+                            });                            
+                    } else {
+                        $(".status").val(0).trigger("change");
+                    }
+                    $('.modal').modal('hide');
+                    window.location.href = "/admin-pledge/submission-queue";                    
+                });
 
                }
 
@@ -382,7 +413,11 @@
             $('#lock-event-modal').modal("hide");
         });
 
+        $(".closeModalBtn").click(function() {
+                $("#regionalPoolModal").modal("hide"); 
+            });
+
     </script>
-    @include('volunteering.partials.add-event-js')
+    @include('admin-pledge.submission-queue.partials.add-event-js')
     @include('donate.partials.choose-charity-js')
 @endpush
