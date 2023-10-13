@@ -286,7 +286,7 @@
 
     <div class="form-row p-3" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
         <div class="form-group col-md-12">
-            <input type="radio" checked id="charity_selection_1" name="charity_selection" value="fsp" />
+            <input type="radio" id="charity_selection_1" name="charity_selection" value="fsp" />
             <label class="blue" for="charity_selection_1">Fund supported pool</label>
             <span class="charity_selection_errors errors">
                        @error('charity_selection')
