@@ -324,6 +324,8 @@ var form = document.getElementById("create_pool");
     $(".max-charities-error").hide();
     $(".charity-error-hook").css("border","none")
 
+formData = new FormData();
+
 $("select").each(function(){
 if($(this).val()){
 if($(this).val().length > 0){
@@ -340,12 +342,14 @@ formData.append($(this).attr("name"), $(this).val());
 }
 }
 else if($(this).attr('type') == "file"){
-//formData.append('attachments[]',  $(this)[0].files[0]);
+    if (this.value) {
+         formData.append('attachments[]',  $(this)[0].files[0]);
+    }
 }
 else{
-    if($(this).val().length > 0){
+    // if($(this).val().length > 0){
         formData.append($(this).attr("name"), $(this).val());
-    }
+    // }
 }
 }
 });
