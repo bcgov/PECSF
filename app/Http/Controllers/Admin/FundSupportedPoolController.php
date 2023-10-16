@@ -337,8 +337,14 @@ class FundSupportedPoolController extends Controller
     {
         //
         $pool = FSPool::where('id', $id)->first();
+        $charities = FSPoolCharity::where('f_s_pool_id', $id)
+                        ->join('charities', 'f_s_pool_charities.charity_id', '=', 'charities.id')
+                        ->select('f_s_pool_charities.*') // Avoid selecting everything from the stocks table
+                        ->orderBy('charities.charity_name')
+                        ->with('charity')
+                        ->get();
 
-        return view('admin-campaign.fund-supported-pools.show', compact('pool'));
+        return view('admin-campaign.fund-supported-pools.show', compact('pool','charities'));
 
     }
 
@@ -353,6 +359,12 @@ class FundSupportedPoolController extends Controller
         //
         //
         $pool = FSPool::where('id', $id)->first();
+        $charities = FSPoolCharity::where('f_s_pool_id', $id)
+                            ->join('charities', 'f_s_pool_charities.charity_id', '=', 'charities.id')
+                            ->select('f_s_pool_charities.*') // Avoid selecting everything from the stocks table
+                            ->orderBy('charities.charity_name')
+                            ->with('charity')
+                            ->get();
 
         $errors = session('errors');
         if ($errors) {
@@ -367,16 +379,14 @@ class FundSupportedPoolController extends Controller
             }
         } else {
 
-            foreach ($pool->charities as $key => $pool_charity ) {
+            foreach ($charities as $key => $pool_charity ) {
                 $charity = $pool_charity->charity_id ? Charity::where('id', $pool_charity->charity_id)->select('id', 'charity_name', 'registration_number')->first() : null;
                 $request->session()->flash('charity'.$key.'_selected', $charity);
             }
         }
 
-
-
         // show the view and pass the campaign year to it
-        return view('admin-campaign.fund-supported-pools.edit', compact('pool'));
+        return view('admin-campaign.fund-supported-pools.edit', compact('pool', 'charities'));
 
     }
 
@@ -539,7 +549,7 @@ class FundSupportedPoolController extends Controller
 
 
                         // Clean up old file on the folder
-                        if ($old_pool_charity->image) {
+                        if ($old_pool_charity && $old_pool_charity->image) {
                             $old_filename = public_path( $this->image_folder ) . $old_pool_charity->image;                            
                             if (File::exists( $old_filename )) {
                                 File::delete( $old_filename );

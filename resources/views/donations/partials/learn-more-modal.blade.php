@@ -175,7 +175,7 @@ deduction plan.
     <div class="row">
         <div class="col-12 col-md-4 offset-md-1">
             <h4 class="text-primary">
-                Step 4/5 - Review and submit
+                Step 4 or 5 - Review and submit
             </h4>
             <p>Review your choices to ensure accuracy, and that you're ready to submit.</p>
             <p>Your <span class="font-weight-bold"><u>Payroll Deductions</u></span> begin on the first pay cheque in January following the annual awareness campaign
@@ -219,14 +219,19 @@ deduction plan.
                     </div>
                 </div>
                 <div class="modal-footer d-flex">
+                    <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
                     <button href="#donateGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
-                    <div class="flex-fill"></div>
+                    <div class="flex-fill">
+                        <div class="text-center ">
+                            <h6 class="font-weight-bold">Slide <span class="current_page"> 1 of 9 </span></h6>
+                        </div>
+                    </div>
                     <x-button href="#donateGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to donate</x-button>
                     <x-button href="#donateGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
                     @if ( $campaignYear->isOpen() )
-                        <x-button :href="route('annual-campaign.index')" role="button" class="ready-btn d-none">I'm ready to Donate!</x-button>
+                        <x-button :href="route('annual-campaign.index')" role="button" class="ready-btn d-none">I'm ready to donate!</x-button>
                     @else
-                        <x-button :href="route('donate-now.index')" role="button" class="ready-btn d-none">I'm ready to Donate!</x-button>
+                        <x-button :href="route('donate-now.index')" role="button" class="ready-btn d-none">I'm ready to donate!</x-button>
                     @endif
                 </div>
             </div>
@@ -243,20 +248,30 @@ deduction plan.
 
             movie_id = $('#movie_player').attr('movie-id');
             $('#movie_player').attr('src', movie_id);
-
+            
             if(e.to == 0) {
+                $(this).find(".close-btn").removeClass("d-none");
                 $(this).find(".prev-btn").addClass("d-none");
                 $(this).find(".start-btn").removeClass("d-none");
                 $(this).find(".next-btn").addClass("d-none");
+                $(this).find(".ready-btn").addClass("d-none");
+
+                $('.current_page').html( "1 of 9");
             }
             else if (e.to === 8) {
+                $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
+
+                $('.current_page').html( (e.to + 1) + " of 9");
             } else {
+                $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".start-btn").addClass("d-none");
                 $(this).find(".prev-btn").removeClass("d-none");
                 $(this).find(".next-btn").removeClass("d-none")
                 $(this).find(".ready-btn").addClass("d-none");
+
+                $('.current_page').html( (e.to + 1) + " of 9");
             }
 
         })

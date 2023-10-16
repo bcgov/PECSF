@@ -194,6 +194,7 @@
                     $("#deposit_date").val(data[0].deposit_date);
                     $("#campaign_year").html( (data[0].calendar_year - 1));
                     $("#employee_name").val(data[0].employee_name);
+
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){                        
                         $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
