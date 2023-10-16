@@ -638,8 +638,8 @@ class BankDepositFormController extends Controller
         if($request->charity_selection == "dc"){
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
-            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->id)->delete();
 
+            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->form_id)->delete();
             foreach($request->organization_name as $org){
 
                 if($orgName <= ($orgCount - $request->org_count)){
