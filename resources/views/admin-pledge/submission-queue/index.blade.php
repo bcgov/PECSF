@@ -180,6 +180,7 @@
             var row_number = 0;
             $("#form_id").val($(this).attr("form-id"));
             $("#bank_deposit_form").attr("action","/bank_deposit_form/update")
+            $("#sub_type").attr("disabled",false);
             $.get("/admin-pledge/details",
                 {
                     form_id: $(this).attr("form-id")
@@ -193,8 +194,7 @@
                     $("#deposit_date").val(data[0].deposit_date);
                     $("#campaign_year").html( (data[0].calendar_year - 1));
                     $("#employee_name").val(data[0].employee_name);
-                    if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
-                        $("#sub_type").attr("disabled",false);
+                    if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){                        
                         $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
                         $("#bc_gov_id").val(data[0].bc_gov_id);
@@ -268,6 +268,7 @@
                             $('.organization').last().find("[name='id[]']").val(data[0].charities[i].vendor_id);
                             $('.organization').last().find("[name='vendor_id[]']").val(data[0].charities[i].vendor_id);
                             $('.organization').last().find("[name='donation_percent[]']").val(data[0].charities[i].donation_percent);
+                            $('.organization').last().find("[name='additional[]']").val(data[0].charities[i].specific_community_or_initiative);
                             $(".next_button").attr("disabled",false);
                         }
                     }
