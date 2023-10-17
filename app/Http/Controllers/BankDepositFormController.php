@@ -299,9 +299,11 @@ class BankDepositFormController extends Controller
                 }
                 if(!$fileFound){
                     $validator->errors()->add('attachment','At least one attachment is required.');
+                    $validator->errors()->add('attachment','At least one attachment is required.');
                 }
             }
             else{
+                $validator->errors()->add('attachment','At least one attachment is required.');
                 $validator->errors()->add('attachment','At least one attachment is required.');
             }
 
