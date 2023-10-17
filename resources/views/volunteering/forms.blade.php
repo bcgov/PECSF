@@ -122,6 +122,14 @@ $(function () {
     });
 
     $("#info-modal").modal();
+
+
+    $('.closeModalBtn').on('click', function() {
+        $('#regionalPoolModal').modal('hide');
+    });
+
+    
+
 });
 
 </script>
