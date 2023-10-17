@@ -43,7 +43,7 @@
                 <input class="form-control" type="text" id="donation_percent" name="donation_percent[]">
                 <span class="donation_percent_errors  errors">
                        @error('donation_percent.'.$index)
-                        <span class="invalid-feedback">{{  $message  }}</span>
+                        <span class="invalid-feedback">{{  $message  }} </span>
                     @enderror
                   </span>
             </div>
