@@ -173,11 +173,14 @@
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);
             $("#edit-event-modal").find("button").attr("disabled",false);
+            $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",true);
+            $(".upload-area").show();
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
             e.preventDefault();
             var row_number = 0;
+            var form_id = $(this).attr("form-id");
             $("#form_id").val($(this).attr("form-id"));
             $("#bank_deposit_form").attr("action","/bank_deposit_form/update")
             $("#sub_type").attr("disabled",false);
@@ -257,6 +260,8 @@
                         $(".form-pool").hide();
                         $("input[value='dc']").attr("checked","checked");
 
+                        $('#noselectedresults').hide();
+
 
                         for(i=0;i<data[0].charities.length;i++){
                             text = $("#organization-tmpl").html();
@@ -286,7 +291,9 @@
                         $('#attachments').append( text );
                         attachment_number++;
                      $('.attachment').last().find(".filename").html("Attachment #"+(i + 1)+" "+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+" ");
-                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
@@ -319,6 +326,26 @@
         });
 
         $("select").select2();
+
+        function deleteAttachment(formid, filename){
+
+            // Construct the URL with parameters
+            var deleteUrl = '/bank_deposit_form/' + formid + '/delete' + filename;
+
+            // Send an AJAX request to delete the attachment
+            $.ajax({
+                type: 'GET', // GET method
+                url: deleteUrl, // The URL with parameters
+                success: function(data) {
+                    // Handle the response, e.g., display a success message
+                    $('a[attr-id="' + attrIdValue + '"]').hide();
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred: " + error);
+                }
+            });
+        
+        }
 
         $(".status").change(function(e){
             e.preventDefault();
@@ -417,6 +444,13 @@
         $(".closeModalBtn").click(function() {
                 $("#regionalPoolModal").modal("hide"); 
             });
+
+
+            $(document).ready(function() {
+                $('#edit-event-modal').on('hidden.bs.modal', function() {
+                    location.reload();
+                });
+            });  
 
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')
