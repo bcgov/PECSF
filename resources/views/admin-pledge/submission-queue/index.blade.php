@@ -173,7 +173,9 @@
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);
             $("#edit-event-modal").find("button").attr("disabled",false);
-            $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",true);
+            $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
+            $("#edit-event-modal").find(".organization_name").attr("disabled",true);
+            
             $(".upload-area").show();
             $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
             $("#edit-event-modal").find(".organization_name").attr("disabled",true);
