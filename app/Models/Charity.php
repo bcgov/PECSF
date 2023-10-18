@@ -26,6 +26,8 @@ class Charity extends Model implements Auditable
         'province',
         'country',
         'postal_code',
+        'phone',
+        'fax',
         'ongoing_program',
         'url',
 
