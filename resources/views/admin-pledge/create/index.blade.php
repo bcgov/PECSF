@@ -86,6 +86,12 @@
         });
         $("select").select2();
 
+        $(function () {
+            $('.closeModalBtn').on('click', function() {
+                $('#regionalPoolModal').modal('hide');
+            });
+        });
+
     </script>
     @include('volunteering.partials.add-event-js')
     @include('donate.partials.choose-charity-js')

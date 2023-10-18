@@ -74,7 +74,9 @@
     </thead>
     <tbody>
         @if ($pledge->regional_pool_id)
-            @foreach($pledge->fund_supported_pool->charities as $pool_charity)
+            @php $pool_charities = $pledge->fund_supported_pool->charities->sortBy('charity.charity_name') 
+            @endphp  
+            @foreach($pool_charities as $pool_charity)
                 <tr>
                     <td scope="row">{{ $loop->index +1 }}</td>
                     <td>

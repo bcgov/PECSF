@@ -71,10 +71,10 @@ class DonationDataController extends Controller
 
             return Datatables::of($donations)
                 ->editColumn('created_at', function ($donation) {
-                    return $donation->process_history->created_at->format('Y-m-d H:m:s'); // human readable format
+                    return $donation->process_history->created_at->format('Y-m-d H:i:s'); // human readable format
                 })
                 ->editColumn('updated_at', function ($donation) {
-                    return $donation->process_history->updated_at->format('Y-m-d H:m:s'); // human readable format
+                    return $donation->process_history->updated_at->format('Y-m-d H:i:s'); // human readable format
                 })                        
                 // ->rawColumns(['action','description'])
                 ->make(true);

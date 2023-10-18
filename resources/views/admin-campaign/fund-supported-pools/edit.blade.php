@@ -86,10 +86,10 @@
                             </tr>
                         </thead> --}}
                         <tbody id="accordion">
-                            @foreach (old('charities', $pool->charities->pluck('charity_id') ) as $index => $oldCharity)
+                            @foreach (old('charities', $charities->pluck('charity_id') ) as $index => $oldCharity)
                             <tr id="charity{{ $index }}">
                                 @if (count($errors) == 0)
-                                    @php ( $pool_charity = $pool->charities[$index] )                                    
+                                    @php ( $pool_charity = $charities[$index] )                                    
                                 @else
                                     @php ( $pool_charity = new \App\Models\FSPoolCharity )                                    
                                 @endif
@@ -111,7 +111,7 @@
                             --}}
                             </tr>
                             @endforeach
-                            <tr id="charity{{ count(old('charities', $pool->charities->pluck('charity_id') )) }}"></tr>
+                            <tr id="charity{{ count(old('charities', $charities->pluck('charity_id') )) }}"></tr>
                         </tbody>
                     </table>
 

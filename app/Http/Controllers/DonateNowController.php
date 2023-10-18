@@ -440,6 +440,7 @@ class DonateNowController extends Controller
         if ($request->ajax()) {
             $pool = FSPool::where('id', $id)->first();
             $charities = $pool ? $pool->charities : [];
+            $charities = $charities->sortBy('charity.charity_name');
             return view('donate-now.partials.pool-detail', compact('charities') )->render();
         } else {
             return redirect('/');

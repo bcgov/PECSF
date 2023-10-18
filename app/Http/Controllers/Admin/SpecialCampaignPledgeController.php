@@ -132,10 +132,10 @@ class SpecialCampaignPledgeController extends Controller
 
                 })
                 ->editColumn('created_at', function ($user) {
-                    return $user->created_at->format('Y-m-d H:m:s'); // human readable format
+                    return $user->created_at->format('Y-m-d H:i:s'); // human readable format
                 })
                 ->editColumn('updated_at', function ($user) {
-                    return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
+                    return $user->updated_at->format('Y-m-d H:i:s'); // human readable format
                 })                        
                 ->rawColumns(['action','description'])
                 ->make(true);

@@ -173,13 +173,14 @@
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);
             $("#edit-event-modal").find("button").attr("disabled",false);
+
             $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
             $("#edit-event-modal").find(".organization_name").attr("disabled",true);
             
             $(".upload-area").show();
             $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
             $("#edit-event-modal").find(".organization_name").attr("disabled",true);
-            
+
             $(".upload-area").show();
         });
 
@@ -203,6 +204,7 @@
                     $("#deposit_date").val(data[0].deposit_date);
                     $("#campaign_year").html( (data[0].calendar_year - 1));
                     $("#employee_name").val(data[0].employee_name);
+
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){                        
                         $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
@@ -268,9 +270,6 @@
 
                         $('#noselectedresults').hide();
 
-                        $('#noselectedresults').hide();
-
-
                         for(i=0;i<data[0].charities.length;i++){
                             text = $("#organization-tmpl").html();
                             text = text.replace(/XXX/g, row_number + 1);
@@ -302,9 +301,11 @@
                      $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
                      //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
                      //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
+
                      $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
                      //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
                      //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
+
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
@@ -357,6 +358,7 @@
             });
         
         }
+
 
         function deleteAttachment(formid, filename){
 
