@@ -55,7 +55,7 @@ $("#employeename").hide();
     $("#pecsfid").hide();
 
 if($(this).val()=="Fundraiser"){
-$("#sub_type").html('<option value="">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
+$("#sub_type").html('<option value="none">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
 $(".address_hook").hide();
 $("#sub_type").select2();
     $(".sub_type").show();
@@ -82,7 +82,7 @@ $("#sub_type").select2();
     }
 }
 else if($(this).val()=="Gaming"){
-$("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="">None</option>');
+$("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="none">None</option>');
 $(".address_hook").hide();
 $("#sub_type").select2();
     $(".sub_type").show();
