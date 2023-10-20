@@ -641,7 +641,7 @@
     window.addEventListener(
         'load',
         function () {
-            var carouselEls = document.querySelectorAll('.carousel');
+            var carouselEls = document.querySelectorAll('#myCarousel');
             var carousels = [];
 
             // set example behavior based on
