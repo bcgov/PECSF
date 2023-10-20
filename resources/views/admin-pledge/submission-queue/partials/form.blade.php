@@ -87,7 +87,7 @@
         <div class="form-group col-md-3 sub_type">
             <label for="sub_type">Sub type</label>
             <select class="form-control" type="text" id="sub_type" name="sub_type">
-                <option value="false">Disabled</option>
+                <option value="none">None</option>
             </select>
             <span class="sub_type_errors errors">
                        @error('form_submitter')
@@ -377,13 +377,13 @@
 
             <div class="form-row form-body">
 
-                <div class="col-md-12"> <span style="display:block;padding:10px;">Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</span>
+                <div class="col-md-12 upload-area"> <span style="padding:10px;">Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</span>
                     </div>
 
 
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
 
-
+                    
                     <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
@@ -394,6 +394,7 @@
 
                 </table>
             </div>
+
 
     </div>
 
@@ -420,3 +421,10 @@
 
 </form>
 
+<script>
+    var poolsNotEmpty = <?php echo !empty($pools) ? 'true' : 'false'; ?>;
+    var radioElement = document.getElementById("charity_selection_1");
+    if (poolsNotEmpty) {
+        radioElement.checked = true;
+    }
+</script>

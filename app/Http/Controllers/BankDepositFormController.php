@@ -298,11 +298,11 @@ class BankDepositFormController extends Controller
                     }
                 }
                 if(!$fileFound){
-                    $validator->errors()->add('attachment','Atleast one attachment is required.');
+                    $validator->errors()->add('attachment','At least one attachment is required.');
                 }
             }
             else{
-                $validator->errors()->add('attachment','Atleast one attachment is required.');
+                $validator->errors()->add('attachment','At least one attachment is required.');
             }
 
             if($request->pecsf_id){
@@ -511,7 +511,7 @@ class BankDepositFormController extends Controller
                     for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
                         if(empty(request("organization_name")[$i]))
                         {
-                            $validator->errors()->add('organization_name.'.$i,'The Organization name is required.');
+                            $validator->errors()->add('organization_name.'.$i+1,'The Organization name is required.');
                         }
                         if(empty(request('vendor_id')[$i])){
 
@@ -519,11 +519,11 @@ class BankDepositFormController extends Controller
                         };
                         if(empty(request('donation_percent')[$i])){
 
-                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent is required.');
+                            $validator->errors()->add('donation_percent.'.$i+1,'The Donation Percent is required.');
                         }
                         else if(!is_numeric(request('donation_percent')[$i])){
 
-                            $validator->errors()->add('donation_percent.'.$i,'The Donation Percent must be a number.');
+                            $validator->errors()->add('donation_percent.'.$i+1,'The Donation Percent must be a number.');
                         }
                         else{
                             $a[] = $i;
@@ -607,6 +607,28 @@ class BankDepositFormController extends Controller
                     $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
                 }
             }
+
+
+            if(!empty(request("attachments"))){
+                $fileFound = false;
+                foreach(array_reverse(request('attachments')) as $key => $attachment){
+                    if(in_array($attachment->getClientOriginalName(),explode(",",$request->ignoreFiles)) || empty($attachment) || $attachment == "undefined"){
+                    }
+                    else{
+                        $fileFound = true;
+                        break;
+                    }
+                }
+                if(!$fileFound){
+                    $validator->errors()->add('attachment','At least one attachment is required.');
+                }
+            }
+            else{
+                //$validator->errors()->add('attachment','At least one attachment is required.');
+            }
+
+
+
         });
         $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
@@ -638,8 +660,8 @@ class BankDepositFormController extends Controller
         if($request->charity_selection == "dc"){
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
-            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->id)->delete();
 
+            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->form_id)->delete();
             foreach($request->organization_name as $org){
 
                 if($orgName <= ($orgCount - $request->org_count)){
@@ -655,6 +677,31 @@ class BankDepositFormController extends Controller
                 $orgName--;
             }
         }
+
+
+        $upload_images = $request->file('attachments') ? $request->file('attachments') : [];
+
+        foreach($upload_images as $key => $file){
+
+            if(is_array($request->ignoreFiles)){
+                if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
+                {
+                    continue;
+                }
+            }
+
+
+                $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+
+                $filePath = $file->storeAs(  "/uploads/bank_deposit_form_attachments" , $filename);
+                BankDepositFormAttachments::create([
+                'local_path' => storage_path( $this->doc_folder )."/".$filename,
+                'bank_deposit_form_id' => $request->form_id
+            ]);
+        }
+
+
+
         echo json_encode(["/admin-pledge/submission-queue"]);
     }
 
@@ -773,5 +820,31 @@ class BankDepositFormController extends Controller
             ];
             // return Storage::download($path);
             return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
+        }
+
+
+        public function delete(Request $request, $form_id, $fileName) {
+            // The $form_id and $fileName are route parameters
+        
+            $path = "/bank_deposit_form_attachments/" . $fileName;
+            
+            // Check if the file exists before attempting to delete it
+            if (Storage::disk('uploads')->exists($path)) {
+                // Delete the file
+                error_log(storage_path($this->doc_folder) . "/" . $fileName);
+                Storage::disk('uploads')->delete($path);
+                
+                // Use $form_id to delete records from the database
+                BankDepositFormAttachments::where([
+                    'local_path' => storage_path($this->doc_folder) . "/" . $fileName,
+                    'bank_deposit_form_id' => $form_id
+                ])->delete();
+        
+                $msg = "Attachment '$fileName' has been deleted.";
+            } else {
+                $msg = "Attachment '$fileName' does not exist or has already been deleted.";
+            }
+            
+            return response()->json(['msg' => $msg]);
         }
 }
