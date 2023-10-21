@@ -128,10 +128,10 @@ class CampaignPledgeController extends Controller
 
                 })
                 ->editColumn('created_at', function ($user) {
-                    return $user->created_at->format('Y-m-d H:m:s'); // human readable format
+                    return $user->created_at->format('Y-m-d H:i:s'); // human readable format
                 })
                 ->editColumn('updated_at', function ($user) {
-                    return $user->updated_at->format('Y-m-d H:m:s'); // human readable format
+                    return $user->updated_at->format('Y-m-d H:i:s'); // human readable format
                 })
                 ->rawColumns(['action','description'])
                 ->make(true);
@@ -424,6 +424,7 @@ class CampaignPledgeController extends Controller
         $pool_charities= null;
         if ($pledge->type =='P') {
             $pool_charities = FSPool::asOfDate($pledge->created_at)->where('region_id', $pledge->region_id)->first()->charities;
+            $pool_charities = $pool_charities->sortBy('charity.charity_name');            
         }
 
 

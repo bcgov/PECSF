@@ -158,7 +158,8 @@
                         <input type="file" class="form-control-file @error('images.'.$index) is-invalid @enderror" 
                                 onchange="loadFile(event)" name="images[]" value="{{ old('images.'.$index) }}"> --}}
                         @error( 'images.'.$index )
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span class="invalid-feedback"></span>
+                            <h6 class="text-danger">{{ $message }}</h6>
                         @enderror
                     </div>
                 </div>

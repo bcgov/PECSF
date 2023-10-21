@@ -173,13 +173,24 @@
             $("#edit-event-modal").find("select").attr("disabled",false);
             $("#edit-event-modal").find("input").attr("disabled",false);
             $("#edit-event-modal").find("button").attr("disabled",false);
+
+            $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
+            $("#edit-event-modal").find(".organization_name").attr("disabled",true);
+            
+            $(".upload-area").show();
+            $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
+            $("#edit-event-modal").find(".organization_name").attr("disabled",true);
+
+            $(".upload-area").show();
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
             e.preventDefault();
             var row_number = 0;
+            var form_id = $(this).attr("form-id");
             $("#form_id").val($(this).attr("form-id"));
             $("#bank_deposit_form").attr("action","/bank_deposit_form/update")
+            $("#sub_type").attr("disabled",false);
             $.get("/admin-pledge/details",
                 {
                     form_id: $(this).attr("form-id")
@@ -193,8 +204,8 @@
                     $("#deposit_date").val(data[0].deposit_date);
                     $("#campaign_year").html( (data[0].calendar_year - 1));
                     $("#employee_name").val(data[0].employee_name);
-                    if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){
-                        $("#sub_type").attr("disabled",false);
+
+                    if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){                        
                         $("#sub_type").val(data[0].sub_type).select2();
                         $("#pecsf_id").val(data[0].pecsf_id);
                         $("#bc_gov_id").val(data[0].bc_gov_id);
@@ -257,6 +268,7 @@
                         $(".form-pool").hide();
                         $("input[value='dc']").attr("checked","checked");
 
+                        $('#noselectedresults').hide();
 
                         for(i=0;i<data[0].charities.length;i++){
                             text = $("#organization-tmpl").html();
@@ -268,6 +280,7 @@
                             $('.organization').last().find("[name='id[]']").val(data[0].charities[i].vendor_id);
                             $('.organization').last().find("[name='vendor_id[]']").val(data[0].charities[i].vendor_id);
                             $('.organization').last().find("[name='donation_percent[]']").val(data[0].charities[i].donation_percent);
+                            $('.organization').last().find("[name='additional[]']").val(data[0].charities[i].specific_community_or_initiative);
                             $(".next_button").attr("disabled",false);
                         }
                     }
@@ -285,7 +298,14 @@
                         $('#attachments').append( text );
                         attachment_number++;
                      $('.attachment').last().find(".filename").html("Attachment #"+(i + 1)+" "+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+" ");
-                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
+
+                     $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                     //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
+
                     }
                     $("#edit-event-modal").find("select").attr("disabled",true);
                     $("#edit-event-modal").find("input").attr("disabled",true);
@@ -318,6 +338,47 @@
         });
 
         $("select").select2();
+
+        function deleteAttachment(formid, filename){
+
+            // Construct the URL with parameters
+            var deleteUrl = '/bank_deposit_form/' + formid + '/delete' + filename;
+
+            // Send an AJAX request to delete the attachment
+            $.ajax({
+                type: 'GET', // GET method
+                url: deleteUrl, // The URL with parameters
+                success: function(data) {
+                    // Handle the response, e.g., display a success message
+                    $('a[attr-id="' + attrIdValue + '"]').hide();
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred: " + error);
+                }
+            });
+        
+        }
+
+
+        function deleteAttachment(formid, filename){
+
+            // Construct the URL with parameters
+            var deleteUrl = '/bank_deposit_form/' + formid + '/delete' + filename;
+
+            // Send an AJAX request to delete the attachment
+            $.ajax({
+                type: 'GET', // GET method
+                url: deleteUrl, // The URL with parameters
+                success: function(data) {
+                    // Handle the response, e.g., display a success message
+                    $('a[attr-id="' + attrIdValue + '"]').hide();
+                },
+                error: function(xhr, status, error) {
+                    alert("An error occurred: " + error);
+                }
+            });
+        
+        }
 
         $(".status").change(function(e){
             e.preventDefault();
@@ -416,6 +477,13 @@
         $(".closeModalBtn").click(function() {
                 $("#regionalPoolModal").modal("hide"); 
             });
+
+
+            $(document).ready(function() {
+                $('#edit-event-modal').on('hidden.bs.modal', function() {
+                    location.reload();
+                });
+            });  
 
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')
