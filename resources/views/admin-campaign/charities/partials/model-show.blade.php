@@ -147,6 +147,26 @@
                                     <input type="text" class="form-control" name="alt_country" disabled>
                                 </div>
                             </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="phone">Phone</label>
+                                    <input type="text" class="form-control" name="phone" disabled>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="fax">Fax</label>
+                                    <input type="text" class="form-control" name="fax" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-12 url-web-address">
+                                    <label for="url">URL</label>
+                                    <a href="" target="_blank">
+                                        <p></p>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
