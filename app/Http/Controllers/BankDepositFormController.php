@@ -443,6 +443,7 @@ class BankDepositFormController extends Controller
 
     }
     public function update(Request $request) {
+
         $validator = Validator::make(request()->all(), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
@@ -551,7 +552,7 @@ class BankDepositFormController extends Controller
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
 
-          if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
+            if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
                 {
                     if(!empty($request->pecsf_id)){
 
@@ -630,8 +631,9 @@ class BankDepositFormController extends Controller
 
 
         });
-        $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
+        $validator->validate();
+        
 
         $form = BankDepositForm::find($request->form_id)->update(
             [
@@ -652,10 +654,12 @@ class BankDepositFormController extends Controller
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
                 'business_unit' => $request->business_unit,
-
                 'updated_by_id' => Auth::id(),
             ]
         );
+        if($request->charity_selection == "fsp" && $regional_pool_id != ''){ 
+            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->form_id)->delete();
+        }
 
         if($request->charity_selection == "dc"){
             $orgName = count($request->organization_name) -1;
