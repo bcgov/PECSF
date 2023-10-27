@@ -281,6 +281,8 @@ class CampaignPledgeController extends Controller
         } else {
             // Create a new Pledge
 
+            $deptid = null;
+            $dept_name = null;
             if ($is_GOV) {
                 $business_unit =  $user->primary_job ? $user->primary_job->business_unit : null;
                 // $tgb_reg_district =  $user->primary_job ? $user->primary_job->tgb_reg_district : null;
