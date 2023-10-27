@@ -119,7 +119,8 @@ class BankDepositFormController extends Controller
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
             'event_type'         => 'required',
-            'sub_type'         => 'required',
+            //'sub_type'         => 'required',
+            //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
@@ -322,6 +323,11 @@ class BankDepositFormController extends Controller
 
 
         $validator->validate();
+        if(!isset($request->sub_type)){
+            $sub_type = 'false';
+        } else {
+            $sub_type = $request->sub_type;
+        }
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
    
         // Get deptid and name from employee primary job if bc_gov_id entered
@@ -349,7 +355,7 @@ class BankDepositFormController extends Controller
                 'form_submitter_id' =>  $request->form_submitter,
                 'campaign_year_id' =>  $request->campaign_year,
                 'event_type' =>  $request->event_type,
-                'sub_type' => $request->sub_type,
+                'sub_type' => $sub_type,
                 'deposit_date' => $request->deposit_date,
                 'deposit_amount' => $request->deposit_amount,
                 'description' => $request->description,
@@ -443,12 +449,14 @@ class BankDepositFormController extends Controller
 
     }
     public function update(Request $request) {
+
         $validator = Validator::make(request()->all(), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
             'event_type'         => 'required',
-            'sub_type'         => 'required',
+            //'sub_type'         => 'required',
+            //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
@@ -551,7 +559,7 @@ class BankDepositFormController extends Controller
                     ->where("form_submitter_id","=",$request->form_submitter_id)
                     ->get();
 
-          if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
+            if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
                 {
                     if(!empty($request->pecsf_id)){
 
@@ -630,14 +638,19 @@ class BankDepositFormController extends Controller
 
 
         });
-        $validator->validate();
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
+        $validator->validate();
+        if(!isset($request->sub_type)){
+            $sub_type = 'false';
+        } else {
+            $sub_type = $request->sub_type;
+        }
 
         $form = BankDepositForm::find($request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
                 'event_type' =>  $request->event_type,
-                'sub_type' => $request->sub_type,
+                'sub_type' => $sub_type,
                 'deposit_date' => $request->deposit_date,
                 'deposit_amount' => $request->deposit_amount,
                 'description' => $request->description,
@@ -652,12 +665,14 @@ class BankDepositFormController extends Controller
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
                 'business_unit' => $request->business_unit,
-
                 'updated_by_id' => Auth::id(),
             ]
         );
+        if($request->charity_selection == "fsp" && $regional_pool_id != ''){ 
+            BankDepositFormOrganizations::where("bank_deposit_form_id",$request->form_id)->delete();
+        }
 
-        if($request->charity_selection == "dc"){
+        if($request->charity_selection == "dc"){            
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
 
@@ -697,6 +712,7 @@ class BankDepositFormController extends Controller
                         'bank_deposit_form_id' => $request->form_id
                     ]);
                 }
+
             }
         }
 
