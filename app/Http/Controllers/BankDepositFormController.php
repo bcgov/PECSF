@@ -664,7 +664,6 @@ class BankDepositFormController extends Controller
         if($request->charity_selection == "dc"){            
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
-
             $arr_lenth = $request->arr_lenth;
             $form_organization_name = $request->organization_name;
             $form_vendor_id = $request->vendor_id;
