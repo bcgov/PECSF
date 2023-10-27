@@ -82,11 +82,13 @@ class Kernel extends ConsoleKernel
 
                 $schedule->command('command:ImportCities')
                         //  ->yearlyOn(9, 1, '02:30')
-                        ->dailyAt('2:30')
+                        ->weekdays()
+                        ->at('2:30')
                         ->sendOutputTo(storage_path('logs/ImportCities.log')); 
 
                 $schedule->command('command:ImportDepartments')
-                        ->dailyAt('2:35')
+                        ->weekdays()
+                        ->at('2:35')
                         ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
 
                 // For testing purpose: to generate 2022 pledges based on the BI pledge history
