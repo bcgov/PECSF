@@ -72,13 +72,13 @@ class Kernel extends ConsoleKernel
                         
 
                 // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
-                $schedule->command('command:ImportNonGovPledgeHistory')
-                        ->dailyAt('2:05')
-                        ->sendOutputTo(storage_path('logs/ImportNonPledgeHistory.log'));
+                // $schedule->command('command:ImportNonGovPledgeHistory')
+                //         ->dailyAt('2:05')
+                //         ->sendOutputTo(storage_path('logs/ImportNonPledgeHistory.log'));
 
-                $schedule->command('command:ImportPledgeHistory')
-                        ->dailyAt('2:15')
-                        ->sendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
+                // $schedule->command('command:ImportPledgeHistory')
+                //         ->dailyAt('2:15')
+                //         ->sendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
 
                 $schedule->command('command:ImportCities')
                         //  ->yearlyOn(9, 1, '02:30')
@@ -104,25 +104,25 @@ class Kernel extends ConsoleKernel
                         ->at('4:15')
                         ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
 
-                // Snapshot of eligible employees 
-                $schedule->command('command:UpdateEligibleEmployeeSnapshot')
-                        ->dailyAt('4:30')
-                        ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
-
-                $schedule->command('command:UpdateDailyCampaign')
-                        ->dailyAt('4:45')
-                        ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
-                
-                $schedule->command('command:SystemCleanUp')
-                        ->dailyAt('5:30')
-                        ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
-
-                // Daily Testing 
-                $schedule->command('notify:daily')
-                        ->dailyAt('08:30')
-                        ->appendOutputTo(storage_path('logs/daily.log'));
-
         }
+
+        // Snapshot of eligible employees 
+        $schedule->command('command:UpdateEligibleEmployeeSnapshot')
+                ->dailyAt('4:30')
+                ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
+
+        $schedule->command('command:UpdateDailyCampaign')
+                ->dailyAt('4:45')
+                ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
+        
+        $schedule->command('command:SystemCleanUp')
+                ->dailyAt('5:30')
+                ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
+        
+        // Daily Testing 
+        $schedule->command('notify:daily')
+                ->dailyAt('08:30')
+                ->appendOutputTo(storage_path('logs/daily.log'));
 
     }
 
