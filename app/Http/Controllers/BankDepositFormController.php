@@ -664,15 +664,43 @@ class BankDepositFormController extends Controller
         if($request->charity_selection == "dc"){            
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
+            $arr_lenth = $request->arr_lenth;
+            $form_organization_name = $request->organization_name;
+            $form_vendor_id = $request->vendor_id;
+            $form_donation_percent = $request->donation_percent;
+            $form_additional = $request->additional;
+            if ($arr_lenth > 0) {
+                $form_organization_name = array_slice($form_organization_name, -$arr_lenth);
+                $form_vendor_id = array_slice($form_vendor_id, -$arr_lenth);
+                $form_donation_percent = array_slice($form_donation_percent, -$arr_lenth);
+                $form_additional = array_slice($form_additional, -$arr_lenth);
+            }
+
             BankDepositFormOrganizations::where("bank_deposit_form_id",$request->form_id)->delete();
-            for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
+            //foreach($request->organization_name as $org){
+            if($arr_lenth == 0) {
+                for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
                     BankDepositFormOrganizations::create([
                         'organization_name' => $request->organization_name[$i],
                         'vendor_id' => $request->vendor_id[$i],
                         'donation_percent' => $request->donation_percent[$i],
-                        'specific_community_or_initiative' =>  (isset($request->additional[$i])?$request->additional[$i]:""),
+                        'specific_community_or_initiative' =>  (isset($request->additional[$i])?$request->additional[$i]:" "),
                         'bank_deposit_form_id' => $request->form_id
                     ]);
+                }
+            } else {
+                //for handling the validation error re-submit form
+                for($i=0; $i < $arr_lenth; $i++){ 
+                    $specificCommunityOrInitiative = $form_additional[$i] != '' ? $form_additional[$i] : ' ';
+                    BankDepositFormOrganizations::create([
+                        'organization_name' => $form_organization_name[$i],
+                        'vendor_id' => $form_vendor_id[$i],
+                        'donation_percent' => $form_donation_percent[$i],
+                        'specific_community_or_initiative' =>  $specificCommunityOrInitiative,
+                        'bank_deposit_form_id' => $request->form_id
+                    ]);
+                }
+
             }
         }
 
