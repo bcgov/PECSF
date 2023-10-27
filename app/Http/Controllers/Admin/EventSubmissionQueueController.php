@@ -147,9 +147,7 @@ class EventSubmissionQueueController extends Controller
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
             ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")
-
             ->get();
-            error_log('1');
         foreach($submissions as $index => $submission){
             $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id", $request->form_id)
                                                 ->orderByRaw('CAST(donation_percent AS DECIMAL(10, 2)) DESC')
