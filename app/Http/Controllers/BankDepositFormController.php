@@ -119,7 +119,8 @@ class BankDepositFormController extends Controller
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
             'event_type'         => 'required',
-            'sub_type'         => 'required',
+            //'sub_type'         => 'required',
+            'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
@@ -449,7 +450,8 @@ class BankDepositFormController extends Controller
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
             'event_type'         => 'required',
-            'sub_type'         => 'required',
+            //'sub_type'         => 'required',
+            'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
