@@ -154,6 +154,24 @@
 
                                 </div>
                             </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="phone">Phone</label>
+                                    <input type="text" class="form-control" id="phone" name="phone">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="fax">Fax</label>
+                                    <input type="text" class="form-control" id="fax" name="fax">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="url">URL</label>
+                                    <input type="text" class="form-control" id="url" name="url">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
