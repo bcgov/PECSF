@@ -288,13 +288,13 @@ class ImportPledgeHistory extends Command
         if ($response->successful()) {                
             $row_count = json_decode($response->body())->{'@odata.count'};
             
-            $size = 10000;
+            $size = 5000;
             for ($i = 0; $i <= $row_count / $size ; $i++) {
 
                 $top  = $size;
                 $skip = $size * $i;
                 // Loading pledge history data
-                $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                $response = Http::timeout(60)->retry(3, 100)->withHeaders(['Content-Type' => 'application/json'])
                     ->withBasicAuth(env('ODS_USERNAME'),env('ODS_TOKEN'))
                     ->get(env('ODS_INBOUND_REPORT_PLEDGE_HISTORY_BI_ENDPOINT') .'?$top='.$top.'&$skip='.$skip.'&$filter='.$filter) ;
 
