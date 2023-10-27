@@ -657,24 +657,18 @@ class BankDepositFormController extends Controller
             ]
         );
 
-        if($request->charity_selection == "dc"){
+        if($request->charity_selection == "dc"){            
             $orgName = count($request->organization_name) -1;
             $orgCount = $orgName;
-
             BankDepositFormOrganizations::where("bank_deposit_form_id",$request->form_id)->delete();
-            foreach($request->organization_name as $org){
-
-                if($orgName <= ($orgCount - $request->org_count)){
-                    break;
-                }
-                BankDepositFormOrganizations::create([
-                    'organization_name' => $request->organization_name[$orgName],
-                    'vendor_id' => $request->vendor_id[$orgName],
-                    'donation_percent' => $request->donation_percent[$orgName],
-                    'specific_community_or_initiative' =>  (isset($request->additional[$orgName])?$request->additional[$orgName]:""),
-                    'bank_deposit_form_id' => $request->form_id
-                ]);
-                $orgName--;
+            for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
+                    BankDepositFormOrganizations::create([
+                        'organization_name' => $request->organization_name[$i],
+                        'vendor_id' => $request->vendor_id[$i],
+                        'donation_percent' => $request->donation_percent[$i],
+                        'specific_community_or_initiative' =>  (isset($request->additional[$i])?$request->additional[$i]:""),
+                        'bank_deposit_form_id' => $request->form_id
+                    ]);
             }
         }
 
