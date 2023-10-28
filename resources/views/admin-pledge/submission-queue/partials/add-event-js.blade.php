@@ -315,7 +315,18 @@ formData.append("org_count", $(".organization").length);
 formData.append("ignoreFiles", ignoreFiles);
 
 $(this).fadeTo("slow",0.2);
-$.ajax({
+
+
+var removeButtons = document.querySelectorAll(".remove");
+var numberOfRemoveButtons = removeButtons.length;
+$('#arr_lenth').val(numberOfRemoveButtons);
+
+$(".specific_community_or_initiative").each(function() {
+    var currentValue = $(this).val();
+    $(this).val(currentValue + " ");
+});
+
+$.ajax({ 
 url: $("#bank_deposit_form").attr("action"),
 type:"POST",
 data: formData,
@@ -342,27 +353,27 @@ success:function(response){
     });
     $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
 },
-error: function(response) {
-$('.errors').html("");
-    $(".donation_percent_errors").html("");
-if(response.responseJSON.errors){
-errors = response.responseJSON.errors;
-for(const prop in response.responseJSON.errors){
-count = prop.substring(prop.indexOf(".")+1);
-tag = prop.substring(0,prop.indexOf("."));
-error = errors[prop][0].split(".");
-error = error[0] + error[1].substring(1,error[1].length);
-error = error.replace("_"," ");
-$("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
-$("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+    error: function(response) {   
+        $('.errors').html("");
+        $(".donation_percent_errors").html("");
+        if(response.responseJSON.errors){
+            errors = response.responseJSON.errors;
+            for(const prop in response.responseJSON.errors){
+                count = prop.substring(prop.indexOf(".")+1);
+                tag = prop.substring(0,prop.indexOf("."));
+                error = errors[prop][0].split(".");
+                error = error[0] + error[1].substring(1,error[1].length);
+                error = error.replace("_"," ");
+                $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+                $("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
 
 
-}
-}
-$(".invalid-feedback").css("display","block");
-$("#bank_deposit_form").fadeTo("slow",1);
-},
+            }
+        }
+        $(".invalid-feedback").css("display","block");
+        $("#bank_deposit_form").fadeTo("slow",1);
+    },
 });
 
 });

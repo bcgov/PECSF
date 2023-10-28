@@ -74,7 +74,7 @@ class CampaignYear extends Model implements Auditable
 
         $today = today();
         $from_date = $this->start_date;
-        $to_date =  $this->end_date->addDays(14);
+        $to_date =  $this->end_date->addDays(1);
 
         return ( $this->status == 'I' && (!($today <= $to_date)) );
 

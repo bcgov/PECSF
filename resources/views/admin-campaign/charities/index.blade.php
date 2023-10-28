@@ -162,6 +162,7 @@
                     <th>Category</th>
                     <th>Province</th>
                     <th>Country</th>
+                    <th>Use Alt Address</th>
                     <th>Action </th>
 				</tr>
 			</thead>
@@ -293,6 +294,14 @@
                 {data: 'category_name',      },
                 {data: 'province',   },
                 {data: 'country', },
+                {data: 'use_alt_address', render: function (data, type, full, meta) {
+                            if (data == 1) {
+                                return 'Yes';
+                            } else {
+                                return 'No';
+                            }
+                        },
+                },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
 
             ],
@@ -570,6 +579,16 @@
                             else 
                                 $('#charity-show-model-form input[name=use_alt_address]').prop('checked', false);
                             // console.log(field_value);
+                        } 
+
+                        if (field_name == 'url') {
+                            if (field_value) {
+                                $('.url-web-address a').attr('href', field_value);
+                                $('.url-web-address p').html(field_value);
+                            } else {
+                                $('.url-web-address a').attr('href', '');
+                                $('.url-web-address p').html('');
+                            }
                         }
                     });
                     
