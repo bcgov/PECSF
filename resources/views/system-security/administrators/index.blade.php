@@ -152,13 +152,14 @@
             'order': [[1, 'asc']],
             "initComplete": function(settings, json) {
                     oTable.columns.adjust().draw(false);
-
-                    min_height = $(".wrapper").outerHeight();
-                    $(".main-sidebar").css('min-height', min_height);
             },
             ajax: {
                 url: '{!! route('system.administrators.store') !!}',
                 data: function (d) {
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {

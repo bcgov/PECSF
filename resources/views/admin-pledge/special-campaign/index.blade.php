@@ -250,7 +250,7 @@
     div.dataTables_wrapper div.dataTables_processing {
       top: 5%;
     }
-    
+
 </style>
 @endpush
 
@@ -309,6 +309,10 @@
                     data.cancelled = $('#cancelled').val();
                     data.special_campaign_name = $('#special_campaign_name').val();
                     data.deduct_pay_from = $('#deduct_pay_from').val();
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
