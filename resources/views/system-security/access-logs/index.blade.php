@@ -198,9 +198,6 @@
             'order': [[ 0, 'desc']],
             "initComplete": function(settings, json) {
                     oTable.columns.adjust().draw(false);
-
-                    min_height = $(".wrapper").outerHeight();
-                    $(".main-sidebar").css('height', min_height - 240);
             },
             ajax: {
                 url: '{!! route('system.access-logs') !!}',
@@ -210,6 +207,10 @@
                     data.login_at_from = $('#login_at_from').val();
                     data.login_at_to  = $('#login_at_to').val();
                     data.login_method  = $('#login_method').val();
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height - 240);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {

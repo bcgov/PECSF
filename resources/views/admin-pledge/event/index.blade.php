@@ -270,6 +270,10 @@
                     data.event_type = $("form.filter select[name='event_type']").val();
                     data.sub_type   = $("form.filter select[name='sub_type']").val();
                 },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
+                },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
                             { // session expired 
