@@ -183,7 +183,7 @@
     div.dataTables_wrapper div.dataTables_processing {
       top: 5%;
     }
-    
+
 </style>
 @endpush
 
@@ -229,6 +229,10 @@
                     data.frequency = $("select[name='frequency']").val();
                     data.amount_from = $("input[name='amount_from']").val();
                     data.amount_to = $("input[name='amount_to']").val();
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {

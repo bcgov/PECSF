@@ -270,9 +270,6 @@
                     oTable.page( 'first' ).draw( 'page' );
                 @endif
 
-                min_height = $(".wrapper").outerHeight();
-                $(".main-sidebar").css('min-height', min_height);
-
             },
             ajax: {
                 url: '{!! route('admin-pledge.donate-now.index') !!}',
@@ -291,6 +288,10 @@
                     data.pay_period_amt_from = $('#pay_period_amt_from').val();
                     data.pay_period_amt_to = $('#pay_period_amt_to').val();
                     data.cancelled = $('#cancelled').val();
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {

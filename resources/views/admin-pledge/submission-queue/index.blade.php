@@ -485,6 +485,12 @@
                 });
             });  
 
+
+        $(function() {
+            min_height = $(".content > .container-fluid").outerHeight();
+            $(".wrapper").css('min-height', min_height );
+        })
+
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')
     @include('donate.partials.choose-charity-js')

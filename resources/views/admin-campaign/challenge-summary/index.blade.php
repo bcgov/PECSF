@@ -78,7 +78,7 @@
       top: 5%;
     }
 
-</style>
+    </style>
 @endpush
 
 
@@ -118,6 +118,10 @@
             ajax: {
                 url: '{!! route('settings.challenge-summary.index') !!}',
                 data: function (d) {
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
