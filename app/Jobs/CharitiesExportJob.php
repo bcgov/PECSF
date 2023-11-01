@@ -78,6 +78,8 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
                     'Financial Contact Name',
                     'Financial Contact Title',
                     'Financial Contact Email',
+                    'phone',
+                    'fax',
 
                     'ongoing_program',
                     'url',
@@ -128,6 +130,8 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
             'financial_contact_name',
             'financial_contact_title',
             'financial_contact_email',
+            'phone',
+            'fax',
 
             'ongoing_program',
             'url',  
