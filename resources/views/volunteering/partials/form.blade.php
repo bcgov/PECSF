@@ -13,7 +13,7 @@
         <div class="card-body">
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="organization_code">Organization1</label>
+            <label for="organization_code">Organization</label>
             <select type="text" class="form-control " name="organization_code" id="organization_code" placeholder="">
             <option value="" selected="selected">Choose an Organization</option>
 
