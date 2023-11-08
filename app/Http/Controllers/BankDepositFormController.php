@@ -377,11 +377,11 @@ class BankDepositFormController extends Controller
                 }
 
             } elseif ($event_type == "Fundraiser") { //F****  PECSF ID
-                $existing = BankDepositForm::where("event_type","=","Gaming")
+                $existing = BankDepositForm::where("event_type","=","Fundraiser")
                 ->where("pecsf_id","LIKE","F".substr(date("Y"),2,2)."%")
                 ->orderBy("pecsf_id","desc")
                 ->get();
-
+               
                 if(count($existing) > 0){
                     $pecsf_id = "F".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
                 }
