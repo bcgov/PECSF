@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="edit-event-modal" tabindex="-1" >
+    <div class="modal fade" id="edit-event-modal" >
         <div class="modal-dialog custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
