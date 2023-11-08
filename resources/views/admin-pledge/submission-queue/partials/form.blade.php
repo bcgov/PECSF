@@ -382,7 +382,7 @@
                     </div>
 
 
-                <div style="padding:8px;" class="upload-area form-group col-md-3">
+                <div style="padding:8px; background-color: #EEE;" class="upload-area form-group col-md-12">
 
                     
                     <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
@@ -391,7 +391,7 @@
                     <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
-                <table id="attachments" class=" form-group col-md-6">
+                <table id="attachments" class=" form-group col-md-12">
 
                 </table>
             </div>
