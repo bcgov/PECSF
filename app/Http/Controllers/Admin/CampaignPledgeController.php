@@ -677,9 +677,9 @@ class CampaignPledgeController extends Controller
             $users = User::where('users.organization_id', $request->org_id)
                 ->when($term, function($query) use($term) {
                     return $query->where( function($q) use($term) {
-                        $q->whereRaw( "lower(users.name) like '%".$term."%'")
+                        $q->whereRaw( "lower(users.name) like '%".addslashes($term)."%'")
                         //   ->orWhereRaw( "lower(users.email) like '%".$term."%'")
-                            ->orWhere( "users.emplid", 'like', '%'.$term.'%');
+                            ->orWhere( "users.emplid", 'like', '%'.addslashes($term).'%');
                 });
                 })
                 ->with('primary_job')
