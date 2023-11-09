@@ -444,7 +444,7 @@ reader.readAsDataURL(file);
 
 
 $("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); });
-
+/*
 // Drag enter
 $('.upload-area').on('dragenter', function (e) {
 e.stopPropagation();
@@ -494,10 +494,12 @@ var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
         $(".invalid-feedback").show();
     }
 });
+*/
+
 $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
-$("#upload-area-text").html("Drag and Drop Or <u>Browse</u> Files");
+$("#upload-area-text").html("<u>Browse</u> Files");
 
 var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
 var file = e.target.files;
