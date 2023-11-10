@@ -29,6 +29,11 @@
                     </tr>
                     @php $total = 0; $ignore = true; @endphp
                     @foreach($pledges as $pledge)
+                        @php
+                            if($pledge->donation_type == "Annual") {
+                                $ignore = false;
+                            }
+                        @endphp
                         <tr class="">
                             <td style="width: 15%">
                                 @switch($pledge->donation_type)
@@ -116,23 +121,9 @@
                         </tr>
                     @endforeach
                 </table>
-                @php
-                foreach($pledges as $pledge){
-                    if($pledge->donation_type == "Annual")
-                    {
-                        $ignore = false;
-                        break;
-                    }
-                }
-                @endphp
-                @if($key > $currentYear || $ignore || isset($globalIgnore) || !$campaignYear->isOpen())
-                    @php
-                    if($key>$currentYear)
-                        {
-                            $globalIgnore = true;
-                        }
-                        $ignore = true;
-                    @endphp
+
+                @if($key > $currentYear ||  $ignore  || $current_pledge || !$campaignYear->isOpen())
+                    {{-- No 'duplicate' button --}}
                 @else
 
                     <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;"
@@ -141,7 +132,7 @@
                                 data-source="{{ $pledge->source }}"
                                 {{-- onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();" --}}
                                 >
-                                {{$ignore}}Duplicate this Annual Campaign pledge
+                                Duplicate this Annual Campaign pledge
                     </a>
 
                 {{-- <a style="margin-left: auto;
