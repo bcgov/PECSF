@@ -221,6 +221,10 @@
                     data.year = $('#filter-year').val();
                     data.bn   = $('#filter-bn').val();
                 },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
+                },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
                             { // session expired 
@@ -664,6 +668,6 @@
 
         });
 
-    });
+            });
     </script>
 @endpush
