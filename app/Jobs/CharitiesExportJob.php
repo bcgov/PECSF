@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\FSPool;
 use App\Models\Charity;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -136,7 +137,7 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
             'ongoing_program',
             'url',  
 
-            'f_s_pool_flag',
+            'f_s_pool_count',
             'region_code',
             'region_name',
             'percentage',
@@ -161,33 +162,20 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
 
         $filters = $this->filters;
 
-        $sql = Charity::leftJoin('f_s_pool_charities', 'f_s_pool_charities.charity_id','charities.id')
-                        ->leftJoin('f_s_pools', 'f_s_pools.id', 'f_s_pool_charities.f_s_pool_id')
-                        ->leftJoin('regions', 'f_s_pools.region_id', 'regions.id')
-                        ->where( function($query) use($filters) {
-                            $query->where('f_s_pools.start_date', '=', function ($q) use($filters) {
-                                $q->selectRaw('max(start_date)')
-                                    ->from('f_s_pools as A')
-                                    ->whereColumn('A.region_id', 'f_s_pools.region_id')
-                                    ->whereNull('A.deleted_at')
-                                    ->where('A.start_date', '<=', $filters['as_of_date'] );
-                            })
-                            ->orWhereNull('f_s_pools.start_date');
-                        })
-                        ->whereNull('f_s_pool_charities.deleted_at')
-                        ->whereNull('f_s_pools.deleted_at')
-                        ->whereNull('regions.deleted_at')
-                        ->select('charities.*', 
+        $sql = Charity::select('charities.*', 
                         DB::Raw("CONCAT(charities.designation_code, char(9)) as designation"),
                                 DB::Raw("CONCAT(charities.category_code, char(9)) as category"),
-                                DB::Raw("CONCAT(regions.code, char(9)) as region_code"),
-                                'regions.name as region_name',
-                            'f_s_pool_charities.percentage', 'f_s_pool_charities.name as supported_program',
-                            'f_s_pool_charities.contact_title', 'f_s_pool_charities.contact_name', 'f_s_pool_charities.contact_email',
+                                DB::Raw(" '' as region_code"),
+                                DB::Raw(" '' as region_name"),
+                            DB::Raw(" '' as percentage"),
+                            DB::Raw(" '' as supported_program"),
+                            DB::Raw(" '' as contact_title"),
+                            DB::Raw(" '' as contact_name"),
+                            DB::Raw(" '' as contact_email"),
                             'charities.comments',
-                            DB::Raw("case when f_s_pool_id is null then 'No' else 'Yes' end as f_s_pool_flag"),
+                            DB::Raw(" 0 as f_s_pool_count"),
                     );
-       
+                          
         // Update Process history before counting 
         ProcessHistory::UpdateOrCreate([
             'id' => $this->history_id,
@@ -202,20 +190,51 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
         $total_count = $sql->count();
         ProcessHistory::UpdateOrCreate([
             'id' => $this->history_id,
-        ],[                    
+        ],[
+           'status' => 'Processing',                    
            'total_count' => $total_count,
         ]);
         
 
         // export the data with filter selection
         $count = 0;
-        $sql->chunk(2000, function($charities) use ($handle, $fields, &$count) {
+        $sql->chunk(2000, function($charities) use ($handle, $fields, &$count, $filters) {
          
                 // additional data 
                 foreach( $charities as $charity) {
                     // $charity->business_unit_name = $charity->bus_unit->name;
                     // $charity->region_name = $charity->region->name;
                     $charity->effdt = $charity->effective_date_of_status ?  $charity->effective_date_of_status->format('m-d-Y') : null;
+
+                    // FS Pool Information
+                    $pools = FSPool::asOfDate( $filters['as_of_date'])
+                                        ->join('f_s_pool_charities', 'f_s_pools.id', 'f_s_pool_charities.f_s_pool_id')
+                                        ->join('regions', 'f_s_pools.region_id', 'regions.id')
+                                        ->where('f_s_pool_charities.charity_id', $charity->id)
+                                        ->where('f_s_pools.status', 'A')
+                                        ->select(
+                                            DB::Raw("CONCAT(regions.code, char(9)) as region_code"),
+                                           'regions.name as region_name',
+                                           'f_s_pool_charities.percentage', 'f_s_pool_charities.name as supported_program',
+                                           'f_s_pool_charities.contact_title', 'f_s_pool_charities.contact_name', 'f_s_pool_charities.contact_email',
+                                        )->get();
+
+                    if ( $pools) {
+                        $charity->f_s_pool_count = $pools->count();
+
+                        foreach ($pools as $key=>$pool) {
+                     
+                            $newline = ($pools->count() > 1 && $key + 1 < $pools->count()) ? PHP_EOL : '';
+
+                            $charity->region_code .= $pool->region_code . $newline;
+                            $charity->region_name .= $pool->region_name . $newline; 
+                            $charity->percentage .= $pool->percentage . $newline;
+                            $charity->supported_program .= $pool->supported_program . $newline;
+                            $charity->contact_title .= $pool->contact_title . $newline;
+                            $charity->contact_name .= $pool->contact_name . $newline;
+                            $charity->contact_email .= $pool->contact_email . $newline;
+                        }
+                    }
                 }
 
                 $subset = $charities->map->only( $fields );
@@ -227,12 +246,13 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
 
                 // update done count
                 $count = $count + count($charities);
-                ProcessHistory::UpdateOrCreate([
-                    'id' => $this->history_id,
-                ],[                    
-                   'status' => 'Processing',
-                   'done_count' => $count,
-                ]);
+                if (($count % 6000) == 0) {
+                    ProcessHistory::UpdateOrCreate([
+                       'id' => $this->history_id,
+                    ],[                    
+                        'done_count' => $count,
+                    ]);
+                }
 
         });
 
@@ -242,6 +262,7 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
         ProcessHistory::UpdateOrCreate([
             'id' => $this->history_id,
         ],[                    
+           'done_count' => $count, 
            'status' => 'Completed',
            'end_at' => now(),
         ]);
