@@ -146,6 +146,10 @@
                 {
                     Toast('Success', 'The setting was successfully updated.', 'bg-success' );
                 },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
+                },
                 error: function(response) {
                     if (response.status == 422) {
 

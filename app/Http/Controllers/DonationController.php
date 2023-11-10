@@ -211,7 +211,7 @@ class DonationController extends Controller {
                     {
                         $pledges_by_yearcd[$yearcd][$index]->charities = BankDepositForm::where("id","=",$pledge->id)->first()->charities;
                         if(!empty(BankDepositForm::where("id","=",$pledge->id)->first()->region()->get()->first())){
-                            $pledges_by_yearcd[$yearcd][$index]->region = BankDepositForm::where("id","=",$pledge->id)->first()->region()->get()->first()->name;
+                            $pledges_by_yearcd[$yearcd][$index]->region = BankDepositForm::where("id","=",$pledge->id)->first()->fund_supported_pool()->first()->region->name;
                         }
                     }
                     else

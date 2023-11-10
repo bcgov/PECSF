@@ -71,7 +71,7 @@
     div.dataTables_wrapper div.dataTables_processing {
       top: 5%;
     }
-    
+
 </style>
 @endpush
 
@@ -112,6 +112,10 @@
             ajax: {
                 url: '{!! route('settings.campaignyears.index') !!}',
                 data: function (d) {
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {

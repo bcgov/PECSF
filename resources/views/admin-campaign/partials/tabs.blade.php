@@ -113,13 +113,13 @@
     </li>
 
     <li class="nav-item dropdown">
-        @php $active =  ( str_contains(Route::current()->getName(), 'settings.challenge') ||
+        @php $active =  ( preg_match("/settings.challenge$/", Route::current()->getName()) ||
                           str_contains(Route::current()->getName(), 'settings.challenge-summary')
                         ) ? 'active' : ''
         @endphp
         <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Challenge Setup</a>
         <div class="dropdown-menu">
-          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.challenge') ? 'active' : ''}}"
+          <a class="dropdown-item {{ preg_match("/settings.challenge$/", Route::current()->getName()) ? 'active' : ''}}"
                 href="{{ route('settings.challenge') }}">Challenge Updates</a>
 
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.challenge-summary') ? 'active' : ''}}"
