@@ -391,15 +391,15 @@ class BankDepositFormController extends Controller
             } else {
                 if ($organization_code == "GOV") {  //S****  PECSF ID
                     $existing = BankDepositForm::whereIn("event_type", ["Cash One-Time Donation", "Cheque One-Time Donation"])
-                                ->where("pecsf_id", "LIKE", "S" . $request->bc_gov_id . "%")
+                                ->where("pecsf_id","LIKE","S".substr(date("Y"),2,2)."%")
                                 ->orderBy("pecsf_id", "desc")
                                 ->get();
 
                     if(count($existing) > 0){
-                        $pecsf_id = "S".$request->bc_gov_id.str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                        $pecsf_id = "S".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
                     }
                     else{
-                        $pecsf_id = "S".$request->bc_gov_id."001";
+                        $pecsf_id = "S".substr(date("Y"),2,2)."001";
                     }
                 } else {
                     //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
