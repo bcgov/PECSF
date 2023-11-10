@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\NonGovPledgeHistory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests\CampaignPledgeRequest;
 
 class CampaignPledgeController extends Controller
@@ -94,6 +95,18 @@ class CampaignPledgeController extends Controller
                             ->when( $request->campaign_year_id, function($query) use($request) {
                                 $query->where('campaign_year_id', $request->campaign_year_id);
                             })
+                            ->when( $request->cancelled == 'C', function($query) use($request) {
+                                $query->whereNotNull('pledges.cancelled');
+                            })
+                            ->when( $request->cancelled == 'N', function($query) use($request) {
+                                $query->whereNull('pledges.cancelled');
+                            })
+                            ->when( $request->ods_export_status == 'Y', function($query) use($request) {
+                                $query->whereNotNull('pledges.ods_export_status');
+                            })
+                            ->when( $request->ods_export_status == 'N', function($query) use($request) {
+                                $query->whereNull('pledges.ods_export_status');
+                            })
                             ->when( is_numeric($request->one_time_amt_from) || is_numeric($request->one_time_amt_to), function($query) use($request) {
                                 $from = is_numeric($request->one_time_amt_from) ? $request->one_time_amt_from : 0;
                                 $to = is_numeric($request->one_time_amt_to) ? $request->one_time_amt_to : 9999999;
@@ -119,7 +132,8 @@ class CampaignPledgeController extends Controller
                     $delete = ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null )  ?
                                     '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
                                     $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
-                    $edit = ($pledge->ods_export_status == null )  ?
+                    $edit = (($pledge->organization_id == $gov->id && $pledge->ods_export_status == null && $pledge->cancelled == null) || 
+                             ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null))  ?
                             '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>' : '';
                     return  '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
                         $edit .
@@ -177,10 +191,11 @@ class CampaignPledgeController extends Controller
         $one_time_amount_other = null;
 
         $edit_pecsf_allow = true;
+        $canCancel = false;
 
         return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears',
                     'edit_pecsf_allow',
-                    'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other'));
+                    'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other', 'canCancel'));
     }
 
     /**
@@ -264,6 +279,7 @@ class CampaignPledgeController extends Controller
                                 $query->where('pecsf_id', $request->pecsf_id);
                             })
                             ->where('campaign_year_id', $request->campaign_year_id)
+                            ->whereNull('cancelled')
                             ->first();
         if ($pledge) {
   
@@ -446,7 +462,8 @@ class CampaignPledgeController extends Controller
     {
         //
         $pledge = Pledge::where('id', $id)
-                        ->whereNull('ods_export_status')->first();
+                        ->whereNull('ods_export_status')
+                        ->whereNull('cancelled')->first();
 
         if (!($pledge)) {
             return abort(404);      // 404 Not Found
@@ -483,8 +500,18 @@ class CampaignPledgeController extends Controller
             }
         }
 
+        $canCancel = false;
+        if ($pledge && $pledge->ods_export_at == null && $pledge->cancelled == null) {
+                $gov_organization = Organization::where('code', 'GOV')->first();
+                $is_GOV = ($pledge->organization_id == $gov_organization->id);
+
+                if ($pledge->campaign_year->isOpen() && ($is_GOV) ) {
+                    $canCancel = true;
+                }   
+        }
+
         return view('admin-pledge.campaign.wizard', compact('edit_pecsf_allow', 'pledge', 'pool_option', 'fspools', 'organization', 'organizations','campaignYears',
-                    'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other'));
+                    'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other','one_time_amount_other', 'canCancel'));
 
     }
 
@@ -665,6 +692,33 @@ class CampaignPledgeController extends Controller
     }
 
 
+    public function cancel(Request $request, $id)
+    {
+
+        //
+        $gov_organization = Organization::where('code', 'GOV')->first();
+        
+        $pledge = Pledge::where('id', $id)
+                            ->whereNull('cancelled')
+                            ->whereNull('ods_export_status')
+                            ->where('organization_id', $gov_organization->id)
+                            ->first();
+
+        if (!($pledge)) {
+            return abort(404);      // 404 Not Found
+        }
+
+        // Cancel the pledge
+        $pledge->cancelled = 'Y';
+        $pledge->cancelled_by_id = Auth::Id();
+        $pledge->cancelled_at = now();
+        $pledge->save();
+
+        Session::flash('success', 'Pledge with Transaction ID ' . $pledge->id . ' have been cancelled successfully' ); 
+        return response()->noContent();
+
+    }
+
     public function getUsers(Request $request)
     {
 
@@ -737,6 +791,7 @@ class CampaignPledgeController extends Controller
                             ->when($request->org_id != $gov->id, function($q) use($request) {
                                 return $q->where('pecsf_id', $request->pecsf_id);
                             })
+                            ->whereNull('cancelled')
                             ->first();
 
             $result = (object) [ 'id' => ($pledge ? $pledge->id : null) ];

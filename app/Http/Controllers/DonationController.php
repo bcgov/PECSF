@@ -37,7 +37,9 @@ class DonationController extends Controller {
         $current_pledge = Pledge::where('emplid', $user->emplid)
                          ->whereHas('campaign_year', function($q){
                              $q->where('calendar_year','=', today()->year + 1 );
-                         })->first();
+                         })
+                         ->whereNull('cancelled')
+                         ->first();
 
         // NOTE: Must use the raw select statement in Laravel for querying this custom SQL view due to the performance issue
         // $all_pledges = DB::select( DB::raw("SELECT * FROM pledge_history_view WHERE (GUID = '" . $user->guid .
@@ -49,6 +51,7 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.pay_period_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->whereNull('pledges.cancelled')
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->whereNotNull('pledges.emplid')
@@ -65,6 +68,7 @@ class DonationController extends Controller {
                 ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
                 ->where('pledges.one_time_amount', '<>', 0)
                 ->whereNull('pledges.deleted_at')
+                ->whereNull('pledges.cancelled')
                 ->where('pledges.organization_id', $user->organization_id)
                 ->where('pledges.emplid', $user->emplid)
                 ->whereNotNull('pledges.emplid')
@@ -79,6 +83,7 @@ class DonationController extends Controller {
 
         $donate_now_pledges = DB::table('donate_now_pledges')
                 ->whereNull('donate_now_pledges.deleted_at')
+                ->whereNull('donate_now_pledges.cancelled')
                 ->where('donate_now_pledges.organization_id', $user->organization_id)
                 ->where('donate_now_pledges.emplid', $user->emplid)
                 ->whereNotNull('donate_now_pledges.emplid')
@@ -92,6 +97,7 @@ class DonationController extends Controller {
 
         $special_campaign_pledges = DB::table('special_campaign_pledges')
                 ->whereNull('special_campaign_pledges.deleted_at')
+                ->whereNull('special_campaign_pledges.cancelled')
                 ->where('special_campaign_pledges.organization_id', $user->organization_id)
                 ->where('special_campaign_pledges.emplid', $user->emplid)
                 ->whereNotNull('special_campaign_pledges.emplid')

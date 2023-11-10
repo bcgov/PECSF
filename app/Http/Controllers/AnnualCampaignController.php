@@ -118,6 +118,7 @@ class AnnualCampaignController extends Controller
                             // ->where('user_id', Auth::id())
                             ->where('emplid', $user->emplid)
                             ->where('campaign_year_id', $campaign_year->id)
+                            ->whereNull('cancelled')
                             ->first();
 
         $is_duplicate = ($duplicate_pledge && !($pledge)) ? true : false;
@@ -392,6 +393,7 @@ class AnnualCampaignController extends Controller
         $old_pledge = Pledge::where('organization_id', $user->organization_id ? $user->organization_id : $organization->id)
                             ->where('emplid', $user->emplid)
                             ->where('campaign_year_id', $request->campaign_year_id)
+                            ->whereNull('cancelled')
                             ->first();
         $created_by_id = $old_pledge ? $old_pledge->created_by_id :  Auth::id();                           
         $deptid = $old_pledge ? $old_pledge->deptid : $deptid;              // deptid -- no update when edit  
@@ -402,6 +404,7 @@ class AnnualCampaignController extends Controller
             // 'user_id' => Auth::id(),
             'emplid' => $user->emplid,
             'campaign_year_id' => $request->campaign_year_id,
+            'cancelled' => null,
         ],[
             'user_id' => Auth::id(),
 
@@ -856,7 +859,9 @@ class AnnualCampaignController extends Controller
 
     public function summaryPdf(Request $request, $id) {
 
-        $pledge = Pledge::select("pledges.*")->with("campaign_year")->where('pledges.id', $id)->first();
+        $pledge = Pledge::select("pledges.*")->with("campaign_year")->where('pledges.id', $id)
+                                ->whereNull('cancelled')
+                                ->first();
 
 
         // Make sure this transaction is for the current logged user
@@ -1124,6 +1129,7 @@ class AnnualCampaignController extends Controller
                                     ->where('campaign_years.calendar_year',  today()->year + 1 )
                                     // ->where('user_id', Auth::id() )
                                     ->where('emplid', $user->emplid )
+                                    ->whereNull('cancelled')
                                     ->first();
         if ($current_pledge) {
             return redirect()->route('donations.list')->with('error','The Annual Campaign pledge have already created, no duplication allowed!');
