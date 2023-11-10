@@ -1,6 +1,6 @@
 <li class="nav-item">
     
-    <a class="nav-link nav-bar-cus" data-widget="pushmenu" href="#"
+    <a class="nav-link nav-bar-cus" data-widget="pushmenu" href="#" aria-label="This button will hide the left menu bar"
         @if(config('adminlte.sidebar_collapse_remember'))
             data-enable-remember="true"
         @endif

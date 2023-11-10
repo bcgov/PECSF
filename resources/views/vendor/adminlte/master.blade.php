@@ -228,6 +228,19 @@
         });
     </script>
 
+    {{-- Accessibility feature required for the sidebar --}}
+    <script>
+        $(function() {
+            $(document).on('collapsed.lte.pushmenu', function () {
+			    $('.main-sidebar a').attr('tabindex', -1);
+                $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will display the left menu bar');
+		    }).on('shown.lte.pushmenu', function () {
+			    $('.main-sidebar a').removeAttr('tabindex');
+                $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will hide the left menu bar');
+            });
+        });
+    </script>
+
     <script>
         // <!-- Snowplow starts plowing - Standalone vE.2.14.0 -->
         
