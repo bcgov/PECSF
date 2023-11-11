@@ -204,9 +204,6 @@
             fixedHeader: true,
             "initComplete": function(settings, json) {
                     oTable.columns.adjust().draw(false);
-
-                    min_height = $(".wrapper").outerHeight();
-                    $(".main-sidebar").css('min-height', min_height -240);
             },
             ajax: {
                 url: '{!! route('system.schedule-job-audits.index') !!}',
@@ -218,6 +215,10 @@
                     data.start_time = $('#start_time').val();
                     data.end_time  = $('#end_time').val();
                     data.include_trashed = $('#include_trashed').prop("checked") ? '1' : '0';
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height - 240);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
