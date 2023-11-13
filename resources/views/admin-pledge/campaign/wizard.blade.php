@@ -39,7 +39,7 @@
         </div>
     </div>
 
-  <div class="card-body py-0 pt-4">
+  <div class="card-body py-0 pt-0">
     <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}"
             id="admin-pldege-campaign-form" method="POST">
         @csrf
@@ -48,6 +48,23 @@
             <input type="hidden" id="pledge_id" name="pledge_id" value="{{ $pledge->id }}">
         @endisset
         <input type="hidden" id="step" name="step" value="">
+
+
+        <div class="d-flex  align-items-center my-2 ">
+            <h4><strong>Transaction ID :</strong> {{ $pledge->id }}</h4>
+            <div class="flex-fill"></div>
+
+            @if($canCancel)
+            <div class="d-flex  align-items-center ">
+                <div class="mr-2">
+                    <button  class="cancel-pledge btn btn-outline-danger mr-2" >Cancel this transaction</button>
+                </div>
+            </div>
+            @endif
+        </div>
+        <hr>
+
+
 
         {{-- Nav Items --}}
         <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">
@@ -314,7 +331,7 @@
 
 $(function () {
 
-    // First load
+     // First load
     var first_load = true;
 
     // For keep tracking the current page in wizard, and also count for the signle submission only
@@ -865,6 +882,74 @@ $(function () {
     });
 
 });
+
+
+// Cancel
+@if($canCancel)
+
+    $(function () {
+
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        });
+
+        $(document).on("click", ".cancel-pledge" , function(e) {
+            e.preventDefault();
+
+            id = {{ $pledge->id }};
+            // title = $pledge->id;
+
+            Swal.fire( {
+                title: 'Are you sure you want to cancel the pledge "' + id + '" ?',
+                text: 'This action cannot be undone.',
+                // icon: 'question',
+                showDenyButton: true,
+                // showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
+                buttonsStyling: false,
+                //confirmButtonClass: 'btn btn-danger',
+                customClass: {
+                	confirmButton: 'btn btn-primary', //insert class here
+                    cancelButton: 'btn btn-danger ml-2', //insert class here
+                    denyButton: 'btn btn-outline-secondary ml-2',
+                }
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // Swal.fire('Saved!', '', '')
+                    $.ajax({
+                        method: "POST",
+                        url:  '/admin-pledge/campaign/' + id + '/cancel',
+                        success: function(data)
+                        {
+                            // oTable.ajax.reload(null, false);	// reload datatables
+                            // Toast('Success', 'Pledge ' + id +  ' was successfully cancel.', 'bg-success' );
+                            console.log(data );
+                            window.location = '{{ route("admin-pledge.campaign.index") }}';
+
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.responseJSON.error,
+                            })
+                            console.log(response.responseJSON.error);
+                        }
+                    });
+                } else if (result.isCancelledDenied) {
+                    // Swal.fire('Changes are not saved', '', '')
+                }
+            })
+
+        });
+
+    });
+@endif
 
 </script>
 
