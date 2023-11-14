@@ -242,6 +242,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
             })
             // ->where('pledges.pay_period_amount', '<>', 0)
             ->whereNull('pledges.deleted_at')
+            ->whereNull('pledges.cancelled')
             ->when( $filters['year'], function($query) use($filters) {
                 $query->where('campaign_years.calendar_year', $filters['year']);
             })
