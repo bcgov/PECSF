@@ -812,8 +812,14 @@ class BankDepositFormController extends Controller
             $organizations = Organization::where("status","=","A")->limit(30)->get();
         }
         else{
-            $organizations = Organization::where("code", "LIKE", $request->term . "%")->where("status","=","A")->get();
+            $organizations = Organization::where( function($q) use($request) {
+                                    $q->where("code", "like", "%" . $request->term . "%")
+                                      ->orWhere("name", "like", "%" . $request->term . "%");
+                                })
+                                ->where("status","=","A")
+                                ->get();
         }
+
         $response = ['results' => []];
         $response['results'][] = ["id" => "false", "text" => "Choose an organization"];
         foreach ($organizations as $organization) {
