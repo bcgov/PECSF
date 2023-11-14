@@ -38,7 +38,7 @@
                     <th style="width:18%;">Donation Type</th>
                     <th style="width:62%;">Benefitting Charity</th>
                     <th style="width:10%;">Frequency</th>
-                    <th style="width:10%;text-align:right;" class="percentage-amount-head-title">Percentage</th>
+                    <th style="width:10%;text-align:right;" class="percentage-amount-head-title">{{ ($viewMode ?? '') !== 'pdf' ? 'Percentage' : 'Amount'}}</th>
                 </tr>
                 @foreach ($charities as $charity)
                 <tr>
