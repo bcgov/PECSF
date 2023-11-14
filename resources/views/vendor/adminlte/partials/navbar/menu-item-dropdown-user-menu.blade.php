@@ -50,7 +50,7 @@
 
 <li class="nav-item dropdown user-menu">
     {{-- User menu toggler --}}
-    <button href="#" class="dropdown-toggle btn btn-outline-info" data-toggle="dropdown">
+    <button href="#" class="dropdown-toggle btn btn-outline-info" data-toggle="dropdown" aria-haspopup="true">
         @if(config('adminlte.usermenu_image'))
             <img src="{{ Auth::user()->adminlte_image() }}"
                  class="user-image img-circle elevation-2"
@@ -62,7 +62,7 @@
     </button>
 
     {{-- User menu dropdown --}}
-    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" role="menu" aria-labelledby="menubutton" aria-expanded="false">
 
         {{-- User menu header --}}
         @if(!View::hasSection('usermenu_header') && config('adminlte.usermenu_header'))
@@ -95,14 +95,14 @@
         @endif
 
         {{-- User menu footer --}}
-        <li class="user-footer">
+        <li class="user-footer" role="none">
             @if($profile_url)
                 <a href="{{ $profile_url }}" class="btn btn-default btn-flat">
                     <i class="fa fa-fw fa-user text-lightblue"></i>
                     {{ __('adminlte::menu.profile') }}
                 </a>
             @endif
-            <a class="btn btn-default btn-flat float-right @if(!$profile_url) btn-block @endif"
+            <a class="btn btn-default btn-flat float-right @if(!$profile_url) btn-block @endif" role="menuitem"
                href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="fa fa-fw fa-power-off text-red"></i>
                 {{ __('adminlte::adminlte.log_out') }}

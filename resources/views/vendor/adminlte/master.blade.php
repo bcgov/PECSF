@@ -228,9 +228,11 @@
         });
     </script>
 
-    {{-- Accessibility feature required for the sidebar --}}
+    {{-- Accessibility features --}}
+    @include('aria-accessibility.menu-button-links-js')
     <script>
         $(function() {
+            {{-- Sidebar open/close button --}}
             $(document).on('collapsed.lte.pushmenu', function () {
 			    $('.main-sidebar a').attr('tabindex', -1);
                 $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will display the left menu bar');
@@ -238,7 +240,14 @@
 			    $('.main-sidebar a').removeAttr('tabindex');
                 $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will hide the left menu bar');
             });
+
+            // Initialize menu buttons
+            $('li.user-menu, li.has-treeview').each( function() {
+                new MenuButtonLinks( $(this).get(0) );
+            });
+  
         });
+
     </script>
 
     <script>
