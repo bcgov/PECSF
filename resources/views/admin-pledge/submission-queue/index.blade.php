@@ -249,6 +249,7 @@
                             $("#bcgovid").show();
                         }
                         else{                            
+                            // If "non-GOV" is selected, disable specific options
                             disableOneTime(); 
                             
                             $("#pecsfid").find("label").show();
