@@ -147,6 +147,7 @@ class EventSubmissionQueueController extends Controller
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
             ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")
+            ->with('form_submitted_by')
             ->get();
             
         foreach($submissions as $index => $submission){
