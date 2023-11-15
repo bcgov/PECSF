@@ -250,7 +250,9 @@
                         }
                         else{                            
                             // If "non-GOV" is selected, disable specific options
-                            disableOneTime(); 
+                            if(data[0].organization_code != "GOV") {
+                                disableOneTime(); 
+                            }
                             
                             $("#pecsfid").find("label").show();
                             $("#pecsfid").find("input").show();
