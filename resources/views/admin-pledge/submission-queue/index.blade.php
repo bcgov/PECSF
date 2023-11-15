@@ -237,6 +237,10 @@
                         $("#bc_gov_id").val(data[0].bc_gov_id);
 
                         if(data[0].organization_code == "GOV"){
+                            //enable all event type by default
+                            var eventTypeDropdown = $('#event_type');
+                            eventTypeDropdown.find('option').prop('disabled', false);  
+
                             $("#pecsfid").find("label").hide();
                             $("#pecsfid").find("input").hide();
                             $("#bcgovid").find("label").show();
@@ -244,7 +248,10 @@
                             $("#pecsfid").hide();
                             $("#bcgovid").show();
                         }
-                        else{
+                        else{                            
+                            // If "non-GOV" is selected, disable specific options
+                            disableOneTime(); 
+                            
                             $("#pecsfid").find("label").show();
                             $("#pecsfid").find("input").show();
                             $("#bcgovid").find("label").hide();
@@ -361,25 +368,33 @@
         }
 
 
-        function deleteAttachment(formid, filename){
+        function disableOneTime() {
+            var eventTypeDropdown = $('#event_type');
 
-            // Construct the URL with parameters
-            var deleteUrl = '/bank_deposit_form/' + formid + '/delete' + filename;
+            // Enable all options
+            eventTypeDropdown.find('option').prop('disabled', false);
 
-            // Send an AJAX request to delete the attachment
-            $.ajax({
-                type: 'GET', // GET method
-                url: deleteUrl, // The URL with parameters
-                success: function(data) {
-                    // Handle the response, e.g., display a success message
-                    $('a[attr-id="' + attrIdValue + '"]').hide();
-                },
-                error: function(xhr, status, error) {
-                    alert("An error occurred: " + error);
-                }
-            });
-        
+            eventTypeDropdown.find('option[value="Cash One-Time Donation"]').prop('disabled', true);
+            eventTypeDropdown.find('option[value="Cheque One-Time Donation"]').prop('disabled', true);
+
+            // Set the selected index and update the displayed option text
+            var selectedIndex = 0; // Index of the default option
+            eventTypeDropdown.find('option').eq(selectedIndex).prop('selected', true);
+            eventTypeDropdown.trigger('change');
         }
+
+
+        $('#organization_code').change(function(e){
+            var selectedOrganization = $(this).val();
+            if (selectedOrganization !== 'GOV' && selectedOrganization !== 'RET') {
+                disableOneTime();    
+            } else {
+                var eventTypeDropdown = $('#event_type');
+                eventTypeDropdown.find('option').prop('disabled', false);
+            }    
+        });    
+
+
 
         $(".status").change(function(e){
             e.preventDefault();

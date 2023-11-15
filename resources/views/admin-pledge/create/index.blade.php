@@ -92,6 +92,32 @@
             });
         });
 
+        function disableOneTime() {
+            var eventTypeDropdown = $('#event_type');
+
+            // Enable all options
+            eventTypeDropdown.find('option').prop('disabled', false);
+
+            eventTypeDropdown.find('option[value="Cash One-Time Donation"]').prop('disabled', true);
+            eventTypeDropdown.find('option[value="Cheque One-Time Donation"]').prop('disabled', true);
+
+            // Set the selected index and update the displayed option text
+            var selectedIndex = 0; // Index of the default option
+            eventTypeDropdown.find('option').eq(selectedIndex).prop('selected', true);
+            eventTypeDropdown.trigger('change');
+        }
+
+
+        $('#organization_code').change(function(e){
+            var selectedOrganization = $(this).val();
+            if (selectedOrganization !== 'GOV' && selectedOrganization !== 'RET') {
+                disableOneTime();    
+            } else {
+                var eventTypeDropdown = $('#event_type');
+                eventTypeDropdown.find('option').prop('disabled', false);
+            }    
+        }); 
+
     </script>
     @include('volunteering.partials.add-event-js')
     @include('donate.partials.choose-charity-js')
