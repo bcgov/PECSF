@@ -201,7 +201,15 @@
                     $('#form_submitter').val(data[0]['form_submitter_id']);
                     $("#event_type").val(data[0].event_type).select2();
                     $("#business_unit").val(data[0].business_unit).select2();
-                    $("[name='event_type']").trigger("change");
+
+                    $("#organization_code").html("<option value='"+data[0].organization_code+"'>"+data[0].organization_code+"</option>");
+                    $("#organization_code").select2({
+                        ajax: {
+                            url: '/bank_deposit_form/organization_code',
+                            dataType: 'json'
+                        }
+                    });
+                    $("[name='event_type']").trigger("change");                    
                     $("#deposit_amount").val(data[0].deposit_amount);
                     $("#deposit_date").val(data[0].deposit_date);
                     $("#campaign_year").html( (data[0].calendar_year - 1));
@@ -260,13 +268,6 @@
                     $("#region").val(data[0].region_id).select2();
                     $("#description").val(data[0].description);
 
-                    $("#organization_code").html("<option value='"+data[0].organization_code+"'>"+data[0].organization_code+"</option>");
-                    $("#organization_code").select2({
-                        ajax: {
-                            url: '/bank_deposit_form/organization_code',
-                            dataType: 'json'
-                        }
-                    });
 
 
 
