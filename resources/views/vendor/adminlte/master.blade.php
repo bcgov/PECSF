@@ -241,6 +241,11 @@
                 $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will hide the left menu bar');
             });
 
+            // Special handle for side menu item - administrator/dashboard
+            $('a[href*="administrators/dashboard"]').on( "click", function() {
+                window.location.href=$(this).attr('href');
+            } );
+
             // Initialize menu buttons
             $('li.user-menu, li.has-treeview').each( function() {
                 new MenuButtonLinks( $(this).get(0) );

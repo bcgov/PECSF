@@ -50,7 +50,7 @@
 
 <li class="nav-item dropdown user-menu">
     {{-- User menu toggler --}}
-    <button href="#" class="dropdown-toggle btn btn-outline-info" data-toggle="dropdown" aria-haspopup="true">
+    <button href="#" class="dropdown-toggle btn btn-outline-primary" data-toggle="dropdown" aria-haspopup="true">
         @if(config('adminlte.usermenu_image'))
             <img src="{{ Auth::user()->adminlte_image() }}"
                  class="user-image img-circle elevation-2"
