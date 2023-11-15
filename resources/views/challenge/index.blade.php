@@ -215,9 +215,6 @@
 <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
 <script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
 
-<script src="{{ asset('vendor/echarts/5.4.3/echarts.min.js') }}" ></script>
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" ></script> --}}
-
 <script>
 
 $(function() {
@@ -271,10 +268,6 @@ $(function() {
         serverSide: false,
         // select: true,
         // paging: false,
-        "initComplete": function(settings, json) {
-            min_height = $(".wrapper").outerHeight();
-            $(".main-sidebar").css('min-height', min_height);
-        },
         ajax: {
             url: '{!! route('challenge.index') !!}',
             data: function (data) {
@@ -369,6 +362,7 @@ $(function() {
     });
 
     // Charting Mode 
+    $('#chart-section').hide();
     var myChart = echarts.init(document.getElementById('main'));
 
     $(document).on('click', '#list-mode-btn', function() {
@@ -412,6 +406,8 @@ $(function() {
                 },
                 dataType: 'json',
                 success: function (data) {
+
+                    myChart.resize();
 
                     myChart.setOption({
                         title: {

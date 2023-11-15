@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="edit-event-modal" tabindex="-1" >
+    <div class="modal fade" id="edit-event-modal" >
         <div class="modal-dialog custom-modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -484,6 +484,12 @@
                     location.reload();
                 });
             });  
+
+
+        $(function() {
+            min_height = $(".content > .container-fluid").outerHeight();
+            $(".wrapper").css('min-height', min_height );
+        })
 
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')

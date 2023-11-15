@@ -199,7 +199,7 @@
       top: 5%;
     }
 
-</style>
+    </style>
 @endpush
 
 
@@ -236,10 +236,6 @@
             fixedColumn: true,
             "initComplete": function(settings, json) {
                     oTable.columns.adjust().draw(false);
-
-                    min_height = $(".wrapper").outerHeight();
-                    $(".main-sidebar").css('min-height', min_height);
-
             },
             ajax: {
                 url: '{!! route('system.auditing.index') !!}',
