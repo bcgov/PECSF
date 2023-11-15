@@ -250,7 +250,7 @@
                         }
                         else{                            
                             // If "non-GOV" is selected, disable specific options
-                            if(data[0].organization_code != "GOV") {
+                            if(data[0].organization_code != "RET") {
                                 disableOneTime(); 
                             }
                             
