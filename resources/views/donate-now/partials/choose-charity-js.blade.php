@@ -124,7 +124,7 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
-            if ($(".organization").length > 2) {
+            if ($(".organization").length > 1) {
                     Toast('More than one charity were specified','Please be aware, only one charity is required for Donate Now pledge.',"bg-danger");
                     return false;
             }
