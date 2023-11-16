@@ -24,16 +24,16 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-setInterval(function() {
+// setInterval(function() {
 
-    if(($(".main-sidebar").height() - $(".content-wrapper").height()) > 40){
-        $(".content-wrapper").css("min-height", $(".main-sidebar").height()+"px");
-        $(".main-sidebar").css("min-height", $(".content-wrapper").height()+40+"px");
-    }
+//     if(($(".main-sidebar").height() - $(".content-wrapper").height()) > 40){
+//         $(".content-wrapper").css("min-height", $(".main-sidebar").height()+"px");
+//         $(".main-sidebar").css("min-height", $(".content-wrapper").height()+40+"px");
+//     }
 
 
 
-},100);
+// },100);
 
 $("button").click(function(){
     $(this).blur();

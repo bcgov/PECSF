@@ -378,17 +378,17 @@
 
             <div class="form-row form-body">
 
-                <div class="col-md-12 upload-area"> <span style="padding:10px;">Drag and Drop or Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</span>
+                <div class="col-md-12 upload-area"> <span style="padding:10px;">Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</span>
                     </div>
 
 
                 <div style="padding:8px;" class="upload-area form-group col-md-3">
 
-                    
+                <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;" id="upload-area-text" for="attachment_input_1">
                     <i style="color:#1a5a96;" class="fas fa-file-upload fa-5x"></i>
                     <br>
                     <br>
-                    <a onclick="$('#attachment_input_1').click();" style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;" id="upload-area-text" for="attachment_input_1">Drag and Drop Or <u>Browse</u> Files</a>
+                    <u>Browse</u> Files</a>
                     <input style="display:none" id="attachment_input_1" name="attachments[]" type="file" />
                 </div>
                 <table id="attachments" class=" form-group col-md-6">

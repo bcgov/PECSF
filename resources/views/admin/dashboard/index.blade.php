@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 @section('content')
-    <div class="container">
+    <div class="container" style="min-height: 1200px">
         <div class="row">
             <div class="col text-center">
                 <h1 class="text-primary">Welcome, PECSF Administrator</h1>

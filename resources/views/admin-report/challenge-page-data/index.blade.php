@@ -213,15 +213,15 @@ $(function() {
         // select: true,
         paging: true,
         pageLength: 100,
-        "initComplete": function(settings, json) {
-            min_height = $(".wrapper").outerHeight();
-            $(".main-sidebar").css('min-height', min_height);
-        },
         ajax: {
             url: '{!! route('reporting.challenge-page-data') !!}',
             data: function (data) {
                 data.campaign_year = $("select[name='year']").val();
                 data.as_of_date = $("select[name='as_of_date']").val();
+            },
+            complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
             },
             error: function(xhr, resp, text) {
                     if (xhr.status == 401) {

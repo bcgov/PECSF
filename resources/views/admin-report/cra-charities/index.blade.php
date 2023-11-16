@@ -239,6 +239,10 @@
                 data: function (data) {
                     data.year = $("input[name='as_of_date']").val();
                 },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
+                },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
                             { // session expired 

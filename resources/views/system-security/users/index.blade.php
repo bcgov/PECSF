@@ -266,9 +266,6 @@
             fixedHeader: true,
             "initComplete": function(settings, json) {
                     oTable.columns.adjust().draw(false);
-
-                    min_height = $(".wrapper").outerHeight();
-                    $(".main-sidebar").css('min-height', min_height - 240);
             },            
             ajax: {
                 url: '{!! route('system.users.index') !!}',
@@ -286,6 +283,10 @@
                     data.last_signon_to  = $('#last_signon_to').val();
                     data.last_sync_from = $('#last_sync_from').val();
                     data.last_sync_to  = $('#last_sync_to').val();
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height - 240);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
