@@ -5,9 +5,10 @@ namespace App\Models;
 use Carbon\Carbon;
 use App\Models\CampaignYear;
 use App\Models\Organization;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pledge extends Model implements Auditable
 {
@@ -48,6 +49,27 @@ class Pledge extends Model implements Auditable
     protected $appends = [
         'frequency',
     ];
+
+    // Class Method 
+    public static function hasDataToSend() {
+            
+        $row_count = self::whereExists(function ($query) {
+                                $query->select(DB::raw(1))
+                                    ->from('organizations')
+                                    ->whereColumn('organizations.id', 'pledges.organization_id')
+                                    ->where('organizations.code', 'GOV');
+                            })
+                            ->whereNull('pledges.ods_export_status')
+                            ->whereNull('pledges.cancelled')
+                            ->count();
+
+        if ($row_count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }  
 
     public function getFrequencyAttribute() {
 
