@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\Pledge;
 use Illuminate\Support\Facades\App;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -40,11 +41,44 @@ class Kernel extends ConsoleKernel
 
         if (env('TASK_SCHEDULING_OUTBOUND_PSFT_ENABLED')) 
         { 
-                // Note: The export processes are only execute in TEST and Production  
+                // Note: The export processes are only execute in TEST and Production (1000 per hour limiation on ODS) 
                 $schedule->command('command:ExportPledgesToPSFT')
-                        ->dailyAt('1:00')
-                        ->environments(['TEST', 'prod'])
-                        ->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('00:50')->environments(['TEST', 'prod'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                $schedule->command('command:ExportPledgesToPSFT')
+                         ->when(function () {
+                             return Pledge::hasDataToSend();
+                         })
+                        ->dailyAt('01:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->when(function () {
+                                return Pledge::hasDataToSend();
+                        })
+                        ->dailyAt('02:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->when(function () {
+                                return Pledge::hasDataToSend();
+                        })
+                        ->dailyAt('03:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->when(function () {
+                                return Pledge::hasDataToSend();
+                        })
+                        ->dailyAt('04:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->when(function () {
+                                return Pledge::hasDataToSend();
+                        })
+                        ->dailyAt('05:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->when(function () {
+                                return Pledge::hasDataToSend();
+                        })
+                        ->dailyAt('06:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                        
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->when(function () {
+                              return Pledge::hasDataToSend();
+                        })
+                        ->dailyAt('7:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                                                
         }
 
         if (env('TASK_SCHEDULING_OUTBOUND_BI_ENABLED')) 
@@ -53,7 +87,7 @@ class Kernel extends ConsoleKernel
                         ->weekdays()
                         ->at('1:15')
                         ->environments(['TEST', 'prod'])
-                        ->appendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
+                        ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
 
         }
 

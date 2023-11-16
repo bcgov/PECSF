@@ -292,6 +292,10 @@ class ExportPledgesToPSFT extends Command
 
             }
 
+            if ($this->row_count >= 998) {
+                break;      // avoid the 1000 per hour limit in Production 
+            }
+
         }
 
 
