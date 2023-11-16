@@ -146,13 +146,13 @@
 
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img class="d-block w-100" src="{{asset('img/home/01.jpeg')}}" alt="A person is holding a poster that says #PECSF Proud! $2 Million">
+                                <img class="d-block w-100" src="{{asset('img/home/01.jpeg')}}" alt="First slide">
                             </div>
                             <div class="carousel-item">
-                               <img class="d-block w-100" src="{{asset('img/home/02.jpg')}}" alt="A picture of the PECSF team holding posters that says #PECSF Proud! $2 Million and #PECSF proud">
+                               <img class="d-block w-100" src="{{asset('img/home/02.jpg')}}" alt="Second slide">
                             </div>
                             <div class="carousel-item">
-                                <img class="d-block w-100" src="{{asset('img/home/04.jpg')}}" alt="A picture of the PECSF team holding posters that says #PECSF Proud! $2 Million and #PECSF proud">
+                                <img class="d-block w-100" src="{{asset('img/home/04.jpg')}}" alt="Third slide">
                             </div>
                         </div>
                     </div>
