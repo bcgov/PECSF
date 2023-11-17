@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\BankDepositForm;
-use App\Models\BankDepositFormOrganizations;
-use App\Models\BankDepositFormAttachments;
-use App\Models\Charity;
-use App\Models\EmployeeJob;
-use App\Models\Organization;
+use App\Models\City;
+use App\Models\User;
+use App\Models\FSPool;
 use App\Models\Pledge;
-use App\Models\ProcessHistory;
+use App\Models\Region;
+use App\Models\Charity;
+use App\Models\Department;
+use App\Models\EmployeeJob;
+use App\Models\BusinessUnit;
+use App\Models\CampaignYear;
+use App\Models\Organization;
 use Illuminate\Http\Request;
+use App\Models\ProcessHistory;
+
+use App\Models\BankDepositForm;
+use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
-use App\Models\FSPool;
-use App\Models\Region;
-use App\Models\BusinessUnit;
-use App\Models\Department;
-use App\Models\CampaignYear;
-use App\Models\User;
-use App\Models\City;
-use Illuminate\Support\Facades\Auth;
+use App\Models\BankDepositFormAttachments;
+use App\Models\BankDepositFormOrganizations;
 
 class BankDepositFormController extends Controller
 {
@@ -75,7 +76,7 @@ class BankDepositFormController extends Controller
             }
 
             foreach ($searchValues as $term) {
-                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
+                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower(addslashes($term)) . "%'");
             }
             return $q->orderby('charity_name','asc');
 
@@ -348,6 +349,67 @@ class BankDepositFormController extends Controller
             }
         }
 
+        $organization_code = $request->organization_code;
+        $event_type = $request->event_type;
+        $pecsf_id = '';
+        if($organization_code == "RET"){ //R****  PECSF ID
+            $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0){
+                $pecsf_id = "R".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+            }
+            else{
+                $pecsf_id = "R".substr(date("Y"),2,2)."001";
+            }
+        } else {
+            if($event_type == "Gaming"){ //G****  PECSF ID
+                $existing = BankDepositForm::where("event_type","=","Gaming")
+                ->where("pecsf_id","LIKE","G".substr(date("Y"),2,2)."%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+                if(count($existing) > 0){
+                    $pecsf_id = "G".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                }
+                else{
+                    $pecsf_id = "G".substr(date("Y"),2,2)."001";
+                }
+
+            } elseif ($event_type == "Fundraiser") { //F****  PECSF ID
+                $existing = BankDepositForm::where("event_type","=","Fundraiser")
+                ->where("pecsf_id","LIKE","F".substr(date("Y"),2,2)."%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+               
+                if(count($existing) > 0){
+                    $pecsf_id = "F".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                }
+                else{
+                    $pecsf_id = "F".substr(date("Y"),2,2)."001";
+                }
+            } else {
+                if ($organization_code == "GOV") {  //S****  PECSF ID
+                    $existing = BankDepositForm::whereIn("event_type", ["Cash One-Time Donation", "Cheque One-Time Donation"])
+                                ->where("pecsf_id","LIKE","S".substr(date("Y"),2,2)."%")
+                                ->orderBy("pecsf_id", "desc")
+                                ->get();
+
+                    if(count($existing) > 0){
+                        $pecsf_id = "S".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                    }
+                    else{
+                        $pecsf_id = "S".substr(date("Y"),2,2)."001";
+                    }
+                } else {
+                    //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
+                }
+            } 
+
+        }
+
+
         $form = BankDepositForm::Create(
             [
                 'business_unit' => $request->business_unit,
@@ -368,7 +430,7 @@ class BankDepositFormController extends Controller
                 'address_province' => $request->province,
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
-                'pecsf_id' => $request->pecsf_id,
+                'pecsf_id' => $pecsf_id,
 
                 'deptid' => $deptid,
                 'dept_name'  => $dept_name,
@@ -378,6 +440,7 @@ class BankDepositFormController extends Controller
                 'updated_by_id' => Auth::id(),
             ]
         );
+        
 
         //var_dump($request->all());
 
@@ -457,6 +520,8 @@ class BankDepositFormController extends Controller
             'event_type'         => 'required',
             //'sub_type'         => 'required',
             //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
+            'bc_gov_id'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
+            'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
@@ -750,8 +815,14 @@ class BankDepositFormController extends Controller
             $organizations = Organization::where("status","=","A")->limit(30)->get();
         }
         else{
-            $organizations = Organization::where("code", "LIKE", $request->term . "%")->where("status","=","A")->get();
+            $organizations = Organization::where( function($q) use($request) {
+                                    $q->where("code", "like", "%" . $request->term . "%")
+                                      ->orWhere("name", "like", "%" . $request->term . "%");
+                                })
+                                ->where("status","=","A")
+                                ->get();
         }
+
         $response = ['results' => []];
         $response['results'][] = ["id" => "false", "text" => "Choose an organization"];
         foreach ($organizations as $organization) {

@@ -347,7 +347,7 @@ class ChallengeController extends Controller
 
     public function download(Request $request)
     {
-        
+       
         $campaign_year = Setting::challenge_page_campaign_year();
         $setting = Setting::first();
 
@@ -355,10 +355,14 @@ class ChallengeController extends Controller
         $as_of_date = $request->start_date ?? today()->format('Y-m-d');
 
         if ( $as_of_date >= $setting->campaign_end_date->format('Y-m-d')) {
-            if ($sort == 'department')  {
+            if ($as_of_date < $setting->campaign_final_date->format('Y-m-d')) {
                 $as_of_date = $setting->campaign_end_date->format('Y-m-d');
             } else {
-                $as_of_date = $setting->campaign_final_date->format('Y-m-d');
+                if ($sort == 'department')  {
+                    $as_of_date = $setting->campaign_end_date->format('Y-m-d');
+                } else {
+                    $as_of_date = $setting->campaign_final_date->format('Y-m-d');
+                }
             }
         }
 
