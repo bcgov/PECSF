@@ -39,7 +39,7 @@
         </div>
     </div>
 
-  <div class="card-body py-0 pt-0">
+  <div class="card-body py-0 pt-2">
     <form action="{{ isset($pledge) ? route("admin-pledge.campaign.update", $pledge->id) : route("admin-pledge.campaign.store") }}"
             id="admin-pldege-campaign-form" method="POST">
         @csrf
@@ -49,20 +49,21 @@
         @endisset
         <input type="hidden" id="step" name="step" value="">
 
+        @isset($pledge)
+            <div class="d-flex  align-items-center my-2 ">
+                <h4><strong>Transaction ID :</strong> {{ $pledge->id }}</h4>
+                <div class="flex-fill"></div>
 
-        <div class="d-flex  align-items-center my-2 ">
-            <h4><strong>Transaction ID :</strong> {{ $pledge->id }}</h4>
-            <div class="flex-fill"></div>
-
-            @if($canCancel)
-            <div class="d-flex  align-items-center ">
-                <div class="mr-2">
-                    <button  class="cancel-pledge btn btn-outline-danger mr-2" >Cancel this transaction</button>
-                </div>
+                @if($canCancel)
+                    <div class="d-flex  align-items-center ">
+                        <div class="mr-2">
+                            <button  class="cancel-pledge btn btn-outline-danger mr-2" >Cancel this transaction</button>
+                        </div>
+                    </div>
+                @endif
             </div>
-            @endif
-        </div>
-        <hr>
+            <hr>
+        @endisset            
 
 
 
