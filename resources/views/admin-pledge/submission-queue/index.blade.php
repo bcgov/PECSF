@@ -63,7 +63,7 @@
     <div class="modal fade" id="edit-event-modal" >
         <div class="modal-dialog custom-modal">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary">
                     <h5 class="modal-charity-name" id="charity-modal-label">Submission Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -197,6 +197,8 @@
                 },
                 function (data, status) {
                     $('#organizations').html("");
+                    $('#form_submitter_name').val(data[0]['form_submitted_by']['name']);
+                    $('#form_submitter').val(data[0]['form_submitter_id']);
                     $("#event_type").val(data[0].event_type).select2();
                     $("#business_unit").val(data[0].business_unit).select2();
 
@@ -249,6 +251,7 @@
                             $("#bcgovid").show();
                         }
                         else{                            
+
                             // If "non-GOV" is selected (except RET), disable specific options
                             if(data[0].organization_code != "RET") {
                                 disableOneTime(); 

@@ -220,7 +220,7 @@ class CharityController extends Controller
             }
 
             foreach ($searchValues as $term) {
-                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
+                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower(addslashes($term)) . "%'");
             }
             return $q->orderby('charity_name','asc');
 

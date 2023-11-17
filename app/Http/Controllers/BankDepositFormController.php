@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\BankDepositForm;
-use App\Models\BankDepositFormOrganizations;
-use App\Models\BankDepositFormAttachments;
-use App\Models\Charity;
-use App\Models\EmployeeJob;
-use App\Models\Organization;
+use App\Models\City;
+use App\Models\User;
+use App\Models\FSPool;
 use App\Models\Pledge;
-use App\Models\ProcessHistory;
+use App\Models\Region;
+use App\Models\Charity;
+use App\Models\Department;
+use App\Models\EmployeeJob;
+use App\Models\BusinessUnit;
+use App\Models\CampaignYear;
+use App\Models\Organization;
 use Illuminate\Http\Request;
+use App\Models\ProcessHistory;
+
+use App\Models\BankDepositForm;
+use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
-use App\Models\FSPool;
-use App\Models\Region;
-use App\Models\BusinessUnit;
-use App\Models\Department;
-use App\Models\CampaignYear;
-use App\Models\User;
-use App\Models\City;
-use Illuminate\Support\Facades\Auth;
+use App\Models\BankDepositFormAttachments;
+use App\Models\BankDepositFormOrganizations;
 
 class BankDepositFormController extends Controller
 {
@@ -75,7 +76,7 @@ class BankDepositFormController extends Controller
             }
 
             foreach ($searchValues as $term) {
-                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower($term) . "%'");
+                $q->whereRaw("LOWER(charity_name) LIKE '%" . strtolower(addslashes($term)) . "%'");
             }
             return $q->orderby('charity_name','asc');
 
@@ -519,6 +520,8 @@ class BankDepositFormController extends Controller
             'event_type'         => 'required',
             //'sub_type'         => 'required',
             //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
+            'bc_gov_id'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
+            'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
@@ -812,8 +815,14 @@ class BankDepositFormController extends Controller
             $organizations = Organization::where("status","=","A")->limit(30)->get();
         }
         else{
-            $organizations = Organization::where("code", "LIKE", $request->term . "%")->where("status","=","A")->get();
+            $organizations = Organization::where( function($q) use($request) {
+                                    $q->where("code", "like", "%" . $request->term . "%")
+                                      ->orWhere("name", "like", "%" . $request->term . "%");
+                                })
+                                ->where("status","=","A")
+                                ->get();
         }
+
         $response = ['results' => []];
         $response['results'][] = ["id" => "false", "text" => "Choose an organization"];
         foreach ($organizations as $organization) {
