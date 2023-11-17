@@ -34,7 +34,7 @@ $("#pool_filter").parents(".form-group").hide();
         $("#bcgovid").hide();
         $("#pecsfid").hide();
 
-        if($(this).val()=="Fundraiser"){
+        if ($(this).val()=="Fundraiser") {
             $("#sub_type").html('<option value="none">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
             $(".address_hook").hide();
             $("#sub_type").select2();
@@ -48,9 +48,8 @@ $("#pool_filter").parents(".form-group").hide();
 
             $("#bcgovid").find("input").val("");
             //$("#employee_name").val("");
+        } else if($(this).val()=="Gaming") {
 
-        }
-        else if($(this).val()=="Gaming"){
             $("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="none">None</option>');
             $(".address_hook").hide();
             $("#sub_type").select2();
@@ -64,77 +63,77 @@ $("#pool_filter").parents(".form-group").hide();
 
             $("#bcgovid").find("input").val("");
             //$("#employee_name").val("");
+        } else {
+            // do nothing 
         }
-        else{
-            if($("[name='organization_code']").val() == "GOV"){
 
-                $("#event_type>option[value='Fundraiser']").prop('disabled',false);
-                $("#event_type>option[value='Gaming']").prop('disabled',false);
+        if($("[name='organization_code']").val() == "GOV"){
 
-                if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-                    $("#pecsfid").find("input").show();
-                    $("#bcgovid").find("input").show();
-                    $("#pecsfid").find("label").show();
-                    $("#bcgovid").find("label").show();
-                    $("#bcgovid").show();
-                    $("#employeename").show();
-                    $("#pecsfid").show();
+            $('#event_type>option:not([value=""]').prop('disabled',false);
+            // $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+            // $("#event_type>option[value='Gaming']").prop('disabled',false);
 
-                    //$("#pecsfid").find("input").val("");
-                } else {
-                    $("#pecsfid").find("input").hide();
-                    $("#bcgovid").find("input").show();
-                    $("#pecsfid").find("label").hide();
-                    $("#bcgovid").find("label").show();
-                    $("#bcgovid").show();
-                    $("#employeename").show();
-
-                    //$("#pecsfid").find("input").val("");
-                }    
-
-                
-
-            }
-            else if($("[name='organization_code']").val() == "RET"){
-                $("#pecsfid").find("label").hide();
-                $("#pecsfid").find("input").hide();
-                $("#bcgovid").find("label").hide();
-                $("#bcgovid").find("input").hide();
-
-                if($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser")
-                {
-                    alert("Invalid Event Type for Retiree. We selected a default option on your behalf.");
-                    $("#event_type").val("Cash One-Time Donation").trigger("change");
-                }
-                $("#event_type>option[value='Fundraiser']").prop('disabled',true);
-                $("#event_type>option[value='Gaming']").prop('disabled',true);
-                if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-                    $("#employeename").show();
-                    $("#pecsfid").find("input").show();
-                    $("#pecsfid").find("label").show();
-                    $("#pecsfid").show();
-                }
-            }
-            else{
-                $("#event_type>option[value='Fundraiser']").prop('disabled',false);
-                $("#event_type>option[value='Gaming']").prop('disabled',false);
-                
+            if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
                 $("#pecsfid").find("input").show();
-                $("#bcgovid").find("input").hide();
+                $("#bcgovid").find("input").show();
                 $("#pecsfid").find("label").show();
-                $("#bcgovid").find("label").hide();
+                $("#bcgovid").find("label").show();
+                $("#bcgovid").show();
+                $("#employeename").show();
                 $("#pecsfid").show();
+
+                //$("#pecsfid").find("input").val("");
+            } else {
+                $("#pecsfid").find("input").hide();
+                $("#bcgovid").find("input").show();
+                $("#pecsfid").find("label").hide();
+                $("#bcgovid").find("label").show();
+                $("#bcgovid").show();
                 $("#employeename").show();
 
-                //$("#bcgovid").find("input").val("");
-                
+                //$("#pecsfid").find("input").val("");
+            }    
+
+        } else if ($("[name='organization_code']").val() == "RET") {
+            $("#pecsfid").find("label").hide();
+            $("#pecsfid").find("input").hide();
+            $("#bcgovid").find("label").hide();
+            $("#bcgovid").find("input").hide();
+
+            if($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser")
+            {
+                alert("Invalid Event Type for Retiree. We selected a default option on your behalf.");
+                $("#event_type").val("Cash One-Time Donation").trigger("change");
             }
+            $('#event_type>option:not([value=""]').prop('disabled',false);
+            $("#event_type>option[value='Fundraiser']").prop('disabled',true);
+            $("#event_type>option[value='Gaming']").prop('disabled',true);
+            if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+                $("#employeename").show();
+                $("#pecsfid").find("input").show();
+                $("#pecsfid").find("label").show();
+                $("#pecsfid").show();
+            }
+        } else {
+            $('#event_type>option:not([value=""]').prop('disabled',true);
+            $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+            $("#event_type>option[value='Gaming']").prop('disabled',false);
+            
+            $("#pecsfid").find("input").show();
+            $("#bcgovid").find("input").hide();
+            $("#pecsfid").find("label").show();
+            $("#bcgovid").find("label").hide();
+            $("#pecsfid").show();
+            $("#employeename").show();
+
+            //$("#bcgovid").find("input").val("");
+            
+        }
 
         $(".address_hook").show();
 
         $("#city").select2();
         $("#province").select2();
-        }
 
     });
 
