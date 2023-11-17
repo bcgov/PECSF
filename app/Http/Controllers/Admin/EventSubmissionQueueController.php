@@ -148,7 +148,7 @@ class EventSubmissionQueueController extends Controller
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
             ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")
             ->get();
-            error_log('1');
+            
         foreach($submissions as $index => $submission){
             $submissions[$index]["charities"] = BankDepositFormOrganizations::where("bank_deposit_form_id", $request->form_id)
                                                 ->orderByRaw('CAST(donation_percent AS DECIMAL(10, 2)) DESC')
@@ -158,7 +158,7 @@ class EventSubmissionQueueController extends Controller
 
         $existing = [];
 
-
+        /*
         if($submissions[0]->organization_code == "RET"){
             $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
                 ->orderBy("pecsf_id","desc")
@@ -206,6 +206,7 @@ class EventSubmissionQueueController extends Controller
                 $submissions[0]->pecsf_id = "F".substr(date("Y"),2,2)."001";
             }
         }
+        */
 
         $gov_organization = Organization::where('code', 'GOV')->first();
         foreach($submissions as $index => $submission){

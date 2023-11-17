@@ -348,6 +348,67 @@ class BankDepositFormController extends Controller
             }
         }
 
+        $organization_code = $request->organization_code;
+        $event_type = $request->event_type;
+        $pecsf_id = '';
+        if($organization_code == "RET"){ //R****  PECSF ID
+            $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+            if(count($existing) > 0){
+                $pecsf_id = "R".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+            }
+            else{
+                $pecsf_id = "R".substr(date("Y"),2,2)."001";
+            }
+        } else {
+            if($event_type == "Gaming"){ //G****  PECSF ID
+                $existing = BankDepositForm::where("event_type","=","Gaming")
+                ->where("pecsf_id","LIKE","G".substr(date("Y"),2,2)."%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+
+                if(count($existing) > 0){
+                    $pecsf_id = "G".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                }
+                else{
+                    $pecsf_id = "G".substr(date("Y"),2,2)."001";
+                }
+
+            } elseif ($event_type == "Fundraiser") { //F****  PECSF ID
+                $existing = BankDepositForm::where("event_type","=","Fundraiser")
+                ->where("pecsf_id","LIKE","F".substr(date("Y"),2,2)."%")
+                ->orderBy("pecsf_id","desc")
+                ->get();
+               
+                if(count($existing) > 0){
+                    $pecsf_id = "F".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                }
+                else{
+                    $pecsf_id = "F".substr(date("Y"),2,2)."001";
+                }
+            } else {
+                if ($organization_code == "GOV") {  //S****  PECSF ID
+                    $existing = BankDepositForm::whereIn("event_type", ["Cash One-Time Donation", "Cheque One-Time Donation"])
+                                ->where("pecsf_id","LIKE","S".substr(date("Y"),2,2)."%")
+                                ->orderBy("pecsf_id", "desc")
+                                ->get();
+
+                    if(count($existing) > 0){
+                        $pecsf_id = "S".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+                    }
+                    else{
+                        $pecsf_id = "S".substr(date("Y"),2,2)."001";
+                    }
+                } else {
+                    //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
+                }
+            } 
+
+        }
+
+
         $form = BankDepositForm::Create(
             [
                 'business_unit' => $request->business_unit,
@@ -368,7 +429,7 @@ class BankDepositFormController extends Controller
                 'address_province' => $request->province,
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
-                'pecsf_id' => $request->pecsf_id,
+                'pecsf_id' => $pecsf_id,
 
                 'deptid' => $deptid,
                 'dept_name'  => $dept_name,
@@ -378,6 +439,7 @@ class BankDepositFormController extends Controller
                 'updated_by_id' => Auth::id(),
             ]
         );
+        
 
         //var_dump($request->all());
 
