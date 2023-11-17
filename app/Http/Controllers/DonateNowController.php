@@ -382,7 +382,7 @@ class DonateNowController extends Controller
             foreach ($pool_charities as $key => $pool_charity) {
                 $charity = $pool_charity->charity->toArray();
                 $charity['text'] = $pool_charity->charity->charity_name;
-                $charity['additional'] = '';
+                $charity['additional'] = $pool_charity->name;
 
                 $percentage = $pool_charity->percentage;
 
