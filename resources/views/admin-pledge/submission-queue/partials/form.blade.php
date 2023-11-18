@@ -28,9 +28,9 @@
         <div class="form-group col-md-4">
             <label for="form_submitter">Form submitter</label>
             <!--<div id="form_submitter">{{$current_user->name}}</div>-->
-            <input type="text" disabled class="form-control" value="{{$current_user->name}}" />
+            <input type="text" disabled class="form-control" value="{{$current_user->name}}" id="form_submitter_name"/>
 
-            <input type="hidden" disabled value="{{$current_user->id}}" name="form_submitter" />
+            <input type="hidden" disabled value="{{$current_user->id}}" name="form_submitter" id="form_submitter"/>
 
             <span class="form_submitter_errors errors">
                        @error('form_submitter')
