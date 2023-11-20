@@ -730,6 +730,8 @@ class BankDepositFormController extends Controller
                 'bc_gov_id' => $request->bc_gov_id,
                 'pecsf_id' => $request->pecsf_id,
                 'business_unit' => $request->business_unit,
+
+                'employee_name' => $request->employee_name,
                 'updated_by_id' => Auth::id(),
             ]
         );
