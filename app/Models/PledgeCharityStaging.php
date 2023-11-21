@@ -21,6 +21,10 @@ class PledgeCharityStaging extends Model
         return $this->belongsTo(CampaignYear::class, 'calendar_year', 'calendar_year');
     }
 
+    public function fund_supported_pool() {
+        return $this->belongsTo(FSPool::class, 'f_s_pool_id', 'id')->withDefault();
+    }
+
     public function region() {
         return $this->belongsTo(Region::class, 'tgb_reg_district', 'code');
     }
