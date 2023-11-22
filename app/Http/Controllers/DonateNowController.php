@@ -412,7 +412,7 @@ class DonateNowController extends Controller
         } else {
             $charity = Charity::where('id', $pledge->charity_id)->first();
             $charity['text'] = $charity->charity_name;
-            $charity['additional'] = $charity->status;
+            $charity['additional'] = $pledge->special_program;
             $charity['one-time-percentage-distribution'] = 100;
             $charity['one-time-amount-distribution'] = $one_time_amount;
             $in_support_of = $charity ? $charity->charity_name : '';
