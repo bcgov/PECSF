@@ -419,7 +419,7 @@ class DonateNowController extends Controller
         }
 
         // download PDF file with download method
-        $fsp_name = empty($in_support_of) ? false : $in_support_of;
+        $fsp_name = $pledge->type == 'P' ? $in_support_of : false;
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
