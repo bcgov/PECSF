@@ -62,7 +62,7 @@
                 <td scope="row">1</td>
                 <td>
                     <p>{{ $pledge->charity->charity_name }}</p>
-                    <p>{{ $pledge->additional  }}</p>
+                    <p>{{ $pledge->special_program  }}</p>
                 </td>
                 <td class="text-center">{{ number_format( 100 ,2) }}%</td>
                 <td class="text-center">${{ number_format( $total_amount, 2) }}</td>
