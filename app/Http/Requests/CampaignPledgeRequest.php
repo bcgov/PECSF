@@ -47,7 +47,8 @@ class CampaignPledgeRequest extends FormRequest
                                                         return $q->where('pecsf_id', $this->pecsf_id);
                                                     })
                                                     ->where('campaign_year_id', $this->campaign_year_id)
-                                                    ->whereNull('deleted_at');
+                                                    ->whereNull('deleted_at')
+                                                    ->whereNull('cancelled');
                                         })->ignore($this->pledge_id),
                         ],
                         'organization_id'  => ['required'],

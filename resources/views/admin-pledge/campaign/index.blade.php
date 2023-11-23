@@ -26,10 +26,20 @@
 @endsection
 @section('content')
 
+@if ($message = Session::get('success'))
+    <div class="mx-1 my-2">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ $message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+@endif
 
 <div class="card">
 <form class="filter">
-    <div class="card-body pb-0 search-filter">
+    <div class="card-body py-0 search-filter">
         <h2>Search Criteria</h2>
 
         <div class="form-row">
@@ -114,6 +124,32 @@
             </div> 
 
             <div class="form-group col-md-2">
+                <label for="cancelled">
+                    Status
+                </label>
+                <select class="form-control" name="cancelled" id="cancelled">
+                    <option value="">All</option>
+                    <option value="N">Active</option>
+                    <option value="C">Cancelled</option>
+                </select>
+            </div> 
+
+            <div class="form-group col-md-2">
+                <label for="ods_export_status">
+                    Send to PSFT
+                </label>
+                <select class="form-control" name="ods_export_status" id="ods_export_status">
+                    <option value="">All</option>
+                    <option value="Y">Yes</option>
+                    <option value="N">No</option>
+                </select>
+            </div> 
+
+        </div>
+
+        <div class="form-row">
+
+            <div class="form-group col-md-2">
                 <label for="one_time_amt_from">One Time Amt (From)</label>
                 <input class="form-control " type="number" id="one_time_amt_from" name="one_time_amt_from"
                             value="{{ isset($filter['one_time_amt_from']) ? $filter['one_time_amt_from'] : '' }}">
@@ -159,14 +195,6 @@
 <div class="card">
 	<div class="card-body">
 
-        @if ($message = Session::get('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
 
 		<table class="table table-bordered" id="campaign-table" style="width:100%">
 			<thead>
@@ -187,6 +215,7 @@
                     <th>Bi Weekly Amount</th>
                     <th>Goal Amount</th>
                     <th>Action </th>
+                    <th>Status</th>
                     <th>Send to PSFT</th>
                     <th>Send At </th>
                     <th>Created At</th>
@@ -281,6 +310,8 @@
                     data.one_time_amt_to = $('#one_time_amt_to').val();
                     data.pay_period_amt_from = $('#pay_period_amt_from').val();
                     data.pay_period_amt_to = $('#pay_period_amt_to').val();
+                    data.cancelled = $('#cancelled').val();
+                    data.ods_export_status = $('#ods_export_status').val();
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
@@ -323,6 +354,15 @@
                 {data: 'pay_period_amount', name: 'pay_period_amount',  'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'goal_amount', name: 'goal_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '') },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
+                {data: 'cancelled', name: 'cancelled',  orderable: false, searchable: false, className: "dt-nowrap",
+                    render: function ( data, type, row, meta ) {
+                            if( data == null) {
+                                return '';
+                            } else {
+                                return 'Cancelled';
+                            }
+                        }
+                },
                 {data: 'ods_export_status', name: 'ods_export_status', className: "dt-nowrap",
                     render: function ( data, type, row, meta ) {
                             if( data == 'C') {
