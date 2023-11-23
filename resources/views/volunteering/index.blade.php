@@ -468,6 +468,9 @@
 @include('volunteering.partials.learn-more-modal')
 @include('volunteering.partials.registration-modal')
     </div>
+    
+@endsection
+
 @push('js')
 
 <script>
@@ -631,5 +634,8 @@ var stop = false;
     @endif
 
 </script>
+
+
+
 @endpush
-@endsection
+
