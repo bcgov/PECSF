@@ -273,6 +273,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->group(function() {
     // Pledge Administration - Campaign Pledge
     Route::resource('/campaign', CampaignPledgeController::class);
+    Route::post('/campaign/{id}/cancel', [CampaignPledgeController::class,'cancel'])->name('campaign-pledge.cancel');
     Route::get('/campaign-users', [CampaignPledgeController::class,'getUsers'])->name('administrators.users');
     Route::get('/campaign-nongov-user', [CampaignPledgeController::class,'getNonGovUserDetail'])->name('administrators.nongovuser');
     Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
@@ -310,7 +311,7 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
     // Eligible Employee Count
-    Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
+    // Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
     // Eligible Employee Reporting
     Route::get('/eligible-employees/export', [EligibleEmployeeReportController::class,'export2csv'])->name('eligible-employees.export2csv');
     Route::get('/eligible-employees/export-progress/{id}', [EligibleEmployeeReportController::class,'exportProgress'])->name('eligible-employees.export2csv-progress');

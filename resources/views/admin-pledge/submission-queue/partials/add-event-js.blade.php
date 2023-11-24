@@ -152,6 +152,37 @@ e.preventDefault();
 
 });
 
+function govuserinfo() {
+
+    bc_gov_id = $('#bc_gov_id').val();
+
+    if (bc_gov_id) {
+        $.ajax({
+            url: "/bank_deposit_form/bc_gov_id?id="+ bc_gov_id,
+            type: "GET",
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+                $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+                $("#employment_city").val(response.office_city).select2();
+                $("#region").val($("#region option[code='"+response.tgb_reg_district+"']").val()).select2();
+                $("#business_unit").val(response.business_unit_id).select2();
+                $("#employee_name").val(response.last_name+","+response.first_name);
+                setTimeout(function(){
+                    $("#employment_city").parents(".form-body").fadeTo("slow",1);
+                },500);
+            },
+            error: function(response) {
+            }
+        });
+    } 
+
+}
+
+
 function nongovuserinfo(){
     $.get({
         url: '/admin-pledge/campaign-nongov-user' +
@@ -621,7 +652,8 @@ $("#attachment_input_1").val("");
             });
         }
         else if($(this).val() == "GOV"){
-            $("#business_unit").val("").select2();
+            // $("#business_unit").val("").select2();
+            govuserinfo();
         }
     });
     $("#keyword").keypress(function(e){
