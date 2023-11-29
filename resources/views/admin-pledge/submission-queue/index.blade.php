@@ -405,17 +405,18 @@
         $(".status").change(function(e){
             e.preventDefault();
             $("#submission_id").val($(this).attr("submission_id"))
-            if($(this).val()==2)
-            {
-                $(this).val(0).select2(
-                    {
-                        templateResult:formatState,
-                        templateSelection:formatState
-                    }
-                );
-                $('#lock-event-modal').modal("show");
-            }
-            else if($(this).val() == 1){
+            // if($(this).val()==2)
+            // {
+            //     $(this).val(0).select2(
+            //         {
+            //             templateResult:formatState,
+            //             templateSelection:formatState
+            //         }
+            //     );
+            //     $('#lock-event-modal').modal("show");
+            // }
+            // else 
+            if($(this).val() == 1){
              Swal.fire({
                    title: 'Approved?',
                     text: 'Should We Approved This Event?',
