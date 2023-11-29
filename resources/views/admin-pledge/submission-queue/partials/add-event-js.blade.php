@@ -589,6 +589,7 @@ $("#attachment_input_1").val("");
     };
     $(".status").select2(
         {
+            minimumResultsForSearch: -1,
             templateResult:formatState,
             templateSelection:formatState
         }

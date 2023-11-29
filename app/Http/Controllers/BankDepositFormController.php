@@ -89,10 +89,13 @@ class BankDepositFormController extends Controller
         $multiple = 'false';
         $selected_charities = [];
 
+        $skip_info_modal = (str_ends_with( strtolower(url()->previous()), 'bank_deposit_form'));
 
         $fund_support_pool_list = FSPool::current()->where('f_s_pools.status', 'A')->join("regions","regions.id","=","f_s_pools.region_id")->with('region')->orderBy("name",'asc')->get();
 
-        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'
+                        ,'skip_info_modal'
+                    ));
     }
 
     public function ignoreRemovedFiles($request){
