@@ -152,7 +152,7 @@ class MaintainEventPledgeController extends Controller
     }
 
 
-    public function createEvent(){
+    public function create(){
         $pools = FSPool::where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
@@ -178,7 +178,7 @@ class MaintainEventPledgeController extends Controller
         $fund_support_pool_list = FSPool::current()->where('status', 'A')->with('region')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
-        return view('admin-pledge.create.index', compact('fund_support_pool_list','selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
+        return view('admin-pledge.event.create', compact('fund_support_pool_list','selected_charities','organizations','pools','cities', 'regional_pool_id', 'business_units','regions','departments','campaign_year','current_user'));
     }
 
 }

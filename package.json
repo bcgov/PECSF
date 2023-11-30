@@ -28,6 +28,7 @@
         "@bcgov/bc-sans": "^1.0.1",
         "@fortawesome/fontawesome-free": "^5.15.4",
         "admin-lte": "~3.1.0",
+        "dropzone": "^5.9.0",
         "font-awesome": "^4.7.0",
         "icheck-bootstrap": "^3.0.1"
     }

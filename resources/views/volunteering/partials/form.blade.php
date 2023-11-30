@@ -1,5 +1,4 @@
-<form id="bank_deposit_form" action="{{ route('bank_deposit_form') }}" method="POST" class="dropzone"
-    enctype="multipart/form-data">
+<form id="bank_deposit_form" action="{{ route('bank_deposit_form') }}" method="POST"  enctype="multipart/form-data">
     @csrf
     <br>
 
@@ -393,23 +392,29 @@
                 <h3 class="blue">File(s)</h3>
 
 
-                <span class="pl-3 attachment_errors errors">
+                <span class="pl-3 attachments_errors errors">
 
                     @error('attachments')
                         <span class="invalid-feedback">{{ $message }}</span>
                     @enderror
                 </span>
+                                   
             </div>
 
             <div class="form-row form-body">
 
-                <div class="col-md-12"> <span style="display:block;padding:10px;">Browse to attach your completed
+
+                <div class="col-md-12">
+                    <p class="pl-1">Browse to attach your completed
                         PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank
-                        receipt.</span>
+                        receipt.</p>
                 </div>
 
+                <div class="col-md-12">
+                    <div class="needsclick dropzone" id="attachment-dropzone"></div>  
+                </div>
 
-                <div style="padding:8px; " class="upload-area form-group col-md-12">
+                {{-- <div style="padding:8px; " class="upload-area form-group col-md-12">
 
                     <a onclick="$('#attachment_input_1').click();"
                         style="background:#fff;border:none;font-weight:bold;color:#000;text-align:center;"
@@ -422,18 +427,41 @@
                 </div>
                 <table id="attachments" class=" form-group col-md-12">
 
-                </table>
+                </table> --}}
             </div>
 
-            <div >
-                <label for="document">Documents</label>
-                <div class="col-sm-12">
-                    <div class="dropzone-previews"></div> <!-- this is were the previews should be shown. -->
+            <div style="display:none;" id="my-template">
+                <div id="mytmp" class="dz-preview dz-file-preview">
+                    <div class="dz-image"><img data-dz-thumbnail /></div>	
+                    <div class="dz-details">
+                        <div class="dz-size"><span data-dz-size></span></div>
+                        <div class="dz-filename"><span data-dz-name></span></div>
+                    </div>
+                    <div class="dz-progress">
+                        <span class="dz-upload" data-dz-uploadprogress></span>
+                    </div>
+                    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                    <div class="dz-success-mark">
+                        {{-- <svg xmlns="http://www.w3.org/2000/svg" height="54px" viewBox="0 0 54 54" width="54px" fill="#000000">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg> --}}
+                    </div>
+                    <div class="dz-error-mark">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <circle cx="12" cy="19" r="2" />
+                            <path d="M10 3h4v12h-4z" />
+                        </svg>
+                    </div>
+                    <div class="dz-remove" data-dz-remove>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                        </svg>
+                    </div>
                 </div>
-                {{-- <div class="needsclick dropzone" id="document-dropzone">
-                    <p>Browse to attach your completed PECSF Event Bank Deposit Form attachment (pdf,xls,xlsx,csv,png,jpg,jpeg) with bank receipt.</p>
-                    
-                </div> --}}
+
             </div>
 
         </div>
