@@ -1,7 +1,9 @@
 
 <script>
-    $("#sub_type").select2();
-    $("#event_type").select2();
+$(function () {
+
+    $("#sub_type").select2( {minimumResultsForSearch: -1}  );
+    $("#event_type").select2( {minimumResultsForSearch: -1} );
     $(".org_hook,#pecsfid,#bcgovid,#employeename,.address_hook,.sub_type").hide();
 
 
@@ -9,175 +11,192 @@
         nongovuserinfo();
     });
 
-$("input[name='charity_selection']").click(function(){
-if($(this).val() == "dc"){
-$("#organizations").show();
-$(".org_hook").show();
-$("#add_row").show();
-$(".form-pool").hide();
-$("#pool_filter").parents(".form-group").show();
-}
-else{
-$(".form-pool").show();
-$("#organizations").hide();
-$("#add_row").hide();
-$(".org_hook").hide();
-$("#pool_filter").parents(".form-group").hide();
-}
-});
+    $("input[name='charity_selection']").click(function(){
+        if($(this).val() == "dc"){
+            $("#organizations").show();
+            $(".org_hook").show();
+            $("#add_row").show();
+            $(".form-pool").hide();
+            $("#pool_filter").parents(".form-group").show();
+        } else {
+            $(".form-pool").show();
+            $("#organizations").hide();
+            $("#add_row").hide();
+            $(".org_hook").hide();
+            $("#pool_filter").parents(".form-group").hide();
+        }
+    });
 
-    $("#event_type").change(function(){
+    // $("#event_type").change(function(){
+    //     $(".sub_type").hide();
+    //     $("#bcgovid").hide();
+    //     $("#pecsfid").hide();
+    //         if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+    //             $("#employeename").show();
+    //             $(".sub_type").show();
+    //             if($("[name='organization_code']").val() == "GOV"){
+    //                 $("#pecsfid").find("input").hide();
+    //                 $("#bcgovid").find("input").show();
+    //                 $("#pecsfid").find("label").hide();
+    //                 $("#bcgovid").find("label").show();
+    //             }
+    //             else{
+    //                 $("#pecsfid").find("input").show();
+    //                 $("#bcgovid").find("input").hide();
+    //                 $("#pecsfid").find("label").show();
+    //                 $("#bcgovid").find("label").hide();
+    //             }
+    //         }
+    // });
+
+    $("[name='event_type'],[name='organization_code']").change(function(){
+        $("#employeename").hide();
         $(".sub_type").hide();
         $("#bcgovid").hide();
         $("#pecsfid").hide();
+
+        if($(this).val()=="Fundraiser"){
+            $("#sub_type").html('<option value="none">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
+            $(".address_hook").hide();
+            $("#sub_type").select2( {minimumResultsForSearch: -1} );
+            $(".sub_type").show();
+            // if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+            //     $("#employeename").show();
+
+
+        // if($("[name='organization_code']").val() == "GOV"){
+            // $("#pecsfid").find("input").show();
+            $("#bcgovid").find("input").hide();
+            // $("#pecsfid").find("label").show();
+            $("#bcgovid").find("label").hide();
+            // $("#pecsfid").show();
+            $("#bcgovid").hide();
+
+            $("#bcgovid").find("input").val("");
+
+        // }
+        // else{
+        //     $("#pecsfid").find("input").show();
+        //     $("#bcgovid").find("input").hide();
+        //     $("#pecsfid").find("label").show();
+        //     $("#pecsfid").show();
+
+            // $("#bcgovid").find("label").hide();
+        // }
+            // }
+        } else if($(this).val()=="Gaming") {
+
+            $("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="none">None</option>');
+            $(".address_hook").hide();
+            $("#sub_type").select2( {minimumResultsForSearch: -1} );
+            $(".sub_type").show();
+
+    // if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+    //     $("#employeename").show();
+
+
+        // if($("[name='organization_code']").val() == "GOV"){
+        //     $("#pecsfid").find("input").hide();
+        //     $("#bcgovid").find("input").show();
+        //     $("#pecsfid").find("label").hide();
+        //     $("#bcgovid").find("label").show();
+        //     $("#bcgovid").show()
+        // }
+        // else{
+            // $("#pecsfid").find("input").show();
+            $("#bcgovid").find("input").hide();
+            // $("#pecsfid").find("label").show();
+            $("#bcgovid").find("label").hide();
+            $("#bcgovid").hide();
+            // $("#pecsfid").show();
+
+        // }
+            $("#bcgovid").find("input").val("");
+    // }
+        } else {
+              // do nothing 
+        }
+    
+        if($("[name='organization_code']").val() == "GOV"){
+
+            $('#event_type>option:not([value=""]').prop('disabled',false);
+            // $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+            // $("#event_type>option[value='Gaming']").prop('disabled',false);
+            
             if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-                $("#employeename").show();
-                $(".sub_type").show();
-                if($("[name='organization_code']").val() == "GOV"){
-                    $("#pecsfid").find("input").hide();
-                    $("#bcgovid").find("input").show();
-                    $("#pecsfid").find("label").hide();
-                    $("#bcgovid").find("label").show();
-                }
-                else{
-                    $("#pecsfid").find("input").show();
-                    $("#bcgovid").find("input").hide();
-                    $("#pecsfid").find("label").show();
-                    $("#bcgovid").find("label").hide();
-                }
-            }
-    });
-
-$("[name='event_type'],[name='organization_code']").change(function(){
-$("#employeename").hide();
-    $(".sub_type").hide();
-    $("#bcgovid").hide();
-    $("#pecsfid").hide();
-
-if($(this).val()=="Fundraiser"){
-$("#sub_type").html('<option value="none">None</option><option value="Auction">Auction</option><option value="Entertainment">Entertainment</option><option value="Food">Food</option><option value="Other">Other</option><option value="Sports">Sports</option>');
-$(".address_hook").hide();
-$("#sub_type").select2();
-    $(".sub_type").show();
-    if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-        $("#employeename").show();
-
-
-        if($("[name='organization_code']").val() == "GOV"){
-            $("#pecsfid").find("input").hide();
-            $("#bcgovid").find("input").show();
-            $("#pecsfid").find("label").hide();
-            $("#bcgovid").find("label").show();
-            $("#bcgovid").show()
-
-        }
-        else{
-            $("#pecsfid").find("input").show();
-            $("#bcgovid").find("input").hide();
-            $("#pecsfid").find("label").show();
-            $("#pecsfid").show();
-
-            $("#bcgovid").find("label").hide();
-        }
-    }
-}
-else if($(this).val()=="Gaming"){
-$("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="none">None</option>');
-$(".address_hook").hide();
-$("#sub_type").select2();
-    $(".sub_type").show();
-    if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-        $("#employeename").show();
-
-
-        if($("[name='organization_code']").val() == "GOV"){
-            $("#pecsfid").find("input").hide();
-            $("#bcgovid").find("input").show();
-            $("#pecsfid").find("label").hide();
-            $("#bcgovid").find("label").show();
-            $("#bcgovid").show()
-        }
-        else{
-            $("#pecsfid").find("input").show();
-            $("#bcgovid").find("input").hide();
-            $("#pecsfid").find("label").show();
-            $("#bcgovid").find("label").hide();
-            $("#pecsfid").show();
-        }
-    }
-}
-else{
-    if($("[name='organization_code']").val() == "GOV"){
-
-        $("#event_type>option[value='Fundraiser']").prop('disabled',false);
-        $("#event_type>option[value='Gaming']").prop('disabled',false);
-        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-            $("#employeename").show();
-            if($("[name='organization_code']").val() == "GOV"){
-                $("#pecsfid").find("input").hide();
+            
+            // if($("[name='organization_code']").val() == "GOV"){
+                // $("#pecsfid").find("input").hide();
                 $("#bcgovid").find("input").show();
-                $("#pecsfid").find("label").hide();
-                $("#bcgovid").find("label").show();
-                $("#bcgovid").show()
-
-            }
-            else{
-                $("#pecsfid").find("input").show();
-                $("#bcgovid").find("input").hide();
-                $("#pecsfid").find("label").show();
-                $("#bcgovid").find("label").hide();
-                $("#pecsfid").show();
-
-            }
-        }
-    }
-    else if($("[name='organization_code']").val() == "RET"){
-        $("#pecsfid").find("label").hide();
-        $("#pecsfid").find("input").hide();
-        $("#bcgovid").find("label").hide();
-        $("#bcgovid").find("input").hide();
-
-        if($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser")
-        {
-            alert("Invalid Event Type for Retiree. We selected a default option on your behalf.");
-            $("#event_type").val("Cash One-Time Donation").trigger("change");
-        }
-        $("#event_type>option[value='Fundraiser']").prop('disabled',true);
-        $("#event_type>option[value='Gaming']").prop('disabled',true);
-        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-            $("#employeename").show();
-        }
-    }
-    else{
-        $("#event_type>option[value='Fundraiser']").prop('disabled',false);
-        $("#event_type>option[value='Gaming']").prop('disabled',false);
-        if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
-            $("#employeename").show();
-
-            if($("[name='organization_code']").val() == "GOV"){
-                $("#pecsfid").find("input").hide();
-                $("#bcgovid").find("input").show();
-                $("#pecsfid").find("label").hide();
+                // $("#pecsfid").find("label").hide();
                 $("#bcgovid").find("label").show();
                 $("#bcgovid").show();
+                $("#employeename").show();
 
-            }
-            else{
-                $("#pecsfid").find("input").show();
+
+            } else {
+                // $("#pecsfid").find("input").show();
                 $("#bcgovid").find("input").hide();
-                $("#pecsfid").find("label").show();
+                // $("#pecsfid").find("label").show();
                 $("#bcgovid").find("label").hide();
-                $("#pecsfid").show();
+                $("#bcgovid").hide();
+                $("#employeename").show();
 
             }
+        // }
+        } else if ($("[name='organization_code']").val() == "RET"){
+                // $("#pecsfid").find("label").hide();
+                // $("#pecsfid").find("input").hide();
+                $("#bcgovid").find("label").hide();
+                $("#bcgovid").find("input").hide();
+
+            if($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser")
+            {
+                alert("Invalid Event Type for Retiree. We selected a default option on your behalf.");
+                $("#event_type").val("Cash One-Time Donation").trigger("change");
+            }
+            $('#event_type>option:not([value=""]').prop('disabled',false);
+            $("#event_type>option[value='Fundraiser']").prop('disabled',true);
+            $("#event_type>option[value='Gaming']").prop('disabled',true);
+            if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+                $("#employeename").show();
+                // $("#pecsfid").find("input").show();
+                // $("#pecsfid").find("label").show();
+                // $("#pecsfid").show();
+            }
+        } else{
+            $('#event_type>option:not([value=""]').prop('disabled',false);
+            // $("#event_type>option[value='Fundraiser']").prop('disabled',false);
+            // $("#event_type>option[value='Gaming']").prop('disabled',false);
+            // if($("#event_type").val().toLowerCase() == "cheque one-time donation" || $("#event_type").val().toLowerCase() == "cash one-time donation"){
+            //     $("#employeename").show();
+
+                // if($("[name='organization_code']").val() == "GOV"){
+                //     $("#pecsfid").find("input").hide();
+                //     $("#bcgovid").find("input").show();
+                //     $("#pecsfid").find("label").hide();
+                //     $("#bcgovid").find("label").show();
+                //     $("#bcgovid").show();
+
+                // }
+                // else{
+                    // $("#pecsfid").find("input").show();
+                    $("#bcgovid").find("input").hide();
+                    // $("#pecsfid").find("label").show();
+                    $("#bcgovid").find("label").hide();
+                    // $("#pecsfid").show();
+                    $("#bcgovid").hide();
+                    $("#employeename").show();
+
+            //     }
+            // }
         }
-    }
 
-$(".address_hook").show();
+        $(".address_hook").show();
 
-$("#city").select2();
-$("#province").select2();
-}
+        $("#city").select2();
+        $("#province").select2();
+    // }
 
 });
 
@@ -316,109 +335,112 @@ var formData = new FormData();
         });
 
     });
-$("#bank_deposit_form").submit(function(e)
-{
-e.preventDefault();
-var form = document.getElementById("create_pool");
 
-    $(".max-charities-error").hide();
-    $(".charity-error-hook").css("border","none")
 
-formData = new FormData();
+    $("#bank_deposit_form").submit(function(e)
+    {
+        e.preventDefault();
+        var form = document.getElementById("create_pool");
 
-$("select").each(function(){
-if($(this).val()){
-if($(this).val().length > 0){
-formData.append($(this).attr("name"), $(this).val());
-}
-}
+        $(".max-charities-error").hide();
+        $(".charity-error-hook").css("border","none")
 
-});
-$("input").each(function(){
-if($(this).attr('type') != "submit"){
-if($(this).attr('type') == "radio"){
-if($(this).is(':checked')){
-formData.append($(this).attr("name"), $(this).val());
-}
-}
-else if($(this).attr('type') == "file"){
-    if (this.value) {
-         formData.append('attachments[]',  $(this)[0].files[0]);
-    }
-}
-else{
-    // if($(this).val().length > 0){
-        formData.append($(this).attr("name"), $(this).val());
-    // }
-}
-}
-});
-$("textarea").each(function(){
-if($(this).val().length > 0) {
-formData.append($(this).attr("name"), $(this).val());
-}
-});
-formData.append("org_count", $(".organization").length);
-formData.append("ignoreFiles", ignoreFiles);
+        formData = new FormData();
 
-$(this).fadeTo("slow",0.2);
-$.ajax({
-url: $("#bank_deposit_form").attr("action"),
-type:"POST",
-data: formData,
-headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
-processData: false,
-cache: false,
-contentType: false,
-dataType: 'json',
-success:function(response){
-    Swal.fire({
-        title: '<strong>Success!</strong>',
-        icon: 'success',
-        html:
-            'Form Submitted!',
-        showCloseButton: false,
-        showCancelButton: true,
-        focusConfirm: false,
-    }).then((result) => {
-        $("#bank_deposit_form").fadeTo("slow",1);
-        $('.errors').html("");
+        $("#bank_deposit_form select").each(function(){
+            // if($(this).val()){
+            //     if($(this).val().length > 0){
+                    formData.append($(this).attr("name"), $(this).val());
+            //     }
+            // }
+        });
 
-        window.location = response[0];
-        console.log(response);
+        $("#bank_deposit_form input").each(function(){
+            if($(this).attr('type') != "submit"){
+                if($(this).attr('type') == "radio"){
+                    if($(this).is(':checked')){
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                } else if($(this).attr('type') == "file"){
+                    if (this.value) {
+                        formData.append('attachments[]',  $(this)[0].files[0]);
+                    }
+                } else{
+                    // if($(this).val().length > 0){
+                        formData.append($(this).attr("name"), $(this).val());
+                    // }
+                }
+            }
+        });
+
+        $("textarea").each(function(){
+            if($(this).val().length > 0) {
+                formData.append($(this).attr("name"), $(this).val());
+            }
+        });
+
+        formData.append('province', $('select[name="province"]').val() );
+
+        formData.append("org_count", $(".organization").length);
+        formData.append("ignoreFiles", ignoreFiles);
+
+        $(this).fadeTo("slow",0.2);
+        $.ajax({
+            url: $("#bank_deposit_form").attr("action"),
+            type:"POST",
+            data: formData,
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+                Swal.fire({
+                    title: '<strong>Success!</strong>',
+                    icon: 'success',
+                    html:
+                        'Form Submitted!',
+                    showCloseButton: false,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                }).then((result) => {
+                    $("#bank_deposit_form").fadeTo("slow",1);
+                    $('.errors').html("");
+
+                    window.location = response[0];
+                    console.log(response);
+                });
+                $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
+            },
+            error: function(response) {
+                $('.errors').html("");
+                $(".donation_percent_errors").html("");
+                if(response.responseJSON.errors){
+                    errors = response.responseJSON.errors;
+                    for(const prop in response.responseJSON.errors){
+                        count = prop.substring(prop.indexOf(".")+1);
+                        tag = prop.substring(0,prop.indexOf("."));
+                        error = errors[prop][0].split(".");
+                        error = error[0] + error[1].substring(1,error[1].length);
+                        error = error.replace("_"," ");
+                        $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                        $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+                        $("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                    }
+                }
+                $(".invalid-feedback").css("display","block");
+                $("#bank_deposit_form").fadeTo("slow",1);
+            },
+        });
+
     });
-    $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
-},
-error: function(response) {
-$('.errors').html("");
-    $(".donation_percent_errors").html("");
-if(response.responseJSON.errors){
-errors = response.responseJSON.errors;
-for(const prop in response.responseJSON.errors){
-count = prop.substring(prop.indexOf(".")+1);
-tag = prop.substring(0,prop.indexOf("."));
-error = errors[prop][0].split(".");
-error = error[0] + error[1].substring(1,error[1].length);
-error = error.replace("_"," ");
-$("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-$(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
-$("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-
-
-}
-}
-$(".invalid-feedback").css("display","block");
-$("#bank_deposit_form").fadeTo("slow",1);
-},
-});
-
-});
 
 $('#organization_code').select2({
-ajax: {
-url: '/bank_deposit_form/organization_code',
-dataType: 'json'
-}
+    minimumResultsForSearch: -1,
+    ajax: {
+        url: '/bank_deposit_form/organization_code',
+        dataType: 'json'
+    }
 });
 
 
@@ -593,37 +615,42 @@ $("#attachment_input_1").val("");
     );
 
 
-    $("body").on("blur","#bc_gov_id",function(){
-        $.ajax({
-            url: "/bank_deposit_form/bc_gov_id?id="+$(this).val(),
-            type: "GET",
-            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
-            processData: false,
-            cache: false,
-            contentType: false,
-            dataType: 'json',
-            success:function(response){
-                $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
-                $("#employment_city").val(response.office_city).select2();
-                $("#region").val($("#region option[code='"+response.tgb_reg_district+"']").val()).select2();
-                $("#business_unit").val(response.business_unit_id).select2();
-                $("#employee_name").val(response.last_name+","+response.first_name);
-                setTimeout(function(){
-                    $("#employment_city").parents(".form-body").fadeTo("slow",1);
-                },500);
-            },
-            error: function(response) {
-                Swal.fire({
-                    title:'Employee Id '+ $("#bc_gov_id").val() +' not Found!' ,
-                    icon: 'error',
-                    html:
-                        '<strong>'+ $("#bc_gov_id").val() +' Not Found!</strong>',
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    focusConfirm: false,
-                });
-            },
-        });
+    $("body").on("change","#bc_gov_id",function(){
+
+        if ($(this).val() == '000000') {
+            // no vaidation onb this special employee iD
+        } else {
+            $.ajax({
+                url: "/bank_deposit_form/bc_gov_id?id="+$(this).val(),
+                type: "GET",
+                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+                processData: false,
+                cache: false,
+                contentType: false,
+                dataType: 'json',
+                success:function(response){
+                    $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+                    $("#employment_city").val(response.office_city).select2();
+                    $("#region").val($("#region option[code='"+response.tgb_reg_district+"']").val()).select2();
+                    $("#business_unit").val(response.business_unit_id).select2();
+                    $("#employee_name").val(response.last_name+","+response.first_name);
+                    setTimeout(function(){
+                        $("#employment_city").parents(".form-body").fadeTo("slow",1);
+                    },500);
+                },
+                error: function(response) {
+                    Swal.fire({
+                        title:'Employee Id '+ $("#bc_gov_id").val() +' not Found!' ,
+                        icon: 'error',
+                        html:
+                            '<strong>'+ $("#bc_gov_id").val() +' Not Found!</strong>',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        focusConfirm: false,
+                    });
+                },
+            });
+        }
     });
 
     $("body").on("change","#organization_code",function(){
@@ -676,4 +703,5 @@ $("#attachment_input_1").val("");
         }
     });
 
+});    
 </script>

@@ -89,10 +89,13 @@ class BankDepositFormController extends Controller
         $multiple = 'false';
         $selected_charities = [];
 
+        $skip_info_modal = (str_ends_with( strtolower(url()->previous()), 'bank_deposit_form'));
 
         $fund_support_pool_list = FSPool::current()->where('f_s_pools.status', 'A')->join("regions","regions.id","=","f_s_pools.region_id")->with('region')->orderBy("name",'asc')->get();
 
-        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'));
+        return view('volunteering.forms',compact('fund_support_pool_list','organizations','selected_charities','multiple','charities','terms','province_list','category_list','designation_list','cities','campaign_year','current_user','pools','regional_pool_id','business_units','regions','departments'
+                        ,'skip_info_modal'
+                    ));
     }
 
     public function ignoreRemovedFiles($request){
@@ -113,7 +116,7 @@ class BankDepositFormController extends Controller
 
     public function store(Request $request) {
 
-
+        $bu_election_bc = BusinessUnit::where('code', 'BC015')->first();
 
         $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
             'organization_code'         => 'required',
@@ -122,13 +125,28 @@ class BankDepositFormController extends Controller
             'event_type'         => 'required',
             //'sub_type'         => 'required',
             //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
+            'bc_gov_id'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']),
+                              Rule::when( $request->organization_code == 'GOV' 
+                                            && (!($request->business_unit == ($bu_election_bc ? $bu_election_bc->id : null) && $request->bc_gov_id == '000000')),
+                                    ['exists:users,emplid']),
+                              Rule::when( $request->organization_code == 'GOV' && substr($request->event_type,0,1) == 'C', "numeric|digits:6"),
+                            ], 
+            'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ],                             
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
-            'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
+            // 'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
             'region'         => 'required',
             'business_unit'         => 'required',
-            'charity_selection' => 'required',
+
+            'address_1'    =>  'required_unless:event_type,Fundraiser,Gaming',
+            'city'         =>  'required_unless:event_type,Fundraiser,Gaming',
+            'province'     =>  'required_unless:event_type,Fundraiser,Gaming',
+            'postal_code'  =>  'required_unless:event_type,Fundraiser,Gaming',
+
+            'charity_selection' => ['required', Rule::in(['fsp', 'dc']) ],
+            'regional_pool_id'       => ['required_if:charity_selection,fsp', Rule::when( $request->charity_selection == 'fsp', ['exists:f_s_pools,id']) ],
+
             'description' => 'required',
             'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
         ],[
@@ -150,13 +168,13 @@ class BankDepositFormController extends Controller
             }
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
-            if($request->organization_code != "GOV" && $request->organization_code != "RET")
-            {
-                    if(empty($request->pecsf_id))
-                    {
-                        $validator->errors()->add('pecsf_id','A PECSF ID is required.');
-                    }
-            }
+            // if($request->organization_code != "GOV" && $request->organization_code != "RET")
+            // {
+            //         if(empty($request->pecsf_id))
+            //         {
+            //             $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+            //         }
+            // }
 
                 if($request->event_type != "Fundraiser" && $request->event_type!= "Gaming")
                 {
@@ -167,74 +185,74 @@ class BankDepositFormController extends Controller
                 }
 
 
-            if($request->organization_code == "GOV"){
-                if(empty($request->bc_gov_id))
-                {
-                    $validator->errors()->add('bc_gov_id','An Employee ID is required.');
-                }
-                else if(!is_numeric($request->bc_gov_id))
-                {
-                    $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
-                }
-                else if(strlen($request->bc_gov_id) != 6){
-                    $validator->errors()->add('bc_gov_id','The Employee ID must be 6 digits.');
-                }
-
-                if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
-                {
-                    if(strlen($request->employee_name) < 1){
-                        $validator->errors()->add('employee_name','Employee name required.');
+                if($request->organization_code == "GOV"){
+                    if(empty($request->bc_gov_id))
+                    {
+                        $validator->errors()->add('bc_gov_id','An Employee ID is required.');
                     }
-                    else if(strpos($request->employee_name,",") == FALSE){
-                        $validator->errors()->add('employee_name','Employee name must be your first and last name seperated by a comma. "Jack,Johnson".');
+                    else if(!is_numeric($request->bc_gov_id))
+                    {
+                        $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
                     }
-                    else{
-                        $names = explode(",",$request->employee_name);
+                    else if(strlen($request->bc_gov_id) != 6){
+                        $validator->errors()->add('bc_gov_id','The Employee ID must be 6 digits.');
+                    }
 
-                        if(strlen($names[0]) < 1){
-                            $validator->errors()->add('employee_name','First name before the comma must be more than 1 character.');
+                    if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+                    {
+                        if(strlen($request->employee_name) < 1){
+                            $validator->errors()->add('employee_name','Employee name required.');
                         }
-                        else if(strlen($names[1]) < 1){
-                            $validator->errors()->add('employee_name','Last name after the comma must be more than 1 character.');
+                        else if(strpos($request->employee_name,",") == FALSE){
+                            $validator->errors()->add('employee_name','Employee name must be your first and last name seperated by a comma. "Jack,Johnson".');
                         }
-                        else if($names[1][0] == " "){
-                            $validator->errors()->add('employee_name','Enter first and last name without any spaces. "Jack,Johnson".');
+                        else{
+                            $names = explode(",",$request->employee_name);
+
+                            if(strlen($names[0]) < 1){
+                                $validator->errors()->add('employee_name','First name before the comma must be more than 1 character.');
+                            }
+                            else if(strlen($names[1]) < 1){
+                                $validator->errors()->add('employee_name','Last name after the comma must be more than 1 character.');
+                            }
+                            else if($names[1][0] == " "){
+                                $validator->errors()->add('employee_name','Enter first and last name without any spaces. "Jack,Johnson".');
+                            }
                         }
                     }
+
                 }
-
             }
-            }
-            if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+            // if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+            // {
+            //     if(empty($request->address_1))
+            //     {
+            //         $validator->errors()->add('address_1','An Address is required.');
+            //     }
+
+            //     if(empty($request->city))
+            //     {
+            //         $validator->errors()->add('city','An City is required.');
+            //     }
+
+            //     if(empty($request->province))
+            //     {
+            //         $validator->errors()->add('province','An Province is required.');
+            //     }
+
+            //     if(empty($request->postal_code))
+            //     {
+            //         $validator->errors()->add('postal_code','An Postal Code is required.');
+            //     }
+            // }
+
+            if($request->charity_selection == "dc")
             {
-                if(empty($request->address_1))
-                {
-                    $validator->errors()->add('address_1','An Address is required.');
-                }
-
-                if(empty($request->city))
-                {
-                    $validator->errors()->add('city','An City is required.');
-                }
-
-                if(empty($request->province))
-                {
-                    $validator->errors()->add('province','An Province is required.');
-                }
-
-                if(empty($request->postal_code))
-                {
-                    $validator->errors()->add('postal_code','An Postal Code is required.');
-                }
-            }
-
-            if($request->charity_selection == "fsp")
-            {
-                if(empty($request->regional_pool_id)){
-                    $validator->errors()->add('regional_pool_id','Select a Regional Pool.');
-                }
-            }
-            else{
+            //     if(empty($request->regional_pool_id)){
+            //         $validator->errors()->add('regional_pool_id','Select a Regional Pool.');
+            //     }
+            // }
+            // else{
                 $total = 0;
                 $a = [];
                 $reverse = count(is_array(request("donation_percent"))? request("donation_percent"):[]) - $request->org_count;
@@ -351,63 +369,63 @@ class BankDepositFormController extends Controller
 
         $organization_code = $request->organization_code;
         $event_type = $request->event_type;
-        $pecsf_id = '';
-        if($organization_code == "RET"){ //R****  PECSF ID
-            $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
-                ->orderBy("pecsf_id","desc")
-                ->get();
+        $pecsf_id = $this->assign_pecsf_id($organization_code, $event_type );
+        // if($organization_code == "RET"){ //R****  PECSF ID
+        //     $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
+        //         ->orderBy("pecsf_id","desc")
+        //         ->get();
 
-            if(count($existing) > 0){
-                $pecsf_id = "R".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
-            }
-            else{
-                $pecsf_id = "R".substr(date("Y"),2,2)."001";
-            }
-        } else {
-            if($event_type == "Gaming"){ //G****  PECSF ID
-                $existing = BankDepositForm::where("event_type","=","Gaming")
-                ->where("pecsf_id","LIKE","G".substr(date("Y"),2,2)."%")
-                ->orderBy("pecsf_id","desc")
-                ->get();
+        //     if(count($existing) > 0){
+        //         $pecsf_id = "R".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+        //     }
+        //     else{
+        //         $pecsf_id = "R".substr(date("Y"),2,2)."001";
+        //     }
+        // } else {
+        //     if($event_type == "Gaming"){ //G****  PECSF ID
+        //         $existing = BankDepositForm::where("event_type","=","Gaming")
+        //         ->where("pecsf_id","LIKE","G".substr(date("Y"),2,2)."%")
+        //         ->orderBy("pecsf_id","desc")
+        //         ->get();
 
-                if(count($existing) > 0){
-                    $pecsf_id = "G".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
-                }
-                else{
-                    $pecsf_id = "G".substr(date("Y"),2,2)."001";
-                }
+        //         if(count($existing) > 0){
+        //             $pecsf_id = "G".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+        //         }
+        //         else{
+        //             $pecsf_id = "G".substr(date("Y"),2,2)."001";
+        //         }
 
-            } elseif ($event_type == "Fundraiser") { //F****  PECSF ID
-                $existing = BankDepositForm::where("event_type","=","Fundraiser")
-                ->where("pecsf_id","LIKE","F".substr(date("Y"),2,2)."%")
-                ->orderBy("pecsf_id","desc")
-                ->get();
+        //     } elseif ($event_type == "Fundraiser") { //F****  PECSF ID
+        //         $existing = BankDepositForm::where("event_type","=","Fundraiser")
+        //         ->where("pecsf_id","LIKE","F".substr(date("Y"),2,2)."%")
+        //         ->orderBy("pecsf_id","desc")
+        //         ->get();
                
-                if(count($existing) > 0){
-                    $pecsf_id = "F".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
-                }
-                else{
-                    $pecsf_id = "F".substr(date("Y"),2,2)."001";
-                }
-            } else {
-                if ($organization_code == "GOV") {  //S****  PECSF ID
-                    $existing = BankDepositForm::whereIn("event_type", ["Cash One-Time Donation", "Cheque One-Time Donation"])
-                                ->where("pecsf_id","LIKE","S".substr(date("Y"),2,2)."%")
-                                ->orderBy("pecsf_id", "desc")
-                                ->get();
+        //         if(count($existing) > 0){
+        //             $pecsf_id = "F".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+        //         }
+        //         else{
+        //             $pecsf_id = "F".substr(date("Y"),2,2)."001";
+        //         }
+        //     } else {
+        //         if ($organization_code == "GOV") {  //S****  PECSF ID
+        //             $existing = BankDepositForm::whereIn("event_type", ["Cash One-Time Donation", "Cheque One-Time Donation"])
+        //                         ->where("pecsf_id","LIKE","S".substr(date("Y"),2,2)."%")
+        //                         ->orderBy("pecsf_id", "desc")
+        //                         ->get();
 
-                    if(count($existing) > 0){
-                        $pecsf_id = "S".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
-                    }
-                    else{
-                        $pecsf_id = "S".substr(date("Y"),2,2)."001";
-                    }
-                } else {
-                    //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
-                }
-            } 
+        //             if(count($existing) > 0){
+        //                 $pecsf_id = "S".substr(date("Y"),2,2).str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+        //             }
+        //             else{
+        //                 $pecsf_id = "S".substr(date("Y"),2,2)."001";
+        //             }
+        //         } else {
+        //             //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
+        //         }
+        //     } 
 
-        }
+        // }
 
 
         $form = BankDepositForm::Create(
@@ -512,6 +530,8 @@ class BankDepositFormController extends Controller
 
     }
     public function update(Request $request) {
+// dd($request->all());
+        $bu_election_bc = BusinessUnit::where('code', 'BC015')->first();
 
         $validator = Validator::make(request()->all(), [
             'organization_code'         => 'required',
@@ -520,60 +540,74 @@ class BankDepositFormController extends Controller
             'event_type'         => 'required',
             //'sub_type'         => 'required',
             //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
-            'bc_gov_id'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
+            'bc_gov_id'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']),
+                              Rule::when( $request->organization_code == 'GOV' 
+                                            && (!($request->business_unit == ($bu_election_bc ? $bu_election_bc->id : null) && $request->bc_gov_id == '000000')),
+                                    ['exists:users,emplid']),
+                              Rule::when( $request->organization_code == 'GOV' && substr($request->event_type,0,1) == 'C', "numeric|digits:6"),
+                            ], 
             'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|gt:0',
             'employment_city'         => 'required',
-            'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
-            'region'         => 'required',
+            'region'                 => 'required',
             'business_unit'         => 'required',
-            'charity_selection' => 'required',
+
+            // 'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
+
+            'address_1'    =>  'required_unless:event_type,Fundraiser,Gaming',
+            'city'         =>  'required_unless:event_type,Fundraiser,Gaming',
+            'province'     =>  'required_unless:event_type,Fundraiser,Gaming',
+            'postal_code'  =>  'required_unless:event_type,Fundraiser,Gaming',
+
+            'charity_selection' => ['required', Rule::in(['fsp', 'dc']) ],
+            'regional_pool_id'       => ['required_if:charity_selection,fsp', Rule::when( $request->charity_selection == 'fsp', ['exists:f_s_pools,id']) ],
+
             'description' => 'required',
         ],[
             'organization_code' => 'The Organization Code is required.',
         ]);
         $validator->after(function ($validator) use($request) {
-            if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
-                if($request->organization_code != "GOV")
-                {
-                    if(empty($request->pecsf_id))
-                    {
-                        $validator->errors()->add('pecsf_id','A PECSF ID is required.');
-                    }
-                }
+            // if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
+            //     if($request->organization_code != "GOV")
+            //     {
+            //         if(empty($request->pecsf_id))
+            //         {
+            //             $validator->errors()->add('pecsf_id','A PECSF ID is required.');
+            //         }
+            //     }
 
-            }
-            if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+            // }
+            // if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
+            // {
+            //     if(empty($request->address_1))
+            //     {
+            //         $validator->errors()->add('address_1','An Address is required.');
+            //     }
+
+            //     if(empty($request->city))
+            //     {
+            //         $validator->errors()->add('city','An City is required.');
+            //     }
+
+            //     if(empty($request->province))
+            //     {
+            //         $validator->errors()->add('province','An Province is required.');
+            //     }
+
+            //     if(empty($request->postal_code))
+            //     {
+            //         $validator->errors()->add('postal_code','An Postal Code is required.');
+            //     }
+            // }
+
+            if($request->charity_selection == "dc")
             {
-                if(empty($request->address_1))
-                {
-                    $validator->errors()->add('address_1','An Address is required.');
-                }
-
-                if(empty($request->city))
-                {
-                    $validator->errors()->add('city','An City is required.');
-                }
-
-                if(empty($request->province))
-                {
-                    $validator->errors()->add('province','An Province is required.');
-                }
-
-                if(empty($request->postal_code))
-                {
-                    $validator->errors()->add('postal_code','An Postal Code is required.');
-                }
-            }
-
-            if($request->charity_selection == "fsp")
-            {
-                if(empty($request->regional_pool_id)){
-                    $validator->errors()->add('regional_pool_id','Select a Regional Pool.');
-                }
-            }
-            else{
+            //     if(empty($request->regional_pool_id)){
+            //         $validator->errors()->add('regional_pool_id','Select a Regional Pool.');
+            //     }
+            // }
+            // else{
                 $total = 0;
 
                 if($request->org_count < 1){
@@ -617,47 +651,47 @@ class BankDepositFormController extends Controller
                 }
             }
 
-            $existing = [];
-            if($request->organization_code == "GOV"){
-                $existing = BankDepositForm::where("organization_code","=","GOV")
-                    ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
-                    ->where("form_submitter_id","=",$request->form_submitter_id)
-                    ->get();
+            // $existing = [];
+            // if($request->organization_code == "GOV"){
+            //     $existing = BankDepositForm::where("organization_code","=","GOV")
+            //         ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
+            //         ->where("form_submitter_id","=",$request->form_submitter_id)
+            //         ->get();
 
-            if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
-                {
-                    if(!empty($request->pecsf_id)){
+            // if(!empty($existing) && ($request->event_type != "Gaming" && $request->event_type != "Fundraiser"))
+            //     {
+            //         if(!empty($request->pecsf_id)){
 
-                        $existingPecsfId = BankDepositForm::where("organization_code","=","GOV")
-                            ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
-                            ->where("pecsf_id","=",$request->pecsf_id)
-                            ->orWhere("pecsf_id","=",substr($request->pecsf_id,1))
-                            ->get();
+            //             $existingPecsfId = BankDepositForm::where("organization_code","=","GOV")
+            //                 ->whereIn("event_type",["Cash One-time Donation","Cheque One-time Donation"])
+            //                 ->where("pecsf_id","=",$request->pecsf_id)
+            //                 ->orWhere("pecsf_id","=",substr($request->pecsf_id,1))
+            //                 ->get();
 
-                        if((strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1))) && !empty($exsitingPecsfId))
-                        {
-                            $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
-                        }
-                    }
-                 else{
-                     if($request->organization_code != "GOV") {
-                        $validator->errors()->add('pecsf_id','The PECSF ID is required.');
-                     }
+            //             if((strtolower($request->pecsf_id[0]) != "s" || !is_numeric(substr($request->pecsf_id,1))) && !empty($exsitingPecsfId))
+            //             {
+            //                 $validator->errors()->add('pecsf_id','Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
+            //             }
+            //         }
+            //      else{
+            //          if($request->organization_code != "GOV") {
+            //             $validator->errors()->add('pecsf_id','The PECSF ID is required.');
+            //          }
                      
-                 }
-                }
-                else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
-                        if(empty($request->bc_gov_id))
-                        {
-                            $validator->errors()->add('bc_gov_id','An Employee ID is required.');
-                        }
-                        else if(!is_numeric($request->bc_gov_id))
-                        {
-                            $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
-                        }
-                }
+            //      }
+            //     }
+            //     else if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
+            //             if(empty($request->bc_gov_id))
+            //             {
+            //                 $validator->errors()->add('bc_gov_id','An Employee ID is required.');
+            //             }
+            //             else if(!is_numeric($request->bc_gov_id))
+            //             {
+            //                 $validator->errors()->add('bc_gov_id','The Employee ID must be a number.');
+            //             }
+            //     }
 
-            }
+            // }
             /*
             if(($request->event_type != "Gaming" && $request->event_type != "Fundraiser")){
                 $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
@@ -670,16 +704,16 @@ class BankDepositFormController extends Controller
                 }
             }
             */
-            if($request->pecsf_id){
-                $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
-                    ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
-                    ->where("approved","=",1)
-                    ->get();
-                if(count($existing_pecsf_id) > 0)
-                {
-                    $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
-                }
-            }
+            // if($request->pecsf_id){
+            //     $existing_pecsf_id = BankDepositForm::where("campaign_year_id","=",$request->campaign_year)
+            //         ->whereIn("pecsf_id",[$request->pecsf_id,"S".$request->pecsf_id,"s".$request->pecsf_id])
+            //         ->where("approved","=",1)
+            //         ->get();
+            //     if(count($existing_pecsf_id) > 0)
+            //     {
+            //         $validator->errors()->add('pecsf_id','The PECSF ID has already been used for another Donation.');
+            //     }
+            // }
 
 
             if(!empty(request("attachments"))){
@@ -711,6 +745,23 @@ class BankDepositFormController extends Controller
             $sub_type = $request->sub_type;
         }
 
+        $organization_code = $request->organization_code;
+        $event_type = $request->event_type;
+        $pecsf_id = $request->pecsf_id;
+        $prefix = substr($pecsf_id,0,1);
+        if ($organization_code == "RET" && $prefix != 'R') { //R****  PECSF ID
+            $pecsf_id = $this->assign_pecsf_id($organization_code, $event_type );        
+        } else {
+
+            if (($event_type == "Fundraiser" &&  $prefix != 'F') ||
+                ($event_type == "Gaming" &&  $prefix != 'G') ||
+                ( substr($event_type,0,1) == 'C' &&  $prefix != 'S') ) {
+                $pecsf_id = $this->assign_pecsf_id($organization_code, $event_type );        
+            } else {
+                //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
+            }
+        }
+
         $form = BankDepositForm::find($request->form_id)->update(
             [
                 'organization_code' => $request->organization_code,
@@ -728,8 +779,10 @@ class BankDepositFormController extends Controller
                 'address_province' => $request->province,
                 'address_postal_code' => $request->postal_code,
                 'bc_gov_id' => $request->bc_gov_id,
-                'pecsf_id' => $request->pecsf_id,
+                'pecsf_id' => $pecsf_id,
                 'business_unit' => $request->business_unit,
+
+                'employee_name' => $request->employee_name,
                 'updated_by_id' => Auth::id(),
             ]
         );
@@ -812,7 +865,7 @@ class BankDepositFormController extends Controller
     {
         if(empty($request->term))
         {
-            $organizations = Organization::where("status","=","A")->limit(30)->get();
+            $organizations = Organization::where("status","=","A")->orderBy('name')->get();
         }
         else{
             $organizations = Organization::where( function($q) use($request) {
@@ -820,6 +873,7 @@ class BankDepositFormController extends Controller
                                       ->orWhere("name", "like", "%" . $request->term . "%");
                                 })
                                 ->where("status","=","A")
+                                ->orderBy('name')
                                 ->get();
         }
 
@@ -955,4 +1009,39 @@ class BankDepositFormController extends Controller
             
             return response()->json(['msg' => $msg]);
         }
+
+    public function assign_pecsf_id( $organization_code, $event_type) 
+    {
+
+        $pecsf_id = null;
+        $prefix = '';
+        $yy = substr(date("Y"),2,2);
+        $seq = '001';
+
+        switch ($organization_code) {
+            case "RET":
+                $prefix = "R";
+                break;
+            default:
+                if (substr($event_type,0,1) == 'C') {     // ["Cash One-Time Donation", "Cheque One-Time Donation"]
+                    $prefix = "S";
+                } else {
+                    $prefix = substr($event_type,0,1); 
+                }
+        }
+
+        $existing = BankDepositForm::where("pecsf_id","LIKE", $prefix . $yy ."%")
+                            ->orderBy("pecsf_id","desc")
+                            ->selectRaw('SUBSTRING( pecsf_id, -3) as sequence')
+                            ->first();
+
+        if ($existing){
+            $seq = str_pad((intval($existing->sequence) +1),3,'0',STR_PAD_LEFT);
+            // $pecsf_id = "R". $yy . str_pad((intval(count($existing)) +1),3,'0',STR_PAD_LEFT);
+        }
+        $pecsf_id = $prefix . $yy . $seq;
+
+        return $pecsf_id;
+
+    }
 }
