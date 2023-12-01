@@ -60,7 +60,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                     //     '',
                     // ],
                     [    
-                        'Calendar Year',
+                        'Calandar Year',
                         'Name',
                         'Org Code',
                         'Org Descr',
