@@ -18,11 +18,9 @@ class BankDepositFormAttachmentsSeeder extends Seeder
     public function run()
     {
 
-        $attachemnts = BankDepositFormAttachments::whereNull('file')->where('local_path','like', 'C:%')->orderBy('id')->get();
+        $attachemnts = BankDepositFormAttachments::whereNull('file')->orderBy('id')->get();
 
         foreach ($attachemnts as $attachment) {
-
-            
 
             $filename = substr($attachment->local_path, strrpos($attachment->local_path, '/') + 1);
             $original_filename = substr($filename, strpos($filename, '_') + 1);
