@@ -121,7 +121,9 @@ $(function () {
         }
     });
 
+@if (isset($skip_info_modal) && !($skip_info_modal) )
     $("#info-modal").modal();
+@endif
 
 
     $('.closeModalBtn').on('click', function() {

@@ -102,7 +102,7 @@ class DonateNowRequest extends FormRequest
             // 'charity_id.required_if' => 'A charity selection is required. Please choose a charity.',
             'charities.required' => 'At least one charity must be specified.',
             'charities.min' => 'At least one charity must be specified.',
-            'charities.max' => 'More than one charity were specified.',
+            'charities.max' => 'More than one charity chosen.',
             'charities.*.exists' =>  'The invalid charity entered.',
             'one_time_amount_custom.numeric' => ' The One-time custom amount must be a number.',
             'one_time_amount_custom.required' => 'The amount is required.',

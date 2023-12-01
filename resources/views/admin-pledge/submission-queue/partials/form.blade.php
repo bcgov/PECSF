@@ -121,16 +121,6 @@
 
         </div>
 
-        <div id="pecsfid" class="form-group col-md-3" style="">
-            <label for="pecsf_id">PECSF ID</label>
-            <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
-            <span class="pecsf_id_errors errors">
-                       @error('pecsf_id')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                    @enderror
-                  </span>
-        </div>
-        
         <div id="bcgovid" class="form-group col-md-3" style="display:none;">
             <label for="bc_gov_id">Employee ID</label>
             <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
@@ -151,6 +141,17 @@
                   </span>
         </div>
 
+        <div id="pecsfid" class="form-group col-md-3" style="">
+            <label for="pecsf_id">PECSF ID</label>
+            <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" readonly/>
+            <span class="pecsf_id_errors errors">
+                       @error('pecsf_id')
+                        <span class="invalid-feedback">{{  $message  }}</span>
+                    @enderror
+                  </span>
+        </div>
+        
+
 
     </div>
 <br>
@@ -164,7 +165,9 @@
 
         <div class="form-group col-md-4">
             <label for="event_type">Employment city</label>
-            <select onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');" class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
+            <select 
+                {{-- onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');"  --}}
+                class="form-control search_icon" type="text" id="employment_city" name="employment_city" >
                 <option value="">Select a city</option>
                 @foreach($cities as $city)
                     <option region="{{$city->TGB_REG_DISTRICT}}" value="{{$city->city}}">{{$city->city}}</option>
