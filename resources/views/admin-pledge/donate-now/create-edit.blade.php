@@ -49,20 +49,8 @@
                     <div class="row">
                         <div class="form-group ">
                             <label for="yearcd">Calendar Year</label>
-                            @if ($is_new_pledge)
-                                <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;">
-                                    @foreach ($campaignYears as $cy)
-                                        <option value="{{ $cy->calendar_year }}"
-                                            {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>
-                                            {{ $cy->calendar_year }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @else
-                                <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;" {{ $is_new_pledge ? '' : 'readonly' }}>
-                                <option value="{{ $pledge->calendar_year }}" selected>{{ $pledge->yearcd }}</option>
-                                </select>
-                            @endif
+                            <input type="text" class="form-control" name="yearcd" 
+                                value="{{ $is_new_pledge ? $yearcd : $pledge->yearcd }}" readonly>    
                         </div>
                     </div>
             </div>

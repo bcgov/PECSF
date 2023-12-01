@@ -87,13 +87,8 @@ class DonateNowPledgeController extends Controller
                                              ->orWhere('donate_now_pledges.city', 'like', '%'. $request->city .'%');
                                 });
                             })
-                            ->when( $request->campaign_year_id, function($query) use($request) {
-                                // $query->where('campaign_year_id', $request->campaign_year_id);
-                                $query->where('yearcd', function($q) use($request){
-                                            $q->select('calendar_year')
-                                                    ->from('campaign_years')
-                                                    ->where('campaign_years.id', $request->campaign_year_id);
-                                });
+                            ->when( $request->yearcd && $request->yearcd <> 'all', function($query) use($request) {
+                                $query->where('donate_now_pledges.yearcd', $request->yearcd );
                             })
                             ->when( $request->cancelled == 'C', function($query) use($request) {
                                 $query->whereNotNull('donate_now_pledges.cancelled');
@@ -162,8 +157,11 @@ class DonateNowPledgeController extends Controller
         $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
+        $deduct_pay_from = PayCalendar::nextDeductPayFrom();
+        $yearcd = substr($deduct_pay_from,0,4);
+
         // load the view and pass 
-        return view('admin-pledge.donate-now.index', compact('organizations', 'campaign_years','cities', 'filter'));
+        return view('admin-pledge.donate-now.index', compact('organizations', 'campaign_years','cities', 'filter', 'yearcd'));
 
     }
 
@@ -192,9 +190,12 @@ class DonateNowPledgeController extends Controller
         $cities = City::orderBy('city')->get();
 
         $is_new_pledge = true;
+        
+        $deduct_pay_from = PayCalendar::nextDeductPayFrom();
+        $yearcd = substr($deduct_pay_from,0,4);
 
         return view('admin-pledge.donate-now.create-edit', compact('pledge', 'pool_option', 'fspools', 'organizations','campaignYears','cities',
-                    'is_new_pledge',
+                    'is_new_pledge', 'yearcd'
                     //  'deduct_pay_from', 'one_time_amount'
                     ));
     }
