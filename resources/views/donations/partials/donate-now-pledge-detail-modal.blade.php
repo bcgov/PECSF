@@ -5,7 +5,7 @@
         <p class="font-weight-bold">Calendar Year</p>
       </div>
       <div class="col-1">
-        <p>{{ $year + 1 }}</p>
+        <p>{{ $year }}</p>
       </div>
 </div>
 <div class="row">

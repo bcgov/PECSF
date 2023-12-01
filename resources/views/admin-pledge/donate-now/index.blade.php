@@ -111,12 +111,12 @@
                 <label for="campaign_year">
                     Calendar Year
                 </label>
-                <select id="campaign_year_id" class="form-control" name="campaign_year_id">
-                    <option value="">All</option>
+                <select id="yearcd" class="form-control" name="yearcd">
+                    <option value="all">All</option>
                     @foreach ($campaign_years as $cy)
-                        <option value="{{ $cy->id }}" {{ 
-                            isset($filter['campaign_year_id']) ? ($filter['campaign_year_id'] == $cy->id ? 'selected' : '') :
-                            ($cy->calendar_year == date('Y') ? 'selected' : '') }}>
+                        <option value="{{ $cy->calendar_year }}" {{ 
+                            isset($filter['yearcd']) ? ($filter['yearcd'] == $cy->calendar_year ? 'selected' : '') :
+                            ($cy->calendar_year == $yearcd ? 'selected' : '') }}>
                             {{ $cy->calendar_year }} 
                         </option>
                     @endforeach
@@ -282,7 +282,7 @@
                     data.seqno = $('#seqno').val();
                     data.name = $('#name').val();
                     data.city = $('#city').val();
-                    data.campaign_year_id = $('#campaign_year_id').val();
+                    data.yearcd = $('#yearcd').val();
                     data.one_time_amt_from = $('#one_time_amt_from').val();
                     data.one_time_amt_to = $('#one_time_amt_to').val();
                     data.pay_period_amt_from = $('#pay_period_amt_from').val();
