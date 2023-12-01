@@ -57,11 +57,13 @@ class Organization extends Model implements Auditable
     }
 
     public function pledges() {
-        return $this->hasMany(Pledge::class, 'organization_id', 'id');
+        return $this->hasMany(Pledge::class, 'organization_id', 'id')
+                    ->whereNull('pledges.cancelled');
     }
 
     public function donate_now_pledges() {
-        return $this->hasMany(DonateNowPledge::class, 'organization_id', 'id');
+        return $this->hasMany(DonateNowPledge::class, 'organization_id', 'id')
+                    ->whereNull('donate_now_pledges.cancelled');
     }
 
     public function special_campaign_pledges() {

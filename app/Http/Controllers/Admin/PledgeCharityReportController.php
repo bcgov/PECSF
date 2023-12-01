@@ -154,6 +154,7 @@ class PledgeCharityReportController extends Controller
 
         // get all the record for select options 
         $years = Pledge::join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
+                        ->whereNull('cancelled')
                         ->distinct('campaign_years.calendar_year')->orderBy('campaign_years.calendar_year')->pluck('campaign_years.calendar_year');
 
         // load the view and pass data

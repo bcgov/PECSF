@@ -1,5 +1,5 @@
 
-<h3 class="">3. Decide on the frequency and amount</h3>
+<h3 class="">3. Decide on the amount</h3>
 
 <div class=""></div>
 <div  style="" >

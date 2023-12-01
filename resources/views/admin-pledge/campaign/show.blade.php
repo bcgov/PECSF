@@ -19,9 +19,16 @@
 <div class="card pb-4">
   <div class="card-body py-0">
 
-        <div class="pl-3 pt-3">
-            <div class="form-group row">
-                    <span><b class="pr-3">Transaction ID: </b>{{ $pledge->id }}</span>
+        <div class="d-flex align-items-center my-2">
+            <h4><strong>Transaction ID: </strong><span>{{ $pledge->id }}</span></h4>
+            @if ($pledge->cancelled)
+                <h4 class="ml-3 border border-danger rounded p-2 text-danger font-weight-bold">Cancelled</h4>
+            @endif
+            <div class="flex-fill"></div>
+
+            <div class="d-flex  align-items-center ">
+                <div class="mr-2">
+                </div>
             </div>
         </div>
 
