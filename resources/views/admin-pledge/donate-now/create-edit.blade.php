@@ -230,9 +230,9 @@
                                         <select class="form-control" name="pool_id" id="pool_id">
                                             <option value="" selected>Choose a pool</option>
                                             @foreach ($fspools as $fspool)
-                                                <option value="{{ $fspool->region_id }}"
+                                                <option value="{{ $fspool->id }}"
                                                     @if ( $pledge->id && $pool_option == "P")
-                                                        {{  $pledge->current_fund_supported_pool_by_region()->id == $fspool->id ? 'selected' : ''  }}
+                                                        {{  $pledge->current_fund_supported_pool_by_region()->region_id == $fspool->region_id ? 'selected' : ''  }}
                                                     @endif
                                                     >{{ $fspool->region->name }}</option>
                                             @endforeach
@@ -350,7 +350,7 @@
 
 
         <div class="mt-3">
-            <button class="btn btn-outline-primary" onclick="location.href='{{ route('admin-pledge.donate-now.index') }}'">Cancel</button>
+            <button type="button" class="btn btn-outline-primary" onclick="location.href='{{ route('admin-pledge.donate-now.index') }}'">Cancel</button>
             <input class="btn btn-primary ml-2" type="submit" value="Save">
         </div>
 

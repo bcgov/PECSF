@@ -121,12 +121,14 @@ class FSPool extends Model implements Auditable
     public function annual_campaign_pledges() {
 
         return $this->hasMany(Pledge::class, 'region_id', 'region_id')
-                    ->whereRaw("Date(pledges.created_at) >= '" . $this->start_date . "'");
+                    ->whereRaw("Date(pledges.created_at) >= '" . $this->start_date . "'")
+                    ->whereNull('pledges.cancelled');
     }
 
     public function donate_now_pledges() {
         return $this->hasMany(DonateNowPledge::class, 'region_id', 'region_id')
-                    ->whereRaw("Date(donate_now_pledges.created_at) >= '" . $this->start_date . "'");
+                    ->whereRaw("Date(donate_now_pledges.created_at) >= '" . $this->start_date . "'")
+                    ->whereNull('donate_now_pledges.cancelled');
 
     }
 

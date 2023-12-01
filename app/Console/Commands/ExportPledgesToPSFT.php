@@ -151,7 +151,8 @@ class ExportPledgesToPSFT extends Command
 
         $pledgeData = Pledge::join('organizations', 'pledges.organization_id', 'organizations.id')
                             ->where('organizations.code', 'GOV')
-                            ->where('pledges.ods_export_status', null)
+                            ->whereNull('pledges.ods_export_status')
+                            ->whereNull('pledges.cancelled_at')
                             ->select('pledges.*')
                             ->orderBy('pledges.id')->get();
 
@@ -289,6 +290,10 @@ class ExportPledgesToPSFT extends Command
 
                 $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
 
+            }
+
+            if ($this->row_count > 900) {
+                break;      // avoid the 1000 per hour limit in Production 
             }
 
         }
