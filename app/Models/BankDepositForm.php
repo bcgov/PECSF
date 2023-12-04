@@ -51,7 +51,7 @@ class BankDepositForm extends Model implements Auditable
     ];
 
     function attachments(){
-        $this->hasMany(BankDepositFormAttachments::class);
+        return $this->hasMany(BankDepositFormAttachments::class,'bank_deposit_form_id','id');
     }
 
     function organizations(){
