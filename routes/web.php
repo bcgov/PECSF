@@ -293,6 +293,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     // Pledge Administration -- Donate Now Pledges
     Route::resource('/donate-now', DonateNowPledgeController::class);
     Route::post('/donate-now/{id}/cancel', [DonateNowPledgeController::class,'cancel'])->name('donate-now.cancel');
+    Route::get('/donate-now-users', [DonateNowPledgeController::class,'getUsers'])->name('donate-now.users');
 });
 
 // Special Campaign

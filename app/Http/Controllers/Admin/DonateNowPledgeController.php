@@ -470,7 +470,7 @@ class DonateNowPledgeController extends Controller
                         'last_name' =>  $user->primary_job->last_name ?? '', 
                         'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
                         'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
-                        'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',                    
+                        'region' => $user->primary_job->city_by_office_city->region->code ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',                    
                         'organization' => $user->primary_job->organization_name ?? '',
                 ];
             }
