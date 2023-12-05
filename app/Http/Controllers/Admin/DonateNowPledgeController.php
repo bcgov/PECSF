@@ -50,7 +50,8 @@ class DonateNowPledgeController extends Controller
             session(['admin_pledge_donate_now_filter' => $filter]);
 
             $pledges = DonateNowPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
-                            'charity')
+                            'charity', 
+                            'user.primary_job.city_by_office_city', 'user.primary_job.city_by_office_city.region')
                             // ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'donate_now_pledges.emplid')
                             ->where( function($query) {

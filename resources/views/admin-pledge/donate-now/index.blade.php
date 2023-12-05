@@ -319,9 +319,9 @@
                 {data: 'user.primary_job.city', defaultContent: '', className: "dt-nowrap",
                     render: function ( data, type, row, meta ) {
                             if(row.pecsf_id) {
-                                return row.city;
-                            } else {
                                 return data;
+                            } else {
+                                return row.user.primary_job.city_by_office_city.region.name;
                             }
                         }
                 },
