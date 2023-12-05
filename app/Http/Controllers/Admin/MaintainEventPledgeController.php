@@ -135,18 +135,14 @@ class MaintainEventPledgeController extends Controller
 
             $pledge = BankDepositForm::where('id', $id)->first();
 
-            $pledge->formatted_deposit_amount = number_format($pledge->deposit_amount,2);
+            $pool_charities= null;
+            if ($pledge->regional_pool_id) {
+                $pool_charities = FSPool::where('id', $pledge->regional_pool_id)->first()->charities;
+            }
+            
+            return view('admin-pledge.event.partials.detail-modal',
+                                compact('pledge', 'pool_charities') )->render();
 
-            $pledge->created_by_name = $pledge->created_by ? $pledge->created_by->name : '';
-            $pledge->updated_by_name = $pledge->updated_by ? $pledge ->updated_by->name : '';
-            $pledge->approved_by_name = $pledge->approved_by ? $pledge ->approved_by->name : '';
-            $pledge->formatted_created_at = $pledge->created_at->format('Y-m-d H:i:s');
-            $pledge->formatted_updated_at = $pledge->updated_at->format('Y-m-d H:i:s');
-
-            unset($pledge->created_by );
-            unset($pledge->updated_by );
-            unset($pledge->approved_by );
-            return response()->json($pledge);
         }
 
     }
