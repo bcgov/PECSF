@@ -314,6 +314,26 @@ var formData = new FormData();
         e.preventDefault();
         var form = document.getElementById("create_pool");
 
+        exist_count = $('table#attachments .filename').length;
+        total_count = $('#bank_deposit_form .dropzone .dz-complete').length;
+        error_count = $('#bank_deposit_form .dropzone .dz-error').length;
+        if (total_count > (5 - exist_count) ) {
+            Swal.fire({
+                title: "Problem on upload files",
+                text: "You have reached the maximum number of allowed file uploads. To continue, please remove some files from your current selection and try again.",
+                icon: "warning"
+            });
+            return; 
+        }
+        if (error_count > 0 ) {
+            Swal.fire({
+                title: "Problem on upload files",
+                text: "You have uploaded some unsupported format or file size exceeds limit file(s). Please remove and upload a valid file within the specified size constraints",
+                icon: "warning"
+            });
+            return;
+        }
+
         $(".max-charities-error").hide();
         $(".charity-error-hook").css("border","none")
 
