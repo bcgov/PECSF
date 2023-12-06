@@ -200,20 +200,20 @@ $(function () {
 
 });
 
-$("body").on("change","[name='attachments[]']",function(){
-$(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
-});
+// $("body").on("change","[name='attachments[]']",function(){
+// $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
+// });
 
-let attachment_number = 1;
-$("body").on("click",".add_attachment_row",function(e){
-e.preventDefault();
+// let attachment_number = 1;
+// $("body").on("click",".add_attachment_row",function(e){
+// e.preventDefault();
 
-    text = $("#attachment-tmpl").html();
-    text = text.replace(/XXX/g, attachment_number + 1);
-    $('.attachment').last().after( text );
-    attachment_number++;
+//     text = $("#attachment-tmpl").html();
+//     text = text.replace(/XXX/g, attachment_number + 1);
+//     $('.attachment').last().after( text );
+//     attachment_number++;
 
-});
+// });
 
 function nongovuserinfo(){
     $.get({
@@ -342,6 +342,25 @@ var formData = new FormData();
         e.preventDefault();
         var form = document.getElementById("create_pool");
 
+        total_count = $('#bank_deposit_form .dropzone .dz-complete').length;
+        error_count = $('#bank_deposit_form .dropzone .dz-error').length;
+        if (total_count > 3 ) {
+            Swal.fire({
+                title: "Problem on upload files",
+                text: "You have reached the maximum number of allowed file uploads. To continue, please remove some files from your current selection and try again.",
+                icon: "warning"
+            });
+            return; 
+        }
+        if (error_count > 0 ) {
+            Swal.fire({
+                title: "Problem on upload files",
+                text: "You have uploaded some unsupported format or file size exceeds limit file(s). Please remove and upload a valid file within the specified size constraints",
+                icon: "warning"
+            });
+            return;
+        }
+
         $(".max-charities-error").hide();
         $(".charity-error-hook").css("border","none")
 
@@ -382,7 +401,7 @@ var formData = new FormData();
         formData.append('province', $('select[name="province"]').val() );
 
         formData.append("org_count", $(".organization").length);
-        formData.append("ignoreFiles", ignoreFiles);
+        // formData.append("ignoreFiles", ignoreFiles);
 
         $(this).fadeTo("slow",0.2);
         $.ajax({
@@ -501,7 +520,7 @@ reader.readAsDataURL(file);
 }
 
 
-$("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); });
+// $("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); });
 /*
 // Drag enter
 $('.upload-area').on('dragenter', function (e) {
@@ -553,41 +572,41 @@ var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
     }
 });
 */
-$("#attachment_input_1").change(function(e){
-e.stopPropagation();
-e.preventDefault();
-$("#upload-area-text").html("<u>Browse</u> Files");
+// $("#attachment_input_1").change(function(e){
+// e.stopPropagation();
+// e.preventDefault();
+// $("#upload-area-text").html("<u>Browse</u> Files");
 
-var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
-var file = e.target.files;
-    $(".attachment_errors").html("");
-    if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
-        $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
-        $(".invalid-feedback").show();
-        return;
-    }
-if(file[0].size < 2097152)
-{
-    formData.append('attachments[]', file[0]);
-    $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
-    $(".invalid-feedback").show();
-    const index = ignoreFiles.indexOf(file[0].name);
-    if (index > -1) { // only splice array when item is found
-        ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
-    }
-}
-else{
-    $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
-    $(".invalid-feedback").show();
-}
-});
+// var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
+// var file = e.target.files;
+//     $(".attachment_errors").html("");
+//     if(allowed.indexOf(file[0].name.substring(file[0].name.lastIndexOf(".")+1).toLowerCase()) < 0){
+//         $(".attachment_errors").html('<span class="invalid-feedback">File must be "pdf","xls","xlsx","csv","png","jpeg","jpg"</span>');
+//         $(".invalid-feedback").show();
+//         return;
+//     }
+// if(file[0].size < 2097152)
+// {
+//     formData.append('attachments[]', file[0]);
+//     $("#attachments").append("<div style='min-width:100px;'>"+file[0].name+"<i attachment='"+file[0].name+"' class='remove_attachment fas fa-window-close'></i></div>");
+//     $(".invalid-feedback").show();
+//     const index = ignoreFiles.indexOf(file[0].name);
+//     if (index > -1) { // only splice array when item is found
+//         ignoreFiles.splice(index, 1); // 2nd parameter means remove one item only
+//     }
+// }
+// else{
+//     $(".attachment_errors").html("<span class='invalid-feedback'>Please upload a smaller file < 2MB</span>");
+//     $(".invalid-feedback").show();
+// }
+// });
 
-var ignoreFiles = [];
-$("body").on("click",".remove_attachment",function(){
-$(this).parent().remove();
-ignoreFiles.push($(this).attr("attachment"));
-$("#attachment_input_1").val("");
-});
+// var ignoreFiles = [];
+// $("body").on("click",".remove_attachment",function(){
+// $(this).parent().remove();
+// ignoreFiles.push($(this).attr("attachment"));
+// $("#attachment_input_1").val("");
+// });
     function Toast( toast_title, toast_body, toast_class) {
         $(document).Toasts('create', {
             class: toast_class,

@@ -12,8 +12,21 @@ class BankDepositFormAttachments extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable =[
+        'bank_deposit_form_id',
+        'filename',
+        'original_filename',
+        'mime',
+        'file',
         'local_path',
-        'bank_deposit_form_id'
+    ];
+
+    /**
+     * Attributes to exclude from the Audit.
+     *
+     * @var array
+     */
+    protected $auditExclude = [
+        'file',
     ];
 
     function form(){

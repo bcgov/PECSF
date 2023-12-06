@@ -19,7 +19,7 @@
         <div class="d-flex">
             <div class="mr-2">
                 <div class="button-group">
-                    <a href="/admin-pledge/create" class="btn btn-primary">Add a New Event Pledge</a>
+                    <a href="/admin-pledge/maintain-event/create" class="btn btn-primary">Add a New Event Pledge</a>
                     <a id="pills-home-tab" style="color:#1a5a96;background:transparent;font-weight:bold;text-decoration: none;" 
                         class="{{ str_contains(Route::current()->getName(), 'admin-pledge.submission-queue') ? 'active' : '' }} btn btn-secondary activewhite"  
                         href="{{ route('admin-pledge.submission-queue.index') }}">PECSF Event Submission Queue</a>
@@ -188,7 +188,25 @@
         </div>
     </div>
 
-@include('admin-pledge.event.partials.model-show')
+<!-- Modal -->
+<div class="modal fade" id="pledgeDetailModal" tabindex="-1" role="dialog" aria-labelledby="pledgeDetailModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+        <div class="modal-header bg-primary">
+            <h5 class="modal-title" id="pledgeDetailModalTitle">Event Pledge Detail -- Tran ID <span class="tran-id"></span>
+                    <span class="text-dark font-weight-bold"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -336,33 +354,39 @@
         });
 
 
-        // Model -- Show
-        $(document).on("click",".more-info-pledge", function(e){
-    	//  $(document).on("click", ".show-bu" , function(e) {
-			e.preventDefault();
+        $(document).on("click",".more-info-pledge", function(event){
+            event.preventDefault();
+            event.stopPropagation();
 
-            // clear up the field value
-            $('#event-pledge-show-model-form input').map( function() {$(this).val(''); });
-            $('#event-pledge-show-model-form select').map( function() { return $(this).val(''); });
+            // var current_id = event.target.id;
+            id  = $(this).data('id');
 
-            id = $(this).attr('data-id');
+            target = '#pledgeDetailModal .modal-body';
+            $("#pledgeDetailModal span.tran-id").html(id);
+            $(target).html('');
+
+            console.log( 'more info - ' );
+
+            // Lanuch Modal page for listing the Pool detail
             $.ajax({
-                method: "GET",
-                url:  '/admin-pledge/maintain-event/' + id,
-                dataType: 'json',
-                success: function(data)
-                {
-                    $.each(data, function(field_name,field_value ){
-                        // console.log(field_name);
-                        $(document).find('#event-pledge-show-model-form [name='+field_name+']').val(field_value);
-                    });
-                    $('#event-pledge-show-modal').modal('show');
+                url: '/admin-pledge/maintain-event/' + id,
+                type: 'GET',
+                // data: 'id='+ id,
+                dataType: 'html',
+                success: function (result, text, xhr) {
+                    // $('.modal-title span').html(name);
+                    if(result.indexOf('body class="login-page"') != -1){
+                        window.location.href = '/login';
+                    }
+                    $(target).html(result);
+                    $('#pledgeDetailModal').modal('show');
                 },
-                error: function(response) {
-                    console.log('Error');
-                }
-            });
-    	});
+                error: function(xhr, resp, text) {
+                    alert("Something went wrong, Please try again...");
+                },
+            })
+
+        });
 
     });            
     </script>

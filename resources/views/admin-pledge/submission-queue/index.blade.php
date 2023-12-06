@@ -311,12 +311,10 @@
                         text = text.replace(/XXX/g, attachment_number + 1);
                         $('#attachments').append( text );
                         attachment_number++;
-                     $('.attachment').last().find(".filename").html("Attachment #"+(i + 1)+" "+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+" ");
-                     $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
-                     //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
-                     //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
 
-                     $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                        $('.attachment').last().find(".filename").html("Attachment #"+(i + 1)+" - "+data[0].attachments[i].original_filename +" ");
+                    //  $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
+                        $('.attachment').last().find(".view_attachment").attr("href","/bank_deposit_form/download/"+ data[0].attachments[i].id);                     
                      //$('.attachment').last().find(".delete_attachment").attr("href","/bank_deposit_form/"+form_id+"/delete"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/")));
                      //$('.attachment').last().find(".delete_attachment").attr("href","javascript:deleteAttachment("+form_id+", '"+data[0].attachments[i].local_path.substring(data[0].attachments[i].local_path.lastIndexOf("/"))+"');");
 
@@ -517,4 +515,6 @@
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')
     @include('donate.partials.choose-charity-js')
+
+    @include('volunteering.partials.dropzone-js')    
 @endpush
