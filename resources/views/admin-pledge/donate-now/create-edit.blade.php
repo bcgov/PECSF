@@ -186,6 +186,12 @@
                             value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->organization_name : '' }}"
                             disabled>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_office_city">Office City</label>
+                        <input type="text" class="form-control border-0" id="user_office_city" name="user_office_city"
+                            value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->office_city : '' }}"
+                            readonly>
+                    </div>
                 </div>
 
             </div>
@@ -443,6 +449,7 @@ $(function () {
         $('#user_dept').val('');
         $('#user_bu').val('');
         $('#user_org').val('');
+        $('#user_office_city').val('');
         $('#user_region').val('');
     }
 
@@ -502,6 +509,7 @@ $(function () {
             $('#user_dept').val( data.department );
             $('#user_bu').val( data.business_unit );
             $('#user_org').val( data.organization);
+            $('#user_office_city').val( data.office_city);
             $('#user_region').val(data.region);
         }
     });

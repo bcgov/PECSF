@@ -51,6 +51,7 @@ class DonateNowPledgeController extends Controller
 
             $pledges = DonateNowPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
                             'charity', 
+                            'related_city', 'related_city.region',
                             'user.primary_job.city_by_office_city', 'user.primary_job.city_by_office_city.region')
                             // ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'donate_now_pledges.emplid')
@@ -84,7 +85,7 @@ class DonateNowPledgeController extends Controller
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
-                                    return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
+                                    return $q->where('employee_jobs.office_city', 'like', '%'. $request->city .'%')
                                              ->orWhere('donate_now_pledges.city', 'like', '%'. $request->city .'%');
                                 });
                             })
@@ -472,6 +473,7 @@ class DonateNowPledgeController extends Controller
                         'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
                         'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
                         'region' => $user->primary_job->city_by_office_city->region->code ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',                    
+                        'office_city' => $user->primary_job->office_city ?? '',
                         'organization' => $user->primary_job->organization_name ?? '',
                 ];
             }
