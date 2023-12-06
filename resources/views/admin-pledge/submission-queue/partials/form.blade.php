@@ -368,7 +368,7 @@
 
 
             <div class="form-row form-header">
-                            <h3 class="blue">File(s)</h3>
+                <h3>Attach/Upload Document(s)</h3>
 
 
                 <span class="pl-3 attachments_errors errors">
