@@ -185,6 +185,7 @@
                     <th>PECSF ID</th>
                     <th>Seqno</th>
                     <th>Name</th>
+                    <th>Region</th>
                     <th>City</th>
                     <th>Calendar Year</th>
                     <th>FS Pool / Charities</th>
@@ -316,12 +317,21 @@
                         }
                     }
                 },
-                {data: 'user.primary_job.city', defaultContent: '', className: "dt-nowrap",
+                {data: 'user.primary_job.tgb_reg_district', defaultContent: '', className: "dt-nowrap",
                     render: function ( data, type, row, meta ) {
                             if(row.pecsf_id) {
-                                return data;
+                                return row.related_city.region.name;
                             } else {
                                 return row.user.primary_job.city_by_office_city.region.name;
+                            }
+                        }
+                },
+                {data: 'city', defaultContent: '', className: "dt-nowrap", 
+                        render: function ( data, type, row, meta ) {
+                            if(row.pecsf_id) {
+                                return row.city;
+                            } else {
+                                return row.user.primary_job.office_city;
                             }
                         }
                 },
