@@ -317,7 +317,7 @@ var formData = new FormData();
         exist_count = $('table#attachments .filename').length;
         total_count = $('#bank_deposit_form .dropzone .dz-complete').length;
         error_count = $('#bank_deposit_form .dropzone .dz-error').length;
-        if (total_count > (5 - exist_count) ) {
+        if (total_count > (3 - exist_count) ) {
             Swal.fire({
                 title: "Problem on upload files",
                 text: "You have reached the maximum number of allowed file uploads. To continue, please remove some files from your current selection and try again.",

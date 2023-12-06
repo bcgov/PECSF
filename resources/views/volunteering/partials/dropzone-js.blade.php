@@ -75,7 +75,7 @@
     Dropzone.options.attachmentDropzone = {
         url: '{{ route("bank_deposit_form.storeMedia") }}',
         maxFilesize: 2, // MB
-        maxFiles: 5,        
+        // maxFiles: 5,        
         // autoQueue: false,
         dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
         previewTemplate: document.querySelector("#my-template").innerHTML,

@@ -151,7 +151,7 @@ class BankDepositFormController extends Controller
 
             'description' => 'required',
             // 'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
-            'attachments' => "required|max:5",
+            'attachments' => "required|max:3",
         ],[
 
             'organization_code' => 'The Organization Code is required.',
@@ -527,7 +527,7 @@ class BankDepositFormController extends Controller
         $bu_election_bc = BusinessUnit::where('code', 'BC015')->first();
 
         $no_of_attachments = BankDepositFormAttachments::where('bank_deposit_form_id', $request->form_id)->count();
-        $max_attachments = 5 - $no_of_attachments;
+        $max_attachments = 3 - $no_of_attachments;
 
         $validator = Validator::make(request()->all(), [
             'organization_code'         => 'required',

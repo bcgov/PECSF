@@ -368,7 +368,7 @@
 
 
             <div class="form-row form-header">
-                            <h3 class="blue">File(s)</h3>
+                <h3>Attach/Upload Document(s)</h3>
 
 
                 <span class="pl-3 attachments_errors errors">
@@ -389,7 +389,7 @@
 
                 <div class="col-md-12 upload-area"> 
                     <p ><span class="font-weight-bold">Browse to attach your completed PECSF Event Bank Deposit Form attachment with bank receipt.</span><br>
-                        <em>(Please note that you can only upload files with a maximum size of 2MB each, in pdf, xls, xlsx, csv, png, jpg or jpeg format, and the total number of files should not exceed 5.)</em>
+                        <em>(Please note that you can only upload files with a maximum size of 2MB each, in pdf, xls, xlsx, csv, png, jpg or jpeg format, and the total number of files should not exceed 3.)</em>
                     </p>
 
                     <div class="needsclick dropzone" id="attachment-dropzone"></div>  
