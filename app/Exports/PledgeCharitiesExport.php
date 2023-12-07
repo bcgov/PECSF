@@ -511,14 +511,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                 $calc_total = 0;
                 $goal_amount = $event->deposit_amount;
 
-                foreach( $pool->charities as $index => $pool_charity) {
+                // foreach( $pool->charities as $index => $pool_charity) {
 
-                    if ($index === count( $pool->charities ) - 1  ) {
-                        $calc_amount = $goal_amount - $calc_total;
-                    } else {
-                        $calc_amount = round( $pool_charity->percentage * $goal_amount /100 ,2); 
-                        $calc_total += $calc_amount;
-                    }
+                //     if ($index === count( $pool->charities ) - 1  ) {
+                //         $calc_amount = $goal_amount - $calc_total;
+                //     } else {
+                //         $calc_amount = round( $pool_charity->percentage * $goal_amount /100 ,2); 
+                //         $calc_total += $calc_amount;
+                //     }
 
                     \App\Models\PledgeCharityStaging::insert([
                         'history_id' => $this->history_id,
@@ -545,13 +545,13 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'created_at' => $event->created_at,
                         'updated_at' => $event->updated_at,
 
-                        'charity_id' => $pool_charity->charity_id,
-                        'percentage' => $pool_charity->percentage,
-                        'supported_program' => $pool_charity->name,
-                        'prorate_amount' => $calc_amount,
+                        'charity_id' => null,               // $pool_charity->charity_id,
+                        'percentage' => 0,                  // $pool_charity->percentage,
+                        'supported_program' => null,        // $pool_charity->name,
+                        'prorate_amount' => 0,              // $calc_amount,
 
                     ]);
-                }
+                // }
 
             } else {
 
