@@ -19,16 +19,21 @@
                         str_contains(Route::current()->getName(), 'reporting.pledges') ||
                         str_contains(Route::current()->getName(), 'reporting.pledge-charities') ||
                         str_contains(Route::current()->getName(), 'reporting.eligible-employees') ||
+                        str_contains(Route::current()->getName(), 'reporting.gaming-and-fundrasing') ||
+                        str_contains(Route::current()->getName(), 'reporting.cra-charities') ||
                         str_contains(Route::current()->getName(), 'reporting.challenge-page-data')
                       ) ? 'active' : ''
       @endphp
       <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Program reports</a>
       <div class="dropdown-menu">
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.pledges') ? 'active' : ''}}"
-                href="{{ route('reporting.pledges.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Annual Pledges and Events</a>
+                href="{{ route('reporting.pledges.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Annual and Event Pledges</a>
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.pledge-charities') ? 'active' : ''}}"
-                href="{{ route('reporting.pledge-charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Amount by charity</a>              
+                href="{{ route('reporting.pledge-charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Amount by Charity</a>              
         <div class="dropdown-divider"></div>                              
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.gaming-and-fundrasing') ? 'active' : ''}}"
+          href="{{ route('reporting.gaming-and-fundrasing.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Gaming and Fundrasing Pledges</a>              
+        <div class="dropdown-divider"></div>    
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.cra-charities') ? 'active' : ''}}"
           href="{{ route('reporting.cra-charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Charity</a>              
         <div class="dropdown-divider"></div>                              
