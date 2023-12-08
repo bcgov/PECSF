@@ -65,7 +65,8 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="user_region">Region</label>
-                        <input type="text" class="form-control" value="{{ $pledge->user->primary_job->region->name }}" disabled>
+                        <input type="text" class="form-control" value="{{ (isset($pledge) && $pledge->user) ?
+                                $pledge->user->primary_job->city_by_office_city->region->name . ' (' . $pledge->user->primary_job->city_by_office_city->region->code . ')'  : '' }}" disabled>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="user_dept">Department</label>
@@ -95,6 +96,11 @@
                         <label for="user_org">Organization</label>
                         <input type="text" class="form-control" value="{{ $pledge->user->primary_job->organization }}" disabled>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_office_city">Office City</label>
+                        <input type="text" class="form-control" value="{{ $pledge->user->primary_job->office_city ?? ''  }}" disabled>
+                    </div>
+
                 </div>
             @else
                 <div class="form-row">

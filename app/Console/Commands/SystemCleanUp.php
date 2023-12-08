@@ -154,6 +154,25 @@ class SystemCleanUp extends Command
             }
         }
 
+
+        $this->LogMessage('');
+        $this->LogMessage( "Step 4: uploaded files on tmp (location: /var/www/html/storage/app/tmp) ");
+        $this->LogMessage('');
+
+        $path = storage_path('app/tmp');
+        $files = File::files($path);
+        foreach($files as $file) {
+            if ( date('Y-m-d H:i:s', $file->getMTime()) <= now()->subDays(1)) {
+                
+                if (File::exists( $file->getPathname()  )) {
+                    File::delete( $file->getPathname() );
+                    $this->LogMessage( "  File - [" . $file->getPathname() . "] was deleted");                
+                }
+                
+            }
+        }
+
+
     }
 
 

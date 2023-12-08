@@ -168,7 +168,7 @@ class PledgeCharityReportController extends Controller
 
             $filters = $request->all(); 
 
-            $filename = 'pledges_'.now()->format("Y-m-d-his").".xlsx";
+            $filename = 'Amount_by_charity_'.now()->format("Y-m-d-his").".xlsx";
 
             // Submit a Job
             $history = \App\Models\ProcessHistory::create([
