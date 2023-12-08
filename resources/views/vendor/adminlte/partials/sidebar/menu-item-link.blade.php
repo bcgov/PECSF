@@ -1,7 +1,7 @@
-<li @isset($item['id']) id="{{ $item['id'] }}" @endisset class="nav-item">
+<li @isset($item['id']) id="{{ $item['id'] }}" @endisset class="nav-item" role="none">
 
-    <a class="nav-link py-3 {{ $item['class'] }} @isset($item['shift']) {{ $item['shift'] }} @endisset"
-       href="{{ $item['href'] }}" @isset($item['target']) target="{{ $item['target'] }}" @endisset
+    <a class="nav-link py-3 {{ $item['class'] }} @isset($item['shift']) {{ $item['shift'] }} @endisset" 
+       href="{{ $item['href'] }}" @isset($item['target']) target="{{ $item['target'] }}" @endisset  role="menuitem"
        {!! $item['data-compiled'] ?? '' !!}>
 
         <i class="{{ $item['icon'] ?? 'far fa-fw fa-circle' }} {{

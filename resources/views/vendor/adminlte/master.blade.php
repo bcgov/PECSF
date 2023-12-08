@@ -228,6 +228,33 @@
         });
     </script>
 
+    {{-- Accessibility features --}}
+    @include('aria-accessibility.menu-button-links-js')
+    <script>
+        $(function() {
+            {{-- Sidebar open/close button --}}
+            $(document).on('collapsed.lte.pushmenu', function () {
+			    $('.main-sidebar a').attr('tabindex', -1);
+                $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will display the left menu bar');
+		    }).on('shown.lte.pushmenu', function () {
+			    $('.main-sidebar a').removeAttr('tabindex');
+                $('a.nav-link[data-widget="pushmenu"]').attr('aria-label', 'This button will hide the left menu bar');
+            });
+
+            // Special handle for side menu item - administrator/dashboard
+            $('a[href*="administrators/dashboard"]').on( "click", function() {
+                window.location.href=$(this).attr('href');
+            } );
+
+            // Initialize menu buttons
+            $('li.user-menu, li.has-treeview').each( function() {
+                new MenuButtonLinks( $(this).get(0) );
+            });
+  
+        });
+
+    </script>
+
     <script>
         // <!-- Snowplow starts plowing - Standalone vE.2.14.0 -->
         
