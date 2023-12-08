@@ -20,6 +20,7 @@ use App\Models\BankDepositForm;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -98,27 +99,27 @@ class BankDepositFormController extends Controller
                     ));
     }
 
-    public function ignoreRemovedFiles($request){
-        if(!empty(request()->ignoreFiles))
-        {
-            $fields = $request['attachments'];
-            $request['attachments'] = [];
-            foreach( $fields as $index => $file )
-            {
-                if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
-                {
-                    $request['attachments'][] = $file;
-                }
-            }
-        }
-        return $request;
-    }
+    // public function ignoreRemovedFiles($request){
+    //     if(!empty(request()->ignoreFiles))
+    //     {
+    //         $fields = $request['attachments'];
+    //         $request['attachments'] = [];
+    //         foreach( $fields as $index => $file )
+    //         {
+    //             if(!in_array($file->getClientOriginalName(),explode(",",request()->ignoreFiles)))
+    //             {
+    //                 $request['attachments'][] = $file;
+    //             }
+    //         }
+    //     }
+    //     return $request;
+    // }
 
     public function store(Request $request) {
-
+// dd($request->all());
         $bu_election_bc = BusinessUnit::where('code', 'BC015')->first();
 
-        $validator = Validator::make($this->ignoreRemovedFiles($request->all()), [
+        $validator = Validator::make($request->all(), [
             'organization_code'         => 'required',
             'form_submitter'         => 'required',
             'campaign_year'         => 'required',
@@ -133,7 +134,8 @@ class BankDepositFormController extends Controller
                             ], 
             'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ],                             
             'deposit_date'         => 'required|before:tomorrow',
-            'deposit_amount'         => 'required|numeric|gt:0',
+            'deposit_amount'         => 'required|numeric|between:0.01,999999.99|regex:/^\d+(\.\d{1,2})?$/',
+
             'employment_city'         => 'required',
             // 'postal_code'         => ($request->event_type == "Fundraiser" || $request->event_type == "Gaming") ? " ":'postal_code:CA',
             'region'         => 'required',
@@ -148,24 +150,32 @@ class BankDepositFormController extends Controller
             'regional_pool_id'       => ['required_if:charity_selection,fsp', Rule::when( $request->charity_selection == 'fsp', ['exists:f_s_pools,id']) ],
 
             'description' => 'required',
-            'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
+            // 'attachments.*' => 'required|mimes:pdf,xls,xlsx,csv,png,jpg,jpeg',
+            'attachments' => "required|max:3",
         ],[
+
             'organization_code' => 'The Organization Code is required.',
-            'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.'
+            'attachments.required' => 'At least one attachment is required.',
+            'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.',
+
+            'deposit_amount.regex' => 'Only two decimal places allowed.',
+            'attachments.max' => 'The total number of attachments must not be greater than 5.',
+
+
          ]);
         $validator->after(function ($validator) use($request) {
 
-            if(strpos($request->deposit_amount,".") !== FALSE){
-                $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
-                if(strlen($decimals) == 3)
-                {
-                    $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
-                }
-            }
-            if($request->organization_code == "false")
-            {
-                $validator->errors()->add('organization_code','An organization code is required.');
-            }
+            // if(strpos($request->deposit_amount,".") !== FALSE){
+            //     $decimals = substr($request->deposit_amount,strpos($request->deposit_amount,".")+1,3);
+            //     if(strlen($decimals) == 3)
+            //     {
+            //         $validator->errors()->add('deposit_amount','Only two decimal places allowed.');
+            //     }
+            // }
+            // if($request->organization_code == "false")
+            // {
+            //     $validator->errors()->add('organization_code','An organization code is required.');
+            // }
 
             if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
             // if($request->organization_code != "GOV" && $request->organization_code != "RET")
@@ -223,28 +233,6 @@ class BankDepositFormController extends Controller
 
                 }
             }
-            // if($request->event_type == "Cash One-Time Donation" || $request->event_type == "Cheque One-Time Donation")
-            // {
-            //     if(empty($request->address_1))
-            //     {
-            //         $validator->errors()->add('address_1','An Address is required.');
-            //     }
-
-            //     if(empty($request->city))
-            //     {
-            //         $validator->errors()->add('city','An City is required.');
-            //     }
-
-            //     if(empty($request->province))
-            //     {
-            //         $validator->errors()->add('province','An Province is required.');
-            //     }
-
-            //     if(empty($request->postal_code))
-            //     {
-            //         $validator->errors()->add('postal_code','An Postal Code is required.');
-            //     }
-            // }
 
             if($request->charity_selection == "dc")
             {
@@ -304,25 +292,6 @@ class BankDepositFormController extends Controller
                        // $validator->errors()->add('pecsf_id', 'Previous Cash One-time donation for this form submitter detected; The PECSF ID must be a number prepended with an S.');
                     }
                 }
-            }
-
-
-            if(!empty(request("attachments"))){
-                $fileFound = false;
-                foreach(array_reverse(request('attachments')) as $key => $attachment){
-                    if(in_array($attachment->getClientOriginalName(),explode(",",$request->ignoreFiles)) || empty($attachment) || $attachment == "undefined"){
-                    }
-                    else{
-                        $fileFound = true;
-                        break;
-                    }
-                }
-                if(!$fileFound){
-                    $validator->errors()->add('attachment','At least one attachment is required.');
-                }
-            }
-            else{
-                $validator->errors()->add('attachment','At least one attachment is required.');
             }
 
             if($request->pecsf_id){
@@ -498,26 +467,48 @@ class BankDepositFormController extends Controller
             }
         }
 
-        $upload_images = $request->file('attachments') ? $request->file('attachments') : [];
+        
+        foreach ($request->input('attachments', []) as $filename) {
+            
+            $doc = file_get_contents( storage_path( 'app/tmp/'. $filename ) );
+            $base64 = base64_encode($doc);
+            $mime = pathinfo( storage_path( 'app/tmp/'. $filename ), PATHINFO_EXTENSION);
 
-        foreach($upload_images as $key => $file){
-
-            if(is_array($request->ignoreFiles)){
-                if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
-                {
-                    continue;
-                }
-            }
-
-
-                $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
-
-                $filePath = $file->storeAs(  "/uploads/bank_deposit_form_attachments" , $filename);
-                BankDepositFormAttachments::create([
+            // File::move( storage_path( 'app/tmp/'. $filename ), storage_path( $this->doc_folder ."/". $filename));
+            
+            BankDepositFormAttachments::create([
+                'bank_deposit_form_id' => $form->id,
+                'filename' => $filename,
+                'original_filename' => substr($filename, strpos($filename,'_')+1),
+                'mime' => $mime,
                 'local_path' => storage_path( $this->doc_folder )."/".$filename,
-                'bank_deposit_form_id' => $form->id
+                'file' => $base64,
             ]);
+
         }
+        
+
+
+        // $upload_images = $request->file('attachments') ? $request->file('attachments') : [];
+
+        // foreach($upload_images as $key => $file){
+
+        //     if(is_array($request->ignoreFiles)){
+        //         if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
+        //         {
+        //             continue;
+        //         }
+        //     }
+
+
+        //         $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
+
+        //         $filePath = $file->storeAs(  "/uploads/bank_deposit_form_attachments" , $filename);
+        //         BankDepositFormAttachments::create([
+        //         'local_path' => storage_path( $this->doc_folder )."/".$filename,
+        //         'bank_deposit_form_id' => $form->id
+        //     ]);
+        // }
 
         if(strpos($_SERVER['HTTP_REFERER'],'admin-pledge') !== FALSE)
         {
@@ -529,9 +520,14 @@ class BankDepositFormController extends Controller
         }
 
     }
+
+    
     public function update(Request $request) {
-// dd($request->all());
+
         $bu_election_bc = BusinessUnit::where('code', 'BC015')->first();
+
+        $no_of_attachments = BankDepositFormAttachments::where('bank_deposit_form_id', $request->form_id)->count();
+        $max_attachments = 3 - $no_of_attachments;
 
         $validator = Validator::make(request()->all(), [
             'organization_code'         => 'required',
@@ -548,7 +544,7 @@ class BankDepositFormController extends Controller
                             ], 
             'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ], 
             'deposit_date'         => 'required|before:tomorrow',
-            'deposit_amount'         => 'required|numeric|gt:0',
+            'deposit_amount'         => 'required|numeric|between:0.01,999999.99|regex:/^\d+(\.\d{1,2})?$/',
             'employment_city'         => 'required',
             'region'                 => 'required',
             'business_unit'         => 'required',
@@ -564,8 +560,13 @@ class BankDepositFormController extends Controller
             'regional_pool_id'       => ['required_if:charity_selection,fsp', Rule::when( $request->charity_selection == 'fsp', ['exists:f_s_pools,id']) ],
 
             'description' => 'required',
+            'attachments' => "max:{$max_attachments}",
         ],[
             'organization_code' => 'The Organization Code is required.',
+
+            'deposit_amount.regex' => 'Only two decimal places allowed.',
+            'attachments.max' => 'The total number of attachments must not be greater than 5.',
+
         ]);
         $validator->after(function ($validator) use($request) {
             // if($request->event_type != "Gaming" && $request->event_type != "Fundraiser"){
@@ -716,23 +717,23 @@ class BankDepositFormController extends Controller
             // }
 
 
-            if(!empty(request("attachments"))){
-                $fileFound = false;
-                foreach(array_reverse(request('attachments')) as $key => $attachment){
-                    if(in_array($attachment->getClientOriginalName(),explode(",",$request->ignoreFiles)) || empty($attachment) || $attachment == "undefined"){
-                    }
-                    else{
-                        $fileFound = true;
-                        break;
-                    }
-                }
-                if(!$fileFound){
-                    $validator->errors()->add('attachment','At least one attachment is required.');
-                }
-            }
-            else{
-                //$validator->errors()->add('attachment','At least one attachment is required.');
-            }
+            // if(!empty(request("attachments"))){
+            //     $fileFound = false;
+            //     foreach(array_reverse(request('attachments')) as $key => $attachment){
+            //         if(in_array($attachment->getClientOriginalName(),explode(",",$request->ignoreFiles)) || empty($attachment) || $attachment == "undefined"){
+            //         }
+            //         else{
+            //             $fileFound = true;
+            //             break;
+            //         }
+            //     }
+            //     if(!$fileFound){
+            //         $validator->errors()->add('attachment','At least one attachment is required.');
+            //     }
+            // }
+            // else{
+            //     //$validator->errors()->add('attachment','At least one attachment is required.');
+            // }
 
 
 
@@ -833,28 +834,25 @@ class BankDepositFormController extends Controller
             }
         }
 
+        // attachments
+        foreach ($request->input('attachments', []) as $filename) {
+            
+            $doc = file_get_contents( storage_path( 'app/tmp/'. $filename ) );
+            $base64 = base64_encode($doc);
+            $mime = pathinfo( storage_path( 'app/tmp/'. $filename ), PATHINFO_EXTENSION);
 
-        $upload_images = $request->file('attachments') ? $request->file('attachments') : [];
-
-        foreach($upload_images as $key => $file){
-
-            if(is_array($request->ignoreFiles)){
-                if(in_array($file->getClientOriginalName(),$request->ignoreFiles))
-                {
-                    continue;
-                }
-            }
-
-
-                $filename=date('YmdHis').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
-
-                $filePath = $file->storeAs(  "/uploads/bank_deposit_form_attachments" , $filename);
-                BankDepositFormAttachments::create([
+            // File::move( storage_path( 'app/tmp/'. $filename ), storage_path( $this->doc_folder ."/". $filename));
+            
+            BankDepositFormAttachments::create([
+                'bank_deposit_form_id' => $request->form_id,
+                'filename' => $filename,
+                'original_filename' => substr($filename, strpos($filename,'_')+1),
+                'mime' => $mime,
                 'local_path' => storage_path( $this->doc_folder )."/".$filename,
-                'bank_deposit_form_id' => $request->form_id
+                'file' => $base64,
             ]);
-        }
 
+        }
 
 
         echo json_encode(["/admin-pledge/submission-queue"]);
@@ -974,15 +972,27 @@ class BankDepositFormController extends Controller
                 'message' => 'Organization Code not found'], 404);
         }
     }
-        public function download(Request $request, $fileName) {
-            $headers = [
-                'Content-Description' => 'File Transfer',
-                'Content-Type' => 'application/csv',
-                "Content-Transfer-Encoding: UTF-8",
-            ];
-            // return Storage::download($path);
-            return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
-        }
+
+    public function download($id) {
+        // $headers = [
+        //     'Content-Description' => 'File Transfer',
+        //     'Content-Type' => 'application/csv',
+        //     "Content-Transfer-Encoding: UTF-8",
+        // ];
+        // // return Storage::download($path);
+        // return Storage::disk('uploads')->download("/bank_deposit_form_attachments/".$fileName, $fileName, $headers);
+        $document = BankDepositFormAttachments::find($id);
+        $file_contents = base64_decode($document->file);
+        
+        return response($file_contents)
+                ->header('Cache-Control', 'no-cache private')
+                ->header('Content-Description', 'File Transfer')
+                ->header('Content-Type', $document->mime)
+                ->header('Content-length', strlen($file_contents))
+                ->header('Content-Disposition', 'attachment; filename=' . $document->original_filename)
+                ->header('Content-Transfer-Encoding', 'binary');
+
+    }
 
 
         public function delete(Request $request, $form_id, $fileName) {
@@ -1044,4 +1054,25 @@ class BankDepositFormController extends Controller
         return $pecsf_id;
 
     }
+
+    public function storeMedia(Request $request)
+    {
+       
+        $path = storage_path( 'app/tmp' );
+
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        $file = $request->file('file');
+        $name = uniqid() . '_' . str_replace(' ', '_', trim($file->getClientOriginalName()) );
+
+        $file->move($path, $name);
+
+        return response()->json([
+            'name'          => $name,
+            'original_name' => $file->getClientOriginalName(),
+        ]);
+    }
+
 }

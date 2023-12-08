@@ -49,20 +49,8 @@
                     <div class="row">
                         <div class="form-group ">
                             <label for="yearcd">Calendar Year</label>
-                            @if ($is_new_pledge)
-                                <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;">
-                                    @foreach ($campaignYears as $cy)
-                                        <option value="{{ $cy->calendar_year }}"
-                                            {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>
-                                            {{ $cy->calendar_year }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @else
-                                <select id="yearcd" class="form-control" name="yearcd" style="max-width:200px;" {{ $is_new_pledge ? '' : 'readonly' }}>
-                                <option value="{{ $pledge->calendar_year }}" selected>{{ $pledge->yearcd }}</option>
-                                </select>
-                            @endif
+                            <input type="text" class="form-control" name="yearcd" 
+                                value="{{ $is_new_pledge ? $yearcd : $pledge->yearcd }}" readonly>    
                         </div>
                     </div>
             </div>
@@ -155,7 +143,7 @@
                     <div class="col-md-5 mb-3">
                         <label for="user_region">Region</label>
                         <input type="text" class="form-control border-0" id="user_region"
-                                value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->region->name . ' (' . $pledge->user->primary_job->region->code . ')'  : '' }}"
+                                value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->city_by_office_city->region->name . ' (' . $pledge->user->primary_job->city_by_office_city->region->code . ')'  : '' }}"
                              disabled>
                     </div>
                     <div class="col-md-5 mb-3">
@@ -197,6 +185,12 @@
                         <input type="text" class="form-control border-0" id="user_org"
                             value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->organization_name : '' }}"
                             disabled>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="user_office_city">Office City</label>
+                        <input type="text" class="form-control border-0" id="user_office_city" name="user_office_city"
+                            value="{{ (isset($pledge) && $pledge->user) ? $pledge->user->primary_job->office_city : '' }}"
+                            readonly>
                     </div>
                 </div>
 
@@ -455,6 +449,7 @@ $(function () {
         $('#user_dept').val('');
         $('#user_bu').val('');
         $('#user_org').val('');
+        $('#user_office_city').val('');
         $('#user_region').val('');
     }
 
@@ -483,7 +478,7 @@ $(function () {
         allowClear: true,
         placeholder: "Type employee ID",
         ajax: {
-            url: '{{ route('admin-pledge.administrators.users') }}'
+            url: '{{ route("admin-pledge.donate-now.users") }}'
             , dataType: 'json'
             , delay: 250
             , data: function(params) {
@@ -514,6 +509,7 @@ $(function () {
             $('#user_dept').val( data.department );
             $('#user_bu').val( data.business_unit );
             $('#user_org').val( data.organization);
+            $('#user_office_city').val( data.office_city);
             $('#user_region').val(data.region);
         }
     });

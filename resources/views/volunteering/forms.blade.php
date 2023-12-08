@@ -101,8 +101,10 @@
             </div>
         </div>
     </div>
+@endsection
 
-    @push('js')
+@push('js')
+
 <script>
     
 $(function () {
@@ -169,5 +171,7 @@ $(function () {
         </script>
             @include('volunteering.partials.add-event-js')
             @include('donate.partials.choose-charity-js')
-    @endpush
-@endsection
+
+@include('volunteering.partials.dropzone-js')    
+
+@endpush

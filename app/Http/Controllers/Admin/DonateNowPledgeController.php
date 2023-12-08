@@ -50,7 +50,9 @@ class DonateNowPledgeController extends Controller
             session(['admin_pledge_donate_now_filter' => $filter]);
 
             $pledges = DonateNowPledge::with('organization', 'campaign_year', 'user', 'user.primary_job', 'fund_supported_pool', 'fund_supported_pool.region',
-                            'charity')
+                            'charity', 
+                            'related_city', 'related_city.region',
+                            'user.primary_job.city_by_office_city', 'user.primary_job.city_by_office_city.region')
                             // ->leftJoin('users', 'users.id', '=', 'donate_now_pledges.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'donate_now_pledges.emplid')
                             ->where( function($query) {
@@ -83,17 +85,12 @@ class DonateNowPledgeController extends Controller
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
-                                    return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
+                                    return $q->where('employee_jobs.office_city', 'like', '%'. $request->city .'%')
                                              ->orWhere('donate_now_pledges.city', 'like', '%'. $request->city .'%');
                                 });
                             })
-                            ->when( $request->campaign_year_id, function($query) use($request) {
-                                // $query->where('campaign_year_id', $request->campaign_year_id);
-                                $query->where('yearcd', function($q) use($request){
-                                            $q->select('calendar_year')
-                                                    ->from('campaign_years')
-                                                    ->where('campaign_years.id', $request->campaign_year_id);
-                                });
+                            ->when( $request->yearcd && $request->yearcd <> 'all', function($query) use($request) {
+                                $query->where('donate_now_pledges.yearcd', $request->yearcd );
                             })
                             ->when( $request->cancelled == 'C', function($query) use($request) {
                                 $query->whereNotNull('donate_now_pledges.cancelled');
@@ -162,8 +159,11 @@ class DonateNowPledgeController extends Controller
         $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
+        $deduct_pay_from = PayCalendar::nextDeductPayFrom();
+        $yearcd = substr($deduct_pay_from,0,4);
+
         // load the view and pass 
-        return view('admin-pledge.donate-now.index', compact('organizations', 'campaign_years','cities', 'filter'));
+        return view('admin-pledge.donate-now.index', compact('organizations', 'campaign_years','cities', 'filter', 'yearcd'));
 
     }
 
@@ -192,9 +192,12 @@ class DonateNowPledgeController extends Controller
         $cities = City::orderBy('city')->get();
 
         $is_new_pledge = true;
+        
+        $deduct_pay_from = PayCalendar::nextDeductPayFrom();
+        $yearcd = substr($deduct_pay_from,0,4);
 
         return view('admin-pledge.donate-now.create-edit', compact('pledge', 'pool_option', 'fspools', 'organizations','campaignYears','cities',
-                    'is_new_pledge',
+                    'is_new_pledge', 'yearcd'
                     //  'deduct_pay_from', 'one_time_amount'
                     ));
     }
@@ -469,7 +472,8 @@ class DonateNowPledgeController extends Controller
                         'last_name' =>  $user->primary_job->last_name ?? '', 
                         'department' =>  $user->primary_job->dept_name . ' ('. $user->primary_job->deptid . ')',               
                         'business_unit' => $user->primary_job->bus_unit->name . ' ('.$user->primary_job->bus_unit->code . ')' ,                                        
-                        'region' => $user->primary_job->region->name . ' (' . $user->primary_job->region->code . ')',                    
+                        'region' => $user->primary_job->city_by_office_city->region->code ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',                    
+                        'office_city' => $user->primary_job->office_city ?? '',
                         'organization' => $user->primary_job->organization_name ?? '',
                 ];
             }
