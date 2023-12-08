@@ -464,18 +464,18 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
 
         $events = BankDepositForm::selectRaw("bank_deposit_forms.* 
-                            ,year(bank_deposit_forms.created_at) as calendar_year
-                            ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
+                            ,campaign_years.calendar_year as calendar_year
+                            ,CASE WHEN bank_deposit_forms.bc_gov_id is not null
                                 THEN employee_jobs.name
-                                ELSE ''
+                                ELSE bank_deposit_forms.employee_name
                             END as name
                             ,(select code from business_units where business_units.id = bank_deposit_forms.business_unit) as business_unit_code
                             ,(select code from regions where regions.id = bank_deposit_forms.region_id) as tgb_reg_district
                             ,bank_deposit_forms.deptid as deptid
                             ,bank_deposit_forms.dept_name as dept_name
-                            ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
+                            ,CASE WHEN bank_deposit_forms.bc_gov_id is not null
                                 THEN employee_jobs.office_city
-                                ELSE bank_deposit_forms.address_city
+                                ELSE bank_deposit_forms.employment_city
                             END as city
                             ,CASE when regional_pool_id is not NULL 
                                 THEN 'P'
