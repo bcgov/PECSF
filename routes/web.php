@@ -187,11 +187,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bank_deposit_form/organizations', [BankDepositFormController::class, 'organizations'])->name('organizations');
     Route::get('/bank_deposit_form/bc_gov_id',[BankDepositFormController::class, 'bc_gov_id'])->name('bc_gov_id');
     Route::get('/bank_deposit_form/business_unit',[BankDepositFormController::class, 'business_unit'])->name('business_unit');
-    Route::get('/bank_deposit_form/download/{fileName}',[BankDepositFormController::class, 'download'])->name('download');
+    Route::get('/bank_deposit_form/download/{id}',[BankDepositFormController::class, 'download'])->name('download');
     Route::get('/bank_deposit_form/{form_id}/delete/{fileName}',[BankDepositFormController::class, 'delete'])->name('delete');
     Route::post('/bank_deposit_form', [BankDepositFormController::class, 'store'])->name('bank_deposit_form');
     Route::post('/bank_deposit_form/update', [BankDepositFormController::class, 'update'])->name('bank_deposit_form.update');
+    Route::post('/bank_deposit_form/media', [BankDepositFormController::class, 'storeMedia'])->name('bank_deposit_form.storeMedia');
+    
     Route::post('/volunteering/supply_order_form', [VolunteeringController::class,'supply_order_form'])->name('supply_order_form');
+
 });
 
 Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(function () {
@@ -279,8 +282,8 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
 
     // Event Maintainance Listing
-    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index','show']);
-    Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
+    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index','show', 'create']);
+    // Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
 
     // Event Submission Queue
     Route::resource('/submission-queue', EventSubmissionQueueController::class)->only(['status','details','index']);

@@ -142,20 +142,20 @@ $("#pool_filter").parents(".form-group").hide();
 
     });
 
-$("body").on("change","[name='attachments[]']",function(){
-$(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
-});
+// $("body").on("change","[name='attachments[]']",function(){
+// $(this).parents("tr").find(".filename").html( $(this)[0].files[0].name);
+// });
 
-let attachment_number = 1;
-$("body").on("click",".add_attachment_row",function(e){
-e.preventDefault();
+// let attachment_number = 1;
+// $("body").on("click",".add_attachment_row",function(e){
+// e.preventDefault();
 
-    text = $("#attachment-tmpl").html();
-    text = text.replace(/XXX/g, attachment_number + 1);
-    $('.attachment').last().after( text );
-    attachment_number++;
+//     text = $("#attachment-tmpl").html();
+//     text = text.replace(/XXX/g, attachment_number + 1);
+//     $('.attachment').last().after( text );
+//     attachment_number++;
 
-});
+// });
 
 function govuserinfo() {
 
@@ -308,112 +308,133 @@ var formData = new FormData();
         });
 
     });
-$("#bank_deposit_form").submit(function(e)
-{
-e.preventDefault();
-var form = document.getElementById("create_pool");
 
-    $(".max-charities-error").hide();
-    $(".charity-error-hook").css("border","none")
+    $("#bank_deposit_form").submit(function(e)
+    {
+        e.preventDefault();
+        var form = document.getElementById("create_pool");
 
-$("#bank_deposit_form").find("select").each(function(){
-    // if($(this).val()){
-    //     if($(this).val().length > 0){
-            formData.append($(this).attr("name"), $(this).val());
-    //     }
-    // }
-});
-
-
-$("#bank_deposit_form").find("input").each(function(){
-    if($(this).attr('type') != "submit") {
-        if($(this).attr('type') == "radio"){
-            if($(this).is(':checked')){
-                formData.append($(this).attr("name"), $(this).val());
-            }
-        } else if($(this).attr('type') == "file"){
-            //formData.append('attachments[]',  $(this)[0].files[0]);
-        } else {
-            if($(this).val().length > 0){
-                formData.append($(this).attr("name"), $(this).val());
-            }
+        exist_count = $('table#attachments .filename').length;
+        total_count = $('#bank_deposit_form .dropzone .dz-complete').length;
+        error_count = $('#bank_deposit_form .dropzone .dz-error').length;
+        if (total_count > (3 - exist_count) ) {
+            Swal.fire({
+                title: "Problem on upload files",
+                text: "You have reached the maximum number of allowed file uploads. To continue, please remove some files from your current selection and try again.",
+                icon: "warning"
+            });
+            return; 
         }
-    }
-});
+        if (error_count > 0 ) {
+            Swal.fire({
+                title: "Problem on upload files",
+                text: "You have uploaded some unsupported format or file size exceeds limit file(s). Please remove and upload a valid file within the specified size constraints",
+                icon: "warning"
+            });
+            return;
+        }
 
-$("textarea").each(function(){
-    if($(this).val().length > 0) {
-        formData.append($(this).attr("name"), $(this).val());
-    }
-});
+        $(".max-charities-error").hide();
+        $(".charity-error-hook").css("border","none")
 
-formData.append('province', $('select[name="province"]').val() );
-formData.append("org_count", $(".organization").length);
-formData.append("ignoreFiles", ignoreFiles);
+        formData = new FormData();
 
-$(this).fadeTo("slow",0.2);
+        $("#bank_deposit_form").find("select").each(function(){
+            // if($(this).val()){
+            //     if($(this).val().length > 0){
+                    formData.append($(this).attr("name"), $(this).val());
+            //     }
+            // }
+        });
 
 
-var removeButtons = document.querySelectorAll(".remove");
-var numberOfRemoveButtons = removeButtons.length;
-$('#arr_lenth').val(numberOfRemoveButtons);
+        $("#bank_deposit_form").find("input").each(function(){
+            if($(this).attr('type') != "submit") {
+                if($(this).attr('type') == "radio"){
+                    if($(this).is(':checked')){
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                } else if($(this).attr('type') == "file"){
+                    //formData.append('attachments[]',  $(this)[0].files[0]);
+                } else {
+                    if($(this).val().length > 0){
+                        formData.append($(this).attr("name"), $(this).val());
+                    }
+                }
+            }
+        });
 
-$(".specific_community_or_initiative").each(function() {
-    var currentValue = $(this).val();
-    $(this).val(currentValue + " ");
-});
+        $("textarea").each(function(){
+            if($(this).val().length > 0) {
+                formData.append($(this).attr("name"), $(this).val());
+            }
+        });
 
-$.ajax({ 
-url: $("#bank_deposit_form").attr("action"),
-type:"POST",
-data: formData,
-headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
-processData: false,
-cache: false,
-contentType: false,
-dataType: 'json',
-success:function(response){
-    Swal.fire({
-        title: '<strong>Success!</strong>',
-        icon: 'success',
-        html:
-            'Form Submitted!',
-        showCloseButton: false,
-        showCancelButton: true,
-        focusConfirm: false,
-    }).then((result) => {
-        $("#bank_deposit_form").fadeTo("slow",1);
-        $('.errors').html("");
+        formData.append('province', $('select[name="province"]').val() );
+        formData.append("org_count", $(".organization").length);
+        // formData.append("ignoreFiles", ignoreFiles);
 
-        window.location = response[0];
-        console.log(response);
+        $(this).fadeTo("slow",0.2);
+
+
+        var removeButtons = document.querySelectorAll(".remove");
+        var numberOfRemoveButtons = removeButtons.length;
+        $('#arr_lenth').val(numberOfRemoveButtons);
+
+        $(".specific_community_or_initiative").each(function() {
+            var currentValue = $(this).val();
+            $(this).val(currentValue + " ");
+        });
+
+        $.ajax({ 
+            url: $("#bank_deposit_form").attr("action"),
+            type:"POST",
+            data: formData,
+            headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+            processData: false,
+            cache: false,
+            contentType: false,
+            dataType: 'json',
+            success:function(response){
+                Swal.fire({
+                    title: '<strong>Success!</strong>',
+                    icon: 'success',
+                    html:
+                        'Form Submitted!',
+                    showCloseButton: false,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                }).then((result) => {
+                    $("#bank_deposit_form").fadeTo("slow",1);
+                    $('.errors').html("");
+
+                    window.location = response[0];
+                    console.log(response);
+                });
+                $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
+            },
+            error: function(response) {   
+                $('.errors').html("");
+                $(".donation_percent_errors").html("");
+                if(response.responseJSON.errors){
+                    errors = response.responseJSON.errors;
+                    for(const prop in response.responseJSON.errors){
+                        count = prop.substring(prop.indexOf(".")+1);
+                        tag = prop.substring(0,prop.indexOf("."));
+                        error = errors[prop][0].split(".");
+                        error = error[0] + error[1].substring(1,error[1].length);
+                        error = error.replace("_"," ");
+                        $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                        $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
+                        $("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
+                    }
+                }
+                $(".invalid-feedback").css("display","block");
+                $("#bank_deposit_form").fadeTo("slow",1);
+            },
+        });
+
     });
-    $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
-},
-    error: function(response) {   
-        $('.errors').html("");
-        $(".donation_percent_errors").html("");
-        if(response.responseJSON.errors){
-            errors = response.responseJSON.errors;
-            for(const prop in response.responseJSON.errors){
-                count = prop.substring(prop.indexOf(".")+1);
-                tag = prop.substring(0,prop.indexOf("."));
-                error = errors[prop][0].split(".");
-                error = error[0] + error[1].substring(1,error[1].length);
-                error = error.replace("_"," ");
-                $("."+prop+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-                $(".donation_percent_errors").eq((parseInt(prop.replace("donation_percent.",""))) - 1).html('<span class="invalid-feedback">'+error+'</span>');
-                $("."+prop.substring(0,(prop.indexOf(".") - 1 ))+"_errors").html('<span class="invalid-feedback">'+error+'</span>');
-
-
-            }
-        }
-        $(".invalid-feedback").css("display","block");
-        $("#bank_deposit_form").fadeTo("slow",1);
-    },
-});
-
-});
 
 $('#organization_code').select2({
 ajax: {
@@ -480,7 +501,7 @@ reader.readAsDataURL(file);
 }
 
 
-$("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); });
+// $("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); });
 /*
 // Drag enter
 $('.upload-area').on('dragenter', function (e) {
@@ -532,7 +553,7 @@ var allowed = ["pdf","xls","xlsx","csv","png","jpeg","jpg"];
     }
 });
 */
-
+/*
 $("#attachment_input_1").change(function(e){
 e.stopPropagation();
 e.preventDefault();
@@ -568,6 +589,7 @@ $(this).parent().remove();
 ignoreFiles.push($(this).attr("attachment"));
 $("#attachment_input_1").val("");
 });
+*/
     function Toast( toast_title, toast_body, toast_class) {
         $(document).Toasts('create', {
             class: toast_class,
