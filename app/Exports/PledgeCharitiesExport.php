@@ -50,17 +50,17 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
     public function headings(): array
     {
         return [
-                    [
-                        'Report title : Amount by charity report',
-                    ],
-                    [
-                        'Run at : ' . now(),
-                    ],
-                    [
-                        '',
-                    ],
+                    // [
+                    //     'Report title : Amount by charity report',
+                    // ],
+                    // [
+                    //     'Run at : ' . now(),
+                    // ],
+                    // [
+                    //     '',
+                    // ],
                     [    
-                        'Calander Year',
+                        'Calendar Year',
                         'Name',
                         'Org Code',
                         'Org Descr',
@@ -76,6 +76,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'Employee name',
                         'Pledge Type',
                         'Pool or Charity',
+                        'FS Pool Name',
                         'Type',
                         'Subtype',
                         'Goal Amount',
@@ -112,13 +113,15 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
             $employee->name,
             $employee->pledge_type,
             $employee->pool_type,
+            $employee->f_s_pool_id ? $employee->fund_supported_pool->region->name : '',
+            
             $employee->type,
             $employee->sub_type,
             $employee->amount,
             $employee->created_at,
             $employee->updated_at,
 
-            $employee->percentage,
+            ($employee->percentage != 0) ? $employee->percentage : '',
             $employee->charity ? $employee->charity->registration_number : '',
             $employee->charity ? $employee->charity->charity_name : '',
             $employee->supported_program,
@@ -206,153 +209,6 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
 
 
-        // $pledges =  Pledge::selectRaw("pledges.*
-        //                     ,campaign_years.calendar_year
-        //                     ,CASE WHEN organizations.code = 'GOV'
-        //                             THEN employee_jobs.name
-        //                             ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
-        //                     END as name
-        //                     ,employee_jobs.business_unit as business_unit_code
-        //                     ,employee_jobs.tgb_reg_district
-        //                     ,employee_jobs.deptid
-        //                     ,employee_jobs.dept_name
-        //                     ,CASE WHEN organizations.code = 'GOV'
-        //                             THEN employee_jobs.office_city
-        //                             ELSE pledges.city
-        //                     END as city
-        //                     ,pledges.type  AS pool_type
-        //                 ")
-        //     ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
-        //     ->join('organizations', 'organizations.id', 'pledges.organization_id')
-        //     ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
-        //     ->where( function($query) {
-        //         $query->where('employee_jobs.empl_rcd', '=', function($q) {
-        //                 $q->from('employee_jobs as J2') 
-        //                     ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-        //                     ->selectRaw('min(J2.empl_rcd)');
-        //             })
-        //             ->orWhereNull('employee_jobs.empl_rcd');
-        //     })
-        //     ->where('type', 'P')
-        //     // ->where('pledges.pay_period_amount', '<>', 0)
-        //     ->whereNull('pledges.deleted_at')
-        //     ->when( $filters['year'], function($query) use($filters) {
-        //         $query->where('campaign_years.calendar_year', $filters['year']);
-        //     });
-
-
-        
-
-        // // Step 2 -- Annual One-Time
-        // PledgeStaging::insertUsing([
-        //     'history_id','pledge_type','pledge_id','calendar_year','organization_code','emplid','pecsf_id',
-        //     'name','business_unit_code','tgb_reg_district','deptid','dept_name','city',
-        //     'type','sub_type','pool_type','region_id','pledge','amount',
-        //     'created_by_id','created_at','updated_at',
-        // ],
-        //     Pledge::selectRaw(" ?, 'Annual', pledges.id
-        //                     ,campaign_years.calendar_year
-        //                     ,organizations.code as organization_code
-        //                     ,pledges.emplid
-        //                     ,pledges.pecsf_id
-        //                     ,CASE WHEN organizations.code = 'GOV'
-        //                             THEN employee_jobs.name
-        //                             ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
-        //                     END as name
-        //                     ,employee_jobs.business_unit as business_unit_code
-        //                     ,employee_jobs.tgb_reg_district
-        //                     ,employee_jobs.deptid
-        //                     ,employee_jobs.dept_name
-        //                     ,CASE WHEN organizations.code = 'GOV'
-        //                             THEN employee_jobs.office_city
-        //                             ELSE pledges.city
-        //                     END as city
-        //                     ,'One-Time'   AS type
-        //                     ,''            AS sub_type
-        //                     ,pledges.type  AS pool_type
-        //                     ,pledges.region_id
-        //                     ,pledges.one_time_amount 
-        //                     ,pledges.one_time_amount 
-        //                     ,pledges.created_by_id
-        //                     ,pledges.created_at
-        //                     ,pledges.updated_at
-        //             ", [ $this->history_id] )
-        //     ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
-        //     ->join('organizations', 'organizations.id', 'pledges.organization_id')
-        //     ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
-        //     ->where( function($query) {
-        //         $query->where('employee_jobs.empl_rcd', '=', function($q) {
-        //                 $q->from('employee_jobs as J2') 
-        //                     ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-        //                     ->selectRaw('min(J2.empl_rcd)');
-        //             })
-        //             ->orWhereNull('employee_jobs.empl_rcd');
-        //     })
-        //     ->where('pledges.one_time_amount', '<>', 0)
-        //     ->whereNull('pledges.deleted_at')
-        //     ->when( $filters['year'], function($query) use($filters) {
-        //         $query->where('campaign_years.calendar_year', $filters['year']);
-        //     })
-
-        // );
-
-        // // Step 3 -- Event 
-        // PledgeStaging::insertUsing([
-        //     'history_id','pledge_type','pledge_id','calendar_year','organization_code','emplid','pecsf_id',
-        //     'name','business_unit_code','tgb_reg_district','deptid','dept_name','city',
-        //     'type','sub_type','pool_type','region_id','pledge','amount',
-        //     'created_by_id','created_at','updated_at',
-        // ],
-
-        //     BankDepositForm::selectRaw(" ?, 'Event', bank_deposit_forms.id
-        //                     ,year(bank_deposit_forms.created_at)
-        //                     ,bank_deposit_forms.organization_code
-        //                     ,bank_deposit_forms.bc_gov_id
-        //                     ,bank_deposit_forms.pecsf_id
-        //                     ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
-        //                         THEN employee_jobs.name
-        //                         ELSE ''
-        //                     END
-        //                     ,employee_jobs.business_unit
-        //                     ,regions.code
-        //                     ,employee_jobs.deptid
-        //                     ,employee_jobs.dept_name
-        //                     ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
-        //                         THEN employee_jobs.office_city
-        //                         ELSE bank_deposit_forms.address_city
-        //                     END
-        //                     ,bank_deposit_forms.event_type  
-        //                     ,bank_deposit_forms.sub_type    
-        //                     ,CASE when regional_pool_id is not NULL 
-        //                         THEN 'P'
-        //                         ELSE 'C'
-        //                     END                             
-        //                     ,regions.id                              
-        //                     ,bank_deposit_forms.deposit_amount
-        //                     ,bank_deposit_forms.deposit_amount
-        //                     ,bank_deposit_forms.form_submitter_id      
-        //                     ,bank_deposit_forms.created_at
-        //                     ,bank_deposit_forms.updated_at
-        //                             ", [ $this->history_id] )
-        //         ->join('regions', 'regions.id', 'bank_deposit_forms.region_id')
-        //         ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
-        //         ->where( function($query) {
-        //             $query->where('employee_jobs.empl_rcd', '=', function($q) {
-        //                     $q->from('employee_jobs as J2') 
-        //                         ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-        //                         ->selectRaw('min(J2.empl_rcd)');
-        //                 })
-        //                 ->orWhereNull('employee_jobs.empl_rcd');
-        //         })
-        //         ->where('bank_deposit_forms.approved', 1)
-        //         ->whereNull('bank_deposit_forms.deleted_at')
-        //         ->when( $filters['year'], function($query) use($filters) {
-        //             $query->whereRaw('year(bank_deposit_forms.created_at) = ' . $filters['year']);
-        //         })
-
-        // );
-
-
     }
 
 
@@ -367,13 +223,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                     END as name
                     ,pledges.business_unit as business_unit_code
                     ,pledges.tgb_reg_district
-                    ,employee_jobs.deptid
-                    ,employee_jobs.dept_name
+                    ,pledges.deptid
+                    ,pledges.dept_name
                     ,CASE WHEN organizations.code = 'GOV'
                             THEN employee_jobs.office_city
                             ELSE pledges.city
                     END as city
                     ,pledges.type  AS pool_type
+                    ,pledges.f_s_pool_id AS f_s_pool_id
                 ")
             ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
             ->join('organizations', 'organizations.id', 'pledges.organization_id')
@@ -417,14 +274,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                     if (!$pool) {
                         dd( $pledge);
                     }
-                    foreach( $pool->charities as $index => $pool_charity) {
+                    // foreach( $pool->charities as $index => $pool_charity) {
 
-                        if ($index === count( $pool->charities ) - 1  ) {
-                            $calc_amount = $goal_amount - $calc_total;
-                        } else {
-                            $calc_amount = round( $pool_charity->percentage * $pledge->goal_amount /100 ,2); 
-                            $calc_total += $calc_amount;
-                        }
+                    //     if ($index === count( $pool->charities ) - 1  ) {
+                    //         $calc_amount = $goal_amount - $calc_total;
+                    //     } else {
+                    //         $calc_amount = round( $pool_charity->percentage * $pledge->goal_amount /100 ,2); 
+                    //         $calc_total += $calc_amount;
+                    //     }
 
                         \App\Models\PledgeCharityStaging::insert([
                             'history_id' => $this->history_id,
@@ -443,6 +300,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             'type' => 'Bi-Weekly',
                             'sub_type' => '',
                             'pool_type' => $pledge->type,
+                            'f_s_pool_id' => $pledge->f_s_pool_id,
                             'region_id' => $pledge->region_id,
                             'pledge' => $pledge->pay_period_amount,
                             'amount' => $goal_amount,
@@ -450,14 +308,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             'created_at' => $pledge->created_at,
                             'updated_at' => $pledge->updated_at,
                             
-                            'charity_id' => $pool_charity->charity_id,
-                            'percentage' => $pool_charity->percentage,
-                            'supported_program' => $pool_charity->name,
-                            'prorate_amount' => $calc_amount,
+                            'charity_id' => null,           // $pool_charity->charity_id,
+                            'percentage' => 0,           // $pool_charity->percentage,
+                            'supported_program' => null,    // $pool_charity->name,
+                            'prorate_amount' => 0,       // $calc_amount,
 
 
                         ]);
-                    }
+                    // }
 
                 }
 
@@ -467,14 +325,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                     $calc_total = 0;
                     $goal_amount = $pledge->one_time_amount;
 
-                    foreach( $pool->charities as $index => $pool_charity) {
+                    // foreach( $pool->charities as $index => $pool_charity) {
 
-                        if ($index === count( $pool->charities ) - 1  ) {
-                            $calc_amount = $goal_amount - $calc_total;
-                        } else {
-                            $calc_amount = round( $pool_charity->percentage * $pledge->goal_amount /100 ,2); 
-                            $calc_total += $calc_amount;
-                        }
+                    //     if ($index === count( $pool->charities ) - 1  ) {
+                    //         $calc_amount = $goal_amount - $calc_total;
+                    //     } else {
+                    //         $calc_amount = round( $pool_charity->percentage * $pledge->goal_amount /100 ,2); 
+                    //         $calc_total += $calc_amount;
+                    //     }
 
                         \App\Models\PledgeCharityStaging::insert([
                             'history_id' => $this->history_id,
@@ -493,6 +351,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             'type' => 'One-Time',
                             'sub_type' => '',
                             'pool_type' => $pledge->type,
+                            'f_s_pool_id' => $pledge->f_s_pool_id,
                             'region_id' => $pledge->region_id,
                             'pledge' => $pledge->one_time_amount,
                             'amount' => $pledge->one_time_amount,
@@ -500,13 +359,13 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             'created_at' => $pledge->created_at,
                             'updated_at' => $pledge->updated_at,
 
-                            'charity_id' => $pool_charity->charity_id,
-                            'percentage' => $pool_charity->percentage,
-                            'supported_program' => $pool_charity->name,
-                            'prorate_amount' => $calc_amount,
+                            'charity_id' => null,           // $pool_charity->charity_id,
+                            'percentage' => 0,           // $pool_charity->percentage,
+                            'supported_program' => null,    // $pool_charity->name,
+                            'prorate_amount' => 0,       // $calc_amount,
 
                         ]);
-                    }
+                    // }
 
                 }
 
@@ -536,6 +395,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             'type' => 'Bi-Weekly',
                             'sub_type' => '',
                             'pool_type' => $pledge->type,
+                            'f_s_pool_id' => null,
                             'region_id' => $pledge->region_id,
                             'pledge' => $pledge->pay_period_amount,
                             'amount' =>  $pledge->goal_amount - $pledge->one_time_amount,
@@ -577,6 +437,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                             'type' => 'One-Time',
                             'sub_type' => '',
                             'pool_type' => $pledge->type,
+                            'f_s_pool_id' => null,
                             'region_id' => $pledge->region_id,
                             'pledge' => $pledge->one_time_amount,
                             'amount' => $pledge->one_time_amount,
@@ -603,23 +464,25 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
 
         $events = BankDepositForm::selectRaw("bank_deposit_forms.* 
-                            ,year(bank_deposit_forms.created_at) as calendar_year
-                            ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
+                            ,campaign_years.calendar_year as calendar_year
+                            ,CASE WHEN bank_deposit_forms.bc_gov_id is not null
                                 THEN employee_jobs.name
-                                ELSE ''
+                                ELSE bank_deposit_forms.employee_name
                             END as name
                             ,(select code from business_units where business_units.id = bank_deposit_forms.business_unit) as business_unit_code
                             ,(select code from regions where regions.id = bank_deposit_forms.region_id) as tgb_reg_district
-                            ,employee_jobs.deptid as deptid
-                            ,employee_jobs.dept_name as dept_name
-                            ,CASE WHEN bank_deposit_forms.organization_code = 'GOV'
+                            ,bank_deposit_forms.deptid as deptid
+                            ,bank_deposit_forms.dept_name as dept_name
+                            ,CASE WHEN bank_deposit_forms.bc_gov_id is not null
                                 THEN employee_jobs.office_city
-                                ELSE bank_deposit_forms.address_city
+                                ELSE bank_deposit_forms.employment_city
                             END as city
                             ,CASE when regional_pool_id is not NULL 
                                 THEN 'P'
                                 ELSE 'C'
-                            END as pool_type ")
+                            END as pool_type 
+                            ,bank_deposit_forms.regional_pool_id as f_s_pool_id
+                        ")
                 ->join('campaign_years', 'campaign_years.id', 'bank_deposit_forms.campaign_year_id')
                 ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'bank_deposit_forms.bc_gov_id')
                 ->where( function($query) {
@@ -648,14 +511,14 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                 $calc_total = 0;
                 $goal_amount = $event->deposit_amount;
 
-                foreach( $pool->charities as $index => $pool_charity) {
+                // foreach( $pool->charities as $index => $pool_charity) {
 
-                    if ($index === count( $pool->charities ) - 1  ) {
-                        $calc_amount = $goal_amount - $calc_total;
-                    } else {
-                        $calc_amount = round( $pool_charity->percentage * $goal_amount /100 ,2); 
-                        $calc_total += $calc_amount;
-                    }
+                //     if ($index === count( $pool->charities ) - 1  ) {
+                //         $calc_amount = $goal_amount - $calc_total;
+                //     } else {
+                //         $calc_amount = round( $pool_charity->percentage * $goal_amount /100 ,2); 
+                //         $calc_total += $calc_amount;
+                //     }
 
                     \App\Models\PledgeCharityStaging::insert([
                         'history_id' => $this->history_id,
@@ -674,6 +537,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'type' => $event->event_type,
                         'sub_type' => $event->sub_type,
                         'pool_type' => $event->pool_type,
+                        'f_s_pool_id' => $event->f_s_pool_id,
                         'region_id' => $event->region_id,
                         'pledge' => $event->deposit_amount,
                         'amount' => $event->deposit_amount,
@@ -681,13 +545,13 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'created_at' => $event->created_at,
                         'updated_at' => $event->updated_at,
 
-                        'charity_id' => $pool_charity->charity_id,
-                        'percentage' => $pool_charity->percentage,
-                        'supported_program' => $pool_charity->name,
-                        'prorate_amount' => $calc_amount,
+                        'charity_id' => null,               // $pool_charity->charity_id,
+                        'percentage' => 0,                  // $pool_charity->percentage,
+                        'supported_program' => null,        // $pool_charity->name,
+                        'prorate_amount' => 0,              // $calc_amount,
 
                     ]);
-                }
+                // }
 
             } else {
 
@@ -712,6 +576,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'type' => $event->event_type,
                         'sub_type' => $event->sub_type,
                         'pool_type' => $event->pool_type,
+                        'f_s_pool_id' => null,
                         'region_id' => $event->region_id,
                         'pledge' => $event->deposit_amount,
                         'amount' => $event->deposit_amount,
