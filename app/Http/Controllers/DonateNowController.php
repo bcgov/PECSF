@@ -66,7 +66,9 @@ class DonateNowController extends Controller
 
 
         // Self service
-        $yearcd = Carbon::now()->format('Y');
+        $deduct_pay_from = PayCalendar::nextDeductPayFrom();
+        $yearcd = substr($deduct_pay_from,0,4);
+
         $amount_options =  [
                             6 => '$6',
                             12 => '$12',
@@ -107,11 +109,11 @@ class DonateNowController extends Controller
         // Calculate the deduct pay from
         $current = PayCalendar::whereRaw(" ( date(SYSDATE()) between pay_begin_dt and pay_end_dt) ")->first();
 
-        $check_dt = '';
-        if ($current) {
-            $period = PayCalendar::where('check_dt', '>=',  $current->check_dt )->skip(2)->take(1)->orderBy('check_dt')->first();
-            $check_dt = $period ? $period->check_dt : null;
-        }
+        $check_dt = PayCalendar::nextDeductPayFrom();
+        // if ($current) {
+        //     $period = PayCalendar::where('check_dt', '>=',  $current->check_dt )->skip(2)->take(1)->orderBy('check_dt')->first();
+        //     $check_dt = $period ? $period->check_dt : null;
+        // }
 
         if ($request->ajax()) {
 
