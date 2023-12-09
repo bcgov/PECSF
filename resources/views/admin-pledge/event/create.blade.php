@@ -121,4 +121,6 @@
     </script>
     @include('volunteering.partials.add-event-js')
     @include('donate.partials.choose-charity-js')
+
+    @include('volunteering.partials.dropzone-js')        
 @endpush

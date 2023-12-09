@@ -55,6 +55,10 @@ class DonateNowPledge extends Model implements Auditable
         return $this->belongsTo(User::class)->withDefault();
     }
 
+    public function related_city() {
+        return $this->belongsTo(City::class, 'city', 'city');
+    }
+
     public function region() {
         return $this->belongsTo(Region::class, 'region_id', 'id');
     }
