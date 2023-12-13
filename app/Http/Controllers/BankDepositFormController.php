@@ -57,8 +57,7 @@ class BankDepositFormController extends Controller
         $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->orderby("name", "asc")->get();
         $departments = Department::all();
-        $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
-            ->first();
+        $campaign_year = CampaignYear::where('start_date', '<=', today() )->orderBy('calendar_year', 'desc')->first();
         $current_user = User::where('id', Auth::id() )->first();
         $organizations = [];// Charity::where("charity_status","=","Registered")->paginate(7);
 

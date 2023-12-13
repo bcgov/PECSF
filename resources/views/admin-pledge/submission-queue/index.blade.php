@@ -180,6 +180,7 @@
             $(".upload-area").show();
             $("#edit-event-modal").find(".specific_community_or_initiative").attr("disabled",false);
             $("#edit-event-modal").find(".organization_name").attr("disabled",true);
+            $("#edit-event-modal").find("input.calendar_year").attr("disabled",true);
 
             $(".upload-area").show();
         });
