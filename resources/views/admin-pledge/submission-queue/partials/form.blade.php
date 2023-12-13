@@ -42,7 +42,7 @@
         <div class="form-group col-md-4">
             <label for="campaign_year">Campaign year</label>
             <!--<div id="campaign_year">{{$campaign_year->calendar_year - 1}}</div>-->
-            <input type="text" disabled class="form-control" value="{{$campaign_year->calendar_year - 1}}" />
+            <input type="text" disabled class="form-control calendar_year" value="{{$campaign_year->calendar_year - 1}}" />
             <input type="hidden"  value="{{$campaign_year->id}}" name="campaign_year" />
             <span class="campaign_year_errors errors">
                        @error('form_submitter')
