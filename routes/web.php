@@ -252,7 +252,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Special Campaign Setup
     Route::get('/special-campaigns/charities', [SpecialCampaignSetupController::class,'getCharities']);
-    Route::resource('/special-campaigns', SpecialCampaignSetupController::class);
+    Route::resource('/special-campaigns', SpecialCampaignSetupController::class)->except('create');
 
     // Fund Supported Pools
     Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);
