@@ -88,6 +88,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'CRA org name',
                         'Specific Community Or Initiative',
                         'Charity Amount',
+                        'Tran ID',
 
                     ]
                 ];
@@ -126,6 +127,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
             $employee->charity ? $employee->charity->charity_name : '',
             $employee->supported_program,
             $employee->prorate_amount,
+            $employee->pledge_id,
         ];
     }
 
@@ -502,7 +504,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
 
         foreach( $events as $event ) {
 
-            if ($event->pool_type == 'P')  {
+            if ($event->f_s_pool_id)  {
 
                 // $pool_by_id = \App\Models\FSPool::where('id', $event->regional_pool_id)->first(); 
                 // $pool = \App\Models\FSPool::where('region_id', $pool_by_id->region_id)->asOfDate($event->created_at)->first();
@@ -587,7 +589,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         'charity_id' => $event_charity->vendor_id,
                         'percentage' => $event_charity->donation_percent,
                         'supported_program' => $event_charity->specific_community_or_initiative,
-                        'prorate_amount' => round(($event_charity->goal_amount * $event->donation_percent) / 100, 2),
+                        'prorate_amount' => round(( $event->deposit_amount * $event_charity->donation_percent) / 100, 2),
 
                     ]);
 

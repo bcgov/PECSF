@@ -88,6 +88,7 @@ class GamingAndFundrasingExport implements FromQuery, WithHeadings, WithMapping,
                         'CRA org name',
                         'Specific Community Or Initiative',
                         'Charity Amount',
+                        'Tran ID',
 
                     ]
                 ];
@@ -126,6 +127,7 @@ class GamingAndFundrasingExport implements FromQuery, WithHeadings, WithMapping,
             $employee->charity ? $employee->charity->charity_name : '',
             $employee->supported_program,
             $employee->prorate_amount,
+            $employee->pledge_id,
         ];
     }
 
@@ -248,7 +250,7 @@ class GamingAndFundrasingExport implements FromQuery, WithHeadings, WithMapping,
 
         foreach( $events as $event ) {
 
-            if ($event->pool_type == 'P')  {
+            if ($event->f_s_pool_id)  {
 
                 // $pool_by_id = \App\Models\FSPool::where('id', $event->regional_pool_id)->first(); 
                 // $pool = \App\Models\FSPool::where('region_id', $pool_by_id->region_id)->asOfDate($event->created_at)->first();
@@ -333,7 +335,7 @@ class GamingAndFundrasingExport implements FromQuery, WithHeadings, WithMapping,
                         'charity_id' => $event_charity->vendor_id,
                         'percentage' => $event_charity->donation_percent,
                         'supported_program' => $event_charity->specific_community_or_initiative,
-                        'prorate_amount' => round(($event_charity->goal_amount * $event->donation_percent) / 100, 2),
+                        'prorate_amount' => round(( $event->deposit_amount * $event_charity->donation_percent) / 100, 2),
 
                     ]);
 
