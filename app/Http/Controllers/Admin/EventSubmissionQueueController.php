@@ -145,7 +145,8 @@ class EventSubmissionQueueController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function details(Request $request){
-        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id, campaign_years.calendar_year as calendar_year")
+        $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id,
+                     campaign_years.calendar_year as calendar_year, campaign_years.id as calendar_year_id")                    
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
             ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")

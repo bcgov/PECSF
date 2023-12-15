@@ -214,7 +214,9 @@
                     $("[name='event_type']").trigger("change");                    
                     $("#deposit_amount").val(data[0].deposit_amount);
                     $("#deposit_date").val(data[0].deposit_date);
-                    $("#campaign_year").html( (data[0].calendar_year - 1));
+                    // $("#campaign_year").html( (data[0].calendar_year - 1));
+                    $("input.calendar_year").val( (data[0].calendar_year - 1));
+                    $("input[name='campaign_year']").val( data[0].calendar_year_id );
                     $("#employee_name").val(data[0].employee_name);
 
                     if(data[0].event_type == "Fundraiser" || data[0].event_type == "Gaming"){                        
