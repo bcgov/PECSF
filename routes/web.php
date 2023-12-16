@@ -30,17 +30,17 @@ use App\Http\Controllers\System\AccessLogController;
 use App\Http\Controllers\System\LogViewerController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\System\UploadFileController;
-use App\Http\Controllers\System\AnnouncementController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\DonationDataController;
-
-
 use App\Http\Controllers\Admin\OrganizationController;
+
+
 use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
+use App\Http\Controllers\System\AnnouncementController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\System\SystemSettingController;
@@ -61,6 +61,7 @@ use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
 use App\Http\Controllers\Admin\ChallengePageDataReportController;
+use App\Http\Controllers\Admin\GamingAndFundrasingReportController;
 use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
 /*
 |--------------------------------------------------------------------------
@@ -252,7 +253,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
 
     // Special Campaign Setup
     Route::get('/special-campaigns/charities', [SpecialCampaignSetupController::class,'getCharities']);
-    Route::resource('/special-campaigns', SpecialCampaignSetupController::class);
+    Route::resource('/special-campaigns', SpecialCampaignSetupController::class)->except('create');
 
     // Fund Supported Pools
     Route::get('/fund-supported-pools/charities', [FundSupportedPoolController::class,'getCharities']);
@@ -344,6 +345,12 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/cra-charities/download-export-file/{id}', [CRACharityReportController::class,'downloadExportFile'])->name('cra-charities.download-export-file');
     Route::resource('/cra-charities', CRACharityReportController::class)->only(['index', 'show']);
 
+    // Gaming and Fundrasing Report
+    Route::get('/gaming-and-fundrasing/export', [GamingAndFundrasingReportController::class,'export2csv'])->name('gaming-and-fundrasing.export2csv');
+    Route::get('/gaming-and-fundrasing/export-progress/{id}', [GamingAndFundrasingReportController::class,'exportProgress'])->name('gaming-and-fundrasing.export2csv-progress');
+    Route::get('/gaming-and-fundrasing/download-export-file/{id}', [GamingAndFundrasingReportController::class,'downloadExportFile'])->name('gaming-and-fundrasing.download-export-file');
+    Route::resource('/gaming-and-fundrasing', GamingAndFundrasingReportController::class)->only(['index', 'show']);
+    
     //
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
     Route::get('/supply-report/delete', [SupplyReportController::class,"delete"])->name('delete');

@@ -21,7 +21,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 ini_set('memory_limit', '-1');          // To avoid "PHP Fatal error:  Allowed memory size of xxxxx bytes exhausted"
 
-class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
+class GamingAndFundrasingExport implements FromQuery, WithHeadings, WithMapping, WithEvents
 {
     use Exportable;
 
@@ -200,273 +200,18 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
     protected function populate_staging_table($filters) 
     {
 
-        // Step 1 -- Annual 
-        $this->populate_annual_pledges($filters);
-
-        // Step 2 -- Event 
+        // Step 1 -- Event 
         $this->populate_event_pledges( $this->filters );
 
         // Total Count
         $this->total_count = PledgeCharityStaging::where('history_id', $this->history_id)->count();    
 
-
-
-    }
-
-
-    protected function populate_annual_pledges($filters) {
-
-        $pledges =  Pledge::selectRaw("pledges.*
-                    ,campaign_years.calendar_year
-                    ,organizations.code as organization_code
-                    ,CASE WHEN organizations.code = 'GOV'
-                            THEN employee_jobs.name
-                            ELSE CONCAT (pledges.last_name,', ',pledges.first_name)
-                    END as name
-                    ,pledges.business_unit as business_unit_code
-                    ,pledges.tgb_reg_district
-                    ,pledges.deptid
-                    ,pledges.dept_name
-                    ,CASE WHEN organizations.code = 'GOV'
-                            THEN employee_jobs.office_city
-                            ELSE pledges.city
-                    END as city
-                    ,pledges.type  AS pool_type
-                    ,pledges.f_s_pool_id AS f_s_pool_id
-                ")
-            ->join('campaign_years', 'campaign_years.id', 'pledges.campaign_year_id')
-            ->join('organizations', 'organizations.id', 'pledges.organization_id')
-            ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'pledges.emplid')
-            ->where( function($query) {
-            $query->where('employee_jobs.empl_rcd', '=', function($q) {
-                $q->from('employee_jobs as J2') 
-                    ->whereColumn('J2.emplid', 'employee_jobs.emplid')
-                    ->selectRaw('min(J2.empl_rcd)');
-            })
-            ->orWhereNull('employee_jobs.empl_rcd');
-            })
-            // ->where('type', 'P')
-            // ->where('pledges.pay_period_amount', '<>', 0)
-            ->whereNull('pledges.deleted_at')
-            ->whereNull('pledges.cancelled')
-            ->when( $filters['year'], function($query) use($filters) {
-                        $query->where('campaign_years.calendar_year', $filters['year']);
-                    })
-            ->get();
-
-        foreach( $pledges as $pledge ) {
-
-            // dd ( \App\Models\FSPool::where('region_id', 1)->asOfDate('2022-09-01')->first()->charities ); 
-            //   $pool = $pledge->fund_supported_pool->asOfDate( '2021-09-01')->first();
-
-
-            //      dd ( $pool );
-            //   dd ( $pool->charities );
-            if ($pledge->type == 'P')  {
-
-                // $pool = \App\Models\FSPool::where('region_id', $pledge->region_id)->asOfDate($pledge->created_at)->first();
-                $pool = $pledge->fund_supported_pool;
-
-                // Bi-weekly
-                if ($pledge->pay_period_amount <> 0) {
-
-                    $calc_total = 0;
-                    $goal_amount = $pledge->goal_amount - $pledge->one_time_amount;
-
-                    if (!$pool) {
-                        dd( $pledge);
-                    }
-                    // foreach( $pool->charities as $index => $pool_charity) {
-
-                    //     if ($index === count( $pool->charities ) - 1  ) {
-                    //         $calc_amount = $goal_amount - $calc_total;
-                    //     } else {
-                    //         $calc_amount = round( $pool_charity->percentage * $pledge->goal_amount /100 ,2); 
-                    //         $calc_total += $calc_amount;
-                    //     }
-
-                        \App\Models\PledgeCharityStaging::insert([
-                            'history_id' => $this->history_id,
-                            'pledge_type' => 'Annual',
-                            'pledge_id' => $pledge->id,
-                            'calendar_year' => $pledge->calendar_year,
-                            'organization_code' => $pledge->organization_code,
-                            'emplid' => $pledge->emplid,
-                            'pecsf_id' => $pledge->pecsf_id,
-                            'name' => $pledge->name,
-                            'business_unit_code' => $pledge->business_unit_code,
-                            'tgb_reg_district' => $pledge->tgb_reg_district,
-                            'deptid' => $pledge->deptid,
-                            'dept_name' => $pledge->dept_name,
-                            'city' => $pledge->city,
-                            'type' => 'Bi-Weekly',
-                            'sub_type' => '',
-                            'pool_type' => $pledge->type,
-                            'f_s_pool_id' => $pledge->f_s_pool_id,
-                            'region_id' => $pledge->region_id,
-                            'pledge' => $pledge->pay_period_amount,
-                            'amount' => $goal_amount,
-                            'created_by_id' => $pledge->created_by_id,
-                            'created_at' => $pledge->created_at,
-                            'updated_at' => $pledge->updated_at,
-                            
-                            'charity_id' => null,           // $pool_charity->charity_id,
-                            'percentage' => 0,           // $pool_charity->percentage,
-                            'supported_program' => null,    // $pool_charity->name,
-                            'prorate_amount' => 0,       // $calc_amount,
-
-
-                        ]);
-                    // }
-
-                }
-
-                // One-Time 
-                if ($pledge->one_time_amount <> 0) {
-
-                    $calc_total = 0;
-                    $goal_amount = $pledge->one_time_amount;
-
-                    // foreach( $pool->charities as $index => $pool_charity) {
-
-                    //     if ($index === count( $pool->charities ) - 1  ) {
-                    //         $calc_amount = $goal_amount - $calc_total;
-                    //     } else {
-                    //         $calc_amount = round( $pool_charity->percentage * $pledge->goal_amount /100 ,2); 
-                    //         $calc_total += $calc_amount;
-                    //     }
-
-                        \App\Models\PledgeCharityStaging::insert([
-                            'history_id' => $this->history_id,
-                            'pledge_type' => 'Annual',
-                            'pledge_id' => $pledge->id,
-                            'calendar_year' => $pledge->calendar_year,
-                            'organization_code' => $pledge->organization_code,
-                            'emplid' => $pledge->emplid,
-                            'pecsf_id' => $pledge->pecsf_id,
-                            'name' => $pledge->name,
-                            'business_unit_code' => $pledge->business_unit_code,
-                            'tgb_reg_district' => $pledge->tgb_reg_district,
-                            'deptid' => $pledge->deptid,
-                            'dept_name' => $pledge->dept_name,
-                            'city' => $pledge->city,
-                            'type' => 'One-Time',
-                            'sub_type' => '',
-                            'pool_type' => $pledge->type,
-                            'f_s_pool_id' => $pledge->f_s_pool_id,
-                            'region_id' => $pledge->region_id,
-                            'pledge' => $pledge->one_time_amount,
-                            'amount' => $pledge->one_time_amount,
-                            'created_by_id' => $pledge->created_by_id,
-                            'created_at' => $pledge->created_at,
-                            'updated_at' => $pledge->updated_at,
-
-                            'charity_id' => null,           // $pool_charity->charity_id,
-                            'percentage' => 0,           // $pool_charity->percentage,
-                            'supported_program' => null,    // $pool_charity->name,
-                            'prorate_amount' => 0,       // $calc_amount,
-
-                        ]);
-                    // }
-
-                }
-
-            } else {
-
-                // Bi-weekly
-                if ($pledge->pay_period_amount <> 0) {
-
-                   $pledge_charities = $pledge->bi_weekly_charities;
-
-                    foreach( $pledge_charities as $index => $pledge_charity) {
-
-                        \App\Models\PledgeCharityStaging::insert([
-                            'history_id' => $this->history_id,
-                            'pledge_type' => 'Annual',
-                            'pledge_id' => $pledge->id,
-                            'calendar_year' => $pledge->calendar_year,
-                            'organization_code' => $pledge->organization_code,
-                            'emplid' => $pledge->emplid,
-                            'pecsf_id' => $pledge->pecsf_id,
-                            'name' => $pledge->name,
-                            'business_unit_code' => $pledge->business_unit_code,
-                            'tgb_reg_district' => $pledge->tgb_reg_district,
-                            'deptid' => $pledge->deptid,
-                            'dept_name' => $pledge->dept_name,
-                            'city' => $pledge->city,
-                            'type' => 'Bi-Weekly',
-                            'sub_type' => '',
-                            'pool_type' => $pledge->type,
-                            'f_s_pool_id' => null,
-                            'region_id' => $pledge->region_id,
-                            'pledge' => $pledge->pay_period_amount,
-                            'amount' =>  $pledge->goal_amount - $pledge->one_time_amount,
-                            'created_by_id' => $pledge->created_by_id,
-                            'created_at' => $pledge->created_at,
-                            'updated_at' => $pledge->updated_at,
-
-                            'charity_id' => $pledge_charity->charity_id,
-                            'percentage' => $pledge_charity->percentage,
-                            'supported_program' => $pledge_charity->additional,
-                            'prorate_amount' => $pledge_charity->goal_amount,
-
-                        ]);
-                    }
-
-                }
-
-                // One-Time 
-                if ($pledge->one_time_amount <> 0) {
-
-                    $pledge_charities = $pledge->bi_weekly_charities;
-
-                    foreach( $pledge_charities as $index => $pledge_charity) {
-
-                        \App\Models\PledgeCharityStaging::insert([
-                            'history_id' => $this->history_id,
-                            'pledge_type' => 'Annual',
-                            'pledge_id' => $pledge->id,
-                            'calendar_year' => $pledge->calendar_year,
-                            'organization_code' => $pledge->organization_code,
-                            'emplid' => $pledge->emplid,
-                            'pecsf_id' => $pledge->pecsf_id,
-                            'name' => $pledge->name,
-                            'business_unit_code' => $pledge->business_unit_code,
-                            'tgb_reg_district' => $pledge->tgb_reg_district,
-                            'deptid' => $pledge->deptid,
-                            'dept_name' => $pledge->dept_name,
-                            'city' => $pledge->city,
-                            'type' => 'One-Time',
-                            'sub_type' => '',
-                            'pool_type' => $pledge->type,
-                            'f_s_pool_id' => null,
-                            'region_id' => $pledge->region_id,
-                            'pledge' => $pledge->one_time_amount,
-                            'amount' => $pledge->one_time_amount,
-                            'created_by_id' => $pledge->created_by_id,
-                            'created_at' => $pledge->created_at,
-                            'updated_at' => $pledge->updated_at,
-
-                            'charity_id' => $pledge_charity->charity_id,
-                            'percentage' => $pledge_charity->percentage,
-                            'supported_program' => $pledge_charity->additional,
-                            'prorate_amount' => $pledge_charity->goal_amount,
-
-                        ]);
-
-                    }
-
-                }
-
-            }
-        }   
     }
 
     protected function populate_event_pledges($filters) {
 
-
         $events = BankDepositForm::selectRaw("bank_deposit_forms.* 
-                            ,campaign_years.calendar_year as calendar_year
+                            ,campaign_years.calendar_year
                             ,CASE WHEN bank_deposit_forms.bc_gov_id is not null
                                 THEN employee_jobs.name
                                 ELSE bank_deposit_forms.employee_name
@@ -496,6 +241,7 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                         ->orWhereNull('employee_jobs.empl_rcd');
                 })
                 ->where('bank_deposit_forms.approved', 1)
+                ->whereIn('bank_deposit_forms.event_type', ['Gaming','Fundraiser'])
                 ->whereNull('bank_deposit_forms.deleted_at')
                         ->when( $filters['year'], function($query) use($filters) {
                             $query->where('campaign_years.calendar_year', $filters['year']);
@@ -594,11 +340,8 @@ class PledgeCharitiesExport implements FromQuery, WithHeadings, WithMapping, Wit
                     ]);
 
                 }
-
             }
-
         }
-
     }
 
 }
