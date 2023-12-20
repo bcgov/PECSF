@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Models\Pledge;
+use App\Models\CampaignYear;
 use Illuminate\Support\Facades\App;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -99,7 +100,8 @@ class Kernel extends ConsoleKernel
 
                 // Foundation table
                 $schedule->command('command:ImportPayCalendar')
-                        ->weekdays()
+                        ->weekly()
+                        ->mondays()
                         ->at('2:00')
                         //  ->everyFifteenMinutes()
                         ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'));
@@ -115,12 +117,17 @@ class Kernel extends ConsoleKernel
                 //         ->sendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
 
                 $schedule->command('command:ImportCities')
-                        //  ->yearlyOn(9, 1, '02:30')
+                        ->skip(function () {
+                                return CampaignYear::isAnnualCampaignOpenNow() or (today()->dayOfWeek == 1);
+                        })
                         ->weekdays()
                         ->at('2:30')
                         ->sendOutputTo(storage_path('logs/ImportCities.log')); 
 
                 $schedule->command('command:ImportDepartments')
+                        ->skip(function () {
+                                return CampaignYear::isAnnualCampaignOpenNow() or (today()->dayOfWeek == 1);
+                        })
                         ->weekdays()
                         ->at('2:35')
                         ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
