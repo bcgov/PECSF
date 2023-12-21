@@ -51,6 +51,7 @@ use App\Http\Controllers\System\UserMaintenanceController;
 use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
+use App\Http\Controllers\Admin\DonationDataReportController;
 use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\PledgeCharityReportController;
@@ -315,6 +316,12 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
 
     Route::resource('/donation-upload', DonationUploadController::class)->only(['index','store','show']);
     Route::resource('/donation-data', DonationDataController::class)->only(['index']);
+
+    Route::get('/donation-report/export', [DonationDataReportController::class,'export2csv'])->name('donation-report.export2csv');
+    Route::get('/donation-report/export-progress/{id}', [DonationDataReportController::class,'exportProgress'])->name('donation-report.export2csv-progress');
+    Route::get('/donation-report/download-export-file/{id}', [DonationDataReportController::class,'downloadExportFile'])->name('donation-report.download-export-file');
+    Route::resource('/donation-report', DonationDataReportController::class)->only(['index', 'show']);
+
     // Eligible Employee Count
     // Route::resource('/eligible-employee-count', EligibleEmployeeCountController::class)->only(['index']);
     // Eligible Employee Reporting
