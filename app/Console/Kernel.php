@@ -118,7 +118,7 @@ class Kernel extends ConsoleKernel
 
                 $schedule->command('command:ImportCities')
                         ->skip(function () {
-                                return CampaignYear::isAnnualCampaignOpenNow() or (today()->dayOfWeek == 1);
+                                return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
                         })
                         ->weekdays()
                         ->at('2:30')
@@ -126,7 +126,7 @@ class Kernel extends ConsoleKernel
 
                 $schedule->command('command:ImportDepartments')
                         ->skip(function () {
-                                return CampaignYear::isAnnualCampaignOpenNow() or (today()->dayOfWeek == 1);
+                                return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
                         })
                         ->weekdays()
                         ->at('2:35')
