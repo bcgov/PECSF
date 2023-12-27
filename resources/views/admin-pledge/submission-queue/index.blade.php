@@ -420,7 +420,7 @@
             if($(this).val() == 1){
              Swal.fire({
                    title: 'Approved?',
-                    text: 'Should We Approved This Event?',
+                    text: 'Should we approve this event ?',
                     showCloseButton: true,
                     showCancelButton: true,
                     focusConfirm: false,
