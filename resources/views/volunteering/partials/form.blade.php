@@ -205,7 +205,7 @@
                         <option value="">Select a business unit</option>
                         @foreach ($business_units as $bu)
                             @if (!empty($bu->name))
-                                <option value="{{ $bu->id }}">{{ $bu->name }}</option>
+                                <option value="{{ $bu->id }}" data-org="{{ $bu->org_code }}">{{ $bu->name }}</option>
                             @endif
                         @endforeach
                     </select>

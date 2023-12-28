@@ -5,6 +5,8 @@
 
 $(function () {
 
+    var business_unit_options = {!!json_encode($business_units)!!};
+
     $("#sub_type").select2();
     $("#event_type").select2();
     $(".org_hook,#pecsfid,#bcgovid,#employeename,.address_hook,.sub_type").hide();
@@ -658,36 +660,68 @@ $("#attachment_input_1").val("");
     });
 
     $("body").on("change","#organization_code",function(){
-        if($(this).val() != "GOV" && $(this).val() != "false"){
-            $.ajax({
-                url: "/bank_deposit_form/business_unit?id="+$(this).val(),
-                type: "GET",
-                headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
-                processData: false,
-                cache: false,
-                contentType: false,
-                dataType: 'json',
-                success:function(response){
-                    $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
-                    $("#business_unit").val(response.business_unit_id).select2();
-                    setTimeout(function(){
-                        $("#employment_city").parents(".form-body").fadeTo("slow",1);
-                    },500);
-                },
-                error: function(response) {
-                    Swal.fire({
-                        title: '<strong>Not Found!</strong>',
-                        icon: 'error',
-                        html:
-                            'Business Unit not found!',
-                        showCloseButton: true,
-                        showCancelButton: true,
-                        focusConfirm: false,
-                    });
-                },
+
+        // re-populate business unit options based on organization selection 
+        selected_org_code = $("#organization_code").val();
+
+        $('#business_unit option').slice(1).remove();
+        business_unit_options.forEach(function (item, index) {
+            console.log(item, index);
+
+            new_option = $('<option>', { 
+                        value: item.id,
+                        text : item.name,
+                        'data-org' : item.org_code,
             });
-        }
-        else if($(this).val() == "GOV"){
+
+            if (selected_org_code == "GOV") {
+                if (!(item.org_code)) {
+                    $('#business_unit').append(new_option);
+                }
+            } else {
+                if (selected_org_code == item.org_code) {
+                    $('#business_unit').append(new_option);
+                }
+            }
+
+        });
+
+        $("#business_unit option[data-org='" + selected_org_code + "']").attr('selected','selected').change();
+
+        // if($(this).val() != "GOV" && $(this).val() != "false"){
+        //     $.ajax({
+        //         url: "/bank_deposit_form/business_unit?id="+$(this).val(),
+        //         type: "GET",
+        //         headers: {'X-CSRF-TOKEN': $("input[name='_token']").val()},
+        //         processData: false,
+        //         cache: false,
+        //         contentType: false,
+        //         dataType: 'json',
+        //         success:function(response){
+        //             $("#employment_city").parents(".form-body").fadeTo("fast",0.25);
+        //             $("#business_unit").val(response.business_unit_id).select2();
+        //             setTimeout(function(){
+        //                 $("#employment_city").parents(".form-body").fadeTo("slow",1);
+        //             },500);
+        //         },
+        //         error: function(response) {
+        //             Swal.fire({
+        //                 title: '<strong>Not Found!</strong>',
+        //                 icon: 'error',
+        //                 html:
+        //                     'Business Unit not found!',
+        //                 showCloseButton: true,
+        //                 showCancelButton: true,
+        //                 focusConfirm: false,
+        //             });
+        //         },
+        //     });
+        // }
+        // else if($(this).val() == "GOV"){
+        //     // $("#business_unit").val("").select2();
+        //     govuserinfo();
+        // }
+        if($(this).val() == "GOV"){
             // $("#business_unit").val("").select2();
             govuserinfo();
         }
