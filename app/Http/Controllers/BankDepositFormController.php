@@ -157,11 +157,15 @@ class BankDepositFormController extends Controller
             'attachments' => "required|max:3",
         ],[
 
-            'organization_code' => 'The Organization Code is required.',
+            'organization_code.required' => 'The organization field is required.',
+            'bc_gov_id.required_unless' => "The employee ID field is required unless event type is in Fundraiser, Gaming.",
+            'bc_gov_id.exists' => "The selected employee ID field is invalid.",
             'attachments.required' => 'At least one attachment is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.',
 
             'deposit_amount.regex' => 'Only two decimal places allowed.',
+            'address_1.required_unless' => 'The address line 1 field is required unless event type is in Fundraiser, Gaming.',
+            'description.required' =>  'The donation or event name field is required.',
             'attachments.max' => 'The total number of attachments must not be greater than 5.',
 
 
@@ -565,9 +569,14 @@ class BankDepositFormController extends Controller
             'description' => 'required',
             'attachments' => "max:{$max_attachments}",
         ],[
-            'organization_code' => 'The Organization Code is required.',
+            'organization_code.required' => 'The organization field is required.',
+            'bc_gov_id.required_unless' => "The employee ID field is required unless event type is in Fundraiser, Gaming.",
+            'bc_gov_id.exists' => "The selected employee ID field is invalid.",
 
             'deposit_amount.regex' => 'Only two decimal places allowed.',
+
+            'address_1.required_unless' => 'The address line 1 field is required unless event type is in Fundraiser, Gaming.',
+            'description.required' =>  'The donation or event name field is required.',
             'attachments.max' => 'The total number of attachments must not be greater than 5.',
 
         ]);

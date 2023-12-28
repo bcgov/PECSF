@@ -371,7 +371,11 @@ var formData = new FormData();
         $("#bank_deposit_form select").each(function(){
             // if($(this).val()){
             //     if($(this).val().length > 0){
+                if ($(this).val() == 'false') {
+                    formData.append($(this).attr("name"), '');
+                } else {
                     formData.append($(this).attr("name"), $(this).val());
+                }
             //     }
             // }
         });
