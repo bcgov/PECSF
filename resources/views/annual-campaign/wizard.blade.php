@@ -24,10 +24,10 @@
             <div class=" card-timeline px-2 border-0">
                 <ul class="bs4-step-tracking">
                     <li class="active">
-                        <div><i class="fas fa-bars fa-2xl"></i></div>Method
+                        <div><i class="fas fa-bars fa-2xl"></i></div>Pool or Non-Pool
                     </li>
                     <li class="">
-                        <div><i class="fas fa-dollar-sign fa-2xl"></i></div>Pool or Non-Pool
+                        <div><i class="fas fa-dollar-sign fa-2xl"></i></div>In Support Of
                     </li>
                     <li class="">
                         <div><i class="fas fa-random fa-2xl"></i></div>Amount
