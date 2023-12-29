@@ -54,7 +54,11 @@ class BankDepositFormController extends Controller
             ->orderBy("name","asc")
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
+        // $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","=","A")
+                        ->whereColumn("code","linked_bu_code")
+                        ->selectRaw("business_units.id, business_units.code, business_units.name, (select code from organizations where organizations.bu_code = business_units.code limit 1 ) as org_code ")
+                        ->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->orderby("name", "asc")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('start_date', '<=', today() )->orderBy('calendar_year', 'desc')->first();
@@ -153,11 +157,15 @@ class BankDepositFormController extends Controller
             'attachments' => "required|max:3",
         ],[
 
-            'organization_code' => 'The Organization Code is required.',
+            'organization_code.required' => 'The organization field is required.',
+            'bc_gov_id.required_unless' => "The employee ID field is required unless event type is in Fundraiser, Gaming.",
+            'bc_gov_id.exists' => "The selected employee ID field is invalid.",
             'attachments.required' => 'At least one attachment is required.',
             'deposit_date.before' => 'The deposit date must be the current date or a date before the current date.',
 
             'deposit_amount.regex' => 'Only two decimal places allowed.',
+            'address_1.required_unless' => 'The address line 1 field is required unless event type is in Fundraiser, Gaming.',
+            'description.required' =>  'The donation or event name field is required.',
             'attachments.max' => 'The total number of attachments must not be greater than 5.',
 
 
@@ -561,9 +569,14 @@ class BankDepositFormController extends Controller
             'description' => 'required',
             'attachments' => "max:{$max_attachments}",
         ],[
-            'organization_code' => 'The Organization Code is required.',
+            'organization_code.required' => 'The organization field is required.',
+            'bc_gov_id.required_unless' => "The employee ID field is required unless event type is in Fundraiser, Gaming.",
+            'bc_gov_id.exists' => "The selected employee ID field is invalid.",
 
             'deposit_amount.regex' => 'Only two decimal places allowed.',
+
+            'address_1.required_unless' => 'The address line 1 field is required unless event type is in Fundraiser, Gaming.',
+            'description.required' =>  'The donation or event name field is required.',
             'attachments.max' => 'The total number of attachments must not be greater than 5.',
 
         ]);
@@ -878,7 +891,7 @@ class BankDepositFormController extends Controller
         $response['results'][] = ["id" => "false", "text" => "Choose an organization"];
         foreach ($organizations as $organization) {
             if(!empty($organization->code)){
-                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->name];
+                $response['results'][] = ["id" =>  $organization->code,"text" => $organization->name,  'bu_code' => $organization->bu_code];
             }
         }
         echo json_encode($response);
