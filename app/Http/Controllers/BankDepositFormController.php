@@ -766,7 +766,25 @@ class BankDepositFormController extends Controller
             //     //$validator->errors()->add('attachment','At least one attachment is required.');
             // }
 
+            if($request->organization_code){
 
+                $org = Organization::where('code', $request->organization_code)->first();
+                if ($org->bu_code && $request->business_unit != $org->business_unit->id) {
+                    $validator->errors()->add('business_unit','The selected business unit is invalid.');
+                } 
+
+                if ($request->organization_code == 'GOV') {
+                    $found = Organization::join('business_units', 'organizations.bu_code', 'business_units.code')
+                                    ->where('business_units.id', $request->business_unit)
+                                    ->whereNotNull('organizations.bu_code')
+                                    ->first();
+
+                    if ($found) {
+                        $validator->errors()->add('business_unit','The selected business unit is invalid.');
+                    }
+                }
+               
+            }
 
         });
         $regional_pool_id = ($request->charity_selection == "fsp") ? $request->regional_pool_id : null;
