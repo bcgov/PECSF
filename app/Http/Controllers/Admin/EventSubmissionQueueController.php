@@ -123,7 +123,11 @@ class EventSubmissionQueueController extends Controller
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::orderBy('name')->get();
+        // $business_units = BusinessUnit::orderBy('name')->get();
+        $business_units = BusinessUnit::where("status","=","A")
+                        ->whereColumn("code","linked_bu_code")
+                        ->selectRaw("business_units.id, business_units.code, business_units.name, (select code from organizations where organizations.bu_code = business_units.code limit 1 ) as org_code ")
+                        ->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->orderBy('name')->get();
         $departments = Department::orderBy('department_name')->get();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
