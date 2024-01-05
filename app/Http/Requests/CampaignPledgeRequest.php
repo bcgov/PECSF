@@ -130,7 +130,7 @@ class CampaignPledgeRequest extends FormRequest
                     'pool_id'       => ['required_if:pool_option,P', Rule::when( $this->pool_option == 'P', ['exists:f_s_pools,id']) ],
                     'charities.*'   => ['required_if:pool_option,C'],
                     'percentages.*' => $this->pool_option == 'C' ?
-                                'required|numeric|min:0|max:100|between:0,100.00|regex:/^\d+(\.\d{1,2})?$/' :  '',
+                                'required|numeric|min:0.01|max:100|between:0.01,100.00|regex:/^\d+(\.\d{1,2})?$/' :  '',
                 ]
             );
         }
@@ -199,6 +199,11 @@ class CampaignPledgeRequest extends FormRequest
             // if ($this->somethingElseIsInvalid()) {
             //     $validator->errors()->add('field', 'Something is wrong with this field!');
             // }
+                if (count($charities) > 10) {
+                    for ($i=0; $i < count($charities); $i++) {
+                        $validator->errors()->add('charities.' .$i, 'Maximum limit exceeded. More than 10 charities entered.');
+                    }
+                }
 
             }
         });
@@ -236,9 +241,9 @@ class CampaignPledgeRequest extends FormRequest
 
             'percentages.*.required' => 'The Percentage field is required.',
             'percentages.*.max' => 'The Percentage must not be greater than 100.',
-            'percentages.*.min' => 'The Percentage must be at least 0.',
+            'percentages.*.min' => 'The Percentage must be at least 0.01',
             'percentages.*.numeric' => 'The Percentage must be a number.',
-            'percentages.*.between' => 'The percentages.0 must be between 0 and 100.',
+            'percentages.*.between' => 'The percentages must be between 0.01 and 100.',
             'percentages.*.regex' => 'The percentages format is invalid.',
 
         ];

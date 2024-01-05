@@ -332,8 +332,9 @@
 
 $(function () {
 
-     // First load
+    // First load
     var first_load = true;
+    var ods_export_done = {{ isset($pledge) && $pledge->ods_export_status ? 'true' : 'false' }};
 
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
@@ -441,6 +442,10 @@ $(function () {
     // Validation when click on 'next' button
     function checkForm() {
 
+        if (ods_export_done) {
+            $('#nav-amount input:disabled').prop("disabled", false);
+        }
+
         // reset submission count
         submit_count = 0;
 
@@ -484,7 +489,7 @@ $(function () {
                 timeout: 30000,
                 success: function(data)
                 {
-                    if(data.indexOf('body class="login-page"') != -1){
+                    if(data && data.indexOf('body class="login-page"') != -1){
                         window.location.href = '/login';
                     }
 
@@ -535,6 +540,10 @@ $(function () {
                     console.log('Error');
                 }
             });
+
+        if (step <= 2 && ods_export_done) {
+            $('#nav-amount input').prop("disabled", true);
+        }
 
         return valid;
     }
