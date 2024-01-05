@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-12 col-xl-12 ">
         <h1 class="text-center" style="color:#687278;">Welcome, {{ Auth::user()->name }}</h1>
-        <p class="text-center h5"  style="color:#687278;"><b>Choose from the options below:</b></p>
+        <p class="text-center h5"  style="color:#687278;"><strong>Choose from the options below:</strong></p>
     </div>
   </div>
 </div>
@@ -107,9 +107,7 @@
             <div class="col-12 col-md-5 offset-md-1 pt-5">
                 <br><br>
                 <br><br>
-                <h1 class="mt-5 p1-5" style="font-size: 4em;">
-                Generosity in Action
-                </h1>
+                <h3 class="mt-5 p1-5" style="font-size: 4em;">Generosity in Action</h3>
             </div>
 
             <div class="col-12 col-md-6">
