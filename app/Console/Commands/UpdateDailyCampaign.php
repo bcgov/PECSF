@@ -151,7 +151,7 @@ class UpdateDailyCampaign extends Command
             // Step 1A
             $this->LogMessage("Updating daily campaign by business units");
 
-            $campaign_year = today()->year;
+            // $campaign_year = today()->year;
 
             $history = HistoricalChallengePage::select('year')
                                     ->where('year', '<', $campaign_year)

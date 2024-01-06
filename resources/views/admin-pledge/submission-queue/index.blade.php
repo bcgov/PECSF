@@ -183,6 +183,8 @@
             $("#edit-event-modal").find("input.calendar_year").attr("disabled",true);
 
             $(".upload-area").show();
+
+            $('#organization_code').trigger('change');
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
@@ -420,7 +422,7 @@
             if($(this).val() == 1){
              Swal.fire({
                    title: 'Approved?',
-                    text: 'Should We Approved This Event?',
+                    text: 'Should we approve this event ?',
                     showCloseButton: true,
                     showCancelButton: true,
                     focusConfirm: false,

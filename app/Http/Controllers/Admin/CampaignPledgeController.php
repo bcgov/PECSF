@@ -132,7 +132,7 @@ class CampaignPledgeController extends Controller
                     $delete = ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null )  ?
                                     '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
                                     $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
-                    $edit = (($pledge->organization_id == $gov->id && $pledge->ods_export_status == null && $pledge->cancelled == null) || 
+                    $edit = (($pledge->organization_id == $gov->id && $pledge->cancelled == null) || 
                              ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null))  ?
                             '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.campaign.edit',$pledge->id) . '">Edit</a>' : '';
                     return  '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.campaign.show',$pledge->id) . '">Show</a>' .
@@ -462,7 +462,7 @@ class CampaignPledgeController extends Controller
     {
         //
         $pledge = Pledge::where('id', $id)
-                        ->whereNull('ods_export_status')
+                        // ->whereNull('ods_export_status')
                         ->whereNull('cancelled')->first();
 
         if (!($pledge)) {

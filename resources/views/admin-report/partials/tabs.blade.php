@@ -2,7 +2,8 @@
 
     <li class="nav-item dropdown">
       @php $active =  ( str_contains(Route::current()->getName(), 'reporting.donation-upload') ||
-                        str_contains(Route::current()->getName(), 'reporting.donation-data')
+                        str_contains(Route::current()->getName(), 'reporting.donation-data') ||
+                        str_contains(Route::current()->getName(), 'reporting.donation-report') 
                       ) ? 'active' : ''
       @endphp
       <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Pay Period Report</a>
@@ -11,6 +12,8 @@
               href="{{ route('reporting.donation-upload.index') }}">Upload Donation Data</a>
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.donation-data') ? 'active' : ''}}"
               href="{{ route('reporting.donation-data.index') }}">Review Donation Data </a>
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.donation-report') ? 'active' : ''}}"
+                href="{{ route('reporting.donation-report.index') }}">Export Donation Data </a>
       </div>
     </li>
 
