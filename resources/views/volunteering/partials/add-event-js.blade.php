@@ -194,7 +194,11 @@ $(function () {
             // }
         }
 
-        $(".address_hook").show();
+        if ($("#event_type").val() == "Gaming" || $("#event_type").val() == "Fundraiser") {
+            $('.address_hook').hide();
+        } else {
+            $('.address_hook').show();
+        }
 
         $("#city").select2();
         $("#province").select2();

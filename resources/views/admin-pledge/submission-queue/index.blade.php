@@ -184,7 +184,7 @@
 
             $(".upload-area").show();
 
-            $('#organization_code').trigger('change');
+            // $('#organization_code').trigger('change');
         });
 
         $(document).on("click", ".edit-event-modal" , function(e) {
