@@ -124,7 +124,7 @@
                 </div>
 
                 <div id="bcgovid" class="form-group col-md-3" style="display:none;">
-                    <label for="bc_gov_id">Employee ID</label>
+                    <label for="bc_gov_id">Donor Employee ID</label>
                     <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
                     <span class="bc_gov_id_errors errors">
                         @error('bc_gov_id')
