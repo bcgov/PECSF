@@ -195,7 +195,10 @@ class ExportPledgesToPSFT extends Command
             $period = PayCalendar::where('check_dt', '>=',  $check_dt)->orderBy('check_dt')->first();
             $start_date = $period ? $period->check_dt : $check_dt;
             $end_date   = $pledge->campaign_year->calendar_year . '-12-31';
-
+            if (today() >= $check_dt) {
+                $period = PayCalendar::whereRaw("DATE_SUB(check_dt, INTERVAL 8 DAY) > '". today()->format('Y-m-d') ."'")->orderBy('check_dt')->first(); 
+                $start_date = $period ? $period->check_dt : $start_date;
+            }
 
             $one_time_sent = false;
             $pay_period_sent = false;
