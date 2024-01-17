@@ -29,8 +29,8 @@ class SystemQueueStatus extends Command
      */
     public function handle()
     {
-        //
-         // Get the names of the configured queues
+        
+        $this->info( "Checking queue status - " . now() );
 
         try {
 
