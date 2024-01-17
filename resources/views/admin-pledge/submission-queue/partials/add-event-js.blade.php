@@ -447,6 +447,7 @@ var formData = new FormData();
     });
 
 $('#organization_code').select2({
+    minimumResultsForSearch: -1,
 ajax: {
 url: '/bank_deposit_form/organization_code',
 dataType: 'json'
