@@ -30,7 +30,7 @@ class SystemQueueStatus extends Command
     public function handle()
     {
         
-        $this->info( "Checking queue status - " . now() );
+        $this->info( "Checking queue status on " . now() );
 
         try {
 
@@ -43,8 +43,8 @@ class SystemQueueStatus extends Command
                     $t = Carbon::parse($queue->available_at);
                     $t->setTimezone('America/Vancouver');
 
-                    // if more than 5 minutes
-                    if (Carbon::now()->diffInSeconds($t) > 300) {
+                    // if queue up more than 5 minutes
+                    if ( (!($queue->reserved_at)) && Carbon::now()->diffInSeconds($t) > 300) {
                         // Notify the administrator 
                         $payload = json_decode($queue->payload, true);
 
