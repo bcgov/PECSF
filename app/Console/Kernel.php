@@ -164,7 +164,7 @@ class Kernel extends ConsoleKernel
 
         // Monitoring Process Queue every 5 mins 
         $schedule->command('command:queueStatus')
-                ->everyFiveMinutes()
+                ->everyMinute()
                 ->between('7:00', '19:00')
                 ->appendOutputTo(storage_path('logs/queueStatus.log'));
 
