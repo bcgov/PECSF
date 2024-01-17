@@ -161,7 +161,13 @@ class Kernel extends ConsoleKernel
         $schedule->command('command:SystemCleanUp')
                 ->dailyAt('5:30')
                 ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
-        
+
+        // Monitoring Process Queue every 5 mins 
+        $schedule->command('command:queueStatus')
+                ->daily()
+                ->everyFiveMinutes()
+                ->sendOutputTo(storage_path('logs/queueStatus.log'));
+
         // Daily Testing 
         $schedule->command('notify:daily')
                 ->dailyAt('08:30')
