@@ -48,8 +48,7 @@ class SystemQueueStatus extends Command
                         // Notify the administrator 
                         $payload = json_decode($queue->payload, true);
 
-                        echo $payload['displayName'] .PHP_EOL;;
-                        echo $payload['data']['command'] .PHP_EOL;
+                        $this->info( "  The background queue process ". $payload['displayName'] . " has been in the queue for more than 5 minutes." . PHP_EOL );
                                                                 
                         // send out email notification
                         $notify = new \App\MicrosoftGraph\SendEmailNotification();
