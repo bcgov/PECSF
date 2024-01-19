@@ -62,6 +62,13 @@ class SendEmailNotification
             return true;
         }
 
+        if (!($this->subject)) {
+            $this->subject = "The Process (";
+            $this->subject .=  $this->job_id ? $this->job_id  . " - " : ''; 
+            $this->subject .=  $this->job_name; 
+            $this->subject .=  ") was failed to complete.";
+        }
+
         $this->toRecipients = env('EMAIL_NOTIFICATION_EMAIL_ADDRESSES');   
 
         return $this->sendMailUsingSMPTServer();
@@ -71,14 +78,18 @@ class SendEmailNotification
     protected function sendMailUsingSMPTServer() 
     {
 
-        $this->subject = "PECSF [". App::environment() . "] -- The Process (" . $this->job_id  . " - ". $this->job_name . ") was failed to complete.";
+        $this->subject = "PECSF [". App::environment() . "] -- " . $this->subject;
 
         $this->body = "<p>";
-        $this->body .= "Process ID   : " . $this->job_id . "</br>";
-        $this->body .= "Process Name : " . $this->job_name  . "</br>";
-        $this->body .= "Failed at    : " . now()  . "</br>";
-        $this->body .= "</p>";
-        $this->body .= "<p>The process was failed with the following error message: </p>";
+        if ($this->job_id) {
+            $this->body .= "Process ID   : " . $this->job_id . "</br>";
+        }
+        if (!str_contains($this->subject, "ALERT")) {
+            $this->body .= "Process Name : " . $this->job_name  . "</br>";
+            $this->body .= "Failed at    : " . now()  . "</br>";
+            $this->body .= "</p>";
+            $this->body .= "<p>The process was failed with the following error message: </p>";
+        }
         $this->body .= "<p>" . $this->error_message . "</p>";
  
         // Send immediately
