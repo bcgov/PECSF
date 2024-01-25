@@ -85,7 +85,7 @@
                         <div class="special-campaign-container">
                             <div class="row pr-1">
                                 <div class="v-slider-frame">
-                                    <ul class="v-slides">
+                                    <ul class="v-slides" style="display:none;">
                                         @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
                                             <li class="v-slide">{{  $text }}</li>
                                         @endforeach
@@ -171,25 +171,28 @@
         </style>
         <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.14.2/TweenMax.min.js"></script>
         <script>
-            var vsOpts = {
-                $slides: $('.v-slide'),
-                $list: $('.v-slides'),
-                duration: 8,
-                lineHeight: 30
-            }
+            $(function() {
+                var vsOpts = {
+                    $slides: $('.v-slide'),
+                    $list: $('.v-slides'),
+                    duration: 20,
+                    lineHeight: 30
+                }
 
-            var vSlide = new TimelineMax({
-                paused: true,
-                repeat: -1
-            })
-
-            vsOpts.$slides.each(function(i) {
-                vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
-                    y: i * -1 * vsOpts.lineHeight,
-                    ease: Elastic.easeOut.config(1, 0.7)
+                var vSlide = new TimelineMax({
+                    paused: true,
+                    repeat: -1
                 })
-            })
-            vSlide.play();
+
+                vsOpts.$slides.each(function(i) {
+                    vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
+                        y: i * -1 * vsOpts.lineHeight,
+                        ease: Elastic.easeOut.config(1, 0.8)
+                    })
+                });
+                vSlide.play();
+                $('.v-slides').show();
+            });
         </script>
         <script>
             $(function() {
