@@ -437,7 +437,7 @@ class BankDepositFormController extends Controller
                 'employment_city' => $request->employment_city,
                 'region_id' => $request->region,
                 'regional_pool_id' => $regional_pool_id,
-                'address_line_1' =>  ($request->event_type == 'Cheque One-Time Donation' || $request->event_type == 'Gaming') ? null : $request->address_1,
+                'address_line_1' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->address_1,
                 'address_line_2' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->address_2,
                 'address_city' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->city,
                 'address_province' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->province,
@@ -536,7 +536,7 @@ class BankDepositFormController extends Controller
         //     ]);
         // }
 
-        if(strpos($_SERVER['HTTP_REFERER'],'admin-pledge') !== FALSE)
+        if(strpos(request()->headers->get('referer'),'admin-pledge') !== FALSE)
         {
             echo  json_encode(array(route('admin-pledge.maintain-event.index')));
 
