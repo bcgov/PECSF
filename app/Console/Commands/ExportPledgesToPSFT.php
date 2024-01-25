@@ -289,6 +289,7 @@ class ExportPledgesToPSFT extends Command
 
                 $pledge->ods_export_status = 'C';
                 $pledge->ods_export_at = Carbon::now()->format('c');
+                $pledge->timestamps = false;
                 $pledge->save();
 
                 $this->LogMessage( "    Transaction {$pledge->id} has been sent - " . json_encode( $pledge ) );
@@ -413,6 +414,7 @@ class ExportPledgesToPSFT extends Command
                     // Update the complete flag in pledge table
                     $pledge->ods_export_status = 'C';
                     $pledge->ods_export_at = Carbon::now()->format('c');
+                    $pledge->timestamps = false;
                     $pledge->save();
 
                     // Log Message                 
@@ -529,6 +531,7 @@ class ExportPledgesToPSFT extends Command
                     // Update the complete flag in pledge table
                     $pledge->ods_export_status = 'C';
                     $pledge->ods_export_at = Carbon::now()->format('c');
+                    $pledge->timestamps = false;
                     $pledge->save();
 
                     // Log Message                 
