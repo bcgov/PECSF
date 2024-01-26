@@ -464,6 +464,7 @@
             var formData = new FormData( document.getElementById("bu-edit-model-form") );
             formData.append('_method', 'PUT');
             var id = $("#bu-edit-model-form [name='id']").val();
+            var name = $("#bu-edit-model-form [name='name']").val();
 
             info = 'Confirm to update this record?';
             // if (confirm(info))
