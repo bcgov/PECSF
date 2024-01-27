@@ -364,7 +364,7 @@ class BankDepositFormController extends Controller
 
         $organization_code = $request->organization_code;
         $event_type = $request->event_type;
-        $pecsf_id = $this->assign_pecsf_id($organization_code, $event_type );
+        $pecsf_id = $this->assign_pecsf_id($request->campaign_year, $organization_code, $event_type );
         // if($organization_code == "RET"){ //R****  PECSF ID
         //     $existing = BankDepositForm::where("pecsf_id","LIKE","R".substr(date("Y"),2,2)."%")
         //         ->orderBy("pecsf_id","desc")
@@ -437,7 +437,7 @@ class BankDepositFormController extends Controller
                 'employment_city' => $request->employment_city,
                 'region_id' => $request->region,
                 'regional_pool_id' => $regional_pool_id,
-                'address_line_1' =>  ($request->event_type == 'Cheque One-Time Donation' || $request->event_type == 'Gaming') ? null : $request->address_1,
+                'address_line_1' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->address_1,
                 'address_line_2' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->address_2,
                 'address_city' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->city,
                 'address_province' =>  ($request->event_type == 'Fundraiser' || $request->event_type == 'Gaming') ? null : $request->province,
@@ -536,7 +536,7 @@ class BankDepositFormController extends Controller
         //     ]);
         // }
 
-        if(strpos($_SERVER['HTTP_REFERER'],'admin-pledge') !== FALSE)
+        if(strpos(request()->headers->get('referer'),'admin-pledge') !== FALSE)
         {
             echo  json_encode(array(route('admin-pledge.maintain-event.index')));
 
@@ -800,13 +800,13 @@ class BankDepositFormController extends Controller
         $pecsf_id = $request->pecsf_id;
         $prefix = substr($pecsf_id,0,1);
         if ($organization_code == "RET" && $prefix != 'R') { //R****  PECSF ID
-            $pecsf_id = $this->assign_pecsf_id($organization_code, $event_type );        
+            $pecsf_id = $this->assign_pecsf_id($request->campaign_year, $organization_code, $event_type );        
         } else {
 
             if (($event_type == "Fundraiser" &&  $prefix != 'F') ||
                 ($event_type == "Gaming" &&  $prefix != 'G') ||
                 ( substr($event_type,0,1) == 'C' &&  $prefix != 'S') ) {
-                $pecsf_id = $this->assign_pecsf_id($organization_code, $event_type );        
+                $pecsf_id = $this->assign_pecsf_id($request->campaign_year, $organization_code, $event_type );        
             } else {
                 //do nothing, we don't support one-time cheque/cash donation for non-GOV organziations.
             }
@@ -1069,12 +1069,13 @@ class BankDepositFormController extends Controller
             return response()->json(['msg' => $msg]);
         }
 
-    public function assign_pecsf_id( $organization_code, $event_type) 
+    public function assign_pecsf_id( $campaign_year_id, $organization_code, $event_type) 
     {
 
         $pecsf_id = null;
         $prefix = '';
-        $yy = substr(date("Y"),2,2);
+        $campaign_year = CampaignYear::where('id', $campaign_year_id )->first();
+        $yy = substr( ($campaign_year->calendar_year - 1) ,2,2);
         $seq = '001';
 
         switch ($organization_code) {

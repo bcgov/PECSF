@@ -159,7 +159,11 @@ class MaintainEventPledgeController extends Controller
             ->where('status', 'A')
             ->get();
         $regional_pool_id = $pools->count() > 0 ? $pools->first()->id : null;
-        $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
+        // $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","=","A")
+            ->whereColumn("code","linked_bu_code")
+            ->selectRaw("business_units.id, business_units.code, business_units.name, (select code from organizations where organizations.bu_code = business_units.code limit 1 ) as org_code ")
+            ->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->get();
         $departments = Department::all();
         $campaign_year = CampaignYear::where('start_date', '<=', today() )->orderBy('calendar_year', 'desc')->first();
