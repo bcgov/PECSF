@@ -77,7 +77,7 @@
     @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
         {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
-        <div class="top-message-bar p-2  bg-warning   XXsticky-top">
+        <div class="top-message-bar p-2  XXsticky-top" style="background-color: #FFE066;">
             <div class="row  justify-content-center ">
                 <div class="col-sm-12 col-md-8 col-lg-10">
                     <div class="float-right">
@@ -99,7 +99,7 @@
                     <div class="float-left">
                         <span class="h6 mx-2">|</span>
                         <span class="h6 text-primary font-weight-bold special-campaign">
-                            <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
+                            <u><a href="{{ route('special-campaign.index') }}" class="mx-2" style="color: #C1201A;">Make a Donation</a></u>
                         </span>
                     </div>
                     <div class="form-inline float-right align-middle pr-2">
