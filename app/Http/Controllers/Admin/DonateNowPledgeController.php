@@ -183,7 +183,7 @@ class DonateNowPledgeController extends Controller
         $pledge->deduct_pay_from = PayCalendar::nextDeductPayFrom();
 
         $pool_option = 'P';
-        $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fspools = FSPool::current()->where('status', 'A')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
@@ -310,7 +310,7 @@ class DonateNowPledgeController extends Controller
         }
 
         // Prepare for display
-        $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fspools = FSPool::current()->where('status','A')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
