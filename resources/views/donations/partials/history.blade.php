@@ -27,11 +27,12 @@
                         <th class="text-right">Amount</th>
                         <th></th>
                     </tr>
-                    @php $total = 0; $ignore = true; @endphp
+                    @php $total = 0; $ignore = true; $pledge_for_duplicate = null; @endphp
                     @foreach($pledges as $pledge)
                         @php
-                            if($pledge->donation_type == "Annual") {
+                            if($pledge->donation_type == "Annual" && $ignore) {
                                 $ignore = false;
+                                $pledge_for_duplicate = $pledge;
                             }
                         @endphp
                         <tr class="">
@@ -128,8 +129,8 @@
 
                     <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;"
                                 {{-- href="#"  --}}
-                                data-id="{{ $pledge->id }}"
-                                data-source="{{ $pledge->source }}"
+                                data-id="{{ $pledge_for_duplicate->id }}"
+                                data-source="{{ $pledge_for_duplicate->source }}"
                                 {{-- onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();" --}}
                                 >
                                 Duplicate this Annual Campaign pledge
@@ -147,13 +148,13 @@
                         data-yearcd="{{ $pledge->yearcd }}">{{$ignore}}Duplicate this pledge
                 </button>
                 </a> --}}
-                    <form id="duplicate-form-{{ $pledge->id }}" action="{{ route('annual-campaign.duplicate', $pledge->id) }}" method="POST" style="display: none;">
+                    <form id="duplicate-form-{{ $pledge_for_duplicate->id }}" action="{{ route('annual-campaign.duplicate', $pledge_for_duplicate->id) }}" method="POST" style="display: none;">
                         @csrf
-                        <input type="hidden" name="source" value="{{ $pledge->source }}">
-                        <input type="hidden" name="type" value="{{ $pledge->donation_type }}">
-                        <input type="hidden" name="id" value="{{ $pledge->id }}">
-                        <input type="hidden" name="frequency" value="{{ $pledge->frequency }}">
-                        <input type="hidden" name="yearcd" value="{{ $pledge->yearcd }}">
+                        <input type="hidden" name="source" value="{{ $pledge_for_duplicate->source }}">
+                        <input type="hidden" name="type" value="{{ $pledge_for_duplicate->donation_type }}">
+                        <input type="hidden" name="id" value="{{ $pledge_for_duplicate->id }}">
+                        <input type="hidden" name="frequency" value="{{ $pledge_for_duplicate->frequency }}">
+                        <input type="hidden" name="yearcd" value="{{ $pledge_for_duplicate->yearcd }}">
                     </form>
                 @endif
 
