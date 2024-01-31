@@ -211,6 +211,11 @@
     background: #1a5a96;
 }
 
+.bs4-step-tracking li.active:hover {
+    cursor: pointer;
+}
+
+
     #nav-tab li:not(.active)  a{
         pointer-events: none;
         color: #555;
