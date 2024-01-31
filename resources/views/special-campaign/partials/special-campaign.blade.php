@@ -58,21 +58,23 @@
         /* background-color:  #f8fafc; */
         /* border: 1px solid #1a5a96; */
 
-        background-color: #fff;
+        /* background-color: #fff; */
+        background-color: #f8f9fa;
         border: 1px solid rgba(0, 0, 0, 0.125);
-        border-radius: 0;
-        margin-bottom: 0px;
+        margin-bottom: 10px; 
      }
 
     #special-campaign-area .card:hover {
         /* background-color: #ddeaee ; */
         /* color: white; */
-        /* background-color: #1a5a96; */
-        background-color: #f8f9fa;
+        background-color: #1a5a96;
+        /* background-color: #f8f9fa; */
         opacity: 0.7;
-        /* color: white; */
-        color: #495057;
+        color: white;
+        /* color: #495057; */
         mix-blend-mode: multiply;
+
+        
     }
 
     #special-campaign-area .card:hover img {
@@ -89,10 +91,20 @@
         color: white;
     }
 
+    #special-campaign-area h6 {
+        color: black;
+    }
+    #special-campaign-area .card.active h6 {
+        color: white;
+    }
+    #special-campaign-area .card:hover h6 {
+        color: white;
+    }
 
     #special-campaign-area .card-body {
         padding: 0.25rem;
     }
+
 
 </style>
 @endpush
