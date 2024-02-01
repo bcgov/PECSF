@@ -177,7 +177,7 @@ class CampaignPledgeController extends Controller
     {
         //
         $pool_option = 'P';
-        $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fspools = FSPool::current()->where('status','A')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
@@ -469,7 +469,7 @@ class CampaignPledgeController extends Controller
             return abort(404);      // 404 Not Found
         }
 
-        $fspools = FSPool::current()->get()->sortBy(function($pool, $key) {
+        $fspools = FSPool::current()->where('status','A')->get()->sortBy(function($pool, $key) {
             return $pool->region->name;
         });
 
