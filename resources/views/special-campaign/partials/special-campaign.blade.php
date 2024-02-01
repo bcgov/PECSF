@@ -23,20 +23,26 @@
         <div class="card {{ $special_campaign->id == $special_campaign_id ? 'active' : '' }}" 
                 data-id="{{ $special_campaign->id }}">
             <div class="card-body">
-                <figure class="logo_image pt-2">
-                    <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" width="auto" height="150">
-                </figure> 
-                <h4 class="card-text font-weight-bold">{{ $special_campaign->name }}</h4>
-                <h6 class="card-text">{{ $special_campaign->charity->charity_name  }}</h6>
-                <h6 class="card-text">{{ $special_campaign->charity->city . ', ' . $special_campaign->charity->province }}</h6>
-                <p class="card-text font-weight-bold">{{ $special_campaign->description }}</p>
-                <input class="form-check-input" style="display:none" type="radio" 
-                    name="special_campaign_id" id="special_campaign_{{ $special_campaign->id }}"
-                    value="{{ $special_campaign->id }}" {{ $special_campaign->id == $special_campaign_id ? 'checked' : '' }}>
+                <div class="row no-gutters pt-2">
+                    <div class="col-md-4">
+                        <figure class="logo_image text-center">
+                            <img src="{{  asset("img/uploads/special_campaign").'/'. $special_campaign->image }}" class="img-fluid rounded">
+                        </figure> 
+                    </div>
+                    <div class="col-md-7 pl-4">
+                        <h4 class="card-text font-weight-bold ">{{ $special_campaign->name }}</h4>
+                        <h6 class="card-text">{{ $special_campaign->charity->charity_name  }}</h6>
+                        <h6 class="card-text">{{ $special_campaign->charity->city . ', ' . $special_campaign->charity->province }}</h6>
+                        <p class="card-text font-weight-bold">{{ $special_campaign->description }}</p>
+                        <input class="form-check-input" style="display:none" type="radio" 
+                            name="special_campaign_id" id="special_campaign_{{ $special_campaign->id }}"
+                            value="{{ $special_campaign->id }}" {{ $special_campaign->id == $special_campaign_id ? 'checked' : '' }}>
+                    </div>
+                </div>
             </div>
         </div>
         @endforeach
-    </div>
+    </div>  
 
 </div>
 
@@ -49,17 +55,26 @@
         /* color: #1a5a96; */
         /* color: #313132 ;  */
         color: #1a5a96;
-        background-color:  #f8fafc;
-        border: 1px solid #1a5a96;
-    }
+        /* background-color:  #f8fafc; */
+        /* border: 1px solid #1a5a96; */
+
+        /* background-color: #fff; */
+        background-color: #f8f9fa;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        margin-bottom: 10px; 
+     }
 
     #special-campaign-area .card:hover {
         /* background-color: #ddeaee ; */
         /* color: white; */
         background-color: #1a5a96;
+        /* background-color: #f8f9fa; */
         opacity: 0.7;
         color: white;
+        /* color: #495057; */
         mix-blend-mode: multiply;
+
+        
     }
 
     #special-campaign-area .card:hover img {
@@ -76,6 +91,19 @@
         color: white;
     }
 
+    #special-campaign-area h6 {
+        color: black;
+    }
+    #special-campaign-area .card.active h6 {
+        color: white;
+    }
+    #special-campaign-area .card:hover h6 {
+        color: white;
+    }
+
+    #special-campaign-area .card-body {
+        padding: 0.25rem;
+    }
 
 
 </style>
