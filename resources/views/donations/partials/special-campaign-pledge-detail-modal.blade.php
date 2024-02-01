@@ -31,7 +31,7 @@
         <p class="font-weight-bold">Deduct from Pay</p>
       </div>
       <div class="col-8">
-        <p>{{ $check_dt }}</p>
+        <p>{{ $check_dt->format('Y-m-d') }}</p>
       </div>
     </div>
 
