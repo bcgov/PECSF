@@ -4,6 +4,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary">
+                <h5 class="modal-title" aria-label="A slide deck with information on Why donate to PECSF and How to Donate">Why donate to PECSF and How to Donate</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -238,6 +239,22 @@ deduction plan.
         </div>
     </div>
 </div>
+
+
+@push('css')
+
+<style>
+	#learn-more-modal a {
+        text-decoration: underline;
+	}
+
+    #learn-more-modal a:hover {
+        font-weight: bold;
+    }
+
+</style>
+
+@endpush
 
 @push('js')
 

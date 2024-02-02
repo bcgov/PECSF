@@ -77,7 +77,7 @@
     @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
         {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
-        <div class="top-message-bar p-2  bg-warning   XXsticky-top">
+        <div class="top-message-bar p-2  XXsticky-top" style="background-color: #FFE066;">
             <div class="row  justify-content-center ">
                 <div class="col-sm-12 col-md-8 col-lg-10">
                     <div class="float-right">
@@ -85,7 +85,7 @@
                         <div class="special-campaign-container">
                             <div class="row pr-1">
                                 <div class="v-slider-frame">
-                                    <ul class="v-slides">
+                                    <ul class="v-slides" style="display:none;">
                                         @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
                                             <li class="v-slide">{{  $text }}</li>
                                         @endforeach
@@ -99,7 +99,7 @@
                     <div class="float-left">
                         <span class="h6 mx-2">|</span>
                         <span class="h6 text-primary font-weight-bold special-campaign">
-                            <u><a href="{{ route('special-campaign.index') }}" class="text-danger mx-2">Make a Donation</a></u>
+                            <u><a href="{{ route('special-campaign.index') }}" class="mx-2" style="color: #C1201A;">Make a Donation</a></u>
                         </span>
                     </div>
                     <div class="form-inline float-right align-middle pr-2">
@@ -171,25 +171,28 @@
         </style>
         <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.14.2/TweenMax.min.js"></script>
         <script>
-            var vsOpts = {
-                $slides: $('.v-slide'),
-                $list: $('.v-slides'),
-                duration: 8,
-                lineHeight: 30
-            }
+            $(function() {
+                var vsOpts = {
+                    $slides: $('.v-slide'),
+                    $list: $('.v-slides'),
+                    duration: 20,
+                    lineHeight: 30
+                }
 
-            var vSlide = new TimelineMax({
-                paused: true,
-                repeat: -1
-            })
-
-            vsOpts.$slides.each(function(i) {
-                vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
-                    y: i * -1 * vsOpts.lineHeight,
-                    ease: Elastic.easeOut.config(1, 0.7)
+                var vSlide = new TimelineMax({
+                    paused: true,
+                    repeat: -1
                 })
-            })
-            vSlide.play();
+
+                vsOpts.$slides.each(function(i) {
+                    vSlide.to(vsOpts.$list, vsOpts.duration / vsOpts.$slides.length, {
+                        y: i * -1 * vsOpts.lineHeight,
+                        ease: Elastic.easeOut.config(1, 0.8)
+                    })
+                });
+                vSlide.play();
+                $('.v-slides').show();
+            });
         </script>
         <script>
             $(function() {

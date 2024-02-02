@@ -1095,7 +1095,7 @@ class AnnualCampaignController extends Controller
                 foreach( $bi_weekly_pledges as $index => $bi_weekly_pledge) {
                     $charity = Charity::where('id', $bi_weekly_pledge->charity->id)->where('charity_status', 'Registered')->first();
                     if (!$charity) {
-                        $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click here to see available charities, or alternatively you can select a different years choices from your donor history";
+                        $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click 'continue' to see available charities, or alternatively you can select a different years choices from your donor history";
                         break;
                     }
                 }
@@ -1103,7 +1103,7 @@ class AnnualCampaignController extends Controller
                 foreach( $one_time_pledges as $index => $one_time_pledge) {
                     $charity = Charity::where('id', $one_time_pledge->charity->id)->where('charity_status', 'Registered')->first();
                     if (!$charity) {
-                        $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click here to see available charities, or alternatively you can select a different years choices from your donor history";
+                        $msg = "One or more charity(ies) you've selected is not available in the current campaign. Click 'continue' to see available charities, or alternatively you can select a different years choices from your donor history";
                         break;
                     }
                 }
