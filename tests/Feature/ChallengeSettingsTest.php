@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\DailyCampaign;
+use App\Models\DailyCampaignSummary;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class ChallengeSettingsTest extends TestCase
@@ -25,6 +26,7 @@ class ChallengeSettingsTest extends TestCase
 
         Setting::truncate();
         DailyCampaign::truncate();
+        DailyCampaignSummary::truncate();
 
         DailyCampaign::factory(10)->create([
             'campaign_year' => today()->month <= 2 ? today()->year -1 : today()->year,
@@ -209,11 +211,13 @@ class ChallengeSettingsTest extends TestCase
         // $form_data = $this->get_new_record_form_data();
         $form_data = [
             'challenge_start_date' => today()->year . '-09-05',
-            'challenge_end_date' => today()->year . '-12-31',
+            // 'challenge_end_date' => today()->year . '-12-31',
+            'challenge_end_date' => today()->year . '-11-15',
             'challenge_final_date' => today()->year + 1 . '-02-14',
             
             'campaign_start_date' => today()->year . '-09-05',
-            'campaign_end_date' => today()->year . '-12-31',
+            // 'campaign_end_date' => today()->year . '-12-31',
+            'campaign_end_date' => today()->year . '-11-15',
             'campaign_final_date' => today()->year + 1 . '-02-14',
         ];
         

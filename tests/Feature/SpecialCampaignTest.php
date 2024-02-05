@@ -404,7 +404,7 @@ class SpecialCampaignTest extends TestCase
         $period = PayCalendar::where('check_dt', '>=', $current->check_dt )->skip(2)->take(1)->orderBy('check_dt')->first();
 
         // Test Transaction
-        $pledge = new SpecialCampaignPledge([
+        $pledge = SpecialCampaignPledge::factory()->make([
             'organization_id' =>  $organization->id,
             'emplid' => $is_gov ? $user->emplid : null,
             'user_id' => $is_gov ? $user->id : 0, 
