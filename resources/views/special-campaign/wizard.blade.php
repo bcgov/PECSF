@@ -211,6 +211,11 @@
     background: #1a5a96;
 }
 
+.bs4-step-tracking li.active:hover {
+    cursor: pointer;
+}
+
+
     #nav-tab li:not(.active)  a{
         pointer-events: none;
         color: #555;
@@ -269,6 +274,23 @@
 
 $(function () {
 
+    // treat browser back button like the 'back' button in this wizard page
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', function(event) {
+        url = this.location.href;
+        if (url.indexOf('special-campaign/create')) {
+            current_step = $("input[type=hidden][name='step']").val();
+            if (current_step == 1) {
+                // back
+                $(".cancel").trigger("click");
+            } else {
+                history.pushState(null, null, location.href);
+                $('.modal').modal('hide');
+                $(".back").trigger("click");
+            }
+        }
+    });
+
     $('#special-campaign-pledge-form').on('keyup keypress', function(e) {
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13) {
@@ -311,10 +333,47 @@ $(function () {
     $(".back").on("click", function() {
         if (step > 1) {
             step = step - 2;
-            $(".next").trigger("click");
+            // $(".next").trigger("click");
         }
+
+        // to show current and hide other tabs
+        if (step < $(".step").length) {
+            $(".step").show();
+            $(".step")
+                .not(":eq(" + step++ + ")")
+                .hide();
+            stepProgress(step);
+            $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+        }
+
         hideButtons(step);
+        $(this).blur();
     });
+
+    // Click on Wizard STEP icon to jump to visited  page
+    $('ul.bs4-step-tracking li').on('click', function(e) {
+
+        if ($(this).hasClass('active') && ($(this).index() + 1 != step) ) {
+            step = $(this).index();
+            // $(".next").trigger("click");
+
+            // to show current and hide other tabs
+            if (step < $(".step").length) {
+                $(".step").show();
+                $(".step")
+                    .not(":eq(" + step++ + ")")
+                    .hide();
+                stepProgress(step);
+                $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+            }
+
+            // Update nav buttons
+            hideButtons(step);
+            $(this).blur();
+        }
+
+    })
+
 
     // CALCULATE PROGRESS BAR
     stepProgress = function(currstep) {
@@ -338,6 +397,10 @@ $(function () {
 
     // DISPLAY AND HIDE "NEXT", "BACK" AND "SUMBIT" BUTTONS
     hideButtons = function(step) {
+
+        // sync variable and the hidden variable
+        $("input[type=hidden][name='step']").val( step );
+
         var limit = parseInt($(".step").length);
         $(".action").hide();
         if (step < limit) {
