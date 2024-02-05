@@ -714,13 +714,13 @@ class AdminDonateNowPledgeTest extends TestCase
         $period = PayCalendar::where('check_dt', '>=', $current->check_dt )->skip(2)->take(1)->orderBy('check_dt')->first();
 
         // Test Transaction
-        $pledge = new DonateNowPledge([
+        $pledge = DonateNowPledge::factory()->Make([
             'organization_id' =>  $organization->id,
             'emplid' => $is_gov ? $user->emplid : null,
             'user_id' => $is_gov ? $user->id : null, 
             'pecsf_id' => $is_gov ? null : '882288',
             'yearcd' => today()->year,
-            'seq_no' => 1,
+            'seqno' => 1,
 
             // 'business_unit' => $is_gov ? $job->business_unit : $business->code,
             // 'tgb_reg_district' => $is_gov ? $job->tgb_reg_district : $region->code,
