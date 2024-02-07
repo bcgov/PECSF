@@ -106,12 +106,86 @@ class ChallengePageTest extends TestCase
 
     }
 
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_gov_annual_campaign_pledge_correctly_calculate()
+    /** Test Authenication */
+    public function test_an_anonymous_user_cannot_access_challenge_page()
+    {
+        $response = $this->get('challenge');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+
+    public function test_an_anonymous_user_cannot_access_challenge_page_via_post_method()
+    {
+        $response = $this->post('challenge', []);
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+
+    public function test_an_anonymous_user_cannot_access_daily_campaign_page()
+    {
+        $response = $this->get('challenge/daily_campaign');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+
+    public function test_an_anonymous_user_cannot_download_daily_campaign()
+    {
+        $response = $this->get('challenge/download');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+
+    /**  Authorized User **/
+    /** Test Authenication */
+    public function test_an_authorized_user_can_access_challenge_page()
+    {
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        $this->actingAs($this->user);
+        $response = $this->get('challenge');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_an_authorized_user_can_access_challenge_page_via_post_method()
+    {
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        $this->actingAs($this->user);
+        $response = $this->post('challenge', []);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_an_authorized_user_cannot_access_daily_campaign_page()
+    {
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        $this->actingAs($this->user);
+        $response = $this->get('challenge/daily_campaign');
+
+        $response->assertStatus(200);
+    }
+ 
+    public function test_an_authorized_user_cannot_download_daily_campaign()
+    {
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+        
+        $this->actingAs($this->user);
+        $response = $this->get('challenge/download');
+ 
+        $response->assertStatus(200);
+    }
+
+
+
+
+    /* validate calcualtion */
+    public function test_the_gov_annual_campaign_pledge_correctly_calculate()
     {
 
         [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
@@ -134,7 +208,7 @@ class ChallengePageTest extends TestCase
 
     }
 
-    public function test_non_gov_annual_campaign_pledge_correctly_calculate()
+    public function test_the_non_gov_annual_campaign_pledge_correctly_calculate()
     {
 
         [$sum, $expected_rows] = $this->get_new_record_form_data(false, false);
@@ -158,7 +232,7 @@ class ChallengePageTest extends TestCase
     }
 
 
-    public function test_gov_event_pledge_correctly_calculate()
+    public function test_the_gov_event_pledge_correctly_calculate()
     {
 
         [$sum, $expected_rows] = $this->get_new_record_form_data(true, true);
@@ -181,7 +255,7 @@ class ChallengePageTest extends TestCase
 
     }
 
-    public function test_non_gov_event_pledge_correctly_calculate()
+    public function test_the_non_gov_event_pledge_correctly_calculate()
     {
 
         [$sum, $expected_rows] = $this->get_new_record_form_data(false, true);
@@ -205,8 +279,8 @@ class ChallengePageTest extends TestCase
     }
 
 
-    // Special 
-    public function test_gov_annual_campaign_pledge_with_Government_Communications_and_Public_Engagement_correctly_calculate()
+    // Special Rule
+    public function the_gov_annual_campaign_pledge_with_Government_Communications_and_Public_Engagement_correctly_calculate()
     {
 
         [$sum, $expected_rows] = $this->get_new_record_form_data(true, false, true);
