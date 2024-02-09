@@ -111,7 +111,7 @@
                             @if ($pledge->donation_type == 'Annual' and $pledge->frequency == 'Bi-Weekly')
                                 <td class="text-right" style="width: 10%">$ {{ number_format($pledge->amount,2) }} </td>
                             @else
-                                <td class=""></td>
+                                <td class="text-right font-weight-bold"> - </td>
                             @endif
                             <td class="text-right" style="width: 10%">$ {{ number_format($pledge->pledge,2) }} </td>
                             <td class="text-right" style="width: 10%">
