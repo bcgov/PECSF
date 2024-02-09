@@ -24,7 +24,8 @@
                         <th>Donation Type</th>
                         <th>Benefitting Charity</th>
                         <th>Frequency</th>
-                        <th class="text-right">Amount</th>
+                        <th class="text-right">Bi-weekly Amount</th>
+                        <th class="text-right">Total Amount</th>
                         <th></th>
                     </tr>
                     @php $total = 0; $ignore = true; $pledge_for_duplicate = null; @endphp
@@ -107,7 +108,12 @@
                             @php
 
                             @endphp
-                            <td class="text-right" style="width: 15%">$ {{ number_format($pledge->pledge,2) }} </td>
+                            @if ($pledge->donation_type == 'Annual' and $pledge->frequency == 'Bi-Weekly')
+                                <td class="text-right" style="width: 10%">$ {{ number_format($pledge->amount,2) }} </td>
+                            @else
+                                <td class=""></td>
+                            @endif
+                            <td class="text-right" style="width: 10%">$ {{ number_format($pledge->pledge,2) }} </td>
                             <td class="text-right" style="width: 10%">
                                 {{-- @if ($pledge->campaign_type == 'Annual')  --}}
                                 <button type="button" class="more-info btn btn-sm btn-outline-primary"
