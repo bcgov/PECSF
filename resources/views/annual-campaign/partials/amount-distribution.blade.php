@@ -37,12 +37,12 @@
                     </div>
                 </div>
             </td>
-            <td style="width:140px" class="by-amount d-none">
+            <td style="width:140px" class="by-amount">
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" class="form-control form-control-sm amount-input" name="{{$keyCase}}Amount[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-amount-distribution"],2,'.','') }}'>
+                    <input type="number" class="form-control form-control-sm amount-input" name="{{$keyCase}}Amount[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-amount-distribution"],2,'.','') }}' readonly>
                 </div>
             </td>
             {{-- <td>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </td>
-            <td class="by-amount d-none ">
+            <td class="by-amount">
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
