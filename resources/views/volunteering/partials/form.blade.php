@@ -15,7 +15,7 @@
                 <div class="form-group col-md-4">
                     <label for="organization_code">Organization</label>
                     <select type="text" class="form-control " name="organization_code" id="organization_code"
-                        placeholder="">
+                        placeholder="" role="listbox">
                         <option value="" selected="selected">Choose an Organization</option>
 
                     </select>
@@ -73,7 +73,7 @@
 
                 <div class="form-group col-md-3 event_type">
                     <label for="event_type">Donation or event type</label>
-                    <select class="form-control" type="text" id="event_type" name="event_type">
+                    <select class="form-control" type="text" id="event_type" name="event_type" role="listbox">
                         <option value="">Select an event type</option>
                         <option value="Cash One-Time Donation">Cash one-time donation</option>
                         <option value="Cheque One-Time Donation">Cheque one-time donation</option>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="form-group col-md-3 sub_type">
                     <label for="sub_type">Sub type</label>
-                    <select class="form-control" type="text" id="sub_type" name="sub_type">
+                    <select class="form-control" type="text" id="sub_type" name="sub_type" role="listbox">
                         <option value="none">None</option>
                     </select>
                     <span class="sub_type_errors errors">
@@ -164,10 +164,10 @@
             <div class="form-row form-body">
 
                 <div class="form-group col-md-4">
-                    <label for="event_type">Employment city</label>
+                    <label for="employment_city">Employment city</label>
                     <select
                         onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');"
-                        class="form-control search_icon" type="text" id="employment_city" name="employment_city">
+                        class="form-control search_icon" type="text" id="employment_city" name="employment_city" role="listbox">
                         <option value="">Select a city</option>
                         @foreach ($cities as $city)
                             <option region="{{ $city->TGB_REG_DISTRICT }}" value="{{ $city->city }}">
@@ -184,7 +184,7 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label for="region">Region</label>
-                    <select class="form-control search_icon" id="region" name="region">
+                    <select class="form-control search_icon" id="region" name="region" role="listbox">
                         <option value="">Select a region</option>
                         @foreach ($regions as $region)
                             <option code="{{ $region->code }}" value="{{ $region->id }}">{{ $region->name }}
@@ -200,8 +200,8 @@
                 </div>
 
                 <div class="form-group col-md-4">
-                    <label for="sub_type">Business unit</label>
-                    <select class="form-control search_icon" id="business_unit" name="business_unit">
+                    <label for="business_unit">Business unit</label>
+                    <select class="form-control search_icon" id="business_unit" name="business_unit" role="listbox">
                         <option value="">Select a business unit</option>
                         @foreach ($business_units as $bu)
                             @if (!empty($bu->name))
@@ -229,7 +229,7 @@
                     in February following the calendar year in which the donation is received.</span>
 
                 <div class="form-group col-md-12" id="address_line_1" style="">
-                    <label for="event_type">Address line 1</label>
+                    <label for="address_1">Address line 1</label>
                     <input class="form-control" type="text" id="address_1" name="address_1" />
 
                     <span class="address_1_errors errors">
@@ -242,9 +242,9 @@
 
 
                 <div class="form-group col-md-4">
-                    <label for="sub_type">City</label>
+                    <label for="city">City</label>
 
-                    <select class="form-control search_icon" type="text" id="city" name="city">
+                    <select class="form-control search_icon" type="text" id="city" name="city" role="listbox">
                         <option value="">Select a city</option>
                         @foreach ($cities as $city)
                             <option value="{{ $city->city }}" province="{{ $city->province }}">
@@ -261,8 +261,8 @@
                 </div>
 
                 <div class="form-group col-md-4">
-                    <label for="sub_type">Province</label>
-                    <select class="form-control" type="text" id="province" name="province">
+                    <label for="province">Province</label>
+                    <select class="form-control" type="text" id="province" name="province" role="listbox">
                         <option value="">Select a province</option>
                         <option value="British Columbia">British columbia</option>
                         <option value="Ontario">Ontario</option>
@@ -275,7 +275,7 @@
 
                 </div>
                 <div class="form-group col-md-4">
-                    <label for="sub_type">Postal Code</label>
+                    <label for="postal_code">Postal Code</label>
                     <input class="form-control" type="text" id="postal_code" name="postal_code" />
                     <span class="postal_code_errors errors">
                         @error('postal_code')
@@ -286,80 +286,81 @@
                 </div>
 
             </div>
-            <br>
-            <br>
+
             <div class="form-row form-header">
                 <h3 class="blue">Charity selections and distribution</h3>
             </div>
+            <div class="form-row form-body">
+                <div class="form-row p-3">
+                    <div class="form-group col-md-12 method_selection" tabindex="0">
+                        <input type="radio" checked id="charity_selection_1" name="charity_selection" tabindex="-1"
+                            value="fsp" role="radiogroup" />
+                        <label class="blue pl-2" for="charity_selection_1">Fund supported pool</label>
+                        <span class="charity_selection_errors errors">
+                            @error('charity_selection')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </span>
+                    </div>
+                    <div class="p-2">
+                        <span class="p-2">
+                            By choosing this option your donation will support the current Fund Supported Pool of regional
+                            programs. Click on the tiles to learn about the programs in each regional pool.
+                        </span>
+                    </div>
 
-            <div class="form-row p-3" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
-                <div class="form-group col-md-12">
-                    <input type="radio" checked id="charity_selection_1" name="charity_selection"
-                        value="fsp" />
-                    <label class="blue" for="charity_selection_1">Fund supported pool</label>
-                    <span class="charity_selection_errors errors">
-                        @error('charity_selection')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
-                    </span>
 
-                    <br>
-                    <span style="padding:20px;">
-                        By choosing this option your donation will support the current Fund Supported Pool of regional
-                        programs. Click on the tiles to learn about the programs in each regional pool.
-                    </span>
-                </div>
+                    @foreach ($pools as $pool)
+                        <div class="form-group col-md-2 form-pool" tabindex="0">
 
+                            <div style="width:100%;".
+                                class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}"
+                                data-id="pool{{ $pool->id }}">
+                                {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
+                                width="50" height="50"> --}}
+                                <div class="card-body m-1 p-2">
 
-                @foreach ($pools as $pool)
-                    <div class="form-group col-md-2 form-pool">
+                                    <div class="form-check float-left">
+                                        <input class="form-check-input" type="radio" name="regional_pool_id" role="radiogroup" 
+                                            id="pool{{ $pool->id }}" value="{{ $pool->id }}"
+                                            {{ $pool->id == $regional_pool_id ? 'checked' : '' }} tabindex="-1">
 
-                        <div style="width:100%;"
-                            class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}"
-                            data-id="pool{{ $pool->id }}">
-                            {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
-                             width="50" height="50"> --}}
-                            <div class="card-body m-1 p-2">
+                                    </div>
+                                    <br>
 
-                                <div class="form-check float-left">
-                                    <input class="form-check-input" type="radio" name="regional_pool_id"
-                                        id="pool{{ $pool->id }}" value="{{ $pool->id }}"
-                                        {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
-
+                                    <label style="font-weight:bold;font-size:16px;text-align: center; width: 100%;"
+                                        class="form-check-label pl-3" for="pool{{ $pool->id }}">
+                                        {{ $pool->region->name }}
+                                    </label>
+                                    <span 
+                                        style="font-size:13px;text-decoration:underline;width:100%;text-align:center;display:block"
+                                        class="pt-2 more-info bottom-center" data-id="{{ $pool->id }}"
+                                        data-name="{{ $pool->region->name }}" data-source="" data-type=""
+                                        data-yearcd="{{ date('Y', strtotime($pool->start_date)) }}">View Details</span>
                                 </div>
-                                <br>
 
-                                <label style="font-weight:bold;font-size:16px;text-align: center; width: 100%;"
-                                    class="form-check-label pl-3" for="xxxpool{{ $pool->id }}">
-                                    {{ $pool->region->name }}
-                                </label>
-                                <span
-                                    style="font-size:16px;font-weight:bold;text-decoration:underline;width:100%;text-align:center;display:block"
-                                    class="more-info bottom-center" data-id="{{ $pool->id }}"
-                                    data-name="{{ $pool->region->name }}" data-source="" data-type=""
-                                    data-yearcd="{{ date('Y', strtotime($pool->start_date)) }}">View Details</span>
+
                             </div>
+
+                        </div>
+                    @endforeach
+
+                    @for ($i = 0; $i < count($pools) % 6; $i++)
+                        <div class="form-group col-md-2 form-pool">
+
 
 
                         </div>
-
-                    </div>
-                @endforeach
-
-                @for ($i = 0; $i < count($pools) % 6; $i++)
-                    <div class="form-group col-md-2 form-pool">
-
-
-
-                    </div>
-                @endfor
+                    @endfor
+                </div>
             </div>
+
             <div
                 class="form-row p-3"style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;border-bottom:#ccc 1px solid;border-radius:5px;">
 
-                <div class="form-group col-md-6">
-                    <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
-                    <label class="blue" for="charity_selection_2">Donor choice</label>
+                <div class="form-group col-md-6 method_selection" tabindex="0">
+                    <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" role="radiogroup" tabindex="-1"/>
+                    <label class="blue pl-2" for="charity_selection_2">Donor choice</label>
                 </div>
                 <div class="form-group  org_hook col-md-6">
                     <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en"
@@ -370,7 +371,7 @@
                     </a>
                 </div>
                 <div class="form-group col-md-12">
-                    <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered
+                    <p class="pl-2">By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered
                         charitable organizations.
                         Our system uses the official name of the charity registered with the CRA. You can use the View
                         CRA Charity List link to confirm if the organization you would like to support is registered.
@@ -379,16 +380,10 @@
                 </div>
                 @include('donate.partials.choose-charity')
 
-
-
-
             </div>
+
             <br>
-
-
-
-
-            <div class="form-row form-header">
+            <div class="form-row form-header" >
                 <h3>Attach/Upload Document(s)</h3>
 
 
@@ -477,7 +472,8 @@
         <br>
         <br>
         <p style="padding:20px;">Once information has been submitted to PECSF Administration, no further changes are
-            possible through eForm. Please contact pecsf@gov.bc.ca</p>
+            possible through eForm. Please contact <a
+            href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.</p>
 
         <h5 style="padding-left:20px;">Freedom of Information and Protection of Privacy Act</h5>
         <p style="padding:20px;">

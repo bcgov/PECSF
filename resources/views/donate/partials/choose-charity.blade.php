@@ -13,7 +13,7 @@
     </select>
     </div>
     <div class="form-group org_hook col-md-4">
-        <label for="category">Search by Province</label>
+        <label for="charity_province">Search by Province</label>
         <select class="form-control" style="width:100%;" type="text" name="province" id="charity_province">
             <option value="">Choose a Province</option>
             @foreach(\App\Models\Charity::PROVINCE_LIST as $key => $value)
@@ -24,7 +24,7 @@
 
     @isset($fund_support_pool_list)
         <div class="form-group col-md-4 org_hook">
-            <label for="pool_selection_id">Search by Fund Supported Pool</label>
+            <label for="pool_filter">Search by Fund Supported Pool</label>
             <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
                 <option value="">Choose a Fund Supported Pool</option>
                 @foreach($fund_support_pool_list as $pool)

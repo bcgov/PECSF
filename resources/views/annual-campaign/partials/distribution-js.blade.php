@@ -6,6 +6,17 @@ $(function () {
     // if($("#step-distribution-page .frequencyoneTime").length > 0){
     //     $("#step-distribution-page .frequencybiWeekly").hide();
     // }
+    // Enter or space key on Wizard STEP icon to change frequency
+    $(document).on('keyup', '#step-distribution-page .frequencybiWeekly label, #step-distribution-page .frequencyoneTime label', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).find('input[type=radio]').trigger('click');
+            $(this).focus();
+        }
+    });
+
     $(document).on('click', '#distributeByPercentageOneTime, #distributeByDollarOneTime', function (e) {
         const frequency = '#oneTimeSection';
 
@@ -13,14 +24,18 @@ $(function () {
             // $("#oneTimeSection").find(".by-amount").removeClass("d-none");
             // $("#oneTimeSection").find(".by-percent").addClass("d-none");
             $("#oneTimeSection").find('td.by-amount input.amount-input').prop('readonly', false);
+            $("#oneTimeSection").find('td.by-amount input.amount-input').attr('tabindex', 0);
             $("#oneTimeSection").find('td.by-percent input.percent-input').prop('readonly', true);
+            $("#oneTimeSection").find('td.by-percent input.percent-input').attr('tabindex', -1);
             $("#oneTimeSection").find(".percent-amount-text").html("Distribute by Percentage");
             // redistribute('amount', $("#oneTimeSection"));
         } else {
             // $("#oneTimeSection").find(".by-percent").removeClass("d-none");
             // $("#oneTimeSection").find(".by-amount").addClass("d-none");
             $("#oneTimeSection").find('td.by-amount input.amount-input').prop('readonly', true);
+            $("#oneTimeSection").find('td.by-amount input.amount-input').attr('tabindex', -1);
             $("#oneTimeSection").find('td.by-percent input.percent-input').prop('readonly', false);
+            $("#oneTimeSection").find('td.by-percent input.percent-input').attr('tabindex', 0);
             $("#oneTimeSection").find(".percent-amount-text").html("Distribute by Dollar Amount");
             // redistribute('percent', $("#oneTimeSection"));
         }
@@ -34,14 +49,18 @@ $(function () {
             // $("#biWeeklySection").find(".by-amount").removeClass("d-none");
             // $("#biWeeklySection").find(".by-percent").addClass("d-none");
             $("#biWeeklySection").find('td.by-amount input.amount-input').prop('readonly', false);
+            $("#biWeeklySection").find('td.by-amount input.amount-input').attr('tabindex', 0);
             $("#biWeeklySection").find('td.by-percent input.percent-input').prop('readonly', true);
+            $("#biWeeklySection").find('td.by-percent input.percent-input').attr('tabindex', -1);
             $("#biWeeklySection").find(".percent-amount-text").html("Distribute by Percentage");
             // redistribute('amount', $("#biWeeklySection"));
         } else {
             // $("#biWeeklySection").find(".by-percent").removeClass("d-none");
             // $("#biWeeklySection").find(".by-amount").addClass("d-none");
             $("#biWeeklySection").find('td.by-amount input.amount-input').prop('readonly', true);
+            $("#biWeeklySection").find('td.by-amount input.amount-input').attr('tabindex', -1);
             $("#biWeeklySection").find('td.by-percent input.percent-input').prop('readonly', false);
+            $("#biWeeklySection").find('td.by-percent input.percent-input').attr('tabindex', 0);
             $("#biWeeklySection").find(".percent-amount-text").html("Distribute by Dollar Amount");
             // redistribute('percent', $("#biWeeklySection"));
         }
