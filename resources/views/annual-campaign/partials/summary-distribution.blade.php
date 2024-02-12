@@ -11,12 +11,12 @@
         </div> -->
 
         <div class="btn-group btn-group-toggle mt-3 frequency frequency{{$keyCase}}" role="group"  aria-label="Select frequency" data-toggle="buttons">
-            <label class="btn btn-outline-primary btn-lg active" for="distributeByPercentage">
-                <input type="radio"  checked class="btn-check"  autocomplete="off"  id="distributeByPercentage" name="distributionByPercent{{ucfirst($keyCase)}}" value="0" >
+            <label class="btn btn-outline-primary btn-lg active" for="distributeByPercentage" tabindex="0">
+                <input type="radio"  checked class="btn-check"  autocomplete="off"  id="distributeByPercentage" name="distributionByPercent{{ucfirst($keyCase)}}" value="0" tabindex="-1">
                 Percentage
             </label>
-            <label class="btn btn-outline-primary btn-lg" for="distributeByDollar">
-                <input type="radio"  class="btn-check"  autocomplete="off"  id="distributeByDollar" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" >
+            <label class="btn btn-outline-primary btn-lg" for="distributeByDollar" tabindex="0">
+                <input type="radio"  class="btn-check"  autocomplete="off"  id="distributeByDollar" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" tabindex="-1">
                 Dollar amount
             </label>
         </div>

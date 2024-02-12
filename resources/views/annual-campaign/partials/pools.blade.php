@@ -17,13 +17,13 @@
         @foreach( $fspools as $pool )
         <div class="col mb-4">
 
-            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->region_id }}">
+            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->region_id }}"  tabindex="0">
                 {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                         width="50" height="50"> --}}
                 <div class="card-body m-1 p-2">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->region_id }}"
-                            value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
+                            value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}  tabindex="-1">
                         <label class="form-check-label h5 pl-3" for="xxxpool{{ $pool->region_id }}">
                             {{ $pool->region->name }}
                         </label>
@@ -109,13 +109,24 @@
 $(function () {
 
        // Step 2a -- Regional Pool Area
+
+        // Enter or space key on Wizard STEP icon to forward and backward 
+        $('#step-regional-pools-area .card').on('keyup', function(e) {
+            // Enter or space key on Wizard STEP icon to forward and backward    
+            var key  = e.key;
+            if (key === ' ' || key === 'Enter') {
+                e.preventDefault();
+                $(this).trigger('click');
+            }
+        });
+
        $('#step-regional-pools-area .card').click( function(event) {
         event.stopPropagation();
 
         id = $(this).attr('data-id');
 
-        console.log('radio button clicked -- ' + event.target.id);
-        console.log('radio button clicked -- ' + $(this).attr('data-id') );
+        // console.log('radio button clicked -- ' + event.target.id);
+        // console.log('radio button clicked -- ' + $(this).attr('data-id') );
 
         if (id) {
 

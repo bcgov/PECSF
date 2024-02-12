@@ -376,7 +376,7 @@
         <table class="table mt-4" style="width:100%;text-align:center;">
             <tr>
                 <td style="width:200px;text-align:center;">
-                    <img style="width:200px;" src="/img/volunteering.png" />
+                    <img style="width:200px;" src="/img/volunteering.png" alt="Caring for Communties since 1965" />
 
                 </td>
                 <td style="text-align:left;font-size:26px;font-weight:bold;vertical-align:middle;">
@@ -470,6 +470,19 @@
     </div>
     
 @endsection
+
+
+@push('css')
+
+<style>
+        /* Should be override in app.scss */
+    a {
+        text-decoration: underline !important; 
+    }
+
+</style>
+    
+@endpush
 
 @push('js')
 
