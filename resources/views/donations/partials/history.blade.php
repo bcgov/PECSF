@@ -8,12 +8,17 @@
         <div class="card-header" id="heading0{{ $loop->index }}">
             <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse0{{ $loop->index }}"
                    aria-expanded="{{ $loop->index == 0 ? 'true' : 'false' }}" aria-controls="collapse">
-                <button class="btn btn-link font-weight-bold">
+                <span class="text-primary font-weight-bold">
                     {{  $key }}
-                </button>
+                </span>
                 <div class="flex-fill"></div>
-                <div class="expander">
-                </div>
+                <button class="custom-expander btn btn-primary" data-id="{{ $key }}">
+                    @if ($loop->index == 0)
+                        Collapse donation history
+                    @else
+                        Expand donation history
+                    @endif
+                </button>
             </h5>
         </div>
 
@@ -84,7 +89,7 @@
                                     @if ($pledge->donation_type == 'Donate Today')
                                         {{ $pledge->number_of_charities }}
                                     @else
-                                        <a type="button" class="more-info "
+                                        <button class="more-info btn btn-link"
                                             data-source="{{ $pledge->source  }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
@@ -133,14 +138,14 @@
                     {{-- No 'duplicate' button --}}
                 @else
 
-                    <a class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;"
+                    <button class="duplicate-pledge btn btn-primary" style="margin-left: auto; margin-right: auto; width: fit-content; display: block;"
                                 {{-- href="#"  --}}
                                 data-id="{{ $pledge_for_duplicate->id }}"
                                 data-source="{{ $pledge_for_duplicate->source }}"
                                 {{-- onclick="event.preventDefault(); document.getElementById('duplicate-form-{{ $pledge->id }}').submit();" --}}
                                 >
                                 Duplicate this Annual Campaign pledge
-                    </a>
+                    </button>
 
                 {{-- <a style="margin-left: auto;
     margin-right: auto;
@@ -176,44 +181,55 @@
 
 @push('js')
 <script>
-$('a.duplicate-pledge').on('click', function(event){
+$(function () {
+    $('a.duplicate-pledge').on('click', function(event){
 
-    pledge_id = $(this).data("id");
+        pledge_id = $(this).data("id");
 
-    $.ajax({
-        url: '/annual-campaign/valid-duplicate/' + pledge_id,
-        data: 'source='+ $(this).data("source") ,
-        type: 'GET',
-        dataType: 'json',
-        success: function (result) {
-            // $('.modal-title span').html(name);
-            if (result.message) {
-                Swal.fire({
-                    title: 'Are you sure ?',
-                    text: result.message,
-                    // icon: 'question',
-                    //showDenyButton: true,
-                    confirmButtonText: 'Continue',
-                    showCancelButton: true,
-                }).then((result) => {
+        $.ajax({
+            url: '/annual-campaign/valid-duplicate/' + pledge_id,
+            data: 'source='+ $(this).data("source") ,
+            type: 'GET',
+            dataType: 'json',
+            success: function (result) {
+                // $('.modal-title span').html(name);
+                if (result.message) {
+                    Swal.fire({
+                        title: 'Are you sure ?',
+                        text: result.message,
+                        // icon: 'question',
+                        //showDenyButton: true,
+                        confirmButtonText: 'Continue',
+                        showCancelButton: true,
+                    }).then((result) => {
 
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        $("#duplicate-form-"+ pledge_id ).submit();
-                    }
-                })
-            } else {
-                // submit form
-                $("#duplicate-form-"+ pledge_id ).submit();
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            $("#duplicate-form-"+ pledge_id ).submit();
+                        }
+                    })
+                } else {
+                    // submit form
+                    $("#duplicate-form-"+ pledge_id ).submit();
+                }
+            },
+            complete: function() {
+            },
+            error: function () {
+                alert("error");
+                $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
             }
-        },
-        complete: function() {
-        },
-        error: function () {
-            alert("error");
-            $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
-        }
-    })
+        })
+
+    });
+
+    $('#accordion').on('hidden.bs.collapse', function(event){
+        $("#accordion .card-header h5").find('button.custom-expander').html('Expand donation history');
+    });
+
+    $('#accordion').on('shown.bs.collapse', function(event){
+        $("#accordion .card-header h5[aria-expanded='true']").find('button.custom-expander').html('Collapse donation history');
+    });
 
 });
 

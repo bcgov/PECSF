@@ -128,6 +128,15 @@
 
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
+<style>
+
+    /* Should be override in app.scss */
+    a {
+        text-decoration: underline !important; 
+    }
+   
+</style>
+
 @endpush
 
 
