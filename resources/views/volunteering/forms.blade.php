@@ -19,40 +19,12 @@
             @include('volunteering.partials.form')
 
 
-    @push('css')
-        <link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet">
 
-
-        <style>
-            .select2 {
-                width:100% !important;
-            }
-            .select2-selection--multiple{
-                overflow: hidden !important;
-                height: auto !important;
-                min-height: 38px !important;
-            }
-
-            .select2-container .select2-selection--single {
-                height: 38px !important;
-            }
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: 38px !important;
-            }
-
-            table tr{
-                background:#fff;
-            }
-
-        </style>
-        <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
-
-    @endpush
     <div class="modal fade" id="info-modal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <h5 class="modal-charity-name text-light" id="charity-modal-label">Have you deposited your funds and scanned your completed PECSF Bank Deposit Form? </h5>
+                    <h5 class="modal-charity-name" id="charity-modal-label">Have you deposited your funds and scanned your completed PECSF Bank Deposit Form? </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -88,7 +60,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-3">
-                                <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-primary" data-dismiss="modal" aria-label="Close">Complete eForm</button>
+                                <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-primary" data-dismiss="modal" aria-label="Complete eForm from Close">Complete eForm</button>
                             </div>
                             <div class="col-md-2">
                                 <button type="button" id="cancel-btn" value="Refresh" class="form-control btn btn-secondary" onclick="window.location='/';">Cancel</button>
@@ -103,6 +75,65 @@
     </div>
 @endsection
 
+
+@push('css')
+    <link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+
+<style>
+    .select2 {
+        width:100% !important;
+    }
+    .select2-selection--multiple{
+        overflow: hidden !important;
+        height: auto !important;
+        min-height: 38px !important;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+    }
+
+    table tr{
+        background:#fff;
+    }
+
+
+    /* Temporaily override the app.scss*/
+    .btn:focus, button:focus{
+        border: #fff 2px solid!important;
+    }
+
+    .custom.pagination .page-item {
+        margin-top: 0;
+        border: #a2adb7 1px solid;
+    }
+
+    .custom.pagination a {
+        text-decoration: none !important;
+    }   
+      /* Should be override in app.scss */
+    a {
+        text-decoration: underline !important; 
+    }
+
+    input[type='radio'] {
+        accent-color: #1A5A96;
+        height:20px; 
+        width:20px; 
+        vertical-align: middle;
+    }
+    input[name="keyword"] {
+        border:#000 1px solid;
+    }
+
+</style>
+
+
+@endpush
 @push('js')
 
 <script>
@@ -123,8 +154,27 @@ $(function () {
         }
     });
 
+    // prevent spacebar to trigger the page scrolling
+    $(document).on("keypress", function(e) {
+        var $focusElem = $(":focus");
+        if (e.which == 13 && $focusElem.is("input"))
+            e.preventDefault();
+    });
+
+    // prevent spacebar to trigger the page scrolling
+    $(document).on("keypress", function(e) {
+        var $focusElem = $(":focus");
+        if (e.which == 32 && !($focusElem.is("input") || $focusElem.attr("contenteditable") == "true"))
+            e.preventDefault();
+    });
+
 @if (isset($skip_info_modal) && !($skip_info_modal) )
-    $("#info-modal").modal();
+    $("#info-modal").on('shown.bs.modal', function(event) {
+        // not setting focus to submit button
+        $('#complete-btn').trigger('focus');
+    });
+
+    $("#info-modal").modal('show');
 @endif
 
 
@@ -134,7 +184,7 @@ $(function () {
 
     
 
-});
+
 
         function disableOneTime() {
             var eventTypeDropdown = $('#event_type');
@@ -162,6 +212,34 @@ $(function () {
             }    
         });  
 
+
+    // method_selection
+    $('.method_selection').on('keyup', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).find('input[name=charity_selection]').trigger('click');
+        }
+    });
+
+    // Enter or space key on Wizard STEP icon to forward and backward 
+    $('.form-pool').on('keyup', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).find('input[name=regional_pool_id]').prop('checked',true);
+        }
+    });
+
+    $('.form-pool').on('click', function(e) {
+     
+        // $(this).find('input[name=regional_pool_id]').trigger('click');
+        // $(this).AddClass('active');
+    });
+
+});
 </script>
         <script src="{{ asset('vendor/select2/js/select2.min.js') }}" ></script>
         <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
