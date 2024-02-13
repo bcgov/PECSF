@@ -135,6 +135,18 @@
         text-decoration: underline !important; 
     }
    
+    .btn-link {
+        text-decoration: underline !important; 
+    }
+
+    .fa-chevron-up {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-nav-accordion.collapsed .fa-chevron-up {
+        transform: rotate(180deg);
+    }
+
 </style>
 
 @endpush
