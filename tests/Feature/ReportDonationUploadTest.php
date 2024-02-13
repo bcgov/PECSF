@@ -27,7 +27,7 @@ use App\Models\DailyCampaignSummary;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class DonationUploadTest extends TestCase
+class ReportDonationUploadTest extends TestCase
 {
 
     use WithFaker;
