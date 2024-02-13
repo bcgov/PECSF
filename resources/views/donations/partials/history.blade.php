@@ -12,13 +12,16 @@
                     {{  $key }}
                 </span>
                 <div class="flex-fill"></div>
-                <button class="custom-expander btn btn-primary" data-id="{{ $key }}">
+                <button class="btn btn-link btn-nav-accordion {{ $loop->index == 0 ? 'collapsed' : ''}}" type="button" data-id="{{ $key }}">
+                    <i class="fas fa-chevron-up fa-lg"></i>
+                </button>
+                {{-- <button class="custom-expander btn btn-primary" data-id="{{ $key }}">
                     @if ($loop->index == 0)
                         Collapse donation history
                     @else
                         Expand donation history
                     @endif
-                </button>
+                </button> --}}
             </h5>
         </div>
 
@@ -224,11 +227,13 @@ $(function () {
     });
 
     $('#accordion').on('hidden.bs.collapse', function(event){
-        $("#accordion .card-header h5").find('button.custom-expander').html('Expand donation history');
+        $("#accordion .card-header h5").find('button.btn-nav-accordion').removeClass('collapsed');
+        $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
     });
 
     $('#accordion').on('shown.bs.collapse', function(event){
-        $("#accordion .card-header h5[aria-expanded='true']").find('button.custom-expander').html('Collapse donation history');
+        $("#accordion .card-header h5").find('button.btn-nav-accordion').removeClass('collapsed');
+        $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
     });
 
 });
