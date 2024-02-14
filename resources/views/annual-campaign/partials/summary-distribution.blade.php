@@ -38,6 +38,11 @@
                     <th style="width:18%;">Donation Type</th>
                     <th style="width:62%;">Benefitting Charity</th>
                     <th style="width:10%;">Frequency</th>
+                    @if (($viewMode ?? '') == 'pdf')
+                        @if ($key == 'bi-weekly')
+                            <th class="width:10%;text-right">Bi-weekly Amount</th>
+                        @endif
+                    @endif
                     <th style="width:10%;text-align:right;" class="percentage-amount-head-title">{{ ($viewMode ?? '') !== 'pdf' ? 'Percentage' : 'Amount'}}</th>
                 </tr>
                 @foreach ($charities as $charity)
@@ -59,7 +64,12 @@
                         </div>
                     </td>
                     @endif
-                    <td style="width:130px" class="by-amount d-none">
+                    @if (($viewMode ?? '') == 'pdf')
+                        @if ($key == 'bi-weekly')        
+                            <td style="width:90px" style="text-align: center;">$ {{ number_format($biWeeklyAmount,2) }} </td>
+                        @endif
+                    @endif
+                    <td  class="by-amount d-none">
                         <div class="input-group input-group-sm mb-3" style="flex-direction:column">
                             <input type="hidden" class="form-control form-control-sm amount-input float-right text-right"  name="{{$keyCase}}Amount[{{ $charity['id'] }}]" value='{{$charity["$key_-amount-distribution"]}}' disabled>
                             <span class="float-right text-right"> ${{ number_format( $charity["$key_-amount-distribution"] * $multiplier,2) }}</span>

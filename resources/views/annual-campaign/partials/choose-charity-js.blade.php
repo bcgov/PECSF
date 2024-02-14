@@ -182,7 +182,11 @@
 
         });
 
+        var last_registration_number = null;
         $("body").on("click",".view_details",function(e){
+            e.preventDefault();
+            last_registration_number = $(this).attr('registration_number');
+            
             if($(this).attr("pool_image").length > 21){
                 $("table.charity").hide();
                 $("table.fsp").show();
@@ -193,10 +197,10 @@
                 $("#pool_image").attr("src",$(this).attr("pool_image"));
                 $("#pool_description").html($(this).attr("pool_description"));
                 $("#program_name").html("<b>Program:</b> " + $(this).attr("charitable_programs"));
-                $("#charityDetails").modal("show");
+
+                // $("#charityDetails").modal("show");
             }
             else{
-                e.preventDefault();
                 $("table.charity").show();
                 $("table.fsp").hide();
                 $(".modal-header").show();
@@ -215,10 +219,16 @@
                 $("#charity_type").html($(this).attr("charity_type"));
                 $("#charity_name").html($(this).attr("charity_name"));
                 $("#employee_name").html($(this).attr("employee_name"));
-
-                $("#charityDetails").modal("show");
+       
             }
+
+            $("#charityDetails").modal("show");
         });
+
+        $('#charityDetails').on('hidden.bs.modal', function (e) {
+            // alert('test');
+            $(".view_details[registration_number=" + last_registration_number +"]").focus();          
+        })
     });
     $("#charity_province").select2();
     $("#category").select2();
