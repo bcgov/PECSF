@@ -13,7 +13,7 @@
                 </span>
                 <div class="flex-fill"></div>
                 <button class="btn btn-link btn-nav-accordion {{ $loop->index == 0 ? 'collapsed' : ''}}" type="button" data-id="{{ $key }}">
-                    <i class="fas fa-chevron-up fa-lg"></i>
+                    <i class="fas fa-angle-down fa-2x"></i>
                 </button>
                 {{-- <button class="custom-expander btn btn-primary" data-id="{{ $key }}">
                     @if ($loop->index == 0)
@@ -185,7 +185,7 @@
 @push('js')
 <script>
 $(function () {
-    $('a.duplicate-pledge').on('click', function(event){
+    $('button.duplicate-pledge').on('click', function(event){
 
         pledge_id = $(this).data("id");
 
