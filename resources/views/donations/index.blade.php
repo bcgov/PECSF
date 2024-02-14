@@ -131,11 +131,11 @@
 <style>
 
     /* Should be override in app.scss */
-    a {
+    #accordion a {
         text-decoration: underline !important; 
     }
    
-    .btn-link {
+    #accordion .btn-link {
         text-decoration: underline !important; 
     }
 
