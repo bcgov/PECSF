@@ -139,12 +139,12 @@
         text-decoration: underline !important; 
     }
 
-    .fa-chevron-up {
+    .fa-angle-down {
         transition: all 0.3s ease;
     }
     
-    .btn-nav-accordion.collapsed .fa-chevron-up {
-        transform: rotate(180deg);
+    .btn-nav-accordion.collapsed .fa-angle-down {
+        transform: rotate(180deg); 
     }
 
 </style>
