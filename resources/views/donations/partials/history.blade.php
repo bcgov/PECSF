@@ -185,7 +185,7 @@
 @push('js')
 <script>
 $(function () {
-    $('a.duplicate-pledge').on('click', function(event){
+    $('button.duplicate-pledge').on('click', function(event){
 
         pledge_id = $(this).data("id");
 
