@@ -23,21 +23,22 @@ use App\Models\Organization;
 use App\Models\FSPoolCharity;
 use App\Models\PledgeCharity;
 use App\Models\PledgeStaging;
-use App\Exports\PledgesExport;
 use App\Models\ProcessHistory;
 use App\Models\BankDepositForm;
 use Illuminate\Http\UploadedFile;
 use App\Models\DailyCampaignSummary;
 use App\Models\PledgeCharityStaging;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PledgeCharitiesExport;
 use Illuminate\Support\Facades\Artisan;
 use App\Exports\DonationDataReportExport;
+use App\Exports\GamingAndFundrasingExport;
 use App\Models\BankDepositFormAttachments;
 use App\Models\BankDepositFormOrganizations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ReportPledgeReportTest extends TestCase
+class ReportGamingAndFundrasingReportTest extends TestCase
 {
 
     use WithFaker;
@@ -95,157 +96,157 @@ class ReportPledgeReportTest extends TestCase
     }
 
     /** Test Authenication */
-    public function test_an_anonymous_user_cannot_access_the_pledges_report_index_page()
+    public function test_an_anonymous_user_cannot_access_the_gaming_and_fundrasing_report_index_page()
     {
-        $response = $this->get('reporting/pledges');
+        $response = $this->get('reporting/gaming-and-fundrasing');
 
         $response->assertStatus(302);
         $response->assertRedirect('login');
     }
-    public function test_an_anonymous_user_cannot_access_the_pledges_report_create_page()
+    public function test_an_anonymous_user_cannot_access_the_gaming_and_fundrasing_report_create_page()
     {
-        $response = $this->get('reporting/pledges/create');
+        $response = $this->get('reporting/gaming-and-fundrasing/create');
 
         $response->assertStatus(302);
         $response->assertRedirect('login');
     }
-    public function test_an_anonymous_user_cannot_create_the_pledges_report()
+    public function test_an_anonymous_user_cannot_create_the_gaming_and_fundrasing_report()
     {
 
-        $response = $this->post('reporting/pledges', []);
+        $response = $this->post('reporting/gaming-and-fundrasing', []);
 
         $response->assertStatus(405);
     }
-    public function test_an_anonymous_user_cannot_access_the_pledges_report_view_page()
+    public function test_an_anonymous_user_cannot_access_the_gaming_and_fundrasing_report_view_page()
     {
-        $response = $this->get('reporting/pledges/1');
+        $response = $this->get('reporting/gaming-and-fundrasing/1');
  
         $response->assertStatus(302);
         $response->assertRedirect('login');
 
     }
-    public function test_an_anonymous_user_cannot_access_the_pledges_report_edit_page()
+    public function test_an_anonymous_user_cannot_access_the_gaming_and_fundrasing_report_edit_page()
     {
-        $response = $this->get('reporting/pledges/1/edit');
+        $response = $this->get('reporting/gaming-and-fundrasing/1/edit');
 
         $response->assertStatus(404);
     }
-    public function test_an_anonymous_user_cannot_update_the_pledges_report()
+    public function test_an_anonymous_user_cannot_update_the_gaming_and_fundrasing_report()
     {
 
-        $response = $this->put('reporting/pledges/1', [] );
+        $response = $this->put('reporting/gaming-and-fundrasing/1', [] );
 
         $response->assertStatus(405);
     }
-    public function test_an_anonymous_user_cannot_delete_the_pledges_report()
+    public function test_an_anonymous_user_cannot_delete_the_gaming_and_fundrasing_report()
     {
-        $response = $this->delete('reporting/pledges/1');
+        $response = $this->delete('reporting/gaming-and-fundrasing/1');
 
         $response->assertStatus(405);
     }
  
 
     // Authorized User
-    public function test_an_authorized_user_cannot_access_the_pledges_report_index_page()
+    public function test_an_authorized_user_cannot_access_the_gaming_and_fundrasing_report_index_page()
     {
 		$this->actingAs($this->user);
-        $response = $this->get('reporting/pledges');
+        $response = $this->get('reporting/gaming-and-fundrasing');
 
         $response->assertStatus(403);
     }
-    public function test_an_authorized_user_cannot_access_the_pledges_report_create_page()
+    public function test_an_authorized_user_cannot_access_the_gaming_and_fundrasing_report_create_page()
     {
 		$this->actingAs($this->user);
-        $response = $this->get('reporting/pledges/create');
+        $response = $this->get('reporting/gaming-and-fundrasing/create');
 
         $response->assertStatus(403);
     }
-    public function test_an_authorized_user_cannot_create_the_pledges_report()
+    public function test_an_authorized_user_cannot_create_the_gaming_and_fundrasing_report()
     {
 
 		$this->actingAs($this->user);
-        $response = $this->post('reporting/pledges', []);
+        $response = $this->post('reporting/gaming-and-fundrasing', []);
 
         $response->assertStatus(405);
     }
-    public function test_an_authorized_user_cannot_access_the_pledges_report_view_page()
+    public function test_an_authorized_user_cannot_access_the_gaming_and_fundrasing_report_view_page()
     {
 		$this->actingAs($this->user);
-        $response = $this->get('reporting/pledges/1');
+        $response = $this->get('reporting/gaming-and-fundrasing/1');
 
         $response->assertStatus(403);
     }
-    public function test_an_authorized_user_cannot_access_the_pledges_report_edit_page()
+    public function test_an_authorized_user_cannot_access_the_gaming_and_fundrasing_report_edit_page()
     {
 		$this->actingAs($this->user);
-        $response = $this->get('reporting/pledges/1/edit');
+        $response = $this->get('reporting/gaming-and-fundrasing/1/edit');
 
         $response->assertStatus(404);
     }
-    public function test_an_authorized_user_cannot_update_the_pledges_report()
+    public function test_an_authorized_user_cannot_update_the_gaming_and_fundrasing_report()
     {
 		$this->actingAs($this->user);
-        $response = $this->put('reporting/pledges/1', [] );
+        $response = $this->put('reporting/gaming-and-fundrasing/1', [] );
 
         $response->assertStatus(405);
     }
-    public function test_an_authorized_user_cannot_delete_the_pledges_report()
+    public function test_an_authorized_user_cannot_delete_the_gaming_and_fundrasing_report()
     {
 		$this->actingAs($this->user);
-        $response = $this->delete('reporting/pledges/1');
+        $response = $this->delete('reporting/gaming-and-fundrasing/1');
 
         $response->assertStatus(405);
     }
   
 
     // Administrator User
-    public function test_an_administrator_can_access_the_pledges_report_index_page()
+    public function test_an_administrator_can_access_the_gaming_and_fundrasing_report_index_page()
     {
         $this->actingAs($this->admin);
-        $response = $this->get('reporting/pledges');
+        $response = $this->get('reporting/gaming-and-fundrasing');
 
         $response->assertStatus(200);
     }
-    public function test_an_administrator_can_access_the_pledges_report_create_page()
+    public function test_an_administrator_can_access_the_gaming_and_fundrasing_report_create_page()
     {
         $this->actingAs($this->admin);
-        $response = $this->get('reporting/pledges/create');
+        $response = $this->get('reporting/gaming-and-fundrasing/create');
 
         $response->assertStatus(200);
     }
-    public function test_an_administrator_can_create_the_pledges_report()
+    public function test_an_administrator_can_create_the_gaming_and_fundrasing_report()
     {
 
         $this->actingAs($this->admin);
-        $response = $this->post('reporting/pledges', []);
+        $response = $this->post('reporting/gaming-and-fundrasing', []);
 
         $response->assertStatus(405);
     }
-    public function test_an_administrator_cannot_access_the_pledges_report_view_page()
+    public function test_an_administrator_cannot_access_the_gaming_and_fundrasing_report_view_page()
     {
         $this->actingAs($this->admin);
-        $response = $this->get('reporting/pledges/1');
+        $response = $this->get('reporting/gaming-and-fundrasing/1');
 
         $response->assertStatus(200);
     }
-    public function test_an_administrator_cannot_access_the_pledges_report_edit_page()
+    public function test_an_administrator_cannot_access_the_gaming_and_fundrasing_report_edit_page()
     {
         $this->actingAs($this->admin);
-        $response = $this->get('reporting/pledges/1/edit');
+        $response = $this->get('reporting/gaming-and-fundrasing/1/edit');
 
         $response->assertStatus(404);
     }
-    public function test_an_administrator_cannot_update_the_pledges_report()
+    public function test_an_administrator_cannot_update_the_gaming_and_fundrasing_report()
     {
         $this->actingAs($this->admin);
-        $response = $this->put('reporting/pledges/1', [] );
+        $response = $this->put('reporting/gaming-and-fundrasing/1', [] );
 
         $response->assertStatus(405);
     }
-    public function test_an_administrator_cannot_delete_the_pledges_report()
+    public function test_an_administrator_cannot_delete_the_gaming_and_fundrasing_report()
     {
         $this->actingAs($this->admin);
-        $response = $this->delete('reporting/pledges/1');
+        $response = $this->delete('reporting/gaming-and-fundrasing/1');
 
         $response->assertStatus(405);
     }
@@ -254,11 +255,11 @@ class ReportPledgeReportTest extends TestCase
     public function test_an_administrator_can_download_donation_report_success()
     {
  
-        $pledge = $this->create_new_record_form_data(true, true);
+        $pledge = $this->create_new_record_form_data(true, false);
         $year = $pledge->campaign_year->calendar_year;
 
         $this->actingAs($this->admin);
-        $response = $this->json('get', '/reporting/pledges/export', ['year' => $year],
+        $response = $this->json('get', '/reporting/gaming-and-fundrasing/export', ['year' => $year],
                                     ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
@@ -271,9 +272,9 @@ class ReportPledgeReportTest extends TestCase
        $filters = json_decode( $history->parameters , true);
 
        // export data
-       Excel::store(new PledgesExport($history->id, $filters), 'public/'. $history->filename);  
+       Excel::store(new GamingAndFundrasingExport($history->id, $filters), 'public/'. $history->filename);  
 
-        $response = $this->get('/reporting/pledges/download-export-file/' . $history->id, []);
+        $response = $this->get('/reporting/gaming-and-fundrasing/download-export-file/' . $history->id, []);
         $response->assertStatus(200);
         $response->assertDownload($history->filename);
 
@@ -303,12 +304,14 @@ class ReportPledgeReportTest extends TestCase
 
         $organization = Organization::factory()->create([
                     'code' => "GOV",
+                    'status' => 'A',
         ]);
-        if (!($is_gov)) {
+        // if (!($is_gov)) {
             $organization = Organization::factory()->create([
                     'code' => "LDB",
+                    'status' => 'A',
                 ]);
-        }
+        // }
         $business = BusinessUnit::factory()->create();
         $region = Region::factory()->create();
         $charities = Charity::factory(10)->create([
