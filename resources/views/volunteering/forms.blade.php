@@ -116,7 +116,7 @@
         text-decoration: none !important;
     }   
       /* Should be override in app.scss */
-    a {
+    .content-wrapper a {
         text-decoration: underline !important; 
     }
 
