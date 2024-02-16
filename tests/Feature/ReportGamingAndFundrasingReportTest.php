@@ -138,11 +138,14 @@ class ReportGamingAndFundrasingReportTest extends TestCase
 
         $response->assertStatus(405);
     }
-    public function test_an_anonymous_user_cannot_delete_the_gaming_and_fundrasing_report()
+   
+    public function test_an_anonymous_user_cannot_download_the_gaming_and_fundrasing_report()
     {
-        $response = $this->delete('reporting/gaming-and-fundrasing/1');
+      
+        $response = $this->get('/reporting/gaming-and-fundrasing/download-export-file/1', []);
 
-        $response->assertStatus(405);
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
     }
  
 
@@ -196,6 +199,14 @@ class ReportGamingAndFundrasingReportTest extends TestCase
         $response = $this->delete('reporting/gaming-and-fundrasing/1');
 
         $response->assertStatus(405);
+    }
+    public function test_an_authorized_user_cannot_download_the_gaming_and_fundrasing_report()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get('/reporting/gaming-and-fundrasing/download-export-file/1', []);
+
+        $response->assertStatus(403);
+      
     }
   
 
