@@ -15,7 +15,7 @@
                 <div class="form-group col-md-4">
                     <label for="organization_code">Organization</label>
                     <select type="text" class="form-control " name="organization_code" id="organization_code"
-                        placeholder="" role="listbox">
+                        placeholder="" role="listbox" aria-label="Organization">
                         <option value="" selected="selected">Choose an Organization</option>
 
                     </select>
@@ -61,7 +61,7 @@
             <div class="form-row form-body">
                 <div class="form-group col-md-6">
                     <label for="description">Donation or event name</label>
-                    <input class="form-control" type="text" name="description" id="description" />
+                    <input class="form-control" type="text" name="description" id="description" aria-label="Donation or event name"/>
                     <span>Include Event Name-Date (DD/MM/YYYY) - Name of Coordinator<br>For Cash or Cheque, write CASH
                         or Cheque – Cheque #</span>
                     <span class="description_errors errors">
@@ -101,8 +101,8 @@
                 </div>
 
                 <div class="form-group col-md-3">
-                    <label for="sub_type">Deposit date</label>
-                    <input class="form-control" type="date" id="deposit_date" name="deposit_date">
+                    <label for="deposit_date">Deposit date</label>
+                    <input class="form-control" type="date" id="deposit_date" name="deposit_date" aria-label="Deposit date">
                     <span class="deposit_date_errors errors">
                         @error('form_submitter')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -113,7 +113,7 @@
 
                 <div class="form-group col-md-3">
                     <label for="sub_type">Deposit amount ($)</label>
-                    <input class="form-control" type="text" id="deposit_amount" name="deposit_amount" />
+                    <input class="form-control" type="text" id="deposit_amount" name="deposit_amount" aria-label="Deposit amount" />
 
                     <span class="deposit_amount_errors errors">
                         @error('form_submitter')
@@ -125,7 +125,7 @@
 
                 <div id="bcgovid" class="form-group col-md-3" style="display:none;">
                     <label for="bc_gov_id">Donor Employee ID</label>
-                    <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" />
+                    <input class="form-control" type="text" name="bc_gov_id" id="bc_gov_id" aria-label="Donor Employee ID" />
                     <span class="bc_gov_id_errors errors">
                         @error('bc_gov_id')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -135,7 +135,7 @@
 
                 <div id="employeename" class="form-group col-md-3" style="">
                     <label for="employee_name">Employee Name</label>
-                    <input class="form-control" type="text" name="employee_name" id="employee_name" />
+                    <input class="form-control" type="text" name="employee_name" id="employee_name" aria-label="Employee Name" />
                     <span class="employee_name_errors errors">
                         @error('employee_name')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -145,7 +145,7 @@
 
                 <div id="pecsfid" class="form-group col-md-3" style="">
                     <label for="pecsf_id">PECSF ID</label>
-                    <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" />
+                    <input class="form-control" type="text" name="pecsf_id" id="pecsf_id" aria-label="PECSF ID"/>
                     <span class="pecsf_id_errors errors">
                         @error('pecsf_id')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -167,7 +167,7 @@
                     <label for="employment_city">Employment city</label>
                     <select
                         onchange="$('#region').val($('[code='+this.options[this.selectedIndex].attributes[0].value+']').attr('value')).trigger('change');"
-                        class="form-control search_icon" type="text" id="employment_city" name="employment_city" role="listbox">
+                        class="form-control search_icon" type="text" id="employment_city" name="employment_city" role="listbox" aria-label="Employment city">
                         <option value="">Select a city</option>
                         @foreach ($cities as $city)
                             <option region="{{ $city->TGB_REG_DISTRICT }}" value="{{ $city->city }}">
@@ -184,7 +184,7 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label for="region">Region</label>
-                    <select class="form-control search_icon" id="region" name="region" role="listbox">
+                    <select class="form-control search_icon" id="region" name="region" role="listbox" aria-label="Region">
                         <option value="">Select a region</option>
                         @foreach ($regions as $region)
                             <option code="{{ $region->code }}" value="{{ $region->id }}">{{ $region->name }}
@@ -201,7 +201,7 @@
 
                 <div class="form-group col-md-4">
                     <label for="business_unit">Business unit</label>
-                    <select class="form-control search_icon" id="business_unit" name="business_unit" role="listbox">
+                    <select class="form-control search_icon" id="business_unit" name="business_unit" role="listbox" aria-label="Business unit">
                         <option value="">Select a business unit</option>
                         @foreach ($business_units as $bu)
                             @if (!empty($bu->name))
@@ -230,7 +230,7 @@
 
                 <div class="form-group col-md-12" id="address_line_1" style="">
                     <label for="address_1">Address line 1</label>
-                    <input class="form-control" type="text" id="address_1" name="address_1" />
+                    <input class="form-control" type="text" id="address_1" name="address_1" aria-label="Address 1"/>
 
                     <span class="address_1_errors errors">
                         @error('address_1')
@@ -244,7 +244,7 @@
                 <div class="form-group col-md-4">
                     <label for="city">City</label>
 
-                    <select class="form-control search_icon" type="text" id="city" name="city" role="listbox">
+                    <select class="form-control search_icon" type="text" id="city" name="city" role="listbox" aria-label="City">
                         <option value="">Select a city</option>
                         @foreach ($cities as $city)
                             <option value="{{ $city->city }}" province="{{ $city->province }}">
@@ -262,7 +262,7 @@
 
                 <div class="form-group col-md-4">
                     <label for="province">Province</label>
-                    <select class="form-control" type="text" id="province" name="province" role="listbox">
+                    <select class="form-control" type="text" id="province" name="province" role="listbox" aria-label="Province">
                         <option value="">Select a province</option>
                         <option value="British Columbia">British columbia</option>
                         <option value="Ontario">Ontario</option>
@@ -276,7 +276,7 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label for="postal_code">Postal Code</label>
-                    <input class="form-control" type="text" id="postal_code" name="postal_code" />
+                    <input class="form-control" type="text" id="postal_code" name="postal_code" aria-label="Postal Code"/>
                     <span class="postal_code_errors errors">
                         @error('postal_code')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -294,7 +294,7 @@
                 <div class="form-row p-3">
                     <div class="form-group col-md-12 method_selection" tabindex="0">
                         <input type="radio" checked id="charity_selection_1" name="charity_selection" tabindex="-1"
-                            value="fsp" role="radiogroup" />
+                            value="fsp" role="radiogroup" aria-label="Fund supported pool"/>
                         <label class="blue pl-2" for="charity_selection_1">Fund supported pool</label>
                         <span class="charity_selection_errors errors">
                             @error('charity_selection')
@@ -359,7 +359,7 @@
                 class="form-row p-3"style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;border-bottom:#ccc 1px solid;border-radius:5px;">
 
                 <div class="form-group col-md-6 method_selection" tabindex="0">
-                    <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" role="radiogroup" tabindex="-1"/>
+                    <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" role="radiogroup" tabindex="-1" aria-label="Donor choice" />
                     <label class="blue pl-2" for="charity_selection_2">Donor choice</label>
                 </div>
                 <div class="form-group  org_hook col-md-6">
@@ -406,7 +406,7 @@
                 </div>
 
                 <div class="col-md-12">
-                    <div class="needsclick dropzone" id="attachment-dropzone"></div>  
+                    <div class="needsclick dropzone" id="attachment-dropzone" ></div>  
                 </div>
 
                 {{-- <div style="padding:8px; " class="upload-area form-group col-md-12">
