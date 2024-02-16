@@ -110,6 +110,14 @@ class ReportDonationReportTest extends TestCase
 
         $response->assertStatus(405);
     }
+    public function test_an_anonymous_user_cannot_download_donations_report()
+    {
+      
+        $response = $this->get('/reporting/donation-report/download-export-file/1', []);
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
  
 
     // Authorized User
@@ -162,6 +170,13 @@ class ReportDonationReportTest extends TestCase
         $response = $this->delete('reporting/donation-report/1');
 
         $response->assertStatus(405);
+    }
+    public function test_an_authorized_user_cannot_download_donations_report()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get('/reporting/donation-report/download-export-file/1', []);
+
+        $response->assertStatus(403);
     }
   
 
