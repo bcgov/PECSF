@@ -143,8 +143,15 @@ class ReportPledgeReportTest extends TestCase
 
         $response->assertStatus(405);
     }
- 
+    public function test_an_anonymous_user_cannot_download_the_pledges_report()
+    {
+      
+        $response = $this->get('/reporting/pledges/download-export-file/1', []);
 
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+ 
     // Authorized User
     public function test_an_authorized_user_cannot_access_the_pledges_report_index_page()
     {
@@ -195,6 +202,13 @@ class ReportPledgeReportTest extends TestCase
         $response = $this->delete('reporting/pledges/1');
 
         $response->assertStatus(405);
+    }
+    public function test_an_authozied_user_cannot_download_the_pledges_report()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get('/reporting/pledges/download-export-file/1', []);
+
+        $response->assertStatus(403);
     }
   
 

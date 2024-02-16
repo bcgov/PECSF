@@ -143,6 +143,14 @@ class ReportPledgeCharityReportTest extends TestCase
 
         $response->assertStatus(405);
     }
+    public function test_an_anonymous_user_cannot_download_pledge_charity_report()
+    {
+      
+        $response = $this->get('/reporting/pledge-charities/download-export-file/1', []);
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
  
 
     // Authorized User
@@ -195,6 +203,13 @@ class ReportPledgeCharityReportTest extends TestCase
         $response = $this->delete('reporting/pledge-charities/1');
 
         $response->assertStatus(405);
+    }
+    public function test_an_authorized_user_cannot_download_pledge_charity_report()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get('/reporting/pledge-charities/download-export-file/1', []);
+
+        $response->assertStatus(403);
     }
   
 
