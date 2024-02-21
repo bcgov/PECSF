@@ -12,7 +12,8 @@
                     {{  $key }}
                 </span>
                 <div class="flex-fill"></div>
-                <button class="btn btn-link btn-nav-accordion {{ $loop->index == 0 ? 'collapsed' : ''}}" type="button" data-id="{{ $key }}">
+                <button class="btn btn-link btn-nav-accordion {{ $loop->index == 0 ? 'collapsed' : ''}}" type="button" data-id="{{ $key }}"
+                    aria-label="{{ $loop->index == 0 ? 'Hide donation history' : 'Expand donation history' }}">
                     <i class="fas fa-angle-down fa-2x"></i>
                 </button>
                 {{-- <button class="custom-expander btn btn-primary" data-id="{{ $key }}">
@@ -228,12 +229,16 @@ $(function () {
 
     $('#accordion').on('hidden.bs.collapse', function(event){
         $("#accordion .card-header h5").find('button.btn-nav-accordion').removeClass('collapsed');
+        $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand donation history'); 
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
+        $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Hide donation history');   
     });
 
     $('#accordion').on('shown.bs.collapse', function(event){
         $("#accordion .card-header h5").find('button.btn-nav-accordion').removeClass('collapsed');
+        $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand donation history'); 
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
+        $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Hide donation history');
     });
 
 });
