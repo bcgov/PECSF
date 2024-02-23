@@ -223,15 +223,15 @@ $(function () {
         }
     });
 
-    // Enter or space key on Wizard STEP icon to forward and backward 
-    $('.form-pool').on('keyup', function(e) {
-        // Enter or space key on Wizard STEP icon to forward and backward    
-        var key  = e.key;
-        if (key === ' ' || key === 'Enter') {
-            e.preventDefault();
-            $(this).find('input[name=regional_pool_id]').prop('checked',true);
-        }
-    });
+    // // Enter or space key on Wizard STEP icon to forward and backward 
+    // $('.form-pool').on('keyup', function(e) {
+    //     // Enter or space key on Wizard STEP icon to forward and backward    
+    //     var key  = e.key;
+    //     if (key === ' ' || key === 'Enter') {
+    //         e.preventDefault();
+    //         $(this).find('input[name=regional_pool_id]').prop('checked',true);
+    //     }
+    // });
 
     $('.form-pool').on('click', function(e) {
      
