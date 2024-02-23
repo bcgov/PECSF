@@ -1,14 +1,3 @@
-<style>
-.modal-body {
-    overflow-y: auto; /* Add a vertical scrollbar when content overflows */
-}
-
-
-.modal-body{
-    max-height: 80vh; /* Set a maximum height for the modal content */
-}
-</style>    
-
 @extends('adminlte::page')
 @section('content_header')
     <div class="d-flex mt-3">
@@ -144,6 +133,18 @@
         .custom-modal {
             max-width: 80%; /* Set the desired width */
         }
+
+        input[type='radio'] {
+            accent-color: #1A5A96;
+            height:20px; 
+            width:20px; 
+            vertical-align: middle;
+        }
+        
+        input[name="keyword"] {
+            border:#000 1px solid;
+        }
+
     </style>
 
 @endpush
@@ -304,7 +305,8 @@
                         }
                     }
                     else{
-                        $("#pool"+data[0].regional_pool_id).attr("checked",true);
+                        $("#pool"+data[0].fund_supported_pool.region_id).trigger('click');
+
                     }
                     $("#edit-event-modal-body").find(".col-md-2").removeClass("col-md-2").addClass("col-md-4");
 

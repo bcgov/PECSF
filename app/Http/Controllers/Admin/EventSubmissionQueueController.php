@@ -129,7 +129,7 @@ class EventSubmissionQueueController extends Controller
                         ->selectRaw("business_units.id, business_units.code, business_units.name, (select code from organizations where organizations.bu_code = business_units.code limit 1 ) as org_code ")
                         ->groupBy("linked_bu_code")->orderBy("name")->get();
         $regions = Region::where("status","=","A")->orderBy('name')->get();
-        $departments = Department::orderBy('department_name')->get();
+        $departments = Department::orderBy('department_name')->limit(10)->get();
         $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )->orderBy('calendar_year', 'desc')
             ->first();
         $current_user = User::where('id', Auth::id() )->first();
@@ -154,7 +154,7 @@ class EventSubmissionQueueController extends Controller
             ->where("bank_deposit_forms.id","=",$request->form_id)
             ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
             ->join("campaign_years","bank_deposit_forms.campaign_year_id","=","campaign_years.id")
-            ->with('form_submitted_by','organization')
+            ->with('form_submitted_by','organization','fund_supported_pool')
             ->get();
             
         foreach($submissions as $index => $submission){
