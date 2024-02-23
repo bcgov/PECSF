@@ -370,7 +370,7 @@
                 
                                     <div class=" text-right m-2 pt-2" data-id="{{ $pool->region_id }}">
                                         <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}" tabindex="0"
-                                            data-name="{{ $pool->region->name }}"></i>
+                                            data-name="{{ $pool->region->name }}" aria-label="More information on the Pool"></i>
                                     </div>
                                 </div>
                             </div>
