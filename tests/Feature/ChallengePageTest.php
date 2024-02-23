@@ -181,6 +181,73 @@ class ChallengePageTest extends TestCase
         $response->assertStatus(200);
     }
 
+    // Daily Campaign -- Export
+    public function test_authorized_user_download_daily_campaign_by_bu_report_success()
+    {
+
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        // run command 
+        $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
+
+        // export data 
+        $this->actingAs($this->user);
+        $response = $this->get('/challenge/download?sort=region');
+
+        $filename = 'Daily_Campaign_Update_Region_' . today()->format('Y-m-d') . '.xlsx';
+        $response->assertStatus(200);
+        $response->assertDownload( $filename ); 
+
+        $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+
+    }
+
+    public function test_authorized_user_download_daily_campaign_by_organization_report_success()
+    {
+
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        // run command 
+        $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
+
+        // export data 
+        $this->actingAs($this->user);
+        $response = $this->get('/challenge/download?sort=organization');
+                                  
+        $filename = 'Daily_Campaign_Update_By_Org_' . today()->format('Y-m-d') . '.xlsx';
+        $response->assertStatus(200);
+        $response->assertDownload( $filename ); 
+
+        $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+
+    }
+
+    public function test_authorized_user_download_daily_campaign_by_department_report_success()
+    {
+
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        // run command 
+        $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
+
+        // export data 
+        $this->actingAs($this->user);
+        $response = $this->get('/challenge/download?sort=department');
+
+        $row = Setting::first();
+                                  
+        $filename = 'Daily_Campaign_Update_By_Dept_' . $row->campaign_end_date->format('Y-m-d') . '.xlsx';
+        $response->assertStatus(200);
+        $response->assertDownload( $filename ); 
+
+        $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+
+    }
+
+
 
 
 
@@ -303,11 +370,7 @@ class ChallengePageTest extends TestCase
 
     }
 
-    // Daily Campaign -- Export
-
-
-
-
+  
     /* Private Function */
     private function get_new_record_form_data($is_gov = true, $bEvent = false, $special_bu = false) 
     {
