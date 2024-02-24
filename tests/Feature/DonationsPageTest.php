@@ -122,15 +122,15 @@ class DonationsPageTest extends TestCase
         $response->assertStatus(405);
     }
 
-    public function test_an_anonymous_user_cannot_access_pledge_detail()
+    public function test_an_anonymous_user_cannot_access_donation_history_detail()
     {
-        $response = $this->get('donations/pledge-detail', []);
+        // $response = $this->get('donations/pledge-detail', []);
+        $response = $this->json('get', 'donations/pledge-detail', [], ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
 
-        $response->assertStatus(302);
-        $response->assertRedirect('login');
+        $response->assertStatus(401);
     }
 
-    public function test_an_anonymous_user_cannot_download_daily_campaign()
+    public function test_an_anonymous_user_cannot_download_donation_history()
     {
         $response = $this->get('donations?download_pdf=true');
 
@@ -150,7 +150,7 @@ class DonationsPageTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_an_authorized_user_can_access_donation_page_via_post_method()
+    public function test_an_authorized_user_cannot_access_donation_page_via_post_method()
     {
         [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
 
@@ -160,26 +160,41 @@ class DonationsPageTest extends TestCase
         $response->assertStatus(405);
     }
 
-    public function test_an_authorized_user_can_access_daily_campaign_page()
+    public function test_an_authorized_user_cannot_access_donation_history_detail()
     {
-        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
-
         $this->actingAs($this->user);
-        $response = $this->get('donations/daily_campaign');
+        $response = $this->json('get', 'donations/pledge-detail', [], ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+        // $response = $this->get('donations/pledge-detail', []);
 
-        $response->assertStatus(404);
-    }
- 
-    public function test_an_authorized_user_can_download_daily_campaign()
-    {
-        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+        $response->assertStatus(200);
         
-        $this->actingAs($this->user);
-        $response = $this->get('donations/download');
- 
-        $response->assertStatus(404);
     }
 
+    public function test_an_authorized_user_can_download_donation_history()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get('donations?download_pdf=true');
+
+        $response->assertStatus(200);
+    }
+
+    // Test download pdf file 
+    public function test_an_authorized_user_can_download_donation_history_in_pdf_format()
+    {
+        $this->actingAs($this->user);
+        $response = $this->get('donations?download_pdf=true');
+
+        $response->assertStatus(200);   
+
+        $filename = "Donation History Summary.pdf";
+
+        $response->assertDownload( $filename ); 
+        $response->assertSeeText('PDF-');
+
+        $this->assertTrue($response->headers->get('content-type') == 'application/pdf');
+        $this->assertTrue($response->headers->get('content-disposition') == 'attachment; filename="' . $filename .'"');
+
+    }
 
 
 
