@@ -174,6 +174,15 @@ class DonateNowTest extends TestCase
 
     }
 
+    public function test_an_anonymous_user_cannot_download_summary()
+    {
+
+        $response = $this->get('/donate-now/1/summary?download_pdf=true');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+
+    }
 
     //
     // Test Authorized User
@@ -358,6 +367,26 @@ class DonateNowTest extends TestCase
         $response->assertSeeText( $charities[0]->charity_name );
 
     }
+
+    public function test_an_authorized_user_can_download_summary()
+    {
+
+        [$form_data, $pledge] = $this->get_new_record_form_data(true);
+ 
+        $filename = "Donate Now Summary - " . today()->format('Y-m-d') . ".pdf";
+
+        $this->actingAs($this->user);
+        $response = $this->get("/donate-now/" . $pledge->id . "/summary?download_pdf=true");
+    
+        $response->assertStatus(200);
+
+        $response->assertDownload( $filename ); 
+        $response->assertSeeText('PDF-');
+
+        $this->assertTrue($response->headers->get('content-type') == 'application/pdf');
+        $this->assertTrue($response->headers->get('content-disposition') == 'attachment; filename="' . $filename .'"');
+    }
+
 
 //     // /** Form Validation */
 //     // public function test_validation_rule_fields_are_required_when_create()
