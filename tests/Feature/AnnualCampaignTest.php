@@ -186,6 +186,15 @@ class AnnualCampaignTest extends TestCase
 
     }
 
+    public function test_an_anonymous_user_cannot_download_summary()
+    {
+
+        $response = $this->get('/annual-campaign/1/summary?download_pdf=true');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+
+    }
 
     //
     // Test Authorized User
@@ -436,6 +445,27 @@ class AnnualCampaignTest extends TestCase
         $response->assertSeeText( "1 results" );
         $response->assertSeeText( $charities[0]->charity_name );
 
+    }
+
+
+    
+    public function test_an_authoried_user_can_download_summary()
+    {
+
+        [$form_data, $pledge] = $this->get_new_record_form_data(true);
+ 
+        $filename = "Annual Campaign Summary - " . $pledge->campaign_year->calendar_year - 1 . ".pdf";
+
+        $this->actingAs($this->user);
+        $response = $this->get("/annual-campaign/" . $pledge->id . "/summary?download_pdf=true");
+    
+        $response->assertStatus(200);
+
+        $response->assertDownload( $filename ); 
+        $response->assertSeeText('PDF-');
+
+        $this->assertTrue($response->headers->get('content-type') == 'application/pdf');
+        $this->assertTrue($response->headers->get('content-disposition') == 'attachment; filename="' . $filename .'"');
     }
 
 //     // /** Form Validation */
