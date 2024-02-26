@@ -5,7 +5,7 @@
 
         <div class="form-group org_hook col-md-4">
                     <label for="keyword">Search by Keyword</label>
-                    <input class="form-control" type="search" name="keyword" value="" id="keyword" />
+                    <input class="form-control" type="text" name="keyword" value="" id="keyword" />
                 </div>
                 <div class="form-group org_hook col-md-4">
                     <label for="category">Search by Category</label>

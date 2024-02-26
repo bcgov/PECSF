@@ -17,25 +17,25 @@
   <div class="row">
     <div class="col-9 col-sm-9">
         <h1>Make a Donation</h1>
-        <p class="text-muted">When you give through PECSF 100% of your donated dollars goes to the organizations you<br> choose to support.</p>
+        <p style="color: #687278;">When you give through PECSF 100% of your donated dollars goes to the organizations you<br> choose to support.</p>
 
         {{-- Wizard Progress bar (stepper) --}}
         <div class="card-header border-0 p-0">
             <div class=" card-timeline px-2 border-0">
                 <ul class="bs4-step-tracking">
-                    <li class="active">
+                    <li class="active" tabindex="0">
                         <div><i class="fas fa-bars fa-2xl"></i></div>Pool or Non-Pool
                     </li>
-                    <li class="">
+                    <li class=""  tabindex="-1">
                         <div><i class="fas fa-dollar-sign fa-2xl"></i></div>In Support Of
                     </li>
-                    <li class="">
+                    <li class=""  tabindex="-1">
                         <div><i class="fas fa-random fa-2xl"></i></div>Amount
                     </li>
-                    <li class="amount-distribution">
+                    <li class="amount-distribution"  tabindex="-1">
                         <div><i class="fas fa-random fa-2xl"></i></div>Amount Distribution
                     </li>
-                    <li class="">
+                    <li class=""  tabindex="-1">
                         <div><i class="fas fa-check fa-2xl"></i></div>Review and Submit
                     </li>
                 </ul>
@@ -81,7 +81,7 @@
                             <div class="card-body bg-light">
                                 If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
                                 If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted. 
-                                Visit the PECSF webpages to learn more about the <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity" style="text-decoration: underline;">Fund Supported Pool</a> option.
+                                Visit the PECSF webpages to learn more about the <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity">Fund Supported Pool</a> option.
 
                             </div>
                         </div>
@@ -179,8 +179,8 @@
         width: 20%;   /* change from 25 to 20% */
         float: left;
         position: relative;
-        font-weight: 400;
-        color:  #b2b2b2;  /* #878788 ; */
+        font-weight: 500;
+        color: #687278; /*  #b2b2b2;  */
         text-align: center;
         z-index: 100;
     }
@@ -197,8 +197,11 @@
         text-align: right !important
     }
 
+    .bs4-step-tracking li.active> div {
+        color: #fff;  
+    }
     .bs4-step-tracking li> div {
-        color: #fff;
+        color: #687278;   /* #fff */
         width: 38px;
         text-align: center;
         line-height: 38px;
@@ -262,6 +265,26 @@
         font-weight: bold;
     }
 
+    /* Temporaily override the app.scss*/
+    .btn:focus, button:focus{
+        border: #fff 2px solid!important;
+    }
+
+    .custom.pagination .page-item {
+        margin-top: 0;
+        border: #a2adb7 1px solid;
+    }
+
+    .custom.pagination a {
+        text-decoration: none !important;
+    }
+
+
+    /* Should be override in app.scss */
+    a {
+        text-decoration: underline !important; 
+    }
+
 </style>
 
 @endpush
@@ -305,12 +328,26 @@ $(function () {
 
 
 
-    $(document).on("keyup keypress", "#annual-campaign-form", function(e) {
-        var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
+    // $(document).on("keyup keypress", "#annual-campaign-form", function(e) {
+    //     var keyCode = e.keyCode || e.which;
+    //     if (keyCode === 13) {
+    //         e.preventDefault();
+    //         return false;
+    //     }
+    // });
+
+    // prevent spacebar to trigger the page scrolling
+    $(document).on("keypress", function(e) {
+        var $focusElem = $(":focus");
+        if (e.which == 13 && $focusElem.is("input"))
             e.preventDefault();
-            return false;
-        }
+    });
+
+    // prevent spacebar to trigger the page scrolling
+    $(document).on("keypress", function(e) {
+        var $focusElem = $(":focus");
+        if (e.which == 32 && !($focusElem.is("input") || $focusElem.attr("contenteditable") == "true"))
+            e.preventDefault();
     });
 
     $(".next").on("click", function() {
@@ -402,6 +439,15 @@ $(function () {
 
     });
 
+    // Enter or space key on Wizard STEP icon to forward and backward 
+    $('ul.bs4-step-tracking li').on('keyup', function(e) {
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
+    });
+
     // Click on Wizard STEP icon to jump to visited  page
     $('ul.bs4-step-tracking li').on('click', function(e) {
 
@@ -478,8 +524,13 @@ $(function () {
             } else {
                 $('#step-regional-pools-area').hide();
                 $('#step-charities-area').show();
+                $('#step-charities-area #keyword').focus();
             }
         }
+
+        // reset tabindex on wizard 
+        $('ul.bs4-step-tracking li').attr('tabindex', -1);
+        $('ul.bs4-step-tracking li.active').attr('tabindex',0);
 
         // scroll to top
         $(window).scrollTop(0);
