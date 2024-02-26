@@ -18,10 +18,12 @@ $(function () {
             $("#organizations").show();
             $(".org_hook").show();
             $("#add_row").show();
-            $(".form-pool").hide();
+            // $(".form-pool").hide();
+            $("#step-regional-pools-area").hide();
             $("#pool_filter").parents(".form-group").show();
         } else {
-            $(".form-pool").show();
+            // $(".form-pool").show();
+            $("#step-regional-pools-area").show();
             $("#organizations").hide();
             $("#add_row").hide();
             $(".org_hook").hide();
@@ -482,7 +484,8 @@ dataType: 'json'
 
 $("#employment_city,#region,#business_unit").select2();
 
-
+{{--
+/*
 $('.more-info').click( function(event) {
 event.stopPropagation();
 // var current_id = event.target.id;
@@ -515,6 +518,8 @@ $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wro
 $('#regionalPoolModal').modal('show')
 }
 });
+*/
+--}}
 
 $("body").on("click",".view_attachment",function(){
 window.open(URL.createObjectURL($(this).parents("tr").find("input")[0].files[0]));

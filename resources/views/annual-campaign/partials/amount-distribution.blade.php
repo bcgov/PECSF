@@ -8,12 +8,12 @@
             </label>-->
 
             <div class="btn-group btn-group-toggle mt-3 frequency frequency{{$keyCase}}" role="group"  aria-label="Select frequency" data-toggle="buttons">
-                <label class="btn btn-outline-primary btn-lg active" for="distributeByPercentage{{ucfirst($keyCase)}}">
-                    <input type="radio" checked class="btn-check"  autocomplete="off"  id="distributeByPercentage{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="0" >
+                <label class="btn btn-outline-primary btn-lg active" for="distributeByPercentage{{ucfirst($keyCase)}}" tabindex="0">
+                    <input type="radio" checked class="btn-check"  autocomplete="off"  id="distributeByPercentage{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="0" tabindex="-1">
                     Percentage
                 </label>
-                <label class="btn btn-outline-primary btn-lg" for="distributeByDollar{{ucfirst($keyCase)}}">
-                    <input type="radio"  class="btn-check"  autocomplete="off"  id="distributeByDollar{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" >
+                <label class="btn btn-outline-primary btn-lg" for="distributeByDollar{{ucfirst($keyCase)}}" tabindex="0">
+                    <input type="radio"  class="btn-check"  autocomplete="off"  id="distributeByDollar{{ucfirst($keyCase)}}" name="distributionByPercent{{ucfirst($keyCase)}}" value="1" tabindex="-1">
                     Dollar amount
                 </label>
             </div>
@@ -31,18 +31,18 @@
             </td>
             <td style="width:140px" class="by-percent">
                 <div class="input-group input-group-sm mb-3">
-                    <input type="number" class="form-control form-control-sm percent-input" name="{{$keyCase}}Percent[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-percentage-distribution"],2,'.','') }}'>
+                    <input type="number" class="form-control form-control-sm percent-input" name="{{$keyCase}}Percent[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-percentage-distribution"],2,'.','') }}' tabindex="0">
                     <div class="input-group-append">
                         <span class="input-group-text">%</span>
                     </div>
                 </div>
             </td>
-            <td style="width:140px" class="by-amount d-none">
+            <td style="width:140px" class="by-amount">
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" class="form-control form-control-sm amount-input" name="{{$keyCase}}Amount[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-amount-distribution"],2,'.','') }}'>
+                    <input type="number" class="form-control form-control-sm amount-input" name="{{$keyCase}}Amount[{{ $charity['id'] }}]" placeholder="" value='{{ number_format($charity["$key_-amount-distribution"],2,'.','') }}' tabindex="-1" readonly>
                 </div>
             </td>
             {{-- <td>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </td>
-            <td class="by-amount d-none ">
+            <td class="by-amount">
                 <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>

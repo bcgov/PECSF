@@ -12,12 +12,12 @@
             <div id="donateGuideCarousel" class="carousel center slide w-100" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner text-center" style="min-height: 550px;">
                     <div class="carousel-item active">
-                        <h3 class="text-primary my-5">
+                        <h3 class="text-primary my-4">
                             Why donate to the Provincial Employees Community Service Fund?
                         </h3>
-                        <div class="my-4">
-                            <iframe id="movie_player" movie-id="https://www.youtube-nocookie.com/embed/ZMEjHqr3npo?cc_load_policy=1"
-                                width="560" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="my-1">
+                            <iframe id="movie_player" movie-id="https://www.youtube-nocookie.com/embed/ZMEjHqr3npo?cc_load_policy=1&rel=0&autoplay=0"
+                                width="820" height="460" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                     </div>
                     <div class="carousel-item">

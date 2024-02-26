@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // class PledgeCharity extends Pivot implements Auditable
 class PledgeCharity extends Model implements Auditable
 {
 
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
     use \OwenIt\Auditing\Auditable;
 
     protected $table = 'pledge_charities';
