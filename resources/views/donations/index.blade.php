@@ -128,6 +128,27 @@
 
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
+<style>
+
+    /* Should be override in app.scss */
+    #accordion a {
+        text-decoration: underline !important; 
+    }
+   
+    #accordion .btn-link {
+        text-decoration: underline !important; 
+    }
+
+    .fa-angle-down {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-nav-accordion.collapsed .fa-angle-down {
+        transform: rotate(180deg); 
+    }
+
+</style>
+
 @endpush
 
 
