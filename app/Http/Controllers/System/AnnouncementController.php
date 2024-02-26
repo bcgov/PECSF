@@ -11,6 +11,16 @@ use App\Http\Requests\AnnouncementRequest;
 class AnnouncementController extends Controller
 {
     /**
+     * create a new instance of the class
+     *
+     * @return void
+     */
+    function __construct()
+    {
+         $this->middleware('permission:setting');
+    }
+    
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
