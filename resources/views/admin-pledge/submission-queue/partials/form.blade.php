@@ -288,29 +288,31 @@
             <h3 class="blue">Charity selections and distribution</h3>
     </div>
 
-    <div class="form-row p-3" style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;">
-        <div class="form-group col-md-12">
-            <input type="radio" id="charity_selection_1" name="charity_selection" value="fsp" />
-            <label class="blue" for="charity_selection_1">Fund supported pool</label>
-            <span class="charity_selection_errors errors">
-                       @error('charity_selection')
-                        <span class="invalid-feedback">{{  $message  }}</span>
-                            @enderror
-                        </span>
+    <div class="form-row form-body">
+        <div class="form-row p-3" >
+            <div class="form-group col-md-12 method_selection" tabindex="0">
+                <input type="radio" checked id="charity_selection_1" name="charity_selection" tabindex="-1"
+                            value="fsp" role="radiogroup" aria-label="Fund supported pool"/>
+                <label class="blue pl-2" for="charity_selection_1">Fund supported pool</label>
+                <span class="charity_selection_errors errors">
+                        @error('charity_selection')
+                            <span class="invalid-feedback">{{  $message  }}</span>
+                        @enderror
+                </span>
 
-            <br>
-            <span style="padding:20px;">
-    By choosing this option your donation will support the current Fund Supported Pool of regional programs. Click on the tiles to learn about the programs in each regional pool.
-</span>
-        </div>
+                <br>
+                <div class="p-2">
+                    <span class="p-2">
+                        By choosing this option your donation will support the current Fund Supported Pool of regional programs. Click on the tiles to learn about the programs in each regional pool.
+                    </span>
+                </div>
+            </div>
 
 
-        @foreach( $pools as $pool )
+        {{-- @foreach( $pools as $pool )
             <div class="form-group col-md-2 form-pool">
 
                 <div style="width:100%;" class="BC-Gov-SecondaryButton card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->id }}">
-                    {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
-                             width="50" height="50"> --}}
                     <div class="card-body m-1 p-2">
 
                         <div class="form-check float-left">
@@ -340,28 +342,55 @@
 
 
             </div>
-            @endfor
+            @endfor --}}
+            
+            <div class="pt-2 px-3 row row-cols-1 row-cols-lg-2 row-cols-xl-4"  id="step-regional-pools-area">
+                @foreach( $pools as $pool )
+                <div class="col mb-2">
+        
+                    <div class="card h-100 {{ $pool->id == $regional_pool_id ? 'active' : '' }}" data-id="pool{{ $pool->region_id }}"  tabindex="0">
+                        {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
+                                width="50" height="50"> --}}
+                        <div class="card-body m-0 p-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="regional_pool_id" id="pool{{ $pool->region_id }}"
+                                    value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}  tabindex="-1">
+                                <label class="h5 pl-2 pt-1" for="pool{{ $pool->region_id }}">
+                                    {{ $pool->region->name }}
+                                </label>
+                            </div>
+        
+                            <div class=" text-right m-2 pt-2" data-id="{{ $pool->region_id }}">
+                                <i class="more-info fas fa-info-circle fa-2x bottom-right" data-id="{{ $pool->id }}" tabindex="0"
+                                    data-name="{{ $pool->region->name }}" aria-label="More information on the Pool"></i>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
-            <div class="form-row p-3"style="border-left:#ccc 1px solid;border-right:#ccc 1px solid;border-bottom:#ccc 1px solid;border-radius:5px;">
 
-        <div class="form-group col-md-6">
-            <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
-            <label class="blue" for="charity_selection_2">Donor choice</label>
+    <div class="form-row form-body">
+        <div class="form-row p-3">
+
+            <div class="form-group col-md-6">
+                <input type="radio" id="charity_selection_2" name="charity_selection" value="dc" />
+                <label class="blue pl-2" for="charity_selection_2">Donor choice</label>
+            </div>
+            <div class="form-group  org_hook col-md-6">
+                <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
+            </div>
+            <div class="form-group col-md-12">
+                <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered charitable organizations.
+                    Our system uses the official name of the charity registered with the CRA. You can use the View CRA Charity List link to confirm if the organization you would like to support is registered. You can also support a specific branch or program name.</p>
+
+            </div>
+            @include('donate.partials.choose-charity')
         </div>
-        <div class="form-group  org_hook col-md-6">
-            <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en" target="_blank"><img class="float-right" style="width:26px;height:26px;position:relative;top:-4px;" src="{{asset("img/icons/external_link.png")}}"></img><h5 class="blue float-right">View CRA Charity List</h5></a>
-        </div>
-        <div class="form-group col-md-12">
-            <p>By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered charitable organizations.
-                Our system uses the official name of the charity registered with the CRA. You can use the View CRA Charity List link to confirm if the organization you would like to support is registered. You can also support a specific branch or program name.</p>
-
-        </div>
-        @include('donate.partials.choose-charity')
-
-
-
-
-        </div>
+    </div>
             <br>
 
 
@@ -477,3 +506,177 @@
         radioElement.checked = true;
     }
 </script>
+
+@push('css')
+<style>
+
+    /* Region Pool Area */
+    #step-regional-pools-area .card  {
+        color: #1a5a96;
+        background-color: #f8fafc;
+        border: 1px solid #d3e1ee;
+        min-height: 100px;
+        border-radius: 10px;
+    }
+
+    #step-regional-pools-area input[name='regional_pool_id'] {
+        width: 18px;
+        height: 20px;
+    }
+
+    #step-regional-pools-area .card label {
+        font-weight: 700;
+    }
+
+    #step-regional-pools-area .card:hover {
+        /* background-color: darkgray; */
+        background-color: #1a5a96;
+        color: white;
+    }
+    #step-regional-pools-area .card.active {
+        background-color: #1a5a96;
+        color: white;
+    }
+
+    #step-regional-pools-area .bottom-right {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+    }
+
+    #step-regional-pools-area inpu:disabled {
+        background-color: red;  
+    }
+    
+</style>
+@endpush
+
+@push('js')
+<script>
+
+$(function () {
+
+    // Enter or space key on Wizard STEP icon to forward and backward 
+    $('#step-regional-pools-area .card').on('keyup', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
+    });
+
+    $('#step-regional-pools-area .card').click( function(event) {
+        event.stopPropagation();
+
+        id = $(this).attr('data-id');
+
+        // console.log('radio button clicked -- ' + event.target.id);
+        // console.log('radio button clicked -- ' + $(this).attr('data-id') );
+
+        if (id) {
+            if (!($('#'+id).prop('disabled') ) ) {
+
+                // Need to set the selection on card
+                $('#step-regional-pools-area .card').each(function( index, element ) {
+                    // console.log( index + ": " + $( this ).val() + " - " + event.target.id );
+                    $(element).removeClass('active');
+                    $(element).prop('checked',false);
+                });
+
+                $('#step-regional-pools-area .card[data-id=' + id + ']').addClass('active');
+                $('#'+id).prop('checked',true);
+            }
+        }
+    });
+
+    var selected_more_info = "";
+    $('#step-regional-pools-area .more-info').on('keyup', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
+    });
+
+
+    $('.more-info').click( function(event) {
+        event.stopPropagation();
+        // var current_id = event.target.id;
+        id = $(this).attr('data-id');
+        name = $(this).attr('data-name');
+
+        // console.log( 'more info - ' + id );
+        selected_more_info = this;
+        if ( id  ) {
+            // Lanuch Modal page for listing the Pool detail
+            $.ajax({
+                url: '/donate-now/regional-pool-detail/' + id,
+                type: 'GET',
+                // data: $("#notify-form").serialize(),
+                dataType: 'html',
+                success: function (result) {
+                $('#regionalPoolModal  .modal-title span').html(name);
+                target = '#regionalPoolModal .pledgeDetail';
+                $(target).html('');
+                $(target).html(result);
+                },
+                complete: function() {
+                },
+                error: function (result) {
+                    target = '.pledgeDetail';
+                    $(target).html('');
+                    $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+                }
+            })
+
+            $('#regionalPoolModal').modal('show')
+        }
+    });
+
+
+    // $('.more-info').click( function(event) {
+    //     event.stopPropagation();
+
+    //     // var current_id = event.target.id;
+    //     id = $(this).attr('data-id');
+    //     name = $(this).attr('data-name');
+
+    //     console.log( 'more info - ' + id );
+    //     $(target).html('');
+    //     if ( id  ) {
+    //         // Lanuch Modal page for listing the Pool detail
+    //         $.ajax({
+    //             url: '/donate-now/regional-pool-detail/' + id,
+    //             type: 'GET',
+    //             // data: $("#notify-form").serialize(),
+    //             dataType: 'html',
+    //             success: function (result) {
+    //                 $('#regionalPoolModal  .modal-title span').html(name);
+    //                 target = '#regionalPoolModal .pledgeDetail';
+    //                 $(target).html('');
+    //                 $(target).html(result);
+    //             },
+    //             complete: function() {
+    //             },
+    //             error: function (result) {
+    //                 target = '.pledgeDetail';
+    //                 $(target).html('');
+    //                 $(target).html('<i class="glyphicon glyphicon-info-sign"></i> Something went wrong, Please try again...');
+    //             }
+    //         })
+
+    //         $('#regionalPoolModal').modal('show')
+    //     }
+    // });
+
+    $('#regionalPoolModal').on('hidden.bs.modal', function (e) {
+        // do something...
+        $( selected_more_info ).focus();
+    })
+    
+});
+
+</script>
+@endpush

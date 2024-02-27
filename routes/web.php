@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PledgeController;
+// use App\Http\Controllers\PledgeController;
 
-use App\Http\Controllers\CharityController;
+// use App\Http\Controllers\CharityController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ChallengeController;
@@ -19,7 +19,7 @@ use App\Http\Controllers\VolunteeringController;
 use App\Http\Controllers\AnnualCampaignController;
 
 
-use App\Http\Controllers\Auth\AzureLoginController;
+// use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
 use App\Http\Controllers\SpecialCampaignController;
 
@@ -52,7 +52,7 @@ use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Admin\DonationDataReportController;
-use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
+// use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
@@ -268,7 +268,7 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     Route::post('/challenge/finalize_challenge_data', [ChallengeSettingsController::class,'finalizeChallengeData'])->name('challenge.finalize_challenge_data');
 
     // Challenge Summary Maintenance
-    Route::resource('/challenge-summary', ChallengeSummaryMaintenanceController::class);
+    Route::resource('/challenge-summary', ChallengeSummaryMaintenanceController::class)->except('create');
 
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');

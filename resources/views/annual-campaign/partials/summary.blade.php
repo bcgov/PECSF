@@ -103,6 +103,17 @@ $(function () {
         $("#step-summary-area .frequencyoneTime").hide();
     }
 
+    // Enter or space key on Wizard STEP icon to change frequency
+    $('#step-summary-area .frequency label').on('keyup', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).find('input[type=radio]').trigger('click');
+            $(this).focus();
+        }
+    });
+
     $(document).on('click', '#distributeByDollar, #distributeByPercentage', function () {
         const frequency = $(this).attr('id') === 'distributeByDollarAmountOneTime' ? '#oneTimeSection' : '#biWeeklySection';
         if ($(this).attr('id') == "distributeByDollar") {

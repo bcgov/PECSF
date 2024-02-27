@@ -84,9 +84,10 @@
                     <table class="table  rounded">
                         <tr class="bg-light">
                             <th style="width:18%;">Donation Type</th>
-                            <th style="width:62%;">Benefitting Charity</th>
+                            <th style="width:50%;">Benefitting Charity</th>
                             <th style="width:10%;">Frequency</th>
-                            <th style="width:10%;text-align:right;">Amount</th>
+                            <th class="width:10%;text-right">Bi-weekly Amount</th>
+                            <th style="width:10%;text-align:right;">Total Amount</th>
 
                         </tr>
                         @php $total = 0; @endphp
@@ -142,7 +143,11 @@
                                     </td>
                                 @endif
                                 <td>{{ $pledge->frequency }} </td>
-
+                                @if ($pledge->donation_type == 'Annual' and $pledge->frequency == 'Bi-Weekly')
+                                    <td class="text-right">$ {{ number_format($pledge->amount,2) }} </td>
+                                @else
+                                    <td class="text-right font-weight-bold"> - </td>
+                                @endif
                                 <td class="text-right">$ {{ number_format($pledge->pledge,2) }} </td>
                                 {{-- <td class="text-right">$ {{ $pledge->frequency == 'Bi-Weekly' ?
                                         number_format($pledge->pay_period_amount * $pledge->campaign_year->number_of_periods,2) :
