@@ -170,22 +170,9 @@ div.border-primary a {
 }
 
 // link on the tab
-.menu .nav-link.active {
-    color: #1a5a96;
-    font-weight: normal !important;
-    text-decoration: none;
-    background: none;
-    border-bottom: #1a5a96 2px solid;
-    font-family: "BCSans";
-    border-radius: 0;
-}
-
 .menu .nav-link {
-    color: #313132;
     border-bottom: #cfcfcf 2px solid;
-    padding-left: 45px;
-    padding-right: 45px;
-    border-radius: 0;
+    border-radius: 0.15rem;
     margin-right: 5px;
 }
 
