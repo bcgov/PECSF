@@ -174,7 +174,12 @@ class SpecialCampaignPledgeController extends Controller
 
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
 
-        $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        // Sepcial Campaign
+        // $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        $special_campaigns = SpecialCampaign::where('start_date', '<=', today())
+                ->where('end_date', '>=', today())
+                ->orderBy('start_date')
+                ->get();
 
         // default the first special campaign
         // $pledge->special_campaign_id = $special_campaigns->first()->id;
