@@ -155,7 +155,7 @@ class Kernel extends ConsoleKernel
                 ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
 
         $schedule->command('command:UpdateDailyCampaign')
-                ->dailyAt('4:45')
+                ->dailyAt('5:00')
                 ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
         
         $schedule->command('command:SystemCleanUp')
