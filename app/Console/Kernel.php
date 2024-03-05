@@ -150,12 +150,12 @@ class Kernel extends ConsoleKernel
         }
 
         // Snapshot of eligible employees 
-        $schedule->command('command:UpdateEligibleEmployeeSnapshot')
+        $schedule->command('command:UpdateEligibleEmployeeSnapshot --date=' . today()->format('Y-m-d') )
                 ->dailyAt('4:30')
                 ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
 
         $schedule->command('command:UpdateDailyCampaign')
-                ->dailyAt('5:00')
+                ->dailyAt('4:45')
                 ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
         
         $schedule->command('command:SystemCleanUp')
