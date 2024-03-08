@@ -83,10 +83,10 @@
 
 
                     <div class="p-2 ">
-                        <button type="button" class="action cancel btn btn-lg btn-outline-secondary"
+                        <button type="button" class="action cancel btn btn-lg btn-outline-primary"
                             onclick="window.location='{{ route('donations.list') }}'"
                         >Cancel</button>
-                        <button type="button" class="action back btn btn-lg btn-outline-secondary"
+                        <button type="button" class="action back btn btn-lg btn-outline-primary"
                             style="display: none">Back</button>
                         <button type="button" class="ml-2 action next btn btn-lg btn-primary"
                             >Next</button>
