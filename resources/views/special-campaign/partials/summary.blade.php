@@ -27,6 +27,14 @@
 
         <div class="container mt-2">
             <div class="row">
+                <div class="col-6 font-weight-bold">Campaign period :</div>
+                <div class="col-6">From {{ $special_campaign->start_date->format('M j, Y') }} to {{ $special_campaign->end_date->format('M j, Y') }}</div>
+            </div>
+        </div>
+        
+
+        <div class="container mt-2">
+            <div class="row">
                 <div class="col-6 font-weight-bold">Deduction date :</div>
                 <div class="col-6">{{ $check_dt }}</div>
             </div>

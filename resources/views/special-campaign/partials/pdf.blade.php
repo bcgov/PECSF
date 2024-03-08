@@ -99,10 +99,15 @@
                         <td class="col-6">Initative :</td>
                         <td class="col-6">{{ $special_campaign_name }}</td>
                     </tr>
+
+                    <tr class="row">
+                        <td class="col-6">Campaign period :</td>
+                        <td class="col-6">From {{ $special_campaign->start_date->format('M j, Y') }} to {{ $special_campaign->end_date->format('M j, Y') }}</td>
+                    </tr>
                     
                     <tr>
                         <td class="col-6">Deduction date :</td>
-                        <td class="col-6">{{ $check_dt->format('Y-m-d') }}</td>
+                        <td class="col-6"> {{ $check_dt->format('Y-m-d') }}</td>
                     </tr>
                 </table>
             </div>
