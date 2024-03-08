@@ -301,7 +301,11 @@ class SpecialCampaignPledgeController extends Controller
             return abort(404);      // 404 Not Found
         }
 
-        $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        // $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        $special_campaigns = SpecialCampaign::where('start_date', '<=', today())
+                                ->where('end_date', '>=', today())
+                                ->orderBy('start_date')
+                                ->get();
 
         // $organization = Organization::where('id', $pledge->organization_id)->first();
         $cities = City::orderBy('city')->get();
