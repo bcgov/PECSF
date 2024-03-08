@@ -60,7 +60,7 @@
 <h4 style="text-align:center;width:100%;">Donation - Special Campaign</h4>
 
 
-<span><i>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August, for payroll deductions from January - June, and in March, for payroll deductions from July - December.</i></span>
+<span><i>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected.</i></span>
 
 <div class="container">
 

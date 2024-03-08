@@ -38,8 +38,7 @@
 <div class="row">
     <p class="py-4">
     Please note that <b>this is not a tax receipt</b>.
-    Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year.
-    In August for payroll deductions from January - June, and in March for payroll deductions from July - December.
+    Payroll deductions begin with the first paycheque in January and will appear on your payroll issued T4 for year when the funds are collected. 
     </p>
 </div>
 
