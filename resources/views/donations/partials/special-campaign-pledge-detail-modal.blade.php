@@ -18,6 +18,15 @@
 </div>
 
 <div class="row">
+  <div class="col-4 text-right">
+      <p class="font-weight-bold">Campaign Period</p>
+    </div>
+    <div class="col-8">
+      <p>From {{ $pledge->special_campaign->start_date->format('M j, Y') }} to {{ $pledge->special_campaign->end_date->format('M j, Y') }}</p>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-4 text-right">
         <p class="font-weight-bold">Calendar Year</p>
       </div>

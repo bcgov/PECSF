@@ -109,7 +109,7 @@ class SpecialCampaignController extends Controller
                 $special_campaign_name = $special_campaign ? $special_campaign->name : '';
 
                 return view('special-campaign.partials.summary', compact('user', 'one_time_amount',
-                        'in_support_of', 'special_campaign_name', 'check_dt', 'request'))->render();
+                        'in_support_of', 'special_campaign', 'special_campaign_name', 'check_dt', 'request'))->render();
             }
             return response()->noContent();
         }
@@ -332,10 +332,10 @@ class SpecialCampaignController extends Controller
         if(isset($request->download_pdf)){
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'check_dt'));
-            return $pdf->download('Donation Summary.pdf');
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign', 'special_campaign_name', 'check_dt'));
+            return $pdf->download('Special Campaign Donation Summary - '.date("Y-m-d").'.pdf');
         } else {
-            return view('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'deduct_pay_from'));
+            return view('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign', 'special_campaign_name', 'deduct_pay_from'));
         }
 
     }
