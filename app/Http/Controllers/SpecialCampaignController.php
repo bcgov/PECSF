@@ -333,7 +333,7 @@ class SpecialCampaignController extends Controller
             // view()->share('donations.index',compact('pledges', 'currentYear', 'totalPledgedDataTillNow', 'campaignYear',
             //     'pledge', 'pledges_by_yearcd'));
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'check_dt'));
-            return $pdf->download('Donation Summary.pdf');
+            return $pdf->download('Special Campaign Donation Summary - '.date("Y-m-d").'.pdf');
         } else {
             return view('special-campaign.partials.pdf', compact('fsp_name','user', 'one_time_amount', 'in_support_of', 'special_campaign_name', 'deduct_pay_from'));
         }
