@@ -149,7 +149,7 @@ class SpecialCampaignPledgeController extends Controller
 
         // get all the record 
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $years = SpecialCampaignPledge::distinct('yearcd')->orderBy('yearcd', 'desc')->pluck('yearcd');
+        $years = CampaignYear::orderBy('calendar_year', 'desc')->pluck('calendar_year');
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
