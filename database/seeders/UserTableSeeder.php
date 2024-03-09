@@ -310,7 +310,7 @@ class UserTableSeeder extends Seeder
               'name' => $user['name'],
               'password' => $password,
               'source_type' => 'LCL',
-              'organization_id' => $organization ? $organization->id : null,
+              'organization_id' => $organization ? $organization->id : 1,
               'emplid' => $user['emplid'],
             ]);
 
