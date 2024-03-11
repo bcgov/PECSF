@@ -22,6 +22,7 @@
                         str_contains(Route::current()->getName(), 'reporting.pledges') ||
                         str_contains(Route::current()->getName(), 'reporting.pledge-charities') ||
                         str_contains(Route::current()->getName(), 'reporting.eligible-employees') ||
+                        str_contains(Route::current()->getName(), 'reporting.org-partipation-tracker') ||
                         str_contains(Route::current()->getName(), 'reporting.gaming-and-fundrasing') ||
                         str_contains(Route::current()->getName(), 'reporting.cra-charities') ||
                         str_contains(Route::current()->getName(), 'reporting.challenge-page-data')
@@ -42,6 +43,8 @@
         <div class="dropdown-divider"></div>                              
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
               href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.org-partipation-tracker') ? 'active' : ''}}"
+          href="{{ route('reporting.org-partipation-tracker.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Organization Participation Trackers</a>
         <div class="dropdown-divider"></div>                                 
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.challenge-page-data') ? 'active' : ''}}"
           href="{{ route('reporting.challenge-page-data') }}" role="tab" aria-controls="pills-home" aria-selected="true">Challenge Page Data</a>
