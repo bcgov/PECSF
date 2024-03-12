@@ -20,4 +20,7 @@ class EligibleEmployeeByBU extends Model
         'ee_count',
     ];
 
+    protected $casts = [
+        'as_of_date' => 'date:Y-m-d',
+    ];
 }
