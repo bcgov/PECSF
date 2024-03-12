@@ -237,7 +237,7 @@ class CampaignPledgeRequest extends FormRequest
             'pay_period_amount_other.min' => 'The min amount is $ 1.',
             'pay_period_amount_other.regex' => 'The invalid amount, max 2 decimal places.',
 
-            'pool_id.required_if' => "The pool id field is required.",
+            'pool_id.required_if' => "The Fund Supported Pool field is required",
             'charities.*.required_if' => 'The Charity field is required.',
 
             'percentages.*.required' => 'The Percentage field is required.',
