@@ -152,7 +152,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
                 foreach($chuck as $row)  {
 
                     // Special Rule -- To split GCPE employees from business unit BC022 
-                    $bu = BusinessUnit::where('code', $row->business_unit)->first();
+                    $bu = BusinessUnit::where('code', $row->business_unit)->with('organization')->first();
                     $business_unit_code = $bu->linked_bu_code;
                     if ($row->business_unit == 'BC022' && str_starts_with($row->dept_name, 'GCPE')) {
                         $business_unit_code  = 'BGCPE';
@@ -258,6 +258,8 @@ class UpdateEligibleEmployeeSnapshot extends Command
                                     ->from('eligible_employee_by_bus')
                                     ->whereColumn('eligible_employee_by_bus.business_unit_code', 'business_units.code');
                         })
+                        ->where('status', 'A')
+                        ->with('organization')
                         ->get();
 
         foreach($business_units as $row ) {
@@ -265,7 +267,7 @@ class UpdateEligibleEmployeeSnapshot extends Command
             EligibleEmployeeByBU::create([
                 'campaign_year' => $campaign_year,
                 'as_of_date' => $as_of_date->format('Y-m-d'),
-                'organization_code' => 'GOV',
+                'organization_code' => $row->organization ? $row->organization->code : 'GOV',
 
                 'business_unit_code' => $row->code,
                 'business_unit_name' => $row->name,
