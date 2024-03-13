@@ -65,6 +65,7 @@ use App\Http\Controllers\Admin\ChallengePageDataReportController;
 use App\Http\Controllers\Admin\GamingAndFundrasingReportController;
 use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
 use App\Http\Controllers\Admin\OrgPartipationTractorReportController;
+use App\Http\Controllers\Admin\EligibleEmployeeSummaryMaintenanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
