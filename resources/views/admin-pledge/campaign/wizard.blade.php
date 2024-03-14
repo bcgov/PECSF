@@ -864,23 +864,32 @@ $(function () {
     $(document).on("click", "div.delete_this_row" , function(e) {
         e.preventDefault();
 
-        Swal.fire({
-            text: 'Are you sure to delete this line ?'  ,
-            // icon: 'question'
-            //showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: 'Delete',
-            //denyButtonText: `Don't save`,
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                // Swal.fire('Saved!', '', '')
-                //$(this).parent().parent().parent().parent().remove();
-                el = '#' + $(this).attr('data-id');
-                $(el).remove();
+        row_count = $('#charity-table tr').length;
 
-            }
-        })
+        if (row_count > 2) {
+            Swal.fire({
+                text: 'Are you sure to delete this line ?'  ,
+                // icon: 'question'
+                //showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                //denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    // Swal.fire('Saved!', '', '')
+                    //$(this).parent().parent().parent().parent().remove();
+                    el = '#' + $(this).attr('data-id');
+                    $(el).remove();
+                }
+            })
+        } else {
+            Swal.fire({
+                icon: "error",
+                // title: "Oops...",
+                text: "At minimum, one charity needs to be defined",
+            });
+        }
     });
 
     $(document).on("keyup", "input[name='percentages[]']", function(e) {
