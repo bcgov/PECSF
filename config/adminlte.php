@@ -299,7 +299,7 @@ return [
             'text' => 'Donations',
             'url' => '/donations',
             'icon' => 'nav-icon fa fa-hand-holding-heart', //'give',
-            'active' => ['/donations/*', '/donate','/donate/*'],
+            'active' => ['/donations/*', '/annual-campaign/*', '/donate-now/*', '/special-campaign/*'],
         ],
         [
             'text' => 'Volunteering',
