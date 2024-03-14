@@ -25,17 +25,76 @@
 @endsection
 @section('content')
 
+@if ($message = Session::get('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ $message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+<div class="card">
+    <form class="filter">
+        <div class="card-body py-0 search-filter">
+            <h2>Search Criteria</h2>
+    
+            <div class="form-row">
+
+                <div class="form-group col-md-2">
+                    <label for="filter_campaign_year">
+                        Campaign Year
+                    </label>
+                    <select class="form-control" name="filter_campaign_year">
+                        <option value="" selected>All</option>
+                        @foreach ($campaign_years as $cy)                                            
+                            <option value="{{ $cy }}">{{ $cy }}</option>
+                        @endforeach
+                    </select>
+                </div> 
+
+                <div class="form-group col-md-3">
+                    <label for="filter_organization_code">
+                        Organization
+                    </label>
+                    <select name="filter_organization_code" value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach( $organizations as $organization)
+                            <option value="{{ $organization->code }}"
+                                {{ isset($filter['filter_organization_code']) && $filter['filter_organization_code'] == $organization->code ? 'selected' : '' }}>
+                                {{ $organization->name }} ({{ $organization->code }})</option>
+                        @endforeach 
+                    </select>
+                </div>
+    
+                <div class="form-group col-md-3">
+                    <label for="filter_business_unit">
+                        Business Code / Name
+                    </label>
+                    <input name="filter_business_unit" class="form-control" 
+                            value="{{ isset($filter['filter_business_unit']) ? $filter['filter_business_unit'] : '' }}"/>
+                </div> 
+    
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="refresh-btn" value="Search" class="form-control btn-primary">Search</button>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Clear</button>
+                </div>
+
+            </div>
+        </div> 
+    </form>  
+</div>   
+
 <div class="card">
 	<div class="card-body">
-
-        @if ($message = Session::get('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
 
 		<table class="table table-bordered" id="ee-table" style="width:100%">
 			<thead>
@@ -73,6 +132,11 @@
 		text-align: right !important;
         padding-right: 10px;
 	}
+
+    #ee-table_filter {
+        display: none;
+    }
+
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
@@ -120,7 +184,10 @@
             'order': [[0, 'desc']],
             ajax: {
                 url: '{!! route('settings.eligible-employee-summary.index') !!}',
-                data: function (d) {
+                data: function (data) {
+                    data.filter_organization_code  = $('select[name=filter_organization_code').val();
+                    data.filter_campaign_year = $('select[name=filter_campaign_year').val();
+                    data.filter_business_unit = $('input[name=filter_business_unit').val();
                 },
                 complete: function(xhr, resp) {
                     min_height = $(".wrapper").outerHeight();
@@ -160,6 +227,35 @@
             
         });
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                if ($(this).parents('form.filter') )  
+                     oTable.ajax.reload();    
+                return false;
+            }
+        });
+
+        $('.search-filter select').on('change', function() {
+            oTable.draw();
+        });
+
+        $('#refresh-btn').on('click', function() {
+            // oTable.ajax.reload(null, true);
+            oTable.draw();
+        });
+
+        $('#reset-btn').on('click', function() {
+
+            // Reset filter fields value
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
+
+            oTable.search( '' ).columns().search( '' ).draw();
+        });
+
+
+
         // Model for creating new business unit
         $('#ee-create-modal').on('show.bs.modal', function (e) {
             // do something...
@@ -168,6 +264,7 @@
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 $(document).find('[name='+field_name+']').val('');
             });
+            $('#ee-create-modal').find('[name=campaign_year]').val( {{ today()->year }} );
             $('#ee-create-modal').find('[name=status]').val('A');
 
         })

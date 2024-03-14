@@ -13,8 +13,13 @@
 
 			<div class="form-group row">
                 <label for="campaign_year" class="col-sm-3 col-form-label">Campaign Year:</label>
-                <div class="col-sm-4">
-					<input type="text" class="form-control" id="campaign_year" name="campaign_year">
+                <div class="col-sm-2">
+					<select class="form-control" name="campaign_year">
+						@foreach ($campaign_years as $cy)
+							<option value="{{ $cy }}">{{ $cy }}</option>
+						@endforeach
+					</select>
+					{{-- <input type="text" class="form-control" id="campaign_year" name="campaign_year"> --}}
                 </div>
             </div>
 
@@ -28,11 +33,13 @@
 			<div class="form-group row">
                 <label for="organization_code" class="col-sm-3 col-form-label">Organization</label>
                 <div class="col-sm-5">
-					<select class="form-control" style="width:100%;" name="organization_code">
-						<option value="">select organization</option>
+					<select class="form-control" name="organization_code">
+						<option value="" data-bu="">-- select organization --</option>
 						@foreach ($organizations as $org)
-							<option value="{{ $org->code }}" data-bu="{{ $org->business_unit->name . ' (' . $org->bu_code . ')' }}">
-								{{ $org->name . ' (' . $org->code . ')' }}</option>
+							@if ($org->code <> 'GOV')
+								<option value="{{ $org->code }}" data-bu="{{ $org->business_unit->name . ' (' . $org->bu_code . ')' }}">
+									{{ $org->name . ' (' . $org->code . ')' }}</option>
+							@endif
 						@endforeach
 					</select>
 					{{-- <input type="text" class="form-control" name="organization_code" disabled> --}}
