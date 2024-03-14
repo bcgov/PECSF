@@ -254,8 +254,6 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
-
-
         // Model for creating new business unit
         $('#ee-create-modal').on('show.bs.modal', function (e) {
             // do something...
