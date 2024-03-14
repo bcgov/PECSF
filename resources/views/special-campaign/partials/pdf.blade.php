@@ -60,7 +60,7 @@
 <h4 style="text-align:center;width:100%;">Donation - Special Campaign</h4>
 
 
-<span><i>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected. PECSF issues cheques twice a year. In August, for payroll deductions from January - June, and in March, for payroll deductions from July - December.</i></span>
+<span><i>Please note that this is not a tax receipt. Payroll deductions will appear on your payroll issued T4 for year when the funds are collected.</i></span>
 
 <div class="container">
 
@@ -99,10 +99,15 @@
                         <td class="col-6">Initative :</td>
                         <td class="col-6">{{ $special_campaign_name }}</td>
                     </tr>
+
+                    <tr class="row">
+                        <td class="col-6">Campaign period :</td>
+                        <td class="col-6">From {{ $special_campaign->start_date->format('M j, Y') }} to {{ $special_campaign->end_date->format('M j, Y') }}</td>
+                    </tr>
                     
                     <tr>
                         <td class="col-6">Deduction date :</td>
-                        <td class="col-6">{{ $check_dt->format('Y-m-d') }}</td>
+                        <td class="col-6"> {{ $check_dt->format('Y-m-d') }}</td>
                     </tr>
                 </table>
             </div>

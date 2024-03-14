@@ -347,7 +347,7 @@ class DonationController extends Controller {
                 } elseif ($request->donation_type == 'Special Campaign') {
                     // Special Campaign - Detail
 
-                    $pledge = SpecialCampaignPledge::where('id', $request->id)->first();
+                    $pledge = SpecialCampaignPledge::where('id', $request->id)->with('special_campaign')->first();
 
                     $year = $request->yearcd;
                     $frequency = $request->frequency;

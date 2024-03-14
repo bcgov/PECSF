@@ -232,6 +232,8 @@
                                         <h6 class="card-text">{{ $special_campaign->charity->charity_name  }}</h6>
                                         <h6 class="card-text">{{ $special_campaign->charity->city . ', ' . $special_campaign->charity->province }}</h6>
                                         <p class="card-text font-weight-bold">{{ $special_campaign->description }}</p>
+                                        <hr>
+                                        <h6 class="card-text"> Campaign period : From {{ $special_campaign->start_date->format('M j, Y') }} to {{ $special_campaign->end_date->format('M j, Y') }}</h6>
                                         <input class="form-check-input" style="display:none" type="radio" 
                                             name="special_campaign_id" id="special_campaign_{{ $special_campaign->id }}"
                                             value="{{ $special_campaign->id }}" {{ $special_campaign->id ==  $pledge->special_campaign_id ? 'checked' : '' }}>
@@ -388,6 +390,13 @@
         border: 1px solid red; */
         background-color: #1a5a96;
         color: white;
+    }
+
+    #special-campaign-area hr {
+        margin-top: 0.2rem;
+        margin-bottom: 0.5rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.9);
     }
 
 </style>

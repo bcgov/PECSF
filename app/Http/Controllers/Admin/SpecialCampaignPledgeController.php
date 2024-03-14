@@ -148,8 +148,8 @@ class SpecialCampaignPledgeController extends Controller
         }
 
         // get all the record 
-        $organizations = Organization::orderBy('name')->get();
-        $years = SpecialCampaignPledge::distinct('yearcd')->orderBy('yearcd', 'desc')->pluck('yearcd');
+        $organizations = Organization::where('status', 'A')->orderBy('name')->get();
+        $years = CampaignYear::orderBy('calendar_year', 'desc')->pluck('calendar_year');
         $cities = City::orderBy('city')->get();
 
         // load the view and pass 
@@ -174,7 +174,12 @@ class SpecialCampaignPledgeController extends Controller
 
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
 
-        $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        // Sepcial Campaign
+        // $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        $special_campaigns = SpecialCampaign::where('start_date', '<=', today())
+                ->where('end_date', '>=', today())
+                ->orderBy('start_date')
+                ->get();
 
         // default the first special campaign
         // $pledge->special_campaign_id = $special_campaigns->first()->id;
@@ -296,7 +301,11 @@ class SpecialCampaignPledgeController extends Controller
             return abort(404);      // 404 Not Found
         }
 
-        $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        // $special_campaigns = SpecialCampaign::orderBy('name')->get();
+        $special_campaigns = SpecialCampaign::where('start_date', '<=', today())
+                                ->where('end_date', '>=', today())
+                                ->orderBy('start_date')
+                                ->get();
 
         // $organization = Organization::where('id', $pledge->organization_id)->first();
         $cities = City::orderBy('city')->get();
