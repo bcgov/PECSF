@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\BusinessUnit;
+use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -36,7 +37,16 @@ class EligibleEmployeeSummaryMaintenanceController extends Controller
         if($request->ajax()) {
 
             // $columns = ["code","name","status","effdt","linked_bu_code", "created_at"];
-            $summaries = EligibleEmployeeByBU::all();
+            $summaries = EligibleEmployeeByBU::when( $request->filter_campaign_year, function($query) use($request) {
+                                $query->where('eligible_employee_by_bus.campaign_year', $request->filter_campaign_year);
+                            })
+                            ->when( $request->filter_organization_code, function($query) use($request) {
+                                $query->where('eligible_employee_by_bus.organization_code', $request->filter_organization_code);
+                            })
+                            ->when( $request->filter_business_unit, function($query) use($request) {
+                                $query->where('eligible_employee_by_bus.business_unit_code', 'like', '%' . $request->filter_business_unit . '%')
+                                    ->orWhere('eligible_employee_by_bus.business_unit_name', 'like', '%' . $request->filter_business_unit . '%');
+                            });
 
             return Datatables::of($summaries)
                 ->addColumn('action', function ($summary) {
@@ -52,15 +62,16 @@ class EligibleEmployeeSummaryMaintenanceController extends Controller
             ->make(true);
         }
         // business-units --> eligible-employee-summary
-        $organizations = Organization::where('code', '<>', 'GOV')
-                                        ->where('status', 'A')->orderBy('code')
-                                        ->with('business_unit')
+        $campaign_years = range( today()->year, 2023);
+
+        $organizations = Organization::where('status', 'A')->orderBy('name')
+                                       ->with('business_unit')
+                                       ->get();
+
+        $business_units = BusinessUnit::where('status', 'A')->orderBy('name')
                                         ->get();
 
-        $business_units = BusinessUnit::where('status', 'A')->orderBy('code')
-                                        ->get();
-
-        return view('admin-campaign.eligible-employee-summary.index', compact('organizations', 'business_units'));
+        return view('admin-campaign.eligible-employee-summary.index', compact('campaign_years', 'organizations', 'business_units'));
 
     }
 
