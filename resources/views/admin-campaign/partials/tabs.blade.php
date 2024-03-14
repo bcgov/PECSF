@@ -114,7 +114,8 @@
 
     <li class="nav-item dropdown">
         @php $active =  ( preg_match("/settings.challenge$/", Route::current()->getName()) ||
-                          str_contains(Route::current()->getName(), 'settings.challenge-summary')
+                          str_contains(Route::current()->getName(), 'settings.challenge-summary') ||
+                          str_contains(Route::current()->getName(), 'settings.eligible-employee-summary')
                         ) ? 'active' : ''
         @endphp
         <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Challenge Setup</a>
@@ -124,7 +125,11 @@
 
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.challenge-summary') ? 'active' : ''}}"
                 href="{{ route('settings.challenge-summary.index') }}">Challenge Summary Update</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.eligible-employee-summary') ? 'active' : ''}}"
+            href="{{ route('settings.eligible-employee-summary.index') }}">Eligible Employee Summary Update</a>
         </div>
+        
     </li>
 
     {{-- <li class="nav-item">
