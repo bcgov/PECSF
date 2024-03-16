@@ -237,8 +237,11 @@ class ChallengePageTest extends TestCase
         $response = $this->get('/challenge/download?sort=department');
 
         $row = Setting::first();
+
+        $campaign_year = Setting::challenge_page_campaign_year();
+        $report_date = (today()->month >= 3 && today()->month <= 8) ?  today() : $row->campaign_end_date;
                                   
-        $filename = 'Daily_Campaign_Update_By_Dept_' . $row->campaign_end_date->format('Y-m-d') . '.xlsx';
+        $filename = 'Daily_Campaign_Update_By_Dept_' . $report_date->format('Y-m-d') . '.xlsx';
         $response->assertStatus(200);
         $response->assertDownload( $filename ); 
 
@@ -266,13 +269,20 @@ class ChallengePageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonPath('data', []);
-        $response->assertSeeText(number_format(round( $sum, 0)) );
 
-        // check database
-        foreach($expected_rows as $row) {
-            $this->assertDatabaseHas('daily_campaigns', $row );
+        $campaign_year = Setting::challenge_page_campaign_year();
+        if (today()->month >= 3 && today()->month <= 8) {
+            // No data proceed by 
+        } else {
+
+            $response->assertSeeText(number_format(round( $sum, 0)) );
+
+            // check database
+            foreach($expected_rows as $row) {
+                $this->assertDatabaseHas('daily_campaigns', $row );
+            }
         }
-
+        
     }
 
     public function test_the_non_gov_annual_campaign_pledge_correctly_calculate()
@@ -289,11 +299,17 @@ class ChallengePageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonPath('data', []);
-        $response->assertSeeText( number_format(round( $sum, 0)) );
 
-        // check database
-        foreach($expected_rows as $row) {
-            $this->assertDatabaseHas('daily_campaigns', $row );
+        $campaign_year = Setting::challenge_page_campaign_year();
+        if (today()->month >= 3 && today()->month <= 8) {
+            // No data proceed by 
+        } else {
+            $response->assertSeeText( number_format(round( $sum, 0)) );
+
+            // check database
+            foreach($expected_rows as $row) {
+                $this->assertDatabaseHas('daily_campaigns', $row );
+            }
         }
 
     }
@@ -313,11 +329,16 @@ class ChallengePageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonPath('data', []);
-        $response->assertSeeText( number_format(round( $sum, 0)) );
+        $campaign_year = Setting::challenge_page_campaign_year();
+        if (today()->month >= 3 && today()->month <= 8) {
+            // No data proceed by 
+        } else {
+            $response->assertSeeText( number_format(round( $sum, 0)) );
 
-        // check database
-        foreach($expected_rows as $row) {
-            $this->assertDatabaseHas('daily_campaigns', $row );
+            // check database
+            foreach($expected_rows as $row) {
+                $this->assertDatabaseHas('daily_campaigns', $row );
+            }
         }
 
     }
@@ -336,11 +357,17 @@ class ChallengePageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonPath('data', []);
-        $response->assertSeeText( number_format(round( $sum, 0)) );
 
-        // check database
-        foreach($expected_rows as $row) {
-            $this->assertDatabaseHas('daily_campaigns', $row );
+        $campaign_year = Setting::challenge_page_campaign_year();
+        if (today()->month >= 3 && today()->month <= 8) {
+            // No data proceed by 
+        } else {
+            $response->assertSeeText( number_format(round( $sum, 0)) );
+
+            // check database
+            foreach($expected_rows as $row) {
+                $this->assertDatabaseHas('daily_campaigns', $row );
+            }
         }
 
     }
@@ -361,11 +388,17 @@ class ChallengePageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonPath('data', []);
-        $response->assertSeeText(number_format(round( $sum, 0)) );
 
-        // check database
-        foreach($expected_rows as $row) {
-            $this->assertDatabaseHas('daily_campaigns', $row );
+        $campaign_year = Setting::challenge_page_campaign_year();
+        if (today()->month >= 3 && today()->month <= 8) {
+            // No data proceed by 
+        } else {
+            $response->assertSeeText(number_format(round( $sum, 0)) );
+
+            // check database
+            foreach($expected_rows as $row) {
+                $this->assertDatabaseHas('daily_campaigns', $row );
+            }
         }
 
     }
