@@ -26,7 +26,6 @@ use Illuminate\Validation\Rule;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 use Illuminate\Http\Request;
-use App\MicrosoftGraph\TokenCache;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Hash;
