@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "76141ca4695340fa5c6d31487978b7cb",
+    "content-hash": "4e07993d4ab6f8b54ef2b966ee60394e",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -4644,58 +4644,6 @@
                 "source": "https://github.com/maximebf/php-debugbar/tree/v1.20.2"
             },
             "time": "2024-02-15T10:49:09+00:00"
-        },
-        {
-            "name": "microsoft/microsoft-graph",
-            "version": "1.110.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/microsoftgraph/msgraph-sdk-php.git",
-                "reference": "da45ea4a5d5dda97549313129748bd10fdb2930c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/microsoftgraph/msgraph-sdk-php/zipball/da45ea4a5d5dda97549313129748bd10fdb2930c",
-                "reference": "da45ea4a5d5dda97549313129748bd10fdb2930c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
-                "php": "^8.0 || ^7.3",
-                "psr/http-message": "^1.0 || ^2.0"
-            },
-            "require-dev": {
-                "guzzlehttp/promises": "^1.0 || ^2.0",
-                "mikey179/vfsstream": "^1.2",
-                "phpstan/phpstan": "^0.12.90 || ^1.0.0",
-                "phpunit/phpunit": "^8.0 || ^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Microsoft\\Graph\\": "src/",
-                    "Beta\\Microsoft\\Graph\\": "src/Beta/Microsoft/Graph/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Microsoft Graph Client Tooling",
-                    "email": "graphtooling@service.microsoft.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "The Microsoft Graph SDK for PHP",
-            "homepage": "https://developer.microsoft.com/en-us/graph",
-            "support": {
-                "issues": "https://github.com/microsoftgraph/msgraph-sdk-php/issues",
-                "source": "https://github.com/microsoftgraph/msgraph-sdk-php/tree/1.110.0"
-            },
-            "time": "2024-01-15T18:49:30+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",

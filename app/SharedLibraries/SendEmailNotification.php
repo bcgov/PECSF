@@ -1,6 +1,6 @@
 <?php
 
-namespace App\MicrosoftGraph;
+namespace App\SharedLibraries;
 
 use DateTime;
 use DateInterval;
