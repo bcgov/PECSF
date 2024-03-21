@@ -51,7 +51,7 @@ class SystemQueueStatus extends Command
                         $this->info( "  The background queue process ". $payload['displayName'] . " submitted on " . $t . " has been in the queue for more than 5 minutes." . PHP_EOL );
                                                                 
                         // send out email notification
-                        $notify = new \App\MicrosoftGraph\SendEmailNotification();
+                        $notify = new \App\SharedLibraries\SendEmailNotification();
                         $notify->job_id =  null;
                         $notify->job_name = $this->signature;
                         $notify->subject = "**ALERT** The background job was queued up over 5 mins"; 
@@ -70,7 +70,7 @@ class SystemQueueStatus extends Command
         } catch (\Exception $ex) {
 
             // send out email notification
-            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify = new \App\SharedLibraries\SendEmailNotification();
             $notify->job_id =  null;
             $notify->job_name = $this->signature;
             $notify->error_message = $ex->getMessage();

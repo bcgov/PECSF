@@ -6,7 +6,6 @@ use App\Models\User;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 use Illuminate\Http\Request;
-use App\MicrosoftGraph\TokenCache;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
