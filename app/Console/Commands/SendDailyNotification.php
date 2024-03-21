@@ -40,11 +40,17 @@ class SendDailyNotification extends Command
     {
 
         // June 24, replaceto send 
+        $switch = env('EMAIL_DAILY_NOTIFICATION_ENABLED');
+        if (!($switch)) {
+            return true;
+        }
 
-        $toAddresses = ['james.poon@gov.bc.ca', 'james.poon@telus.com',
-                        'Kunal.Kapoor1@ca.ey.com',
-                        'jpoon88@gmail.com', 'employee11@extest.gov.bc.ca',
-                        'employee12@extest.gov.bc.ca'];
+        // $toAddresses = ['james.poon@gov.bc.ca', 'james.poon@telus.com',
+        //                 'Kunal.Kapoor1@ca.ey.com',
+        //                 'jpoon88@gmail.com', 'employee11@extest.gov.bc.ca',
+        //                 'employee12@extest.gov.bc.ca'];
+        $toAddresses = explode( ',', env('EMAIL_DAILY_NOTIFICATION_ADDRESSES') );   
+
         $subject = '(from region: '. env('APP_ENV') .') ' . env('APP_NAME') . ' - schedule daily notification testing (Ver 2.0)';
         $body = "Test message -- daily notification send out from server for testing purpose, please ignore. (from region: " . env('APP_ENV') .')';
 
