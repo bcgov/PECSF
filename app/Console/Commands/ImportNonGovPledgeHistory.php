@@ -98,7 +98,7 @@ class ImportNonGovPledgeHistory extends Command
             }
 
             // send out email notification
-            $notify = new \App\MicrosoftGraph\SendEmailNotification();
+            $notify = new \App\SharedLibraries\SendEmailNotification();
             $notify->job_id =  $this->task ? $this->task->id : null;
             $notify->job_name =  $this->signature;
             $notify->error_message = $ex->getMessage();
