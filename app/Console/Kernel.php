@@ -116,21 +116,25 @@ class Kernel extends ConsoleKernel
                 //         ->dailyAt('2:15')
                 //         ->sendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
 
-                $schedule->command('command:ImportCities')
-                        ->skip(function () {
-                                return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
-                        })
+                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1)) {
+
+                   $schedule->command('command:ImportCities')
+                        // ->skip(function () {
+                        //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                        // })
                         ->weekdays()
                         ->at('2:30')
                         ->sendOutputTo(storage_path('logs/ImportCities.log')); 
 
-                $schedule->command('command:ImportDepartments')
-                        ->skip(function () {
-                                return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
-                        })
+                   $schedule->command('command:ImportDepartments')
+                        // ->skip(function () {
+                        //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                        // })
                         ->weekdays()
                         ->at('2:35')
                         ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+                        
+                }
 
                 // For testing purpose: to generate 2022 pledges based on the BI pledge history
                 // $schedule->command('command:GeneratePledgeFromHistory')
