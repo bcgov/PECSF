@@ -44,16 +44,25 @@ class SystemStatusController extends Controller
 
             $job_name = explode(" ", $event->command)[2];
 
-            // skip serveral jobs which the history doesn't logged in audit table
+            // SKIP -- serveral jobs which the history doesn't logged in audit table
             if ($job_name == 'command:queueStatus' || $job_name == 'notify:daily') {
                 continue;
             }
 
-            // special handle for job "command:ExportPledgesToPSFT"
+            // SPECIAL -- job "command:ExportPledgesToPSFT"
             if ($job_name == $last_job_name && $job_name == 'command:ExportPledgesToPSFT') {
                 continue;
             }
             $last_job_name = $job_name;
+
+            // SPECIAL -- only run on Monday and weekdays if annual campaign period is open
+            if ($job_name == 'command:ImportCities' || $job_name == 'command;ImportDepartments') {
+                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1)) {
+                    // normal 
+                } else {
+                    continue;
+                }
+            }
 
             // check environments
             if ($event->environments && !(in_array( env('APP_ENV'), $event->environments)) ) {
@@ -67,7 +76,7 @@ class SystemStatusController extends Controller
             );
             $previousDueDateUpto = $previousDueDate->copy()->addMinutes(5)->format('Y-m-d H:i:s');
 
-            $audit = ScheduleJobAudit::where('job_name', $job_name)
+            $audit = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
                         ->whereBetween('start_time', [$previousDueDate, $previousDueDateUpto])
                         ->where('status', 'Completed')
                         ->first();
@@ -75,7 +84,7 @@ class SystemStatusController extends Controller
             if ($audit) {
                 $status = 'Success';
             } else {
-                $status = 'Failure -- The previous schedule did not run.';
+                $status = 'Failure -- The previous schedule did not run or fail.';
             }
 
 
