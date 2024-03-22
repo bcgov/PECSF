@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\SystemStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::middleware(['api_token'])->group(function () {
+
+    Route::get('/system/queue-status/{api_token}', [SystemStatusController::class, 'queueStatus']);
+    Route::get('/system/schedule-status/{api_token}', [SystemStatusController::class, 'scheduleStatus']);
+
 });
