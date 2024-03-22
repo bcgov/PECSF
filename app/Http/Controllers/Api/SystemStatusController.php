@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Api;
 use DateTimeZone;
 use Carbon\Carbon;
 use Cron\CronExpression;
-use App\Models\CampaignYear;
-use Illuminate\Http\Request;
-use App\Models\ScheduleJobAudit;
-use Illuminate\Events\Dispatcher;
+use Exception;
 use App\Http\Controllers\Controller;
+use App\Models\CampaignYear;
+use App\Models\ScheduleJobAudit;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
+use Illuminate\Queue\QueueManager;
+use Illuminate\Support\Facades\DB;
 
 class SystemStatusController extends Controller
 {
@@ -25,8 +28,32 @@ class SystemStatusController extends Controller
             $status = "running";
         }
 
+        // checking queue
+        $queues = DB::table(config('queue.connections.database.table'))->get();
+
+        $jobs = [];
+        if($queues) {
+
+            foreach($queues as $queue) {
+
+                $t = Carbon::parse($queue->available_at);
+                $t->setTimezone('America/Vancouver');
+
+                // if queue up more than 5 minutes
+                if ( (!($queue->reserved_at)) && Carbon::now()->diffInSeconds($t) > 300) {
+
+                    $payload = json_decode($queue->payload, true);
+                    array_push($jobs, "The background queue process ". $payload['displayName'] . " submitted on " . $t . " has been in the queue for more than 5 minutes.");
+                    
+                }
+            }
+
+        }
+
         return response()->json([
             'queue status' => $status,
+            'now' => now()->format('Y-m-d H:i:s'),
+            'jobs' => $jobs,
         ], 200);
 
     }
@@ -79,13 +106,13 @@ class SystemStatusController extends Controller
 
             $audit = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
                         ->whereBetween('start_time', [$previousDueDate, $previousDueDateUpto])
-                        ->where('status', 'Completed')
                         ->first();
 
             if ($audit) {
-                $status = 'Success';
+                $status = "Success -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
+                           " | start at " . $audit->start_time . " - end at " . $audit->end_time;
             } else {
-                $status = 'Failure -- The previous schedule did not run or fail.';
+                $status = 'Failure -- The previous schedule did not run';
             }
 
 
@@ -95,9 +122,9 @@ class SystemStatusController extends Controller
                 'environments' => $event->environments,
 
                 // $event->description,
-                'previous' => $previousDueDate->format('Y-m-d H:i:s'),
+                'previous schedule time' => $previousDueDate->format('Y-m-d H:i:s'),
                 'status' => $status,
-                'next' => (new CronExpression($event->expression))
+                'next schedule time' => (new CronExpression($event->expression))
                             ->getNextRunDate(Carbon::now())
                             ->setTimezone( $timezone )->format('Y-m-d H:i:s'),
             ];
