@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use DateTimeZone;
 use Carbon\Carbon;
 use Cron\CronExpression;
+use App\Models\CampaignYear;
 use Illuminate\Http\Request;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Events\Dispatcher;
@@ -56,9 +57,9 @@ class SystemStatusController extends Controller
             $last_job_name = $job_name;
 
             // SPECIAL -- only run on Monday and weekdays if annual campaign period is open
-            if ($job_name == 'command:ImportCities' || $job_name == 'command;ImportDepartments') {
+            if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
                 if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1)) {
-                    // normal 
+                    // it should be processed 
                 } else {
                     continue;
                 }
