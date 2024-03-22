@@ -167,10 +167,10 @@ class Kernel extends ConsoleKernel
                 ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
 
         // Monitoring Process Queue every 5 mins 
-        $schedule->command('command:queueStatus')
-                ->everyFiveMinutes()
-                ->between('7:00', '19:00')
-                ->appendOutputTo(storage_path('logs/queueStatus.log'));
+        // $schedule->command('command:queueStatus')
+        //         ->everyFiveMinutes()
+        //         ->between('7:00', '19:00')
+        //         ->appendOutputTo(storage_path('logs/queueStatus.log'));
 
         // Daily Testing 
         $schedule->command('notify:daily')
