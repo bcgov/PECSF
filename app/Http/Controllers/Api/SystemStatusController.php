@@ -44,6 +44,11 @@ class SystemStatusController extends Controller
 
             $job_name = explode(" ", $event->command)[2];
 
+            // skip serveral jobs which the history doesn't logged in audit table
+            if ($job_name == 'command:queueStatus' || $job_name == 'notify:daily') {
+                continue;
+            }
+
             // special handle for job "command:ExportPledgesToPSFT"
             if ($job_name == $last_job_name && $job_name == 'command:ExportPledgesToPSFT') {
                 continue;
