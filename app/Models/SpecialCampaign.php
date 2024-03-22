@@ -14,7 +14,7 @@ class SpecialCampaign extends Model implements Auditable
 
     protected $fillable = [
         'name', 'description', 'banner_text', 'charity_id', 'start_date', 'end_date',
-        'image', 'created_by_id', 'updated_by_id'
+        'image', 'mime', 'image_data', 'created_by_id', 'updated_by_id'
     ];
 
     protected $casts = [
