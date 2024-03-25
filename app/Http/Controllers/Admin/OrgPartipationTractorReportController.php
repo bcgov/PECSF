@@ -103,7 +103,8 @@ class OrgPartipationTractorReportController extends Controller
             // }
 // dd($request->search['value']);
             // Prepare for the datatables
-            $processes = ProcessHistory::where('process_name', $this->process_name);
+            $processes = ProcessHistory::where('process_name', $this->process_name)
+                            ->with('created_by');
 
 
             return Datatables::of($processes)
