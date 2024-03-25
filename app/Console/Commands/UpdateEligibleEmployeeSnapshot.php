@@ -12,8 +12,10 @@ use App\Models\Organization;
 use Illuminate\Console\Command;
 use App\Models\ScheduleJobAudit;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
 use App\Models\EligibleEmployeeByBU;
 use App\Models\EligibleEmployeeDetail;
+use App\Jobs\OrgPartipationTrackersExportJob;
 
 class UpdateEligibleEmployeeSnapshot extends Command
 {
@@ -64,6 +66,11 @@ class UpdateEligibleEmployeeSnapshot extends Command
             $this->LogMessage( now() );
             $this->LogMessage("Task -- Capture a snapshot of Eligible Employee with region, business unit, department");
             $this->storeEligibleEmployeeDetail();
+            $this->LogMessage( now() );
+
+            $this->LogMessage( now() );
+            $this->LogMessage("Task -- Generate the Organization Participation Tractor Report at the designated time");
+            $this->generateOrgPartipationTractorReport();
             $this->LogMessage( now() );
 
         } catch (\Exception $ex) {
@@ -274,6 +281,93 @@ class UpdateEligibleEmployeeSnapshot extends Command
                 'ee_count' => 0,
 
             ]);
+
+        }
+
+    }
+
+    protected function generateOrgPartipationTractorReport() {
+        // See the function export2csv in OrgPartipationTractorReportController (should be same logic and criteria) 
+
+        $setting = Setting::first();
+
+        // $as_of_date = today();
+        $as_of_date = $this->option('date') ? Carbon::parse($this->option('date')) : today();
+        
+        $year = $as_of_date->year;
+
+        $this->LogMessage( "" );   
+        $this->LogMessage( "Note: The business rule for generating the Organization Participation Tractor Report on Sep 1st and Oct 15th every year" );   
+        $this->LogMessage( "" );   
+        $this->LogMessage( "As of date           : " . $as_of_date->format('Y-m-d') );           
+        $this->LogMessage( "" );   
+
+        if ( $as_of_date && 
+                ( $this->option('date')  ||
+                ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
+                ($as_of_date->month == 10 && $as_of_date->day == 15)
+                ) ) {
+
+            $campaign_year = today()->year;
+
+            $EE_BUs = EligibleEmployeeByBU::where('organization_code', 'GOV')
+                                ->where('campaign_year', $campaign_year)
+                                ->where('ee_count', '>', 0)
+                                ->orderBy('business_unit_code')->get();
+
+            $submitted_at = now();
+
+            foreach($EE_BUs as $index => $row) {
+
+                // For Testing purpose
+                // if ($row->business_unit_code <> 'BC003') {
+                //     continue;
+                // }
+
+                $as_of_date = $row->as_of_date;
+                $bu = $row->business_unit_code;
+
+                $filters = [];
+                $filters['as_of_date'] = $row->as_of_date;
+                $filters['business_unit_code'] = $bu;
+                $filters['year'] = $row->campaign_year;
+                $filters['title'] = $row->business_unit_name . ' ('  . $row->business_unit_code . ')';
+
+                $filename = 'OrgPartipationTracker_'.  $row->campaign_year . '_' . $bu . '_' . $as_of_date->format('Y-m-d') .".xlsx";
+
+                // Submit a Job
+                $history = \App\Models\ProcessHistory::create([
+                    'batch_id' => 0,
+                    'process_name' => 'OrgPartipationTractor',
+                    'parameters' => json_encode( $filters ),
+                    'status'  => 'Queued',
+                    'submitted_at' => $submitted_at,
+                    'original_filename' => $filename,
+                    'filename' => $filename,
+                    'total_count' => 0,
+                    'done_count' => 0,
+                    'created_by_id' => 999,
+                    'updated_by_id' => 999,
+                ]);
+        
+                // Submit a job 
+                $batch = Bus::batch([
+                    new OrgPartipationTrackersExportJob($history->id, $filename, $filters),
+                ])->dispatch();
+
+                // dd ($batch->id);
+                $history->batch_id = $batch->id;
+                $history->save();
+
+                $this->LogMessage( ($index + 1) . " Generate Organization Partipation Tractor Report for business unit " . $bu );
+
+            }
+
+        } else {
+
+            $this->LogMessage( "" );   
+            $this->LogMessage( "No Organization Partipation Tractor Report will be processed for today " . today()->format('Y-m-d') );   
+            $this->LogMessage( "" );   
 
         }
 
