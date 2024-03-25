@@ -131,7 +131,7 @@ class Kernel extends ConsoleKernel
                         //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
                         // })
                         ->weekdays()
-                        ->at('2:35')
+                        ->at('2:45')
                         ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
                         
                 }

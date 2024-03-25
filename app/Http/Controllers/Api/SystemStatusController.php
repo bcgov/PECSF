@@ -104,17 +104,21 @@ class SystemStatusController extends Controller
             );
             $previousDueDateUpto = $previousDueDate->copy()->addMinutes(5)->format('Y-m-d H:i:s');
 
-            $audit = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
-                        ->whereBetween('start_time', [$previousDueDate, $previousDueDateUpto])
-                        ->first();
-
-            if ($audit) {
-                $status = "Success -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
-                           " | start at " . $audit->start_time . " - end at " . $audit->end_time;
+            // 2 mins grace period for the schedule job start 
+            if (now() >= $previousDueDate && now() <= $previousDueDate->copy()->addMinutes(2)) {
+                $status = 'Pending -- The schedule job should start soon';
             } else {
-                $status = 'Failure -- The previous schedule did not run';
-            }
+                $audit = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
+                            ->whereBetween('start_time', [$previousDueDate, $previousDueDateUpto])
+                            ->first();
 
+                if ($audit) {
+                    $status = "Success -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
+                            " | start at " . $audit->start_time . " - end at " . $audit->end_time;
+                } else {
+                    $status = 'Failure -- The previous schedule did not run';
+                }
+            }
 
             $rows[] = [
                 'name' => $job_name,
