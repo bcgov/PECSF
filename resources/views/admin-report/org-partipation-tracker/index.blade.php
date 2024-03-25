@@ -105,6 +105,7 @@
                         <th><input name="select_all" value="1" id="history-list-select-all" type="checkbox" /></th>
                         <th>Process ID</th>
                         <th>Submitted At</th>
+                        <th>Submitted By</th>
                         <th>Start At</th>
                         <th>End At</th>
                         <th>Status</th>
@@ -297,6 +298,7 @@
                 {data: 'select_process', name: 'select_process', orderable: false, searchable: false},
                 {data: 'id', className: "dt-nowrap"},
                 {data: 'submitted_at',  className: "dt-nowrap"},
+                {data: 'created_by.name',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'start_at', defaultContent: '', className: "dt-nowrap" },
                 {data: 'end_at', defaultContent: '', className: "dt-nowrap"},
                 {data: 'status', "className": "dt-center"},
