@@ -23,5 +23,6 @@ Route::middleware(['api_token'])->group(function () {
 
     Route::get('/system/queue-status/{api_token}', [SystemStatusController::class, 'queueStatus']);
     Route::get('/system/schedule-status/{api_token}', [SystemStatusController::class, 'scheduleStatus']);
+    Route::get('/system/database-status/{api_token}', [SystemStatusController::class, 'databaseStatus']);
 
 });

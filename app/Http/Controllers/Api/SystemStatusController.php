@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
 use DateTimeZone;
 use Carbon\Carbon;
+use App\Models\Setting;
 use Cron\CronExpression;
-use Exception;
-use App\Http\Controllers\Controller;
 use App\Models\CampaignYear;
-use App\Models\ScheduleJobAudit;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Request;
+use App\Models\ScheduleJobAudit;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Console\Scheduling\Schedule;
 
 class SystemStatusController extends Controller
 {
@@ -137,4 +138,22 @@ class SystemStatusController extends Controller
         return response()->json( $rows, 200);
 
     }
+
+    public function databaseStatus(Request $request) 
+    {
+
+        $status = "running";
+        try {
+            $setting = Setting::first();
+        } catch (Exception $ex) {
+            $status = "Failure -- " . $ex->getMessage();
+        }       
+
+        return response()->json([
+            'database status' => $status,
+            'now' => now()->format('Y-m-d H:i:s'),
+        ], 200, [], JSON_PRETTY_PRINT);
+
+    }
+
 }
