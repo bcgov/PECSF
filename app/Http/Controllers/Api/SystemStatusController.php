@@ -24,7 +24,7 @@ class SystemStatusController extends Controller
         // Run the command
         $result = shell_exec('ps -eF');
 
-        $status = "Failure -- The background process queue is not functioning.";
+        $status = "@@@ Failure @@@ -- The background process queue is not functioning.";
         if (str_contains( strtolower($result), 'artisan queue:work')) {
             $status = "running";
         }
@@ -55,7 +55,7 @@ class SystemStatusController extends Controller
             'queue status' => $status,
             'now' => now()->format('Y-m-d H:i:s'),
             'jobs' => $jobs,
-        ], 200);
+        ], 200, [], JSON_PRETTY_PRINT);
 
     }
 
@@ -117,7 +117,7 @@ class SystemStatusController extends Controller
                     $status = "Success -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
                             " | start at " . $audit->start_time . " - end at " . $audit->end_time;
                 } else {
-                    $status = 'Failure -- The previous schedule did not run';
+                    $status = '@@@ Failure @@@ -- The previous schedule did not run';
                 }
             }
 
@@ -135,7 +135,7 @@ class SystemStatusController extends Controller
             ];
         }
 
-        return response()->json( $rows, 200);
+        return response()->json($rows, 200, [], JSON_PRETTY_PRINT);
 
     }
 
@@ -146,7 +146,7 @@ class SystemStatusController extends Controller
         try {
             $setting = Setting::first();
         } catch (Exception $ex) {
-            $status = "Failure -- " . $ex->getMessage();
+            $status = "@@@ Failure @@@ -- " . $ex->getMessage();
         }       
 
         return response()->json([
