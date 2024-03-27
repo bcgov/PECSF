@@ -16,7 +16,7 @@ class FSPoolCharity extends Model implements Auditable
     protected $fillable =[
         'f_s_pool_id', 'charity_id', 'status', 'name', 'description', 
         'percentage',  'contact_title', 'contact_name', 'contact_email', 'notes',
-        'image'
+        'image', 'mime', 'image_data' 
     ];
 
     public function charity() 
