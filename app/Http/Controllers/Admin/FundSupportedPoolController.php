@@ -296,6 +296,11 @@ class FundSupportedPoolController extends Controller
                     if (array_key_exists($i, $upload_images)) {
                         // dd ( $request->file('images') );
                         $file= $upload_images[$i];
+
+                          // also store the upload file in database for backup purpose
+                        $mime = $file->getMimeType();
+                        $base64 = base64_encode( $file->get() );
+
                         $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
 
                         $file->move(public_path( $this->image_folder ), $filename);
@@ -314,6 +319,9 @@ class FundSupportedPoolController extends Controller
                         'contact_email' => array_key_exists($i, $contact_emails) ? $contact_emails[$i] : null,
                         'notes'         => array_key_exists($i, $notes) ? $notes[$i] :null,
                         'image'         => $filename,
+
+                        'mime'          => $mime,
+                        'image_data'    => $base64,
                     ]);
                 }
             }
@@ -540,8 +548,15 @@ class FundSupportedPoolController extends Controller
 
                     if (array_key_exists($i, $upload_images)) {
                         $file= $upload_images[$i];
+
+                        // also store the upload file in database for backup purpose
+                        $mime = $file->getMimeType();
+                        $base64 = base64_encode( $file->get() );
+
                         $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                         $payload['image'] = $new_filename;
+                        $payload['mime'] = $mime;
+                        $payload['image_data'] = $base64;
 
                         // Save the new image file on folder 
                         $file->move(public_path( $this->image_folder ), $new_filename);
