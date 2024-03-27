@@ -239,7 +239,7 @@ class CharityListMaintenanceTest extends TestCase
 
         // prepare upload file 
         $filename = 'Test_Charities_results.txt';
-        $file_path = storage_path('app/tmp/' . $filename);
+        $file_path = storage_path('app/test_data_files/' . $filename);
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $uploadedFile = new UploadedFile( $file_path, $filename, $finfo->file($file_path), null, true );
 
@@ -284,7 +284,7 @@ class CharityListMaintenanceTest extends TestCase
 
     //     // prepare upload file 
     //     $filename = 'Test_Data_BCS.xlsx';
-    //     $file_path = storage_path('app/tmp/' . $filename);
+    //     $file_path = storage_path('app/test_data_files/' . $filename);
     //     $finfo = new finfo(FILEINFO_MIME_TYPE);
     //     $uploadedFile = new UploadedFile( $file_path, $filename, $finfo->file($file_path), null, true );
 
@@ -331,7 +331,7 @@ class CharityListMaintenanceTest extends TestCase
 
     //     // prepare upload file 
     //     $filename = 'Test_Data_LA.xlsx';
-    //     $file_path = storage_path('app/tmp/' . $filename);
+    //     $file_path = storage_path('app/test_data_files/' . $filename);
     //     $finfo = new finfo(FILEINFO_MIME_TYPE);
     //     $uploadedFile = new UploadedFile( $file_path, $filename, $finfo->file($file_path), null, true );
 
