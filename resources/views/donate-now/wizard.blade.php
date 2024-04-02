@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-9 col-sm-9">
             <h1>Make a one-time donation</h1>
-            <p class="text-muted">When you give through PECSF 100% of your donated dollars goes to the organizations you<br> choose to support.</p>
+            <p style="color: #687278;">When you give through PECSF 100% of your donated dollars goes to the organizations you<br> choose to support.</p>
 
 
             {{-- Main Content --}}
@@ -19,16 +19,16 @@
                 {{-- <div class="card-header border-0 py-2"> --}}
                     <div class=" card-timeline px-2 border-0" style="display:block;">
                         <ul class="bs4-step-tracking">
-                            <li class="active">
+                            <li class="active" tabindex="0">
                                 <div><i class="fas fa-random fa-2xl"></i></div>Pool or Non-Pool
                             </li>
-                            <li class="">
+                            <li class="" tabindex="-1">
                                 <div><i class="fas fa-bars fa-2xl"></i></div>In Support Of
                             </li>
-                            <li class="">
+                            <li class="" tabindex="-1">
                                 <div><i class="fas fa-dollar-sign  fa-2xl"></i></div>Amount
                             </li>
-                            <li class="">
+                            <li class="" tabindex="-1">
                                 <div><i class="fas fa-check fa-2xl"></i></div>Review and Submit
                             </li>
                         </ul>
@@ -164,8 +164,8 @@
     width: 25%;   /* change from 25 to 20% */
     float: left;
     position: relative;
-    font-weight: 400;
-    color:  #b2b2b2;  /* #878788 ; */
+    font-weight: 500;
+    color:  #687278;  /* #878788 ; */
     text-align: center;
     z-index: 100;
 }
@@ -181,9 +181,12 @@
     padding-right: 11px !important;
     text-align: right !important
 }
+.bs4-step-tracking li.active> div {
+        color: #fff;  
+}
 
 .bs4-step-tracking li> div {
-    color: #fff;
+    color: #687278;
     width: 38px;
     text-align: center;
     line-height: 38px;
@@ -274,6 +277,25 @@
         text-align: right;
     }
 
+    /* Temporaily override the app.scss*/
+    .btn:focus, button:focus{
+        border: #fff 2px solid!important;
+    }
+
+    .custom.pagination .page-item {
+        margin-top: 0;
+        border: #a2adb7 1px solid;
+    }
+
+    .custom.pagination a {
+        text-decoration: none !important;
+    }
+
+
+    /* Should be override in app.scss */
+    a {
+        text-decoration: underline !important; 
+    }
 
 </style>
 
@@ -304,14 +326,28 @@ $(function () {
             }
         }
     });
-
-    $('#donate-now-pledge-form').on('keyup keypress', function(e) {
-        var keyCode = e.keyCode || e.which;
-        if (keyCode === 13) {
+    
+    // prevent spacebar to trigger the page scrolling
+    $('#donate-now-pledge-form').on("keypress", function(e) {
+        var $focusElem = $(":focus");
+        if (e.which == 13 && $focusElem.is("input"))
             e.preventDefault();
-            return false;
-        }
     });
+
+    // prevent spacebar to trigger the page scrolling
+    $('#donate-now-pledge-form').on("keypress", function(e) {
+        var $focusElem = $(":focus");
+        if (e.which == 32 && !($focusElem.is("input") || $focusElem.attr("contenteditable") == "true"))
+            e.preventDefault();
+    });
+
+    // $('#donate-now-pledge-form').on('keyup keypress', function(e) {
+    //     var keyCode = e.keyCode || e.which;
+    //     if (keyCode === 13) {
+    //         e.preventDefault();
+    //         return false;
+    //     }
+    // });
 
     // For keep tracking the current page in wizard, and also count for the signle submission only
     var step = 1;
@@ -365,6 +401,15 @@ $(function () {
 
         hideButtons(step);
         $(this).blur();
+    });
+
+    // Enter or space key on Wizard STEP icon to forward and backward 
+    $('ul.bs4-step-tracking li').on('keyup', function(e) {
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
     });
 
     // Click on Wizard STEP icon to jump to visited  page
@@ -439,10 +484,18 @@ $(function () {
         if (pool_option == 'C') {
             $("#pool-selection-section").hide();
             $("#charity-selection-section").show();
+            $('#charity-selection-section #charity_keyword').focus();
         } else {
             $("#pool-selection-section").show();
             $("#charity-selection-section").hide();
         }
+
+        // reset tabindex on wizard 
+        $('ul.bs4-step-tracking li').attr('tabindex', -1);
+        $('ul.bs4-step-tracking li.active').attr('tabindex',0);
+
+        // scroll to top
+        $(window).scrollTop(0);
 
     };
 
@@ -492,7 +545,7 @@ $(function () {
                 timeout: 30000,
                 success: function(data)
                 {
-                    if(data.indexOf('body class="login-page"') != -1){
+                    if(data && data.indexOf('body class="login-page"') != -1){
                         window.location.href = '/login';
                     }
 

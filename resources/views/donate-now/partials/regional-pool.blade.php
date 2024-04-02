@@ -29,13 +29,13 @@
         @foreach( $pools as $pool )
         <div class="col mb-4">
 
-            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->id }}">
+            <div class="card h-100 {{ $pool->id == $regional_pool_id ? '' : '' }}" data-id="pool{{ $pool->id }}" tabindex="0">
                 {{-- <img src="https://picsum.photos/200" class="card-img-top" alt="..."
                             width="50" height="50"> --}}
                 <div class="card-body m-1 p-2">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="pool_id" id="regional_pool{{ $pool->id }}"
-                            value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }}>
+                            value="{{ $pool->id }}" {{ $pool->id == $regional_pool_id ? 'checked' : '' }} tabindex="-1">
                         <label style="font-weight:700;" class="form-check-label h5 pl-3" for="xxxpool{{ $pool->id }}">
                             {{ $pool->region->name }}
                         </label>
@@ -95,9 +95,13 @@
         border: 1px solid #1a5a96;
     }
 
-    input[name='regional_pool_id'] {
+    #regional-pool-area input[name='pool_id'] {
         width: 18px;
         height: 18px;
+    }
+
+    #regional-pools-area .card label {
+        font-weight: 700;
     }
 
     #regional-pool-area .card:hover {
@@ -124,6 +128,17 @@
 @push('js')
 <script>
 $( function() {
+
+    // Enter or space key on Wizard STEP icon to forward and backward 
+    $('#regional-pool-area .card').on('keyup', function(e) {
+        // Enter or space key on Wizard STEP icon to forward and backward    
+        var key  = e.key;
+        if (key === ' ' || key === 'Enter') {
+            e.preventDefault();
+            $(this).trigger('click');
+        }
+    });
+
     $('#regional-pool-area .card').click( function(event) {
         event.stopPropagation();
 
