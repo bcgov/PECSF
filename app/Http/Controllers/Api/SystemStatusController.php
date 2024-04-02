@@ -143,15 +143,24 @@ class SystemStatusController extends Controller
     {
 
         $status = "running";
+        $uptime = null;
         try {
             $setting = Setting::first();
+
+            // Calculate UpTime
+            $result = DB::select("SHOW GLOBAL STATUS LIKE 'Uptime'");
+            $seconds = $result ? round($result[0]->Value) : null;
+            $uptime = sprintf('%d day(s), %2d hour(s), %2d minute(s), %2d second(s)', ($seconds/ 86400), ($seconds/ 3600), ($seconds/ 60 % 60), $seconds% 60);
+
         } catch (Exception $ex) {
             $status = "@@@ Failure @@@ -- " . $ex->getMessage();
         }       
 
         return response()->json([
             'database status' => $status,
+            'up time' => $uptime,
             'now' => now()->format('Y-m-d H:i:s'),
+
         ], 200, [], JSON_PRETTY_PRINT);
 
     }
