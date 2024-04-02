@@ -46,9 +46,9 @@
         <div class="predefined-amounts-one-time">
             <div class="btn-group d-flex mt-3 amounts btn-group-toggle" data-toggle="buttons" role="group" aria-label="Select amount">
                 @foreach ($amount_options as $key => $text)
-                    <label class="mr-2 btn btn-outline-primary rounded btn-lg d-flex align-items-center justify-content-center" for="amount-one-time-{{ $key}}">
+                    <label class="mr-2 btn btn-outline-primary rounded btn-lg d-flex align-items-center justify-content-center" for="amount-one-time-{{ $key}}" tabindex="0">
                         @php $isCustom = (!in_array($one_time_amount, [6, 12, 20, 50]))  @endphp
-                        <input type="radio" name="one_time_amount" class="btn-check" id="amount-one-time-{{ $key }}" autocomplete="off" {{ (($key == '' && $isCustom ) || ($key == $one_time_amount)) ? 'checked' : '' }} value="{{ $key}}" >
+                        <input type="radio" name="one_time_amount" class="btn-check" id="amount-one-time-{{ $key }}" autocomplete="off" {{ (($key == '' && $isCustom ) || ($key == $one_time_amount)) ? 'checked' : '' }} value="{{ $key}}" tabindex="-1">
                         <div>
                             <div><b>{{ $text }}</b></div>
                             <small class="frequency-text">One-time</small>
@@ -119,6 +119,17 @@
         //     const amount = $("input[type=radio][name=amount]:checked").val() != '' ? $("input[type=radio][name=amount]:checked").val() : $("input[type=number][name=amount]").val();
         //     selectAmount(frequency, amount);
         // });
+
+        // Enter or space key on Wizard STEP icon to change frequency
+        $('#one-time-section .predefined-amounts-one-time label').on('keyup', function(e) {
+            // Enter or space key on Wizard STEP icon to forward and backward    
+            var key  = e.key;
+            if (key === ' ' || key === 'Enter') {
+                e.preventDefault();
+                $(this).find('input[type=radio][name=one_time_amount]').trigger('click');
+                $(this).focus();
+            }
+        });
 
         $(document).on('change', 'input[type=radio][name=one_time_amount]', function() {
             const amount = $(this).val();
