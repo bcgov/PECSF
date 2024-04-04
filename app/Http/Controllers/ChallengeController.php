@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Setting;
 use App\Models\CampaignYear;
 use Illuminate\Http\Request;
 use App\Models\DailyCampaign;
-use Yajra\Datatables\Datatables;
 
+use Yajra\Datatables\Datatables;
 use App\Models\DailyCampaignView;
 use Illuminate\Support\Facades\DB;
 use App\Models\DailyCampaignSummary;
+use App\Models\EligibleEmployeeByBU;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\HistoricalChallengePage;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Exports\DailyCampaignByBUExport;
 use App\Exports\DailyCampaignByDeptExport;
 use App\Exports\DailyCampaignByRegionExport;
+use App\Exports\OrgPartipationTrackersExport;
 
 class ChallengeController extends Controller
 {
@@ -383,4 +386,55 @@ class ChallengeController extends Controller
 
     }
 
+    public function org_participation_tracker(Request $request)
+    {
+        $year_options = CampaignYear::where('calendar_year', '>', 2023)->orderBy('calendar_year', 'desc')->pluck('calendar_year');
+
+        $current_year = today()->year;
+        $business_units = EligibleEmployeeByBU::where('organization_code', 'GOV')
+                        ->where('campaign_year', $current_year)
+                        ->where('ee_count', '>', 0)
+                        ->orderBy('business_unit_name')
+                        ->get();
+
+        $user = User::where('id', Auth::id() )->first();
+        $default_bu = $user ? $user->primary_job->bus_unit->code : null;
+
+
+        return view('challenge.org_participation_tracker', compact('year_options', 'business_units','default_bu'));
+    }
+
+    public function org_participation_tracker_download(Request $request)
+    {
+        $as_of_date = today();
+        $cy = $request->campaign_year;
+        $bu =  $request->business_unit;
+
+        $ee_by_bu = EligibleEmployeeByBU::where('organization_code', 'GOV')
+                            ->where('campaign_year', $cy)
+                            ->where('ee_count', '>', 0)
+                            ->where('business_unit_code', $bu)
+                            ->first();
+        
+        $start_date =  Carbon::createFromDate(null, 10, 15);  // Year defaults to current year
+
+        if ( ($cy < today()->year || today() >= $start_date) && $ee_by_bu) {
+
+            $filters = [];
+            $filters['as_of_date'] = $ee_by_bu->as_of_date;
+            $filters['business_unit_code'] = $bu;
+            $filters['year'] = $cy;
+            $filters['title'] = $ee_by_bu->business_unit_name . ' ('  . $ee_by_bu->business_unit_code . ')';
+
+            $filename = 'OrgPartipationTracker_'.  $cy . '_' . $bu . '_' . $as_of_date->format('Y-m-d') .".xlsx";
+
+            return \Maatwebsite\Excel\Facades\Excel::download(new OrgPartipationTrackersExport( null, $filters), $filename);  
+    
+        } else {
+
+            return redirect()->route('challenge.org_participation_tracker')
+                    ->with('message', 'The organization partipation tracter report for campaign Year ' . $cy . ' will be accessible starting from October 15, ' . $cy);
+        }
+
+    }
 }

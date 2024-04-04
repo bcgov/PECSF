@@ -428,14 +428,16 @@ class OrgPartipationTrackersExport implements FromQuery, WithHeadings, WithColum
                 $this->total_count = $rows->sum('count');
                 $this->row_count = $rows->count();
                 
-                ProcessHistory::UpdateOrCreate([
-                    'id' => $this->history_id,
-                ],[
-                    'total_count' => $this->total_count,
-                    'done_count' => 0,
-                    'status' => 'Processing',
-                    'start_at' => now(),
-                ]);
+                if ($this->history_id) {
+                    ProcessHistory::UpdateOrCreate([
+                        'id' => $this->history_id,
+                    ],[
+                        'total_count' => $this->total_count,
+                        'done_count' => 0,
+                        'status' => 'Processing',
+                        'start_at' => now(),
+                    ]);
+                }
 
             },
             AfterSheet::class    => function(AfterSheet $event) {
@@ -526,24 +528,28 @@ class OrgPartipationTrackersExport implements FromQuery, WithHeadings, WithColum
                 $sheet->getStyle('B7');
 
                 // Update Process History 
-                ProcessHistory::UpdateOrCreate([
-                    'id' => $this->history_id,
-                ],[
-                    'status' => 'Completed',
-                    'message' => 'Exported completed',
-                    'end_at' => now(),
-                ]);
+                if ($this->history_id) {
+                    ProcessHistory::UpdateOrCreate([
+                        'id' => $this->history_id,
+                    ],[
+                        'status' => 'Completed',
+                        'message' => 'Exported completed',
+                        'end_at' => now(),
+                    ]);
+                }
 
                 // Clean Up files over 14 days
-                $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
-                $prcs = ProcessHistory::where('id', $this->history_id)->first();
+                if ($this->history_id) {
+                    $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
+                    $prcs = ProcessHistory::where('id', $this->history_id)->first();
 
-                $file_names = ProcessHistory::where('process_name', $prcs->process_name)
-                                ->whereBetween('updated_at', [ today()->subdays( $retention_days + 90), today()->subdays( $retention_days + 1), ])
-                                ->pluck('filename')
-                                ->toArray();
+                    $file_names = ProcessHistory::where('process_name', $prcs->process_name)
+                                    ->whereBetween('updated_at', [ today()->subdays( $retention_days + 90), today()->subdays( $retention_days + 1), ])
+                                    ->pluck('filename')
+                                    ->toArray();
 
-                Storage::disk('public')->delete( $file_names );
+                    Storage::disk('public')->delete( $file_names );
+                }
             },
 
         ];
