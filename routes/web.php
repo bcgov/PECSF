@@ -206,7 +206,8 @@ Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(func
     Route::post('/', [ChallengeController::class, 'index']);
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
-    // Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
+    Route::get('/org_participation_tracker', [ChallengeController::class, 'org_participation_tracker'])->name('org_participation_tracker');
+    Route::get('/org_participation_tracker_download', [ChallengeController::class, 'org_participation_tracker_download'])->name('org_participation_tracker_download');  
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
