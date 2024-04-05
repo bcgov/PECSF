@@ -19,9 +19,9 @@
         <div class="col-12">
             <h2 aria-expanded="false">FAQ
 
-                <button style="cursor:pointer" onclick="toggle();" id="toggle_all_hook" class="btn-primary btn float-right">Expand All</button>
+                <button style="cursor:pointer" id="toggle_all_hook" class="btn-primary btn float-right">Expand All</button>
             </h2>
-<div style="clear:both;"></div>
+            <div style="clear:both;"></div>
             <section id="accordion">
                 @foreach($sections as $section => $qnas)
                 <h5>
@@ -86,17 +86,26 @@
         content: '-';
     }
 
+    button.btn-nav-accordion:focus {
+        border: none !important;
+    }
+
 </style>
 @endpush
 
 @push('js')
-    <script>
+<script>
 
-        var toggleCount = $(".expander").length;
+    $(function() {        
 
-        function toggle(){
+        var focus_elem = null;
+
+        $("#toggle_all_hook").click(function() {
+
+            focus_elem = $(this);
+
             if($("#toggle_all_hook").text() == "Collapse All"){
-                $(".collapse").each(function() {
+                $($(".collapse").get().reverse()).each(function() {
                     $( this ).collapse('hide');
                 });
 
@@ -105,7 +114,7 @@
 
             }
             else if($("#toggle_all_hook").text() == "Expand All"){
-                $(".collapse").each(function() {
+                $($(".collapse").get().reverse()).each(function() {
                     $( this ).collapse('show');
                 });
                 
@@ -115,16 +124,19 @@
 
             $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand'); 
             $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Collapse');   
-            
-        }
+        
+        });
 
+        $(".card-header").click(function() {
+            focus_elem = $(this).find("button.btn-nav-accordion:first");
 
-        $(".card-header").click(function(){
             if ( $(this).children("h5").attr("aria-expanded") == "true") {
                 $($(this).children("h5").attr("data-target")).collapse('hide');
             } else {
                 $($(this).children("h5").attr("data-target")).collapse('show');
             }
+
+            var toggleCount = $(".expander").length;
 
             open = $("[aria-expanded='true']").length;
             closed = toggleCount - open;
@@ -141,21 +153,27 @@
             }
         });
 
-    $(function() {
-
         $('#accordion').on('hidden.bs.collapse', function(event){
             $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand'); 
             $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Collapse');   
             
+            if (focus_elem) {
+                focus_elem.focus();
+            }
         });
 
         $('#accordion').on('shown.bs.collapse', function(event){
             $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand'); 
             $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Collapse');   
 
+            $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion:first').focus();   
+
+            if (focus_elem) {
+                focus_elem.focus();
+            }
         });
 
     });
-    </script>
+</script>
 @endpush
 @endsection
