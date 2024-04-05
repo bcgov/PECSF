@@ -93,9 +93,14 @@ class SpecialCampaignSetupController extends Controller
 
             // file handling
             $file = $request->file('logo_image_file');
+
+            // also store the upload file in database for backup purpose
+            $mime = $file->getMimeType();
+            $base64 = base64_encode( $file->get() );
+
             $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
             $file->move(public_path( $this->image_folder ), $filename);
-            
+
             $special_campaign = SpecialCampaign::Create([
 
                 'name' => $request->name,
@@ -105,7 +110,10 @@ class SpecialCampaignSetupController extends Controller
                 'start_date' => $request->start_date,
                 'end_date' =>$request->end_date,
                 'image' => $filename,
-                
+
+                'mime' => $mime,
+                'image_data' => $base64,
+
                 'created_by_id' => Auth::id(),
                 'updated_by_id' => Auth::id(),
 
@@ -170,6 +178,11 @@ class SpecialCampaignSetupController extends Controller
             $new_filename = '';
             if ($request->file('logo_image_file')) {
                 $file = $request->file('logo_image_file');
+
+                // also store the upload file in database for backup purpose
+                $mime = $file->getMimeType();
+                $base64 = base64_encode( $file->get() );
+
                 $new_filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $file->getClientOriginalName() );
                 $file->move(public_path( $this->image_folder ), $new_filename);
 
@@ -189,6 +202,10 @@ class SpecialCampaignSetupController extends Controller
                 }
 
                 $special_campaign->image = $new_filename;
+                
+                $special_campaign->mime = $mime;
+                $special_campaign->image_data = $base64;
+
             }
             $special_campaign->updated_by_id = Auth::id();
             $special_campaign->save();
