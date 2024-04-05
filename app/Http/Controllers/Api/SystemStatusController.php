@@ -68,6 +68,7 @@ class SystemStatusController extends Controller
         // set timezone
         $timezone = new DateTimeZone( config('app.timezone'));
 
+        $count_fail = 0;
         $last_job_name = '';   
         foreach ($schedule->events() as $event) {
 
@@ -86,7 +87,11 @@ class SystemStatusController extends Controller
 
             // SPECIAL -- only run on Monday and weekdays if annual campaign period is open
             if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
-                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1)) {
+
+                $cy = CampaignYear::where('calendar_year', today()->year + 1)->first();
+                $last_change_date = $cy ? $cy->updated_at->startOfDay() : null;
+
+                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1) || ($last_change_date == today()) ) {
                     // it should be processed 
                 } else {
                     continue;
@@ -118,10 +123,11 @@ class SystemStatusController extends Controller
                             " | start at " . $audit->start_time . " - end at " . $audit->end_time;
                 } else {
                     $status = '@@@ Failure @@@ -- The previous schedule did not run';
+                    $count_fail++;
                 }
             }
 
-            $rows[] = [
+            $tasks[] = [
                 'name' => $job_name,
                 'cron' => $event->expression,
                 'environments' => $event->environments,
@@ -135,7 +141,11 @@ class SystemStatusController extends Controller
             ];
         }
 
-        return response()->json($rows, 200, [], JSON_PRETTY_PRINT);
+        return response()->json([
+            'failure task count' => $count_fail,
+            'now' => now()->format('Y-m-d H:i:s'),
+            'tasks' => $tasks,
+        ], 200, [], JSON_PRETTY_PRINT);
 
     }
 
