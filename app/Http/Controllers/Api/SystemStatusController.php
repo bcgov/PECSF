@@ -159,8 +159,8 @@ class SystemStatusController extends Controller
 
             // Calculate UpTime
             $result = DB::select("SHOW GLOBAL STATUS LIKE 'Uptime'");
-            $seconds = $result ? round($result[0]->Value) : null;
-            $uptime = sprintf('%d day(s), %2d hour(s), %2d minute(s), %2d second(s)', ($seconds/ 86400), ($seconds/ 3600 % 3600), ($seconds/ 60 % 60), $seconds% 60);
+            $s = $result ? round($result[0]->Value) : null;
+            $uptime = sprintf('%d day(s), %d hour(s), %d minute(s) and %d second(s)', $s/86400, round($s/3600) %24, round($s/60) %60, $s%60);
 
         } catch (Exception $ex) {
             $status = "@@@ Failure @@@ -- " . $ex->getMessage();
