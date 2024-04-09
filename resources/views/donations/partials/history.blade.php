@@ -182,6 +182,13 @@
 
 </div>
 
+@push('css')
+<style>
+    button.btn-nav-accordion:focus {
+        border: none !important;
+    }
+</style>
+@endpush
 
 @push('js')
 <script>
@@ -227,11 +234,20 @@ $(function () {
 
     });
 
+    var focus_elem = null;
+    $(".card-header").click(function() {
+            focus_elem = $(this).find("button.btn-nav-accordion:first");
+    });
+
     $('#accordion').on('hidden.bs.collapse', function(event){
         $("#accordion .card-header h5").find('button.btn-nav-accordion').removeClass('collapsed');
         $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand donation history'); 
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Hide donation history');   
+
+        if (focus_elem) {
+                focus_elem.focus();
+        }
     });
 
     $('#accordion').on('shown.bs.collapse', function(event){
@@ -239,6 +255,10 @@ $(function () {
         $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand donation history'); 
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Hide donation history');
+
+        if (focus_elem) {
+                focus_elem.focus();
+        }
     });
 
 });
