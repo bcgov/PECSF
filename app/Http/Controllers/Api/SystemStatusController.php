@@ -91,7 +91,7 @@ class SystemStatusController extends Controller
                 $cy = CampaignYear::where('calendar_year', today()->year + 1)->first();
                 $last_change_date = $cy ? $cy->updated_at->startOfDay() : null;
 
-                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1) || ($last_change_date == today()) ) {
+                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1) || ($last_change_date != today()) ) {
                     // it should be processed 
                 } else {
                     continue;
