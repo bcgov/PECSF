@@ -75,7 +75,7 @@
                                             {{ $pledge->region }}
                                             @break
                                         @default
-                                        <button class="p-0 btn btn-link"
+                                        <button class="p-0 more-info btn btn-link"
                                             data-source="{{ $pledge->source }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
@@ -89,7 +89,7 @@
                                     @if ($pledge->donation_type == 'Donate Today')
                                         {{ $pledge->number_of_charities }}
                                     @else
-                                        <button class="pl-0 btn btn-link"
+                                        <button class="pl-0 more-info btn btn-link"
                                             data-source="{{ $pledge->source  }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
