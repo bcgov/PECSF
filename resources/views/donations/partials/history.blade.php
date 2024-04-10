@@ -75,25 +75,21 @@
                                             {{ $pledge->region }}
                                             @break
                                         @default
-                                        <a type="button" class="more-info"
+                                        <button class="p-0 btn btn-link"
                                             data-source="{{ $pledge->source }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">
                                             {{ count($pledge->charities) }} {{ count($pledge->charities) > 1 ? 'charities' : 'charity' }}
-
-
-
-
-                                        </a>
+                                        </button>
 
                                     @endswitch
                                 @else
                                     @if ($pledge->donation_type == 'Donate Today')
                                         {{ $pledge->number_of_charities }}
                                     @else
-                                        <button class="more-info btn btn-link"
+                                        <button class="pl-0 btn btn-link"
                                             data-source="{{ $pledge->source  }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
@@ -186,6 +182,10 @@
 <style>
     button.btn-nav-accordion:focus {
         border: none !important;
+    }
+
+    #accordion .btn {
+        font-size: 1em;
     }
 </style>
 @endpush
