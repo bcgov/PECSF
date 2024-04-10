@@ -89,9 +89,9 @@ class SystemStatusController extends Controller
             if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
 
                 $cy = CampaignYear::where('calendar_year', today()->year + 1)->first();
-                $last_change_date = $cy ? $cy->updated_at->startOfDay() : null;
+                $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(2)->addMinutes(30) : null;
 
-                if ( ($last_change_date != today()) && (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1))) {
+                if ( (now() > $last_change_date ) && (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1))) {
                     // it should be processed 
                 } else {
                     continue;
