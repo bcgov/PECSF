@@ -19,10 +19,10 @@
         <div class="col-12">
             <h2 aria-expanded="false">FAQ
 
-                <button style="cursor:pointer" onclick="toggle();" id="toggle_all_hook" class="btn-primary  btn-sm btn float-right">Expand All</button>
+                <button style="cursor:pointer" id="toggle_all_hook" class="btn-primary btn float-right">Expand All</button>
             </h2>
-<div style="clear:both;"></div>
-            <section>
+            <div style="clear:both;"></div>
+            <section id="accordion">
                 @foreach($sections as $section => $qnas)
                 <h5>
                 @if($section == 'Canlendar')
@@ -35,18 +35,21 @@
                     @foreach($qnas as $i => $qna)
                     <div class="card">
                         <div class="card-header" id="heading{{$i}}{{$section}}">
-                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;"  data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
-                                <button class="btn btn-link">
+                            <h5 class="mb-0 align-items-center d-flex" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse{{$i}}{{$section}}" aria-expanded="{{$i==0 ? 'false' : 'false'}}" aria-controls="collapse{{$i}}{{$section}}">
+                                {{-- <button class="btn btn-link"> --}}
                                     {{$qna['question']}}
-                                </button>
+                                {{-- </button> --}}
                                 <div class="flex-fill"></div>
-                                <div class="expander">
+                                <button class="btn btn-link btn-nav-accordion" aria-label="Expand">
+                                    <div class="expander">
 
-                                </div>
+                                    </div>
+                                </button>
                             </h5>
                         </div>
 
-                        <div id="collapse{{$i}}{{$section}}" class="collapse {{$i==0 ? '' : ''}}" aria-labelledby="heading{{$i}}{{$section}}" data-parent="#accordion{{$section}}">
+                        <div id="collapse{{$i}}{{$section}}" class="collapse {{$i==0 ? '' : ''}}" aria-labelledby="heading{{$i}}{{$section}}" 
+                                    {{-- data-parent="#accordion{{$section}}" --}} >
                             <div class="card-body">
                                 {!! $qna['answer'] !!}
                             </div>
@@ -59,36 +62,82 @@
         </div>
     </div>
 </div>
+
+@push('css')
+<style>
+
+    .expander {
+        border: 1px solid $primary;
+        border-radius: 50%;
+        background-color: $primary;
+        color: #fff;
+        width: 1.3em;
+        height: 1.3em;
+        text-align: center;
+        font-size: 1.6em;;
+        line-height: 1.25em;
+        font-weight: bold;
+        &::after {
+            content: '+';
+        }
+    }
+
+    [aria-expanded="true"] .expander::after{
+        content: '-';
+    }
+
+    button.btn-nav-accordion:focus {
+        border: none !important;
+    }
+
+</style>
+@endpush
+
 @push('js')
-    <script>
+<script>
 
-        var toggleCount = $(".expander").length;
+    $(function() {        
 
-        function toggle(){
+        var focus_elem = null;
+
+        $("#toggle_all_hook").click(function() {
+
+            focus_elem = $(this);
+
             if($("#toggle_all_hook").text() == "Collapse All"){
-                $(".card-header h2").attr("aria-expanded",false);
-                $(".card-header h5").attr("aria-expanded",false);
-                $(".collapse").hide();
+                $($(".collapse").get().reverse()).each(function() {
+                    $( this ).collapse('hide');
+                });
+
                 $("#toggle_all_hook").text("Expand All");
                 $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
 
-
             }
             else if($("#toggle_all_hook").text() == "Expand All"){
-                $(".card-header h2").attr("aria-expanded",true);
-                $(".card-header h5").attr("aria-expanded",true);
-                $(".collapse").show();
+                $($(".collapse").get().reverse()).each(function() {
+                    $( this ).collapse('show');
+                });
+                
                 $("#toggle_all_hook").text("Collapse All");
                 $("#toggle_all_hook").removeClass("btn-primary").addClass("btn-secondary");
-
             }
-        }
 
+            $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand'); 
+            $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Collapse');   
+        
+        });
 
-        $(".card-header").click(function(){
-            $($(this).children("h5").attr("data-target")).toggle();
-            $(this).children("h5").attr("aria-expanded",$(this).children("h5").attr("aria-expanded") == "true" ? "false" : "true");
-            $(this).children("h2").attr("aria-expanded",$(this).children("h2").attr("aria-expanded") == "true" ? "false" : "true");
+        $(".card-header").click(function() {
+            focus_elem = $(this).find("button.btn-nav-accordion:first");
+
+            if ( $(this).children("h5").attr("aria-expanded") == "true") {
+                $($(this).children("h5").attr("data-target")).collapse('hide');
+            } else {
+                $($(this).children("h5").attr("data-target")).collapse('show');
+            }
+
+            var toggleCount = $(".expander").length;
+
             open = $("[aria-expanded='true']").length;
             closed = toggleCount - open;
             if(open == toggleCount){
@@ -103,6 +152,28 @@
                 $("#toggle_all_hook").removeClass("btn-secondary").addClass("btn-primary");
             }
         });
-    </script>
+
+        $('#accordion').on('hidden.bs.collapse', function(event){
+            $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand'); 
+            $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Collapse');   
+            
+            if (focus_elem) {
+                focus_elem.focus();
+            }
+        });
+
+        $('#accordion').on('shown.bs.collapse', function(event){
+            $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand'); 
+            $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Collapse');   
+
+            $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion:first').focus();   
+
+            if (focus_elem) {
+                focus_elem.focus();
+            }
+        });
+
+    });
+</script>
 @endpush
 @endsection
