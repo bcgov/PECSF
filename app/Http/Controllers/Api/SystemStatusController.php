@@ -22,10 +22,10 @@ class SystemStatusController extends Controller
     public function queueStatus(Request $request) {
 
         // Run the command
-        $result = shell_exec('ps -eF');
+        $cmd_result = shell_exec('ps -eF');
 
         $status = "@@@ Failure @@@ -- The background process queue is not functioning.";
-        if (str_contains( strtolower($result), 'artisan queue:work')) {
+        if (str_contains( strtolower($cmd_result), 'artisan queue:work')) {
             $status = "running";
         }
 
@@ -51,11 +51,17 @@ class SystemStatusController extends Controller
 
         }
 
-        return response()->json([
+        $result = [
             'queue status' => $status,
             'now' => now()->format('Y-m-d H:i:s'),
             'jobs' => $jobs,
-        ], 200, [], JSON_PRETTY_PRINT);
+        ];
+
+        if (str_contains($status, 'Failure')) {
+            $result['server'] = shell_exec('cat /proc/sys/kernel/hostname');
+        }
+
+        return response()->json( $result, 200, [], JSON_PRETTY_PRINT);
 
     }
 
