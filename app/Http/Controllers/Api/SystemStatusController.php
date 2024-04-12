@@ -93,9 +93,8 @@ class SystemStatusController extends Controller
 
             // SPECIAL -- only run on Monday and weekdays if annual campaign period is open
             if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
-
                 $cy = CampaignYear::where('calendar_year', today()->year + 1)->first();
-                $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(2)->addMinutes(30) : null;
+                $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(3) : null;
 
                 if ( (now() > $last_change_date ) && (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1))) {
                     // it should be processed 
