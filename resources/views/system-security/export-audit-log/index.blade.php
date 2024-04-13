@@ -116,6 +116,17 @@
 
         </div>
 
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="show_value" checked>
+                    <label class="form-check-label pl-2" for="show_value">
+                    Show <span>'Row Value'</span> column
+                    </label>
+                </div>
+            </div>
+        </div>
+
     </div>    
     
     <div class="px-4"></div>
@@ -206,6 +217,11 @@
 
     div.dataTables_wrapper div.dataTables_processing {
       top: 5%;
+    }
+
+    input#show_value {
+        width: 18px;
+        height: 18px;
     }
 
 </style>
@@ -346,6 +362,15 @@
         //         }
         //     });
     	// });
+
+        $('#show_value').on('click', function() {
+            
+            let column = oTable.column(6);
+ 
+            // Toggle the visibility
+            column.visible(!column.visible());
+
+        });
 
     });
 

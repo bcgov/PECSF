@@ -131,6 +131,10 @@
 <style>
 
     /* Should be override in app.scss */
+    .content-header a {
+        text-decoration: underline !important; 
+    }
+    
     #accordion a {
         text-decoration: underline !important; 
     }

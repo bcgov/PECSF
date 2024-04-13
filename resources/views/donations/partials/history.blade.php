@@ -75,25 +75,21 @@
                                             {{ $pledge->region }}
                                             @break
                                         @default
-                                        <a type="button" class="more-info"
+                                        <button class="p-0 more-info btn btn-link"
                                             data-source="{{ $pledge->source }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
                                             data-frequency="{{ $pledge->frequency }}"
                                             data-yearcd="{{ $pledge->yearcd }}">
                                             {{ count($pledge->charities) }} {{ count($pledge->charities) > 1 ? 'charities' : 'charity' }}
-
-
-
-
-                                        </a>
+                                        </button>
 
                                     @endswitch
                                 @else
                                     @if ($pledge->donation_type == 'Donate Today')
                                         {{ $pledge->number_of_charities }}
                                     @else
-                                        <button class="more-info btn btn-link"
+                                        <button class="pl-0 more-info btn btn-link"
                                             data-source="{{ $pledge->source  }}"
                                             data-type="{{ $pledge->donation_type }}"
                                             data-id="{{ $pledge->id }}"
@@ -182,6 +178,17 @@
 
 </div>
 
+@push('css')
+<style>
+    button.btn-nav-accordion:focus {
+        border: none !important;
+    }
+
+    #accordion .btn {
+        font-size: 1em;
+    }
+</style>
+@endpush
 
 @push('js')
 <script>
@@ -227,11 +234,20 @@ $(function () {
 
     });
 
+    var focus_elem = null;
+    $(".card-header").click(function() {
+            focus_elem = $(this).find("button.btn-nav-accordion:first");
+    });
+
     $('#accordion').on('hidden.bs.collapse', function(event){
         $("#accordion .card-header h5").find('button.btn-nav-accordion').removeClass('collapsed');
         $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand donation history'); 
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Hide donation history');   
+
+        if (focus_elem) {
+                focus_elem.focus();
+        }
     });
 
     $('#accordion').on('shown.bs.collapse', function(event){
@@ -239,6 +255,10 @@ $(function () {
         $("#accordion .card-header h5").find('button.btn-nav-accordion').attr('aria-label', 'Expand donation history'); 
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').addClass('collapsed');
         $("#accordion .card-header h5[aria-expanded='true']").find('button.btn-nav-accordion').attr('aria-label', 'Hide donation history');
+
+        if (focus_elem) {
+                focus_elem.focus();
+        }
     });
 
 });
