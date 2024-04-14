@@ -167,6 +167,10 @@ class SystemStatusController extends Controller
             $s = $result ? round($result[0]->Value) : null;
             $uptime = sprintf('%d day(s), %d hour(s), %d minute(s) and %d second(s)', $s/86400, round($s/3600) %24, round($s/60) %60, $s%60);
 
+            if ($s < 300) {
+                $status = "@@@ Failure @@@ -- The database was recently restarted, less than 5 minutes ago.";    
+            }
+
         } catch (Exception $ex) {
             $status = "@@@ Failure @@@ -- " . $ex->getMessage();
         }       
