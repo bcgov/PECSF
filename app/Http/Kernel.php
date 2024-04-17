@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
 
         'campaign' => \App\Http\Middleware\Campaign::class,
+        'api_token' => \App\Http\Middleware\ApiToken::class,
     ];
 }
