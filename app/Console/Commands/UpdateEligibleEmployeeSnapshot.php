@@ -333,7 +333,10 @@ class UpdateEligibleEmployeeSnapshot extends Command
                 $filters['year'] = $row->campaign_year;
                 $filters['title'] = $row->business_unit_name . ' ('  . $row->business_unit_code . ')';
 
-                $filename = 'OrgPartipationTracker_'.  $row->campaign_year . '_' . $bu . '_' . $as_of_date->format('Y-m-d') .".xlsx";
+                $business_unit = BusinessUnit::where('code', $row->business_unit_code)->first();
+                $t1 = ($business_unit && $business_unit->acronym) ? $business_unit->acronym :  $row->business_unit_code;
+
+                $filename = 'OrgPartipationTracker_'.  $row->campaign_year . '_' . $t1 . '_' . $as_of_date->format('Y-m-d') .".xlsx";
 
                 // Submit a Job
                 $history = \App\Models\ProcessHistory::create([
