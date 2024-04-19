@@ -116,21 +116,25 @@ class Kernel extends ConsoleKernel
                 //         ->dailyAt('2:15')
                 //         ->sendOutputTo(storage_path('logs/ImportPledgeHistory.log'));    
 
-                $schedule->command('command:ImportCities')
-                        ->skip(function () {
-                                return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
-                        })
+                if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1)) {
+
+                   $schedule->command('command:ImportCities')
+                        // ->skip(function () {
+                        //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                        // })
                         ->weekdays()
                         ->at('2:30')
                         ->sendOutputTo(storage_path('logs/ImportCities.log')); 
 
-                $schedule->command('command:ImportDepartments')
-                        ->skip(function () {
-                                return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
-                        })
+                   $schedule->command('command:ImportDepartments')
+                        // ->skip(function () {
+                        //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                        // })
                         ->weekdays()
-                        ->at('2:35')
+                        ->at('2:45')
                         ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+                        
+                }
 
                 // For testing purpose: to generate 2022 pledges based on the BI pledge history
                 // $schedule->command('command:GeneratePledgeFromHistory')
@@ -163,10 +167,10 @@ class Kernel extends ConsoleKernel
                 ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
 
         // Monitoring Process Queue every 5 mins 
-        $schedule->command('command:queueStatus')
-                ->everyFiveMinutes()
-                ->between('7:00', '19:00')
-                ->appendOutputTo(storage_path('logs/queueStatus.log'));
+        // $schedule->command('command:queueStatus')
+        //         ->everyFiveMinutes()
+        //         ->between('7:00', '19:00')
+        //         ->appendOutputTo(storage_path('logs/queueStatus.log'));
 
         // Daily Testing 
         $schedule->command('notify:daily')
