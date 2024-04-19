@@ -187,6 +187,9 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow {
         height: 38px !important;
     }
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #687278 !important;
+    }
 
     /* tracking */
 .bs4-step-tracking {
@@ -313,6 +316,18 @@
         text-align: right;
     }
 
+    .form-control:focus-visible {
+        outline: 2px solid #3b99fc;
+        /* outline: 2px solid #000; */
+    }
+
+        
+	.select2-container--default.select2-container--focus .select2-selection--single, .select2-container--default.select2-container--focus .select2-selection--multiple
+	{
+        outline: 2px solid #3b99fc;
+        /* outline: 2px solid #000 !important; */
+        border-color: #000 !important;
+	} 
 
 </style>
 
@@ -437,6 +452,24 @@ $(function () {
 
         // scroll to top
         $(window).scrollTop(0);
+        switch(step) {
+        case 1:
+            // code block
+            section = '#nav-profile';
+            break;
+        case 2:
+            section = '#nav-amount';
+            break;
+        case 3:
+            section = '#nav-selection';
+            break;
+        case 4:
+            section = '#nav-summary';
+            break;            
+        default:
+            section = '#nav-summary';
+        }
+        $(section).find('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])').eq(0).focus();
     };
 
     // Validation when click on 'next' button
@@ -501,22 +534,49 @@ $(function () {
                 error: function(response) {
                     valid = false;
                     if (response.status == 422) {
+                        i = 0;
                         $.each(response.responseJSON.errors, function(field_name,error){
+                            error_field_name = null;
+
                             if ( field_name.includes('.') ) {
                                 items = field_name.split(".");
                                 pos = Number(items[ items.length -1 ]);
-                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
-                                $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
+                                error_field_name = $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')')
+                                // $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
+                                // $(document).find('[name="' + items[0] + '[]"]:eq(' + pos + ')').addClass('is-invalid');
                             } else {
                                 if (field_name.includes('pay_period_amount_error')) {
-                                    $('.pay_period_amount_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                    $('.pay_period_amount_error').append('<span id="'+field_name+'-error" role="alert" class="text-strong text-danger">' +error+ '</span>');
+                                    $('input[name=pay_period_amount]:checked').focus();
+                                    i++;
                                 } else if (field_name.includes('one_time_amount_error')) {
-                                    $('.one_time_amount_error').append('<span class="text-strong text-danger">' +error+ '</span>');
+                                    $('.one_time_amount_error').append('<span id="'+field_name+'-error" role="alert" class="text-strong text-danger">' +error+ '</span>');
+                                    $('input[name=pay_period_amount]:checked').focus();
+                                    i++;
                                 } else {
-                                    $(document).find('[name=' + field_name + ']').parent().append('<span class="text-strong text-danger">' +error+ '</span>');
-                                    $(document).find('[name=' + field_name + ']').addClass('is-invalid');
+                                    error_field_name = $(document).find('[name=' + field_name + ']');
                                 }
                             }
+
+                            // Append error message and set in-valid
+                            if (error_field_name) {
+                                $(error_field_name).parent().append('<span id="'+error_field_name+'-error" role="alert" class="text-strong text-danger">' +error+ '</span>');
+                                if ($(error_field_name).hasClass('select2')) {
+                                    $(error_field_name).parent().find("[role='combobox']").addClass('is-invalid');
+                                    $(error_field_name).parent().find("[role='combobox']").attr('aria-describedby', error_field_name +'-error');  
+                                    $(error_field_name).parent().find("[role='combobox']").attr('aria-labelledby', error_field_name +'-error');  
+                                    $(error_field_name).parent().find("[role='combobox']").attr("aria-invalid","true");
+                                } else {
+                                    $(error_field_name).addClass('is-invalid');
+                                    $(error_field_name).attr('aria-describedby', error_field_name + '-error');  
+                                }
+                            }
+
+                            // set focus on the first error
+                            if (i == 0) {
+                                $(error_field_name).focus();
+                            }
+                            i++;
 
                             // additional checking for pledge existence
                             code = $("select[name='organization_id'] option:selected").attr('code');
@@ -600,7 +660,7 @@ $(function () {
 
     $('#user_id').select2({
         allowClear: true,
-        placeholder: "Type employee ID",
+        placeholder: "Select an employee",
         ajax: {
             url: '{{ route('admin-pledge.administrators.users') }}'
             , dataType: 'json'
@@ -618,9 +678,16 @@ $(function () {
                     };
             }
             , cache: false
+            
         }
     });
 
+    // $('#user_id').on('select2:open', function (e) {
+    //     $('#select2-user_id-results').attr('aria-labelledby', "user_id_label"); // Clear this an don't want to use it
+
+    //     // $('.emplid_section .select2-selection').attr('aria-label', 'Select employee');
+    // });
+        
     $('#user_id').on('select2:select', function (e) {
         var data = e.params.data;
 
@@ -636,6 +703,7 @@ $(function () {
             $('#user_office_city').val( data.office_city);
             $('#user_region').val(data.region);
         }
+
     });
 
     $('#user_id').on('select2:unselect', function (e) {
@@ -733,7 +801,7 @@ $(function () {
         pay_period_amount = $("input[name='pay_period_amount']:checked").val();
         pay_period_amount_other = $("input[name='pay_period_amount_other']").val();
         pay_period_amt = Math.max(pay_period_amount, pay_period_amount_other);
-        $('#pay_period_figure').html( parseFloat(pay_period_amt).toFixed(2) );
+        $('#pay_period_figure').html( '$ ' + parseFloat(pay_period_amt).toFixed(2) );
 
         if($.isNumeric(pay_period_amt)){
                 pay_period_amt_allocated = parseFloat( pay_period_amt * elem.value / 100).toFixed(2) ;
@@ -746,7 +814,7 @@ $(function () {
         one_time_amount = $("input[name='one_time_amount']:checked").val();
         one_time_amount_other = $("input[name='one_time_amount_other']").val();
         one_time_amt = Math.max(one_time_amount, one_time_amount_other);
-        $('#one_time_figure').html( parseFloat(one_time_amt).toFixed(2) );
+        $('#one_time_figure').html( '$ ' + parseFloat(one_time_amt).toFixed(2) );
 
         if($.isNumeric(one_time_amt)){
                 one_time_amt_allocated = parseFloat( one_time_amt * elem.value / 100).toFixed(2) ;
@@ -773,6 +841,11 @@ $(function () {
 
     $("input[name=pay_period_amount]").change(function() {
         $("input[name=pay_period_amount_other]").val('');
+        if (this.id == 'pay_period_amt_5') {
+            $("input[name=pay_period_amount_other]").attr('tabindex', '0');
+        } else {
+            $("input[name=pay_period_amount_other]").attr('tabindex', '-1');
+        }
         recalculate_allocation();
     });
 
@@ -783,6 +856,11 @@ $(function () {
 
     $("input[name=one_time_amount]").change(function() {
         $("input[name=one_time_amount_other]").val('');
+        if (this.id == 'one_time_amount_5') {
+            $("input[name=one_time_amount_other]").attr('tabindex', '0');
+        } else {
+            $("input[name=one_time_amount_other]").attr('tabindex', '-1');
+        }
         recalculate_allocation();
     });
 
@@ -854,6 +932,7 @@ $(function () {
         $('#charity' + row_number).find("select[name='charities[]']").each(function() {
             initializeSelect2($(this));
         });
+        $(document).find('#charity' + row_number + ' span.select2-selection').eq(0).focus();
 
         $('#charity-table').append('<tr id="charity' + (row_number + 1) + '"></tr>');
         row_number++;
@@ -861,34 +940,48 @@ $(function () {
     });
 
 
-    $(document).on("click", "div.delete_this_row" , function(e) {
+    $(document).on("click", "#nav-selection button.delete_this_row" , function(e) {
         e.preventDefault();
 
-        row_count = $('#charity-table tr').length;
+        if (step == 3) {
+            row_count = $('#charity-table tr').length;
 
-        if (row_count > 2) {
-            Swal.fire({
-                text: 'Are you sure to delete this line ?'  ,
-                // icon: 'question'
-                //showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Delete',
-                //denyButtonText: `Don't save`,
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-                    // Swal.fire('Saved!', '', '')
-                    //$(this).parent().parent().parent().parent().remove();
-                    el = '#' + $(this).attr('data-id');
-                    $(el).remove();
-                }
-            })
-        } else {
-            Swal.fire({
-                icon: "error",
-                // title: "Oops...",
-                text: "At minimum, one charity needs to be defined",
-            });
+            if (row_count > 2) {
+                Swal.fire({
+                    text: 'Are you sure to delete this line ?'  ,
+                    // icon: 'question'
+                    //showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    //denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        // Swal.fire('Saved!', '', '')
+                        //$(this).parent().parent().parent().parent().remove();
+
+
+                        el = '#' + $(this).attr('data-id');
+
+                        // refocus to next item
+                        next_el = $(el).next();
+                        if (next_el && $(next_el).find('button.delete_this_row').length > 0 ) {
+                            $(next_el).find('span.select2-selection').eq(0).focus();
+                        } else {
+                            $('#add_row').focus();
+                        }
+
+                        $(el).remove();
+
+                    }
+                })
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    // title: "Oops...",
+                    text: "At minimum, one charity needs to be defined",
+                });
+            }
         }
     });
 

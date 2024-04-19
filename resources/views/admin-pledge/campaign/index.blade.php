@@ -28,7 +28,7 @@
 
 @if ($message = Session::get('success'))
     <div class="mx-1 my-2">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
             {{ $message }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -474,7 +474,10 @@
 
         });
 
-
+        @if ($message = Session::get('success'))
+            $('.alert-success[role="alert"]').show();
+            $('.alert-success[role="alert"] button.close' ).focus();
+        @endif
 
     });
     </script>

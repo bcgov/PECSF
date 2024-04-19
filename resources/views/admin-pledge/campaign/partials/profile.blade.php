@@ -5,10 +5,10 @@
   <div class="card-body">
           <div class="row">
               <div class="form-group ">
-                  <label for="campaign_year_id">Calendar Year : &nbsp&nbsp</label>
+                  <label for="campaign_year_id">Calendar Year :</label>
                     @isset($pledge)
-                        <select id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;" readonly>
-                            <option value="{{ $pledge->campaign_year_id }}" selected>{{ $pledge->campaign_year->calendar_year }}</option>
+                        <select  id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;"  readonly >
+                            <option  value="{{ $pledge->campaign_year_id }}" selected>{{ $pledge->campaign_year->calendar_year }}</option>
                         </select>
                     @endisset
                     @empty($pledge)
@@ -33,7 +33,7 @@
     <div class="card-body ">
         <div class="form-row">
             <div class="form-group col-md-3">
-                <label for="user_id">Organization</label>
+                <label for="organization_id">Organization</label>
                     @isset($pledge)
                         @if ( $edit_pecsf_allow )
                             <select class="form-control" style="width:100%;" name="organization_id" id="organization_id">
@@ -59,7 +59,7 @@
 
             </div>
             <div class="form-group col-md-7 emplid_section">
-                <label for="user">Employee</label>
+                <label id="user_id_label" for="user_id">Employee</label>
                 @if (isset($pledge))
                         <select class="form-control" name="user_id" id="user" readonly>
                             <option value="{{ $pledge->user_id }}" selected>{{ $pledge->user ? $pledge->user->name : '' }}</option>
@@ -71,7 +71,7 @@
                 @endif
             </div>
             <div class="form-group col-md-3 pecsf_id_section">
-                <label for="user">PECSF ID</label>
+                <label for="pecsf_id">PECSF ID</label>
                 {{-- @if (isset($pledge))
                     <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $pledge->pecsf_id }}" readonly>
                 @else  --}}
@@ -114,13 +114,13 @@
                 <label for="pecsf_bu">Business Unit</label>
                 <input type="text" class="form-control border-0" id="pecsf_bu" name="pecsf_bu"
                     value="{{ (isset($pledge) && $pledge->pecsf_user_bu ) ? $pledge->pecsf_user_bu->name . ' (' . $pledge->pecsf_user_bu->code . ')' : '' }}"
-                    readonly>
+                    readonly tabindex="-1">
             </div>
             <div class="col-md-4 mb-4">
                 <label for="pecsf_region">Region</label>
                 <input type="text" class="form-control border-0" id="pecsf_region" name="pecsf_region"
                     value="{{ (isset($pledge) && $pledge->pecsf_user_region ) ? $pledge->pecsf_user_region->name . ' (' . $pledge->pecsf_user_region->code . ')' : '' }}"
-                    readonly>
+                    readonly tabindex="-1">
             </div>
         </div>
 
@@ -181,7 +181,7 @@
                 <label for="user_office_city">Office City</label>
                 <input type="text" class="form-control border-0" id="user_office_city" name="user_office_city"
                     value="{{ (isset($pledge)) ? $pledge->city   : '' }}"
-                    readonly>
+                    readonly tabindex="-1">
             </div>
         </div>
 
