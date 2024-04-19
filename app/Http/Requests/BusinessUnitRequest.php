@@ -30,7 +30,7 @@ class BusinessUnitRequest extends FormRequest
                          ],
             'name'    => 'required|max:60',
             'status'  => ['required', Rule::in(['A', 'I']) ],
-            'acronym' => 'required|max:4|alpha|uppercase',
+            'acronym' => 'required|max:4|alpha|uppercase|unique:business_units,acronym',
             'linked_bu_code' => [ 'required', 'max:5', 
                                     Rule::when( $this->code <> $this->linked_bu_code,
                                     [Rule::exists('business_units')->where(function ($query) {
