@@ -26,6 +26,13 @@
             </div>
 
 			<div class="form-group row">
+                <label for="acronym" class="col-sm-2 col-form-label">Acronym:</label>
+                <div class="col-sm-4">
+					<input type="text" class="form-control" id="acronym" name="acronym">
+            	</div>
+            </div>
+			
+			<div class="form-group row">
                 <label for="status" class="col-sm-2 col-form-label">Status:</label>
                 <div class="col-sm-4">
 					<select id="status" name="status" class="form-control" required>
