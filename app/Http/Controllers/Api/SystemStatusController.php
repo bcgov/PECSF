@@ -113,6 +113,25 @@ class SystemStatusController extends Controller
                     ->getPreviousRunDate(Carbon::now()->setTimezone($event->timezone), allowCurrentDate: true)
                     ->setTimezone($timezone)
             );
+
+            if (CampaignYear::isAnnualCampaignOpenNow()) {
+                // Use the previous calculate date
+            } else {
+                if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
+                    if ($job_name == 'command:ImportCities') {
+                        $hr = 2; $min = 30;
+                    } else {
+                        $hr = 2; $min = 45;
+                    }
+
+                    if (now() <= (today()->hour($hr)->minute($min)) ) {
+                    // if ($test < (today()->hour($hr)->minute($min))) {                        
+                        $prevMonday = today()->previous('Monday');
+                        $previousDueDate = $prevMonday->hour($hr)->minute($min);
+                    } 
+                }
+            }
+
             $previousDueDateUpto = $previousDueDate->copy()->addMinutes(5)->format('Y-m-d H:i:s');
 
             // 2 mins grace period for the schedule job start 
