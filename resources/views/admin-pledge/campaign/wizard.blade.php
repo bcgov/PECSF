@@ -7,7 +7,7 @@
     <h4 class="mx-1 mt-3">{{ isset($pledge) ? 'Edit ' : 'Create '}} a Campaign Pledge</h4>
 
     <div class="mx-1 pt-2">
-        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('admin-pledge.campaign.index') }}'">
+        <button class="btn btn-outline-primary go-back-btn" onclick="window.location.href='{{ route('admin-pledge.campaign.index') }}'">
             Back    
         </button> 
     </div>
@@ -189,6 +189,15 @@
     }
     .select2-container--default .select2-selection--single .select2-selection__placeholder {
         color: #687278 !important;
+    }
+
+    .select2-selection--single.is-invalid {
+        border-color: #e3342f ;
+        padding-right: 2.19rem !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23e3342f' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23e3342f' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.4em + 0.6875rem) center;
+        background-size: calc(0.8em + 0.375rem) calc(0.8em + 0.375rem);
     }
 
     /* tracking */
@@ -452,24 +461,7 @@ $(function () {
 
         // scroll to top
         $(window).scrollTop(0);
-        switch(step) {
-        case 1:
-            // code block
-            section = '#nav-profile';
-            break;
-        case 2:
-            section = '#nav-amount';
-            break;
-        case 3:
-            section = '#nav-selection';
-            break;
-        case 4:
-            section = '#nav-summary';
-            break;            
-        default:
-            section = '#nav-summary';
-        }
-        $(section).find('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])').eq(0).focus();
+        $('button.go-back-btn').focus();
     };
 
     // Validation when click on 'next' button
@@ -560,15 +552,15 @@ $(function () {
 
                             // Append error message and set in-valid
                             if (error_field_name) {
-                                $(error_field_name).parent().append('<span id="'+error_field_name+'-error" role="alert" class="text-strong text-danger">' +error+ '</span>');
+                                $(error_field_name).parent().append('<span id="'+error_field_name.attr('name')+'-error" role="alert" class="text-strong text-danger">' +error+ '</span>');
                                 if ($(error_field_name).hasClass('select2')) {
                                     $(error_field_name).parent().find("[role='combobox']").addClass('is-invalid');
-                                    $(error_field_name).parent().find("[role='combobox']").attr('aria-describedby', error_field_name +'-error');  
-                                    $(error_field_name).parent().find("[role='combobox']").attr('aria-labelledby', error_field_name +'-error');  
+                                    $(error_field_name).parent().find("[role='combobox']").attr('aria-describedby', error_field_name.attr('name') +'-error');  
+                                    $(error_field_name).parent().find("[role='combobox']").attr('aria-labelledby', error_field_name.attr('name') +'-error');  
                                     $(error_field_name).parent().find("[role='combobox']").attr("aria-invalid","true");
                                 } else {
                                     $(error_field_name).addClass('is-invalid');
-                                    $(error_field_name).attr('aria-describedby', error_field_name + '-error');  
+                                    $(error_field_name).attr('aria-describedby', error_field_name.attr('name') + '-error');  
                                 }
                             }
 
@@ -843,8 +835,10 @@ $(function () {
         $("input[name=pay_period_amount_other]").val('');
         if (this.id == 'pay_period_amt_5') {
             $("input[name=pay_period_amount_other]").attr('tabindex', '0');
+            $("input[name=pay_period_amount_other]").attr('aria-required','true');
         } else {
             $("input[name=pay_period_amount_other]").attr('tabindex', '-1');
+            $("input[name=pay_period_amount_other]").attr('aria-required','false');
         }
         recalculate_allocation();
     });
@@ -858,8 +852,10 @@ $(function () {
         $("input[name=one_time_amount_other]").val('');
         if (this.id == 'one_time_amount_5') {
             $("input[name=one_time_amount_other]").attr('tabindex', '0');
+            $("input[name=one_time_amount_other]").attr('aria-required','true');
         } else {
             $("input[name=one_time_amount_other]").attr('tabindex', '-1');
+            $("input[name=one_time_amount_other]").attr('aria-required','false');
         }
         recalculate_allocation();
     });

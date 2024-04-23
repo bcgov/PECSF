@@ -8,7 +8,7 @@
         <div class="form-group col-md-11">
             <label id="{{ 'charities'.$index }}" for="charities">Charity CRA Organization Name and Business Number</label>
             <select name="charities[]" class="form-control select2 @error('charities.'.$index) is-invalid @enderror" 
-                        aria-labelledby="{{ 'charities'.$index }}" 
+                        aria-labelledby="{{ 'charities'.$index }}"  aria-required="true" aria-hidden="true"
                         style="width: 100%">
 
                 @isset($pledge_charity)
@@ -44,7 +44,7 @@
             <label id="{{ 'percentages'.$index }}" for="percentages">Allocation (%)</label>
             <input type="text" name="percentages[]" class="form-control @error('percentages.'.$index) is-invalid @enderror" 
                 value="{{ isset($pledge_charity) ? $pledge_charity->percentage : '' }}"
-                aria-labelledby="{{ 'percentages'.$index }}" />
+                aria-labelledby="{{ 'percentages'.$index }}" aria-required="true"/>
             @error( 'percentages.'.$index )
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror

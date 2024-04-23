@@ -68,7 +68,7 @@
                         <label id="pay_period_amt_5_label" class="form-check-label" for="pay_period_amt_5" aria-hidden="true">
                             <span>Other:</span>
                         </label>
-                        <input class="form-input" type="text" name="pay_period_amount_other" value="{{ $pay_period_amount_other }}" 
+                        <input class="form-control mt-2 ml-1 w-25" type="text" name="pay_period_amount_other" value="{{ $pay_period_amount_other }}" 
                                 tabindex="{{ $pay_period_amount_other > 0 ? '0' : '-1' }}"
                                 aria-label="enter Pay period deduction amount"
                         {{ ( isset($pledge) && $pledge->ods_export_status)  ? 'disabled' : '' }}>
@@ -153,7 +153,7 @@
                             <span>Other:</span>
                         </label>
 
-                        <input class="form-input" type="text" name="one_time_amount_other" value="{{ $one_time_amount_other }}"
+                        <input class="form-control mt-2 ml-1 w-25" type="text" name="one_time_amount_other" value="{{ $one_time_amount_other }}"
                                 tabindex="{{ $one_time_amount_other > 0 ? '0' : '-1' }}"
                                 aria-label="enter one time deduction amount"
                             {{ ( isset($pledge) && $pledge->ods_export_status)  ? 'disabled' : '' }}>
