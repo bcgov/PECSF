@@ -12,7 +12,7 @@
                         </select>
                     @endisset
                     @empty($pledge)
-                        <select id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;">
+                        <select id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;" aria-required="true">
                             @foreach ($campaignYears as $cy)
                                 <option value="{{ $cy->id }}"
                                     {{ ($cy->calendar_year == date('Y')+1) ? 'selected' : '' }}>
@@ -36,7 +36,7 @@
                 <label for="organization_id">Organization</label>
                     @isset($pledge)
                         @if ( $edit_pecsf_allow )
-                            <select class="form-control" style="width:100%;" name="organization_id" id="organization_id">
+                            <select class="form-control" style="width:100%;" name="organization_id" id="organization_id" aria-required="true">
                                 @foreach ($organizations as $organization)
                                     <option value="{{ $organization->id }}" code="{{ $organization->code }}" {{ $organization->code == $pledge->organization->code ? 'selected' : '' }}>
                                         {{ $organization->name }}</option>
@@ -65,7 +65,7 @@
                             <option value="{{ $pledge->user_id }}" selected>{{ $pledge->user ? $pledge->user->name : '' }}</option>
                         </select>
                 @else
-                    <select class="form-control select2" style="width:100%;" name="user_id" id="user_id">
+                    <select class="form-control select2" style="width:100%;" name="user_id" id="user_id" aria-required="true" aria-hidden="true">
                         {{-- <option value="" selected>-- choose user --</option> --}}
                     </select>
                 @endif
@@ -84,18 +84,18 @@
         <div class="form-row pecsf_id_section">
             <div class="col-md-3 mb-3">
                 <label for="pecsf_first_name">First Name</label>
-                <input type="text" class="form-control" id="pecsf_first_name" name="pecsf_first_name"
+                <input type="text" class="form-control" id="pecsf_first_name" name="pecsf_first_name" aria-required="true"
                     value="{{ old('pecsf_first_name') ?? ( isset($pledge) ? $pledge->first_name : '') }}" {{ $edit_pecsf_allow ? '' : 'readonly' }}>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="pecsf_last_name">Last Name</label>
-                <input type="text" class="form-control" id="pecsf_last_name" name="pecsf_last_name"
+                <input type="text" class="form-control" id="pecsf_last_name" name="pecsf_last_name" aria-required="true"
                     value="{{ old('pecsf_last_name') ?? ( isset($pledge) ? $pledge->last_name : '') }}" {{ $edit_pecsf_allow ? '' : 'readonly' }}>
             </div>
             <div class="col-md-3 mb-3">
                 <label for="pecsf_city">City</label>
                 @if ( $edit_pecsf_allow )
-                    <select class="form-control" style="width:100%;" name="pecsf_city" id="pecsf_city" >
+                    <select class="form-control" style="width:100%;" name="pecsf_city" id="pecsf_city" aria-required="true">
                         <option value="">Select a City</option>
                         @foreach ($cities as $city)
                             <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || (isset($pledge) && $city->city == $pledge->city) ? 'selected' : '' }}
