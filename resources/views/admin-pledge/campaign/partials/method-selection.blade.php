@@ -3,9 +3,10 @@
         <div class="card-header bg-light">
             <div class="custom-control custom-radio">
                 <input data-toggle="collapse" data-target="#method-selection-1" type="radio" 
+                  aria-labelledby="pool-option-1_label" aria-required="true"
                   name="pool_option" id="pool-option-1" value="P" class="custom-control-input" 
                       {{ $pool_option == "P" ? 'checked' : '' }}/>
-                <label class="custom-control-label" for="pool-option-1">Select a regional Fund Supported Pool</label>
+                <label id="pool-option-1_label" class="custom-control-label" for="pool-option-1" aria-hidden="true">Select a regional Fund Supported Pool</label>
             </div>
         </div>
 
@@ -15,7 +16,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="pool_id">Fund Supported Pool</label>
-                        <select class="form-control" name="pool_id" id="pool_id">
+                        <select class="form-control" name="pool_id" id="pool_id" aria-required="true">
                             <option value="" selected>Choose a pool</option>
                             @foreach ($fspools as $fspool) 
                                 <option value="{{ $fspool->id }}"
@@ -36,8 +37,9 @@
         <div class="card-header  bg-light">
             <div class="custom-control custom-radio">
                 <input data-toggle="collapse" data-target="#method-selection-2" type="radio" 
+                    aria-labelledby="pool-option-2_label"   aria-required="true"
                     name="pool_option" id="pool-option-2" value="C" class="custom-control-input"  {{ $pool_option == "C" ? 'checked' : '' }} />
-                <label class="custom-control-label" for="pool-option-2">Select up to 10 charities from the CRA list</label>
+                <label  id="pool-option-2_label" class="custom-control-label" for="pool-option-2" aria-hidden="true">Select up to 10 charities from the CRA list</label>
             </div>
         </div>
         <div id="method-selection-2" class="collapse {{ $pool_option == "C" ? 'show' : '' }}" data-parent="#method-selection">
