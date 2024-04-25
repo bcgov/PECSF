@@ -255,7 +255,7 @@ class ReportDonationUploadTest extends TestCase
 
         // prepare upload file 
         $filename = 'Test_Data_LDB.xlsx';
-        $file_path = storage_path('app/tmp/' . $filename);
+        $file_path = storage_path('app/test_data_files/' . $filename);
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $uploadedFile = new UploadedFile( $file_path, $filename, $finfo->file($file_path), null, true );
 
@@ -273,6 +273,7 @@ class ReportDonationUploadTest extends TestCase
         $response->assertJsonPath('success', "File Test_Data_LDB.xlsx for organization LDB was successfully uploaded and added to the process queue.");
 
         // process queue  
+        $this->artisan('queue:restart');
         $this->artisan('queue:work --once');
 
         // check database
@@ -303,7 +304,7 @@ class ReportDonationUploadTest extends TestCase
 
         // prepare upload file 
         $filename = 'Test_Data_BCS.xlsx';
-        $file_path = storage_path('app/tmp/' . $filename);
+        $file_path = storage_path('app/test_data_files/' . $filename);
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $uploadedFile = new UploadedFile( $file_path, $filename, $finfo->file($file_path), null, true );
 
@@ -318,7 +319,8 @@ class ReportDonationUploadTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonPath('success', "File Test_Data_BCS.xlsx for organization BCS was successfully uploaded and added to the process queue.");
 
-        // process queue  
+        // process queue 
+        $this->artisan('queue:restart'); 
         $this->artisan('queue:work --once');
 
         // check database
@@ -350,7 +352,7 @@ class ReportDonationUploadTest extends TestCase
 
         // prepare upload file 
         $filename = 'Test_Data_LA.xlsx';
-        $file_path = storage_path('app/tmp/' . $filename);
+        $file_path = storage_path('app/test_data_files/' . $filename);
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $uploadedFile = new UploadedFile( $file_path, $filename, $finfo->file($file_path), null, true );
 
@@ -366,6 +368,7 @@ class ReportDonationUploadTest extends TestCase
         $response->assertJsonPath('success', "File Test_Data_LA.xlsx for organization LA was successfully uploaded and added to the process queue.");
 
         // process queue  
+        $this->artisan('queue:restart');
         $this->artisan('queue:work --once');
 
         // check database

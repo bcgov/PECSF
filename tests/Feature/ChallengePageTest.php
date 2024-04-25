@@ -139,6 +139,22 @@ class ChallengePageTest extends TestCase
         $response->assertRedirect('login');
     }
 
+    public function test_an_anonymous_user_cannot_access_org_participation_tracker_page()
+    {
+        $response = $this->get('challenge/org_participation_tracker');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+
+    public function test_an_anonymous_user_cannot_download_org_participation_tracker_campaign()
+    {
+        $response = $this->get('challenge/org_participation_tracker_download');
+
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
+    }
+
     /**  Authorized User **/
     /** Test Authenication */
     public function test_an_authorized_user_can_access_challenge_page()
@@ -179,6 +195,28 @@ class ChallengePageTest extends TestCase
         $response = $this->get('challenge/download');
  
         $response->assertStatus(200);
+    }
+
+    public function test_an_authorized_user_can_access_org_participation_tracker_page()
+    {
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+
+        $this->actingAs($this->user);
+        $response = $this->get('challenge/org_participation_tracker');
+
+        $response->assertStatus(200);
+    }
+ 
+    public function test_an_authorized_user_can_download_org_participation_tracker()
+    {
+        // [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+        
+        $this->actingAs($this->user);
+        $response = $this->get('challenge/org_participation_tracker_download', []);
+ 
+        $response->assertStatus(302);
+        $response->assertSessionHas( "message" );
+
     }
 
     // Daily Campaign -- Export

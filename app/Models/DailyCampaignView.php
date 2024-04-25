@@ -23,11 +23,11 @@ class DailyCampaignView extends Model
                     select 1 as current, organization_code, business_unit_code, organization_name,
                             -- 0 as participation_rate, 
                             case when (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                and eligible_employee_by_bus.organization_code = 'GOV' 
+                                and eligible_employee_by_bus.organization_code = A.organization_code
                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                                 ) > 0 then 
                                     A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                        and eligible_employee_by_bus.organization_code = 'GOV' 
+                                        and eligible_employee_by_bus.organization_code = A.organization_code
                                         and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                                     ) * 100 
                                 else 0 end as participation_rate,
@@ -37,7 +37,7 @@ class DailyCampaignView extends Model
                                 and historical_challenge_pages.business_unit_code = A.business_unit_code
                             ) as previous_participation_rate,
                             (A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                and eligible_employee_by_bus.organization_code = 'GOV' 
+                                and eligible_employee_by_bus.organization_code = A.organization_code 
                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                             ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ?
                                 -- and historical_challenge_pages.organization_name = A.organization_name
@@ -46,7 +46,7 @@ class DailyCampaignView extends Model
                             as 'change_rate', 
                             A.donors, A.dollars, (@row_number:=@row_number + 1) AS rank
                             ,(select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                and eligible_employee_by_bus.organization_code = 'GOV' 
+                                and eligible_employee_by_bus.organization_code = A.organization_code
                                 and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                             ) as ee_count
                      from 
@@ -59,12 +59,12 @@ class DailyCampaignView extends Model
                         ) as A, (SELECT @row_number:=0) AS temp
                     where 1=1
                     order by A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                        and eligible_employee_by_bus.organization_code = 'GOV' 
+                                        and eligible_employee_by_bus.organization_code = A.organization_code
                                         and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                                     ) * 100 desc
                                 , abs(
                                     (A.donors / (select ee_count from eligible_employee_by_bus where eligible_employee_by_bus.campaign_year = ?
-                                        and eligible_employee_by_bus.organization_code = 'GOV' 
+                                        and eligible_employee_by_bus.organization_code = A.organization_code
                                         and eligible_employee_by_bus.business_unit_code = A.business_unit_code
                                     ) * 100) - COALESCE((select participation_rate from historical_challenge_pages where year = ?
                                         -- and historical_challenge_pages.organization_name = A.organization_name
