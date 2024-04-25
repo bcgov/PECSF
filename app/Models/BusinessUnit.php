@@ -14,7 +14,7 @@ class BusinessUnit extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable =[
-        'code', 'name', 'status', 'effdt', 'linked_bu_code', 'notes', 'created_by_id', 'updated_by_id'
+        'code', 'name', 'status', 'effdt', 'acronym', 'linked_bu_code', 'notes', 'created_by_id', 'updated_by_id'
     ];
 
     public function scopeCurrent($query)

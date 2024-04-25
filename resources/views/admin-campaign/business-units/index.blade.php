@@ -42,6 +42,7 @@
 				<tr>
                     <th>Business Unit</th>
 					<th>Name</th>
+                    <th>Acronym</th>
                     <th>Status</th>
                     <th>Effective Date</th>
                     <th>Associated BU</th>
@@ -131,6 +132,7 @@
             columns: [
                 {data: 'code', name: 'code', className: "dt-nowrap" },
                 {data: 'name', name: 'name', className: "dt-nowrap" },
+                {data: 'acronym', name: 'acronym', className: "dt-nowrap" },
                 {data: 'status', name: 'status', className: "dt-nowrap" },
                 {data: 'effdt', name: 'effdt'},
                 {data: 'linked_bu_code',  className: 'dt-nowrap'},
@@ -139,8 +141,8 @@
             ],
             columnDefs: [
                     {
-                        width: '5em',
-                        targets: [0]
+                        // width: '5em',
+                        // targets: [0]
                     },
             ]
         });
@@ -148,7 +150,7 @@
         // Model for creating new business unit
         $('#bu-create-modal').on('show.bs.modal', function (e) {
             // do something...
-            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 $(document).find('[name='+field_name+']').val('');
@@ -166,7 +168,7 @@
             if (confirm(info))
             {
 
-                var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+                var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
                 $.each( fields, function( index, field_name ) {
                     $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -201,7 +203,7 @@
     	$(document).on("click", ".edit-bu" , function(e) {
 			e.preventDefault();
 
-            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
             });
@@ -249,7 +251,7 @@
             info = 'Confirm to update this record?';
             if (confirm(info))
             {
-                var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+                var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
                 $.each( fields, function( index, field_name ) {
                     $('#bu-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
                 });
@@ -285,7 +287,7 @@
     	$(document).on("click", ".show-bu" , function(e) {
 			e.preventDefault();
 
-            var fields = ['code', 'name', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
             });
