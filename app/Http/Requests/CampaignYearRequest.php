@@ -48,6 +48,8 @@ class CampaignYearRequest extends FormRequest
             'status'              => ['required',Rule::when($this->status == 'A', [Rule::in($arr)]) ],
             'start_date'          => 'required|date|before_or_equal:end_date',
             'end_date'            => 'required|date|after_or_equal:start_date',
+            'volunteer_start_date'  => 'required|date|before_or_equal:volunteer_end_date',
+            'volunteer_end_date'    => 'required|date|after_or_equal:volunteer_start_date',
             'close_date'          => 'required|date',
         ];
     }

@@ -144,7 +144,51 @@
                 </div>
             </div>
 
+
+            <div class="">
+                <hr>
+            </div>    
             <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="volunteer_start_date">Volunteer Registration Start Date</label>
+                    <input type="date" class="form-control  @error('volunteer_start_date') is-invalid @enderror" name="volunteer_start_date" 
+                    @if(isset($campaign_year)) 
+                        @error('volunteer_start_date')   
+                            value="{{ old('volunteer_start_date') }}">
+                        @else
+                            value="{{ old('volunteer_start_date') ? old('volunteer_start_date') : ($campaign_year->volunteer_start_date ? $campaign_year->volunteer_start_date->toDateString() : '') }}">
+                        @enderror
+                    @else 
+                        value="{{ old('volunteer_start_date') }}">
+                    @endif
+                    @error('volunteer_start_date')
+                    <div class="invalid-feedback">
+                        {{  $message }}
+                    </div>
+                    @enderror
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="volunteer_end_date">Volunteer Registration End Date</label>
+                    <input type="date" class="form-control  @error('volunteer_end_date') is-invalid @enderror" name="volunteer_end_date" 
+                    @if(isset($campaign_year))  
+                        @error('volunteer_end_date')     
+                            value="{{ old('volunteer_end_date') }}">
+                        @else
+                            value="{{ old('volunteer_end_date') ? old('volunteer_end_date') : ( $campaign_year->volunteer_end_date ? $campaign_year->volunteer_end_date->toDateString() : '') }}">
+                        @enderror
+                    @else 
+                        value="{{ old('volunteer_end_date') }}">
+                    @endif
+                    @error('volunteer_end_date')
+                    <div class="invalid-feedback">
+                        {{  $message }}
+                    </div>
+                    @enderror
+                </div>
+                
+            </div>
+
+            <div class="form-row pt-4">
                 <div>
                 <button type="submit" class="btn btn-primary">Save</button>
                 </div>
