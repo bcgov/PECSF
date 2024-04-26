@@ -110,7 +110,7 @@ class MaintainVolunteerProfileController extends Controller
                 ->addColumn('action', function ($profile) use($gov) {
                     $delete = ($profile->organization_id != $gov->id && $profile->ods_export_status == null && $profile->cancelled == null)  ? 
                                 '<a class="btn btn-danger btn-sm ml-2 delete-profile" data-id="'.
-                             $profile->id . '" data-code="'. $profile->id . '">Delete</a>' : '';
+                             $profile->id . '" data-code="'. $profile->fullname . '">Delete</a>' : '';
                     $edit = '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-volunteering.profile.edit',$profile->id) . '">Edit</a>';
                     return '<a class="btn btn-info btn-sm" href="' . route('admin-volunteering.profile.show',$profile->id) . '">Show</a>' .
                         $edit . 

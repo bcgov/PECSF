@@ -20,6 +20,7 @@ class VolunteerProfile extends Model implements Auditable
     protected $appends = [
         'preferred_role_name',
         'province_name',
+        'fullname',
         'full_address',
         'is_renew_profile',
     ];
@@ -60,6 +61,16 @@ class VolunteerProfile extends Model implements Auditable
     {
         $name = $this->province ? self::PROVINCE_LIST[ $this->province] : '';
         return $name;
+    }
+
+    public function getFullnameAttribute()
+    {
+        $fullname = $this->first_name . ', ' . $this->last_name;
+        if ($this->organization_code == 'GOV') { 
+            $job = $this->emplid ? $this->primary_job()->first() : null; 
+            $fullname = $job ? $job->name : '';
+        }
+        return $fullname;
     }
 
     public function getFullAddressAttribute()
