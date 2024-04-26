@@ -81,6 +81,12 @@ class MaintainVolunteerProfileController extends Controller
                             ->when( $request->no_of_years, function($query) use($request) {
                                 $query->where('volunteer_profiles.no_of_years', $request->no_of_years );
                             })
+                            ->when( $request->city, function($query) use($request) {
+                                $query->where( function($q) use($request) {
+                                    return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
+                                             ->orWhere('volunteer_profiles.city', 'like', '%'. $request->city .'%');
+                                });
+                            })
                             ->when( $request->preferred_role, function($query) use($request) {
                                 $query->where('volunteer_profiles.preferred_role', $request->preferred_role );
                             })
@@ -189,6 +195,7 @@ class MaintainVolunteerProfileController extends Controller
         $user = User::where('id', $request->user_id )->first();
 
         $organization = Organization::where('id', $request->organization_id)->first();
+        $city = City::where('id', $request->city)->first();
 
         $profile = VolunteerProfile::Create([
             'campaign_year' => $request->campaign_year,
@@ -204,7 +211,7 @@ class MaintainVolunteerProfileController extends Controller
 
             'address_type' =>  $request->address_type,
             'address' => ($request->address_type =="G") ? '' : $request->address,
-            'city' => ($request->address_type =="G") ? '' : $request->city,
+            'city' => ($request->address_type =="G") ? '' : $city->city,
             'province' => ($request->address_type =="G") ? '' : $request->province,
             'postal_code' => ($request->address_type =="G") ? '' : $request->postal_code,
             'opt_out_recongnition' => $request->opt_out_recongnition ? 'Y' : 'N',
@@ -291,6 +298,7 @@ class MaintainVolunteerProfileController extends Controller
 
         $gov_organization = Organization::where('code', 'GOV')->first();
         $is_GOV = ($request->organization_id == $gov_organization->id);
+        $city = City::where('id', $request->city)->first();
 
         if (!$is_GOV) {
             $profile->first_name = $request->pecsf_first_name;
@@ -303,7 +311,7 @@ class MaintainVolunteerProfileController extends Controller
 
         $profile->address_type = $request->address_type;
         $profile->address = ($request->address_type =="G") ? '' : $request->address;
-        $profile->city = ($request->address_type =="G") ? '' : $request->city;
+        $profile->city = ($request->address_type =="G") ? '' : $city->city;
         $profile->province = ($request->address_type =="G") ? '' : $request->province;
         $profile->postal_code = ($request->address_type =="G") ? '' : $request->postal_code;
         $profile->opt_out_recongnition = $request->opt_out_recongnition ? 'Y' : 'N';

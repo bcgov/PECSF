@@ -94,7 +94,7 @@ class MaintainVolunteerProfileRequest extends FormRequest
                                     })
                                     ->first();
 
-            if ($profile) {
+            if ($profile && $this->profile_id != $profile->id) {
                 if( $org->code == 'GOV' ) {
                     $validator->errors()->add('emplid',  "This employee have already registered for campaign year " . $this->campaign_year);
                 } else {

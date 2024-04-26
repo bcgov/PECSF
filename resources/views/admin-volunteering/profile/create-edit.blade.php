@@ -248,7 +248,7 @@
                                 <option role="listitem" value="0" selected>Please select</option>
                                 @foreach ( range(1,50) as $value ) 
                                     <option role="listitem" value="{{ $value }}" 
-                                    {{ ($profile && $profile->no_of_years && $profile->no_of_years == $i) ? "selected" : "" }}>
+                                    {{ ($profile && $profile->no_of_years && $profile->no_of_years == $value) ? "selected" : "" }}>
                                     {{ $value }}</option>
                                 @endforeach
                             </select>

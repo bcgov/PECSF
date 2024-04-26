@@ -155,6 +155,20 @@
                 </select>
             </div> 
 
+            <div class="form-group col-md-2">
+                <label for="city">
+                    City
+                </label>
+                <select class="form-control" name="city" id="city" role="listbox">
+                    <option role="listitem" value="">All</option>
+                    @foreach ($cities as $city ) 
+                        <option role="listitem" value="{{ $city->city }}" 
+                        {{ isset($filter['city']) && $filter['city'] == $city->city ? 'selected' : '' }}>
+                        {{ $city->city }}</option>
+                    @endforeach
+                </select>
+            </div> 
+
             <div class="form-group col-md-1">
                 <label for="search">
                     &nbsp;
