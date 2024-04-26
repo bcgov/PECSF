@@ -5,13 +5,19 @@
         <div class="flex-fill"></div>
     </div>
 
+    <div class="mx-1 pt-3">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('volunteering.index') }}'">
+            Back
+        </button>
+    </div>
+
 @endsection
 @section('content')
 
 <div class="row">
     <div class="col-12">
 
-        <div class="card-deck py-5 px-5">
+        <div class="card-deck pt-2 pb-5 px-5">
             <div class="card">
             <div class="card-body text-center">
                 <h1 class="card-text text-center text-primary">{{ $user->primary_job->years_of_service }}</h1>

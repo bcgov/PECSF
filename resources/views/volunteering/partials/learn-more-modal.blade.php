@@ -269,7 +269,7 @@
                 </div>
                 <x-button href="#donateGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
                 <x-button href="#donateGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
-                @if ( $campaignYear->isVolunteerRegistrationOpen() )
+                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                     <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
                 @else
                     <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
