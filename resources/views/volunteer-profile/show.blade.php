@@ -33,7 +33,7 @@
         </div>
 
 
-        @if (\App\Models\CampaignYear::isVolunteerRegistrationOpenNow())
+        @if ($allow_edit)
         <div class="pb-3">
             <button type="button" class="btn btn-primary" onclick="location.href='/volunteering/profile/{{ $profile->id }}/edit';">
                     Edit Your Information

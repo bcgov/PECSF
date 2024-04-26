@@ -159,14 +159,16 @@ class VolunteerProfileController extends Controller
     public function show(string $id)
     {
 
-        //
+        //  
         $profile = VolunteerProfile::where("id",$id)->first();
         $user = User::where('id', Auth::id())->first();
 
         if (!$profile) { abort(404);}
         if ($profile->emplid <> $user->emplid ) { abort(403); }
-        
-        return view('volunteer-profile.show', compact('profile','user'));
+
+        $allow_edit = (CampaignYear::isVolunteerRegistrationOpenNow() && (today()->year == $profile->campaign_year)) ? true : false;
+
+        return view('volunteer-profile.show', compact('profile','user', 'allow_edit'));
         
     }
 
