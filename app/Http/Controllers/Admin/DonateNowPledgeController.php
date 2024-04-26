@@ -509,50 +509,50 @@ class DonateNowPledgeController extends Controller
         }
     }
 
-    public function getNonGovUserDetail(Request $request) {
+    // public function getNonGovUserDetail(Request $request) {
      
-        if($request->ajax()) {
+    //     if($request->ajax()) {
 
-            // Search for the Non-Gov History
-            $pledge = DonateNowPledge::join('campaign_years', 'pledges.campaign_year_id', 'campaign_years.id')
-                            ->where('pledges.organization_id', $request->org_id )
-                            ->where('pledges.pecsf_id', $request->pecsf_id)
-                            ->orderBy('campaign_years.calendar_year', 'desc')
-                            ->first();
+    //         // Search for the Non-Gov History
+    //         $pledge = DonateNowPledge::join('campaign_years', 'pledges.campaign_year_id', 'campaign_years.id')
+    //                         ->where('pledges.organization_id', $request->org_id )
+    //                         ->where('pledges.pecsf_id', $request->pecsf_id)
+    //                         ->orderBy('campaign_years.calendar_year', 'desc')
+    //                         ->first();
 
-            if ($pledge) {
-                $formatted_result = (object) [
-                        'first_name' => $pledge->first_name,
-                        'last_name' => $pledge->last_name,
-                        'city' => $pledge->city,
-                    ];
+    //         if ($pledge) {
+    //             $formatted_result = (object) [
+    //                     'first_name' => $pledge->first_name,
+    //                     'last_name' => $pledge->last_name,
+    //                     'city' => $pledge->city,
+    //                 ];
 
-                return json_encode( $formatted_result );
-            }
+    //             return json_encode( $formatted_result );
+    //         }
             
 
-            // Search Non-Gov History
-            $history = NonGovPledgeHistory::leftJoin('organizations', 'non_gov_pledge_histories.org_code', 'organizations.code')
-                            ->where('organizations.id', $request->org_id )
-                            ->where('non_gov_pledge_histories.pecsf_id', $request->pecsf_id)
-                            ->orderBy('non_gov_pledge_histories.yearcd', 'desc')
-                            ->first();
+    //         // Search Non-Gov History
+    //         $history = NonGovPledgeHistory::leftJoin('organizations', 'non_gov_pledge_histories.org_code', 'organizations.code')
+    //                         ->where('organizations.id', $request->org_id )
+    //                         ->where('non_gov_pledge_histories.pecsf_id', $request->pecsf_id)
+    //                         ->orderBy('non_gov_pledge_histories.yearcd', 'desc')
+    //                         ->first();
 
-            if ($history) {
-                $formatted_result = (object) [
-                        'first_name' => $history->first_name,
-                        'last_name' => $history->last_name,
-                        'city' => $history->city,
-                    ];
+    //         if ($history) {
+    //             $formatted_result = (object) [
+    //                     'first_name' => $history->first_name,
+    //                     'last_name' => $history->last_name,
+    //                     'city' => $history->city,
+    //                 ];
 
-                return json_encode( $formatted_result );
-            }
+    //             return json_encode( $formatted_result );
+    //         }
                 
-            return response()->noContent();    
+    //         return response()->noContent();    
 
-        } else {
-            return redirect('/');
-        }
-    }
+    //     } else {
+    //         return redirect('/');
+    //     }
+    // }
 
 }
