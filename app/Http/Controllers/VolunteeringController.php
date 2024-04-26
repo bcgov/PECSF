@@ -2,63 +2,91 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\VolunteerRegistrationRequest;
-use App\Models\BankDepositForm;
-use App\Models\BusinessUnit;
-use App\Models\CampaignYear;
-use App\Models\FSPool;
-use App\Models\Organization;
-use App\Models\Region;
-use App\Models\Department;
-use App\Models\User;
-use App\Models\Pledge;
-use App\Models\Volunteer;
-use App\Models\City;
-use App\Models\EmployeeJob;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\SupplyOrderform;
+use App\Models\City;
+use App\Models\User;
+use App\Models\FSPool;
+use App\Models\Pledge;
+use App\Models\Region;
 use App\Models\Setting;
-
-
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use App\Models\Volunteer;
+use App\Models\Department;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
+use App\Models\EmployeeJob;
+use App\Models\BusinessUnit;
+use App\Models\CampaignYear;
+use App\Models\Organization;
 use Illuminate\Http\Request;
+use App\Models\BankDepositForm;
+
+
+use App\Models\SupplyOrderform;
+use Illuminate\Validation\Rule;
+use App\Models\VolunteerProfile;
+use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Yajra\Datatables\Datatables;
+use App\Http\Requests\VolunteerRegistrationRequest;
 
 class VolunteeringController extends Controller
 {
-    public function index() {
-        $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        $user = User::find(Auth::id());
-        $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
-        $cities = City::all();
-        $settings = Setting::first();
-        $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("business_units","volunteers.business_unit_id","business_units.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
-      $show = false;
-        if(!empty($is_registered)){
-            if(is_array($is_registered->new_address))
-            {
-                $is_registered->province = $is_registered->new_address[2];
-                $is_registered->city = $is_registered->new_address[1];
-            }
-            else{
-                $is_registered->province = "";
-                $is_registered->city = "";
-            }
-            $show = ($settings->volunteer_start_date > $is_registered->updated_at) && (Carbon::now() > $settings->volunteer_start_date);
 
-        }
-        $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
-        $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
-        return view('volunteering.index', compact('settings','business_units','show','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
+    public function index() 
+    {
+        $user = User::where('id', Auth::id())->first();
+
+        $campaignYear = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                                    ->orderBy('calendar_year', 'desc')
+                                    ->first();
+
+        $profile = null;
+        if ($campaignYear->isVolunteerRegistrationOpen() ) {
+            $profile = VolunteerProfile::where("campaign_year", today()->year )
+                            ->where("organization_code", 'GOV')
+                            ->where("emplid", $user->emplid)
+                            ->first();
+        } 
+
+        $cy = today()->month < 6 ? today()->year - 1 : today()->year;
+        $last_year_profile = VolunteerProfile::where("campaign_year", $cy )
+                                    ->where("organization_code", 'GOV')
+                                    ->where("emplid", $user->emplid)
+                                    ->first();
+
+
+        return view('volunteering.index', compact('campaignYear', 'user', 'profile', 'last_year_profile'));
     }
+
+    // public function index() {
+    //     $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+    //     $user = User::find(Auth::id());
+    //     $totalPledgedDataTillNow = Pledge::where('user_id', Auth::id())->sum('goal_amount');
+    //     $cities = City::all();
+    //     $settings = Setting::first();
+    //     $is_registered = !empty(Volunteer::where("user_id","=",Auth::id())->get()) ? Volunteer::where("user_id","=",Auth::id())->join("business_units","volunteers.business_unit_id","business_units.id")->where("volunteers.updated_at","<",Carbon::parse($settings->volunteer_start_date))->first() : false;
+    //   $show = false;
+    //     if(!empty($is_registered)){
+    //         if(is_array($is_registered->new_address))
+    //         {
+    //             $is_registered->province = $is_registered->new_address[2];
+    //             $is_registered->city = $is_registered->new_address[1];
+    //         }
+    //         else{
+    //             $is_registered->province = "";
+    //             $is_registered->city = "";
+    //         }
+    //         $show = ($settings->volunteer_start_date > $is_registered->updated_at) && (Carbon::now() > $settings->volunteer_start_date);
+
+    //     }
+    //     $global_address = EmployeeJob::where("emplid","=",$user->emplid)->first();
+    //     $business_units = BusinessUnit::where("status","=","A")->orderBy("name")->get();
+    //     return view('volunteering.index', compact('settings','business_units','show','global_address','organizations', 'user', 'totalPledgedDataTillNow','cities','is_registered'));
+    // }
 
     public function training(){
         $organizations = BusinessUnit::where("status","=","A")->orderBy("name")->get();
