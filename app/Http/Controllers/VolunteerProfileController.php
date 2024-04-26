@@ -31,8 +31,9 @@ class VolunteerProfileController extends Controller
             return redirect()->route('volunteering.profile.show',$profile->id);
         } else {
             if (CampaignYear::isVolunteerRegistrationOpenNow()) {
-                return redirect()->route('volunteering.profile.create',$profile->id);
+                return redirect()->route('volunteering.profile.create');
             } else {
+                // No Volunteer History and was closed for registration  
                 abort(403);
             }
         }
