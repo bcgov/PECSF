@@ -44,6 +44,7 @@
                     @csrf
                     @if (isset($profile) && $profile->id)
                         @method('PUT')
+                        <input type="hidden" id="campaign_year" name="campaign_year" value="{{ today()->year }}">
                         <input type="hidden" id="profile_id" name="profile_id" value="{{ $profile->id }}">
                     @endisset
                     <input type="hidden" id="step" name="step" value="">
@@ -291,6 +292,14 @@
 
     .form-control[type='search']:focus-visible {
         outline: 2px solid #000;
+    }
+
+    hr {
+        border: none;
+        height: 2px;
+        /* Set the hr color */
+        color: #ccc;  /* old IE */
+        background-color: #ccc;  Modern Browsers */
     }
 
 </style>

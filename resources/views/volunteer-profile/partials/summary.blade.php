@@ -5,7 +5,16 @@
     <div class="card-body">
 
         <h4 class="text-primary">Your Volunteer Details</h4>
-        <div class="row">
+        <div class="row pt-2">
+            <div class="col-12">
+                <div class="font-weight-bold">Campaign Year</div>
+                <div>
+                    {{ $request->campaign_year }}
+                </div>
+            </div>
+        </div>   
+
+        <div class="row pt-2">
             <div class="col-12">
                 <div class="font-weight-bold">Organization</div>
                 <div>

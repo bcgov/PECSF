@@ -5,7 +5,7 @@
     <div class="form-row">
         <div class="form-group col-12 pt-2">
             <label for="business_unit_code">Your Organization</label>
-            <select type="text" class="form-control w-50" name="business_unit_code" id="business_unit_code"
+            <select type="text" class="form-control w-75" name="business_unit_code" id="business_unit_code"
                 placeholder="" role="listbox">
                 <option value="" selected="selected">Choose an Organization</option>
                 @foreach($business_units as $bu)
@@ -20,12 +20,12 @@
 
         @if ($is_renew) 
             <div class="form-group col-12" style="display:none;">
-                <input type="text" class="form-control w-25" name="no_of_years" id="no_of_years" value="1" readonly>
+                <input type="text" class="form-control w-75" name="no_of_years" id="no_of_years" value="1" readonly>
              </div>
         @else
             <div class="form-group col-12">
                 <label for="no_of_years">How many years have you been working with PECSF</label>
-                <select type="text" class="form-control w-25" name="no_of_years" id="no_of_years" role="listbox">
+                <select type="text" class="form-control w-75" name="no_of_years" id="no_of_years" role="listbox">
                     <option role="listitem" value="" >Please select</option>
                     @foreach ( range(1,50) as $value ) 
                         <option role="listitem" value="{{ $value }}" 
@@ -39,7 +39,7 @@
 
         <div class="form-group col-12">
             <label for="preferred_role">Your Preferred Volunteer Role</label>
-            <select type="text" class="form-control w-25" name="preferred_role" id="preferred_role"
+            <select type="text" class="form-control w-75" name="preferred_role" id="preferred_role"
                  role="listbox">
                 <option role="listitem" value="">Please select</option>
                 @foreach( $role_list as $key => $value)

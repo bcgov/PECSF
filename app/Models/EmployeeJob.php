@@ -132,7 +132,7 @@ class EmployeeJob extends Model
     public function getYearsOfVolunteerAttribute()
     {
 
-        $cy = today()->month < 6 ? today()->year - 1 : today()->year;
+        $cy = today()->year;
 
         $years = VolunteerProfile::where("campaign_year", '<=', $cy)
                             ->where("organization_code", 'GOV')
