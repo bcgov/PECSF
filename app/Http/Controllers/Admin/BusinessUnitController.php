@@ -34,8 +34,9 @@ class BusinessUnitController extends Controller
 
         if($request->ajax()) {
 
-            $columns = ["code","name","status","effdt","linked_bu_code", "created_at"];
-            $business_units = BusinessUnit::orderBy($columns[$request->input("order")[0]['column']],$request->input("order")[0]['dir']);
+            // $columns = ["code","name","status","effdt","linked_bu_code", "created_at"];
+            // $business_units = BusinessUnit::orderBy($columns[$request->input("order")[0]['column']],$request->input("order")[0]['dir']);
+            $business_units = BusinessUnit::all();
 
             return Datatables::of($business_units)
                 ->addColumn('action', function ($business_unit) {
@@ -67,6 +68,7 @@ class BusinessUnitController extends Controller
                 'name' => $request->name,
                 'status' => $request->status,
                 'effdt' => $request->effdt,
+                'acronym' => $request->acronym,
                 'linked_bu_code' => $request->linked_bu_code,
                 'notes' => $request->notes,
                 'created_by_id' => Auth::id(),

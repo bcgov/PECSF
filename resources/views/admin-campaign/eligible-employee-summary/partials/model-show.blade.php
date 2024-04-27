@@ -1,9 +1,9 @@
 {{-- Modal for  --}}
-<div class="modal fade" id="bu-show-modal" tabindex="-1" role="dialog" aria-labelledby="buModalLabel" aria-hidden="true">
+<div class="modal fade" id="ee-show-modal" tabindex="-1" role="dialog" aria-labelledby="buModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
 	  <div class="modal-content">
 		<div class="modal-header bg-primary">
-		  <h5 class="modal-title" id="buModalLabel">Existing business unit details</h5>
+		  <h5 class="modal-title" id="buModalLabel">Existing eligible employee summary</h5>
 		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		  </button>
@@ -13,53 +13,50 @@
             <input type="hidden" class="form-control"  name="id" value="" disabled>
 
 			<div class="form-group row">
-                <label for="code" class="col-sm-2 col-form-label">Code:</label>
+                <label for="campaign_year" class="col-sm-3 col-form-label">Campaign Year</label>
                 <div class="col-sm-4">
-					<input type="text" class="form-control" name="code" value="" disabled>
+					<input type="text" class="form-control" name="campaign_year" value="" disabled>
                 </div>
             </div>
 
 			<div class="form-group row">
-                <label for="name" class="col-sm-2 col-form-label">Name:</label>
-                <div class="col-sm-10">
-					<input type="text" class="form-control"  name="name" value="" disabled>
+                <label for="as_of_date" class="col-sm-3 col-form-label">As of Date:</label>
+                <div class="col-sm-4">
+					<input type="text" class="form-control"  name="as_of_date" value="" disabled>
             	</div>
             </div>
 
 			<div class="form-group row">
-                <label for="acronym" class="col-sm-2 col-form-label">Acronym:</label>
+                <label for="organization_code" class="col-sm-3 col-form-label">Organization</label>
                 <div class="col-sm-4">
-					<input type="text" class="form-control" name="acronym" value="" disabled>
-            	</div>
-            </div>
-
-			<div class="form-group row">
-                <label for="status" class="col-sm-2 col-form-label">Status:</label>
-                <div class="col-sm-4">
-					<select name="status" class="form-control" disabled>
-						<option value="A">Active</option>
-						<option value="I">Inactive</option>
-					</select>
+					<input type="text" class="form-control" name="organization_code" disabled>
                 </div>
             </div>
 
 			<div class="form-group row">
-                <label for="effdt" class="col-sm-2 col-form-label">Effective date:</label>
+                <label for="business_unit_code" class="col-sm-3 col-form-label">Business Unit Code</label>
                 <div class="col-sm-4">
-					<input type="date" class="form-control"  name="effdt" value="" disabled>
+					<input type="text" class="form-control"  name="business_unit_code" value="" disabled>
             	</div>
             </div>
 
 			<div class="form-group row">
-                <label for="linked_bu_code" class="col-sm-2 col-form-label">Associated BU:</label>
+                <label for="business_unit_name" class="col-sm-3 col-form-label">Business Unit Name</label>
                 <div class="col-sm-4">
-					<input type="text" class="form-control" name="linked_bu_code" value="" disabled>
-                </div>
+					<input type="text" class="form-control"  name="business_unit_name" value="" disabled>
+            	</div>
             </div>
 
 			<div class="form-group row">
-                <label for="notes" class="col-sm-2 col-form-label">Notes:</label>
-                <div class="col-sm-10">
+                <label for="ee_count" class="col-sm-3 col-form-label">Employee Count</label>
+                <div class="col-sm-4">
+					<input type="text" class="form-control"  name="ee_count" value="" disabled>
+            	</div>
+            </div>
+
+			<div class="form-group row">
+                <label for="notes" class="col-sm-3 col-form-label">Notes:</label>
+                <div class="col-sm-8">
 					<textarea type="text" class="form-control"  name="notes" disabled></textarea>
             	</div>
             </div>

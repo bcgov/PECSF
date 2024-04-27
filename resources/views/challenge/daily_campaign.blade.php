@@ -10,78 +10,71 @@
 @extends('adminlte::page')
 @section('content_header')
 
-<h1 class="mt-2">Daily Campaign</h1>
+<div class="mt-2">
+    <h1>Challenge</h1>
 
-<ul class="mt-3 menu nav nav-pills" id="pills-tab">
-    <li class="nav-item nav-center-4">
-        <a  class="nav-link"
-           href="{{ route('challenge.index') }}" role="tab" aria-controls="pills-home" aria-selected="false">
-            Leaderboard</a>
-    </li>
-    <li class="nav-item nav-center-4">
-        <a  class="nav-link active disabled"
-           href="{{  route('challenge.daily_campaign') }}" role="tab" aria-controls="pills-profile" aria-selected="true">
-            Daily Campaign Update</a>
-    </li>
-</ul>
-    
+    @include('challenge.partials.tabs')
+
+    <h6 class="mt-3">View and download daily statistics updates during the annual PECSF campaign.</h6>
+
+</div>
+   
 @endsection
 @section('content')
 
-    <form id="download_report" method="GET" enctype="multipart/form-data" action="{{ route("challenge.download") }}" >
-        @csrf
+<div class="card">
+    <div class="card-body">
+
+        <form id="download_report" method="GET" enctype="multipart/form-data" action="{{ route("challenge.download") }}" >
+            @csrf
+            <div class="form-row">
+                <div class="form-group col-md-2">
+
+                    <label for="sort">
+                        View by
+                    </label>
+                    <select id="sort" class="select form-control" name="sort">
+                        <option value="region"> By Region</option>
+                        <option value="organization"> By Organization</option>
+                        <option value="department"> By Department</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label for="sort">
+                        Specify dates (Optional)
+                    </label>
+                    <select class="form-control" id="start_date" name="start_date">
+                        <option value=""></option>
+                        dept_date_options
+                        @foreach ($dept_date_options as $date) 
+                            <option final="2" value="{{ $date }}">{{ $date }}</option>
+                        @endforeach
+                        @foreach ($final_date_options as $date) 
+                            <option final="1" value="{{ $date }}">{{ $date }}</option>
+                        @endforeach
+                        @foreach ($date_options as $date) 
+                            <option value="{{ $date }}">{{ $date }}</option>
+                        @endforeach
+                    </select>                
+                    
+                </div>
+                <div class="form-group col-md-1">
+                    <input type="hidden" name="excel" value = '1' />
+
+                    <input type="submit" style="margin-top:30px;" class="btn btn-primary" value="Download Report" />
+                </div>
+            </div>
+        </form>
+
         <div class="form-row">
-            <div class="form-group col-md-12">
-                <h6>View and download daily statistics updates during the annual PECSF campaign.</h6>
+            <div id="preview" class="form-group col-md-12">
+
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group col-md-2">
-
-                <label for="sort">
-                    View by
-                </label>
-                <select id="sort" class="select form-control" name="sort">
-                    <option value="region"> By Region</option>
-                    <option value="organization"> By Organization</option>
-                    <option value="department"> By Department</option>
-                </select>
-            </div>
-
-            <div class="form-group col-md-3">
-                <label for="sort">
-                    Specify dates (Optional)
-                </label>
-                <select class="form-control" id="start_date" name="start_date">
-                    <option value=""></option>
-                    dept_date_options
-                    @foreach ($dept_date_options as $date) 
-                        <option final="2" value="{{ $date }}">{{ $date }}</option>
-                    @endforeach
-                    @foreach ($final_date_options as $date) 
-                        <option final="1" value="{{ $date }}">{{ $date }}</option>
-                    @endforeach
-                    @foreach ($date_options as $date) 
-                        <option value="{{ $date }}">{{ $date }}</option>
-                    @endforeach
-                </select>                
-                
-            </div>
-            <div class="form-group col-md-1">
-                <input type="hidden" name="excel" value = '1' />
-
-                <input type="submit" style="margin-top:30px;" class="btn btn-primary" value="Download Report" />
-            </div>
-        </div>
-    </form>
-
-    <div class="form-row">
-        <div id="preview" class="form-group col-md-12">
-
-        </div>
     </div>
-
+</div>
 
 @endsection
 

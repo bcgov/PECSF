@@ -212,6 +212,18 @@ class CitiesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    // Database assertion
+    public function test_model_exists_in_database() {
+        $city = User::factory()->create();
+        $this->assertModelExists($city);
+    }
+  
+    public function test_model_deleted_in_database() {
+        $city = User::factory()->create();
+        $city->delete();
+
+        $this->assertModelMissing($city);
+    }
 
 
 }

@@ -4,7 +4,7 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <h4 class="mx-1 mt-3">Business Units</h4>
+    <h4 class="mx-1 mt-3">Eligible Employee Summary Maintenance</h4>
 
     <div class="d-flex mt-3">
         <div class="flex-fill">
@@ -15,8 +15,8 @@
 
         <div class="d-flex">
             <div class="mr-2">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bu-create-modal">
-                    Add a New Business Unit
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ee-create-modal">
+                    Add a New Record
                 </button>
             </div>
         </div>
@@ -25,28 +25,87 @@
 @endsection
 @section('content')
 
+@if ($message = Session::get('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ $message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+<div class="card">
+    <form class="filter">
+        <div class="card-body py-0 search-filter">
+            <h2>Search Criteria</h2>
+    
+            <div class="form-row">
+
+                <div class="form-group col-md-2">
+                    <label for="filter_campaign_year">
+                        Campaign Year
+                    </label>
+                    <select class="form-control" name="filter_campaign_year">
+                        <option value="" selected>All</option>
+                        @foreach ($campaign_years as $cy)                                            
+                            <option value="{{ $cy }}">{{ $cy }}</option>
+                        @endforeach
+                    </select>
+                </div> 
+
+                <div class="form-group col-md-3">
+                    <label for="filter_organization_code">
+                        Organization
+                    </label>
+                    <select name="filter_organization_code" value="" class="form-control">
+                        <option value="">All</option>
+                        @foreach( $organizations as $organization)
+                            <option value="{{ $organization->code }}"
+                                {{ isset($filter['filter_organization_code']) && $filter['filter_organization_code'] == $organization->code ? 'selected' : '' }}>
+                                {{ $organization->name }} ({{ $organization->code }})</option>
+                        @endforeach 
+                    </select>
+                </div>
+    
+                <div class="form-group col-md-3">
+                    <label for="filter_business_unit">
+                        Business Code / Name
+                    </label>
+                    <input name="filter_business_unit" class="form-control" 
+                            value="{{ isset($filter['filter_business_unit']) ? $filter['filter_business_unit'] : '' }}"/>
+                </div> 
+    
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="refresh-btn" value="Search" class="form-control btn-primary">Search</button>
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="search">
+                        &nbsp;
+                    </label>
+                    <button type="button" id="reset-btn" value="Reset" class="form-control  btn-secondary" >Clear</button>
+                </div>
+
+            </div>
+        </div> 
+    </form>  
+</div>   
+
 <div class="card">
 	<div class="card-body">
 
-        @if ($message = Session::get('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ $message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-
-		<table class="table table-bordered" id="bu-table" style="width:100%">
+		<table class="table table-bordered" id="ee-table" style="width:100%">
 			<thead>
 				<tr>
+                    <th>Campaign Year</th>
+					<th>As of Date</th>
+
+                    <th>Organization</th>
                     <th>Business Unit</th>
-					<th>Name</th>
-                    <th>Acronym</th>
-                    <th>Status</th>
-                    <th>Effective Date</th>
-                    <th>Associated BU</th>
-                    <th>Notes</th>
+                    <th>Name</th>
+                    <th>Employee Count</th>
                     <th>Action</th>
 				</tr>
 			</thead>
@@ -55,23 +114,29 @@
 	</div>
 </div>
 
-@include('admin-campaign.business-units.partials.model-create')
-@include('admin-campaign.business-units.partials.model-edit')
-@include('admin-campaign.business-units.partials.model-show')
+@include('admin-campaign.eligible-employee-summary.partials.model-create')
+@include('admin-campaign.eligible-employee-summary.partials.model-edit')
+@include('admin-campaign.eligible-employee-summary.partials.model-show')
 
 @endsection
 
 
 @push('css')
 
-    <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+
+    <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
 
 	<style>
-	#bu-table_filter label {
+	#ee-table_filter label {
 		text-align: right !important;
         padding-right: 10px;
 	}
+
+    #ee-table_filter {
+        display: none;
+    }
+
     .dataTables_scrollBody {
         margin-bottom: 10px;
     }
@@ -80,14 +145,14 @@
       top: 5%;
     }
 
-</style>
+    </style>
 @endpush
 
 
 @push('js')
 
-    <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
-    <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 
     <script>
@@ -106,7 +171,7 @@
         });
 
         // Datatables
-        var oTable = $('#bu-table').DataTable({
+        var oTable = $('#ee-table').DataTable({
             "scrollX": true,
             retrieve: true,
             "searching": true,
@@ -116,10 +181,17 @@
             },
             serverSide: true,
             select: true,
-            'order': [[0, 'asc']],
+            'order': [[0, 'desc']],
             ajax: {
-                url: '{!! route('settings.business-units.index') !!}',
-                data: function (d) {
+                url: '{!! route('settings.eligible-employee-summary.index') !!}',
+                data: function (data) {
+                    data.filter_organization_code  = $('select[name=filter_organization_code').val();
+                    data.filter_campaign_year = $('select[name=filter_campaign_year').val();
+                    data.filter_business_unit = $('input[name=filter_business_unit').val();
+                },
+                complete: function(xhr, resp) {
+                    min_height = $(".wrapper").outerHeight();
+                    $(".main-sidebar").css('min-height', min_height);
                 },
                 error: function(xhr, resp, text) {
                         if (xhr.status == 401) {
@@ -130,32 +202,68 @@
                 },
             },
             columns: [
-                {data: 'code', name: 'code', className: "dt-nowrap" },
-                {data: 'name', name: 'name', className: "dt-nowrap" },
-                {data: 'acronym', name: 'acronym', className: "dt-nowrap" },
-                {data: 'status', name: 'status', className: "dt-nowrap" },
-                {data: 'effdt', name: 'effdt'},
-                {data: 'linked_bu_code',  className: 'dt-nowrap'},
-                {data: 'notes', name: 'notes', className: 'editable', width: '30em', orderable: false},
+                {data: 'campaign_year', name: 'campaign_year', className: "dt-nowrap" },
+                {data: 'as_of_date', name: 'as_of_date', className: "dt-nowrap" },
+                {data: 'organization_code', name: 'organization_code', className: "dt-nowrap" },
+                {data: 'business_unit_code', name: 'business_unit_code', className: "dt-nowrap" },
+                {data: 'business_unit_name', name: 'business_unit_name', className: "dt-nowrap" },
+                {data: 'ee_count', name: 'ee_count', className: "dt-center dt-nowrap" },
                 {data: 'action', name: 'action', className: "dt-nowrap", orderable: false, searchable: false}
             ],
             columnDefs: [
                     {
-                        // width: '5em',
-                        // targets: [0]
+                        width: '5em',
+                        targets: [0]
+                    },
+                    // {
+                    //     render: DataTable.render.number(',', '', 0, '$ '),
+                    //     targets: [3],
+                    // },
+                    {
+                        render: DataTable.render.number(',', '', 0, ''),
+                        targets: [5],
                     },
             ]
+            
+        });
+
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                if ($(this).parents('form.filter') )  
+                     oTable.ajax.reload();    
+                return false;
+            }
+        });
+
+        $('.search-filter select').on('change', function() {
+            oTable.draw();
+        });
+
+        $('#refresh-btn').on('click', function() {
+            // oTable.ajax.reload(null, true);
+            oTable.draw();
+        });
+
+        $('#reset-btn').on('click', function() {
+
+            // Reset filter fields value
+            $('.search-filter input').map( function() {$(this).val(''); });
+            $('.search-filter select').map( function() { return $(this).val(''); })
+
+            oTable.search( '' ).columns().search( '' ).draw();
         });
 
         // Model for creating new business unit
-        $('#bu-create-modal').on('show.bs.modal', function (e) {
+        $('#ee-create-modal').on('show.bs.modal', function (e) {
             // do something...
-            var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            var fields = ['campaign_year', 'as_of_date', 'donors', 'dollars', 'notes'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 $(document).find('[name='+field_name+']').val('');
             });
-            $('#bu-create-modal').find('[name=status]').val('A');
+            $('#ee-create-modal').find('[name=campaign_year]').val( {{ today()->year }} );
+            $('#ee-create-modal').find('[name=status]').val('A');
 
         })
 
@@ -168,22 +276,23 @@
             if (confirm(info))
             {
 
-                var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
+                var fields = ['campaign_year', 'as_of_date', 'organization_code', 'ee_count', 'notes'];
                 $.each( fields, function( index, field_name ) {
                     $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 });
 
                 $.ajax({
                     method: "POST",
-                    url:  '{{ route('settings.business-units.store')  }}',
+                    url:  '{{ route('settings.eligible-employee-summary.store')  }}',
                     data: form.serialize(), // serializes the form's elements.
                     success: function(data)
                     {
                         oTable.ajax.reload(null, false);	// reload datatables
-                        $('#bu-create-modal').modal('hide');
+                        $('#ee-create-modal').modal('hide');
 
-                        var code = $("#bu-create-model-form [name='code']").val();
-                        Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
+                        var year = $("#bu-create-model-form [name='campaign_year']").val();
+                        var code = $("#bu-create-model-form [name='business_unit']").val();
+                        Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully created.', 'bg-success' );
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -199,11 +308,17 @@
             };
         });
 
+        $('#ee-create-modal select[name="organization_code"]').on('change', function (e) {
+            name = $(this).find('option:selected').attr('data-bu');
+            $('#ee-create-modal input[name="business_unit"]').val( name );
+        });
+
+
         // Model -- Edit
     	$(document).on("click", ".edit-bu" , function(e) {
 			e.preventDefault();
 
-            var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            var fields = ['campaign_year', 'as_of_date', 'organization_code', 'ee_count', 'notes'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
             });
@@ -212,14 +327,14 @@
 
             $.ajax({
                 method: "GET",
-                url:  '/settings/business-units/' + id  + '/edit',
+                url:  '/settings/eligible-employee-summary/' + id  + '/edit',
                 dataType: 'json',
                 success: function(data)
                 {
                     $.each(data, function(field_name,field_value ){
                         $(document).find('#bu-edit-model-form [name='+field_name+']').val(field_value);
                     });
-                    $('#bu-edit-modal').modal('show');
+                    $('#ee-edit-modal').modal('show');
                 },
                 error: function(response) {
                     console.log('Error');
@@ -232,7 +347,7 @@
                             class: toast_class,
                             title: toast_title,
                             autohide: true,
-                            delay: 3000,
+                            delay: 6000,
                             body: toast_body
             });
         }
@@ -251,22 +366,23 @@
             info = 'Confirm to update this record?';
             if (confirm(info))
             {
-                var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
+                var fields = ['campaign_year', 'as_of_date', 'organization_code', 'ee_count', 'notes'];
                 $.each( fields, function( index, field_name ) {
                     $('#bu-edit-model-form [name='+field_name+']').nextAll('span.text-danger').remove();
                 });
 
                 $.ajax({
                     method: "PUT",
-                    url:  '/settings/business-units/' + id,
+                    url:  '/settings/eligible-employee-summary/' + id,
                     data: form.serialize(), // serializes the form's elements.
                     success: function(data)
                     {
                         oTable.ajax.reload(null, false);	// reload datatables
-                        $('#bu-edit-modal').modal('hide');
+                        $('#ee-edit-modal').modal('hide');
 
-                        var code = $("#bu-edit-model-form [name='code']").val();
-                        Toast('Success', 'Region code ' + code +  ' was successfully updated.', 'bg-success' );
+                        var year = $("#bu-edit-model-form [name='campaign_year']").val();
+                        var code = $("#bu-edit-model-form [name='business_unit_code']").val();
+                        Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully updated.', 'bg-success' );
 
                     },
                     error: function(response) {
@@ -287,7 +403,7 @@
     	$(document).on("click", ".show-bu" , function(e) {
 			e.preventDefault();
 
-            var fields = ['code', 'name', 'acronym', 'status', 'effdt', 'notes', 'linked_bu_code'];
+            var fields = ['campaign_year', 'as_of_date', 'organization_code', 'ee_count', 'notes'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
             });
@@ -295,7 +411,7 @@
             id = $(this).attr('data-id');
             $.ajax({
                 method: "GET",
-                url:  '/settings/business-units/' + id,
+                url:  '/settings/eligible-employee-summary/' + id,
                 dataType: 'json',
                 success: function(data)
                 {
@@ -303,7 +419,7 @@
                         // console.log(field_name);
                         $(document).find('#bu-show-model-form [name='+field_name+']').val(field_value);
                     });
-                    $('#bu-show-modal').modal('show');
+                    $('#ee-show-modal').modal('show');
                 },
                 error: function(response) {
                     console.log('Error');
@@ -316,10 +432,11 @@
             e.preventDefault();
 
             id = $(this).attr('data-id');
+            year = $(this).attr('data-year');
             code = $(this).attr('data-code');
 
             Swal.fire( {
-                title: 'Are you sure you want to delete business unit code "' + code + '" ?',
+                title: 'Are you sure you want to delete campaign year "' + year + '" and business unit "' + code + '" eligible employee summary record ?',
                 text: 'This action cannot be undone.',
                 // icon: 'question',
                 //showDenyButton: true,
@@ -338,11 +455,11 @@
                     // Swal.fire('Saved!', '', '')
                     $.ajax({
                         method: "DELETE",
-                        url:  '/settings/business-units/' + id,
+                        url:  '/settings/eligible-employee-summary/' + id,
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
+                            Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully deleted.', 'bg-success' );
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {

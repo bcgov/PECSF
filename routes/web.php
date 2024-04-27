@@ -64,6 +64,8 @@ use App\Http\Controllers\Admin\EligibleEmployeeReportController;
 use App\Http\Controllers\Admin\ChallengePageDataReportController;
 use App\Http\Controllers\Admin\GamingAndFundrasingReportController;
 use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
+use App\Http\Controllers\Admin\OrgPartipationTractorReportController;
+use App\Http\Controllers\Admin\EligibleEmployeeSummaryMaintenanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -204,7 +206,8 @@ Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(func
     Route::post('/', [ChallengeController::class, 'index']);
     Route::get('/daily_campaign', [ChallengeController::class, 'daily_campaign'])->name('daily_campaign');
     Route::get('/download', [ChallengeController::class, 'download'])->name('download');
-    // Route::get('/currentyear', [ChallengeController::class, 'current'])->name('current');
+    Route::get('/org_participation_tracker', [ChallengeController::class, 'org_participation_tracker'])->name('org_participation_tracker');
+    Route::get('/org_participation_tracker_download', [ChallengeController::class, 'org_participation_tracker_download'])->name('org_participation_tracker_download');  
 });
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
@@ -270,6 +273,10 @@ Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(functi
     // Challenge Summary Maintenance
     Route::resource('/challenge-summary', ChallengeSummaryMaintenanceController::class)->except('create');
 
+    // Eligible Employees Summary 
+    Route::resource('/eligible-employee-summary', EligibleEmployeeSummaryMaintenanceController::class)->except('create');
+
+
     Route::get('/volunteering', [SettingsController::class,'volunteering'])->name('volunteering');
     Route::post('/change', [SettingsController::class,'changeSetting'])->name('change');
 
@@ -330,6 +337,14 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/eligible-employees/download-export-file/{id}', [EligibleEmployeeReportController::class,'downloadExportFile'])->name('eligible-employees.download-export-file');
     Route::resource('/eligible-employees', EligibleEmployeeReportController::class)->only(['index']);
 
+    // Organization Partipation Tracker
+    Route::get('/org-partipation-tracker/export', [OrgPartipationTractorReportController::class,'export2csv'])->name('org-partipation-tracker.export2csv');
+    Route::get('/org-partipation-tracker/export-progress', [OrgPartipationTractorReportController::class,'exportProgress'])->name('org-partipation-tracker.export2csv-progress');
+    Route::get('/org-partipation-tracker/download-export-file/{id}', [OrgPartipationTractorReportController::class,'downloadExportFile'])->name('org-partipation-tracker.download-export-file');
+    Route::get('/org-partipation-tracker/filter-ids', [OrgPartipationTractorReportController::class,'filteredIds'])->name('org-partipation-tracker.filtered-ids');
+    Route::get('/org-partipation-tracker/download-export-files-in-zip', [OrgPartipationTractorReportController::class,'downloadExportFilesInZip'])->name('org-partipation-tracker.download-export-files-in-zip');
+    Route::resource('/org-partipation-tracker', OrgPartipationTractorReportController::class)->only(['index','show']);
+
     // Challenge Page Data 
     Route::get('/challenge-page-data', [ChallengePageDataReportController::class,'index'])->name('challenge-page-data');
     Route::get('/challenge-page-data/date-options', [ChallengePageDataReportController::class,'getDateOptions'])->name('challenge-page-data.date-options');
@@ -357,7 +372,7 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/gaming-and-fundrasing/export-progress/{id}', [GamingAndFundrasingReportController::class,'exportProgress'])->name('gaming-and-fundrasing.export2csv-progress');
     Route::get('/gaming-and-fundrasing/download-export-file/{id}', [GamingAndFundrasingReportController::class,'downloadExportFile'])->name('gaming-and-fundrasing.download-export-file');
     Route::resource('/gaming-and-fundrasing', GamingAndFundrasingReportController::class)->only(['index', 'show']);
-    
+
     //
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
     Route::get('/supply-report/delete', [SupplyReportController::class,"delete"])->name('delete');
