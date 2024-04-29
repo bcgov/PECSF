@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\City;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -11,7 +12,7 @@ class VolunteerProfile extends Model implements Auditable
     
     protected $fillable = [
 
-        'campaign_year', 'organization_code', 'emplid', 'pecsf_id', 'first_name', 'last_name',
+        'campaign_year', 'organization_code', 'emplid', 'pecsf_id', 'first_name', 'last_name', 'pecsf_city',
         'business_unit_code', 'no_of_years', 'preferred_role', 'address_type', 
         'address', 'city', 'province', 'postal_code', 'opt_out_recongnition',
         'created_by_id', 'updated_by_id',
@@ -23,6 +24,10 @@ class VolunteerProfile extends Model implements Auditable
         'fullname',
         'full_address',
         'is_renew_profile',
+        'related_region',
+        'related_city',
+        'pecsf_user_bu',
+        'pecsf_user_city',
     ];
 
     public const PROVINCE_LIST = [
@@ -101,6 +106,47 @@ class VolunteerProfile extends Model implements Auditable
         $is_renew = $registed_in_the_past ? true : false;
        
         return $is_renew;
+    }
+
+    public function getRelatedRegionAttribute() {
+
+        if ($this->organization_code == 'GOV') {
+            return $this->primary_job->region;
+        } else {
+            $city = City::where('city', $this->pecsf_city)->first();
+            return $city ? $city->region : null;
+        }
+
+    }
+
+    public function getRelatedCityAttribute() {
+
+        if ($this->organization_code == 'GOV') {
+            $city = City::where('city', $this->primary_job->office_city)->first();
+            return $city;
+        } else {
+            $city = City::where('city', $this->pecsf_city)->first();
+            return $city;
+        }
+    }
+
+    public function getPecsfUserCityAttribute() {
+        $city = null;
+        if ($this->organization_code <> 'GOV' && $this->pecsf_city) {
+
+            $city = City::where('city', $this->pecsf_city)->first();
+        }
+
+        return $city;
+    }
+
+    public function getPecsfUserBuAttribute() {
+        $bu = null;
+        if ($this->organization_code != 'GOV') {
+            $bu = $this->organization->business_unit;
+        }
+
+        return $bu;
     }
 
 

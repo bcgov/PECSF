@@ -84,7 +84,7 @@ class MaintainVolunteerProfileController extends Controller
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
                                     return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
-                                             ->orWhere('volunteer_profiles.city', 'like', '%'. $request->city .'%');
+                                             ->orWhere('volunteer_profiles.pecsf_city', 'like', '%'. $request->city .'%');
                                 });
                             })
                             ->when( $request->preferred_role, function($query) use($request) {
@@ -167,7 +167,7 @@ class MaintainVolunteerProfileController extends Controller
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
 
         $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
-        $cities = City::orderBy('city')->select('city','id')->get();
+        $cities = City::orderBy('city')->get();
         $campaignYears = range(2024, today()->year);
 
         $role_list = VolunteerProfile::ROLE_LIST;
@@ -204,6 +204,7 @@ class MaintainVolunteerProfileController extends Controller
             'pecsf_id' => (!($organization->code == 'GOV')) ? $request->pecsf_id : null,
             'first_name' => (!($organization->code == 'GOV')) ? $request->pecsf_first_name : null, 
             'last_name' => (!($organization->code == 'GOV')) ? $request->pecsf_last_name : null,
+            'pecsf_city' => (!($organization->code == 'GOV')) ? $request->pecsf_city : null,
 
             'business_unit_code' => $request->business_unit_code,
             'no_of_years' => $request->no_of_years,
@@ -303,6 +304,7 @@ class MaintainVolunteerProfileController extends Controller
         if (!$is_GOV) {
             $profile->first_name = $request->pecsf_first_name;
             $profile->last_name  = $request->pecsf_last_name;
+            $profile->pecsf_city = $request->pecsf_city;
         }
 
         $profile->business_unit_code = $request->business_unit_code;

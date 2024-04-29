@@ -122,10 +122,20 @@
                         <label for="">Last name</label>
                         <input type="text" class="form-control" value="{{ $profile->last_name }}" disabled>
                     </div>
-                    {{-- <div class="col-md-3 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="">City</label>
-                        <input type="text" class="form-control"  value="{{ $profile->city }}" disabled>
-                    </div> --}}
+                        <input type="text" class="form-control"  value="{{ $profile->pecsf_city  }}" disabled>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 mb-3">
+                        <label for="">Business Unit</label>
+                        <input type="text" class="form-control"  value="{{ $profile->pecsf_user_bu->name }}" disabled>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="">Region</label>
+                        <input type="text" class="form-control"  value="{{ $profile->pecsf_user_city->region->name }}" disabled>
+                    </div>
                 </div>
             @endif
             </div>

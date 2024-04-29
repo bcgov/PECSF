@@ -127,13 +127,14 @@
                         <input type="text" class="form-control" id="pecsf_last_name" name="pecsf_last_name"
                             value="{{ old('pecsf_last_name') ?? ( isset($profile) ? $profile->last_name : '') }}" {{ $is_new_profile ? '' : 'readonly' }}>
                     </div>
-                    {{-- <div class="col-md-3 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="pecsf_city">City</label>
                         @if ($is_new_profile )
                             <select class="form-control" style="width:100%;" name="pecsf_city" id="pecsf_city" >
                                 <option value="">Select a City</option>
                                 @foreach ($cities as $city)
-                                    <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || ( ($profile) && $city->city == $profile->city) ? 'selected' : '' }}>
+                                    <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || (($profile && $profile->pecsf_city) && $city->city == $profile->pecsf_city->city) ? 'selected' : '' }}
+                                        data-region="{{ $city->region ? $city->region->name : '' }}">
                                         {{ $city->city }}</option>
                                 @endforeach
                             </select>
@@ -141,8 +142,22 @@
                            <input type="text" class="form-control" id="pecsf_city" name="pecsf_city"
                               value="{{ ( isset($profile) ? $profile->city : '') }}" readonly>
                         @endif
-                    </div> --}}
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label for="pecsf_bu">Business Unit</label>
+                        <input type="text" class="form-control border-0" id="pecsf_bu" name="pecsf_bu"
+                            value="{{ (isset($profile) && $profile->organization_code ) ? $profile->pecsf_user_bu->name . ' (' . $profile->pecsf_user_bu->code . ')' : '' }}"
+                            readonly tabindex="-1">
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label for="pecsf_region">Region</label>
+                        <input type="text" class="form-control border-0" id="pecsf_region" name="pecsf_region"
+                            value="{{ (isset($profile) && $profile->pecsf_city ) ? $profile->pecsf_user_city->region->name . ' (' . $profile->pecsf_user_city->region->code . ')' : '' }}"
+                            readonly tabindex="-1">
+                    </div>
                 </div>
+                 
 
                 <div class="form-row emplid_section">
                     <div class="col-md-2 mb-3">
@@ -489,6 +504,9 @@
 
 $(function () {
 
+    // First load
+    var first_load = true;
+
     $.ajaxSetup({
             headers: {
             'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -514,6 +532,15 @@ $(function () {
         $('#no_of_years_area').show();
     }
 
+    function reset_pecsf_profile_info() {
+        $('#pecsf_id').val('');
+        $('#pecsf_first_name').val('');
+        $('#pecsf_last_name').val('');
+        $('#pecsf_city').val('');
+        $('#pecsf_bu').val('');
+        $('#pecsf_region').val('');
+    }
+
     $('#organization_id').change( function() {
         profile_id = $('#profile_id').val();
         if (!profile_id) {
@@ -525,9 +552,19 @@ $(function () {
         if (code == 'GOV') {
             $('.emplid_section').show();
             $('.pecsf_id_section').hide();
+
+            $('#user_id').val(null).trigger('change');            
         } else {
             $('.emplid_section').hide();
             $('.pecsf_id_section').show();
+
+            if (profile_id && first_load) {
+                // No action
+            } else {
+                reset_pecsf_profile_info();
+                get_nongov_user_detail();
+            }
+            first_load = false;
         }
 
     });
@@ -644,6 +681,8 @@ $(function () {
                     $('#pecsf_first_name').val( data.first_name );
                     $('#pecsf_last_name').val( data.last_name );
                     $('#pecsf_city').val( data.city );
+                    $('#pecsf_bu').val(data.pecsf_bu);
+                    $('#pecsf_region').val(data.pecsf_region);
                 }
             },
             error: function(response) {
@@ -776,6 +815,11 @@ $(function () {
 
             return valid;
 
+    });
+
+    $('#pecsf_city').change( function() {
+        region = $('#pecsf_city option:selected').attr('data-region');
+        $("#pecsf_region").val( region );
     });
 
 
