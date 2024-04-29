@@ -70,6 +70,7 @@
                     </div>
                 </div>                    
         
+                @if (!($profile->is_renew_profile))
                 <div class="row pt-2">
                     <div class="col-12">
                         <div class="font-weight-bold">Number of years you have been volunteering with PECSF</div>
@@ -77,7 +78,8 @@
                             {{ $profile->no_of_years }}
                         </div>
                     </div>
-                </div>                    
+                </div>
+                @endif
         
                 <div class="row pt-2">
                     <div class="col-12">

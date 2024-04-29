@@ -36,8 +36,9 @@
 
                 <div class="pt-3">
                     {{-- <button href="/training" role="button" class="btn ">Begin Volunteer Training</button> --}}
-                    <button type="button" class="btn btn-primary btn-lg" onclick="location.href='/volunteering/profile/{{ $profile->id }}';">
-                        Back to my Volunteer Profile
+                    {{-- <button type="button" class="btn btn-primary btn-lg" onclick="location.href='/volunteering/profile/{{ $profile->id }}';"> --}}
+                    <button type="button" class="btn btn-primary btn-lg" onclick="location.href='/volunteering';">
+                        Back to Volunteering
                     </button>
                 </div>
 

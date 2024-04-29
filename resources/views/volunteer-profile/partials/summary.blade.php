@@ -23,6 +23,7 @@
             </div>
         </div>                    
 
+        @if (!($is_renew))
         <div class="row pt-2">
             <div class="col-12">
                 <div class="font-weight-bold">Number of years you have been volunteering with PECSF</div>
@@ -31,6 +32,7 @@
                 </div>
             </div>
         </div>                    
+        @endif
 
         <div class="row pt-2">
             <div class="col-12">

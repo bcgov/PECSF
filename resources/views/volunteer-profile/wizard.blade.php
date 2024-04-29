@@ -48,7 +48,10 @@
                         <input type="hidden" id="profile_id" name="profile_id" value="{{ $profile->id }}">
                     @endisset
                     <input type="hidden" id="step" name="step" value="">
-                    {{-- <input type="hidden" id="yearcd" name="yearcd" value="{{ $yearcd }}"> --}}
+                    @if ($is_renew) 
+                        <input type="hidden" id="is_renew" name="is_renew" value="Y">
+                    @endif
+                    
 
                     {{-- Nav Items --}}
                     <ul class="nav nav-tabs" id="nav-tab" role="tablist" style="display:none;">

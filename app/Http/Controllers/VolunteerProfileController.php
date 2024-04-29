@@ -104,8 +104,10 @@ class VolunteerProfileController extends Controller
                     $address = $request->address .', '. $city->city .', '. $province .', '. $request->postal_code;
                 }
                 
+                $is_renew = $request->is_renew == 'Y' ? true : false;
+
                 return view('volunteer-profile.partials.summary', compact('request', 'user', 'business_unit', 
-                        'address', 'role_name'))->render();
+                        'address', 'role_name', 'is_renew'))->render();
             }
             return response()->noContent();
         }
