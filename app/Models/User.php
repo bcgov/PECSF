@@ -79,11 +79,11 @@ class User extends Authenticatable implements Auditable
     }
 
     public function isVolunteer() {
-        return $this->volunteer->count() > 0;
+        return $this->volunteer_profiles->count() > 0;
     }
 
-    public function volunteer() {
-        return $this->hasMany(Volunteer::class);
+    public function volunteer_profiles() {
+        return $this->hasMany(VolunteerProfile::class, 'emplid', 'emplid');
     }
 
     public function organization() 

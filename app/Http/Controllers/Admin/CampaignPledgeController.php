@@ -12,6 +12,7 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\PledgeCharity;
+use App\Models\VolunteerProfile;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
 use App\Models\NonGovPledgeHistory;
@@ -838,6 +839,21 @@ class CampaignPledgeController extends Controller
                     $formatted_result->first_name = $history->first_name;
                     $formatted_result->last_name = $history->last_name;
                     $formatted_result->city = $history->city;
+                } else {
+
+                    // search on Volunteer Profile 
+                    $profile = VolunteerProfile::leftJoin('organizations', 'volunteer_profiles.organization_code', 'organizations.code')
+                                ->where('organizations.id', $request->org_id )
+                                ->where('volunteer_profiles.pecsf_id', $request->pecsf_id)
+                                ->orderBy('volunteer_profiles.campaign_year', 'desc')
+                                ->first();
+
+                    if ($profile) {
+                        $formatted_result->first_name = $profile->first_name;
+                        $formatted_result->last_name = $profile->last_name;
+                        $formatted_result->city = $profile->city;
+                    }
+
                 }
             }
 

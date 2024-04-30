@@ -25,7 +25,8 @@
                         str_contains(Route::current()->getName(), 'reporting.org-partipation-tracker') ||
                         str_contains(Route::current()->getName(), 'reporting.gaming-and-fundrasing') ||
                         str_contains(Route::current()->getName(), 'reporting.cra-charities') ||
-                        str_contains(Route::current()->getName(), 'reporting.challenge-page-data')
+                        str_contains(Route::current()->getName(), 'reporting.challenge-page-data') ||
+                        str_contains(Route::current()->getName(), 'reporting.volunteer-profiles')
                       ) ? 'active' : ''
       @endphp
       <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Program reports</a>
@@ -40,6 +41,9 @@
         <div class="dropdown-divider"></div>    
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.cra-charities') ? 'active' : ''}}"
           href="{{ route('reporting.cra-charities.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Charity</a>              
+        <div class="dropdown-divider"></div>                              
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.volunteer-profiles') ? 'active' : ''}}"
+          href="{{ route('reporting.volunteer-profiles.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Volunteer Profiles</a>              
         <div class="dropdown-divider"></div>                              
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.eligible-employees') ? 'active' : ''}}"
               href="{{ route('reporting.eligible-employees.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Eligible Employee Report</a>
