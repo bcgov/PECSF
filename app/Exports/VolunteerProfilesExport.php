@@ -71,10 +71,13 @@ class VolunteerProfilesExport implements FromQuery, WithHeadings, WithMapping, W
                         'EMPLID',
                         'PECSF ID',
                         'Full Name',
+                        'City',
+                        'Business Unit',
+                        'Region',
 
                         'New Registration',
-                        'Business Unit',
-                        'Business Unit Descr',
+                        'Registrated BU',
+                        'Registrated BU Descr',
                         'Number of years',
                         'Preferred Role',
 
@@ -100,6 +103,10 @@ class VolunteerProfilesExport implements FromQuery, WithHeadings, WithMapping, W
             $row->emplid,
             $row->pecsf_id,
             $row->fullname,
+
+            $row->employee_city->city,
+            $row->employee_business_unit->name,
+            $row->employee_region->name,
 
             $row->is_renew_profile ? 'No' : 'Yes',
 
