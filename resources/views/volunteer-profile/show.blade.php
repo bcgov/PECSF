@@ -20,7 +20,7 @@
         <div class="card-deck pt-2 pb-5 px-5">
             <div class="card">
             <div class="card-body text-center">
-                <h1 class="card-text text-center text-primary">{{ $user->primary_job->years_of_service }}</h1>
+                <h1 class="card-text text-center text-primary">{{ $user->primary_job->years_of_service ? $user->primary_job->years_of_service : 'N/A' }}</h1>
                 <p class="card-text  text-secondary">Years of BC Government service</p>
             </div>
             </div>
