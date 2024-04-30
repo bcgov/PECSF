@@ -17,9 +17,9 @@
                             <h3 class="text-primary my-3 pb-5">
                                 Welcome to PECSF Training!
                             </h3>
-                            <div class="my-1">
+                            <div class="my-1 border-dark">
                                 <iframe id="training_guide_movie_player" movie-id="https://www.youtube-nocookie.com/embed/vsyojouAq5U?cc_load_policy=1&rel=0&autoplay=0"
-                                    width="560" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    width="640" height="400" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         </div>
 
@@ -73,7 +73,7 @@
                             </div>
 
                             <p class="px-5 pt-4">
-                                Become a PECSF Canvasser and Champion in your office! 
+                                Become a PECSF Canvasser and Champion in your office!  
                                 @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                                     <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
                                 @endif
@@ -113,7 +113,7 @@
                             </div>
 
                             <p class="px-5 pt-4">
-                                Become a PECSF Canvasser and Champion in your office! 
+                                Become a PECSF Event Coordinator in your office!
                                 @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                                     <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
                                 @endif
@@ -164,7 +164,7 @@
 
                             
                             <p class="px-5 pt-4">
-                                Become a PECSF Canvasser and Champion in your office! 
+                                Become a PECSF Lead Coordinator in your office!
                                 @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                                     <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
                                 @endif
@@ -183,8 +183,10 @@
 
                                     <ul class="text-left check-bullet ">
                                         <li><x-bullet />Read the questions in our FAQ section </li>
-                                        <li><x-bullet />Visit the PECSF website – Become a Volunteer section </li>
-                                        <li><x-bullet />Contact Kristina Allsopp, PECSF Volunteer Experience and Training Analyst</li>
+                                        <li><x-bullet />Visit the PECSF website – 
+                                                <a href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank"> 
+                                                    Become a Volunteer section </a></li>
+                                        <li><x-bullet />Contact <a href="mailto:kristina.allsopp@gov.bc.ca">Kristina Allsopp</a>, PECSF Volunteer Experience and Training Analyst</li>
                                     </ul>
                                 </div>
 
