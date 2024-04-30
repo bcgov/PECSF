@@ -224,6 +224,7 @@ class ImportEmployeeJob extends Command
                                 'organization_id' => $organization ? $organization->id : null,
                                 'effdt' => $row->EFFDT,
                                 'effseq' => $row->EFFSEQ,
+                                'hire_dt' => $row->HIRE_DT,
                                 'empl_status' => $row->EMPL_STATUS,
                                 'empl_ctg' => $row->EMPL_CTG,
                                 'empl_class' => $row->EMPL_CLASS,

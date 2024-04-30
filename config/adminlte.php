@@ -306,18 +306,29 @@ return [
             'url' => '/volunteering',
             'icon' => 'nav-icon fa fa-hands-helping',
             'active' => ['volunteering/*'],
-            'submenu' => [
-                [
-                    'text' => 'Dashboard',
-                    'icon' => 'nav-icon fa fa-wave-square',
-                    'url'  => '/volunteering',
-                ],
-                [
-                    'text' => 'Forms',
-                    'icon' => 'nav-icon far fa-newspaper',
-                    'url'  => '/bank_deposit_form',
-                ],
-            ]
+
+            // 'text' => 'Volunteering',
+            // 'url' => '/volunteering',
+            // 'icon' => 'nav-icon fa fa-hands-helping',
+            // 'active' => ['volunteer/*'],
+            // 'submenu' => [
+            //     [
+            //         'text' => 'Dashboard',
+            //         'icon' => 'nav-icon fa fa-wave-square',
+            //         'url'  => '/volunteering',
+            //     ],
+            //     [
+            //         'text' => 'Volunteer Profile',
+            //         'icon' => 'nav-icon nav-icon far fa-user ',
+            //         'url'  => '/volunteering/profile',
+            //         'active' => ['/volunteering/profile/*'],
+            //     ],
+            //     [
+            //         'text' => 'Forms',
+            //         'icon' => 'nav-icon far fa-newspaper',
+            //         'url'  => '/bank_deposit_form',
+            //     ],
+            // ]
         ],
         [
             'text' => 'Challenge',
@@ -348,9 +359,10 @@ return [
                     'url'  => '/settings/campaignyears',
                 ],
                 [
-                    'text' => 'Training, Communications and Engagement',
+                    'text' => 'Volunteering',
                     'icon' => 'nav-icon fa fa-graduation-cap',
-                    'url'  => '/settings',
+                    'url'  => '/admin-volunteering/profile',
+                    'active' => ['/admin-volunteering/*']
                 ],
                 [
                     'text' => 'Reporting',

@@ -2,16 +2,23 @@
 
 @section('content_header')
     <div class="d-flex mt-3">
-        <h1>Forms</h1>
+        <h1>Event bank deposit form</h1>
         <div class="flex-fill"></div>
     </div>
+
+    <div class="mx-1 pt-3">
+        <button class="btn btn-outline-primary" onclick="window.location.href='{{ url()->previous() }}'">
+            Back
+        </button>
+    </div>
+
 @endsection
 
 
 
 @section('content')
 
-    @include('volunteering.partials.form_tabs')
+    {{-- @include('volunteering.partials.form_tabs') --}}
 
 
 
@@ -63,7 +70,7 @@
                                 <button type="button" id="complete-btn" value="Refresh" class="form-control btn btn-primary" data-dismiss="modal" aria-label="Complete eForm from Close">Complete eForm</button>
                             </div>
                             <div class="col-md-2">
-                                <button type="button" id="cancel-btn" value="Refresh" class="form-control btn btn-secondary" onclick="window.location='/';">Cancel</button>
+                                <button type="button" id="cancel-btn" value="Refresh" class="form-control btn btn-secondary" onclick="window.location='{{ url()->previous() }}';">Cancel</button>
                             </div>
                         </div>
 
