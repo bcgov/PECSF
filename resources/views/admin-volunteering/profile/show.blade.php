@@ -124,7 +124,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="">City</label>
-                        <input type="text" class="form-control"  value="{{ $profile->pecsf_city  }}" disabled>
+                        <input type="text" class="form-control"  value="{{ $profile->employee_city->city  }}" disabled>
                     </div>
                 </div>
                 <div class="form-row">
@@ -134,7 +134,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="">Region</label>
-                        <input type="text" class="form-control"  value="{{ $profile->pecsf_user_city->region->name }}" disabled>
+                        <input type="text" class="form-control"  value="{{ $profile->employee_region->name }}" disabled>
                     </div>
                 </div>
             @endif

@@ -110,7 +110,7 @@
                         {{-- @if (isset($profile))
                             <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" readonly>
                         @else  --}}
-                            <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" {{ $is_new_profile ? '' : 'readonly' }}>
+                            <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" >
                         {{-- @endif --}}
                     </div>
 
@@ -120,40 +120,40 @@
                     <div class="col-md-3 mb-3">
                         <label for="pecsf_first_name">First Name</label>
                         <input type="text" class="form-control" id="pecsf_first_name" name="pecsf_first_name"
-                            value="{{ old('pecsf_first_name') ?? ( isset($profile) ? $profile->first_name : '') }}" {{ $is_new_profile ? '' : 'readonly' }}>
+                            value="{{ old('pecsf_first_name') ?? ( isset($profile) ? $profile->first_name : '') }}">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="pecsf_last_name">Last Name</label>
                         <input type="text" class="form-control" id="pecsf_last_name" name="pecsf_last_name"
-                            value="{{ old('pecsf_last_name') ?? ( isset($profile) ? $profile->last_name : '') }}" {{ $is_new_profile ? '' : 'readonly' }}>
+                            value="{{ old('pecsf_last_name') ?? ( isset($profile) ? $profile->last_name : '') }}">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="pecsf_city">City</label>
-                        @if ($is_new_profile )
+                        {{-- @if ($is_new_profile ) --}}
                             <select class="form-control" style="width:100%;" name="pecsf_city" id="pecsf_city" >
                                 <option value="">Select a City</option>
                                 @foreach ($cities as $city)
-                                    <option value="{{ $city->city }}" {{ $city->city == old('pecsf_city') || (($profile && $profile->pecsf_city) && $city->city == $profile->pecsf_city->city) ? 'selected' : '' }}
+                                    <option value="{{ $city->city }}" {{ $city->city == old('employee_city_name') || (($profile && $profile->employee_city) && $city->city == $profile->employee_city->city) ? 'selected' : '' }}
                                         data-region="{{ $city->region ? $city->region->name : '' }}">
                                         {{ $city->city }}</option>
                                 @endforeach
                             </select>
-                        @else
+                        {{-- @else
                            <input type="text" class="form-control" id="pecsf_city" name="pecsf_city"
                               value="{{ ( isset($profile) ? $profile->city : '') }}" readonly>
-                        @endif
+                        @endif --}}
                     </div>
 
                     <div class="col-md-4 mb-4">
                         <label for="pecsf_bu">Business Unit</label>
                         <input type="text" class="form-control border-0" id="pecsf_bu" name="pecsf_bu"
-                            value="{{ (isset($profile) && $profile->organization_code ) ? $profile->pecsf_user_bu->name . ' (' . $profile->pecsf_user_bu->code . ')' : '' }}"
+                            value="{{ (isset($profile) && $profile->employee_business_unit ) ? $profile->employee_business_unit->name . ' (' . $profile->employee_business_unit->code . ')' : '' }}"
                             readonly tabindex="-1">
                     </div>
                     <div class="col-md-4 mb-4">
                         <label for="pecsf_region">Region</label>
                         <input type="text" class="form-control border-0" id="pecsf_region" name="pecsf_region"
-                            value="{{ (isset($profile) && $profile->pecsf_city ) ? $profile->pecsf_user_city->region->name . ' (' . $profile->pecsf_user_city->region->code . ')' : '' }}"
+                            value="{{ (isset($profile) && $profile->employee_region ) ? $profile->employee_region->name . ' (' . $profile->employee_region->code . ')' : '' }}"
                             readonly tabindex="-1">
                     </div>
                 </div>

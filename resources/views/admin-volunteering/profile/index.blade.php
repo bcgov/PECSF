@@ -157,7 +157,7 @@
 
             <div class="form-group col-md-2">
                 <label for="city">
-                    Emp/PECSF User's City
+                    Office City
                 </label>
                 <select class="form-control" name="city" id="city" role="listbox">
                     <option role="listitem" value="">All</option>
@@ -205,7 +205,7 @@
                     <th>No Of Years</th>
                     <th>Preferred Role</th>
                     <th>Region</th>
-                    <th>City</th>
+                    <th>Office City</th>
                     <th>Action </th>
                     <th>Created At</th>
                     <th>Updated At</th>
@@ -338,8 +338,8 @@
                 {data: 'business_unit.name',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'no_of_years',  defaultContent: '', className: "dt-nowrap"},
                 {data: 'preferred_role_name',  defaultContent: '', className: "dt-nowrap"},
-                {data: 'related_region.name',  defaultContent: '', orderable: false, searchable: false,  className: "dt-nowrap"},
-                {data: 'related_city.city', defaultContent: '', orderable: false, searchable: false, className: "dt-nowrap" },
+                {data: 'employee_region.name',  defaultContent: '', orderable: false, searchable: false,  className: "dt-nowrap"},
+                {data: 'employee_city.city', defaultContent: '', orderable: false, searchable: false, className: "dt-nowrap" },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'created_at', name: 'created_at', className: "dt-nowrap" },
                 {data: 'updated_at', name: 'updated_at', className: "dt-nowrap" },

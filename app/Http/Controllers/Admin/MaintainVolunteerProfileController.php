@@ -44,7 +44,9 @@ class MaintainVolunteerProfileController extends Controller
 
             $profiles = VolunteerProfile::with('organization', 'primary_job', 'business_unit',
                             // 'related_city', 'related_city.region',
-                            'primary_job.city_by_office_city', 'primary_job.city_by_office_city.region')
+                            'employee_city', 'employee_region'
+                            // 'primary_job.city_by_office_city', 'primary_job.city_by_office_city.region'
+                            )
                             // ->leftJoin('users', 'users.id', '=', 'volunteer_profiles.user_id')
                             ->leftJoin('employee_jobs', 'employee_jobs.emplid', '=', 'volunteer_profiles.emplid')
                             ->where( function($query) {
@@ -83,8 +85,7 @@ class MaintainVolunteerProfileController extends Controller
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
-                                    return $q->where('employee_jobs.city', 'like', '%'. $request->city .'%')
-                                             ->orWhere('volunteer_profiles.pecsf_city', 'like', '%'. $request->city .'%');
+                                    return $q->where('volunteer_profiles.employee_city_name', 'like', '%'. $request->city .'%');
                                 });
                             })
                             ->when( $request->preferred_role, function($query) use($request) {
@@ -192,9 +193,10 @@ class MaintainVolunteerProfileController extends Controller
     public function store(MaintainVolunteerProfileRequest $request)
     {
 
-        $user = User::where('id', $request->user_id )->first();
+        $user = User::where('emplid', $request->emplid )->first();
 
         $organization = Organization::where('id', $request->organization_id)->first();
+        $pecsf_city = City::where('city', $request->pecsf_city)->first();
         $city = City::where('id', $request->city)->first();
 
         $profile = VolunteerProfile::Create([
@@ -204,7 +206,9 @@ class MaintainVolunteerProfileController extends Controller
             'pecsf_id' => (!($organization->code == 'GOV')) ? $request->pecsf_id : null,
             'first_name' => (!($organization->code == 'GOV')) ? $request->pecsf_first_name : null, 
             'last_name' => (!($organization->code == 'GOV')) ? $request->pecsf_last_name : null,
-            'pecsf_city' => (!($organization->code == 'GOV')) ? $request->pecsf_city : null,
+            'employee_city_name' => ($organization->code == 'GOV') ?  ($user->primary_job ? $user->primary_job->office_city : null) : $request->pecsf_city,
+            'employee_bu_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->business_unit : null) : $organization->bu_code,
+            'employee_region_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->city_by_office_city->region->code : null) : $pecsf_city->TGB_REG_DISTRICT,
 
             'business_unit_code' => $request->business_unit_code,
             'no_of_years' => $request->no_of_years,
@@ -264,7 +268,7 @@ class MaintainVolunteerProfileController extends Controller
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
 
         $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
-        $cities = City::orderBy('city')->select('city','id')->get();
+        $cities = City::orderBy('city')->get();
         $campaignYears = range(2024, today()->year);
 
         $role_list = VolunteerProfile::ROLE_LIST;
@@ -297,14 +301,16 @@ class MaintainVolunteerProfileController extends Controller
             return abort(404);      // 404 Not Found
         }
 
-        $gov_organization = Organization::where('code', 'GOV')->first();
-        $is_GOV = ($request->organization_id == $gov_organization->id);
+        $org = Organization::where('id', $request->organization_id)->first();
+        $pecsf_city = City::where('city', $request->pecsf_city)->first();
         $city = City::where('id', $request->city)->first();
 
-        if (!$is_GOV) {
+        if ($org->code <> 'GOV') {
             $profile->first_name = $request->pecsf_first_name;
             $profile->last_name  = $request->pecsf_last_name;
-            $profile->pecsf_city = $request->pecsf_city;
+            $profile->employee_city_name = $request->pecsf_city;
+            $profile->employee_bu_code = $org->bu_code;
+            $profile->employee_region_code = $pecsf_city->TGB_REG_DISTRICT;
         }
 
         $profile->business_unit_code = $request->business_unit_code;

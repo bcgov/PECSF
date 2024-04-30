@@ -12,7 +12,8 @@ class VolunteerProfile extends Model implements Auditable
     
     protected $fillable = [
 
-        'campaign_year', 'organization_code', 'emplid', 'pecsf_id', 'first_name', 'last_name', 'pecsf_city',
+        'campaign_year', 'organization_code', 'emplid', 'pecsf_id', 'first_name', 'last_name', 
+        'employee_city_name', 'employee_bu_code', 'employee_region_code',
         'business_unit_code', 'no_of_years', 'preferred_role', 'address_type', 
         'address', 'city', 'province', 'postal_code', 'opt_out_recongnition',
         'created_by_id', 'updated_by_id',
@@ -24,8 +25,8 @@ class VolunteerProfile extends Model implements Auditable
         'fullname',
         'full_address',
         'is_renew_profile',
-        'related_region',
-        'related_city',
+        // 'related_region',
+        // 'related_city',
         'pecsf_user_bu',
         'pecsf_user_city',
     ];
@@ -108,27 +109,43 @@ class VolunteerProfile extends Model implements Auditable
         return $is_renew;
     }
 
-    public function getRelatedRegionAttribute() {
+    // public function getRelatedRegionAttribute() {
 
-        if ($this->organization_code == 'GOV') {
-            return $this->primary_job->region;
-        } else {
-            $city = City::where('city', $this->pecsf_city)->first();
-            return $city ? $city->region : null;
-        }
+    //     if ($this->organization_code == 'GOV') {
+    //         return $this->primary_job->region;
+    //     } else {
+    //         $city = City::where('city', $this->pecsf_city)->first();
+    //         return $city ? $city->region : null;
+    //     }
 
+    // }
+
+    // public function getRelatedCityAttribute() {
+
+    //     if ($this->organization_code == 'GOV') {
+    //         $city = City::where('city', $this->primary_job->office_city)->first();
+    //         return $city;
+    //     } else {
+    //         $city = City::where('city', $this->pecsf_city)->first();
+    //         return $city;
+    //     }
+    // }
+
+    public function employee_business_unit() {
+
+        return $this->belongsTo(BusinessUnit::class, 'employee_bu_code', 'code');
     }
 
-    public function getRelatedCityAttribute() {
+    public function employee_region() {
 
-        if ($this->organization_code == 'GOV') {
-            $city = City::where('city', $this->primary_job->office_city)->first();
-            return $city;
-        } else {
-            $city = City::where('city', $this->pecsf_city)->first();
-            return $city;
-        }
+        return $this->belongsTo(Region::class, 'employee_region_code', 'code');
     }
+
+    public function employee_city() {
+
+        return $this->belongsTo(City::class, 'employee_city_name', 'city');
+    }
+
 
     public function getPecsfUserCityAttribute() {
         $city = null;
