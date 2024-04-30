@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h5 class="modal-title" aria-label="Welcome to Volunteering!">PECSF Training</h5>
+                <h5 class="modal-title" aria-label="Welcome to Volunteering!">Training</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -208,7 +208,7 @@
                 <button href="#trainingGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                 <div class="flex-fill">
                     <div class="text-center ">
-                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 7 </span></h6>
+                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 5 </span></h6>
                     </div>
                 </div>
                 <x-button href="#trainingGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
