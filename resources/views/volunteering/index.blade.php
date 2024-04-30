@@ -34,7 +34,8 @@
                     </a>
                     </div>
                     <div class="col col-md-6">
-                    <a href="{{route('volunteering.training')}}">
+                        <a href="#" data-toggle="modal" data-target="#training-guide-modal">
+                    {{-- <a href="{{route('volunteering.training')}}"> --}}
                         <div class="card px-2 d-table" style="height: 100%">
                             <div class="card-body d-table-cell align-middle text-center">
                                 <i class="x nav-icon fas fa-graduation-cap fa-2x"></i>
@@ -131,6 +132,7 @@
 </div>
 
 @include('volunteering.partials.learn-more-modal')
+@include('volunteering.partials.training-guide-modal')
 
 @endsection
 
