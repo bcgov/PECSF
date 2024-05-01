@@ -17,7 +17,7 @@
                             <h3 class="text-primary my-3 pb-5">
                                 Welcome to PECSF Training!
                             </h3>
-                            <div class="my-1 border-dark">
+                            <div class="my-1">
                                 <iframe id="training_guide_movie_player" movie-id="https://www.youtube-nocookie.com/embed/vsyojouAq5U?cc_load_policy=1&rel=0&autoplay=0"
                                     width="640" height="400" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
@@ -28,58 +28,75 @@
                             <h3 class="text-primary text-center">
                                 What are the different types of volunteer training available?
                             </h3>
-                            <h4 class="text-primary text-center ">
-                                PECSF 101 – Did You Know? Canvasser Training 
-                            </h4>
-                            <p class="px-5 pt-2">An introduction to PECSF program for first-time volunteers, canvassers, and workplace contacts! 
-                                Learn about the benefits of PECSF, how to share them with employees in your area, and feel confident 
-                                in the online pledge system!  
-                            </p>
-                            <p class="px-5 font-weight-bold">Upon the completion of training, each employee with be able to:  </p>
+                            <h5 class="text-primary text-center ">
+                                PECSF 101 - Did You Know? Canvasser Training 
+                            </h5>
 
-                            <div class="list-group list-group-flush px-5 text-left">
-                                <div class="list-group-item list-group-item-action">
-                                    <i class="far fa-check-square fa-1x"></i>
-                                    <span class="pl-2">Articulate the benefits of the PECSF program with their respective departments and organization.
-                                    </span> 
+                            <div class="row">
+                                <div class="col-11 col-md-11">
+                                    <p class="px-5 pt-2">An introduction to PECSF program for first-time volunteers, canvassers, and workplace contacts! 
+                                        Learn about the benefits of PECSF, how to share them with employees in your area, and feel confident 
+                                        in the online pledge system!  
+                                    </p>
+                                    <p class="px-5 font-weight-bold">Upon the completion of training, each employee with be able to: </p>
                                 </div>
-                                <div class="list-group-item list-group-item-action">
-                                    <i class="far fa-check-square fa-1x"></i>
-                                    <span class="pl-2">Demonstrate proficiency in delivering the PECSF Thank You Calendar to employees in a timely and professional manner, 
-                                        ensuring effective communication of its significance and purpose. 
-                                    </span>
-                                </div>
-                                <div class="list-group-item list-group-item-action">
-                                    <i class="far fa-check-square fa-1x"></i>
-                                    <span class="pl-2">Effectively display posters and promotional materials related to
-                                    the PECSF campaign, as well as collect entry prize draw forms in a manner that maximizes engagement and participation.
-                                    </span>
-                                </div>
-
-                                <div class="list-group-item list-group-item-action">
-                                    <i class="far fa-check-square fa-1x"></i>
-                                    <span class="pl-2">Readily assist their colleagues and provide accurate answers to inquiries throughout the duration 
-                                            of the PECSF campaign, fostering a supportive and informed environment. 
-                                    </span>
-                                </div>
-                                <div class="list-group-item list-group-item-action">
-                                    <i class="far fa-check-square fa-1x"></i>
-                                    <span class="pl-2">Proficiently navigate the online pledge system, efficiently search for charity choices, 
-                                        and provide assistance to fellow employees in selecting charitable organizations during the PECSF campaign. 
-                                    </span>
-                                </div>
-                                
-                               
+                            </div>
+                            
+                            <div class="text-center">
+                                <img src="{{asset('img/volunteering-intro/step-2.jpg')}}" alt="" style="max-width: 200px;">
                             </div>
 
-                            <p class="px-5 pt-4">
-                                Become a PECSF Canvasser and Champion in your office!  
-                                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                                    <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
-                                @endif
-                                <a href="#link">Find Learning (gov.bc.ca)</a>
-                            </p>
+                            <div class="row justify-content-center">
+                                <div class="col-11 col-md-11">
+                                    {{-- <b class="h5 my-3">
+                                        Upon the completion of training, each employee with be able to:  
+                                    </b> --}}
+                                    <ul class="text-left check-bullet">
+                                        <li><i class="far fa-check-square fa-1x"></i>
+                                            <span class="pl-2">
+                                            Articulate the benefits of the PECSF program with their respective departments and organization.
+                                            </span>
+                                        </li>
+                                        <li><i class="far fa-check-square fa-1x"></i>
+                                            <span class="pl-2">
+                                            Demonstrate proficiency in delivering the PECSF Thank You Calendar 
+                                            to employees in a timely and professional manner, ensuring effective communication of its significance and purpose.
+                                            </span>
+                                        </li>
+                                        <li><i class="far fa-check-square fa-1x"></i>
+                                            <span class="pl-2">
+                                            Effectively display posters and promotional materials related to
+                                            the PECSF campaign, as well as collect entry prize draw forms in a manner that maximizes engagement and participation.
+                                            </span>
+                                        </li>
+                                        <li><i class="far fa-check-square fa-1x"></i>
+                                            <span class="pl-2">
+                                            Readily assist their colleagues and provide accurate answers to inquiries throughout the duration of the PECSF campaign, 
+                                            fostering a supportive and informed environment.
+                                            </span>
+                                        </li>
+                                        <li><i class="far fa-check-square fa-1x"></i>
+                                            <span class="pl-2">
+                                            Proficiently navigate the online pledge system, efficiently search for charity choices, and provide assistance to fellow 
+                                            employees in selecting charitable organizations during the PECSF campaign.
+                                            </span>
+                                        </li>
+                                    </ul>
 
+                                    <p class="pt-2">
+                                        Become a PECSF Canvasser and Champion in your office!  
+                                        @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
+                                            <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
+                                        @endif
+                                        <a target="_blank" href="https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF">
+                                            Find Learning (gov.bc.ca)
+                                        </a>
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            
                         </div>
 
                         {{-- page 3 --}}
@@ -87,20 +104,26 @@
                             <h3 class="text-primary my-1 pb-2 text-center">
                                 PECSF Gaming & Events - Know Your Limit! 
                             </h3>
-                            <p>
-                                In depth training for event planners and 50/50 gaming volunteers. 
-                                You will learn the basics of hosting awareness events in the workplace, 
-                                PECSF fundraiser and 50/50 gaming regulations, and step-by-step instructions 
-                                to complete the online PECSF eForm for reporting all events. 
-                            </p>
-                            <div class="row">
-                                <div class="col-12 text-center">
-                                    <img src="{{asset('img/volunteering-intro/step-2.jpg')}}" alt="" style="max-width: 200px;">
+                            <div class="row justify-content-center">
+                                <div class="col-11 col-md-11">
+                                    <p>
+                                        In depth training for event planners and 50/50 gaming volunteers. 
+                                        You will learn the basics of hosting awareness events in the workplace, 
+                                        PECSF fundraiser and 50/50 gaming regulations, and step-by-step instructions 
+                                        to complete the online PECSF eForm for reporting all events. 
+                                    </p>
                                 </div>
-                                <div class="pt-2 col-10 col-md-10 offset-md-1">
-                                    <b class="h5 my-3">
+                            </div>
+
+                            <div class="text-center">
+                                <img src="{{asset('img/volunteering-intro/step-2.jpg')}}" alt="" style="max-width: 200px;">
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <div class="pt-2 col-11">
+                                    <h5 class="h5 my-3 font-weight-bold">
                                         Upon the completion of training, each employee with be able to:  
-                                    </b>
+                                    </h5>
                                     <ul class="text-left check-bullet ">
                                         <li><x-bullet />Demonstrate a foundational understanding of hosting awareness events in the workplace, 
                                             including key principles, planning considerations, and effective implementation strategies, to foster a culture of engagement.</li>
@@ -109,37 +132,49 @@
                                         <li><x-bullet />Confidently utilize the online PECSF e-Form through step-by-step instructions, aimed at simplifying banking processes and 
                                             online reporting while ensuring accuracy in financial transactions (including one-time cash/cheque donations) and reporting procedures.</li>
                                     </ul>
+
+                                    <p class="pt-4">
+                                        Become a PECSF Event Coordinator in your office!
+                                        @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
+                                            <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
+                                        @endif
+                                        <a target="_blank" href="https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF">
+                                            Find Learning (gov.bc.ca)
+                                        </a>
+                                    </p>
+                                    
                                 </div>
                             </div>
-
-                            <p class="px-5 pt-4">
-                                Become a PECSF Event Coordinator in your office!
-                                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                                    <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
-                                @endif
-                                <a href="#link">Find Learning (gov.bc.ca)</a>
-                            </p>
 
                         </div>
 
                         {{-- page 4 --}}
-                        <div class="carousel-item ">
+                        <div class="carousel-item">
                             <h3 class="text-primary my-1 pb-2 text-center">
                                 PECSF Lead Coordinator  
                             </h3>
-                            <p>
-                                In depth training for PECSF lead coordinators that are responsible for leading their entire organization’s campaign. 
-                                This course provides information on PECSF, how to coordinate your volunteers, how to create a successful action plan 
-                                and how to conduct donor incentive draws.  
-                            </p>
-                            <div class="row">
+                            
+                            <div class="row justify-content-center">
+                                <div class="col-11">
+                                    <p class="text-left">
+                                        In depth training for PECSF lead coordinators that are responsible for leading their entire organization’s campaign. 
+                                        This course provides information on PECSF, how to coordinate your volunteers, how to create a successful action plan 
+                                        and how to conduct donor incentive draws.  
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center">
                                 {{-- <div class="col-12 text-center">
                                     <img src="{{asset('img/volunteering-intro/step-2.jpg')}}" alt="" style="max-width: 200px;">
                                 </div> --}}
-                                <div class="px-2 pt-2 col-12 col-md-12 ">
-                                    <b class="h5 my-3">
+                                
+                                <div class="col-11 col-md-11">
+
+                                    <h5 class="my-1 font-weight-bold">
                                         Upon the completion of training, each employee with be able to:  
-                                    </b>
+                                    </h5>
+
                                     <ul class="text-left check-bullet ">
                                         <li><x-bullet />Effectively lead and oversee their ministry/organization's workplace campaign. </li>
                                         <li><x-bullet />Strategically apply insights, management techniques, and communication strategies to lead the 
@@ -154,22 +189,24 @@
                                             Understand PECSF’s Donor Privacy Policy and its direct application to Donor Incentive Draws. You will have a clear understanding of 
                                             the policy's principles, ensuring compliance and ethical handling of donor information within the context of participation incentive draws.</li>
                                     </ul>
+
+                                    <p class="px-2 pt-2">
+                                        You work closely with PECSF HQ to ensure successful outcomes including receiving ministry/organization specific campaign statistics 
+                                        for the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
+                                    </p>
+
+                                    <p class="pt-2">
+                                        Become a PECSF Lead Coordinator in your office!
+                                        @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
+                                            <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
+                                        @endif
+                                        <a target="_blank" href="https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF">
+                                            Find Learning (gov.bc.ca)
+                                        </a>
+                                    </p>
+
                                 </div>
                             </div>
-
-                            <p class="px-2 pt-4">
-                                You work closely with PECSF HQ to ensure successful outcomes including receiving ministry/organization specific campaign statistics 
-                                for the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
-                            </p>
-
-                            
-                            <p class="px-5 pt-4">
-                                Become a PECSF Lead Coordinator in your office!
-                                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                                    <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
-                                @endif
-                                <a href="#link">Find Learning (gov.bc.ca)</a>
-                            </p>
 
                         </div>
 
@@ -178,14 +215,14 @@
                             <h3 class="text-primary text-center my-3">
                                 Still have question about volunteering or volunteer training?
                             </h3>
-                            <div class="row mb-3">
+                            <div class="row pt-5 mb-3">
                                 <div class="col-12 col-md-4 offset-md-2">
 
                                     <ul class="text-left check-bullet ">
-                                        <li><x-bullet />Read the questions in our FAQ section </li>
+                                        <li><x-bullet />Read the questions in our <a target="_blank" href="http://localhost:8000/contact">FAQ section</a></li>
                                         <li><x-bullet />Visit the PECSF website – 
-                                                <a href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank"> 
-                                                    Become a Volunteer section </a></li>
+                                            <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank"> 
+                                                    Become a Volunteer section</a></li>
                                         <li><x-bullet />Contact <a href="mailto:kristina.allsopp@gov.bc.ca">Kristina Allsopp</a>, PECSF Volunteer Experience and Training Analyst</li>
                                     </ul>
                                 </div>
