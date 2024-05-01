@@ -83,16 +83,6 @@
                                         </li>
                                     </ul>
 
-                                    <p class="pt-2">
-                                        Become a PECSF Canvasser and Champion in your office!  
-                                        @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                                            <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
-                                        @endif
-                                        <a target="_blank" href="https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF">
-                                            Find Learning (gov.bc.ca)
-                                        </a>
-                                    </p>
-
                                 </div>
                             </div>
 
@@ -132,16 +122,6 @@
                                         <li><x-bullet />Confidently utilize the online PECSF e-Form through step-by-step instructions, aimed at simplifying banking processes and 
                                             online reporting while ensuring accuracy in financial transactions (including one-time cash/cheque donations) and reporting procedures.</li>
                                     </ul>
-
-                                    <p class="pt-4">
-                                        Become a PECSF Event Coordinator in your office!
-                                        @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                                            <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
-                                        @endif
-                                        <a target="_blank" href="https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF">
-                                            Find Learning (gov.bc.ca)
-                                        </a>
-                                    </p>
                                     
                                 </div>
                             </div>
@@ -195,7 +175,7 @@
                                         for the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
                                     </p>
 
-                                    <p class="pt-2">
+                                    {{-- <p class="pt-2">
                                         Become a PECSF Lead Coordinator in your office!
                                         @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                                             <x-button :href="route('volunteering.profile.create')" role="button" class="">I'm ready to volunteer!</x-button>
@@ -203,7 +183,7 @@
                                         <a target="_blank" href="https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF">
                                             Find Learning (gov.bc.ca)
                                         </a>
-                                    </p>
+                                    </p> --}}
 
                                 </div>
                             </div>
@@ -219,7 +199,7 @@
                                 <div class="col-12 col-md-4 offset-md-2">
 
                                     <ul class="text-left check-bullet ">
-                                        <li><x-bullet />Read the questions in our <a target="_blank" href="http://localhost:8000/contact">FAQ section</a></li>
+                                        <li><x-bullet />Read the questions in our <a target="_blank" href="/contact">FAQ section</a></li>
                                         <li><x-bullet />Visit the PECSF website – 
                                             <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank"> 
                                                     Become a Volunteer section</a></li>
@@ -250,13 +230,9 @@
                         <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 5 </span></h6>
                     </div>
                 </div>
-                <x-button href="#trainingGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
+                <x-button href="#trainingGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about the training</x-button>
                 <x-button href="#trainingGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
-                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                    <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
-                @else
-                    <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
-                @endif
+                <x-button role="button" class="ready-btn d-none">I'm ready to training!</x-button>
             </div>
         </div>
     </div>
@@ -329,6 +305,16 @@
 
         $("#training-guide-modal").on("hidden.bs.modal", function () {
             $('#training_guide_movie_player').attr('src', '')
+        });
+
+        $('#training-guide-modal button.btn.ready-btn').on('click',  function () {
+            $('#training-guide-modal').modal('hide');
+
+            window.open(
+                "https://learning.gov.bc.ca/psc/CHIPSPLM/EMPLOYEE/ELM/c/LM_OD_EMPLOYEE_FL.LM_FND_LRN_FL.GBL?Action=U&KWRD=PECSF",
+                '_blank' // <- This is what makes it open in a new window.
+            );
+            
         });
 
     });
