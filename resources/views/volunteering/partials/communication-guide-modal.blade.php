@@ -9,7 +9,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="min-height: 650px;">
+            <div class="modal-body" style="min-height: 660px;">
                 <div id="communicationGuideCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                     <div class="carousel-inner">
                         {{-- page 1 --}}
@@ -65,31 +65,33 @@
                                     </p>
 
                                     <h5 class="pt-2 font-weight-bold">PECSF Community Connect SharePoint</h5>
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <span>(Viodes image)</span>
+                                    <div class="row align-items-center">
+                                        <div class="col-1 text-center text-primary">
+                                            <span>
+                                                <i class="fas fa-warehouse fa-2x"></i>
+                                            </span>
                                         </div>
-                                        <div class="col-10">
+                                        <div class="col-11">
                                             <p>Videos of the new donor experience are a valuable tool for canvassers to help get the message out to employees.  
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <span>(Corporate Prize Draw Image)</span>
+                                    <div class="row align-items-center">
+                                        <div class="col-1 text-center text-primary">
+                                            <span><i class="fas fa-vector-square  fa-2x"></i></span>
                                         </div>
-                                        <div class="col-10">
+                                        <div class="col-11">
                                             <p>Volunteers can encourage employees to complete the online PECSF Corporate Prize Draw to win one of many beautiful prizes.  
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <span>(Campaign Key Dates image) </span>
+                                    <div class="row align-items-center">
+                                        <div class="col-1 text-center text-primary">
+                                            <span><i class="fas fa-users  fa-2x"></i></span>
                                         </div>
-                                        <div class="col-10">
+                                        <div class="col-11">
                                             <p>Mark your calendar and share colleagues the <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772/SitePages/Dates%20and%20Events.aspx">
                                                     PECSF Campaign Key Dates and Events</a>. Then join us for memorable moments and 
                                                 meaningful milestones that provide endless opportunities for connection and celebration.
@@ -97,11 +99,11 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <span>(Deputy Minister’s Challenge image)</span> 
+                                    <div class="row align-items-center">
+                                        <div class="col-1 text-center text-primary">
+                                            <span><i class="fas fa-underline  fa-2x"></i></span> 
                                         </div>
-                                        <div class="col-10">  
+                                        <div class="col-11">  
                                             <p>The Deputy Minister’s Challenge is an annual campaign challenge that is aimed at promoting participation, 
                                                 engagement which harnesses the collective power of individuals to drive positive change and help shape a better future for all British Columbians. 
                                                 Share the details of the annual Deputy Minister’s challenge with your organization.  
@@ -109,11 +111,13 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-2">
-                                            <span>(Awards and Recognition image)</span>
+                                    <div class="row align-items-center">
+                                        <div class="col-1 text-center text-primary">
+                                            <span>
+                                                <i class="fas fa-warehouse fa-2x"></i>
+                                            </span>
                                         </div>
-                                        <div class="col-10">  
+                                        <div class="col-11">  
                                             <p>
                                                 There are two types of awards: Participation Awards, based on statistics and Nomination Awards, which requires employees to complete and submit a nomination in recognition of creativity, innovation and outstanding efforts of their peers.  Remember to nominate your colleagues each November.  
                                             </p>
@@ -176,16 +180,14 @@
                 <button href="#communicationGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                 <div class="flex-fill">
                     <div class="text-center ">
-                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 3 </span></h6>
+                        <h6 class="font-weight-bold" style="">Slide <span class="current_page"> 1 of 3 </span></h6>
                     </div>
                 </div>
                 <x-button href="#communicationGuideCarousel" role="button" class="start-btn d-none" data-slide="next">Learn more about how to volunteer</x-button>
                 <x-button href="#communicationGuideCarousel" role="button" class="next-btn " data-slide="next">Next</x-button>
-                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                    <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
-                @else
-                    <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
-                @endif
+                
+                <button type="button" class="btn btn-primary ready-btn d-none" data-dismiss="modal" aria-label="Close">Close</button>
+               
             </div>
         </div>
     </div>
@@ -229,7 +231,7 @@
                 $(this).find(".next-btn").removeClass("d-none");
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css('padding-left', '190px');
+                // $('.modal-footer h6').css('padding-left', '190px');
                 $('.current_page').html( "1 of " + total);
             }
             else if (e.to === total -1 ) {
@@ -237,7 +239,7 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
+                // $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( (e.to + 1) + " of " + total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
