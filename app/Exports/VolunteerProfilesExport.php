@@ -4,22 +4,23 @@ namespace App\Exports;
 
 // use App\Models\EmployeeJob;
 
+use App\Models\City;
 use App\Models\BusinessUnit;
-use App\Models\VolunteerProfile;
 use App\Models\ProcessHistory;
 
+use App\Models\VolunteerProfile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Events\BeforeExport;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 
 
 
@@ -66,18 +67,18 @@ class VolunteerProfilesExport implements FromQuery, WithHeadings, WithMapping, W
                     //     '',
                     // ],
                     [
-                        'Calendar Year',
+                        'Campaign Year',
                         'Organization',
                         'EMPLID',
                         'PECSF ID',
-                        'Full Name',
-                        'City',
+                        'First Name',
+                        'Last Name',
+
                         'Business Unit',
                         'Region',
+                        'City',
 
                         'New Registration',
-                        'Registrated BU',
-                        'Registrated BU Descr',
                         'Number of years',
                         'Preferred Role',
 
@@ -96,23 +97,25 @@ class VolunteerProfilesExport implements FromQuery, WithHeadings, WithMapping, W
 
     public function map($row): array
     {
+
+        $city_name = ($row->address_type == 'G') ? $row->primary_job->office_city : $row->city;
+
+        $city = City::where('city', $city_name)->first();
+
         return [
 
             $row->campaign_year,
             $row->Organization->name,
             $row->emplid,
             $row->pecsf_id,
-            $row->fullname,
-
-            $row->employee_city->city,
-            $row->employee_business_unit->name,
-            $row->employee_region->name,
+            $row->organization_code == 'GOV' ? $row->primary_job->first_name   : $row->first_name,
+            $row->organization_code == 'GOV' ? $row->primary_job->last_name   : $row->last_name,
+            
+            $row->business_unit ? $row->business_unit->name : '',
+            $city ? $city->region->name : '',
+            $city ? $city->city : '',
 
             $row->is_renew_profile ? 'No' : 'Yes',
-
-            $row->business_unit_code,
-            $row->business_unit ? $row->business_unit->name : '',
-
             $row->no_of_years,
             $row->preferred_role_name,
 

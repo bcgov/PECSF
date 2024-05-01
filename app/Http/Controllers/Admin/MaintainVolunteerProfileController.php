@@ -215,10 +215,10 @@ class MaintainVolunteerProfileController extends Controller
             'preferred_role' => $request->preferred_role,
 
             'address_type' =>  $request->address_type,
-            'address' => ($request->address_type =="G") ? '' : $request->address,
-            'city' => ($request->address_type =="G") ? '' : $city->city,
-            'province' => ($request->address_type =="G") ? '' : $request->province,
-            'postal_code' => ($request->address_type =="G") ? '' : $request->postal_code,
+            'address' => ($request->address_type =="G") ? null : $request->address,
+            'city' => ($request->address_type =="G") ? null : $city->city,
+            'province' => ($request->address_type =="G") ? null : $request->province,
+            'postal_code' => ($request->address_type =="G") ? null : $request->postal_code,
             'opt_out_recongnition' => $request->opt_out_recongnition ? 'Y' : 'N',
 
             'created_by_id' => Auth::Id(),
@@ -318,10 +318,10 @@ class MaintainVolunteerProfileController extends Controller
         $profile->preferred_role = $request->preferred_role;
 
         $profile->address_type = $request->address_type;
-        $profile->address = ($request->address_type =="G") ? '' : $request->address;
-        $profile->city = ($request->address_type =="G") ? '' : $city->city;
-        $profile->province = ($request->address_type =="G") ? '' : $request->province;
-        $profile->postal_code = ($request->address_type =="G") ? '' : $request->postal_code;
+        $profile->address = ($request->address_type =="G") ? null : $request->address;
+        $profile->city = ($request->address_type =="G") ? null : $city->city;
+        $profile->province = ($request->address_type =="G") ? null : $request->province;
+        $profile->postal_code = ($request->address_type =="G") ? null : $request->postal_code;
         $profile->opt_out_recongnition = $request->opt_out_recongnition ? 'Y' : 'N';
 
         $profile->updated_by_id = Auth::id();
@@ -403,7 +403,7 @@ class MaintainVolunteerProfileController extends Controller
                         'region' => $user->primary_job->city_by_office_city->region->code ? $user->primary_job->city_by_office_city->region->name . ' (' . $user->primary_job->city_by_office_city->region->code . ')' : '',                    
                         'office_city' => $user->primary_job->office_city ?? '',
                         'organization' => $user->primary_job->organization_name ?? '',
-                        'full_address'  => $user->primary_job->full_address ?? '',
+                        'full_address'  => $user->primary_job->office_full_address ?? '',
                         'profile_count' => $user->volunteer_profile_count,
                 ];
             }
