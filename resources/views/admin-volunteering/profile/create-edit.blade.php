@@ -110,7 +110,7 @@
                         {{-- @if (isset($profile))
                             <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" readonly>
                         @else  --}}
-                            <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" >
+                            <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" readonly>
                         {{-- @endif --}}
                     </div>
 
@@ -330,7 +330,7 @@
 
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
-                                        <div class="pl-3"><span id="user_full_address">{{ $profile && $profile->primary_job ? $profile->primary_job->full_address : '' }}</span></div>
+                                        <div class="pl-3"><span id="user_full_address">{{ $profile && $profile->primary_job ? $profile->primary_job->office_full_address : '' }}</span></div>
                                     </div>
                                 </div>
 

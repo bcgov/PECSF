@@ -10,7 +10,7 @@
                 </button>
             </div>
             <div class="modal-body" style="min-height: 650px;">
-                <div id="donateGuideCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                <div id="learnGuideCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                     <div class="carousel-inner">
                         {{-- page 1 --}}
                         <div class="carousel-item active text-center">
@@ -19,7 +19,7 @@
                             </h3>
                             <div class="my-1">
                                 <iframe id="movie_player" movie-id="https://www.youtube-nocookie.com/embed/ui-7PMerNnU?cc_load_policy=1&rel=0&autoplay=0"
-                                    width="560" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    width="640" height="400" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         </div>
 
@@ -112,9 +112,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="row pt-4">
-                                            <div class="col-3">
-                                                <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3">
+                                        <div class="row pt-4 align-items-center">
+                                            <div class="col-3 text-center text-primary">
+                                                <i class="fas fa-user-tie fa-5x"></i>
+                                                {{-- <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3"> --}}
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
                                                 <span><b>Executive Sponsor</b> - In this role, you assist the Lead Coordinator 
@@ -155,9 +156,9 @@
                                             </div>
                                         </div>
 
-                                        <div class="row pt-4">
-                                            <div class="col-3">
-                                                <img src="{{asset('img/volunteering-intro/step-3-2.jpg')}}" style="width:100px" class="m-3">
+                                        <div class="row pt-4 align-items-center">
+                                            <div class="col-3 text-center text-primary">
+                                                <i class="fas fa-hands-helping fa-5x"></i>
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
                                                 <span><b>Volunteer</b> - This role is a general volunteer, you could be helping to sell 50/50 tickets, assisting with events, 
@@ -165,9 +166,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="row pt-4">
-                                            <div class="col-3">
-                                                <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3">
+                                        <div class="row pt-4 align-items-center">
+                                            <div class="col-3 text-center text-primary">
+                                                <i class="fas fa-handshake fa-5x"></i>
+                                                {{-- <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3"> --}}
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
                                                 <span><b>Committee Member</b> - Fund Supported Pool Regional Committee members raise the awareness of local charities 
@@ -218,7 +220,7 @@
                                         All volunteer are required to attend annual virtual volunteer training.
                                     </p>
                                     <p>
-                                        With the new <b><u>PECSF Calendar</u></b>, we've made it much easier for you to register and access all the tools and resources you will need to succeed and enjoy your experience as a volunteer.
+                                        Visit the training section to learn more about the various courses offered to help prepare you with all the tools and resources you will need to succeed and enjoy your experience as a volunteer.
                                     </p>
                                 </div>
                                 <div class="col-12 col-md-4 offset-md-1">
@@ -232,20 +234,24 @@
                             <h3 class="text-primary text-center my-3">
                                 How volunteering with PECSF works
                             </h3>
-                            <div class="row mb-3">
-                                <div class="col-12 col-md-4 offset-md-2">
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-12 col-md-6 offset-md-2">
                                     <h4 class="text-primary mt-5">
                                         Step 3: Share your experience!
                                     </h4>
                                     <p>
-                                        With the new <b><u>Volunteer Discussion Board</u></b> you can share photos, videos and encouraging messages with your fellow colleagues to keep the upto date with your overall experience as a PECSF volunteer, and stay connected as a team while we are all working remotely.
+                                        Volunteers often find great fulfillment in sharing their experiences, whether through quotes, photos, videos or 
+                                        blogs on volunteers or charities. By sharing these experiences, volunteers can reflect on their growth while 
+                                        inspiring others to get involved with PECSF and their community. Share your volunteer experience with PECSF 
+                                        HQ at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> to illustrate the impact of volunteerism and to help motivate others to join and help create a culture of generosity.  
                                     </p>
                                     <p>
                                         <b>Are you ready to become a volunteer ?</b>
                                     </p>
                                 </div>
-                                <div class="col-12 col-md-4 offset-md-1">
-                                    <img src="{{asset('img/volunteering-intro/step-5.jpg')}}" alt="" style="max-width: 300px;">
+                                <div class="col-12 col-md-4 text-center">
+                                    <i class="fab fa-microblog fa-10x"></i>
+                                    {{-- <img src="{{asset('img/volunteering-intro/step-5.jpg')}}" alt="" style="max-width: 300px;"> --}}
                                 </div>
                             </div>
                         </div>
@@ -254,21 +260,21 @@
                 </div>
             </div>
             {{-- <div class="modal-footer d-flex">
-                <x-button href="#donateGuideCarousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Back</x-button>
+                <x-button href="#learnGuideCarousel" style="outline-primary" class="prev-btn d-none" role="button" data-slide="prev">Back</x-button>
                 <div class="flex-fill"></div>
-                <x-button href="#donateGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
+                <x-button href="#learnGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                 <x-button data-toggle="modal" data-target="#volunteer-registration" role="button" class="ready-btn d-none">I'm ready to Volunteer!</x-button>
             </div> --}}
             <div class="modal-footer d-flex">
                 <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
-                <button href="#donateGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
+                <button href="#learnGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                 <div class="flex-fill">
                     <div class="text-center ">
                         <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 7 </span></h6>
                     </div>
                 </div>
-                <x-button href="#donateGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
-                <x-button href="#donateGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
+                <x-button href="#learnGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
+                <x-button href="#learnGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
                 @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                     <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
                 @else
@@ -337,7 +343,7 @@
         })
 
         $('#learn-more-modal').on('show.bs.modal', function (event) {
-            $('#donateGuideCarousel').carousel(0);
+            $('#learnGuideCarousel').carousel(0);
             movie_id = $('#movie_player').attr('movie-id');
             $('#movie_player').attr('src', movie_id);
         })

@@ -769,7 +769,7 @@ class AdminDonateNowPledgeTest extends TestCase
             "pecsf_id" => $pledge->pecsf_id,
             "pecsf_first_name" => $pledge->first_name,
             "pecsf_last_name" => $pledge->last_name,
-            "pecsf_city" => $pledge->first_name,
+            "pecsf_city" => $pledge->city,
 
             "charity_id"  => ($pledge->type == 'C') ? $pledge->charity_id : null,
             "special_program" => ($pledge->type == 'C') ?  $pledge->special_program  : null,

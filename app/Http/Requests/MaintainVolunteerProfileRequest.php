@@ -50,6 +50,9 @@ class MaintainVolunteerProfileRequest extends FormRequest
             'pecsf_last_name'  => [
                                     Rule::when($this->organization_id != $gov->id, 'required|regex:/^[\pL\s\-]+$/u'),
                                   ],
+            'pecsf_city'   => [
+                                    Rule::when($this->organization_id != $gov->id, 'required'),
+                             ],
             'business_unit_code'  => ['required', 
                     Rule::exists("business_units", "code")->where('status', 'A')->whereNull("deleted_at"),
                 ],
@@ -78,47 +81,51 @@ class MaintainVolunteerProfileRequest extends FormRequest
 
             $org = Organization::where('id', $this->organization_id)->first();
 
-            if ($org->code != "GOV") {
-                if ($this->address_type == 'G') {
-                    $validator->errors()->add('address_type',  "The address cannot be 'Use Global Address Listing' for non-Gov employee.");
+            if ($org) {
+            
+                if ($org->code != "GOV") {
+                    if ($this->address_type == 'G') {
+                        $validator->errors()->add('address_type',  "The address cannot be 'Use Global Address Listing' for non-Gov employee.");
+                    }
                 }
-            }
 
-            // Check duplicate records Campaign Year + Empld / PECSF ID
-            $profile = VolunteerProfile::where('campaign_year', $this->campaign_year)
-                                    ->where('organization_code', $org->code)
-                                    ->when($org->code == 'GOV', function($q) {
-                                        return $q->where('emplid', $this->emplid);
-                                    }) 
-                                    ->when($org->code != 'GOV', function($q) {
-                                        return $q->where('pecsf_id', $this->pecsf_id);
-                                    })
-                                    ->first();
+                // Check duplicate records Campaign Year + Empld / PECSF ID
+                $profile = VolunteerProfile::where('campaign_year', $this->campaign_year)
+                                        ->where('organization_code', $org->code)
+                                        ->when($org->code == 'GOV', function($q) {
+                                            return $q->where('emplid', $this->emplid);
+                                        }) 
+                                        ->when($org->code != 'GOV', function($q) {
+                                            return $q->where('pecsf_id', $this->pecsf_id);
+                                        })
+                                        ->first();
 
-            if ($profile && $this->profile_id != $profile->id) {
-                if( $org->code == 'GOV' ) {
-                    $validator->errors()->add('emplid',  "This employee have already registered for campaign year " . $this->campaign_year);
-                } else {
-                    $validator->errors()->add('pecsf_id',  "This non-government employee have already registered for campaign year " . $this->campaign_year);
+                if ($profile && $this->profile_id != $profile->id) {
+                    if( $org->code == 'GOV' ) {
+                        $validator->errors()->add('emplid',  "This employee have already registered for campaign year " . $this->campaign_year);
+                    } else {
+                        $validator->errors()->add('pecsf_id',  "This non-government employee have already registered for campaign year " . $this->campaign_year);
+                    }
                 }
-            }
 
-            // If renew record, only 1 is allowed
-            $profile = VolunteerProfile::where('campaign_year', '<', $this->campaign_year)
-                                    ->where('organization_code', $org->code)
-                                    ->when($org->code == 'GOV', function($q) {
-                                        return $q->where('emplid', $this->emplid);
-                                    }) 
-                                    ->when($org->code != 'GOV', function($q) {
-                                        return $q->where('pecsf_id', $this->pecsf_id);
-                                    })
-                                    ->orderBy('campaign_year', 'desc')
-                                    ->first();
+                // If renew record, only 1 is allowed
+                $profile = VolunteerProfile::where('campaign_year', '<', $this->campaign_year)
+                                        ->where('organization_code', $org->code)
+                                        ->when($org->code == 'GOV', function($q) {
+                                            return $q->where('emplid', $this->emplid);
+                                        }) 
+                                        ->when($org->code != 'GOV', function($q) {
+                                            return $q->where('pecsf_id', $this->pecsf_id);
+                                        })
+                                        ->orderBy('campaign_year', 'desc')
+                                        ->first();
 
-            if ($profile && $this->no_of_years <> 1) {
-                $validator->errors()->add('no_of_years',  
-                    "The registration from the ". $profile->campaign_year . " campaign year has been located. Renewal entries must be for a duration of one year."
-                    );
+                if ($profile && $this->no_of_years <> 1) {
+                    $validator->errors()->add('no_of_years',  
+                        "The registration from the ". $profile->campaign_year . " campaign year has been located. Renewal entries must be for a duration of one year."
+                        );
+                }
+
             }
 
         });

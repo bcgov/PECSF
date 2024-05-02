@@ -97,7 +97,7 @@ class VolunteerProfileController extends Controller
                 $role_name = VolunteerProfile::ROLE_LIST[$request->preferred_role];
 
                 if ($request->address_type == 'G') { 
-                    $address = $job->address1 .', '. $job->city .', '. $job->stateprovince .', '. $job->postal;
+                    $address = $job->office_full_address;
                 } else {
                     $city = City::where('id', $request->city)->first();            
                     $province = $request->province ? VolunteerProfile::PROVINCE_LIST[$request->province] : '';
@@ -125,7 +125,7 @@ class VolunteerProfileController extends Controller
                                 ->orderBy("campaign_year", 'desc')
                                 ->first();
         $is_renew = $registered_in_past ? true : false;
-
+        
 
         $profile = VolunteerProfile::Create(
             [
@@ -143,10 +143,10 @@ class VolunteerProfileController extends Controller
                 'preferred_role' => $request->preferred_role,
 
                 'address_type' => $request->address_type,
-                'address' => ($request->address_type =="G") ? '' : $request->address,
-                'city' => ($request->address_type =="G") ? '' : $city->city,
-                'province' => ($request->address_type =="G") ? '' : $request->province,
-                'postal_code' => ($request->address_type =="G") ? '' : $request->postal_code,
+                'address' => ($request->address_type =="G") ? null : $request->address,
+                'city' => ($request->address_type =="G") ? null : $city->city,
+                'province' => ($request->address_type =="G") ? null : $request->province,
+                'postal_code' => ($request->address_type =="G") ? null : $request->postal_code,
                 'opt_out_recongnition' => $request->opt_out_recongnition ? 'Y' : 'N',
 
                 'created_by_id'  => Auth::id(),
@@ -241,10 +241,10 @@ class VolunteerProfileController extends Controller
         $profile->business_unit_code = $request->business_unit_code;
         $profile->no_of_years = $profile->is_renew_profile ? 1 : $request->no_of_years;
         $profile->preferred_role = $request->preferred_role;
-        $profile->address = ($request->address_type =="G") ? '' : $request->address;
-        $profile->city = ($request->address_type =="G") ? '' : $city->city;
-        $profile->province = ($request->address_type =="G") ? '' : $request->province;
-        $profile->postal_code = ($request->address_type =="G") ? '' : $request->postal_code;
+        $profile->address = ($request->address_type =="G") ? null : $request->address;
+        $profile->city = ($request->address_type =="G") ? null : $city->city;
+        $profile->province = ($request->address_type =="G") ? null : $request->province;
+        $profile->postal_code = ($request->address_type =="G") ? null : $request->postal_code;
         $profile->opt_out_recongnition  = $request->opt_out_recongnition ? 'Y' : 'N';
 
         $profile->updated_by_id = Auth::id();

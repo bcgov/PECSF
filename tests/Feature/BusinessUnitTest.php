@@ -195,6 +195,7 @@ class BusinessUnitTest extends TestCase
         $form_data['effdt'] = '2022-12-10';
         $form_data['status'] = 'I';
         $form_data['name'] = 'Modified Dummy';
+        $form_data['acronym'] = 'MDD';
 
         $this->actingAs($this->admin);
         $response = $this->json('put', '/settings/business-units/' . $row->id, $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
@@ -345,6 +346,7 @@ class BusinessUnitTest extends TestCase
             "effdt" => "2015-01-01",
             "status" => "A",
             "name" => "Dummay data",
+            'acronym' => 'DUMM',
             "linked_bu_code" => "BC928",
             "notes" => "testing 123",
         ];

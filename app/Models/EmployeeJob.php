@@ -41,6 +41,7 @@ class EmployeeJob extends Model
     protected $appends = [
         'organization_name',        // Organization under the Org Chart 
         'full_address',
+        'office_full_address',
         'years_of_service',
         'years_of_volunteer',
         'total_donations',
@@ -113,6 +114,17 @@ class EmployeeJob extends Model
         $address .= trim($this->city) ? ', '. $this->city : '';
         $address .= trim($this->stateprovince) ? ', '. $this->stateprovince : '';
         $address .= trim($this->postal) ? ', '. $this->postal : '';
+       
+        return $address;
+    }
+
+    public function getOfficeFullAddressAttribute()
+    {
+        $address = $this->office_address1;
+        $address .= trim($this->office_address2) ? ', '. $this->office_address2 : '';
+        $address .= trim($this->office_city) ? ', '. $this->office_city : '';
+        $address .= trim($this->office_stateprovince) ? ', '. $this->office_stateprovince : '';
+        $address .= trim($this->office_postal) ? ', '. $this->office_postal : '';
        
         return $address;
     }
