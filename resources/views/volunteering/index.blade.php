@@ -62,7 +62,8 @@
                     </div>
 
                     <div class="col col-md-6">
-                        <a href="{{route('volunteering.communication')}}">
+                        <a href="#" data-toggle="modal" data-target="#communication-guide-modal">
+                        {{-- <a href="{{route('volunteering.communication')}}"> --}}
                             <div class="card px-2 d-table" style="height: 100%">
                                 <div class="card-body d-table-cell align-middle text-center">
                                     <i class="nav-icon fas fa-comments fa-3x "></i><br>
@@ -133,6 +134,7 @@
 
 @include('volunteering.partials.learn-more-modal')
 @include('volunteering.partials.training-guide-modal')
+@include('volunteering.partials.communication-guide-modal')
 
 @endsection
 

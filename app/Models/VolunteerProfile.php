@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Models\City;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class VolunteerProfile extends Model implements Auditable
 {
+    use HasFactory;
     use \OwenIt\Auditing\Auditable;
     
     protected $fillable = [
@@ -88,7 +90,7 @@ class VolunteerProfile extends Model implements Auditable
             $job = $this->emplid ? $this->primary_job()->first() : null; 
 
             if ($job) {
-                $address = $job->full_address;
+                $address = $job->office_full_address;
             }
         } else {
             $address = $this->address .', '. $this->city .', '. $this->province .', '. $this->postal_code;
