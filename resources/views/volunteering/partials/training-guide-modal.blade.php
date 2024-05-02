@@ -42,9 +42,9 @@
                                 </div>
                             </div>
                             
-                            <div class="text-center">
+                            {{-- <div class="text-center">
                                 <img src="{{asset('img/volunteering-intro/step-2.jpg')}}" alt="" style="max-width: 200px;">
-                            </div>
+                            </div> --}}
 
                             <div class="row justify-content-center">
                                 <div class="col-11 col-md-11">
@@ -232,7 +232,7 @@
                 </div>
                 <x-button href="#trainingGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about the training</x-button>
                 <x-button href="#trainingGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
-                <x-button role="button" class="ready-btn d-none">I'm ready to training!</x-button>
+                <x-button role="button" class="ready-btn d-none">I'm ready for training!</x-button>
             </div>
         </div>
     </div>
@@ -260,7 +260,7 @@
 
     $(function () {
 
-        var total = 5;
+        var training_total = 5;
         $('#training-guide-modal').on('slide.bs.carousel', function (e) {
 
             movie_id = $('#training_guide_movie_player').attr('movie-id');
@@ -275,15 +275,15 @@
                 $(this).find(".ready-btn").addClass("d-none");
 
                 $('.modal-footer h6').css('padding-left', '190px');
-                $('.current_page').html( "1 of " + total);
+                $('.current_page').html( "1 of " + training_total);
             }
-            else if (e.to === total -1 ) {
+            else if (e.to === training_total -1 ) {
                 $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
                 $('.modal-footer h6').css({'padding-left':''});
-                $('.current_page').html( (e.to + 1) + " of " + total);
+                $('.current_page').html( (e.to + 1) + " of " + training_total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".start-btn").addClass("d-none");
@@ -292,7 +292,7 @@
                 $(this).find(".ready-btn").addClass("d-none");
 
                 $('.modal-footer h6').css({'padding-left':''});
-                $('.current_page').html( (e.to + 1) + " of " + total);
+                $('.current_page').html( (e.to + 1) + " of " + training_total);
             }
 
         })
