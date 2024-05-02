@@ -67,21 +67,19 @@ class VolunteerProfilesExport implements FromQuery, WithHeadings, WithMapping, W
                     //     '',
                     // ],
                     [
-                        'Campaign Year',
-                        'Organization',
-                        'EMPLID',
-                        'PECSF ID',
-                        'First Name',
                         'Last Name',
-
+                        'First Name',
+                        'Campaign Year',
                         'Business Unit',
                         'Region',
                         'City',
-
-                        'New Registration',
-                        'Number of years',
                         'Preferred Role',
+                        'No of years volunteering',
 
+                        'Organization',
+                        'EMPLID',
+                        'PECSF ID',
+                        'New Registration',
                         'Use Global Address',
                         'Full Address',
                         'Opt-out recognition',
@@ -104,21 +102,20 @@ class VolunteerProfilesExport implements FromQuery, WithHeadings, WithMapping, W
 
         return [
 
-            $row->campaign_year,
-            $row->Organization->name,
-            $row->emplid,
-            $row->pecsf_id,
-            $row->organization_code == 'GOV' ? $row->primary_job->first_name   : $row->first_name,
             $row->organization_code == 'GOV' ? $row->primary_job->last_name   : $row->last_name,
+            $row->organization_code == 'GOV' ? $row->primary_job->first_name   : $row->first_name,
+            $row->campaign_year,
             
             $row->business_unit ? $row->business_unit->name : '',
             $city ? $city->region->name : '',
             $city ? $city->city : '',
-
-            $row->is_renew_profile ? 'No' : 'Yes',
-            $row->no_of_years,
             $row->preferred_role_name,
+            $row->no_of_years,
 
+            $row->Organization->name,
+            $row->emplid,
+            $row->pecsf_id,
+            $row->is_renew_profile ? 'No' : 'Yes',
             $row->address_type == 'G' ? 'Yes' : 'No',
             $row->full_address,
             $row->opt_out_recongnition == 'Y' ? 'Yes' : 'No',
