@@ -117,7 +117,7 @@ class VolunteerProfileReportController extends Controller
         }
 
         // get all the record for select options 
-        $years = VolunteerProfile::distinct('campaign_year')->orderBy('campaign_year')->pluck('campaign_year');
+        $years = range(2024, today()->year);
 
         // load the view and pass data
         return view('admin-report.volunteer-profiles.index', compact('years'));
@@ -130,7 +130,7 @@ class VolunteerProfileReportController extends Controller
 
             $filters = $request->all(); 
 
-            $filename = 'volunteer_profiles_'.now()->format("Y-m-d-his").".xlsx";
+            $filename = 'volunteer_profiles_'.$request->year .'_'.now()->format("Y-m-d-his").".xlsx";
 
             // Submit a Job
             $history = \App\Models\ProcessHistory::create([

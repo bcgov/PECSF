@@ -79,6 +79,7 @@
                                 <select class="form-control" style="width:100%;" name="organization_id" id="organization_id">
                                     @foreach ($organizations as $organization)
                                         <option value="{{ $organization->id }}" code="{{ $organization->code }}"
+                                            bu_code="{{ $organization->bu_code }}"
                                             {{ $organization->code == 'GOV' ? 'selected' : '' }}>
                                             {{ $organization->name }}</option>
                                     @endforeach
@@ -107,11 +108,11 @@
                     </div>
                     <div class="form-group col-md-3 pecsf_id_section">
                         <label for="user">PECSF ID</label>
-                        {{-- @if (isset($profile))
+                        @if ($is_new_profile)
+                            <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" >
+                        @else 
                             <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" readonly>
-                        @else  --}}
-                            <input type="text" class="form-control" name="pecsf_id" id="pecsf_id" value="{{ $profile->pecsf_id }}" readonly>
-                        {{-- @endif --}}
+                        @endif
                     </div>
 
                 </div>
@@ -527,7 +528,10 @@ $(function () {
 
         $('#user_full_address').html('');
 
+        // set business unit 
+        $('#business_unit_code').val('');
         // reset when this is renew
+
         // $('#no_of_years').prop('disabled',false);
         $('#no_of_years_area').show();
     }
@@ -539,6 +543,9 @@ $(function () {
         $('#pecsf_city').val('');
         $('#pecsf_bu').val('');
         $('#pecsf_region').val('');
+
+        // set business unit 
+        $('#business_unit_code').val('');
     }
 
     $('#organization_id').change( function() {
@@ -563,6 +570,11 @@ $(function () {
             } else {
                 reset_pecsf_profile_info();
                 get_nongov_user_detail();
+
+                // Business Unit Code
+                bu_code = $("select[name='organization_id']").find(":selected").attr('bu_code');
+                $('#business_unit_code').val(bu_code);
+
             }
             first_load = false;
         }
@@ -664,7 +676,7 @@ $(function () {
         // clean up the old values
         $('#pecsf_first_name').val('');
         $('#pecsf_last_name').val('');
-        $('#pecsf_city').val('');
+        $('#pecsf_city').val('');  
 
         $.get({
             url: '{{ route('admin-pledge.administrators.nongovuser') }}' +
