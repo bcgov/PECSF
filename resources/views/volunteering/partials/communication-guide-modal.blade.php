@@ -23,11 +23,11 @@
                                     <div class="row align-items-center">
                                         <div class="col-2 text-center text-primary">
                                             <span>
-                                                <i class="fas fa-envelope fa-6x"></i>
+                                                <i class="fas fa-envelope fa-4x"></i>
                                             </span>
                                         </div>
                                         <div class="col-10">
-                                            <h5 class="pt-2 font-weight-bold">PECSF Community Connect SharePoint</h5>
+                                            <h5 class="pt-2 font-weight-bold">Sign up for PECSF eNews</h5>
                                             <p>
                                                 Each campaign there are two official messages that are sent out from the Honorary Chair and Vice Chair.  
                                                 One at the beginning of Campaign (third week of September) and one towards the end of Campaign.  
@@ -39,14 +39,14 @@
                                     <div class="row pt-3 align-items-center">
                                         <div class="col-2 text-center text-primary">
                                             <span>
-                                                <i class="fas fa-newspaper fa-6x"></i>
+                                                <i class="fas fa-newspaper fa-4x"></i>
                                             </span>
                                         </div>
                                         <div class="col-10">
                                             <h5 class="pt-2 font-weight-bold">eNewsletter</h5>
                                             <p>Our eNewsletter provides volunteers with a monthly dose of inspiration and updates from PECSF headquarters.
                                                 Whether you are a seasoned volunteer or new to the team, this eNewsletter is your gateway to staying connected, 
-                                                informed and motivated!  Sign up today by emailing <a href="mailto:pecsf@gov.bc.ca">pecsf@gov.bc.ca!</a>  
+                                                informed and motivated!  Sign up today by emailing <a href="mailto:pecsf@gov.bc.ca?subject=Sign up for PECSF eNews">pecsf@gov.bc.ca!</a>  
                                            </p>
                                         </div>
                                     </div>
@@ -54,14 +54,15 @@
                                     <div class="row pt-3 align-items-center">
                                         <div class="col-2 text-center text-primary">
                                             <span>
-                                                <i class="fas fa-blog fa-6x"></i>
+                                                <i class="fas fa-blog fa-4x"></i>
                                             </span>
                                         </div>
                                         <div class="col-10">
-                                            <h5 class="pt-2 font-weight-bold">Blogs</h5>
+                                            <h5 class="pt-2 font-weight-bold">PECSF Blog Ideas</h5>
                                             <p>Read our heartwarming charity and volunteers blogs, where passion meets purpose and acts of kindness inspire change.
                                                 Dedicated volunteers and charities share their stories, insights and experiences with the PECSF program that ignites a spirit 
-                                                of generosity and community engagement.  We would love to hear from you, email pecsf@gov.bc.ca today with your blog ideas.    
+                                                of generosity and community engagement.  We would love to hear from you, email 
+                                                <a href="mailto:pecsf@gov.bc.ca?subject=PECSF Blog Ideas">pecsf@gov.bc.ca</a> today with your blog ideas.    
                                             </p>
                                         </div>
                                     </div>
@@ -78,7 +79,7 @@
                                 What are some of the important PECSF Resources? 
                             </h3>
 
-                            <div class="row pt-4     justify-content-center">
+                            {{-- <div class="row pt-4     justify-content-center">
                                 <div class="col-12">
                                     <div class="row align-items-center">
                                         <div class="col-1 text-right text-primary">
@@ -91,24 +92,42 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="row pt-3 justify-content-center">
                                 <div class="col-10">
+                                    <h4 class="pb-2 font-weight-bold">Website</h4>
+
                                   
                                     <p>Volunteers can find the entire <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer/resources">
-                                        PECSF Campaign lifecycle of resources</a> can be found on the PECSF website. 
+                                        PECSF Campaign lifecycle of resources</a> on the PECSF website. 
                                         Volunteers will find promotional material for spreading the message, a detailed how to donate guide, 
                                         logos, volunteer handbook and so much more!  
                                     </p>
                                     <p>Virtual events have emerged as a powerful platform for connection, collaboration and engagement. 
                                         Check out the virtual campaign toolkit and event guidelines on the PECSF website. 
                                         Harness the power of technology in this hybrid working environment and make the virtual experience inspirational, 
-                                        informative, and engaging for your coworkers. For more ideas, reach out to <a href="mailto:pecsf@gov.bc.ca">pecsf@gov.bc.ca</a>. 
+                                        informative, and engaging for your coworkers. For more ideas, reach out to 
+                                        <a href="mailto:pecsf@gov.bc.ca?subject=PECSF Virtual Events">pecsf@gov.bc.ca</a>. 
                                     </p>
 
                                 </div>
                             </div>
+
+                            {{-- {{-- <div class="row pt-4     justify-content-center"> --}}
+                                <div class="col-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-12 text-center text-primary">
+                                             
+                                                    <img src="{{asset('img/volunteering-intro/pecsf_logo_volunteer_lifecycle_392x388.jpg')}}" alt="" style="max-width: 300px;">
+                                            
+                                            {{-- <span>
+                                                <i class="fas fa-video fa-3x"></i>
+                                            </span> --}}
+                                        </div>
+                                    </div>
+                                </div>
+
 
                         </div>
 
@@ -118,7 +137,7 @@
                                 What are some of the important PECSF Resources? 
                             </h3>
                             
-                            <div class="row pt-4     justify-content-center">
+                            {{-- <div class="row pt-4     justify-content-center">
                                 <div class="col-12">
                                     <div class="row align-items-center">
                                         <div class="col-1 text-right text-primary">
@@ -131,11 +150,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="row pt-5 justify-content-center">
                                 <div class="col-10">
-                                    <div class="row justify-content-center">
+                                    <div class="row align-items-center">
                                         <div class="col-1 text-center text-primary">
                                             <span>
                                                 <i class="fas fa-video fa-2x"></i>
@@ -194,6 +213,11 @@
                                         </div>
                                     </div>
 
+                                    <p class="px-3 pt-3">
+                                        To be added to the membership for the PECSF Community Connect SharePoint, email 
+                                        <a href="mailto:pecsf@gov.bc.ca">pecsf@gov.bc.ca</a>.   
+                                    </p>
+        
                                 </div>
                             </div>
 
@@ -234,18 +258,18 @@
                             </div> --}}
 
                             <div class="row pt-4 justify-content-center">
-                                <div class="col-10">
+                                <div class="col-11">
                                     <div class="row align-items-center">
                                         <div class="col-2 text-center text-primary">
                                             <span>
-                                                <i class="fas fa-map-marked-alt fa-6x"></i>
+                                                <i class="fas fa-map-marked-alt fa-4x"></i>
                                             </span>
                                         </div>
                                         <div class="col-10">
                                             <h5 class="pt-2 font-weight-bold">In Person and Virtual Engagement</h5>
                                             <p>The PECSF program has a long history of in person and virtual engagement.  
-                                                Join us the PECSF Campaign kick-off and Recognition event which will be posted on the 
-                                                    <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect home page</a>.   
+                                                Join us for the annual PECSF Campaign Kick-off and Recognition events. Details of the events will be posted on the 
+                                                    <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect</a>.   
                                             </p>
                                             <p>Each year the PECSF HQ team visits regional offices to recognize and celebrate the effort of champions 
                                                 who promote the PECSF program. Complete the 
@@ -258,7 +282,7 @@
                                     <div class="row pt-3 align-items-center">
                                         <div class="col-2 text-center text-primary">
                                             <span>
-                                                <i class="fas fa-comments fa-6x"></i>
+                                                <i class="fas fa-comments fa-4x"></i>
                                             </span>
                                         </div>
                                         <div class="col-10">
@@ -270,16 +294,16 @@
                                         </div>
                                     </div>
 
-                                    <div class="row pt-5 align-items-center">
+                                    <div class="row pt-3 align-items-center">
                                         <div class="col-2 text-center text-primary">
                                             <span>
-                                                <i class="fas fa-question-circle fa-6x"></i>
+                                                <i class="fas fa-question-circle fa-4x"></i>
                                             </span>
                                         </div>
                                         <div class="col-10">
                                             <h5 class="pt-3 font-weight-bold">Contact Us</h5>
                                             <p>If you have any questions or are interested in volunteering to help with the Annual PECSF Fall Campaign, 
-                                                email Kristina Allsopp at <a href="mailto:pecsf@gov.bc.ca">pecsf@gov.bc.ca</a>.  
+                                                email Kristina Allsopp at <a href="mailto:pecsf@gov.bc.ca?subject=Volunteering Questions">pecsf@gov.bc.ca</a>.  
                                             </p>
                                         </div>
                                     </div>
@@ -355,7 +379,7 @@
                 $(this).find(".next-btn").removeClass("d-none");
                 $(this).find(".ready-btn").addClass("d-none");
 
-                // $('.modal-footer h6').css('padding-left', '190px');
+                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( "1 of " + communication_total);
             }
             else if (e.to === communication_total -1 ) {
@@ -363,7 +387,8 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
-                // $('.modal-footer h6').css({'padding-left':''});
+
+                $('.modal-footer h6').css('padding-left', '164px');
                 $('.current_page').html( (e.to + 1) + " of " + communication_total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
@@ -377,6 +402,14 @@
             }
 
         })
+
+        $('#communication-guide-modal').on('show.bs.modal', function (event) {
+            $('#communicationGuideCarousel').carousel(0);
+        })
+
+        $('#communication-guide-modal').on("hidden.bs.modal", function (event) {
+
+        });
 
     });
 
