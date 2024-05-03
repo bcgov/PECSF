@@ -11,7 +11,7 @@
             @if ($is_renew) 
                 <h1>Renew your Volunteer</h1>
             @else
-                <h1>Register As a Volunteer</h1>
+                <h1>Register as a Volunteer</h1>
             @endif
             <p style="color: #687278;">"Volunteers do not necessarily have the time; they just have the heart." ~ Elizabeth Andrew</p>
 
@@ -44,10 +44,10 @@
                     @csrf
                     @if (isset($profile) && $profile->id)
                         @method('PUT')
-                        <input type="hidden" id="campaign_year" name="campaign_year" value="{{ today()->year }}">
                         <input type="hidden" id="profile_id" name="profile_id" value="{{ $profile->id }}">
                     @endisset
                     <input type="hidden" id="step" name="step" value="">
+                    <input type="hidden" id="campaign_year" name="campaign_year" value="{{ today()->year }}">
                     @if ($is_renew) 
                         <input type="hidden" id="is_renew" name="is_renew" value="Y">
                     @endif

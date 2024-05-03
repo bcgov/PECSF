@@ -56,7 +56,12 @@ class VolunteerProfileController extends Controller
                                    ->where("emplid", $user->emplid)
                                    ->first();
 
-        $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","A")
+                            ->whereIn('code', function($query) {
+                                $query->select('linked_bu_code')
+                                ->from("business_units");                               
+                            })
+                            ->orderBy("name")->get();
         $cities = City::orderBy('city')->select('city','id')->get();
 
         $role_list = VolunteerProfile::ROLE_LIST;
@@ -205,7 +210,12 @@ class VolunteerProfileController extends Controller
         // $profile = VolunteerProfile::where("user_id",Auth::id())->first();
         // $user = User::where('id', Auth::id())->first();
 
-        $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","A")
+                                ->whereIn('code', function($query) {
+                                    $query->select('linked_bu_code')
+                                    ->from("business_units");                               
+                                })
+                                ->orderBy("name")->get();
         $cities = City::orderBy('city')->select('city','id')->get();
 
         $role_list = VolunteerProfile::ROLE_LIST;
