@@ -25,7 +25,7 @@
                         <div class="step-1 text-center">
                             <p class="text-muted">
                                 You have successfully registered as a volunteer with PECSF. <br>
-                                Click the button below to begin volunteer training process.
+                                Click the button below to learn more about available training. 
                             </p>
                             <div class="m-3">
                                 <img src="{{asset('img/volunteering-intro/finished-registraion.jpeg')}}" class="img-fluid">
