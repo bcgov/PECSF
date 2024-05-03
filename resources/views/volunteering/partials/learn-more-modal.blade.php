@@ -14,12 +14,12 @@
                     <div class="carousel-inner">
                         {{-- page 1 --}}
                         <div class="carousel-item active text-center">
-                            <h3 class="text-primary my-3 pb-5">
+                            <h3 class="text-primary my-3 pb-3">
                                 Welcome to PECSF Volunteering!
                             </h3>
-                            <div class="my-1">
+                            <div class="">
                                 <iframe id="movie_player" movie-id="https://www.youtube-nocookie.com/embed/ui-7PMerNnU?cc_load_policy=1&rel=0&autoplay=0"
-                                    width="640" height="400" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    width="780" height="510" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         </div>
 
@@ -32,13 +32,14 @@
                                 <div class="col offset-sm-1">
                                     <span class="font-weight-bold">Your benefits are: </span>
                                     <ul class="check-bullet">
-                                        <li><x-bullet />Putting your public service values into action</li>
-                                        <li><x-bullet />Making a difference in your community</li>
+                                        
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Put your public service values into action</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Make a difference in your community</li>
                                         {{-- <li><x-bullet />Challenge yourself</li> --}}
-                                        <li><x-bullet />Building your team spirit, strengthens and connections</li>
-                                        <li><x-bullet />Showcasing or developing your skills as a leader </li>
-                                        <li><x-bullet />Network with others across the provincial government</li>
-                                        <li><x-bullet />Offering your skills - there are so many ways to contribute!</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Build your team spirit, strengthens and connections</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Showcase or developing your skills as a leader </li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Network with others across the provincial government</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Offer your skills - there are so many ways to contribute!</li>
                                     </ul>
                                 </div>
                                 <div class="col-4">
@@ -54,18 +55,22 @@
                             <h3 class="text-primary my-3 pb-4">
                                 Your commitment as a volunteer
                             </h3>
-                            <div class="row">
+                            <div class="row justify-content-center">
                                 <div class="col-12">
                                     <img src="{{asset('img/volunteering-intro/step-2.jpg')}}" alt="" style="max-width: 300px;">
                                 </div>
-                                <div class="col-12 col-md-6 offset-md-3">
-                                    <b class="h5 my-3">
-                                        As a volunteer you commit to:
-                                    </b>
-                                    <ul class="text-left check-bullet ">
-                                        <li><x-bullet />Volunteering during the September to November awareness campaign</li>
-                                        <li><x-bullet />Attend the campaign kick-off event in your region (where applicable)</li>
-                                        <li><x-bullet />Two hours of PECSF online volunteering training</li>
+                            </div>
+                            <div class="row justify-content-center">
+                                <b class="h5 py-3">
+                                    As a volunteer you commit to:
+                                </b>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-7 ">
+                                    <ul class="pl-5 text-left check-bullet ">
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Volunteering during the September to November awareness campaign</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Attend the campaign kick-off event in your region (where applicable)</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Two hours of PECSF online volunteering training</li>
                                     </ul>
                                 </div>
 
@@ -78,8 +83,8 @@
                                 What are some of the available volunteer roles?
                             </h3>
                             <div class="container">
-                                <div class="row text-left">
-                                    <div class="col-6 col-md-6">
+                                <div class="row justify-content-center text-left">
+                                    <div class="col-10 col-md-10">
                                         {{-- <div class="px-3">
                                             <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3">
                                             <b>Coordinators</b> - lead and set the tone of workspace campaign
@@ -93,7 +98,7 @@
                                             <b> Event Coordinators</b> - plan and run successful fundraising events
                                         </div> --}}
                                         <div class="row pt-2">
-                                            <div class="col-3">
+                                            <div class="col-3 text-center">
                                                 <img src="{{asset('img/volunteering-intro/step-3-2.jpg')}}" style="width:100px" class="m-3">
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
@@ -102,7 +107,7 @@
                                         </div>
 
                                         <div class="row pt-4">
-                                            <div class="col-3">
+                                            <div class="col-3 text-center">
                                                 <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3">
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
@@ -129,24 +134,22 @@
                                         
                                     </div>
                                 
-                                {{-- right  --}}
-                                
-                                    <div class="col-6 col-md-6">
-                                        {{-- <div class="px-3">
-                                            <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3">
-                                            <div class="d-flex"><b>Coordinators</b> - lead and set the tone of workspace campaign</div>
-                                        </div>
-                                        <div class="px-3">
-                                            <img src="{{asset('img/volunteering-intro/step-3-2.jpg')}}" style="width:100px" class="m-3">
-                                            <b> Canvassers</b> - provide one-on-one contact with Employees
-                                        </div>
-                                        <div class="px-3">
-                                            <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3">
-                                            <b> Event Coordinators</b> - plan and run successful fundraising events
-                                        </div> --}}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- page 5 --}}
+                        <div class="carousel-item text-center">
+                            <h3 class="text-primary my-4">
+                                What are some of the available volunteer roles?
+                            </h3>
+                            <div class="container">
+                                <div class="row justify-content-center text-left">
+                              
+                                    <div class="col-10 col-md-10">
 
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-3 text-center">
                                                 <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3">
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
@@ -183,13 +186,18 @@
                             </div>
                         </div>
 
-                        {{-- page 5 --}}
-                        <div class="carousel-item">
-                            <h3 class="text-primary text-center my-3">
+                        {{-- page 6 --}}
+                        <div class="carousel-item text-center">
+                            <h3 class="text-primary my-3 pb-4">
                                 How volunteering with PECSF works
                             </h3>
-                            <div class="row">
-                                <div class="col-12 col-md-4 offset-md-2">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <img src="{{asset('img/volunteering-intro/step-4.jpg')}}" alt="" style="max-width: 160px;">
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-7 text-left">
                                     <h4 class="text-primary mt-5">
                                         Step 1: Register as a volunteer
                                     </h4>
@@ -197,45 +205,50 @@
                                         We want to personalize your new volunteer experience as much as possible.
                                     </p>
                                     <p>
-                                        In efforts to do that, we need to gather some info about your current role, your organization, and location so that we can also help you connect with other volunteer in your ministry or branch.
+                                        In efforts to do that, we need to gather some info about your current role, your organization, and location so that we can also help you connect with other volunteers in your ministry or branch.
                                     </p>
-                                </div>
-                                <div class="col-12 col-md-4 offset-md-1">
-                                    <img src="{{asset('img/volunteering-intro/step-4.jpg')}}" alt="" style="max-width: 300px;">
                                 </div>
                             </div>
                         </div>
 
-                        {{-- page 6 --}}
-                        <div class="carousel-item">
-                            <h3 class="text-primary text-center my-3">
+
+                        {{-- page 7 --}}
+                        <div class="carousel-item text-center">
+                            <h3 class="text-primary my-3 pb-4">
                                 How volunteering with PECSF works
                             </h3>
-                            <div class="row">
-                                <div class="col-12 col-md-4 offset-md-2">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <img src="{{asset('img/volunteering-intro/step-5.jpg')}}" alt="" style="max-width: 160px;">
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-7 text-left">
                                     <h4 class="text-primary mt-5">
                                         Step 2: Attend Volunteer Training
                                     </h4>
                                     <p>
-                                        All volunteer are required to attend annual virtual volunteer training.
+                                        All volunteers are required to attend annual virtual volunteer training.
                                     </p>
                                     <p>
                                         Visit the training section to learn more about the various courses offered to help prepare you with all the tools and resources you will need to succeed and enjoy your experience as a volunteer.
                                     </p>
                                 </div>
-                                <div class="col-12 col-md-4 offset-md-1">
-                                    <img src="{{asset('img/volunteering-intro/step-5.jpg')}}" alt="" style="max-width: 300px;">
-                                </div>
                             </div>
                         </div>
 
-                        {{-- page 7 --}}
-                        <div class="carousel-item">
-                            <h3 class="text-primary text-center my-3">
+                        {{-- page 8 --}}
+                        <div class="carousel-item text-center">
+                            <h3 class="text-primary my-3 pb-4">
                                 How volunteering with PECSF works
                             </h3>
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-12 col-md-6 offset-md-2">
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <i class="fab fa-microblog fa-10x"></i>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-7 text-left">
                                     <h4 class="text-primary mt-5">
                                         Step 3: Share your experience!
                                     </h4>
@@ -243,18 +256,16 @@
                                         Volunteers often find great fulfillment in sharing their experiences, whether through quotes, photos, videos or 
                                         blogs on volunteers or charities. By sharing these experiences, volunteers can reflect on their growth while 
                                         inspiring others to get involved with PECSF and their community. Share your volunteer experience with PECSF 
-                                        HQ at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> to illustrate the impact of volunteerism and to help motivate others to join and help create a culture of generosity.  
+                                        HQ at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> to illustrate the impact of volunteerism and to help 
+                                        motivate others to join and create a culture of generosity.  
                                     </p>
                                     <p>
-                                        <b>Are you ready to become a volunteer ?</b>
+                                        <b>Are you ready to become a volunteer?</b>
                                     </p>
-                                </div>
-                                <div class="col-12 col-md-4 text-center">
-                                    <i class="fab fa-microblog fa-10x"></i>
-                                    {{-- <img src="{{asset('img/volunteering-intro/step-5.jpg')}}" alt="" style="max-width: 300px;"> --}}
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                 </div>
@@ -270,7 +281,7 @@
                 <button href="#learnGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
                 <div class="flex-fill">
                     <div class="text-center ">
-                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 7 </span></h6>
+                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 8 </span></h6>
                     </div>
                 </div>
                 <x-button href="#learnGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
@@ -306,6 +317,8 @@
 <script>
 
     $(function () {
+
+        var learn_total = 8;
         $('#learn-more-modal').on('slide.bs.carousel', function (e) {
 
             movie_id = $('#movie_player').attr('movie-id');
@@ -320,15 +333,15 @@
                 $(this).find(".ready-btn").addClass("d-none");
 
                 $('.modal-footer h6').css('padding-left', '190px');
-                $('.current_page').html( "1 of 7");
+                $('.current_page').html( "1 of " + learn_total);
             }
-            else if (e.to === 6) {
+            else if (e.to === (learn_total - 1)) {
                 $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
                 $('.modal-footer h6').css({'padding-left':''});
-                $('.current_page').html( (e.to + 1) + " of 7");
+                $('.current_page').html( (e.to + 1) + " of " + learn_total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
                 $(this).find(".start-btn").addClass("d-none");
@@ -337,7 +350,7 @@
                 $(this).find(".ready-btn").addClass("d-none");
 
                 $('.modal-footer h6').css({'padding-left':''});
-                $('.current_page').html( (e.to + 1) + " of 7");
+                $('.current_page').html( (e.to + 1) + " of " + learn_total);
             }
 
         })
