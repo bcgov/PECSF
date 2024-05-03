@@ -25,7 +25,7 @@
                             {{-- <span  class="card-body text-center" data-toggle="modal" data-target="#learn-more-modal">                   --}}
                                 <i class="nav-icon fas fa-chalkboard-teacher fa-2x"></i><br>
                                 <p class="font-weight-bold"><span>Learn</span></p>
-                                <p class="">Need more information about the ways to volunteer with PECSF</p>
+                                <p class="">Need more information about the ways to volunteer with PECSF.</p>
                                 <p></p>
                             {{-- </span> --}}
                             </div>
@@ -158,6 +158,10 @@
 
     .home-tiles .card span {
       font-size: 22px;
+    }
+
+    .home-tiles a:hover {
+        color: white;
     }
 
 </style>
