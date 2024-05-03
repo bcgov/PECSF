@@ -141,7 +141,12 @@ class MaintainVolunteerProfileController extends Controller
         // get all the record 
         //$campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->paginate(10);
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
-        $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","A")
+                                ->whereIn('code', function($query) {
+                                    $query->select('linked_bu_code')
+                                    ->from("business_units");                               
+                                })
+                                ->orderBy("name")->get();
         $year_list = range(2024, today()->year);
 
         $role_list = VolunteerProfile::ROLE_LIST;        
@@ -167,7 +172,12 @@ class MaintainVolunteerProfileController extends Controller
 
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
 
-        $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","A")
+                                ->whereIn('code', function($query) {
+                                    $query->select('linked_bu_code')
+                                    ->from("business_units");                               
+                                })
+                                ->orderBy("name")->get();
         $cities = City::orderBy('city')->get();
         $campaignYears = range(2024, today()->year);
 
@@ -267,7 +277,12 @@ class MaintainVolunteerProfileController extends Controller
         // Prepare for display
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
 
-        $business_units = BusinessUnit::where("status","A")->orderBy("name")->get();
+        $business_units = BusinessUnit::where("status","A")
+                            ->whereIn('code', function($query) {
+                                $query->select('linked_bu_code')
+                                ->from("business_units");                               
+                            })
+                            ->orderBy("name")->get();
         $cities = City::orderBy('city')->get();
         $campaignYears = range(2024, today()->year);
 
