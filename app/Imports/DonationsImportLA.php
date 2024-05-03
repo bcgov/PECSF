@@ -106,7 +106,7 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
         // $data[1] = str_pad($data[1], 6, "0", STR_PAD_LEFT); 
         $data[0] = substr($data[0], 1);
 
-        $data[6] = $data[6] ? $data[6] : 'bi-weekly';
+        $data[6] = isset($data[6]) ? $data[6] : 'bi-weekly';
 
         // Preapre Data for checking exists and unique 
         $data['org_code'] = $this->org_code;  
