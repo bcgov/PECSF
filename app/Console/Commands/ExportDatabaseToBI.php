@@ -34,7 +34,7 @@ class ExportDatabaseToBI extends Command
         ['name' => 'bank_deposit_forms',                'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'bank_deposit_form_organizations',   'delta' => 'updated_at', 'hidden' => null ],
         ['name' => 'bank_deposit_form_attachments',     'delta' => 'updated_at', 'hidden' => ['file'] ],
-        ['name' => 'volunteers',                        'delta' => 'updated_at', 'hidden' => null ],
+        ['name' => 'volunteer_profiles',                'delta' => 'updated_at', 'hidden' => null ],
 
     ];
  
