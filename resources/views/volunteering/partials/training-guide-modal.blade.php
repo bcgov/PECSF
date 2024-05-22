@@ -211,7 +211,7 @@
                             <div class="row pt-3">
                                 <div class="col-8 offset-md-3">
                                     <ul class="text-left">
-                                        <li><i class="far fa-check-circle text-primary"></i>Read the questions in our <a target="_blank" href="/contact">FAQ section</a></li>
+                                        <li><i class="far fa-check-circle text-primary"></i>Read the questions and answers in our <a target="_blank" href="/contact">FAQ section</a></li>
                                         <li><i class="far fa-check-circle text-primary"></i>Visit the PECSF website - <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank"> 
                                                     Become a Volunteer section</a></li>
                                         <li><i class="far fa-check-circle text-primary"></i>Contact <a href="mailto:kristina.allsopp@gov.bc.ca">Kristina Allsopp</a>, PECSF Volunteer Experience and Training Analyst</li>
@@ -231,17 +231,23 @@
                 <x-button href="#trainingGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                 <x-button data-toggle="modal" data-target="#volunteer-registration" role="button" class="ready-btn d-none">I'm ready to Volunteer!</x-button>
             </div> --}}
-            <div class="modal-footer d-flex">
-                <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
-                <button href="#trainingGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
-                <div class="flex-fill">
-                    <div class="text-center ">
-                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 5 </span></h6>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 text-left">
+                            <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
+                            <button href="#trainingGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
+                        </div>
+                        <div class="col-4 text-center">
+                            <h6 class="font-weight-bold">Slide <span class="current_page"> 1 of 5 </span></h6>
+                        </div>
+                        <div class="col-4 text-right">
+                            <x-button href="#trainingGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about training</x-button>
+                            <x-button href="#trainingGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
+                            <x-button role="button" class="ready-btn d-none">I'm ready for training!</x-button>
+                        </div>
                     </div>
                 </div>
-                <x-button href="#trainingGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about training</x-button>
-                <x-button href="#trainingGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
-                <x-button role="button" class="ready-btn d-none">I'm ready for training!</x-button>
             </div>
         </div>
     </div>
@@ -320,7 +326,6 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css('padding-left', '190px');
                 $('.current_page').html( "1 of " + training_total);
             }
             else if (e.to === training_total -1 ) {
@@ -328,7 +333,6 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( (e.to + 1) + " of " + training_total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
@@ -337,7 +341,6 @@
                 $(this).find(".next-btn").removeClass("d-none")
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( (e.to + 1) + " of " + training_total);
             }
 
