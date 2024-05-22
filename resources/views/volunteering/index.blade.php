@@ -91,7 +91,9 @@
                         <a href="{{route('volunteering.profile.create')}}">
                     @endif
                 @else
-                    @if ($last_year_profile)
+                    @if ($profile)
+                        <a href="{{route('volunteering.profile.show', $profile->id)}}">
+                    @elseif ($last_year_profile)
                         <a href="{{route('volunteering.profile.show', $last_year_profile->id)}}">
                     @else 
                         
@@ -113,7 +115,10 @@
                                 <p>Become a PECSF volunteer for your organization today.</p>
                             @endif
                         @else
-                            @if ($last_year_profile)
+                            @if ($profile)
+                                <p class="font-weight-bold"> <span>Profile</span></p>
+                                <p>View PECSF volunteer profile.</p>
+                            @elseif ($last_year_profile) 
                                 <p class="font-weight-bold"> <span>Last Year Profile</span></p>
                                 <p>View your Last Year PECSF volunteer profile.</p>
                             @else 
