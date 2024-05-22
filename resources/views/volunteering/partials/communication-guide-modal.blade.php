@@ -27,7 +27,7 @@
                                             </span>
                                         </div>
                                         <div class="col-10">
-                                            <h5 class="pt-2 font-weight-bold">Sign up for PECSF eNews</h5>
+                                            <h5 class="pt-2 font-weight-bold">PECSF Campaign Messages</h5>
                                             <p>
                                                 Each campaign there are two official messages that are sent out from the Honorary Chair and Vice Chair.  
                                                 One at the beginning of Campaign (third week of September) and one towards the end of Campaign.  
@@ -151,10 +151,11 @@
                                     </div>
                                 </div>
                             </div> --}}
-
-                            <div class="row pt-5 justify-content-center">
+                            <div class="row pt-3 justify-content-center">
                                 <div class="col-10">
-                                    <div class="row align-items-center">
+                                    <h4 class="pb-2 font-weight-bold pl-2">PECSF Community Connect SharePoint</h4>
+
+                                    <div class="row pt-2 align-items-center">
                                         <div class="col-1 text-center text-primary">
                                             <span>
                                                 <i class="fas fa-video fa-2x"></i>
@@ -323,20 +324,25 @@
                 <x-button href="#communicationGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                 <x-button data-toggle="modal" data-target="#volunteer-registration" role="button" class="ready-btn d-none">I'm ready to Volunteer!</x-button>
             </div> --}}
-            <div class="modal-footer d-flex">
-                <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
-                <button href="#communicationGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
-                <div class="flex-fill">
-                    <div class="text-center ">
-                        <h6 class="font-weight-bold" style="">Slide <span class="current_page"> 1 of 4 </span></h6>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 text-left">
+                            <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
+                            <button href="#communicationGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
+                        </div>
+                        <div class="col-4 text-center">
+                            <h6 class="font-weight-bold" style="">Slide <span class="current_page"> 1 of 4 </span></h6>
+                        </div>
+                        <div class="col-4 text-right">
+                            <x-button href="#communicationGuideCarousel" role="button" class="start-btn d-none" data-slide="next">Learn more about how to volunteer</x-button>
+                            <x-button href="#communicationGuideCarousel" role="button" class="next-btn " data-slide="next">Next</x-button>
+                            <button type="button" class="btn btn-primary ready-btn d-none" data-dismiss="modal" aria-label="Close">Return to Volunteering menu</button>
+                        </div>
                     </div>
                 </div>
-                <x-button href="#communicationGuideCarousel" role="button" class="start-btn d-none" data-slide="next">Learn more about how to volunteer</x-button>
-                <x-button href="#communicationGuideCarousel" role="button" class="next-btn " data-slide="next">Next</x-button>
-                
-                <button type="button" class="btn btn-primary ready-btn d-none" data-dismiss="modal" aria-label="Close">Return to Volunteering menu</button>
-               
             </div>
+            
         </div>
     </div>
 </div>
@@ -379,7 +385,6 @@
                 $(this).find(".next-btn").removeClass("d-none");
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( "1 of " + communication_total);
             }
             else if (e.to === communication_total -1 ) {
@@ -387,8 +392,6 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
-
-                $('.modal-footer h6').css('padding-left', '164px');
                 $('.current_page').html( (e.to + 1) + " of " + communication_total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
@@ -397,7 +400,6 @@
                 $(this).find(".next-btn").removeClass("d-none")
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( (e.to + 1) + " of " + communication_total);
             }
 

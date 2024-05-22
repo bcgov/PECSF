@@ -30,20 +30,15 @@ class VolunteeringController extends Controller
                                     ->orderBy('calendar_year', 'desc')
                                     ->first();
 
-        $profile = null;
-        if ($campaignYear->isVolunteerRegistrationOpen() ) {
-            $profile = VolunteerProfile::where("campaign_year", today()->year )
-                            ->where("organization_code", 'GOV')
-                            ->where("emplid", $user->emplid)
-                            ->first();
-        } 
+        $profile = VolunteerProfile::where("campaign_year", today()->year )
+                        ->where("organization_code", 'GOV')
+                        ->where("emplid", $user->emplid)
+                        ->first();
 
-        $cy = today()->month < 6 ? today()->year - 1 : today()->year;
-        $last_year_profile = VolunteerProfile::where("campaign_year", $cy )
+        $last_year_profile = VolunteerProfile::where("campaign_year", '<', today()->year )
                                     ->where("organization_code", 'GOV')
                                     ->where("emplid", $user->emplid)
                                     ->first();
-
 
         return view('volunteering.index', compact('campaignYear', 'user', 'profile', 'last_year_profile'));
     }

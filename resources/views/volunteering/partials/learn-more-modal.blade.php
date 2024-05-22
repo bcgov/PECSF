@@ -36,8 +36,8 @@
                                         <li><i class="far fa-check-circle pr-2 text-primary"></i>Put your public service values into action</li>
                                         <li><i class="far fa-check-circle pr-2 text-primary"></i>Make a difference in your community</li>
                                         {{-- <li><x-bullet />Challenge yourself</li> --}}
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Build your team spirit, strengthens and connections</li>
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Showcase or developing your skills as a leader </li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Build your team spirit and connections</li>
+                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Showcase or develop your skills as a leader </li>
                                         <li><i class="far fa-check-circle pr-2 text-primary"></i>Network with others across the provincial government</li>
                                         <li><i class="far fa-check-circle pr-2 text-primary"></i>Offer your skills - there are so many ways to contribute!</li>
                                     </ul>
@@ -276,21 +276,27 @@
                 <x-button href="#learnGuideCarousel" role="button" class="next-btn" data-slide="next">Next</x-button>
                 <x-button data-toggle="modal" data-target="#volunteer-registration" role="button" class="ready-btn d-none">I'm ready to Volunteer!</x-button>
             </div> --}}
-            <div class="modal-footer d-flex">
-                <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
-                <button href="#learnGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
-                <div class="flex-fill">
-                    <div class="text-center ">
-                        <h6 class="font-weight-bold" style="padding-left: 190px;">Slide <span class="current_page"> 1 of 8 </span></h6>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 text-left">
+                            <button type="button" class="btn btn-outline-secondary close-btn" data-dismiss="modal" aria-label="Close">Close</button>
+                            <button href="#learnGuideCarousel" class="btn btn-outline-primary btn-md prev-btn d-none" data-slide="prev">Back</button>
+                        </div>
+                        <div class="col-4 text-center">
+                            <h6 class="font-weight-bold">Slide <span class="current_page"> 1 of 8 </span></h6>
+                        </div>
+                        <div class="col-4 text-right">
+                            <x-button href="#learnGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
+                            <x-button href="#learnGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
+                            @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
+                                <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
+                            @else
+                                <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <x-button href="#learnGuideCarousel" role="button" class="start-btn" data-slide="next">Learn more about how to volunteer</x-button>
-                <x-button href="#learnGuideCarousel" role="button" class="next-btn d-none" data-slide="next">Next</x-button>
-                @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
-                    <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
-                @else
-                    <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
-                @endif
             </div>
         </div>
     </div>
@@ -332,7 +338,6 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css('padding-left', '190px');
                 $('.current_page').html( "1 of " + learn_total);
             }
             else if (e.to === (learn_total - 1)) {
@@ -340,7 +345,6 @@
                 $(this).find(".next-btn").addClass("d-none");
                 $(this).find(".ready-btn").removeClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( (e.to + 1) + " of " + learn_total);
             } else {
                 $(this).find(".close-btn").addClass("d-none");
@@ -349,7 +353,6 @@
                 $(this).find(".next-btn").removeClass("d-none")
                 $(this).find(".ready-btn").addClass("d-none");
 
-                $('.modal-footer h6').css({'padding-left':''});
                 $('.current_page').html( (e.to + 1) + " of " + learn_total);
             }
 
