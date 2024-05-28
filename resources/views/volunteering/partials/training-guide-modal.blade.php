@@ -348,6 +348,8 @@
 
         $('#training-guide-modal').on('show.bs.modal', function (event) {
             $('#trainingGuideCarousel').carousel(0);
+            $('#training-guide-modal .current_page').html( "1 of " + training_total);
+
             movie_id = $('#training_guide_movie_player').attr('movie-id');
             $('#training_guide_movie_player').attr('src', movie_id);
         })

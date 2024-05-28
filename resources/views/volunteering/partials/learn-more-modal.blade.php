@@ -360,6 +360,8 @@
 
         $('#learn-more-modal').on('show.bs.modal', function (event) {
             $('#learnGuideCarousel').carousel(0);
+            $('#learn-more-modal .current_page').html( "1 of " + learn_total);
+
             movie_id = $('#movie_player').attr('movie-id');
             $('#movie_player').attr('src', movie_id);
         })

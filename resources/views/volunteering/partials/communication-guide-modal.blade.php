@@ -407,6 +407,7 @@
 
         $('#communication-guide-modal').on('show.bs.modal', function (event) {
             $('#communicationGuideCarousel').carousel(0);
+            $('#communication-guide-modal .current_page').html( "1 of " + communication_total);
         })
 
         $('#communication-guide-modal').on("hidden.bs.modal", function (event) {
