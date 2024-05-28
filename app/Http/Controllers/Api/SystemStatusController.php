@@ -85,6 +85,22 @@ class SystemStatusController extends Controller
                 continue;
             }
 
+            // Check whether the environment variables enable for outbound
+            if ((!(env('TASK_SCHEDULING_OUTBOUND_PSFT_ENABLED'))) && $job_name == 'command:ExportPledgesToPSFT') {
+                continue;
+            } elseif (((!env('TASK_SCHEDULING_OUTBOUND_BI_ENABLED'))) && $job_name == 'command:ExportDatabaseToBI') {
+                continue;
+            } elseif (((!env('TASK_SCHEDULING_INBOUND_ENABLED'))) && (
+                    $job_name == 'command:ImportPayCalendar' ||
+                    $job_name == 'command:ImportCities' ||
+                    $job_name == 'command:ImportDepartments' ||
+                    $job_name == 'command:ImportEmployeeJob' ||
+                    $job_name == 'command:SyncUserProfile')) {
+                continue;
+            } else {
+                // perform checking
+            }
+
             // SPECIAL -- job "command:ExportPledgesToPSFT"
             if ($job_name == $last_job_name && $job_name == 'command:ExportPledgesToPSFT') {
                 continue;
