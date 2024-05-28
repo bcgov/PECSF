@@ -31,16 +31,61 @@
                             <div class="row">
                                 <div class="col offset-sm-1">
                                     <span class="font-weight-bold">Your benefits are: </span>
-                                    <ul class="check-bullet">
-                                        
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Put your public service values into action</li>
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Make a difference in your community</li>
-                                        {{-- <li><x-bullet />Challenge yourself</li> --}}
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Build your team spirit and connections</li>
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Showcase or develop your skills as a leader </li>
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Network with others across the provincial government</li>
-                                        <li><i class="far fa-check-circle pr-2 text-primary"></i>Offer your skills - there are so many ways to contribute!</li>
-                                    </ul>
+                                    <div class="container pt-3">
+                                        <div class="row justify-content-center text-left">
+                                            <div class="col-12 col-md-12">
+                                                <div class="row py-2">
+                                                    <div class="col-1 text-right">
+                                                        <i class="far fa-check-circle pr-2 text-primary"></i>
+                                                    </div>
+                                                    <div class="col-11">  
+                                                        Put your public service values into action
+                                                    </div>
+                                                </div>
+
+                                                <div class="row py-2">
+                                                    <div class="col-1 text-right">
+                                                        <i class="far fa-check-circle pr-2 text-primary"></i>
+                                                    </div>
+                                                    <div class="col-11">  
+                                                        Make a difference in your community
+                                                    </div>
+                                                </div>
+
+                                                <div class="row py-2">
+                                                    <div class="col-1 text-right">
+                                                        <i class="far fa-check-circle pr-2 text-primary"></i>
+                                                    </div>
+                                                    <div class="col-11">  
+                                                        Build your team spirit and connections
+                                                    </div>
+                                                </div>
+
+                                                <div class="row py-2">
+                                                    <div class="col-1 text-right">
+                                                        <i class="far fa-check-circle pr-2 text-primary"></i>
+                                                    </div>
+                                                    <div class="col-11">  
+                                                        Showcase or develop your skills as a leader
+                                                    </div>
+                                                </div>
+
+                                                <div class="row py-2">
+                                                    <div class="col-1 text-right"><i class="far fa-check-circle pr-2 text-primary"></i></div>
+                                                    <div class="col-11">  
+                                                        Make valuable networking connections with others in the BC Public Service
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row py-2">
+                                                    <div class="col-1 text-right"><i class="far fa-check-circle pr-2 text-primary"></i></div>
+                                                    <div class="col-11">  
+                                                        Offer your skills - there are so many ways to contribute!
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-4">
                                     <img src="{{asset('img/volunteering-intro/step-1-1.jpg')}}" class="img-fluid pr-5 mb-2">
@@ -102,7 +147,8 @@
                                                 <img src="{{asset('img/volunteering-intro/step-3-2.jpg')}}" style="width:100px" class="m-3">
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b>Canvassers</b> - In this role, you help donors with making their pledges, distribute the annual PECSF calendar, share information about the PECSF program with colleagues and collect the campaign prize draw entries. </span>
+                                                <span><b>Canvasser</b> - In this role, you help donors with making their pledges, distribute the annual PECSF calendar, 
+                                                            share information about the PECSF program with colleagues and collect the campaign prize draw entries. </span>
                                             </div>
                                         </div>
 
@@ -111,9 +157,8 @@
                                                 <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3">
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b> Event Coordinators</b> -  In this role, you build awareness and 
-                                                    enthusiasm for the campaign by creating and running gaming and fundraising events 
-                                                    as outlined in the lead coordinator’s organizations plan.</span>
+                                                <span><b> Event Coordinator</b> - In this role, you build awareness and enthusiasm for the campaign by creating 
+                                                            and running gaming and fundraising events as outlined in your lead coordinator's plan. </span>
                                             </div>
                                         </div>
 
@@ -153,9 +198,9 @@
                                                 <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3">
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b>Lead Coordinators</b> - In this role, you recruit canvassers, event planners, 
-                                                        other volunteers to help make an action plan, procure resources, delegate tasks to 
-                                                        volunteers, guide the process and share your team’s success with your organization.</span>
+                                                <span><b>Lead Coordinator</b> -  In this role, you recruit canvassers, event planners, and other volunteers 
+                                                    to help make an action plan, procure resources, delegate tasks to volunteers, guide the process and share your team's 
+                                                    success with your organization. </span>
                                             </div>
                                         </div>
 
@@ -164,8 +209,8 @@
                                                 <i class="fas fa-hands-helping fa-5x"></i>
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b>Volunteer</b> - This role is a general volunteer, you could be helping to sell 50/50 tickets, assisting with events, 
-                                                    distributing calendars, or helping to create PECSF communications in your organization.</span>
+                                                <span><b>Volunteer</b> - Not sure where you fit? This role is a general volunteer; you could be helping sell 50/50 tickets,
+                                                    assisting with events, distributing calendars, or creating PECSF communications in your organization.</span>
                                             </div>
                                         </div>
 
@@ -175,9 +220,9 @@
                                                 {{-- <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3"> --}}
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b>Committee Member</b> - Fund Supported Pool Regional Committee members raise the awareness of local charities 
-                                                    and PECSF annual campaign. Members select and allocate funds to charitable organizations on a three-year cycle. 
-                                                    Contact PECSF at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> to express your interest in starting a committee in your region or (if available) volunteer on an existing committee.</span>
+                                                <span><b>Committee Member</b> - Fund Supported Pool Regional Committee members raise the awareness of local charities and PECSF annual campaign. 
+                                                    Members select and allocate funds to charitable organizations on a three-year cycle. Contact PECSF at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> 
+                                                    to express your interest in starting a committee in your region or volunteer on an existing committee (if available).</span>
                                             </div>
                                         </div>
 
@@ -202,10 +247,10 @@
                                         Step 1: Register as a volunteer
                                     </h4>
                                     <p>
-                                        We want to personalize your new volunteer experience as much as possible.
+                                        We want you to personalize your volunteer experience as much as possible and be able to connect you with other volunteers in your organization, region, or office.  
                                     </p>
                                     <p>
-                                        In efforts to do that, we need to gather some info about your current role, your organization, and location so that we can also help you connect with other volunteers in your ministry or branch.
+                                        In order to do so, we need to gather some information about your current role, organization, and location. 
                                     </p>
                                 </div>
                             </div>
@@ -231,7 +276,8 @@
                                         All volunteers are required to attend annual virtual volunteer training.
                                     </p>
                                     <p>
-                                        Visit the training section to learn more about the various courses offered to help prepare you with all the tools and resources you will need to succeed and enjoy your experience as a volunteer.
+                                        Visit the training section to learn more about the various courses offered to help prepare you 
+                                        with all of the tools and resources to help you succeed and enjoy your experience as a volunteer. 
                                     </p>
                                 </div>
                             </div>
@@ -253,11 +299,12 @@
                                         Step 3: Share your experience!
                                     </h4>
                                     <p>
-                                        Volunteers often find great fulfillment in sharing their experiences, whether through quotes, photos, videos or 
-                                        blogs on volunteers or charities. By sharing these experiences, volunteers can reflect on their growth while 
-                                        inspiring others to get involved with PECSF and their community. Share your volunteer experience with PECSF 
-                                        HQ at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> to illustrate the impact of volunteerism and to help 
-                                        motivate others to join and create a culture of generosity.  
+                                        Volunteers often find great fulfillment in sharing their experiences and hearing about the experience of others. 
+                                        You can share your experience through quotes, photos, videos or blogs about your experience, your fellow volunteers, 
+                                        or about charities you are passionate about. By sharing these experiences, you can reflect on your growth while inspiring 
+                                        others to get involved with PECSF and their community. Share your volunteer experience with PECSF HQ at 
+                                        <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>
+                                        to illustrate the impact of volunteerism and to help motivate others to join and help create a culture of generosity.
                                     </p>
                                     <p>
                                         <b>Are you ready to become a volunteer?</b>
@@ -360,6 +407,8 @@
 
         $('#learn-more-modal').on('show.bs.modal', function (event) {
             $('#learnGuideCarousel').carousel(0);
+            $('#learn-more-modal .current_page').html( "1 of " + learn_total);
+
             movie_id = $('#movie_player').attr('movie-id');
             $('#movie_player').attr('src', movie_id);
         })

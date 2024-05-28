@@ -34,9 +34,10 @@
 
                             <div class="row">
                                 <div class="col-11 col-md-11">
-                                    <p class="px-5 pt-2">An introduction to PECSF program for first-time volunteers, canvassers, and workplace contacts! 
+                                    <p class="px-5 pt-2">
+                                        An introduction to the PECSF program for first-time volunteers, canvassers, and workplace contacts! 
                                         Learn about the benefits of PECSF, how to share them with employees in your area, and feel confident 
-                                        in the online pledge system!  
+                                        in the online pledge system!
                                     </p>
                                    
                                 </div>
@@ -48,29 +49,29 @@
 
                             <div class="row justify-content-center">
                                 <div class="col-11 col-md-11">
-                                    <p class="font-weight-bold">Upon the completion of training, each employee with be able to: </p>
+                                    <p class="font-weight-bold">Upon the completion of training, each employee will be able to: </p>
                                     {{-- <b class="h5 my-3">
                                         Upon the completion of training, each employee with be able to:  
                                     </b> --}}
                                     <ul class="text-left ">
                                         <li><i class="far fa-check-circle text-primary"></i>
-                                            Articulate the benefits of the PECSF program with their respective departments and organization.
+                                            Articulate the benefits of the PECSF program with their colleagues.
                                         </li>
                                         <li><i class="far fa-check-circle text-primary"></i>
                                             Demonstrate proficiency in delivering the PECSF Thank You Calendar 
-                                            to employees in a timely and professional manner, ensuring effective communication of its significance and purpose.
+                                            to employees in a professional manner, ensuring effective communication of its purpose. 
                                         </li>
                                         <li><i class="far fa-check-circle text-primary"></i>
-                                            Effectively display posters and promotional materials related to
-                                            the PECSF campaign, as well as collect entry prize draw forms in a manner that maximizes engagement and participation.
+                                            Effectively display posters and promotional materials related to 
+                                            the PECSF campaign and collect entry prize draw forms to maximize engagement.  
                                         </li>
                                         <li><i class="far fa-check-circle text-primary"></i>
                                             Readily assist their colleagues and provide accurate answers to inquiries throughout the duration of the PECSF campaign, 
                                             fostering a supportive and informed environment.
                                         </li>
                                         <li><i class="far fa-check-circle text-primary"></i>
-                                            Proficiently navigate the online pledge system, efficiently search for charity choices, and provide assistance to fellow 
-                                            employees in selecting charitable organizations during the PECSF campaign.
+                                            Proficiently navigate the online pledge system, efficiently search for charity choices, and assist fellow employees in 
+                                            selecting charitable organizations during the PECSF campaign. 
                                         </li>
                                     </ul>
 
@@ -103,7 +104,7 @@
                             <div class="row justify-content-center">
                                 <div class="pt-2 col-11">
                                     <p class="my-3 font-weight-bold">
-                                        Upon the completion of training, each employee with be able to:  
+                                        Upon the completion of training, each employee will be able to:
                                     </p>
                                     <ul class="text-left  ">
                                         <li><i class="far fa-check-circle text-primary"></i>Demonstrate a foundational understanding of hosting awareness events in the workplace, 
@@ -143,25 +144,40 @@
                                 <div class="col-11 col-md-11">
 
                                     <p class="my-1 font-weight-bold">
-                                        Upon the completion of training, each employee with be able to:  
+                                        Upon the completion of training, each employee will be able to:  
                                     </p>
 
                                     <ul class="text-left ">
-                                        <li><i class="far fa-check-circle text-primary"></i>Effectively lead and oversee their ministry/organization's workplace campaign. </li>
-                                        <li><i class="far fa-check-circle text-primary"></i>Strategically apply insights, management techniques, and communication strategies to lead the 
-                                            campaign to success, fostering engagement, and achieving fundraising goals.  </li>
-                                        <li><i class="far fa-check-circle text-primary"></i>Proficiently collaborate with their executive sponsor, communications team, and PECSF committee to 
-                                            develop a focused and goal-oriented Campaign Action Plan. </li>
-                                        <li><i class="far fa-check-circle text-primary"></i>Demonstrate the ability to set the tone for their campaign, establish a clear campaign cycle timeframe, 
-                                            and effectively recruit, develop, and support a team of volunteers. </li>
-                                        <li><i class="far fa-check-circle text-primary"></i>Understand PECSF’s Donor Privacy Policy and its direct application to Donor Incentive Draws. You will have a clear understanding of 
-                                            the policy's principles, ensuring compliance and ethical handling of donor information within the context of participation incentive draws.</li>
+                                        <li><i class="far fa-check-circle text-primary"></i>
+                                            Effectively lead and oversee their organization's workplace campaign.
+                                         </li>
+                                        <li><i class="far fa-check-circle text-primary"></i>
+                                            Strategically apply management techniques and communication strategies to lead the campaign to success, 
+                                            fostering engagement, and achieving fundraising goals. 
+                                        </li>
+                                        <li><i class="far fa-check-circle text-primary"></i>
+                                            Proficiently collaborate with their executive sponsor, communications team, and PECSF volunteer team 
+                                            to develop a focused and goal-oriented Campaign Action Plan. 
+                                        </li>
+                                        <li><i class="far fa-check-circle text-primary"></i>
+                                            Demonstrate the ability to set the tone for their campaign, establish a clear campaign cycle timeframe, 
+                                            and effectively recruit, develop, and support a team of volunteers.
+                                        </li>
+                                        <li><i class="far fa-check-circle text-primary"></i>
+                                            Understand PECSF's Donor Privacy Policy and its direct application to Donor Incentive Draws. 
+                                            You will have a clear understanding of the policy's principles, ensuring compliance and ethical handling of donor 
+                                            information within the context of participation incentive draws. 
+                                        </li>
+                                        <li><i class="far fa-check-circle text-primary"></i>
+                                            You work closely with PECSF HQ to ensure successful outcomes including receiving campaign statistics for 
+                                            the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
+                                         </li>
                                     </ul>
 
-                                    <p class="px-2 pt-2">
+                                    {{-- <p class="px-2 pt-2">
                                         You work closely with PECSF HQ to ensure successful outcomes including receiving ministry/organization specific campaign statistics 
                                         for the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
-                                    </p>
+                                    </p> --}}
 
                                     {{-- <p class="pt-2">
                                         Become a PECSF Lead Coordinator in your office!
@@ -201,7 +217,7 @@
                         </div> --}}
                         <div class="carousel-item text-center page-5">
                             <h3 class="text-primary my-3 pb-4">
-                                How volunteering with PECSF works
+                                Still have questions about volunteering or volunteer training?
                             </h3>
                             <div class="row justify-content-center">
                                 <div class="col-12">
@@ -295,7 +311,7 @@
     }
 
     #training-guide-modal .page-4 ul li i {
-        padding-right: 14px !important;
+        padding-right: 11px !important;
     }
 
     #training-guide-modal .page-5 ul li i {
@@ -348,6 +364,8 @@
 
         $('#training-guide-modal').on('show.bs.modal', function (event) {
             $('#trainingGuideCarousel').carousel(0);
+            $('#training-guide-modal .current_page').html( "1 of " + training_total);
+
             movie_id = $('#training_guide_movie_player').attr('movie-id');
             $('#training_guide_movie_player').attr('src', movie_id);
         })
