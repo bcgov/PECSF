@@ -168,7 +168,7 @@
                                                 {{-- <img src="{{asset('img/volunteering-intro/step-3-1.jpg')}}" style="width:100px" class="m-3"> --}}
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b>Executive Sponsor</b> - In this role, you assist the Lead Coordinator 
+                                                <span><b>Executive Sponsor</b> - In this role, you assist your Lead Coordinator 
                                                     in spreading the message about the benefits of PECSF by sending out executive messages to 
                                                     staff, sharing at the executive table and attending PECSF events.</span>
                                             </div>
