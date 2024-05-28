@@ -30,8 +30,8 @@
                                             <h5 class="pt-2 font-weight-bold">PECSF Campaign Messages</h5>
                                             <p>
                                                 Each year there are two official messages that are sent out to all BC public servants from the PECSF  
-                                                Honourary Chair and Honourary Vice Chair. One is sent out at the beginning of campaign 
-                                                (the third week of September) and the other is sent out towards the end of campaign.  
+                                                    Honourary Chair and Honourary Vice Chair. One is sent out at the beginning of the campaign 
+                                                    (the third week of September) and the other is sent out towards the end of the campaign.  
                                                 Volunteers are encouraged to share these messages in their communications.
                                             </p>
                                         </div>
