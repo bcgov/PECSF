@@ -29,8 +29,9 @@
                                         <div class="col-10">
                                             <h5 class="pt-2 font-weight-bold">PECSF Campaign Messages</h5>
                                             <p>
-                                                Each campaign there are two official messages that are sent out from the Honorary Chair and Vice Chair.  
-                                                One at the beginning of Campaign (third week of September) and one towards the end of Campaign.  
+                                                Each year there are two official messages that are sent out to all BC public servants from the PECSF  
+                                                Honourary Chair and Honourary Vice Chair. One is sent out at the beginning of campaign 
+                                                (the third week of September) and the other is sent out towards the end of campaign.  
                                                 Volunteers are encouraged to share these messages in their communications.
                                             </p>
                                         </div>
@@ -58,7 +59,7 @@
                                             </span>
                                         </div>
                                         <div class="col-10">
-                                            <h5 class="pt-2 font-weight-bold">PECSF Blog Ideas</h5>
+                                            <h5 class="pt-2 font-weight-bold">Blogs</h5>
                                             <p>Read our heartwarming charity and volunteers blogs, where passion meets purpose and acts of kindness inspire change.
                                                 Dedicated volunteers and charities share their stories, insights and experiences with the PECSF program that ignites a spirit 
                                                 of generosity and community engagement.  We would love to hear from you, email 
@@ -99,10 +100,9 @@
                                     <h4 class="pb-2 font-weight-bold">Website</h4>
 
                                   
-                                    <p>Volunteers can find the entire <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer/resources">
-                                        PECSF Campaign lifecycle of resources</a> on the PECSF website. 
-                                        Volunteers will find promotional material for spreading the message, a detailed how to donate guide, 
-                                        logos, volunteer handbook and so much more!  
+                                    <p>You can find the entire <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer/resources">
+                                        PECSF Campaign lifecycle of resources</a> on the PECSF website including promotional materials for spreading the message, 
+                                        a detailed how to donate guide, logos, the PECSF volunteer handbook and so much more!  
                                     </p>
                                     <p>Virtual events have emerged as a powerful platform for connection, collaboration and engagement. 
                                         Check out the virtual campaign toolkit and event guidelines on the PECSF website. 
@@ -209,7 +209,10 @@
                                         </div>
                                         <div class="col-11">  
                                             <p>
-                                                There are two types of awards: Participation Awards, based on statistics and Nomination Awards, which requires employees to complete and submit a nomination in recognition of creativity, innovation and outstanding efforts of their peers.  Remember to nominate your colleagues each November.  
+                                                There are two types of awards: Participation Awards and Nomination Awards. Participation Awards are                                                 
+                                                based on the number of donors for each organization or region. Nomination Awards require employees to complete 
+                                                and submit a nomination in recognition of creativity, innovation and outstanding efforts of their peers. 
+                                                Remember to nominate your colleagues each November.  
                                             </p>
                                         </div>
                                     </div>
@@ -268,9 +271,9 @@
                                         </div>
                                         <div class="col-10">
                                             <h5 class="pt-2 font-weight-bold">In Person and Virtual Engagement</h5>
-                                            <p>The PECSF program has a long history of in person and virtual engagement.  
-                                                Join us for the annual PECSF Campaign Kick-off and Recognition events. Details of the events will be posted on the 
-                                                    <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect</a>.   
+                                            <p>The PECSF program has a long history of in-person and virtual engagement.  
+                                                Join us for the PECSF Campaign Kick-off and Recognition events which will be posted on the  
+                                                    <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect home page</a>.   
                                             </p>
                                             <p>Each year the PECSF HQ team visits regional offices to recognize and celebrate the effort of champions 
                                                 who promote the PECSF program. Complete the 
@@ -290,7 +293,7 @@
                                             <h5 class="pt-3 font-weight-bold">Feedback</h5>
                                             <p>As always, we welcome your feedback, if you have any suggestions or comments, please share them with us in our 
                                                 <a target="_blank" href="https://forms.office.com/pages/responsepage.aspx?id=AFLbbw09ikqwNtNoXjWa3Ai9wfjgvSFOiS5TXhN1jFFUN1gxTjE4VkkzNUpMTFFRV1ZGVTVORTdCNCQlQCN0PWcu">
-                                                    volunteer feedback survey.</a>   
+                                                    volunteer feedback survey</a> or email us at <a href="mailto:pecsf@gov.bc.ca">PECSF@gov.bc.ca</a>.  
                                             </p>
                                         </div>
                                     </div>
