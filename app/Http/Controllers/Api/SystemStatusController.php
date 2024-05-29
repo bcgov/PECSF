@@ -85,6 +85,22 @@ class SystemStatusController extends Controller
                 continue;
             }
 
+            // Check whether the environment variables enable for outbound
+            if ((!(env('TASK_SCHEDULING_OUTBOUND_PSFT_ENABLED'))) && $job_name == 'command:ExportPledgesToPSFT') {
+                continue;
+            } elseif (((!env('TASK_SCHEDULING_OUTBOUND_BI_ENABLED'))) && $job_name == 'command:ExportDatabaseToBI') {
+                continue;
+            } elseif (((!env('TASK_SCHEDULING_INBOUND_ENABLED'))) && (
+                    $job_name == 'command:ImportPayCalendar' ||
+                    $job_name == 'command:ImportCities' ||
+                    $job_name == 'command:ImportDepartments' ||
+                    $job_name == 'command:ImportEmployeeJob' ||
+                    $job_name == 'command:SyncUserProfile')) {
+                continue;
+            } else {
+                // perform checking
+            }
+
             // SPECIAL -- job "command:ExportPledgesToPSFT"
             if ($job_name == $last_job_name && $job_name == 'command:ExportPledgesToPSFT') {
                 continue;
@@ -151,6 +167,11 @@ class SystemStatusController extends Controller
                 }
             }
 
+            $last_completed = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
+                                ->where('status', 'Completed')
+                                ->orderBy('end_time', 'desc')
+                                ->first();
+
             $tasks[] = [
                 'name' => $job_name,
                 'cron' => $event->expression,
@@ -159,6 +180,8 @@ class SystemStatusController extends Controller
                 // $event->description,
                 'previous schedule time' => $previousDueDate->format('Y-m-d H:i:s'),
                 'status' => $status,
+                'last completed start time' => $last_completed ? $last_completed->start_time : null,
+                'last completed end time' => $last_completed ? $last_completed->end_time : null,
                 'next schedule time' => (new CronExpression($event->expression))
                             ->getNextRunDate(Carbon::now())
                             ->setTimezone( $timezone )->format('Y-m-d H:i:s'),
