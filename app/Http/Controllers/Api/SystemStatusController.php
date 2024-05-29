@@ -150,6 +150,11 @@ class SystemStatusController extends Controller
 
             $previousDueDateUpto = $previousDueDate->copy()->addMinutes(5)->format('Y-m-d H:i:s');
 
+            $last_completed = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
+                                                ->where('status', 'Completed')
+                                                ->orderBy('end_time', 'desc')
+                                                ->first();
+
             // 2 mins grace period for the schedule job start 
             if (now() >= $previousDueDate && now() <= $previousDueDate->copy()->addMinutes(2)) {
                 $status = 'Pending -- The schedule job should start soon';
@@ -158,7 +163,7 @@ class SystemStatusController extends Controller
                             ->whereBetween('start_time', [$previousDueDate, $previousDueDateUpto])
                             ->first();
 
-                if ($audit) {
+                if ($audit || ($last_completed && $last_completed->end_date > $previousDueDate)) {
                     $status = "Success -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
                             " | start at " . $audit->start_time . " - end at " . $audit->end_time;
                 } else {
@@ -166,11 +171,6 @@ class SystemStatusController extends Controller
                     $count_fail++;
                 }
             }
-
-            $last_completed = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
-                                ->where('status', 'Completed')
-                                ->orderBy('end_time', 'desc')
-                                ->first();
 
             $tasks[] = [
                 'name' => $job_name,
