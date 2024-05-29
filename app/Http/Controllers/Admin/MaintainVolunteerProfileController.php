@@ -166,8 +166,8 @@ class MaintainVolunteerProfileController extends Controller
     {
         //
         $profile = new VolunteerProfile();
-
-        $profile->address_type = 'G';
+dd($profile);
+        $profile->address_type = 'S';
         $profile->campaign_year = date('Y');
 
         $organizations = Organization::where('status', 'A')->orderBy('name')->get();
