@@ -68,6 +68,31 @@
                 </div>
             </div>
 
+            <hr>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="volunteer_start_date">Volunteer Registration Start Date</label>
+                    <input type="text" class="form-control  @error('volunteer_start_date') is-invalid @enderror" name="volunteer_start_date" 
+                            value="{{ ($campaign_year->volunteer_start_date) ? $campaign_year->volunteer_start_date->toDateString() : '' }}" readonly>
+                    @error('volunteer_start_date')
+                    <div class="invalid-feedback">
+                        {{  $message }}
+                    </div>
+                    @enderror
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="volunteer_end_date">Volunteer Registration End Date</label>
+                    <input type="text" class="form-control  @error('volunteer_end_date') is-invalid @enderror" name="volunteer_end_date" 
+                            value="{{ ($campaign_year->volunteer_end_date) ? $campaign_year->volunteer_end_date->toDateString() : '' }}" readonly>
+                    @error('volunteer_end_date')
+                    <div class="invalid-feedback">
+                        {{  $message }}
+                    </div>
+                    @enderror
+                </div>
+                
+            </div>
+
             <div class="container  my-3">
                 <div class="row no-gutters my-3">
                     <div class="border-bottom col-8">

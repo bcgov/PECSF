@@ -33,6 +33,14 @@ class UserMaintenanceController extends Controller
 
             $users = User::select('users.*',
                     'employee_jobs.empl_status',
+                    'employee_jobs.hire_dt',
+                    'employee_jobs.office_address1',
+                    'employee_jobs.office_address2',
+                    'employee_jobs.office_city',
+                    'employee_jobs.office_stateprovince',
+                    'employee_jobs.office_country',
+                    'employee_jobs.office_postal',
+
                     'employee_jobs.date_updated',
                     'employee_jobs.date_deleted',
                     'employee_jobs.business_unit',

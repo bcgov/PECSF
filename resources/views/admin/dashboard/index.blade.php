@@ -42,12 +42,13 @@
         <div class="row">
             <div class="col">                
                 <div class="card">
-                    <a href="{{ route('settings.others') }}">
+                    <a href="{{ route('admin-volunteering.profile.index') }}">
                     <div class="card-body mt-4  text-center">
                         <div>
                             <img src="{{asset('img/admin/4.png')}}" style="height:100px">
                         </div>
-                        Training, Communications and Engagement<br>
+                        {{-- Training, Communications and Engagement<br> --}}
+                        Volunteering<br>
                         <i class="fas fa-arrow-right"></i>
                     </div>
                     </a>
