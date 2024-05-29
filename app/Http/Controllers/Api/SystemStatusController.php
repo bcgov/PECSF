@@ -167,6 +167,11 @@ class SystemStatusController extends Controller
                 }
             }
 
+            $last_completed = ScheduleJobAudit::where('job_name', 'like', $job_name . '%')
+                                ->where('status', 'Completed')
+                                ->orderBy('end_time', 'desc')
+                                ->first();
+
             $tasks[] = [
                 'name' => $job_name,
                 'cron' => $event->expression,
@@ -175,6 +180,8 @@ class SystemStatusController extends Controller
                 // $event->description,
                 'previous schedule time' => $previousDueDate->format('Y-m-d H:i:s'),
                 'status' => $status,
+                'last completed start time' => $last_completed ? $last_completed->start_time : null,
+                'last completed end time' => $last_completed ? $last_completed->end_time : null,
                 'next schedule time' => (new CronExpression($event->expression))
                             ->getNextRunDate(Carbon::now())
                             ->setTimezone( $timezone )->format('Y-m-d H:i:s'),
