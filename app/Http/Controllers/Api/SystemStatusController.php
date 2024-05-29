@@ -163,8 +163,12 @@ class SystemStatusController extends Controller
                             ->whereBetween('start_time', [$previousDueDate, $previousDueDateUpto])
                             ->first();
 
-                if ($audit || ($last_completed && $last_completed->end_date > $previousDueDate)) {
-                    $status = "Success -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
+                if ($audit || ($last_completed && $last_completed->end_time > $previousDueDate)) {
+                    $status = $audit ? "Success" : "Retry success";
+                    if (!($audit)) {
+                        $audit = $last_completed;
+                    }
+                    $status .= " -- The last run id: " . $audit->id . " | " . $audit->job_name . " | " . $audit->status .
                             " | start at " . $audit->start_time . " - end at " . $audit->end_time;
                 } else {
                     $status = '@@@ Failure @@@ -- The previous schedule did not run';
