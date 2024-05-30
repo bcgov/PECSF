@@ -2,11 +2,11 @@
 
 <div class="pt-2" id="recognition-items-area">
 
-    <div class="form-row">
+    {{-- <div class="form-row">
         <div class="form-group col-12 pt-2">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="address_type" id="address_type_1" value="G" 
-                    {{ (($profile && $profile->address_type == 'G') || (!$profile)) ? 'checked' : '' }}>
+                    {{ ($profile && $profile->address_type == 'G') ? 'checked' : '' }}>
                 <label class="form-check-label font-weight-bold" for="address_type_1">
                     Use my Global Address Listing
                 </label>
@@ -18,15 +18,19 @@
         <div class="form-group col-12 ">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="address_type" id="address_type_2" value="S"
-                    {{ ($profile && $profile->address_type != 'G') ? 'checked' : '' }}>
+                    {{ (($profile && $profile->address_type != 'G') || (!$profile)) ? 'checked' : '' }}>
                 <label class="form-check-label font-weight-bold" for="address_type_2">
                     Use the following address:
                 </label>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <div class="pl-4 pt-3" id="other_address_area" style="{{ (($profile && $profile->address_type == 'G') || (!$profile)) ? 'display:none;' : '' }}"> 
+    {{-- 2024 May 29 Suspense Address Type options until the Glowbal address issue resolved --}}
+    <input type="hidden" name="address_type" value="S">
+    <h5 class="font-weight-bold pt-2">Use the following address:</h5>
+
+    <div class="pl-4 pt-3" id="other_address_area" style="{{ ($profile && $profile->address_type == 'G') ? 'display:none;' : '' }}"> 
         <div class="form-row">
                 <div class="form-group col-12">
                     <label for="address">Street address</label>
