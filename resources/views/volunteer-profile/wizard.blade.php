@@ -220,6 +220,10 @@
     color: #1a5a96; /* #dc3545 */
 }
 
+.bs4-step-tracking li.active:hover {
+    cursor: pointer;
+}    
+
 .bs4-step-tracking li.active>div {
     background: #1a5a96;
 }
