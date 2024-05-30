@@ -43,7 +43,7 @@ class VolunteerProfile extends Model implements Auditable
         "NS" => "Nova Scotia",
         "NU" => "Nunavut",
         "ON" => "Ontario",
-        "OC" => "Outside of Canada",
+        // "OC" => "Outside of Canada",
         "PE" => "Prince Edward Island",
         "QC" => "Quebec",
         "SK" => "Saskatchewan",
