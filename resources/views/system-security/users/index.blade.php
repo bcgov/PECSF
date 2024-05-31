@@ -150,6 +150,7 @@
                     <th>Active Job Count</th>
 
                     <th>Empl Status</th>
+                    <th>Hire Date</th>
                     <th>Date Update</th>
                     <th>Date Delete</th>
 
@@ -158,7 +159,14 @@
                     <th>Dept Name</th>
                     <th>Region</th>
                     <th>Region Name</th>
+
+                    <th>Office Address 1</th>
+                    <th>Office Address 2</th>
                     <th>Office City</th>
+                    <th>Office Province</th>
+                    <th>Office Country</th>
+                    <th>Office Postal</th>
+
                     <th>Last Signon at</th>
                     <th>Last Sync at</th>
                     <th>Created at</th>
@@ -334,6 +342,7 @@
                     }
                 },
                 {data: 'empl_status', name: 'employee_jobs.empl_status', defaultContent: '', className: "dt-nowrap" },
+                {data: 'hire_dt', name: 'employee_jobs.hire_dt', defaultContent: '', className: "dt-nowrap" },
                 {data: 'date_updated', name: 'employee_jobs.date_updated', defaultContent: '', className: "dt-nowrap" },
                 {data: 'date_deleted', name: 'employee_jobs.date_deleted', defaultContent: '', className: "dt-nowrap" },
                 {data: 'business_unit', name: 'employee_jobs.business_unit', defaultContent: '', className: "dt-nowrap" },
@@ -341,7 +350,12 @@
                 {data: 'dept_name', name: 'employee_jobs.dept_name', defaultContent: '', className: "dt-nowrap" },
                 {data: 'tgb_reg_district', name: 'regions.code', defaultContent: '', className: "dt-nowrap" },
                 {data: 'region_name', name: 'regions.name', defaultContent: '', className: "dt-nowrap" },
-                {data: 'office_city', name: 'employee_jobs.office_city', defaultContent: '', className: "dt-nowrap" },                
+                {data: 'office_address1', name: 'employee_jobs.address1', defaultContent: '', className: "dt-nowrap" },
+                {data: 'office_address2', name: 'employee_jobs.address2', defaultContent: '', className: "dt-nowrap" },
+                {data: 'office_city', name: 'employee_jobs.city', defaultContent: '', className: "dt-nowrap" },
+                {data: 'office_stateprovince', name: 'employee_jobs.stateprovince', defaultContent: '', className: "dt-nowrap" },
+                {data: 'office_country', name: 'employee_jobs.country', defaultContent: '', className: "dt-nowrap" },
+                {data: 'office_postal', name: 'employee_jobs.postal', defaultContent: '', className: "dt-nowrap" },
                 {data: 'last_signon_at', name: 'last_signon_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'last_sync_at', name: 'last_sync_at', orderable: false, searchable: false, className: "dt-nowrap"},
                 {data: 'created_at', name: 'created_at', orderable: false, searchable: false, className: "dt-nowrap"},

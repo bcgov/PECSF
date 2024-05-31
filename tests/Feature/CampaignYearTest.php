@@ -334,6 +334,8 @@ class CampaignYearTest extends TestCase
               "end_date" => "2027-11-21",
               "number_of_periods" => 26,
               "close_date" => "2027-12-31",
+              "volunteer_start_date" => "2027-06-01",
+              "volunteer_end_date" => "2027-11-15",
         ];
 
         return $form_data;

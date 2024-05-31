@@ -81,6 +81,8 @@ class CampaignYearController extends Controller
             'status' => $request->status,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
+            'volunteer_start_date' => $request->volunteer_start_date,
+            'volunteer_end_date' => $request->volunteer_end_date,
             'close_date' => $request->close_date,
             'created_by_id' => Auth::id(),
             'modified_by_id' => Auth::id(),

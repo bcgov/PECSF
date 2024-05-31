@@ -23,6 +23,8 @@ class CampaignYear extends Model implements Auditable
         'start_date',
         'end_date',
         'close_date',
+        'volunteer_start_date',
+        'volunteer_end_date',
         'created_by_id',
         'modified_by_id',
     ];
@@ -31,6 +33,8 @@ class CampaignYear extends Model implements Auditable
         'start_date' => 'date:Y-m-d',
         'end_date' => 'date:Y-m-d',
         'close_date' => 'date:Y-m-d',
+        'volunteer_start_date' => 'date:Y-m-d',
+        'volunteer_end_date' => 'date:Y-m-d',
     ];
 
     // Class Method 
@@ -48,7 +52,21 @@ class CampaignYear extends Model implements Auditable
         }
         
     }
-    
+
+    public static function isVolunteerRegistrationOpenNow() {
+        $today = today();
+        $cy = self::where('volunteer_start_date', '<=',  $today) 
+                ->where('volunteer_end_date', '>=', $today)
+                ->where('calendar_year', $today->year + 1)
+                ->first();
+
+        if ($cy) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+   
 
     public function created_by()
     {
@@ -68,6 +86,12 @@ class CampaignYear extends Model implements Auditable
 
     public function isActive() {
         return ($this->status == 'A');
+    }
+
+    public function isVolunteerRegistrationOpen() {
+
+        $today = today();
+        return ($today >= $this->volunteer_start_date && $today <= $this->volunteer_end_date);
     }
 
     public function canSendToPSFT() {

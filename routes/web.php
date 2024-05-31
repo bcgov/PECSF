@@ -3,9 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-// use App\Http\Controllers\PledgeController;
 
-// use App\Http\Controllers\CharityController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ChallengeController;
@@ -15,11 +13,8 @@ use App\Http\Controllers\ContactFaqController;
 use App\Http\Controllers\Admin\RegionController;
 
 use App\Http\Controllers\VolunteeringController;
-// use App\Http\Controllers\PledgeCharityController;
 use App\Http\Controllers\AnnualCampaignController;
 
-
-// use App\Http\Controllers\Auth\AzureLoginController;
 use App\Http\Controllers\BankDepositFormController;
 use App\Http\Controllers\SpecialCampaignController;
 
@@ -28,14 +23,14 @@ use App\Http\Controllers\Admin\CRACharityController;
 use App\Http\Controllers\System\AccessLogController;
 
 use App\Http\Controllers\System\LogViewerController;
+use App\Http\Controllers\VolunteerProfileController;
 use App\Http\Controllers\Admin\PayCalendarController;
 use App\Http\Controllers\System\UploadFileController;
 use App\Http\Controllers\Admin\BusinessUnitController;
 use App\Http\Controllers\Admin\CampaignYearController;
 use App\Http\Controllers\Admin\DonationDataController;
+
 use App\Http\Controllers\Admin\OrganizationController;
-
-
 use App\Http\Controllers\Admin\PledgeReportController;
 use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
@@ -52,7 +47,6 @@ use App\Http\Controllers\Admin\ChallengeSettingsController;
 use App\Http\Controllers\Admin\FundSupportedPoolController;
 use App\Http\Controllers\System\ScheduleJobAuditController;
 use App\Http\Controllers\Admin\DonationDataReportController;
-// use App\Http\Controllers\Auth\MicrosoftGraphLoginController;
 use App\Http\Controllers\Admin\MaintainEventPledgeController;
 use App\Http\Controllers\Admin\PledgeCharityReportController;
 use App\Http\Controllers\Admin\EventSubmissionQueueController;
@@ -61,7 +55,9 @@ use App\Http\Controllers\Admin\CityRegionInformationController;
 use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
+use App\Http\Controllers\Admin\VolunteerProfileReportController;
 use App\Http\Controllers\Admin\ChallengePageDataReportController;
+use App\Http\Controllers\Admin\MaintainVolunteerProfileController;
 use App\Http\Controllers\Admin\GamingAndFundrasingReportController;
 use App\Http\Controllers\Admin\ChallengeSummaryMaintenanceController;
 use App\Http\Controllers\Admin\OrgPartipationTractorReportController;
@@ -170,20 +166,24 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::prefix('volunteering')->middleware(['auth'])->name('volunteering.')->group(function () {
+
+    // Landing Page
     Route::get('/', [VolunteeringController::class, 'index'])->name('index');
-    Route::post('/', [VolunteeringController::class, 'store'])->name('store');
+    
+    // Profile
+    Route::get('/profile/thank-you', [VolunteerProfileController::class, 'thankYou'])->name('profile.thank-you');
+    Route::resource('profile', VolunteerProfileController::class)->except(['destroy']);
+
+    // communication
+    Route::view('/comminucation', '/volunteering/comminucation',[])->name('communication');
+
+    // Supply Order Form 
     Route::get('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_order_form');
-
     Route::post('/supply_order_form', [VolunteeringController::class, 'supply_order_form'])->name('supply_order_form');
-    Route::get('/edit', [VolunteeringController::class, 'edit'])->name('edit');
-    Route::post('/update', [VolunteeringController::class, 'update'])->name('update');
-
 
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [VolunteeringController::class, 'profile'])->name('profile');
-    Route::get('/training', [VolunteeringController::class, 'training'])->name('trainging');
 
     Route::get('/bank_deposit_form', [BankDepositFormController::class, 'index'])->name('bank_deposit_form');
     Route::get('/bank_deposit_form/organization_code', [BankDepositFormController::class, 'organization_code'])->name('organization_code_ajax');
@@ -212,17 +212,11 @@ Route::prefix('challenge')->middleware(['auth'])->name('challenge.')->group(func
 
 Route::get('/contact', [ContactFaqController::class, 'index'])->middleware(['auth'])->name('contact');
 
-// Route::get('report', [PledgeCharityController::class, 'index'])->name('report');
-
-// Route::group(['middleware' => ['auth']], function() {
-//     Route::resource('campaignyears', CampaignYearController::class)->except(['destroy']);
-// });
 
 Route::middleware(['auth'])->prefix('administrators')->name('admin.')->group(function() {
+    
     Route::get('dashboard', [AdministratorController::class, 'dashboard'])->name('dashboard');
-    // Route::resource('/', AdministratorController::class)->only(['index','store']);
-    // Route::get('/{administrator}/delete', [AdministratorController::class,'destroy']);
-    // Route::get('/users', [AdministratorController::class,'getUsers']);
+
 });
 
 
@@ -316,6 +310,12 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
 
 });
 
+// Administration -- Volunteering 
+Route::middleware(['auth'])->prefix('admin-volunteering')->name('admin-volunteering.')->group(function() {
+    // Pledge Administration -- Volunteer Profile 
+    Route::get('/profile-users', [MaintainVolunteerProfileController::class,'getUsers'])->name('profile.users');
+    Route::resource('/profile', MaintainVolunteerProfileController::class);
+});
 
 
 
@@ -372,6 +372,12 @@ Route::middleware(['auth'])->prefix('reporting')->name('reporting.')->group(func
     Route::get('/gaming-and-fundrasing/export-progress/{id}', [GamingAndFundrasingReportController::class,'exportProgress'])->name('gaming-and-fundrasing.export2csv-progress');
     Route::get('/gaming-and-fundrasing/download-export-file/{id}', [GamingAndFundrasingReportController::class,'downloadExportFile'])->name('gaming-and-fundrasing.download-export-file');
     Route::resource('/gaming-and-fundrasing', GamingAndFundrasingReportController::class)->only(['index', 'show']);
+
+    // Volunteer Profile Report
+    Route::get('/volunteer-profiles/export', [VolunteerProfileReportController::class,'export2csv'])->name('volunteer-profiles.export2csv');
+    Route::get('/volunteer-profiles/export-progress/{id}', [VolunteerProfileReportController::class,'exportProgress'])->name('volunteer-profiles.export2csv-progress');
+    Route::get('/volunteer-profiles/download-export-file/{id}', [VolunteerProfileReportController::class,'downloadExportFile'])->name('volunteer-profiles.download-export-file');
+    Route::resource('/volunteer-profiles', VolunteerProfileReportController::class)->only(['index', 'show']);
 
     //
     Route::resource('/supply-report', SupplyReportController::class)->only(['index','store']);
