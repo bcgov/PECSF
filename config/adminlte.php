@@ -331,7 +331,7 @@ return [
             // ]
         ],
         [
-            'text' => 'Challenge',
+            'text' => 'Statistics',
             'url' => '/challenge',
             'icon' => 'nav-icon fa fa-chart-bar', // 'challenge',
             'active' => ['challenge/*']
