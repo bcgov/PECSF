@@ -2,7 +2,7 @@
 
 @section('content_header')
 <div class="mt-2">
-    <h1>Challenge</h1>
+    <h1>Statistics</h1>
 
     @include('challenge.partials.tabs')
 
@@ -81,8 +81,11 @@
             </div>
         </div>
 
-        <div class="d-flex mt-1">
+        <div class="d-flex mt-1 mb-3">
             <div class="flex-fill">
+                <button id="download-pdf-btn" type="button" class="btn btn-primary">
+                    <span class="mx-2 px-2">Download as PDF</span>
+                </button>
             </div>
     
             <div class="d-flex">
@@ -349,6 +352,11 @@ $(function() {
             oTable.search( term ).draw();
         }, 500);
         $(this).data('timer', wait);
+    });
+
+    $('#download-pdf-btn').on('click', function() {
+        year = $('select[name="year"]').val();
+        window.location.href = "{{ route('challenge.index') }}" + '?year=' + year +'&download';
     });
 
     // Charting Mode 
