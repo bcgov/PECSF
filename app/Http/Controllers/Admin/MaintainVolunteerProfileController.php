@@ -166,7 +166,7 @@ class MaintainVolunteerProfileController extends Controller
     {
         //
         $profile = new VolunteerProfile();
-dd($profile);
+
         $profile->address_type = 'S';
         $profile->campaign_year = date('Y');
 
