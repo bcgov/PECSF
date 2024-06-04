@@ -140,7 +140,7 @@ class MaintainVolunteerProfileRequest extends FormRequest
     {
         return [
 
-            'emplid.required' => 'The emplid field is required',
+            'emplid.required' => 'The employee field is required',
 
             'business_unit_code.required' => 'The business unit field is required',
             'business_unit_code.exists' => 'The selected business unit is invalid',
