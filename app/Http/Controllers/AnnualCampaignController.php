@@ -1242,7 +1242,7 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity = new PledgeCharity();
 
                             $new_pledge_charity->charity_id = $bi_weekly_pledge->charity->id;
-                            $new_pledge_charity->additional = $bi_weekly_pledge->name2;
+                            $new_pledge_charity->additional = $bi_weekly_pledge->vendor_name2;
                             $new_pledge_charity->percentage = $bi_weekly_pledge->percent;
                             $new_pledge_charity->amount = round(($bi_weekly_pledge->amount / 26),2);
                             $new_pledge_charity->frequency = 'bi-weekly'; // : 'one-time',
@@ -1266,7 +1266,7 @@ class AnnualCampaignController extends Controller
                             $new_pledge_charity = new PledgeCharity();
 
                             $new_pledge_charity->charity_id = $one_time_pledge->charity->id;
-                            $new_pledge_charity->additional = $one_time_pledge->name2;
+                            $new_pledge_charity->additional = $one_time_pledge->vendor_name2;
                             $new_pledge_charity->percentage = $one_time_pledge->percent;
                             $new_pledge_charity->amount = $one_time_pledge->amount;
                             $new_pledge_charity->frequency = 'one-time';

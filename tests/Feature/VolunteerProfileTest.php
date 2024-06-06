@@ -153,7 +153,7 @@ class VolunteerProfileTest extends TestCase
         $response = $this->get('/volunteering/profile/create');
 
         $response->assertStatus(200);
-        $response->assertSeeText("Register As a Volunteer");
+        $response->assertSeeText("Register as a Volunteer");
     }
 
     
@@ -320,7 +320,7 @@ class VolunteerProfileTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'business_unit_code' =>  "The organization field is required",
-            'no_of_years' => "The no of years field is required.",
+            'no_of_years' => "The number of years field is required",
             'preferred_role' => "The preferred volunteer role field is required",
         ]);
 
@@ -362,7 +362,7 @@ class VolunteerProfileTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             
-            "address" => "The address field is required",
+            "address" => "The street address field is required",
             "city" => "The city field is required",
             "province" => "The province field is required",
             "postal_code" => "The postal code field is required",
@@ -384,7 +384,7 @@ class VolunteerProfileTest extends TestCase
         
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
-            "no_of_years" => "The no of years must be between 1 and 50."
+            "no_of_years" => "The number of years must be between 1 and 50"
         ]);
         
 

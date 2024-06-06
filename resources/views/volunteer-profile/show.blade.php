@@ -75,7 +75,7 @@
                     <div class="col-12">
                         <div class="font-weight-bold">Number of years you have been volunteering with PECSF</div>
                         <div>
-                            {{ $profile->no_of_years }}
+                            {{ $profile->no_of_years == 1 ? 'This is my first year!' : $profile->no_of_years }}
                         </div>
                     </div>
                 </div>

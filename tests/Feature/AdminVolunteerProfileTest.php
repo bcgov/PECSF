@@ -366,7 +366,7 @@ class AdminVolunteerProfileTest extends TestCase
                 "pecsf_first_name" => "The pecsf first name field is required.",
                 "pecsf_last_name" => "The pecsf last name field is required.",
                 "business_unit_code" => "The business unit field is required",
-                "no_of_years" => "The no of years field is required.",
+                "no_of_years" => "The number of years field is required",
                 "preferred_role" => "The preferred volunteer role field is required",
                 "address_type" => "The address type field is required.",
             ]);
@@ -393,7 +393,7 @@ class AdminVolunteerProfileTest extends TestCase
 
             $response->assertStatus(422);
             $response->assertJsonValidationErrors([
-                "no_of_years" => "The no of years must be between 1 and 50."
+                "no_of_years" => "The number of years must be between 1 and 50"
             ]);
         }
 

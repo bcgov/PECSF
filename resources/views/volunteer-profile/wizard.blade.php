@@ -97,7 +97,7 @@
                         <button type="button" class="action next btn btn-lg btn-primary ml-1"
                             >Next</button>
                         <button type="submit" class="action submit btn btn-lg btn-primary ml-1"
-                            style="display: none">Register</button>
+                            style="display: none">{{ (isset($profile) && $profile->id) ? 'Update' : 'Register' }}</button>
                     </div>
 
                 </form>
@@ -219,6 +219,10 @@
     font-weight: bold;
     color: #1a5a96; /* #dc3545 */
 }
+
+.bs4-step-tracking li.active:hover {
+    cursor: pointer;
+}    
 
 .bs4-step-tracking li.active>div {
     background: #1a5a96;

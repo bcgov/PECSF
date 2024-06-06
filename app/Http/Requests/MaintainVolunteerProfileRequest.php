@@ -140,13 +140,19 @@ class MaintainVolunteerProfileRequest extends FormRequest
     {
         return [
 
+            'emplid.required' => 'The employee field is required',
+
             'business_unit_code.required' => 'The business unit field is required',
             'business_unit_code.exists' => 'The selected business unit is invalid',
+
+            'no_of_years.required' => 'The number of years field is required',
+            'no_of_years.between' => 'The number of years must be between 1 and 50',
+            'no_of_years.integer' => 'The number of years must be an integer',
 
             'preferred_role.required' => 'The preferred volunteer role field is required',
             'preferred_role.in' => 'The selected preferred volunteer role is invalid',
 
-            'address.required_if' => 'The address field is required',
+            'address.required_if' => 'The street address field is required',
             'city.required_if' => 'The city field is required',
             'city.exists' =>  'The invalid city entered',
             'province.required_if' => 'The province field is required',
