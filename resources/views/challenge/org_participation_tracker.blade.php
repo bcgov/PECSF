@@ -2,7 +2,7 @@
 @section('content_header')
 
 <div class="mt-2">
-    <h1>Challenge</h1>
+    <h1>Statistics</h1>
 
     @include('challenge.partials.tabs')
 
