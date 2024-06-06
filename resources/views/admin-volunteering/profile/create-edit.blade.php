@@ -262,7 +262,9 @@
                             <label for="no_of_years">How many years have you been volunteering with PECSF</label>
                             <select type="text" class="form-control w-25" name="no_of_years" id="no_of_years" role="listbox">
                                 <option role="listitem" value="0" selected>Please select</option>
-                                <option role="listitem" value="1" >This is the first year</option>
+                                <option role="listitem" value="1" 
+                                        {{ ($profile && $profile->no_of_years && $profile->no_of_years == 1)  ? "selected" : '' }}>This is my first year!</option>
+                                >This is the first year</option>
                                 @foreach ( range(2,50) as $value ) 
                                     <option role="listitem" value="{{ $value }}" 
                                     {{ ($profile && $profile->no_of_years && $profile->no_of_years == $value) ? "selected" : "" }}>
