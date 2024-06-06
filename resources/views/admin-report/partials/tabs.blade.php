@@ -51,7 +51,7 @@
           href="{{ route('reporting.org-partipation-tracker.index') }}" role="tab" aria-controls="pills-home" aria-selected="true">Organization Participation Trackers</a>
         <div class="dropdown-divider"></div>                                 
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'reporting.challenge-page-data') ? 'active' : ''}}"
-          href="{{ route('reporting.challenge-page-data') }}" role="tab" aria-controls="pills-home" aria-selected="true">Challenge Page Data</a>
+          href="{{ route('reporting.challenge-page-data') }}" role="tab" aria-controls="pills-home" aria-selected="true">Statistics Page Data</a>
       </div>
     </li>
 

@@ -4,7 +4,7 @@
 
 @include('admin-report.partials.tabs')
 
-<h4 class="mx-1 mt-3">Challenge Page Data Report</h4>
+<h4 class="mx-1 mt-3">Statistics Page Data Report</h4>
 
 <div class="d-flex mt-3">
     <div class="flex-fill">
@@ -191,7 +191,7 @@ $(function() {
                 text: 'Current page to CSV',
                 filename: function() {
                         var date = $('#as_of_date').val();
-                        return 'Challenge_Page_Data_on_' + date;
+                        return 'Statistics_Page_Data_on_' + date;
                 },
             },
             { extend: 'excel', className: 'btn btn-primary',
@@ -199,7 +199,7 @@ $(function() {
                 // messageTop: 'Year : ' + $('#year').val() + '  and As of date : ' + $('#as_of_date').val(),
                 filename: function() {
                         var date = $('#as_of_date').val();
-                        return 'Challenge_Page_Data_on_' + date;
+                        return 'Statistics_Page_Data_on_' + date;
                 },
             },
         ], 
