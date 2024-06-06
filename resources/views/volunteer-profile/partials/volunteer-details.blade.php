@@ -24,10 +24,11 @@
              </div>
         @else
             <div class="form-group col-12">
-                <label for="no_of_years">How many years have you been volunteering with PECSF</label>
+                <label for="no_of_years">How many years have you been volunteering with PECSF?</label>
                 <select type="text" class="form-control w-75" name="no_of_years" id="no_of_years" role="listbox">
-                    <option role="listitem" value="" >Please select</option>
-                    @foreach ( range(1,50) as $value ) 
+                    <option role="listitem" value="" >Please choose the number of years</option>
+                    <option role="listitem" value="1" {{ ($profile && $profile->no_of_years == 1) ? "selected" : '' }}>This is my first year!</option>
+                    @foreach ( range(2,50) as $value ) 
                         <option role="listitem" value="{{ $value }}" 
                         {{ ($profile && $profile->no_of_years == $value) ? "selected" : "" }}>
                         {{ $value }}</option>
