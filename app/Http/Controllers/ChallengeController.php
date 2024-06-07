@@ -280,8 +280,9 @@ class ChallengeController extends Controller
         //             ->first();
 
 
-        $year_options = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
+        $finalized_years = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
 
+        $year_options = $finalized_years;
         if ($current_campaign_year > $year_options[0]) {
             $found = DailyCampaign::where('campaign_year', $current_campaign_year)
                                     ->where('daily_type', 0)
@@ -317,6 +318,9 @@ class ChallengeController extends Controller
             // if ($summary) {
             //     $final_date = $summary->as_of_date;
             // }
+            if (!(in_array( $campaign_year, $finalized_years))) {
+                abort(404);
+            }
             
             if (!($summary)) {
                 
@@ -389,7 +393,7 @@ class ChallengeController extends Controller
             return $pdf->download( $campaign_year . ' PECSF Campaign Final Statistics.pdf');
         }
 
-        return view('challenge.index', compact('year_options', 'year'));
+        return view('challenge.index', compact('finalized_years', 'year_options', 'year'));
     }
 
     public function daily_campaign(Request $request){
