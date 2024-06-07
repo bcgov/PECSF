@@ -477,6 +477,10 @@ class ChallengeController extends Controller
 
     public function org_participation_tracker(Request $request)
     {
+        if (!(CampaignYear::isAnnualCampaignOpenNow())) {
+            abort(404);
+        }
+
         $year_options = CampaignYear::where('calendar_year', '>', 2023)->orderBy('calendar_year', 'desc')->pluck('calendar_year');
 
         $current_year = today()->year;
@@ -495,6 +499,10 @@ class ChallengeController extends Controller
 
     public function org_participation_tracker_download(Request $request)
     {
+        if (!(CampaignYear::isAnnualCampaignOpenNow())) {
+            abort(404);
+        }
+        
         $as_of_date = today();
         $cy = $request->campaign_year;
         $bu =  $request->business_unit;
