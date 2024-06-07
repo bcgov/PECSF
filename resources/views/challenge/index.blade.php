@@ -23,7 +23,9 @@
                 </label>
                 <select name="year" id="year" class="form-control ">
                     @foreach($year_options as $annum)
-                        <option {{ old('year')==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
+                        <option {{ $year==$annum?"selected":""}} 
+                             data-final="{{ in_array( $annum, $finalized_years) ? '1' : '0' }}"
+                            value="{{$annum}}">{{$annum}}</option>
                     @endforeach
                 </select>
             </div>
@@ -83,7 +85,8 @@
 
         <div class="d-flex mt-1 mb-3">
             <div class="flex-fill">
-                <button id="download-pdf-btn" type="button" class="btn btn-primary">
+                <button id="download-pdf-btn" type="button" class="btn btn-primary"  
+                    style="{{ (in_array( $year, $finalized_years)) ? '' : 'display:none;' }}">
                     <span class="mx-2 px-2">Download as PDF</span>
                 </button>
             </div>
@@ -338,6 +341,12 @@ $(function() {
             $('#chart-mode-btn').trigger('click');
         }
         oTable.ajax.reload();
+
+        if ($(this).find(":selected").data('final') == 1) {
+            $('#download-pdf-btn').show();
+        } else {
+            $('#download-pdf-btn').hide();
+        }
 
     });
 
