@@ -4,7 +4,7 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <h4 class="mx-1 mt-3">Challenge Updates</h4>
+    <h4 class="mx-1 mt-3">Statistics Updates</h4>
 
     <div class="d-flex mt-3">
         <div class="flex-fill">
@@ -31,7 +31,7 @@
             <p class="font-italic  text-danger"><u>Note:</u> For final date before March 1, it will be considered a previous campaign year (e.g 2024-02-20, the campiagn year is still 2023)</p>
 
             <div class="row pb-2">
-                <div class="col-md-12"><h4 class="text-primary">Challenge Page Updates</h4></div>
+                <div class="col-md-12"><h4 class="text-primary">Statistics Page Updates</h4></div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-3">
@@ -53,7 +53,7 @@
                 <div class="form-group col-md-3">
                     <label for="finalize_challenge_data">&nbsp;</label>
                         <button type="button" class="finalize_challenge_data btn form-control btn-danger">
-                            Finalize Challenge Page
+                            Finalize Statistics Page
                         </button>
                 </div>
             </div>
@@ -168,7 +168,7 @@
 
         var form = $('#setting-edit-form');
 
-        info = 'Confirm to finalize Challenge Page Data ?';
+        info = 'Confirm to finalize Statistics Page Data ?';
         if (confirm(info))
         {        
 
@@ -178,7 +178,7 @@
                     data: form.serialize(), // serializes the form's elements.
                     success: function(data)
                     {
-                        Toast('Success', 'The Challenge Page Data were successfully finalized.', 'bg-success' );
+                        Toast('Success', 'The Statistics Page Data were successfully finalized.', 'bg-success' );
                     },
                     error: function(response) {
                         if (response.status == 422) {
