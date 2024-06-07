@@ -54,10 +54,31 @@ class Setting extends Model implements Auditable
         $in_date = $in_date ?? today();
 
         $year = $in_date->year;
-        if ($in_date->month < 3 ) {
-            $year = $in_date->year - 1;
+
+        $campaign_year = CampaignYear::where('calendar_year', $year + 1)->first();
+
+        if ($campaign_year) {
+            if ($in_date < $campaign_year->start_date) {
+                $year = $in_date->year - 1;
+            }
+        } else {
+            if ($in_date->month < 9 ) {
+                $year = $in_date->year - 1;
+            }
         }
 
         return $year;
+    }
+
+    public static function isCampaignPeriodActive( $in_date = null ) {
+
+        $in_date = $in_date ?? today();
+
+        $setting = self::first();
+        if ($in_date > $setting->campaign_start_date && $in_date <= $setting->campaign_final_date) {
+            return true;
+        }
+
+        return false;
     }
 }

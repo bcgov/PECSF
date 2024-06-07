@@ -223,7 +223,7 @@
             //         text: 'Current page to CSV',
             //         filename: function() {
             //                 var date = $('#yearcd').val();
-            //                 return 'Challenge_Page_Data_on_' + date;
+            //                 return 'Statistics_Page_Data_on_' + date;
             //         },
             //     },
             //     { extend: 'excel', className: 'btn btn-primary',
@@ -231,7 +231,7 @@
             //         // messageTop: 'Year : ' + $('#year').val() + '  and As of date : ' + $('#yearcd').val(),
             //         filename: function() {
             //                 var date = $('#yearcd').val();
-            //                 return 'Challenge_Page_Data_on_' + date;
+            //                 return 'Statistics_Page_Data_on_' + date;
             //         },
             //     },
             // ], 

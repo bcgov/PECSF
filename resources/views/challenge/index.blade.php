@@ -7,7 +7,7 @@
     @include('challenge.partials.tabs')
 
     <h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
+        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Statictics%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
 
@@ -81,8 +81,11 @@
             </div>
         </div>
 
-        <div class="d-flex mt-1">
+        <div class="d-flex mt-1 mb-3">
             <div class="flex-fill">
+                <button id="download-pdf-btn" type="button" class="btn btn-primary">
+                    <span class="mx-2 px-2">Download as PDF</span>
+                </button>
             </div>
     
             <div class="d-flex">
@@ -349,6 +352,11 @@ $(function() {
             oTable.search( term ).draw();
         }, 500);
         $(this).data('timer', wait);
+    });
+
+    $('#download-pdf-btn').on('click', function() {
+        year = $('select[name="year"]').val();
+        window.location.href = "{{ route('challenge.index') }}" + '?year=' + year +'&download';
     });
 
     // Charting Mode 
