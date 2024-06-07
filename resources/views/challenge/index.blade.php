@@ -7,7 +7,7 @@
     @include('challenge.partials.tabs')
 
     <h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
+        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Statictics%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
 
