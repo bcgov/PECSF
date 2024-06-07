@@ -23,7 +23,7 @@
                 </label>
                 <select name="year" id="year" class="form-control ">
                     @foreach($year_options as $annum)
-                        <option {{ old('year')==$annum?"selected":""}} 
+                        <option {{ $year==$annum?"selected":""}} 
                              data-final="{{ in_array( $annum, $finalized_years) ? '1' : '0' }}"
                             value="{{$annum}}">{{$annum}}</option>
                     @endforeach
