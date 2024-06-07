@@ -370,8 +370,8 @@ class ChallengeController extends Controller
             $rows[] = (object) [ 'organization_name' => 'Other', 'dollars' => $other_dollars, 'donors' => $other_donors ];
 
             // Total Donors and Amount
-            $total_dollars = $summary->dollars;
-            $total_donors =  $summary->donors;
+            $total_dollars = $summary ? $summary->dollars : 0;
+            $total_donors =  $summary ? $summary->donors : 0;
 
 
 
