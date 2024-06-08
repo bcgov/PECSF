@@ -167,7 +167,7 @@ class EmployeeJob extends Model
         $total_amount = 0;
         // Annual Campaign
         $amount = Pledge::where('organization_id', $gov->id )
-                                ->where('emplid', '112899')
+                                ->where('emplid', $this->emplid)
                                 ->whereNull('cancelled')
                                 ->sum('goal_amount');
         $total_amount += $amount;
