@@ -14,10 +14,11 @@ class DataFixFor_jp_0143_EE195765 extends Seeder
     public function run(): void
     {
         //
-        DB::update("update pledges set one_time_amount = 0, pay_period_amount = 50, goal_amount = 1300, updated_at = now() 
+        DB::update("update pledges set pay_period_amount = 50, goal_amount = 1350, updated_at = now() 
                        where id = 271 and deleted_at is null");
-        DB::update("update pledge_charities set frequency = 'bi-weekly', amount = 50, goal_amount = 1300, updated_at = now() 
-                        where pledge_id = 271 and deleted_at is null");
-
+        DB::update("delete from pledge_charities where pledge_id = 271 and frequency = 'bi-weekly' and deleted_at is null");
+        DB::update("insert into pledge_charities (charity_id, pledge_id, frequency,	additional,	percentage,	amount,	goal_amount, created_at, updated_at) 
+                    select charity_id, pledge_id, 'bi-weekly', additional, percentage, 50 * (percentage / 100), 50 * (percentage / 100) * 26, now(), now() 
+                        from pledge_charities where pledge_id = 271 and frequency = 'one-time' and deleted_at is null");
     }
 }
