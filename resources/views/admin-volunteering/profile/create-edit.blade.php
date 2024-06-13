@@ -838,6 +838,24 @@ $(function () {
     });
 
 
+    $('#opt_out_recongnition').on('click', function(e) {
+         if (e.originalEvent ) {
+            val = this.checked ? this.value : '';
+            if (val == 'Y') {
+                $('input[name=address]').val('');
+                $('select[name=city]').val('').trigger('change');
+                $('select[name=province]').val('');
+                $('input[name=postal_code]').val('');
+            }
+         }
+    });
+
+    $('input[name=address],select[name=city],select[name=province],input[name=postal_code]').on('change', function (e) {
+        if (e.originalEvent ) {
+            $('#opt_out_recongnition').prop('checked', false);
+        }
+    });
+
 });
 
 </script>

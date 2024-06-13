@@ -60,15 +60,16 @@ class MaintainVolunteerProfileRequest extends FormRequest
             'preferred_role' => ["required", Rule::in( $role_keys )],
 
             'address_type' => ['required', Rule::in(['G', 'S'])],
-            'address'  => ['required_if:address_type,S'],
-            'city'  => ['required_if:address_type,S',
-                            Rule::when( $this->address_type == 'S', ['exists:cities,id']),
+            // 'address'  => ['required_if:address_type,S'],
+            'address'  => Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y'),
+            'city'  => [ Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y'),
+                            Rule::when( $this->address_type == 'S' && $this->opt_out_recongnition != 'Y', ['exists:cities,id']),
                     ],
-            'province' => ['required_if:address_type,S',
-                                Rule::when( $this->address_type == 'S', Rule::in( $province_keys )) 
+            'province' => [ Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y'),
+                                Rule::when( $this->address_type == 'S' && $this->opt_out_recongnition != 'Y', Rule::in( $province_keys )) 
                             ],
-            'postal_code'  => ['required_if:address_type,S',
-                    Rule::when( $this->address_type == 'S', 'regex:/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/'),
+            'postal_code'  => [ Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y'),
+                    Rule::when( $this->address_type == 'S' && $this->opt_out_recongnition != 'Y', 'regex:/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/'),
                                 ],
 
             ];

@@ -73,8 +73,7 @@
     <div class="form-group col-12">
         <label>
             <input id="opt_out_recongnition" name="opt_out_recongnition" 
-                type="checkbox" {{ ($profile && $profile->opt_out_recongnition == "Y") ? "checked":""}}  
-                name="address_type" value="Y" {{ ($profile && $profile->opt_out_recongnition == 'Y') ? 'checked' : '' }}>
+                type="checkbox" value="Y" {{ ($profile && $profile->opt_out_recongnition == "Y") ? "checked":""}}>  
             <span class="pl-2">I wish to opt-out from receiving recognition items.</span>
         </label>
     </div>
@@ -107,6 +106,24 @@ $(function () {
             $('input[name=postal_code]').prop('disabled',false);
         }
 
+    });
+
+    $('#opt_out_recongnition').on('click', function(e) {
+         if (e.originalEvent ) {
+            val = this.checked ? this.value : '';
+            if (val == 'Y') {
+                $('input[name=address]').val('');
+                $('select[name=city]').val('').trigger('change');
+                $('select[name=province]').val('');
+                $('input[name=postal_code]').val('');
+            }
+         }
+    });
+
+    $('#recognition-items-area').on('change', 'input[name=address],select[name=city],select[name=province],input[name=postal_code]', function (e) {
+        if (e.originalEvent ) {
+            $('#opt_out_recongnition').prop('checked', false);
+        }
     });
 
 });
