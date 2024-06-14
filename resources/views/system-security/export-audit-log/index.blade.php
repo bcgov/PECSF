@@ -372,6 +372,15 @@
 
         });
 
+        $('.search-filter').on('keyup', function(e) {
+            var key  = e.key;
+            if (key === 'Enter') {
+                e.preventDefault();
+                oTable.draw();
+                // $(this).trigger('click');
+            }
+        });
+
     });
 
     </script>
