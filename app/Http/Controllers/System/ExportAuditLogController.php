@@ -36,7 +36,7 @@ class ExportAuditLogController extends Controller
                      return $query->where('export_audit_logs.table_name', $request->table_name);
                 })
                 ->when($request->row_id, function($query) use($request) {
-                    return $query->where('export_audit_logs.table_name', $request->row_id);
+                    return $query->where('export_audit_logs.row_id', $request->row_id);
                 })
                 ->when($request->start_time || $request->end_time, function($query) use($request) {
                      $from = $request->start_time ?? '1990-01-01';
