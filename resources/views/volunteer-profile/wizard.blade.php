@@ -293,9 +293,9 @@
 
 
     /* Should be override in app.scss */
-    a {
+    /* a {
         text-decoration: underline !important; 
-    }
+    } */
 
     .form-control[type='search']:focus-visible {
         outline: 2px solid #000;
