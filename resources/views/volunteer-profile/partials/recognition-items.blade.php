@@ -116,6 +116,18 @@ $(function () {
                 $('select[name=city]').val('').trigger('change');
                 $('select[name=province]').val('');
                 $('input[name=postal_code]').val('');
+
+                // clear error messages
+                fields = ['address_type', 'address', 'city', 'province', 'postal_code', 'opt_out_recongnition'];
+
+                $.each( fields, function( index, field_name ) {
+                    $('#volunteer-profile-form [name='+ field_name +']').nextAll('span.text-danger').remove();
+                    $('#volunteer-profile-form [name='+ field_name +']').removeClass('is-invalid');
+                });
+
+                $('#city').parent().find('.select2-selection--single').removeClass('is-invalid');
+                $('#city').parent().find('span.text-danger').remove();
+
             }
          }
     });
