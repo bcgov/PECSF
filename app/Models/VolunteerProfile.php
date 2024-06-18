@@ -93,7 +93,11 @@ class VolunteerProfile extends Model implements Auditable
                 $address = $job->office_full_address;
             }
         } else {
-            $address = $this->address .', '. $this->city .', '. $this->province .', '. $this->postal_code;
+            if ($this->opt_out_recongnition == 'Y') {
+                $address = 'Not applicable';
+            } else {
+                $address = $this->address .', '. $this->city .', '. $this->province .', '. $this->postal_code;
+            }
         }
         return $address;
     }
