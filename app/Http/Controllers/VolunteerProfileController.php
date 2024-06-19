@@ -104,9 +104,13 @@ class VolunteerProfileController extends Controller
                 if ($request->address_type == 'G') { 
                     $address = $job->office_full_address;
                 } else {
-                    $city = City::where('id', $request->city)->first();            
-                    $province = $request->province ? VolunteerProfile::PROVINCE_LIST[$request->province] : '';
-                    $address = $request->address .', '. $city->city .', '. $province .', '. $request->postal_code;
+                    if ($request->opt_out_recongnition == 'Y') {
+                        $address = 'Not applicable';
+                    } else {
+                        $city = City::where('id', $request->city)->first();            
+                        $province = $request->province ? VolunteerProfile::PROVINCE_LIST[$request->province] : '';
+                        $address = $request->address .', '. $city->city .', '. $province .', '. $request->postal_code;
+                    }
                 }
                 
                 $is_renew = $request->is_renew == 'Y' ? true : false;
@@ -148,10 +152,10 @@ class VolunteerProfileController extends Controller
                 'preferred_role' => $request->preferred_role,
 
                 'address_type' => $request->address_type,
-                'address' => ($request->address_type =="G") ? null : $request->address,
-                'city' => ($request->address_type =="G") ? null : $city->city,
-                'province' => ($request->address_type =="G") ? null : $request->province,
-                'postal_code' => ($request->address_type =="G") ? null : $request->postal_code,
+                'address' => ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->address,
+                'city' => ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $city->city,
+                'province' => ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->province,
+                'postal_code' => ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->postal_code,
                 'opt_out_recongnition' => $request->opt_out_recongnition ? 'Y' : 'N',
 
                 'created_by_id'  => Auth::id(),
@@ -251,10 +255,10 @@ class VolunteerProfileController extends Controller
         $profile->business_unit_code = $request->business_unit_code;
         $profile->no_of_years = $profile->is_renew_profile ? 1 : $request->no_of_years;
         $profile->preferred_role = $request->preferred_role;
-        $profile->address = ($request->address_type =="G") ? null : $request->address;
-        $profile->city = ($request->address_type =="G") ? null : $city->city;
-        $profile->province = ($request->address_type =="G") ? null : $request->province;
-        $profile->postal_code = ($request->address_type =="G") ? null : $request->postal_code;
+        $profile->address = ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->address;
+        $profile->city = ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $city->city;
+        $profile->province = ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->province;
+        $profile->postal_code = ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->postal_code;
         $profile->opt_out_recongnition  = $request->opt_out_recongnition ? 'Y' : 'N';
 
         $profile->updated_by_id = Auth::id();
