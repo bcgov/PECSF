@@ -73,8 +73,7 @@
     <div class="form-group col-12">
         <label>
             <input id="opt_out_recongnition" name="opt_out_recongnition" 
-                type="checkbox" {{ ($profile && $profile->opt_out_recongnition == "Y") ? "checked":""}}  
-                name="address_type" value="Y" {{ ($profile && $profile->opt_out_recongnition == 'Y') ? 'checked' : '' }}>
+                type="checkbox" value="Y" {{ ($profile && $profile->opt_out_recongnition == "Y") ? "checked":""}}>  
             <span class="pl-2">I wish to opt-out from receiving recognition items.</span>
         </label>
     </div>
@@ -107,6 +106,36 @@ $(function () {
             $('input[name=postal_code]').prop('disabled',false);
         }
 
+    });
+
+    $('#opt_out_recongnition').on('click', function(e) {
+         if (e.originalEvent ) {
+            val = this.checked ? this.value : '';
+            if (val == 'Y') {
+                $('input[name=address]').val('');
+                $('select[name=city]').val('').trigger('change');
+                $('select[name=province]').val('');
+                $('input[name=postal_code]').val('');
+
+                // clear error messages
+                fields = ['address_type', 'address', 'city', 'province', 'postal_code', 'opt_out_recongnition'];
+
+                $.each( fields, function( index, field_name ) {
+                    $('#volunteer-profile-form [name='+ field_name +']').nextAll('span.text-danger').remove();
+                    $('#volunteer-profile-form [name='+ field_name +']').removeClass('is-invalid');
+                });
+
+                $('#city').parent().find('.select2-selection--single').removeClass('is-invalid');
+                $('#city').parent().find('span.text-danger').remove();
+
+            }
+         }
+    });
+
+    $('#recognition-items-area').on('change', 'input[name=address],select[name=city],select[name=province],input[name=postal_code]', function (e) {
+        if (e.originalEvent ) {
+            $('#opt_out_recongnition').prop('checked', false);
+        }
     });
 
 });

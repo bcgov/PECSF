@@ -101,16 +101,18 @@
         
                 <div class="pt-2">
 
-                    <div class="row pt-2">
-                        <div class="col-12">
-                            <div class="font-weight-bold">
-                                {{ ($profile->address_type == 'G') ? 'Use my Global Address Listing' : 'Use the following address' }}
-                                </div> 
-                            <div>
-                                {{  $profile->full_address }}
-                            </div>
-                        </div>    
-                    </div>                 
+                    @if ($profile->opt_out_recongnition != 'Y')
+                        <div class="row pt-2">
+                            <div class="col-12">
+                                <div class="font-weight-bold">
+                                    {{ ($profile->address_type == 'G') ? 'Use my Global Address Listing' : 'Use the following address' }}
+                                    </div> 
+                                <div>
+                                    {{  $profile->full_address }}
+                                </div>
+                            </div>    
+                        </div>
+                    @endif
             
                     <div class="row pt-2">
                         <div class="col-12">
