@@ -14,8 +14,8 @@
                     @empty($pledge)
                         <select id="campaign_year_id" class="form-control" name="campaign_year_id" style="max-width:200px;" aria-required="true">
                             @foreach ($campaignYears as $cy)
-                                <option value="{{ $cy->id }}"
-                                    {{ ($cy->calendar_year == date('Y')+1) ? 'selected' : '' }}>
+                                <option value="{{ $cy->id }}" calendar_year="{{ $cy->calendar_year }}"
+                                    {{ ($cy->calendar_year == ($default_campaign_year +1) ) ? 'selected' : '' }}>
                                     {{ $cy->calendar_year }}
                                 </option>
                             @endforeach

@@ -66,6 +66,18 @@ class CampaignYear extends Model implements Auditable
             return false;
         }
     }
+
+    public static function defaultCampaignYear() {
+
+        $default_campaign_year = today()->year - 1; 
+        $temp_campaign_year = CampaignYear::where('calendar_year', today()->year +1 )->first();
+        if ($temp_campaign_year && today() >= $temp_campaign_year->start_date ) {
+            $default_campaign_year = today()->year; 
+        } 
+
+        return $default_campaign_year;
+
+    }
    
 
     public function created_by()
