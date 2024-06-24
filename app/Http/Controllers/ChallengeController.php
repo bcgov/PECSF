@@ -283,6 +283,11 @@ class ChallengeController extends Controller
         $finalized_years = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
 
         $year_options = $finalized_years;
+        if ($current_campaign_year == $finalized_years[0] && today() < $setting->challenge_final_date) {
+            // not yet finalized
+            array_shift($finalized_years);
+        }
+
         if ($current_campaign_year > $year_options[0]) {
             $found = DailyCampaign::where('campaign_year', $current_campaign_year)
                                     ->where('daily_type', 0)
