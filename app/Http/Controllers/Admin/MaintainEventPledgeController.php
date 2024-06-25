@@ -58,7 +58,7 @@ class MaintainEventPledgeController extends Controller
                                     })
                                     ->orWhereNull('employee_jobs.empl_rcd');
                             })
-                ->where("approved","=",1)
+                ->whereIn("approved",[1,2])
                             ->when($request->tran_id, function($query) use($request) {
                                 return $query->where('bank_deposit_forms.id', 'like', $request->tran_id);
                             })
@@ -92,6 +92,9 @@ class MaintainEventPledgeController extends Controller
                             ->when( $request->sub_type, function($query) use($request) {
                                 $query->where('bank_deposit_forms.sub_type', $request->sub_type);
                             })
+                            ->when( $request->approved, function($query) use($request) {
+                                $query->where('bank_deposit_forms.approved', $request->approved);
+                            })
                             ->select('bank_deposit_forms.*');
 
             return Datatables::of($pledges)
@@ -106,7 +109,8 @@ class MaintainEventPledgeController extends Controller
          $filter = null;
          if (str_contains( url()->previous(), 'admin-pledge/create') ||
              str_contains( url()->previous(), 'admin-pledge/submission-queue') ||
-             str_contains( url()->previous(), 'admin-pledge/maintain-event')) {
+             str_contains( url()->previous(), 'admin-pledge/maintain-event') ||
+             str_contains( url()->previous(), 'admin-pledge/status')) {
              $filter = session('admin_pledge_event_pledge_filter');
          }
 
@@ -116,9 +120,12 @@ class MaintainEventPledgeController extends Controller
 
         $event_types = ['Cash One-Time Donation', 'Cheque One-Time Donation', 'Fundraiser', 'Gaming'];
         $sub_types = ['Auction', 'Entertainment', 'Food', 'Other', 'Sports', '50/50 Draw'];
+        $status_list =  ["1" => "Approved", "2" => "Locked"];
+
+        $default_campaign_year = CampaignYear::defaultCampaignYear();
 
         return view('admin-pledge.event.index',compact(
-                         'filter', 'organizations', 'campaign_years', 'cities', 'event_types', 'sub_types'));
+                         'filter', 'organizations', 'campaign_years', 'cities', 'event_types', 'sub_types', 'default_campaign_year', 'status_list'));
 
     }
 
