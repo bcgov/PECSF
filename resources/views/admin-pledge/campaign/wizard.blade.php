@@ -384,32 +384,15 @@ $(function () {
     $(".next").on("click", function() {
         var nextstep = false;
         if (step == 1) {
-
             @empty($pledge) 
-
                 calendar_year = $('#campaign_year_id option:selected').attr('calendar_year')
-                Swal.fire( {
-                    title: 'Are you certain that you want the pledge to apply to Calendar Year ' + calendar_year + ' ?',
-                    // text: 'This action cannot be undone.',
-                    // icon: 'question',
-                    showDenyButton: true,
-                    // showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    denyButtonText: 'No',
-                    buttonsStyling: false,
-                    //confirmButtonClass: 'btn btn-danger',
-                    customClass: {
-                        confirmButton: 'btn btn-primary', //insert class here
-                        cancelButton: 'btn btn-danger ml-2', //insert class here
-                        denyButton: 'btn btn-outline-secondary ml-2',
-                    }
-                    //denyButtonText: `Don't save`,
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        nextstep = checkForm();
-                    } 
-                })
+                let text = 'Warning: \n\nAre you sure that you want the new pledge to apply to Campaign Year ' + (calendar_year-1) + ' (Calendar Year ' + calendar_year + ') ?';
+
+                if (confirm( text ) == true) {
+                    nextstep = checkForm();
+                } else {
+                    nextstep = false;
+                }                
             @endempty
             @isset($pledge) 
                 nextstep = checkForm();
