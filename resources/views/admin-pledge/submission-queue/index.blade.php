@@ -471,18 +471,59 @@
                     window.location.href = "/admin-pledge/submission-queue";                    
                 });
 
-               }
+            } else if ($(this).val() == 2) {
 
-               else{
+                    Swal.fire( {
+                        title: 'Are you sure you want to lock the event pledge "' + $("#submission_id").val() + '" ?',
+                        text: 'This action cannot be undone.',
+                        // icon: 'question',
+                        //showDenyButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, lock it!',
+                        buttonsStyling: false,
+                        //confirmButtonClass: 'btn btn-danger',
+                        customClass: {
+                            confirmButton: 'btn btn-danger', //insert class here
+                            cancelButton: 'btn btn-secondary ml-2', //insert class here
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            $.post("/admin-pledge/status",
+                            {
+                                submission_id: $("#submission_id").val(),
+                                status: $(this).val(),
+                            },
+                            function (data, status) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "The pledge " + $("#submission_id").val() + " has been locked.",
+                                    showConfirmButton: true,
+                                }).then((result) => {
+                                    window.location.href = "/admin-pledge/submission-queue";     
+                                });
+                                // Swal.fire('Status updated!', '', 'success');
+                            }).fail(function() {
+                                Swal.fire('Status failed to update!', '', 'fail');
+                                window.location.href = "/admin-pledge/submission-queue";     
+                            });
+                               
+                        } else {
+                            window.location.href = "/admin-pledge/submission-queue";     
+                        }
+
+                    });
+
+            } else {
 
                 $.post("/admin-pledge/status",
                     {
                         submission_id: $("#submission_id").val(),
-                        status: 0
+                        status: $(this).val(),
                     },
                     function (data, status) {
                     });
-        }
+            }
         });
 
         $(".lock-submission").click(function(){
