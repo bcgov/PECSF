@@ -184,7 +184,14 @@ class ChallengePageTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get('challenge/daily_campaign');
 
-        $response->assertStatus(200);
+        $setting = Setting::first();
+
+        if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+            $response->assertStatus(200);
+        } else {
+            $response->assertStatus(404);
+        }
+
     }
  
     public function test_an_authorized_user_can_download_daily_campaign()
@@ -193,8 +200,15 @@ class ChallengePageTest extends TestCase
         
         $this->actingAs($this->user);
         $response = $this->get('challenge/download');
- 
-        $response->assertStatus(200);
+
+        $setting = Setting::first();
+
+        if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+            $response->assertStatus(200);
+        } else {
+            $response->assertStatus(404);
+        }
+        
     }
 
     public function test_an_authorized_user_can_access_org_participation_tracker_page()
@@ -209,7 +223,7 @@ class ChallengePageTest extends TestCase
  
     public function test_an_authorized_user_can_download_org_participation_tracker()
     {
-        // [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
+        [$sum, $expected_rows] = $this->get_new_record_form_data(true, false);
         
         $this->actingAs($this->user);
         $response = $this->get('challenge/org_participation_tracker_download', []);
@@ -233,11 +247,21 @@ class ChallengePageTest extends TestCase
         $response = $this->get('/challenge/download?sort=region');
 
         $filename = 'Daily_Campaign_Update_Region_' . today()->format('Y-m-d') . '.xlsx';
-        $response->assertStatus(200);
-        $response->assertDownload( $filename ); 
 
-        $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+        $setting = Setting::first();
+
+        if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+            $response->assertStatus(200);
+
+            $response->assertStatus(200);
+            $response->assertDownload( $filename ); 
+
+            $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+        } else {
+            $response->assertStatus(404);
+        }
+
 
     }
 
@@ -254,11 +278,19 @@ class ChallengePageTest extends TestCase
         $response = $this->get('/challenge/download?sort=organization');
                                   
         $filename = 'Daily_Campaign_Update_By_Org_' . today()->format('Y-m-d') . '.xlsx';
-        $response->assertStatus(200);
-        $response->assertDownload( $filename ); 
 
-        $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+        $setting = Setting::first();
+
+        if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+
+            $response->assertStatus(200);
+            $response->assertDownload( $filename ); 
+
+            $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+        } else {
+            $response->assertStatus(404);
+        }
 
     }
 
@@ -280,11 +312,19 @@ class ChallengePageTest extends TestCase
         $report_date = (today()->month >= 3 && today()->month <= 8) ?  today() : $row->campaign_end_date;
                                   
         $filename = 'Daily_Campaign_Update_By_Dept_' . $report_date->format('Y-m-d') . '.xlsx';
-        $response->assertStatus(200);
-        $response->assertDownload( $filename ); 
 
-        $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+        
+        $setting = Setting::first();
+
+        if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+            $response->assertStatus(200);
+            $response->assertDownload( $filename ); 
+
+            $this->assertTrue($response->headers->get('content-type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $this->assertTrue($response->headers->get('content-disposition') == "attachment; filename=" . $filename);
+        } else {
+            $response->assertStatus(404);
+        }
 
     }
 
@@ -308,7 +348,7 @@ class ChallengePageTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonPath('data', []);
 
-        $campaign_year = Setting::challenge_page_campaign_year();
+        $campaign_year = Setting::challenge_page_campaign_year();        
         if (today()->month >= 3 && today()->month <= 8) {
             // No data proceed by 
         } else {

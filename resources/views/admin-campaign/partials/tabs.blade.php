@@ -118,13 +118,13 @@
                           str_contains(Route::current()->getName(), 'settings.eligible-employee-summary')
                         ) ? 'active' : ''
         @endphp
-        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Challenge Setup</a>
+        <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Statistics Setup</a>
         <div class="dropdown-menu">
           <a class="dropdown-item {{ preg_match("/settings.challenge$/", Route::current()->getName()) ? 'active' : ''}}"
-                href="{{ route('settings.challenge') }}">Challenge Updates</a>
+                href="{{ route('settings.challenge') }}">Statistics Updates</a>
 
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.challenge-summary') ? 'active' : ''}}"
-                href="{{ route('settings.challenge-summary.index') }}">Challenge Summary Update</a>
+                href="{{ route('settings.challenge-summary.index') }}">Statistics Summary Update</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.eligible-employee-summary') ? 'active' : ''}}"
             href="{{ route('settings.eligible-employee-summary.index') }}">Eligible Employee Summary Update</a>
@@ -134,6 +134,6 @@
 
     {{-- <li class="nav-item">
         <a class="nav-link {{ str_contains( Route::current()->getName(), 'settings.challenge') ? 'active' : ''}}"
-           href="{{ route('settings.challenge-summary') }}">Challenge Updates</a>
+           href="{{ route('settings.challenge-summary') }}">Statistics Updates</a>
     </li> --}}
   </ul>

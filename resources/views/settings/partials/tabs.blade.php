@@ -2,7 +2,7 @@
     {{-- <li class="nav-item nav-center-3">
         <a class="nav-link  {{ str_contains(Route::current()->getName(), 'settings.challenge') ? 'active' : '' }}"
            id="pills-home-tab" href="{{ route('settings.challenge') }}" role="tab"
-           aria-controls="pills-home" aria-selected="true">Challenge Page</a>
+           aria-controls="pills-home" aria-selected="true">Statistics Page</a>
     </li> --}}
     <li class="nav-item nav-center-3">
         <a class="nav-link {{ str_contains(Route::current()->getName(), 'settings.volunteering') ? 'active' : '' }} {{ str_contains(Route::current()->getName(), 'admin-pledge.maintain-event') ? 'active' : '' }}"
