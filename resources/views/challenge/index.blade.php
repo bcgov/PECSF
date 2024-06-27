@@ -7,7 +7,7 @@
     @include('challenge.partials.tabs')
 
     <h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Challenge%20page">PECSF@gov.bc.ca</a>.</h6>
+        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Statictics%20page">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
 
@@ -23,7 +23,9 @@
                 </label>
                 <select name="year" id="year" class="form-control ">
                     @foreach($year_options as $annum)
-                        <option {{ old('year')==$annum?"selected":""}} value="{{$annum}}">{{$annum}}</option>
+                        <option {{ $year==$annum?"selected":""}} 
+                             data-final="{{ in_array( $annum, $finalized_years) ? '1' : '0' }}"
+                            value="{{$annum}}">{{$annum}}</option>
                     @endforeach
                 </select>
             </div>
@@ -81,8 +83,12 @@
             </div>
         </div>
 
-        <div class="d-flex mt-1">
+        <div class="d-flex mt-1 mb-3">
             <div class="flex-fill">
+                <button id="download-pdf-btn" type="button" class="btn btn-primary"  
+                    style="{{ (in_array( $year, $finalized_years)) ? '' : 'display:none;' }}">
+                    <span class="mx-2 px-2">Download as PDF</span>
+                </button>
             </div>
     
             <div class="d-flex">
@@ -336,6 +342,12 @@ $(function() {
         }
         oTable.ajax.reload();
 
+        if ($(this).find(":selected").data('final') == 1) {
+            $('#download-pdf-btn').show();
+        } else {
+            $('#download-pdf-btn').hide();
+        }
+
     });
 
     $(document).on('keyup', '#organization_name', function() {
@@ -349,6 +361,11 @@ $(function() {
             oTable.search( term ).draw();
         }, 500);
         $(this).data('timer', wait);
+    });
+
+    $('#download-pdf-btn').on('click', function() {
+        year = $('select[name="year"]').val();
+        window.location.href = "{{ route('challenge.index') }}" + '?year=' + year +'&download';
     });
 
     // Charting Mode 
