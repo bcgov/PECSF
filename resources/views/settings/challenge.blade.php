@@ -6,7 +6,7 @@
 
 
     <div class="d-flex mt-3">
-        <h1>Challenge Settings</h1>
+        <h1>Statistics Settings</h1>
         <div class="flex-fill"></div>
     </div>
     <br>
