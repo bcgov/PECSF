@@ -167,7 +167,7 @@
 
             <div class="row justify-content-center">
                 <div class="text-center">
-                    <a class="btn btn-primary" href="/challenge" role="button">Go to challenge page</a>
+                    <a class="btn btn-primary" href="/challenge" role="button">Go to statistics page</a>
                 </div>
             </div>
 

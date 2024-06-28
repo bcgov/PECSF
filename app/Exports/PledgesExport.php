@@ -67,7 +67,7 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
                         'Org Descr',
                         'Business Unit',
                         'Business Unit Descr',
-                        'Challenge Business Unit',
+                        'Statistics Business Unit',
                         'Region',
                         'Region Descr',
                         'City',
