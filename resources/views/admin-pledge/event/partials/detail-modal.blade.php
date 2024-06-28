@@ -21,10 +21,16 @@
                     <input type="text" disabled class="form-control" value="{{ $pledge->form_submitted_by->name }}" name="form_submitter" />
                 </div>
 
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-2">
                     <label for="campaign_year">Campaign year</label>
                     <input type="text" disabled class="form-control"
                         value="{{ $pledge->campaign_year->calendar_year - 1 }}" />
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="Status">Approval Status</label>
+                    <input type="text" disabled class="form-control"
+                        value="{{ $pledge->status }}" />
                 </div>
             </div>
 
