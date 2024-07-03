@@ -164,8 +164,14 @@ class CampaignPledgeController extends Controller
         $campaign_years = CampaignYear::orderBy('calendar_year', 'desc')->get();
         $cities = City::orderBy('city')->get();
 
+        $default_campaign_year = CampaignYear::defaultCampaignYear();
+        // $temp_campaign_year = CampaignYear::where('calendar_year', today()->year +1 )->first();
+        // if ($temp_campaign_year && today() >= $temp_campaign_year->start_date ) {
+        //     $default_campaign_year = today()->year; 
+        // } 
+
         // load the view and pass
-        return view('admin-pledge.campaign.index', compact('organizations', 'campaign_years','cities', 'filter'));
+        return view('admin-pledge.campaign.index', compact('organizations', 'campaign_years','cities', 'filter', 'default_campaign_year'));
 
     }
 
@@ -194,7 +200,9 @@ class CampaignPledgeController extends Controller
         $edit_pecsf_allow = true;
         $canCancel = false;
 
-        return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears',
+        $default_campaign_year = CampaignYear::defaultCampaignYear();
+
+        return view('admin-pledge.campaign.wizard', compact('pool_option', 'fspools', 'organizations','campaignYears', 'default_campaign_year',
                     'edit_pecsf_allow',
                     'cities', 'pay_period_amount','one_time_amount','pay_period_amount_other', 'one_time_amount_other', 'canCancel'));
     }

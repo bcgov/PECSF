@@ -116,7 +116,7 @@
                         {{-- <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }} --}}
                             <option value="{{ $cy->id }}" {{ 
                                 isset($filter['campaign_year_id']) ? ($filter['campaign_year_id'] == $cy->id ? 'selected' : '') :
-                                ($cy->calendar_year == (date('Y') + 1) ? 'selected' : '') }}>
+                                ($cy->calendar_year == ($default_campaign_year +1) ? 'selected' : '') }}>
                                 {{ $cy->calendar_year }} 
                         </option>
                     @endforeach
