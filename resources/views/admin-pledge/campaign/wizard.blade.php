@@ -381,6 +381,19 @@ $(function () {
         }
     });
 
+    function processToNextStep() {
+
+        if (step < $(".step").length) {
+                $(".step").show();
+                $(".step")
+                    .not(":eq(" + step++ + ")")
+                    .hide();
+                stepProgress(step);
+                $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+        }
+        hideButtons(step);
+    }
+
     $(".next").on("click", function() {
         var nextstep = false;
         if (step == 1) {
@@ -396,15 +409,48 @@ $(function () {
         }
 
         if (nextstep == true) {
-            if (step < $(".step").length) {
-                $(".step").show();
-                $(".step")
-                    .not(":eq(" + step++ + ")")
-                    .hide();
-                stepProgress(step);
-                $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+
+            // Only apply on step when create a new pledge to confirm the campaign year
+            pledge_id = $('#pledge_id').val();
+            if (($('#nav-profile.active')[0]) && (pledge_id === undefined)) {               
+                calendar_year = $('#campaign_year_id option:selected').attr('calendar_year');
+                Swal.fire( {
+                    title: 'Are you certain that you want the pledge to apply to Campaign Year ' + (calendar_year-1) + '\n (Calendar Year ' + calendar_year + ') ?',
+                    // text: 'This action cannot be undone.',
+                    // icon: 'question',
+                    showDenyButton: true,
+                    // showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    denyButtonText: 'No',
+                    buttonsStyling: false,
+                    //confirmButtonClass: 'btn btn-danger',
+                    customClass: {
+                        confirmButton: 'btn btn-primary', //insert class here
+                        cancelButton: 'btn btn-danger ml-2', //insert class here
+                        denyButton: 'btn btn-outline-secondary ml-2',
+                    }
+                    //denyButtonText: `Don't save`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+
+                        processToNextStep();
+
+                    } 
+                });
+            } else {
+                processToNextStep();
             }
-            hideButtons(step);
+
+            // if (step < $(".step").length) {
+            //     $(".step").show();
+            //     $(".step")
+            //         .not(":eq(" + step++ + ")")
+            //         .hide();
+            //     stepProgress(step);
+            //     $('#nav-tab li:nth-child(' + step +') a').tab('show');   // Select third tab
+            // }
+            // hideButtons(step);
         }
     });
 
@@ -420,7 +466,7 @@ $(function () {
     // CALCULATE PROGRESS BAR
     stepProgress = function(currstep) {
 
-        console.log(currstep);
+        // console.log(currstep);
 
         var percent = parseFloat(100 / $(".step").length) * currstep;
         percent = percent.toFixed();
@@ -500,6 +546,8 @@ $(function () {
             // Amount field 
             $('.pay_period_amount_error').html('');
             $('.one_time_amount_error').html('');
+            // remove select2 invalid attribute
+            $('#admin-pldege-campaign-form span.select2-selection--single').removeClass('is-invalid');
 
             var form = $('#admin-pldege-campaign-form');
             $('#admin-pldege-campaign-form input[name=step]').val( step );

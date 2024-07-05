@@ -91,13 +91,16 @@ class EventSubmissionQueueController extends Controller
                     $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
         }
-        if($request->status == 2){
-            BankDepositForm::where("id","=",$request->submission_id)->update(['approved' => $request->status]);
 
+        if($request->status == 0 || $request->status == 2){
+
+            $form->approved = $request->status;
+            $form->approved_by_id = Auth::id();
+            $form->approved_at = now();
+            $form->save();
         }
-        if($request->status == 0){
-            BankDepositForm::where("id","=",$request->submission_id)->update(['approved' => $request->status]);
-        }
+
+        return response()->noContent();
     }
 
     /**
@@ -109,7 +112,7 @@ class EventSubmissionQueueController extends Controller
     {
      $submissions = BankDepositForm::selectRaw("*,bank_deposit_forms.id as bank_deposit_form_id")
          ->join("users","bank_deposit_forms.form_submitter_id","=","users.id")
-         ->where("approved","!=",1)
+         ->whereNotIn("approved",[1,2])
          ->orderBy('bank_deposit_forms.id', 'desc')
          ->get();
 

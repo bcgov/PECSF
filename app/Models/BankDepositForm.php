@@ -45,10 +45,26 @@ class BankDepositForm extends Model implements Auditable
         'employee_name'
     ];
 
+    protected $appends = [
+        'status',
+    ];
+
     protected $casts = [
         'deposit_date' => 'date:Y-m-d',
         'approved_at' => 'datetime',
     ];
+
+     public const STATUS = [
+        '0' => "Pending",
+        '1' => "Approved",
+        '2' => "Locked",
+    ];
+
+    public function getStatusAttribute() {
+
+        return self::STATUS[$this->approved];
+        
+    }
 
     function attachments(){
         return $this->hasMany(BankDepositFormAttachments::class,'bank_deposit_form_id','id');

@@ -111,7 +111,7 @@
                             {{-- <option value="{{ $cy->id }}" {{ ($cy->calendar_year == date('Y')) ? 'selected' : '' }}>{{ $cy->calendar_year }} --}}
                                 <option value="{{ $cy->id }}" {{ 
                                     isset($filter['campaign_year_id']) ? ($filter['campaign_year_id'] == $cy->id ? 'selected' : '') :
-                                    ($cy->calendar_year == (date('Y') + 1) ? 'selected' : '') }}>
+                                    ($cy->calendar_year == ($default_campaign_year + 1) ? 'selected' : '') }}>
                                     {{ $cy->calendar_year }} 
                             </option>
                         @endforeach
@@ -136,6 +136,17 @@
                         @foreach ($sub_types as $sub_type) 
                             <option value="{{ $sub_type }}" {{ isset($filter['sub_type']) ? ($filter['sub_type'] == $sub_type ? 'selected' : '') : '' }}>
                                 {{ $sub_type }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="approved">Approval Status</label>
+                    <select name="approved" id="approved" value="" class="form-control">
+                        <option value="">Select a Status</option>
+                        @foreach ($status_list as $key => $value) 
+                            <option value="{{ $key }}" {{ isset($filter['approved']) ? ($filter['approved'] == $value ? 'selected' : ($key == 1 ? 'selected' : '')) : ($key == 1 ? 'selected' : '') }}>
+                                {{ $value }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -180,6 +191,7 @@
                         <th>Event Type</th>
                         <th>Donation Amount</th>
                         <th>Sub Type</th>
+                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -287,6 +299,7 @@
                     data.campaign_year_id = $("form.filter select[name='campaign_year_id']").val(); 
                     data.event_type = $("form.filter select[name='event_type']").val();
                     data.sub_type   = $("form.filter select[name='sub_type']").val();
+                    data.approved   = $("form.filter select[name='approved']").val();
                 },
                 complete: function(xhr, resp) {
                     min_height = $(".wrapper").outerHeight();
@@ -321,6 +334,7 @@
                             return data == 'false' ? '' : data;
                         }
                 },
+                {data: 'status', defaultContent: '',className: "dt-nowrap" },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
 
             ],
