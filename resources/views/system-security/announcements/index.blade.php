@@ -12,14 +12,14 @@
 @endsection
 @section('content')
 
-@if ($message = Session::get('success'))
+{{-- @if ($message = Session::get('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ $message }} 
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button>
     </div>
-@endif
+@endif --}}
 
 
 <div class="card">
@@ -114,6 +114,7 @@
 @push('css')
 
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 <style>
     .ck-editor__editable_inline {
@@ -129,6 +130,7 @@
 
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
 <script src="{{ asset('vendor/ckeditor5/build/ckeditor.js') }}" ></script>
+<script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
 <script>
 
@@ -191,7 +193,12 @@ $(function() {
 
 });    
 
-
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
 
 </script> 
     
