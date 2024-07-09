@@ -64,6 +64,7 @@
 
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">    
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	#organization-table_filter label {
@@ -88,6 +89,7 @@
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
 
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -205,7 +207,9 @@
                         $('#organization-create-modal').modal('hide');
                         
                         var code = $("#organization-create-model-form [name='code']").val();
-                        Toast('Success', 'Organization code ' + code +  ' was successfully created.', 'bg-success' );
+                        // Toast('Success', 'Organization code ' + code +  ' was successfully created.', 'bg-success' );
+                        toastr["success"]( 'Organization code ' + code +  ' has been successfully created.', '',
+                                        {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -258,22 +262,6 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) { 
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 3000,
-                            body: toast_body
-            });
-        }
-
-        // Toast.fire({
-        //                     icon: 'success',
-                            
-        //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //                 });
-
         $(document).on("click", "#save-confirm-btn" , function(e) {
 		
             var form = $('#organization-edit-model-form');
@@ -297,7 +285,9 @@
                         $('#organization-edit-modal').modal('hide');
 
                         var code = $("#organization-edit-model-form [name='code']").val();
-                        Toast('Success', 'Organization code ' + code +  ' was successfully updated.', 'bg-success' );
+                        // Toast('Success', 'Organization code ' + code +  ' was successfully updated.', 'bg-success' );
+                        toastr["success"]( 'Organization code ' + code +  ' has been successfully updated.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         
                     },
                     error: function(response) {
@@ -377,7 +367,9 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success', 'Organization code ' + code +  ' was successfully deleted.', 'bg-success' );
+                            // Toast('Success', 'Organization code ' + code +  ' was successfully deleted.', 'bg-success' );
+                            toastr["success"]( 'Organization code ' + code +  ' has been successfully deleted.', '',
+                                        {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {

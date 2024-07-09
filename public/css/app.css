@@ -47983,3 +47983,7 @@ img.reload {
 .content-wrapper > .content {
   min-height: 1140px;
 }
+
+#toast-container > div {
+  opacity: 0.9 !important;
+}

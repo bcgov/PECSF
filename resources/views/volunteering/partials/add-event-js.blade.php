@@ -426,6 +426,10 @@ var formData = new FormData();
             contentType: false,
             dataType: 'json',
             success:function(response){
+@if (str_contains(Route::current()->getName(), 'admin-pledge.maintain-event.create'))
+                window.location = response[0];
+                console.log(response);
+@else
                 Swal.fire({
                     title: '<strong>Success!</strong>',
                     icon: 'success',
@@ -442,6 +446,7 @@ var formData = new FormData();
                     console.log(response);
                 });
                 $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
+@endif                
             },
             error: function(response) {
                 $('.errors').html("");

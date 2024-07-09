@@ -25,15 +25,6 @@
 @endsection
 @section('content')
 
-@if ($message = Session::get('success'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ $message }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-
 <div class="card">
     <form class="filter">
         <div class="card-body py-0 search-filter">
@@ -126,6 +117,7 @@
 
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	#ee-table_filter label {
@@ -154,6 +146,7 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -292,7 +285,10 @@
 
                         var year = $("#bu-create-model-form [name='campaign_year']").val();
                         var code = $("#bu-create-model-form [name='business_unit']").val();
-                        Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully created.', 'bg-success' );
+                        // Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully created.', 'bg-success' );
+                        toastr["success"]( 'The Eligible Employee Summary record for business unit "' + code + '" in the campaign year ' + year + ' has been successfully created.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -342,22 +338,6 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 6000,
-                            body: toast_body
-            });
-        }
-
-        // Toast.fire({
-        //                     icon: 'success',
-
-        //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //                 });
-
         $(document).on("click", "#save-confirm-btn" , function(e) {
 
             var form = $('#bu-edit-model-form');
@@ -382,7 +362,10 @@
 
                         var year = $("#bu-edit-model-form [name='campaign_year']").val();
                         var code = $("#bu-edit-model-form [name='business_unit_code']").val();
-                        Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully updated.', 'bg-success' );
+                        // Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully updated.', 'bg-success' );
+                        toastr["success"]( 'The Eligible Employee Summary record for business unit "' + code + '" in the campaign year ' + year + ' has been successfully updated.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+
 
                     },
                     error: function(response) {
@@ -459,7 +442,10 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully deleted.', 'bg-success' );
+                            // Toast('Success', 'The campaign year "' + year + '" and business unit "' + code + '" - Eligible Employee Summary record was successfully deleted.', 'bg-success' );
+                            toastr["success"]( 'The Eligible Employee Summary record for business unit "' + code + '" in the campaign year ' + year + ' has been successfully deleted.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {
