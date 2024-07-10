@@ -20,7 +20,7 @@ RUN chgrp -R 0 /app && \
 #
 # Build Server Deployment Image
 #
-FROM php:8.1-apache
+FROM php:8.1-apache-bullseye
 
 WORKDIR /
 
@@ -71,7 +71,7 @@ RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
 	\
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 
-RUN echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
+RUN echo "deb https://packages.sury.org/php/ bullseye main" | tee /etc/apt/sources.list.d/php.list
 RUN docker-php-ext-install pdo pdo_mysql opcache
 
 RUN apt-get install -y \
