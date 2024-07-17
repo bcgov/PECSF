@@ -27,7 +27,7 @@
 @endsection
 @section('content')
 
-@if ($message = Session::get('success'))
+{{-- @if ($message = Session::get('success'))
     <div class="mx-1 my-2">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ $message }}
@@ -36,7 +36,7 @@
             </button>
         </div>
     </div>
-@endif
+@endif --}}
 
 <div class="card">
 <form class="filter">
@@ -232,6 +232,7 @@
 
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">    
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	#special-campaign-table_filter label {
@@ -259,6 +260,7 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
 
@@ -407,16 +409,6 @@
         });
 
 
-        function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 3000,
-                            body: toast_body
-            });
-        }
-
         // Model -- Delete
         $(document).on("click", ".delete-pledge" , function(e) {
             e.preventDefault();
@@ -448,7 +440,9 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success', 'Pledge ' + title +  ' was successfully deleted.', 'bg-success' );
+                            // Toast('Success', 'Pledge ' + title +  ' was successfully deleted.', 'bg-success' );
+                            toastr["success"]( 'The Pledge with Transaction ID ' + title +  ' has been successfully deleted.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {
@@ -474,5 +468,13 @@
 
 
     });
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
+
     </script>
 @endpush

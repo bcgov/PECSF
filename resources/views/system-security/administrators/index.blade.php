@@ -11,7 +11,7 @@
 <div class="card">
     <div class="card-body">
         
-        @if ($message = Session::get('success'))
+        {{-- @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible">
                 <a href="#" class="close" style="text-decoration: none;"  data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Success!</strong> {{ $message }}
@@ -23,7 +23,7 @@
                 <a href="#" class="close" style="text-decoration: none;"  data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Error!</strong> {{  $message }}
             </div>    
-        @enderror
+        @enderror --}}
 
         <div class="card">
     
@@ -93,6 +93,7 @@
 <link href="{{ asset('vendor/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 <style>
 	#administrator-table_filter label {
@@ -129,6 +130,7 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -245,5 +247,20 @@
 
 
     });
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif        
+
+@error('user')
+    $(function() {
+        toastr["error"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@enderror    
+
     </script>
 @endpush

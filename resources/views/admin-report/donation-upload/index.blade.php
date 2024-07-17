@@ -159,6 +159,7 @@
 
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
     <style>
 
@@ -206,6 +207,7 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
     <script>
 
     $(function() {
@@ -286,15 +288,6 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 8000,
-                            body: toast_body
-            });
-        }
 
         // Functions for handling the upload file
         $('#donation_file').bind('change', function () {
@@ -370,7 +363,9 @@
                         oTable.ajax.reload(null, false);	// reload datatables
 
                         // var code = $("#bu-edit-model-form [name='code']").val();
-                        Toast('Success', response.success,  'bg-success');
+                        // Toast('Success', response.success,  'bg-success');
+                        toastr["success"]( response.success, '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
 
                         // window.location = response[0];
                         console.log(response);
