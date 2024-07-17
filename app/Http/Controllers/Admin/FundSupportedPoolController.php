@@ -329,6 +329,10 @@ class FundSupportedPoolController extends Controller
 
         $region = Region::where('id', $request->region_id)->first();
 
+        session()->flash('success', 'The Fund Supported Pool ' . $request->region  .
+                ' for start date ' . $request->start_date .
+                ' has been successfully created');
+
         echo  json_encode(array(route('settings.fund-supported-pools.index')));
 
 
@@ -607,9 +611,9 @@ class FundSupportedPoolController extends Controller
         //$region = Region::where('id', $request->region_id)->first();
 
         return redirect()->route('settings.fund-supported-pools.index')
-            ->with('success','Fund Supported Pool ' . $request->region  .
+            ->with('success','The Fund Supported Pool ' . $request->region  .
                 ' for start date ' . $request->start_date .
-                ' updated successfully');
+                ' has been successfully updated.');
 
     }
 

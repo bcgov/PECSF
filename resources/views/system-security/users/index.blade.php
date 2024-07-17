@@ -219,6 +219,7 @@
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/datatables-plugins/fixedheader/css/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	/* #user-table_filter label {
@@ -248,6 +249,7 @@
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables-plugins/fixedheader/js/dataTables.fixedHeader.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
 
@@ -393,17 +395,17 @@
             oTable.search( '' ).columns().search( '' ).draw();
         });
 
-        function Toast( toast_title, toast_body, toast_class) {
-            Swal.fire({
-                    position: 'top-end',
-                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
-                    title: toast_title,
-                    text: toast_body,
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                    timer: 5000
-            })
-        }
+        // function Toast( toast_title, toast_body, toast_class) {
+        //     Swal.fire({
+        //             position: 'top-end',
+        //             icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
+        //             title: toast_title,
+        //             text: toast_body,
+        //             showConfirmButton: false,
+        //             showCloseButton: true,
+        //             timer: 5000
+        //     })
+        // }
 
         $('body').on('click', 'span.toggle_user', function(e) {
             e.preventDefault();
@@ -449,7 +451,9 @@
                                 if (locked == 1) {
                                     text = 'unlocked';
                                 }
-                                Toast('Success', 'User  "' + name +  '" was successfully ' + text + '.', 'bg-success' );
+                                // Toast('Success', 'User  "' + name +  '" was successfully ' + text + '.', 'bg-success' );
+                                toastr["success"]( 'The User ' + name +  ' has been successfully ' + text + '.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                             },
                             error: function (data) {
                                     Swal.fire({

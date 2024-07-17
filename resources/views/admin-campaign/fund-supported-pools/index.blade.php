@@ -100,14 +100,14 @@
 <div class="card">
 	<div class="card-body">
 
-        @if ($message = Session::get('success'))
+        {{-- @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ $message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-        @endif
+        @endif --}}
 
         {{-- <div class="category-filter">
             <select id="effectiveTypeFilter" class="form-control form-control-sm ml-1">
@@ -146,6 +146,7 @@
 
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">    
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 
@@ -179,13 +180,14 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
-    window.setTimeout(function() {
-        $(".alert-success").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove();
-        });
-    }, 5000);
+    // window.setTimeout(function() {
+    //     $(".alert-success").fadeTo(500, 0).slideUp(500, function(){
+    //         $(this).remove();
+    //     });
+    // }, 5000);
 
 
     $(function() {
@@ -286,6 +288,10 @@
             }
         });
 
+        $("select[name='region_id'], input[name='start_date'], select[name='status'], select[name='effective_type']").on('change', function() {
+            oTable.draw();
+        });
+
         $('#refresh-btn').on('click', function() {
             oTable.draw();
         });
@@ -343,8 +349,11 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success',  'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
-                                            '" was successfully deleted.', 'bg-success' );
+                            // Toast('Success',  'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
+                            //                 '" was successfully deleted.', 'bg-success' );
+                            toastr["success"]( 'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
+                                            '" has been successfully deleted.', '',
+                                            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {
@@ -428,8 +437,11 @@
                     $('#pool-duplicate-modal').modal('hide');
 
                     // Display a message
-                    Toast('Success', 'The Fund Supported Pool "' + duplicate_region + '" with Start date "' + start_date +
-                          '" was successfully created.', 'bg-success m-3');
+                    // Toast('Success', 'The Fund Supported Pool "' + duplicate_region + '" with Start date "' + start_date +
+                    //       '" was successfully created.', 'bg-success m-3');
+                    toastr["success"]( 'The Fund Supported Pool "' + duplicate_region + '" with Start date "' + start_date +
+                                            '" has been successfully created.', '',
+                                            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });                          
 
                 },
                 error: function(response) {
@@ -446,28 +458,16 @@
 
         });
 
-
-        function Toast( toast_title, toast_body, toast_class) {
-            // $(document).Toasts('create', {
-            //     icon: 'fas fa-solid fa-check',
-            //     class: toast_class,
-            //     title: toast_title,
-            //     autohide: true,
-            //     delay: 8000,
-            //     body: toast_body
-            // });
-            Swal.fire({
-                    position: 'top-end',
-                    icon: (toast_class.includes("bg-success") ? 'success' : 'warning'),
-                    title: toast_title,
-                    text: toast_body,
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                    timer: 8000
-            })
-        }
-
     });
+
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
+
     </script>
 
 
