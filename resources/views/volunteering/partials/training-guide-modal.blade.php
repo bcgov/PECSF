@@ -18,7 +18,7 @@
                                 Welcome to PECSF Training!
                             </h3>
                             <div class="my-1">
-                                <iframe id="training_guide_movie_player" movie-id="https://www.youtube-nocookie.com/embed/vsyojouAq5U?cc_load_policy=1&rel=0&autoplay=0"
+                                <iframe id="training_guide_movie_player" movie-id="https://www.youtube-nocookie.com/embed/vF5suO7c06o?cc_load_policy=1&rel=0&autoplay=0"
                                     width="800" height="500" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
                         </div>
