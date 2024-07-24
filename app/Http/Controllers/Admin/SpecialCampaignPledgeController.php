@@ -73,8 +73,8 @@ class SpecialCampaignPledgeController extends Controller
                             })
                             ->when( $request->name, function($query) use($request) {
                                 $query->where('special_campaign_pledges.first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('special_campaign_pledges.first_name', 'like', '%' . $request->name . '%')
-                                      ->orWhere('users.name', 'like', '%' . $request->name . '%');
+                                      ->orWhere('special_campaign_pledges.last_name', 'like', '%' . $request->name . '%')
+                                      ->orWhere('employee_jobs.name', 'like', '%' . $request->name . '%');
                             })
                             ->when( $request->city, function($query) use($request) {
                                 $query->where( function($q) use($request) {
