@@ -69,9 +69,17 @@ class ChallengeController extends Controller
         //     $as_of_day = $setting->challenge_final_date;
         // }
 
+        $finalized = false;
+        $final_row = HistoricalChallengePage::select('year')
+                                ->where('year', $current_campaign_year)
+                                ->first(); 
+        if ($final_row && $as_of_day >= $setting->challenge_final_date) {
+            $finalized = true;
+        }
+
         if($request->ajax()) {
 
-            if (!($summary)) {
+            if (!($finalized)) {
             // if ($as_of_day != $setting->challenge_final_date ) {
 
                 // Use Dynamic data during the challenge period
