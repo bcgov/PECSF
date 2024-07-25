@@ -45,6 +45,7 @@ class ChallengePageDataReportController extends Controller
                 where campaign_year = ?
                 and as_of_date = ?
                 and daily_type = 0     
+                and (donors > 0 or dollars > 0) 
                 and business_unit in (select code from business_units where status = 'A')                
                 order by participation_rate desc, abs(change_rate);     
 
