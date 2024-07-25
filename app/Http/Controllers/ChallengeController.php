@@ -69,9 +69,17 @@ class ChallengeController extends Controller
         //     $as_of_day = $setting->challenge_final_date;
         // }
 
+        $finalized = false;
+        $final_row = HistoricalChallengePage::select('year')
+                                ->where('year', $current_campaign_year)
+                                ->first(); 
+        if ($final_row && $as_of_day >= $setting->challenge_final_date) {
+            $finalized = true;
+        }
+
         if($request->ajax()) {
 
-            if (!($summary)) {
+            if (!($finalized)) {
             // if ($as_of_day != $setting->challenge_final_date ) {
 
                 // Use Dynamic data during the challenge period
@@ -414,6 +422,16 @@ class ChallengeController extends Controller
         $final_date_options = [];
         $date_options = [];
         $dept_date_options = [];
+
+        $date_options = DailyCampaign::select('as_of_date')
+                                    ->where('campaign_year', $campaign_year)
+                                    ->where(function($query) use($setting) {
+                                        return $query->WhereBetween('as_of_date',[$setting->campaign_start_date->format('Y-m-d'), $setting->campaign_end_date->format('Y-m-d')]);
+                                    })
+                                    // ->where('as_of_date', '<>', today() )
+                                    ->distinct()
+                                    ->orderBy('as_of_date', 'desc')
+                                    ->pluck('as_of_date');
 
         $final_date_options = DailyCampaign::select('as_of_date')
                                     ->where('campaign_year', $campaign_year)

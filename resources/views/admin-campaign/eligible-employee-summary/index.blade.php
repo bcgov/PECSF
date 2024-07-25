@@ -257,13 +257,13 @@
         // Model for creating new business unit
         $('#ee-create-modal').on('show.bs.modal', function (e) {
             // do something...
-            var fields = ['campaign_year', 'as_of_date', 'donors', 'dollars', 'notes'];
+            var fields = ['campaign_year', 'organization_code', 'business_unit', 'ee_count', 'notes'];
             $.each( fields, function( index, field_name ) {
                 $(document).find('[name='+field_name+']').nextAll('span.text-danger').remove();
                 $(document).find('[name='+field_name+']').val('');
             });
             $('#ee-create-modal').find('[name=campaign_year]').val( {{ today()->year }} );
-            $('#ee-create-modal').find('[name=status]').val('A');
+            // $('#ee-create-modal').find('[name=status]').val('A');
 
         })
 
