@@ -90,6 +90,8 @@ class EventSubmissionQueueController extends Controller
                 if(empty($campaign_year) || !$campaign_year->isOpen()){
                     $campaign_year = CampaignYear::where('calendar_year', intval(date("Y")))->first();
                 }
+
+            session()->flash('success', 'The Event Pledge with Transaction ID ' . $request->submission_id . ' has been successfully approved, and can be viewed in the main list');
         }
 
         if($request->status == 0 || $request->status == 2){
@@ -98,6 +100,8 @@ class EventSubmissionQueueController extends Controller
             $form->approved_by_id = Auth::id();
             $form->approved_at = now();
             $form->save();
+
+            session()->flash('success', 'The Event Pledge with Transaction ID ' . $request->submission_id . ' has been successfully locked, and can be viewed in the main list');
         }
 
         return response()->noContent();

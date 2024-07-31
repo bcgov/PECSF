@@ -14,14 +14,14 @@
 
 <p><a href="/administrators/dashboard" class="BC-Gov-SecondaryButton">Back</a></p>
 
-@if ($message = Session::get('success'))
+{{-- @if ($message = Session::get('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ $message }} 
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button>
     </div>
-@endif
+@endif --}}
 
 <form id="setting-edit-form" action="{{ route('system.settings.store') }}"  method="post">
     @csrf
@@ -83,11 +83,13 @@
 
 @push('css')
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 @endpush
 
 @push('js')
 <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+<script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
 <script>
 
@@ -134,5 +136,14 @@
         });
 
     });
+
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
+
 </script>
 @endpush

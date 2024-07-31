@@ -66,6 +66,7 @@
 
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	#bu-table_filter label {
@@ -89,6 +90,7 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -183,7 +185,9 @@
                         $('#bu-create-modal').modal('hide');
 
                         var code = $("#bu-create-model-form [name='code']").val();
-                        Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
+                        // Toast('Success', 'Region code ' + code +  ' was successfully created.', 'bg-success' );
+                        toastr["success"]( 'Business Unit ' + code +  ' has been successfully created.', '', 
+                                    {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -227,22 +231,6 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 3000,
-                            body: toast_body
-            });
-        }
-
-        // Toast.fire({
-        //                     icon: 'success',
-
-        //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //                 });
-
         $(document).on("click", "#save-confirm-btn" , function(e) {
 
             var form = $('#bu-edit-model-form');
@@ -266,7 +254,9 @@
                         $('#bu-edit-modal').modal('hide');
 
                         var code = $("#bu-edit-model-form [name='code']").val();
-                        Toast('Success', 'Region code ' + code +  ' was successfully updated.', 'bg-success' );
+                        // Toast('Success', 'Region code ' + code +  ' was successfully updated.', 'bg-success' );
+                        toastr["success"]( 'Business Unit ' + code +  ' has been successfully updated.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
 
                     },
                     error: function(response) {
@@ -342,7 +332,9 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
+                            // Toast('Success', 'Region code ' + code +  ' was successfully deleted.', 'bg-success' );
+                            toastr["success"]( 'Business Unit ' + code +  ' has been successfully deleted.', '', 
+                                        {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {
