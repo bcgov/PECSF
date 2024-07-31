@@ -184,6 +184,7 @@
     <link href="{{ asset('vendor/datatables-plugins/fixedheader/css/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet">
 
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
     
 	<style>
     #charity-table_filter label {
@@ -225,6 +226,7 @@
     <script src="{{ asset('vendor/datatables-plugins/fixedheader/js/dataTables.fixedHeader.min.js') }}" ></script>
     
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -506,16 +508,6 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) { 
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 3000,
-                            body: toast_body
-            });
-        }
-
          $(document).on("click", "#save-confirm-btn" , function(e) {
 		
             var form = $('#charity-edit-model-form');
@@ -541,7 +533,10 @@
                         $('#charity-edit-modal').modal('hide');
 
                         var code = $("#charity-edit-model-form [name='registration_number']").val();
-                        Toast('Success', 'Charity ' + code +  ' was successfully updated.', 'bg-success' );
+                        // Toast('Success', 'Charity ' + code +  ' was successfully updated.', 'bg-success' );
+                        toastr["success"]( 'Charity ' + code +  ' has been successfully updated.', '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+
                         
                     },
                     error: function(response) {

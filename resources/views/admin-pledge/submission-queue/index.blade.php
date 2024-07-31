@@ -101,6 +101,7 @@
     <link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
     <style>
         #campaign-table_filter label {
@@ -154,6 +155,7 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script type="x-tmpl" id="organization-tmpl">
         @include('volunteering.partials.add-organization', ['index' => 'XXX', 'charity' => "YYY"] )
@@ -444,31 +446,32 @@
                             },
                             function (data, status) {
 
-                                Swal.fire({
-                                    title: '<strong>Success!</strong>',
-                                    icon: 'info',
-                                    html:
-                                        'The Event was successfully approved and can be viewed in the main list',
-                                    showCloseButton: true,
-                                    showCancelButton: true,
-                                    focusConfirm: false,
-                                    confirmButtonText:
-                                        '<i class="fa fa-thumbs-up"></i> Go To list',
-                                    confirmButtonAriaLabel: 'Go To list',
-                                    cancelButtonText:
-                                        'Close',
-                                    cancelButtonAriaLabel: 'Close'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = "/admin-pledge/maintain-event";
-                                    }
-                                });
+                                // Swal.fire({
+                                //     title: '<strong>Success!</strong>',
+                                //     icon: 'info',
+                                //     html:
+                                //         'The Event was successfully approved and can be viewed in the main list',
+                                //     showCloseButton: true,
+                                //     showCancelButton: true,
+                                //     focusConfirm: false,
+                                //     confirmButtonText:
+                                //         '<i class="fa fa-thumbs-up"></i> Go To list',
+                                //     confirmButtonAriaLabel: 'Go To list',
+                                //     cancelButtonText:
+                                //         'Close',
+                                //     cancelButtonAriaLabel: 'Close'
+                                // }).then((result) => {
+                                //     if (result.isConfirmed) {
+                                //         window.location.href = "/admin-pledge/maintain-event";
+                                //     }
+                                // });
+                                window.location.href = "/admin-pledge/submission-queue";                    
                             });                            
                     } else {
                         $(".status").val(0).trigger("change");
                     }
                     $('.modal').modal('hide');
-                    window.location.href = "/admin-pledge/submission-queue";                    
+                    // window.location.href = "/admin-pledge/submission-queue";                    
                 });
 
             } else if ($(this).val() == 2) {
@@ -495,14 +498,15 @@
                                 status: $(this).val(),
                             },
                             function (data, status) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "The pledge " + $("#submission_id").val() + " has been locked.",
-                                    showConfirmButton: true,
-                                }).then((result) => {
-                                    window.location.href = "/admin-pledge/submission-queue";     
-                                });
+                                // Swal.fire({
+                                //     icon: "success",
+                                //     title: "The pledge " + $("#submission_id").val() + " has been locked.",
+                                //     showConfirmButton: true,
+                                // }).then((result) => {
+                                //     window.location.href = "/admin-pledge/submission-queue";     
+                                // });
                                 // Swal.fire('Status updated!', '', 'success');
+                                window.location.href = "/admin-pledge/submission-queue";  
                             }).fail(function() {
                                 Swal.fire('Status failed to update!', '', 'fail');
                                 window.location.href = "/admin-pledge/submission-queue";     
@@ -559,6 +563,13 @@
             min_height = $(".content > .container-fluid").outerHeight();
             $(".wrapper").css('min-height', min_height );
         })
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
 
     </script>
     @include('admin-pledge.submission-queue.partials.add-event-js')

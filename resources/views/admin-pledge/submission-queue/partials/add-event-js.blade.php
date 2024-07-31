@@ -408,22 +408,23 @@ var formData = new FormData();
             contentType: false,
             dataType: 'json',
             success:function(response){
-                Swal.fire({
-                    title: '<strong>Success!</strong>',
-                    icon: 'success',
-                    html:
-                        'Form Submitted!',
-                    showCloseButton: false,
-                    showCancelButton: true,
-                    focusConfirm: false,
-                }).then((result) => {
-                    $("#bank_deposit_form").fadeTo("slow",1);
-                    $('.errors').html("");
+                window.location = response[0];
+                // Swal.fire({
+                //     title: '<strong>Success!</strong>',
+                //     icon: 'success',
+                //     html:
+                //         'Form Submitted!',
+                //     showCloseButton: false,
+                //     showCancelButton: true,
+                //     focusConfirm: false,
+                // }).then((result) => {
+                //     $("#bank_deposit_form").fadeTo("slow",1);
+                //     $('.errors').html("");
 
-                    window.location = response[0];
-                    console.log(response);
-                });
-                $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
+                //     window.location = response[0];
+                //     console.log(response);
+                // });
+                // $('[submission_id='+$('#form_id').val()+']').val(1).trigger('change');
             },
             error: function(response) {   
                 $('.errors').html("");

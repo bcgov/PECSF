@@ -4,7 +4,7 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <h4 class="mx-1 mt-3">Daily Campaign Summary Maintenance</h4>
+    <h4 class="mx-1 mt-3">Statistics Summary Update</h4>
 
     <div class="d-flex mt-3">
         <div class="flex-fill">
@@ -64,6 +64,7 @@
 
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	#bu-table_filter label {
@@ -87,6 +88,7 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
     window.setTimeout(function() {
@@ -191,7 +193,10 @@
                         $('#bu-create-modal').modal('hide');
 
                         var code = $("#bu-create-model-form [name='campaign_year']").val();
-                        Toast('Success', 'The campaign year ' + code + ' -  Daily Campaign Summary record was successfully created.', 'bg-success' );
+                        // Toast('Success', 'The campaign year ' + code + ' -  Daily Campaign Summary record was successfully created.', 'bg-success' );
+                        toastr["success"]( "The Daily Campaign Summary record for the campaign year " + code + " has been created successfully.", '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+
                     },
                     error: function(response) {
                         if (response.status == 422) {
@@ -235,22 +240,6 @@
             });
     	});
 
-        function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 6000,
-                            body: toast_body
-            });
-        }
-
-        // Toast.fire({
-        //                     icon: 'success',
-
-        //                     title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        //                 });
-
         $(document).on("click", "#save-confirm-btn" , function(e) {
 
             var form = $('#bu-edit-model-form');
@@ -274,7 +263,9 @@
                         $('#bu-edit-modal').modal('hide');
 
                         var code = $("#bu-edit-model-form [name='campaign_year']").val();
-                        Toast('Success', 'The campaign year ' + code + ' -  Daily Campaign Summary record was successfully updated.', 'bg-success' );
+                        // Toast('Success', 'The campaign year ' + code + ' -  Daily Campaign Summary record was successfully updated.', 'bg-success' );
+                        toastr["success"]( "The Daily Campaign Summary record for the campaign year " + code + " has been updated successfully.", '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
 
                     },
                     error: function(response) {
@@ -350,7 +341,9 @@
                         success: function(data)
                         {
                             oTable.ajax.reload(null, false);	// reload datatables
-                            Toast('Success', 'The campaign year ' + code + ' -  Daily Campaign Summary record was successfully deleted.', 'bg-success' );
+                            // Toast('Success', 'The campaign year ' + code + ' -  Daily Campaign Summary record was successfully deleted.', 'bg-success' );
+                            toastr["success"]( "The Daily Campaign Summary record for the campaign year " + code + " has been deleted successfully.", '',
+                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         },
                         error: function(xhr, resp, text) {
                             if (xhr.status == 401 || xhr.status == 419) {

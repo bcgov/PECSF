@@ -226,6 +226,7 @@
 
         <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
         <link href="{{ asset('vendor/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}" rel="stylesheet">        
+        <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 	<style>
 	#event-pledge-table_filter label {
@@ -253,6 +254,7 @@
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
 
@@ -403,6 +405,15 @@
         });
 
     });            
+
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
+
     </script>
 
 @endpush
