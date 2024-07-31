@@ -28,7 +28,7 @@
             <input type="hidden" id="pledge_id" name="pledge_id" value="{{ $pledge->id }}">
         @endif
 
-        @if (!($is_new_pledge))
+        @if (!($is_new_pledge) && !($pledge->ods_export_status) )
             <div class="d-flex  align-items-center my-2">
                 <h4>Transaction ID: </b>{{ $pledge->id }}</h4>
                 <div class="flex-fill"></div>
@@ -327,7 +327,7 @@
                     <label for="one_time_amount" class="col-sm-3 col-form-label">The One-time payroll deductions :</label>
                     <div class="col-sm-2">
                         <input type="text" name="one_time_amount" class="form-control" id="one_time_amount" placeholder="amount"
-                            value="{{ $pledge ? $pledge->one_time_amount : '' }}">
+                            value="{{ $pledge ? $pledge->one_time_amount : '' }}"  {{  ($pledge->ods_export_status ? 'disabled' : '') }}>
                     </div>
                 </div>
 
@@ -341,6 +341,73 @@
 
             </div>
         </div>
+
+        {{-- PeopleSoft Integration Information  --}}
+        @if ($pledge->ods_export_status)
+            <div class="card m-0 mt-3 pb-3">
+                <div class="card-header bg-primary">
+                    <div class="h5">PeopleSoft Integration</div>
+                </div>
+                <div class="card-body ">
+                    <div class="row no-gutters">
+                        <div class="col-3">
+                            <p><b>Send Status:</b>
+                                {{ $pledge->ods_export_status == null ? 'Not Started' : 'Completed' }} </p>
+                        </div>
+                        <div class="col-3">
+                            <p><b>Send at:</b>
+                                {{ $pledge->ods_export_at ? $pledge->ods_export_at : ''  }} </p>
+                                </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card m-0 mt-3 pb-3">
+                <div class="card-header bg-primary">
+                    <div class="h5">Audit Information</div>
+                </div>
+                <div class="card-body ">
+                    <div class="row no-gutters">
+                        <div class="col-3">
+                            <p><b>Created by:</b>
+                                {{ $pledge->created_by->name }} </p>
+                        </div>
+                        <div class="col-3">
+                            <p><b>Created at:</b>
+                                {{ date_timezone_set($pledge->created_at, timezone_open('America/Vancouver')) }}
+                                   </p>
+                        </div>
+                      </div>
+    
+                    <div class="row">
+                      <div class="col-3">
+                        <p><b>Modified by:</b>
+                            {{ isset($pledge->updated_by) ? $pledge->updated_by->name : ''}} </p>
+                      </div>
+                      <div class="col-3">
+                        <p><b>Modified at:</b>
+                            {{ date_timezone_set($pledge->updated_at, timezone_open('America/Vancouver')) }} </p>
+                      </div>
+                    </div>
+    
+                    @if ($pledge->cancelled)
+                        <div class="row">
+                            <div class="col-3">
+                            <p><b>Cancelled by:</b>
+                                {{ isset($pledge->cancelled_by) ? $pledge->updated_by->name : ''}} </p>
+                            </div>
+                            <div class="col-3">
+                            <p><b>Cancelled at:</b>
+                                {{ $pledge->cancelled_at ? $pledge->cancelled_at : ''  }} </p>
+                            </div>
+                        </div>
+                    @endif
+    
+                </div>
+            </div>
+        @endif
 
 
         <div class="mt-3">
