@@ -140,7 +140,8 @@ class AdminBankDepositFormTest extends TestCase
     {
         $response = $this->get('/admin-pledge/maintain-event/1/edit');
 
-        $response->assertStatus(404);
+        $response->assertStatus(302);
+        $response->assertRedirect('login');
         
     }
     public function test_an_anonymous_user_cannot_update_the_admin_bank_deposit_form_pledge()
@@ -267,7 +268,7 @@ class AdminBankDepositFormTest extends TestCase
 		$this->actingAs($this->user);
         $response = $this->get('/admin-pledge/maintain-event/1/edit');
 
-        $response->assertStatus(404);
+        $response->assertStatus(403);
         
     }
     public function test_an_authorized_user_cannot_update_the_admin_bank_deposit_form_pledge()
@@ -405,7 +406,7 @@ class AdminBankDepositFormTest extends TestCase
                                     ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), []) );
+        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection']) );
 
         foreach ($pledge->charities as $charity) {
             $this->assertDatabaseHas('bank_deposit_form_organizations', Arr::except($charity->attributesToArray(),[] ));
@@ -436,22 +437,72 @@ class AdminBankDepositFormTest extends TestCase
         $response->assertSee( $pledge->description);
     }
 
-    public function test_an_administrator_cannot_access_the_admin_bank_deposit_form_pledge_edit_page()
+    public function test_an_administrator_can_access_the_admin_bank_deposit_form_pledge_edit_page()
     {
-        $this->actingAs($this->admin);
-        $response = $this->get('/admin-pledge/maintain-event/1/edit');
 
-        $response->assertStatus(404);
+        [$form_data, $pledge] = $this->get_new_record_form_data(true);
+
+        $this->actingAs($this->admin);
+        $response = $this->get('/admin-pledge/maintain-event/' . $pledge->id .'/edit');
+        $this->delete_file_in_temp_folder($pledge);
+
+        $response->assertStatus(200);
+        $response->assertSee( $pledge->description);
  
     }
 
-    public function test_an_administrator_cannot_update_the_admin_bank_deposit_form_pledge_in_db()
+    public function test_an_administrator_can_update_the_admin_bank_deposit_form_pledge_in_db()
     {
 
-        $this->actingAs($this->admin);
-        $response = $this->put('/admin-pledge/maintain-event/1', []);
+        // $this->actingAs($this->admin);
+        // $response = $this->put('/admin-pledge/maintain-event/1', []);
 
-        $response->assertStatus(405);
+        // $response->assertStatus(405);
+
+        [$form_data, $pledge] = $this->get_new_record_form_data(true);
+
+        $region = Region::factory()->create();
+        $charities = Charity::factory(10)->create([
+            'charity_status' => 'Registered',
+        ]);
+        $fspool = FSPool::factory()->create([
+            'region_id' => $region->id,
+            'status' => 'A',
+        ]);
+        $fspool_charities = FSPoolCharity::factory(5)->create([
+                'f_s_pool_id' => $fspool->id,
+                'charity_id' => $this->faker->randomElement( $charities->pluck('id')->toArray() ),
+                'percentage' => 20,
+                'status' => 'A',
+        ]);
+
+        $pledge->regional_pool_id = $fspool->id;
+        $pledge->charities = [];
+        $new_form_data = $this->tranform_to_form_data($pledge);
+
+                $this->actingAs($this->admin);
+        $response = $this->put('/admin-pledge/maintain-event/' . $pledge->id, $new_form_data );
+
+        
+        $response->assertStatus(204);
+        // $response->assertRedirect('/admin-pledge/maintain-event');
+        $response->assertSessionHas('success');
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection', 'charities', 'created_at', 'updated_at']) );
+
+        foreach ($pledge->charities as $charity) {
+            $this->assertDatabaseHas('bank_deposit_form_organizations', Arr::except($charity->attributesToArray(),['created_at', 'updated_at'] ));
+        }
+        foreach ($pledge->attachments as $attachment) {
+            $this->assertDatabaseHas('bank_deposit_form_attachments', Arr::except($attachment->attributesToArray(),['local_path','created_at', 'updated_at'] ));
+
+            $file_path = Storage::path('tmp/') . $attachment->filename;
+            $this->assertTrue( File::exists( $file_path) );
+        }
+
+        $this->delete_file_in_temp_folder($pledge);
+
     }
 
     public function test_an_administrator_cannot_delete_the_admin_bank_deposit_form_pledge_in_db()
