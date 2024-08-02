@@ -266,9 +266,9 @@
     }
 
     /* Temporaily override the app.scss*/
-    .btn:focus, button:focus{
+    /* .btn:focus, button:focus{
         border: #fff 2px solid!important;
-    }
+    } */
 
     .custom.pagination .page-item {
         margin-top: 0;

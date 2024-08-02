@@ -99,11 +99,13 @@
 
 
 @push('css')
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
 
 @endpush
 
 @push('js')
     <script src="{{ asset('vendor/sweetalert2/sweetalert2.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
 
@@ -112,17 +114,6 @@
                 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
             }
         });
-
-    function Toast( toast_title, toast_body, toast_class) {
-            $(document).Toasts('create', {
-                            class: toast_class,
-                            title: toast_title,
-                            autohide: true,
-                            delay: 3000,
-                            body: toast_body
-            });
-    }
-
 
 
     $(document).on("click", ".save" , function(e) {
@@ -144,7 +135,9 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(data)
                 {
-                    Toast('Success', 'The setting was successfully updated.', 'bg-success' );
+                    // Toast('Success', 'The setting was successfully updated.', 'bg-success' );
+                    toastr["success"]( 'The setting has been successfully updated.', '',
+                                {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                 },
                 complete: function(xhr, resp) {
                     min_height = $(".wrapper").outerHeight();
@@ -178,7 +171,9 @@
                     data: form.serialize(), // serializes the form's elements.
                     success: function(data)
                     {
-                        Toast('Success', 'The Statistics Page Data were successfully finalized.', 'bg-success' );
+                        // Toast('Success', 'The Statistics Page Data were successfully finalized.', 'bg-success' );
+                        toastr["success"]( 'The Statistics Page data has been successfully finalized.', '',
+                                    {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                     },
                     error: function(response) {
                         if (response.status == 422) {

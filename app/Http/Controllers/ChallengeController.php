@@ -49,6 +49,8 @@ class ChallengeController extends Controller
 
         $prior_year = $history ? $history->year : $campaign_year - 1;                                
 
+        $finalized_years = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
+
         $as_of_date = null;
         $dollar_total = 0;
         $donor_count = 0;
@@ -71,9 +73,12 @@ class ChallengeController extends Controller
 
         $finalized = false;
         $final_row = HistoricalChallengePage::select('year')
-                                ->where('year', $current_campaign_year)
+                                ->where('year', $campaign_year)
                                 ->first(); 
-        if ($final_row && $as_of_day >= $setting->challenge_final_date) {
+        // if ($final_row && $as_of_day >= $setting->challenge_final_date) {
+        if (($final_row && $as_of_day >= $setting->challenge_final_date) || 
+            ($final_row && in_array($campaign_year,$finalized_years))) {
+
             $finalized = true;
         }
 
@@ -286,10 +291,7 @@ class ChallengeController extends Controller
         // // TODO - From daily summary  
         // $summary = DailyCampaignSummary::where('campaign_year', $campaign_year)
         //             ->first();
-
-
-        $finalized_years = HistoricalChallengePage::select('year')->distinct()->orderBy('year', 'desc')->pluck('year')->toArray();
-
+        
         $year_options = $finalized_years;
         if ($current_campaign_year == $finalized_years[0] && today() < $setting->challenge_final_date) {
             // not yet finalized

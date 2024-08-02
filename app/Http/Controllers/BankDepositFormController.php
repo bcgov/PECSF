@@ -539,7 +539,9 @@ class BankDepositFormController extends Controller
 
         if(strpos(request()->headers->get('referer'),'admin-pledge') !== FALSE)
         {
-            echo  json_encode(array(route('admin-pledge.maintain-event.index')));
+            // echo  json_encode(array(route('admin-pledge.maintain-event.index')));
+            session()->flash('success', 'The Event Pledge with Transaction ID ' . $form->id . ' has been successfully created');
+            echo  json_encode(array(route('admin-pledge.submission-queue.index')));
 
         }
         else{
@@ -904,7 +906,7 @@ class BankDepositFormController extends Controller
 
         }
 
-
+        session()->flash('success', 'The Event Pledge with Transaction ID ' . $request->form_id . ' has been successfully updated');
         echo json_encode(["/admin-pledge/submission-queue"]);
     }
 

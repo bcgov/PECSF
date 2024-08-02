@@ -361,3 +361,7 @@ img.reload {
     min-height: 1140px; 
 }
     
+// toastr
+#toast-container>div {
+    opacity: 0.9 !important;
+}

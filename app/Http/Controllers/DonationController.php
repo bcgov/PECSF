@@ -126,6 +126,10 @@ class DonationController extends Controller {
         $all_pledges = DB::table('pledge_history_summaries')
                             ->where('emplid', $user->emplid)
                             ->whereNotNull('emplid')
+                            ->where( function($query) {
+                                 $query->whereNull('pledge_history_summaries.event_type')
+                                       ->orWhereIn('pledge_history_summaries.event_type', ['Cash', 'Personal Cheque']);
+                            })
                             ->selectRaw("'BI' as source, NULL as user_id,  pledge_history_id as id,'pledge_history_summaries' as model, emplid, yearcd, source as type,
                                          campaign_type as donation_type, frequency, per_pay_amt as amount, pledge,
                                          (select regions.name from regions where regions.code = pledge_history_summaries.region) as region,

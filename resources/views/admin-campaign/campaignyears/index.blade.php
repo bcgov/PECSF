@@ -26,14 +26,14 @@
 <div class="card">
 	<div class="card-body">
 
-        @if ($message = Session::get('success'))
+        {{-- @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ $message }} 
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-        @endif
+        @endif --}}
             
 		<table class="table table-bordered" id="campaignyear-table" style="width:100%">
 			<thead>
@@ -58,6 +58,7 @@
 @push('css')
 
     <link href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/toastr/toastr.min.css') }}" rel="stylesheet">
     
 	<style>
 	#campaignyear-table_filter label {
@@ -79,13 +80,14 @@
 
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}" ></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}" ></script>
+    <script src="{{ asset('vendor/toastr/toastr.min.js') }}" ></script>
 
     <script>
-    window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove(); 
-        });
-    }, 3000);
+    // window.setTimeout(function() {
+    //     $(".alert").fadeTo(500, 0).slideUp(500, function(){
+    //         $(this).remove(); 
+    //     });
+    // }, 3000);
 
     $(function() {
 
@@ -154,6 +156,15 @@
         });
 
     });
+
+
+@if ($message = Session::get('success'))
+    $(function() {
+        toastr["success"]( "{{ $message }}", '',
+            {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
+    });
+@endif
+
     </script>
 @endpush
 

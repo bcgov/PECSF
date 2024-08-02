@@ -81,6 +81,11 @@
             e.preventDefault();
             // $("#noselectedresults").html("");
 
+            if ($(".organization").length > 0) {
+                    Toast('More than one charity chosen','Only one charity can be selected for a Donate Now pledge.',"bg-danger");
+                    return false;
+            }
+
             // reset -- charities error message
             $('.min-charities-error').html('');
             $('.min-charities-error').removeClass('error');
@@ -124,10 +129,10 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
-            if ($(".organization").length > 1) {
-                    Toast('More than one charity chosen','Only one charity can be selected for a Donate Now pledge.',"bg-danger");
-                    return false;
-            }
+            // if ($(".organization").length > 1) {
+            //         Toast('More than one charity chosen','Only one charity can be selected for a Donate Now pledge.',"bg-danger");
+            //         return false;
+            // }
 
         });
 

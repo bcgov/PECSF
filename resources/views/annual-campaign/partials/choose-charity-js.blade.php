@@ -73,6 +73,11 @@
             e.preventDefault();
             // $("#noselectedresults").html("");
 
+            if ($(".organization").length >= 10) {
+                Toast('A maximum of 10 charities are reached','Please be aware, maximum 10 charities are allowed for Annual pledge.',"bg-danger");
+                return false;
+            }
+
             // reset -- charities error message
             $('.min-charities-error').html('');
             $('.min-charities-error').removeClass('error');
@@ -117,10 +122,10 @@
             // }
             $('#selectedcountresults').html(  $("input[name='charities[]']").length + ' item(s) selected');
 
-            if ($(".organization").length >= 11) {
-                Toast('A maximum of 10 charities are reached','Please be aware, maximum 10 charities are allowed for Annual pledge.',"bg-danger");
-                return false;
-            }
+            // if ($(".organization").length >= 11) {
+            //     Toast('A maximum of 10 charities are reached','Please be aware, maximum 10 charities are allowed for Annual pledge.',"bg-danger");
+            //     return false;
+            // }
 
         });
 

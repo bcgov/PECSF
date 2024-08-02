@@ -37,5 +37,12 @@ class HistoricalChallengePageData_2023 extends Seeder
 
         }
 
+        // recalcuate partipation rate and change
+        DB::update("update historical_challenge_pages
+            set participation_rate =  round(donors / (select ee_count from eligible_employee_by_bus where campaign_year = 2023 and business_unit_code = historical_challenge_pages.business_unit_code) * 100,2)
+            , `change` = round((donors / (select ee_count from eligible_employee_by_bus where campaign_year = 2023 and business_unit_code = historical_challenge_pages.business_unit_code) * 100) -  previous_participation_rate, 2)  
+            where (select ee_count from eligible_employee_by_bus where campaign_year = 2023 and business_unit_code = historical_challenge_pages.business_unit_code) > 0
+                and year = 2023;");
+
     }
 }
