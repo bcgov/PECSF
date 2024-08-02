@@ -15,6 +15,7 @@ class Setting extends Model implements Auditable
         'system_lockdown_start', 'system_lockdown_end',
         'challenge_start_date', 'challenge_end_date', 'volunteer_start_date', 'volunteer_end_date','campaign_end_date','campaign_start_date',"campaign_final_date","challenge_final_date","volunteer_language",
         "campaign_processed_final_date","challenge_processed_final_date",
+        'ee_snapshot_date_1', 'ee_snapshot_date_2', 
 
     ];
 
@@ -31,7 +32,9 @@ class Setting extends Model implements Auditable
         'campaign_end_date' => 'date:Y-m-d',
         'campaign_final_date' => 'date:Y-m-d',
         'campaign_processed_final_date' => 'date:Y-m-d',
-       
+
+        'ee_snapshot_date_1' => 'date:Y-m-d', 
+        'ee_snapshot_date_2' => 'date:Y-m-d',
     ];
 
     protected $appends = [
@@ -76,6 +79,18 @@ class Setting extends Model implements Auditable
 
         $setting = self::first();
         if ($in_date > $setting->campaign_start_date && $in_date <= $setting->campaign_final_date) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function isOrgParticipationTrackerActive( $in_date = null ) {
+
+        $in_date = $in_date ?? today();
+
+        $setting = self::first();
+        if ($in_date >= $setting->ee_snapshot_date_2 && CampaignYear::isAnnualCampaignOpenNow() ) {
             return true;
         }
 
