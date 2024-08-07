@@ -285,7 +285,7 @@ Route::middleware(['auth'])->prefix('admin-pledge')->name('admin-pledge.')->grou
     Route::get('/campaign-pledgeid', [CampaignPledgeController::class,'getCampaignPledgeID'])->name('administrators.pledgeid');
 
     // Event Maintainance Listing
-    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index','show', 'create']);
+    Route::resource('/maintain-event', MaintainEventPledgeController::class)->only(['index','show', 'create','edit','update']);
     // Route::get('/create', [MaintainEventPledgeController::class,'createEvent'])->name('admin-pledge.create');
 
     // Event Submission Queue
