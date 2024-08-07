@@ -6,9 +6,9 @@
                <!--<input class="form-control" type="text" id="organization_name" name="organization_name[]"/>-->
                 <div>
 
-                    <input type="text" disabled class="form-control errors organization_name" name="organization_name[]" value="{{(($charity != "YYY") ? $charity->text : "Disabled")}}" placeholder="" />
-                    <input type="hidden" name="vendor_id[]" value="{{(($charity != "YYY") ? $charity->id : "")}}"/>
-                    <input type="hidden" name="id[]" value="{{(($charity != "YYY") ? $charity->id : "")}}"/>
+                    <input type="text" disabled class="form-control errors organization_name" name="organization_name[]" value="{{(($charity != "YYY") ? $charity->organization_name : "Disabled")}}" placeholder="" />
+                    <input type="hidden" name="vendor_id[]" value="{{(($charity != "YYY") ? $charity->vendor_id : "")}}"/>
+                    <input type="hidden" name="id[]" value="{{(($charity != "YYY") ? $charity->vendor_id : "")}}"/>
                     {{--
                         <form action="{{route('donate.save.select')}}" method="post">
                             @csrf
@@ -40,7 +40,7 @@
 @if (!Request::is('donate/select'))
             <div class="form-group col-md-4">
                 <label for="sub_type">Donation Percent (%)</label>
-                <input class="form-control" type="text" id="donation_percent" name="donation_percent[]">
+                <input class="form-control" type="text" id="donation_percent" name="donation_percent[]" value="{{ ($charity != "YYY") ? $charity->donation_percent : ''}}">
                 <span class="donation_percent_errors  errors">
                        @error('donation_percent.'.$index)
                         <span class="invalid-feedback">{{  $message  }} </span>
@@ -50,7 +50,8 @@
             @endif
             <div class="form-group col-md-12">
                 <label for="sub_type">Specific Community Or Initiative (Optional):</label>
-                <input class="form-control specific_community_or_initiative" type="text" id="specific_community_or_initiative" name="additional[]" />
+                <input class="form-control specific_community_or_initiative" type="text" id="specific_community_or_initiative" name="additional[]" 
+                                    value="{{ ($charity != "YYY") ? $charity->specific_community_or_initiative : ''}}" />
                 <span class="specific_community_or_initiative_errors  errors">
                        @error('specific_community_or_initiative.'.$index)
                         <span class="invalid-feedback">{{  $message  }}</span>
