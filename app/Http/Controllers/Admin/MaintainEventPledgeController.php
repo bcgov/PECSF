@@ -177,6 +177,10 @@ class MaintainEventPledgeController extends Controller
         // $business_units = BusinessUnit::where("status","=","A")->whereColumn("code","linked_bu_code")->groupBy("linked_bu_code")->orderBy("name")->get();
         $business_units = BusinessUnit::where("status","=","A")
             // ->whereColumn("code","linked_bu_code")
+            ->whereIn('code', function($query) {
+                $query->select('linked_bu_code')
+                    ->from('business_units');
+            })
             ->selectRaw("business_units.id, business_units.code, business_units.name, (select code from organizations where organizations.bu_code = business_units.code limit 1 ) as org_code ")
             // ->groupBy("linked_bu_code")
             ->orderBy("name")->get();
