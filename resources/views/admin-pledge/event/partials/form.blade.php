@@ -308,6 +308,14 @@
 @push('css')
 <style>
 
+    /* method selection */
+    .method_selection input[name='charity_selection'] {
+        margin-top: -1px;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+    }
+
     /* Region Pool Area */
     #step-regional-pools-area .card  {
         color: #1a5a96;
@@ -350,6 +358,37 @@
 <script>
 
 $(function () {
+
+    // Hide or Unhide Pool or charities
+    $("input[name='charity_selection']").click(function() {
+
+        if($(this).val() == "dc"){
+            $("#organizations").show();
+            $(".org_hook").show();
+            $("#add_row").show();
+            // $(".form-pool").hide();
+            $("#step-regional-pools-area").hide();
+            $("#pool_filter").parents(".form-group").show();
+        } else {
+            // $(".form-pool").show();
+            $("#step-regional-pools-area").show();
+            $("#organizations").hide();
+            $("#add_row").hide();
+            $(".org_hook").hide();
+            $("#pool_filter").parents(".form-group").hide();
+
+            pool_id = $("input[name='regional_pool_id']:checked").val();
+            if (!(pool_id)) {
+                $("input[name='regional_pool_id']:first").prop("checked", true);
+            }
+        }
+    });
+
+    @if ($pledge->charity_selection == 'fsp') 
+        $("#charity_selection_1").trigger("click"); 
+    @else 
+        $("#charity_selection_2").trigger("click"); 
+    @endif;
 
     // Enter or space key on Wizard STEP icon to forward and backward 
     $('#step-regional-pools-area .card').on('keyup', function(e) {
