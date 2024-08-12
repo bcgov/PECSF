@@ -327,7 +327,7 @@
                     <label for="one_time_amount" class="col-sm-3 col-form-label">The One-time payroll deductions :</label>
                     <div class="col-sm-2">
                         <input type="text" name="one_time_amount" class="form-control" id="one_time_amount" placeholder="amount"
-                            value="{{ $pledge ? $pledge->one_time_amount : '' }}"  {{  ($pledge->ods_export_status ? 'disabled' : '') }}>
+                            value="{{ $pledge ? $pledge->one_time_amount : '' }}"  {{  ($pledge->ods_export_status ? 'readonly tabindex=-1' : '') }}>
                     </div>
                 </div>
 
