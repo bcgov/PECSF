@@ -30,7 +30,7 @@
         <div class="card-body">
 
             <div class="row pt-1">
-                <div class="col-md-12"><h4 class="text-primary">Eligible Employee Snapshot Process / Organization Participation Tractor Report</h4></div>
+                <div class="col-md-12"><h4 class="text-primary">Eligible Employee Snapshot Process / Organization Participation Tracker Report</h4></div>
             </div>
             <p class="font-italic  text-danger"><u>Note:</u> The date of the second snapshot is also used to determine when the Organization Tracker Report will become available online, continuing until the campaign's end date.</p>
             <div class="form-row pt-2">
@@ -50,7 +50,7 @@
             <div class="row pb-2">
                 <div class="col-md-12"><h4 class="text-primary">Statistics Page Updates</h4></div>
             </div>
-            <p class="font-italic  text-danger"><u>Note:</u> Click the "Finalize Statistics Page" button if you need to finalize immediately, instead of waiting for the scheduled process.</p>
+            <p class="font-italic  text-danger"><u>Note:</u> Click the "Finalize Statistics Page" button if you need to set a previous date for the finalization. For future final dates, the scheduled job will process as planned.</p>
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label for="challenge_start_date">Start Date</label>
