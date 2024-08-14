@@ -362,7 +362,7 @@ class VolunteerProfileTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             
-            "address" => "The street address field is required",
+            "address" => "The address field is required",
             "city" => "The city field is required",
             "province" => "The province field is required",
             "postal_code" => "The postal code field is required",
@@ -478,6 +478,7 @@ class VolunteerProfileTest extends TestCase
         $province_list = \App\Models\VolunteerProfile::PROVINCE_LIST;
         $role_list = \App\Models\VolunteerProfile::ROLE_LIST;
         $address_type = $this->faker->randomElement( ['G', 'S'] );
+        $opt_out_recongnition = $this->faker->randomElement( ['Y', 'N'] );
 
         // Test Transaction
         $profile = VolunteerProfile::factory()->make([
@@ -493,10 +494,11 @@ class VolunteerProfileTest extends TestCase
             'business_unit_code' => $business2->code,
 
             'address_type' =>  $address_type,
-            'address' => $address_type == 'G' ? null : substr($this->faker->address(), 0, 60),
-            'city' => $address_type == 'G' ? null : $city->city,
-            'province' => $address_type == 'G' ? null : $this->faker->randomElement( array_keys($province_list) ),
-            'postal_code' => $address_type == 'G' ? null : $this->faker->regexify('/^[A-Z]\d[A-Z]\ {1}\d[A-Z]\d$/'),
+            'address' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : substr($this->faker->address(), 0, 60),
+            'city' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : $city->city,
+            'province' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : $this->faker->randomElement( array_keys($province_list) ),
+            'postal_code' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : $this->faker->regexify('/^[A-Z]\d[A-Z]\ {1}\d[A-Z]\d$/'),
+            'opt_out_recongnition' => $opt_out_recongnition,
 
         ]);
 

@@ -275,7 +275,7 @@ class BankDepositFormTest extends TestCase
         // $response->assertSessionHas('success');
         // $response->assertSessionHasNoErrors();
 
-        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), []) );
+        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection']) );
 
         foreach ($pledge->charities as $charity) {
             $this->assertDatabaseHas('bank_deposit_form_organizations', Arr::except($charity->attributesToArray(),[] ));

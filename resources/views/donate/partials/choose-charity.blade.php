@@ -51,6 +51,9 @@
     <div class="error max-charities-error" style="display:none;color:#D8292F;"><i style="color:black;" class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
         <table class="" id="organizations" style="display:block;width:100%">
+            @foreach($selected_charities as $index => $charity)
+                @include('volunteering.partials.add-organization', ['index' => $index, 'charity' => $charity] )
+            @endforeach
                 <h3 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h3>
                 <span class="charity_errors errors"></span>
         </table>
