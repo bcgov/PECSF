@@ -293,7 +293,7 @@ class ChallengeController extends Controller
         //             ->first();
         
         $year_options = $finalized_years;
-        if ($current_campaign_year == $finalized_years[0] && today() < $setting->challenge_final_date) {
+        if ($finalized_years && $current_campaign_year == $finalized_years[0] && today() < $setting->challenge_final_date) {
             // not yet finalized
             array_shift($finalized_years);
         }

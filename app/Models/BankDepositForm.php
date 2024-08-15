@@ -47,6 +47,7 @@ class BankDepositForm extends Model implements Auditable
 
     protected $appends = [
         'status',
+        'charity_selection',
     ];
 
     protected $casts = [
@@ -62,8 +63,12 @@ class BankDepositForm extends Model implements Auditable
 
     public function getStatusAttribute() {
 
-        return self::STATUS[$this->approved];
+        return $this->approved ? self::STATUS[$this->approved] : '';
         
+    }
+
+    public function getCharitySelectionAttribute() {
+        return ($this->regional_pool_id ? 'fsp' : 'dc');
     }
 
     function attachments(){
@@ -95,7 +100,7 @@ class BankDepositForm extends Model implements Auditable
     }
 
     public function region() {
-        return $this->belongsTo(Region::class, 'regional_pool_id', 'id');
+        return $this->belongsTo(Region::class, 'region_id', 'id');
     }
 
     public function bu() {
