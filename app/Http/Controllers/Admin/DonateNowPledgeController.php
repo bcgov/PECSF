@@ -129,7 +129,7 @@ class DonateNowPledgeController extends Controller
                     $delete = ($pledge->organization_id != $gov->id && $pledge->ods_export_status == null && $pledge->cancelled == null)  ? 
                                 '<a class="btn btn-danger btn-sm ml-2 delete-pledge" data-id="'.
                              $pledge->id . '" data-code="'. $pledge->id . '">Delete</a>' : '';
-                    $edit = ($pledge->ods_export_status == null && $pledge->cancelled == null)  ? 
+                    $edit = ($pledge->cancelled == null)  ? 
                             '<a class="btn btn-primary btn-sm ml-2" href="' . route('admin-pledge.donate-now.edit',$pledge->id) . '">Edit</a>' : '';
                     return '<a class="btn btn-info btn-sm" href="' . route('admin-pledge.donate-now.show',$pledge->id) . '">Show</a>' .
                         $edit . 
@@ -303,7 +303,8 @@ class DonateNowPledgeController extends Controller
         //
         $pledge = DonateNowPledge::where('id', $id)
                             ->whereNull('cancelled')
-                            ->whereNull('ods_export_status')->first();
+                            // ->whereNull('ods_export_status')
+                            ->first();
 
         if (!($pledge)) {
             return abort(404);      // 404 Not Found
@@ -359,7 +360,10 @@ class DonateNowPledgeController extends Controller
         $pledge->region_id = ($request->pool_option == 'P' ? $pool->region_id : null);
         $pledge->f_s_pool_id = ($request->pool_option == 'P' ? $request->pool_id : null);
         $pledge->charity_id  = ($request->pool_option == 'C' ? $request->charity_id : null);
-        $pledge->one_time_amount = $request->one_time_amount ?? 0;
+        if (!($pledge->ods_export_status)) {
+            // not allow to change after post to PeopleSoft
+            $pledge->one_time_amount = $request->one_time_amount ?? 0;
+        }
         $pledge->special_program = $request->special_program;
         $pledge->updated_by_id = Auth::id();
         $pledge->save();
