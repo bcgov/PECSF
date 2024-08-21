@@ -506,7 +506,7 @@ class ChallengeController extends Controller
 
     public function org_participation_tracker(Request $request)
     {
-        if (!(CampaignYear::isAnnualCampaignOpenNow())) {
+        if (!(Setting::isOrgParticipationTrackerActive())) {
             abort(404);
         }
 
@@ -528,7 +528,7 @@ class ChallengeController extends Controller
 
     public function org_participation_tracker_download(Request $request)
     {
-        if (!(CampaignYear::isAnnualCampaignOpenNow())) {
+        if (!(Setting::isOrgParticipationTrackerActive())) {
             abort(404);
         }
         
@@ -542,7 +542,8 @@ class ChallengeController extends Controller
                             ->where('business_unit_code', $bu)
                             ->first();
         
-        $start_date =  Carbon::createFromDate(null, 10, 15);  // Year defaults to current year
+        $setting = Setting::first();                           
+        $start_date = $setting->ee_snapshot_date_2 ?: Carbon::createFromDate(null, 10, 15);  // Year defaults to current year
 
         if ( ($cy < today()->year || today() >= $start_date) && $ee_by_bu) {
 
@@ -559,7 +560,7 @@ class ChallengeController extends Controller
         } else {
 
             return redirect()->route('challenge.org_participation_tracker')
-                    ->with('message', 'The organization partipation tracter report for campaign Year ' . $cy . ' will be accessible starting from October 15, ' . $cy);
+                    ->with('message', 'The organization partipation tracter report for campaign Year ' . $cy . ' will be accessible starting from ' . $setting->ee_snapshot_date_2->format('M j, Y') );
         }
 
     }

@@ -28,11 +28,29 @@
 
     <div class="card">
         <div class="card-body">
-            <p class="font-italic  text-danger"><u>Note:</u> For final date before March 1, it will be considered a previous campaign year (e.g 2024-02-20, the campiagn year is still 2023)</p>
 
+            <div class="row pt-1">
+                <div class="col-md-12"><h4 class="text-primary">Eligible Employee Snapshot Process / Organization Participation Tracker Report</h4></div>
+            </div>
+            <p class="font-italic  text-danger"><u>Note:</u> The date of the second snapshot is also used to determine when the Organization Tracker Report will become available online, continuing until the campaign's end date.</p>
+            <div class="form-row pt-2">
+                <div class="form-group col-md-3">
+                    <label for="ee_snapshot_date_1">1st Snapshot capture date</label>
+                    <input type="date" class="form-control input-control" name="ee_snapshot_date_1" 
+                                value="{{ $setting->ee_snapshot_date_1->toDateString() }}" />
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="ee_snapshot_date_2">2nd Snapshot capture date</label>
+                    <input type="date" class="form-control input-control" name="ee_snapshot_date_2" 
+                                value="{{ $setting->ee_snapshot_date_2->toDateString() }}" />
+                </div>
+            </div>
+
+            <hr>
             <div class="row pb-2">
                 <div class="col-md-12"><h4 class="text-primary">Statistics Page Updates</h4></div>
             </div>
+            <p class="font-italic  text-danger"><u>Note:</u> Click the "Finalize Statistics Page" button if you need to set a previous date for the finalization. For future final dates, the scheduled job will process as planned.</p>
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label for="challenge_start_date">Start Date</label>
@@ -57,8 +75,9 @@
                         </button>
                 </div>
             </div>
-  
-            <div class="row pt-4">
+
+            <hr>
+            <div class="row pt-2">
                 <div class="col-md-12"><h4 class="text-primary">Daily Campaign Updates</h4></div>
             </div>
             <div class="form-row pt-2">
@@ -124,9 +143,11 @@
         if (confirm(info))
         {
             var fields = ['challenge_start_date', 'challenge_end_date','challenge_final_date',
-                          'campaign_start_date', 'campaign_end_date','campaign_final_date'];
+                          'campaign_start_date', 'campaign_end_date','campaign_final_date',
+                          'ee_snapshot_date_1', 'ee_snapshot_date_2'];
             $.each( fields, function( index, field_name ) {
                  $('#setting-edit-form [name='+field_name+']').nextAll('span.text-danger').remove();
+                 $('#setting-edit-form [name='+field_name+']').removeClass('is-invalid');
             });
 
             $.ajax({
@@ -148,6 +169,7 @@
 
                         $.each(response.responseJSON.errors, function(field_name,error){
                             $(document).find('[name='+field_name+']').after('<span class="text-strong text-danger">' +error+ '</span>')
+                            $(document).find('[name='+field_name+']').addClass('is-invalid');
                         })
                     }
                     console.log('Error');

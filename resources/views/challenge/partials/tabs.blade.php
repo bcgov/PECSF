@@ -11,7 +11,7 @@
           Daily Campaign Update</a>
   </li>
   @endif
-  @if (\App\Models\CampaignYear::isAnnualCampaignOpenNow())
+  @if (\App\Models\Setting::isOrgParticipationTrackerActive() )
   <li class="nav-item nav-center-4">
       <a class="nav-link {{ str_contains( Route::current()->getName(), 'challenge.org_participation_tracker') ? 'active disabled' : ''}}" 
           href="{{  route('challenge.org_participation_tracker') }}" role="tab" aria-controls="pills-tracker" aria-selected="false">

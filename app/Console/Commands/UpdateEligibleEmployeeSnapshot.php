@@ -116,7 +116,9 @@ class UpdateEligibleEmployeeSnapshot extends Command
         $year = $as_of_date->year;
 
         $this->LogMessage( "" );   
-        $this->LogMessage( "Note: The business rule for collecting the eligible employee data on Sep 1st and Oct 15th every year" );   
+        $this->LogMessage( "Note: The business rule for collecting the eligible employee data on " . 
+                    $setting->ee_snapshot_date_1->format('M j, Y') .
+                    ' and '. $setting->ee_snapshot_date_2->format('M j, Y') . ' (defined in Statistics Update page)');   
         $this->LogMessage( "" );   
         $this->LogMessage( "As of date           : " . $as_of_date->format('Y-m-d') );           
         $this->LogMessage( "" );   
@@ -125,8 +127,10 @@ class UpdateEligibleEmployeeSnapshot extends Command
 
         if ( $as_of_date && 
                 ( $this->option('date')  ||
-                 ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
-                 ($as_of_date->month == 10 && $as_of_date->day == 15)
+                   ($as_of_date == $setting->ee_snapshot_date_1)  ||
+                   ($as_of_date == $setting->ee_snapshot_date_2) 
+                //  ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
+                //  ($as_of_date->month == 10 && $as_of_date->day == 15)
                 ) ) {
 
             $sql = EmployeeJob::where( function($query) {
@@ -297,15 +301,19 @@ class UpdateEligibleEmployeeSnapshot extends Command
         $year = $as_of_date->year;
 
         $this->LogMessage( "" );   
-        $this->LogMessage( "Note: The business rule for generating the Organization Participation Tractor Report on Sep 1st and Oct 15th every year" );   
+        $this->LogMessage( "Note: The business rule for generating the Organization Participation Tractor Report on " .
+                                $setting->ee_snapshot_date_1->format('M j, Y') .
+                                ' and '. $setting->ee_snapshot_date_2->format('M j, Y') . ' (defined in Statistics Update page)');   
         $this->LogMessage( "" );   
         $this->LogMessage( "As of date           : " . $as_of_date->format('Y-m-d') );           
         $this->LogMessage( "" );   
 
         if ( $as_of_date && 
                 ( $this->option('date')  ||
-                ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
-                ($as_of_date->month == 10 && $as_of_date->day == 15)
+                ($as_of_date == $setting->ee_snapshot_date_1)  ||
+                ($as_of_date == $setting->ee_snapshot_date_2) 
+                // ($as_of_date->month ==  9 && $as_of_date->day ==  1) ||
+                // ($as_of_date->month == 10 && $as_of_date->day == 15)
                 ) ) {
 
             $campaign_year = today()->year;
