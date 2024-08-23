@@ -44,6 +44,9 @@ class ChallengeSettingsController extends Controller
             'campaign_start_date'       => 'required|date',
             'campaign_end_date'         => 'required|date|after:campaign_start_date',
             'campaign_final_date'       => 'required|date|after_or_equal:campaign_end_date',
+            'ee_snapshot_date_1'         => 'required|date',
+            'ee_snapshot_date_2'         => 'required|date|after:ee_snapshot_date_1',
+
         ],[
 
         ]);
@@ -96,6 +99,9 @@ class ChallengeSettingsController extends Controller
         $setting->campaign_start_date =  $request->campaign_start_date;
         $setting->campaign_end_date   =  $request->campaign_end_date;
         $setting->campaign_final_date =  $request->campaign_final_date;
+
+        $setting->ee_snapshot_date_1 = $request->ee_snapshot_date_1;
+        $setting->ee_snapshot_date_2 = $request->ee_snapshot_date_2;
         $setting->save();
         
         return response()->noContent();
