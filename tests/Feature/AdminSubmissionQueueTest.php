@@ -366,7 +366,7 @@ class AdminSubmissionQueueTest extends TestCase
         $pledge->approved = 1;
 
         $response->assertStatus(204);
-        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection', 'updated_at', 'created_at']) );
+        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection', 'challenge_business_unit', 'updated_at', 'created_at']) );
 
         // $response->assertRedirect('login');
     }

@@ -33,6 +33,11 @@ class BusinessUnit extends Model implements Auditable
         return $this->hasOne(Organization::Class, 'bu_code', 'code');
     }
 
+    public function linked_business_unit()
+    {
+        return $this->hasOne(BusinessUnit::Class, 'code', 'linked_bu_code');
+    }
+
     public function created_by()
     {
         return $this->hasOne(User::Class, 'id', 'created_by_id');

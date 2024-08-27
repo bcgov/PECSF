@@ -406,7 +406,7 @@ class AdminBankDepositFormTest extends TestCase
                                     ]);
 
         $response->assertStatus(200);
-        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection']) );
+        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection', 'challenge_business_unit']) );
 
         foreach ($pledge->charities as $charity) {
             $this->assertDatabaseHas('bank_deposit_form_organizations', Arr::except($charity->attributesToArray(),[] ));
@@ -489,7 +489,7 @@ class AdminBankDepositFormTest extends TestCase
         $response->assertSessionHas('success');
         $response->assertSessionHasNoErrors();
 
-        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection', 'charities', 'created_at', 'updated_at']) );
+        $this->assertDatabaseHas('bank_deposit_forms', Arr::except( $pledge->attributesToArray(), ['status', 'charity_selection', 'charities', 'challenge_business_unit', 'created_at', 'updated_at']) );
 
         foreach ($pledge->charities as $charity) {
             $this->assertDatabaseHas('bank_deposit_form_organizations', Arr::except($charity->attributesToArray(),['created_at', 'updated_at'] ));

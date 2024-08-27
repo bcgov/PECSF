@@ -48,6 +48,7 @@ class BankDepositForm extends Model implements Auditable
     protected $appends = [
         'status',
         'charity_selection',
+        'challenge_business_unit',
     ];
 
     protected $casts = [
@@ -69,6 +70,21 @@ class BankDepositForm extends Model implements Auditable
 
     public function getCharitySelectionAttribute() {
         return ($this->regional_pool_id ? 'fsp' : 'dc');
+    }
+
+    public function getChallengeBusinessUnitAttribute()
+    {
+
+        // Special Rule -- To split GCPE employees from business unit BC022 
+        $bu = BusinessUnit::where('id', $this->business_unit)->first();
+        $business_unit_code = $bu ? $bu->linked_bu_code : null;
+        if ($bu->code == 'BC022' && str_starts_with($this->dept_name, 'GCPE')) {
+            $business_unit_code  = 'BGCPE';
+        }
+        $linked_bu = BusinessUnit::where('code', $business_unit_code)->first();
+
+        return $linked_bu;
+
     }
 
     function attachments(){
