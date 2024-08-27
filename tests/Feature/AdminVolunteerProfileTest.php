@@ -674,6 +674,8 @@ class AdminVolunteerProfileTest extends TestCase
             $address_type = $this->faker->randomElement( ['G', 'S'] );
         }
 
+        $opt_out_recongnition = $this->faker->randomElement( ['Y', 'N'] );
+
         // Test Transaction
         $profile = VolunteerProfile::factory()->make([
             'campaign_year' => today()->year,
@@ -688,11 +690,11 @@ class AdminVolunteerProfileTest extends TestCase
             'business_unit_code' => $business2->code,
 
             'address_type' =>  $address_type,
-            'address' => $address_type == 'G' ? null : substr($this->faker->address(), 0, 60),
-            'city' => $address_type == 'G' ? null : $city->city,
-            'province' => $address_type == 'G' ? null : $this->faker->randomElement( array_keys($province_list) ),
-            'postal_code' => $address_type == 'G' ? null : $this->faker->regexify('/^[A-Z]\d[A-Z]\ {1}\d[A-Z]\d$/'),
-
+            'address' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : substr($this->faker->address(), 0, 60),
+            'city' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : $city->city,
+            'province' => ($address_type == 'G' || $opt_out_recongnition == 'Y') ? null : $this->faker->randomElement( array_keys($province_list) ),
+            'postal_code' => ($address_type == 'G' || $opt_out_recongnition== 'Y') ? null : $this->faker->regexify('/^[A-Z]\d[A-Z]\ {1}\d[A-Z]\d$/'),
+            'opt_out_recongnition' => $opt_out_recongnition,
         ]);
 
         $form_data = $this->tranform_to_form_data($profile);

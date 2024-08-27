@@ -45,6 +45,7 @@ class EmployeeJob extends Model
         'years_of_service',
         'years_of_volunteer',
         'total_donations',
+        'challenge_business_unit',
     ];
 
     public const EMPL_STATUS_LIST = 
@@ -200,6 +201,22 @@ class EmployeeJob extends Model
 
 
         return $total_amount;
+    }
+
+
+    public function getChallengeBusinessUnitAttribute()
+    {
+
+        // Special Rule -- To split GCPE employees from business unit BC022 
+        $bu = BusinessUnit::where('code', $this->business_unit)->first();
+        $business_unit_code = $bu ? $bu->linked_bu_code : null;
+        if ($this->business_unit == 'BC022' && str_starts_with($this->dept_name, 'GCPE')) {
+            $business_unit_code  = 'BGCPE';
+        }
+        $linked_bu = BusinessUnit::where('code', $business_unit_code)->first();
+
+        return $linked_bu;
+
     }
 
 }

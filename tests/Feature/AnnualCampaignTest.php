@@ -236,7 +236,7 @@ class AnnualCampaignTest extends TestCase
         $response->assertSessionHas('success');
         $response->assertSessionHasNoErrors();
 
-        $this->assertDatabaseHas('pledges', Arr::except( $pledge->attributesToArray(), ['frequency']) );
+        $this->assertDatabaseHas('pledges', Arr::except( $pledge->attributesToArray(), ['frequency', 'charities', 'distinct_charities', 'challenge_business_unit', 'updated_at', 'created_at']) );
 
         foreach ($pledge->charities as $charity) {
             $this->assertDatabaseHas('pledge_charities', Arr::except($charity->attributesToArray(),['pledge_id'] ));
@@ -307,7 +307,7 @@ class AnnualCampaignTest extends TestCase
         // $response->assertSessionHas('success');
         $response->assertSessionHasNoErrors();
 
-        $this->assertDatabaseHas('pledges', Arr::except( $pledge->attributesToArray(), ['frequency', 'charities', 'distinct_charities', 'updated_at', 'created_at']) );
+        $this->assertDatabaseHas('pledges', Arr::except( $pledge->attributesToArray(), ['frequency', 'charities', 'distinct_charities', 'challenge_business_unit', 'updated_at', 'created_at']) );
 
         foreach ($pledge->charities as $charity) {
             $this->assertDatabaseHas('pledge_charities', Arr::except($charity->attributesToArray(), ['updated_at', 'created_at']));
