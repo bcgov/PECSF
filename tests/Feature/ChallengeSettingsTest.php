@@ -219,6 +219,9 @@ class ChallengeSettingsTest extends TestCase
             // 'campaign_end_date' => today()->year . '-12-31',
             'campaign_end_date' => today()->year . '-11-15',
             'campaign_final_date' => today()->year + 1 . '-02-14',
+
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
         ];
         
         $this->actingAs($this->admin);

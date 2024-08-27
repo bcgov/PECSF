@@ -1008,7 +1008,16 @@ class BankDepositFormController extends Controller
     }
 
     function bc_gov_id(Request $request){
-        $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district, employee_jobs.first_name, employee_jobs.last_name")->first();
+        // $record = EmployeeJob::where("emplid","=",$request->id)->join("business_units","business_units.code","employee_jobs.business_unit")->join("cities","cities.city","employee_jobs.office_city")->selectRaw("business_units.id as business_unit_id, employee_jobs.office_city, employee_jobs.region_id, cities.TGB_REG_DISTRICT as tgb_reg_district, employee_jobs.first_name, employee_jobs.last_name")->first();
+
+        $record = EmployeeJob::where("emplid","=",$request->id)
+                                ->with('bus_unit', 'city_by_office_city')
+                                ->select('business_unit_id', 'business_unit', 'dept_name','office_city', 'region_id', 'first_name', 'last_name')
+                                ->first();
+
+        $record->business_unit_id = $record ? $record->challenge_business_unit->id : null;
+        $record->tgb_reg_district = $record ? $record->city_by_office_city->TGB_REG_DISTRICT : null;
+
         if(!empty($record)){
             return response()->json($record, 200);
         }
