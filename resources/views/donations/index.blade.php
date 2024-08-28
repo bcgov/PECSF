@@ -30,7 +30,7 @@
                 @else
 
                     <p class="font-weight-bold">Thank you for choosing to support PECSF!</p>
-                    <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p>
+                    {{-- <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p> --}}
                     <p class="card-text text-left">
                         {{-- The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca --}}
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
