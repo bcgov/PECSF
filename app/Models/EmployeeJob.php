@@ -196,7 +196,11 @@ class EmployeeJob extends Model
 
         // BI History  
         $amount = PledgeHistorySummary::where('emplid', $this->emplid)
-                                    ->sum('pledge');
+                        ->where( function($query) {
+                                $query->whereNull('pledge_history_summaries.event_type')
+                                    ->orWhereIn('pledge_history_summaries.event_type', ['Cash', 'Personal Cheque']);
+                        })
+                        ->sum('pledge');
         $total_amount += $amount;
 
 
