@@ -218,7 +218,10 @@ class ChallengePageTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get('challenge/org_participation_tracker');
 
-        $response->assertStatus(200);
+        if (Setting::isCampaignPeriodActive()) 
+            $response->assertStatus(200);
+        else
+            $response->assertStatus(404);
     }
  
     public function test_an_authorized_user_can_download_org_participation_tracker()
@@ -228,8 +231,12 @@ class ChallengePageTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get('challenge/org_participation_tracker_download', []);
  
-        $response->assertStatus(302);
-        $response->assertSessionHas( "message" );
+        if (Setting::isOrgParticipationTrackerActive()) {
+            $response->assertStatus(302);
+            $response->assertSessionHas( "message" );
+        } else {
+            $response->assertStatus(404);
+        }
 
     }
 
@@ -497,6 +504,8 @@ class ChallengePageTest extends TestCase
                 'challenge_start_date' => $year . '-09-01',
                 'challenge_end_date' => $year . '-11-15',
                 'challenge_final_date' => (today() < today()->year . '-03-01') ? today() : $year + 1 . '-02-28',
+                'ee_snapshot_date_1' => $year . '-09-01',
+                'ee_snapshot_date_2' => $year . '-10-15',
 
         ]);
 
