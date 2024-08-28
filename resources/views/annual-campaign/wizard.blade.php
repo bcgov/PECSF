@@ -97,7 +97,8 @@
                     </div>
                     <div class="tab-pane fade step" id="nav-distribution" role="tabpanel" aria-labelledby="nav-distribution-tab">
                         <h3>4. Decide on the distributions</h3>
-                        <p>You can distribute your contributions to each charity here. Start from the top and specify the amount of percentage so that together they are total 100%.
+                        <p>
+                            You can distribute your contributions to each charity listed here. Start from the top and specify either the amount or percentage for each so that the total adds up to 100%.
                         </p>
 
                         <span id="step-distribution-page">
