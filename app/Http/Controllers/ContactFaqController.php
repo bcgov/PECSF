@@ -29,7 +29,7 @@ class ContactFaqController extends Controller
             'Volunteering' => [
                 [
                     'question' => 'Where do I find more information on volunteering with the PECSF Annual Campaign?  ',
-                    'answer' => 'You will find volunteering information in the  <a href="/volunteering">Volunteer Section</a> which includes contact information for lead coordinators, possible roles, training, resources and blogs.'
+                    'answer' => 'You will find volunteering information in the  <a href="/volunteering" style="text-decoration: underline;">Volunteer Section</a> which includes contact information for lead coordinators, possible roles, training, resources and blogs.'
                 ],
                 [
                     'question' => 'How much time on average do I have to commit to as a volunteer?',
