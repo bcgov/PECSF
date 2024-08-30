@@ -23,14 +23,14 @@
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-md btn-primary">Make a change to your PECSF pledge</a>
                     @else
                         <p class="card-text text-left">
-                            To make a pledge click the Donate button, copy a prior year's choices from your Donation History.
+                            To make a pledge, click the Donate button or copy a prior year's choice from your Donation History.
                         </p>
                         <a href="{{ route('annual-campaign.index') }}" class="btn btn-primary">Donate</a>
                     @endif
                 @else
 
                     <p class="font-weight-bold">Thank you for choosing to support PECSF!</p>
-                    <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p>
+                    {{-- <p class="card-text text-left">Click the “Details” button below to see your campaign pledge.</p> --}}
                     <p class="card-text text-left">
                         {{-- The Fall campaign has closed, to make changes to your PECSF pledge please email PECSF@gov.bc.ca --}}
                         If you need to change or stop your PECSF campaign payroll pledge deduction, please email <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <div class="d-flex mt-3">
+    <div class="p-2 d-flex mt-3">
         <h1>My Donations</h1>
         <div class="flex-fill"></div>
         @if($totalPledgedDataTillNow > 0)
@@ -54,11 +54,11 @@
         @endif
         <x-button style="outline-primary" class="ml-2" data-toggle="modal" data-target="#learn-more-modal" >Why donate to PECSF?</x-button>
     </div>
-    <div class="d-flex flex-column">
+    <div class="p-2 d-flex flex-column">
         <p class="m-0">
-            Since you started giving through PECSF, you've donated ${{ number_format($totalPledgedDataTillNow,0) }}, as BC Public Servant.
+            Since you began donating through PECSF, your total contributions as a BC Public Servant amount to ${{ number_format($totalPledgedDataTillNow,0) }}.
         </p>
-        <small>reflects pledge totals from 2005 onwards</small>
+        <small>The donation history below reflects pledge totals from 2005 onwards.</small>
     </div>
 @endsection
 @section('content')
