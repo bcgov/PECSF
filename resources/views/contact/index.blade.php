@@ -6,7 +6,8 @@
             <div class="text-left mt-3">
                 <h1>Contact PECSF</h1>
                 <p>
-                    Got a question? We're here to help! If you don't see your question answered in the FAQ section below, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.
+                    Got a question? We're here to help! If you don't see your question answered in the FAQ section below, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca"
+                            style=" text-decoration: underline;">PECSF@gov.bc.ca</a>.
                 </p>
             </div>
          </div>
