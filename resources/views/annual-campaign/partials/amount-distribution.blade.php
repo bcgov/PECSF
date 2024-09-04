@@ -18,7 +18,7 @@
                 </label>
             </div>
         </div>
-        <button type="button" class="distribute-evenly btn btn-link">Distribute evenly</button>
+        <button type="button" class="distribute-evenly btn btn-link" style="text-decoration: underline;">Distribute evenly</button>
     </div>
     <table class="table table-sm">
         @foreach ($selected_charities as $charity)

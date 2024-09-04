@@ -516,6 +516,16 @@ class AnnualCampaignController extends Controller
     public function thankYou()
     {
         $pledge_id = session()->get('pledge_id');
+      
+        if (!($pledge_id)) {
+            $campaign_year = CampaignYear::where('calendar_year', '<=', today()->year + 1 )
+                                   ->orderBy('calendar_year', 'desc')->first();
+            if ($campaign_year->isOpen()) {
+                $user = User::where('id', Auth::id())->first();
+                $pledge =  Pledge::where('emplid', $user->emplid)->orderBy('id', 'desc')->first();
+                $pledge_id = $pledge->id;
+            }
+        }
 
         if ($pledge_id) {
             return view('annual-campaign.thankyou', compact('pledge_id') );
