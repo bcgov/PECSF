@@ -7,7 +7,8 @@
     @include('challenge.partials.tabs')
 
     <h6 class="mt-3">Visit this page daily during the PECSF campaign to see updated statistics, including organization participation rates!<br>
-        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Statictics%20page">PECSF@gov.bc.ca</a>.</h6>
+        If you have questions about PECSF statistics, send us an e-mail at <a href="mailto:PECSF@gov.bc.ca?subject=Statictics%20page"
+            style="text-decoration: underline;">PECSF@gov.bc.ca</a>.</h6>
 </div>
 @endsection
 
@@ -97,7 +98,7 @@
                         <button id="list-mode-btn" type="button" class="btn btn-primary">
                                 <span class="mx-2 px-2">List</span>
                         </button>
-                        <button type="button" class="btn btn-dark mx-0 px-0"></button>
+                        <button type="button" class="btn btn-dark mx-0 px-0" tabindex="-1"></button>
                         <button id="chart-mode-btn" type="button" class="btn btn-outline-secondary">
                                 <span class="px-2">Chart<span>
                         </button>
@@ -121,7 +122,7 @@
                 </thead>
             </table>
         </div>
-        <div id="chart-section" data-load="0"> 
+        <div id="chart-section" data-load="0" tabindex="0" aria-label="This is a chart about Partipation Rate"> 
             <div id="main" class="pt-2" style="width: auto;height:700px;"></div>
         </div>
 
@@ -350,6 +351,59 @@ $(function() {
 
     });
 
+    $(document).on('keyup', '#pills-tab', function(event) {
+
+        current = $(this).find('.nav-item .active');
+        all_items = $(this).find('.nav-item');
+        siblings = current.parent().siblings();
+
+        var tgt = event.currentTarget;
+        flag = false;
+
+        switch (event.key) {
+            case 'ArrowLeft':
+                if ( current.prev() )
+                    current.prev().trigger('click');
+                else 
+                    $(all_items[ allitems.length -1]).trigger('click');
+                // this.moveFocusToPreviousTab(tgt);
+                flag = true;
+                break;
+
+            case 'ArrowRight':
+            if (siblings.length > 0)
+                    $(siblings[0]).trigger('click');
+                else 
+                    $(all_items[0]).trigger('click');
+
+                // this.moveFocusToNextTab(tgt);
+                flag = true;
+                break;
+
+            case 'Home':
+                $(all_items[0]).trigger('click');
+                //this.moveFocusToTab(this.firstTab);
+                flag = true;
+                break;
+
+            case 'End':
+                $(all_items[ allitems.length -1]).trigger('click');
+                // this.moveFocusToTab(this.lastTab);
+                flag = true;
+                break;
+
+            default:
+                break;
+        }
+
+        if (flag) {
+            // event.stopPropagation();
+            // event.preventDefault();
+        }
+                
+    });
+ 
+
     $(document).on('keyup', '#organization_name', function() {
 
         term = $('#organization_name').val();
@@ -417,6 +471,12 @@ $(function() {
                     myChart.resize();
 
                     myChart.setOption({
+                        aria: {
+                            enabled: true,
+                            decal: {
+                               show: true
+                            }
+                        },
                         title: {
                             text: 'Participation Rate Chart',
                             textStyle: { fontSize: 20, fontWeight: 'bold' }, 
