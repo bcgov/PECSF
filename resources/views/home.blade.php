@@ -5,7 +5,7 @@
 <div class="container mb-4">
   <div class="row">
     <div class="col-12 col-xl-12 ">
-        <h1 class="text-center  text-primary" >Welcome, {{ Auth::user()->name }}</h1>
+        <h1 class="text-center  text-primary" >Welcome to PECSF</h1>
         <p class="text-center h5 text-secondary"><strong>Choose from the options below:</strong></p>
     </div>
   </div>
