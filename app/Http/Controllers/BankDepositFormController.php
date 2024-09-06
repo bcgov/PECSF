@@ -985,9 +985,11 @@ class BankDepositFormController extends Controller
 
         if($request->keyword != "")
         {
-            $organizations->where( function ($query) use($request) {
-                    $query->where("charity_name","LIKE","%".$request->keyword."%")
-                          ->orWhere('registration_number',"LIKE","%".$request->keyword."%");
+            $keyword = str_replace('_', '\_', $request->keyword);
+
+            $organizations->where( function ($query) use($request, $keyword) {
+                    $query->where("charity_name","LIKE","%".$keyword."%")
+                          ->orWhere('registration_number',"LIKE","%".$keyword."%");
             });
         }
         if (is_numeric($request->pool_filter)){
