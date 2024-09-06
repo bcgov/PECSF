@@ -1,11 +1,11 @@
-<h4 class="text-primary" style="padding-left:8px;">Search Results</h4>
+<h4 class="text-primary pl-4">Search Results</h4>
 @if($organizations)
-    <p id="charity_count" class="noresults pl-2" style="width:100%;text-align:left;"><b>{{$organizations->total()}} results</b></p>
+    <div id="charity_count" class="noresults text-secondary pl-4" style="width:100%;text-align:left;"><b>{{ number_format($organizations->total(),0) }} results</b></div>
 @else
-    <h3 id="charity_count" class="noresults pl-2" style="width:100%;text-align:center" class="align-content-center">No results</h3>
+    <h3 id="charity_count" class="noresults pl-4" style="width:100%;text-align:center" class="align-content-center">No results</h3>
 @endif
 
-<div style="color:#FFF;border-bottom: #fcc642 2px solid;padding:15px;"></div>
+<div class="pb-2" style="color:#FFF;border-bottom: #fcc642 2px solid;"></div>
 <table id="charities" class="col-md-12">
     @foreach($organizations as $key => $organization)
 

@@ -45,10 +45,10 @@
             </div>
 
 
-        <div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+        <div class="charity-error-hook charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12"
+                style="padding-bottom:25px;">
 
-                <h4 class="blue" style="padding-left: 25px;
-    padding-top: 20px;">Your Charities</h4>
+                <h4 class="blue pl-4 text-primary" style="">Your Charities</h4>
             {{-- <div class="error max-charities-error" style="display:none;"><i class="fas fa-exclamation-circle"></i>
                  Please select a maximum of 10 charities</div> --}}
                 <div class="min-charities-error mx-2"></div>
@@ -62,6 +62,7 @@
                 <span class="charity_errors errors"></span>
 
                 {{-- @if(count($selected_charities) > 0) --}}
+                <div class="pb-2" style="color:#FFF;border-bottom: #fcc642 2px solid;"></div>
                 <table class="charity-container" id="organizations" style="width:100%">
                     @foreach($selected_charities as $index => $charity)
                         @include('annual-campaign.partials.add-charity', ['index' => $index,'charity' => $charity] )

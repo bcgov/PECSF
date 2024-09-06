@@ -1,7 +1,7 @@
 <tr class="organization" id="organization{{$index}}">
     <td>
         <div class="form-row mx-3">
-            <div class="form-group col-md-8 charity">
+            <div class="form-group col-md-8 charity pt-2">
                 <label for="event_type">Organization Name:</label>
                <!--<input class="form-control" type="text" id="organization_name" name="organization_name[]"/>-->
                 <div>
