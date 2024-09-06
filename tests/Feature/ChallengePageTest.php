@@ -218,7 +218,7 @@ class ChallengePageTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get('challenge/org_participation_tracker');
 
-        if (Setting::isCampaignPeriodActive()) 
+        if (Setting::isOrgParticipationTrackerActive()) 
             $response->assertStatus(200);
         else
             $response->assertStatus(404);
@@ -316,7 +316,7 @@ class ChallengePageTest extends TestCase
         $row = Setting::first();
 
         $campaign_year = Setting::challenge_page_campaign_year();
-        $report_date = (today()->month >= 3 && today()->month <= 8) ?  today() : $row->campaign_end_date;
+        $report_date = (today() >= $row->campaign_end_date) ?  $row->campaign_end_date :  today();
                                   
         $filename = 'Daily_Campaign_Update_By_Dept_' . $report_date->format('Y-m-d') . '.xlsx';
 
