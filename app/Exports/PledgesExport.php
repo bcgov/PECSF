@@ -362,12 +362,12 @@ class PledgesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
         );
 
         // Update Challenge Business Unit
-        $pledges = PledgeStaging::all();
+        $pledges = PledgeStaging::where('history_id', $this->history_id)->get();    
 
         foreach ($pledges as $pledge) {
 
             $bu = BusinessUnit::where('code', $pledge->business_unit_code)->first();
-            $business_unit_code = $bu->linked_bu_code;
+            $business_unit_code = $bu ? $bu->linked_bu_code : null;
             if ($business_unit_code == 'BC022' && str_starts_with($pledge->dept_name, 'GCPE')) {
                 $business_unit_code  = 'BGCPE';
             }
