@@ -41,10 +41,20 @@
             });
 
             $.ajax({
-                url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#charity_category").val()
-                    +"&province="+$("#charity_province").val()+"&keyword="+$("#charity_keyword").val()
-                    +"&pool_filter="+$("#pool_filter").val()
-                    +"&selected_vendors="+selected_vendors,
+                // url:"/bank_deposit_form/organizations?page="+page+"&category="+$("#charity_category").val()
+                //     +"&province="+$("#charity_province").val()+"&keyword="+encodeURIComponent($("#charity_keyword").val())
+                //     +"&pool_filter="+$("#pool_filter").val()
+                //     +"&selected_vendors="+selected_vendors,
+                url:"/bank_deposit_form/organizations",                
+                type: "get",
+                data: { 
+                    "page"       : page, 
+                    "category"   : $("#charity_category").val(), 
+                    "province"   : $("#charity_province").val(),
+                    "keyword"    : $("#charity_keyword").val(),
+                    "pool_filter": $("#pool_filter").val(),
+                    "selected_vendors" : selected_vendors,
+                },
                 success:function(data)
                 {
                     // $("#charities").fadeTo("slow",1);
