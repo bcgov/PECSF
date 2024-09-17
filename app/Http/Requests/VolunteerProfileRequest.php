@@ -48,7 +48,7 @@ class VolunteerProfileRequest extends FormRequest
                 [
                     'address_type' => ['required', Rule::in(['G', 'S']) ],
                     // 'address'  => ['required_if:address_type,S'],
-                    'address' => Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y'),
+                    'address' => ['max:100', Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y')],
                     'city'  => [ Rule::requiredIf($this->address_type == 'S' && $this->opt_out_recongnition != 'Y'),
                                     Rule::when( $this->address_type == 'S' && $this->opt_out_recongnition != 'Y', ['exists:cities,id']),
                             ],
@@ -96,6 +96,7 @@ class VolunteerProfileRequest extends FormRequest
             'preferred_role.in' => 'The selected preferred volunteer role is invalid',
 
             'address.required_if' => 'The street address field is required',
+            'address.max' => 'The street address must not be greater than 100 characters.',
             'city.required_if' => 'The city field is required',
             'city.exists' =>  'The invalid city entered',
             'province.required_if' => 'The province field is required',
