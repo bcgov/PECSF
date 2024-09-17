@@ -35,7 +35,7 @@
     @endisset
 
 
-    <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+    <div class="charity-container card {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
         @include("volunteering.partials.organizations")
     </div>
 
@@ -44,7 +44,7 @@
         <br>
         <br>
 
-<div class="charity-error-hook  {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12"
+<div class="charity-error-hook card {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12"
     style="padding-bottom:25px;">
 
         <h4 class="blue pl-4 text-primary" style="">Your Charities</h4>
@@ -55,7 +55,7 @@
             @foreach($selected_charities as $index => $charity)
                 @include('volunteering.partials.add-organization', ['index' => $index, 'charity' => $charity] )
             @endforeach
-                <h3 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h3>
+                <h3 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center pt-2">You have not chosen any charities</h3>
                 <span class="charity_errors errors"></span>
         </table>
 </div>

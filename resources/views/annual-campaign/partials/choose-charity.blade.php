@@ -58,7 +58,7 @@
                     style="{{ count($selected_charities) == 0 ? 'display:none;' : '' }}">{{ count($selected_charities) }} item(s) selected
                 </div>
                 <h3 style="width:100%;text-align:center; {{ count($selected_charities) > 0 ? 'display:none;' : '' }}"
-                    id="noselectedresults" class="align-content-center">You have not chosen any charities</h3>
+                    id="noselectedresults" class="align-content-center pt-2">You have not chosen any charities</h3>
                 <span class="charity_errors errors"></span>
 
                 {{-- @if(count($selected_charities) > 0) --}}
