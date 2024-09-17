@@ -1,7 +1,7 @@
 <tr class="organization" id="organization{{$index}}">
     <td>
-        <div class="form-row raised">
-            <div class="form-group col-md-8 charity">
+        <div class="form-row mx-3 raised">
+            <div class="form-group col-md-8 charity pt-2">
                 <label for="event_type">Organization Name:</label>
                <!--<input class="form-control" type="text" id="organization_name" name="organization_name[]"/>-->
                 <div>
@@ -38,7 +38,7 @@
 
             </div>
 @if (!Request::is('donate/select'))
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2 pt-2">
                 <label for="sub_type">Donation Percent (%)</label>
                 <input class="form-control" type="text" id="donation_percent" name="donation_percent[]" value="{{ ($charity != "YYY") ? $charity->donation_percent : ''}}">
                 <span class="donation_percent_errors  errors">
@@ -48,7 +48,18 @@
                   </span>
             </div>
             @endif
-            <div class="form-group col-md-12">
+
+            <div class="form-group col-md-1 pt-2">
+                <label class="d-block" for="">&nbsp</label>
+                <div class="float-right">
+                    <button class="btn btn-danger remove">
+                        {{--    <i class="fa fa-trash"></i> --}}
+                        Remove</button>
+                </div>
+            </div>
+
+
+            <div class="form-group col-md-10">
                 <label for="sub_type">Specific Community Or Initiative (Optional):</label>
                 <input class="form-control specific_community_or_initiative" type="text" id="specific_community_or_initiative" name="additional[]" 
                                     value="{{ ($charity != "YYY") ? $charity->specific_community_or_initiative : ''}}" />
@@ -58,9 +69,9 @@
                     @enderror
                   </span>
             </div>
-            <div class="form-group col-md-12">
+            {{-- <div class="form-group col-md-12">
                 <button class="btn btn-danger remove">Remove</button>
-            </div>
+            </div> --}}
         </div>
     </td>
 </tr>
