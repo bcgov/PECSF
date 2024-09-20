@@ -83,7 +83,9 @@ class CampaignPledgeRequest extends FormRequest
                                             ->when($this->organization_id != $gov->id, function($q) {
                                                 return $q->where('pecsf_id', $this->pecsf_id);
                                             })
-                                            ->where('campaign_year_id', $this->campaign_year_id);
+                                            ->where('campaign_year_id', $this->campaign_year_id)
+                                            ->whereNull('deleted_at')
+                                            ->whereNull('cancelled');
                                 })->ignore($this->pledge_id),
                             ],
                             'organization_id'  => ['required'],
