@@ -119,6 +119,13 @@
                 </div> 
     
                 <div class="form-group col-md-2">
+                    <label for="business_unit">
+                        Business Unit
+                    </label>
+                    <input name="business_unit" id="business_unit"  class="form-control" />
+                </div>
+
+                <div class="form-group col-md-2">
                     <label for="event_type">Event Type</label>
                     <select name="event_type" id="event_type" value="" class="form-control">
                         <option value="">Select a Event Type</option>
@@ -299,6 +306,7 @@
                     data.description = $("form.filter input[name='description']").val();
                     data.employment_city = $("form.filter select[name='employment_city']").val();
                     data.campaign_year_id = $("form.filter select[name='campaign_year_id']").val(); 
+                    data.business_unit = $('#business_unit').val();
                     data.event_type = $("form.filter select[name='event_type']").val();
                     data.sub_type   = $("form.filter select[name='sub_type']").val();
                     data.approved   = $("form.filter select[name='approved']").val();
