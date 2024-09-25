@@ -364,7 +364,7 @@
                 {data: 'pay_period_amount', name: 'pay_period_amount',  'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '')},
                 {data: 'goal_amount', name: 'goal_amount', 'className': 'dt-right', render: $.fn.dataTable.render.number(',', '.', 2, '') },
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"},
-                {data: 'cancelled', name: 'cancelled',  orderable: false, searchable: false, className: "dt-nowrap",
+                {data: 'cancelled', name: 'cancelled', searchable: false, className: "dt-nowrap",
                     render: function ( data, type, row, meta ) {
                             if( data == null) {
                                 return '';

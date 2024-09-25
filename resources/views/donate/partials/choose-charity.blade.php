@@ -1,4 +1,4 @@
-<div class="form-group org_hook col-md-4">
+<div class="form-group org_hook col-md-4" style="padding-left: 1.9rem;">
             <label for="keyword">Search by Keyword</label>
             <input class="form-control" type="text" name="keyword" value="" id="keyword" />
         </div>
@@ -23,7 +23,7 @@
     </div>
 
     @isset($fund_support_pool_list)
-        <div class="form-group col-md-4 org_hook">
+        <div class="form-group col-md-4 org_hook" style="padding-left: 1.9rem;">
             <label for="pool_filter">Search by Fund Supported Pool</label>
             <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
                 <option value="">Choose a Fund Supported Pool</option>
@@ -35,7 +35,7 @@
     @endisset
 
 
-    <div class="charity-container {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+    <div class="charity-container card {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
         @include("volunteering.partials.organizations")
     </div>
 
@@ -44,17 +44,18 @@
         <br>
         <br>
 
-<div class="charity-error-hook  {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12">
+<div class="charity-error-hook card {{str_contains( Route::current()->getName(), 'bank_deposit_form') ? '' : 'card'}} form-group org_hook  col-md-12"
+    style="padding-bottom:25px;">
 
-        <h4 class="blue" style="ppadding-left: 25px;
-    padding-top: 20px;">Your Charities</h4>
+        <h4 class="blue pl-4 text-primary" style="">Your Charities</h4>
     <div class="error max-charities-error" style="display:none;color:#D8292F;"><i style="color:black;" class="fas fa-exclamation-circle"></i> Please select a maximum of 10 charities</div>
 
+        <div class="pb-2" style="color:#FFF;border-bottom: #fcc642 2px solid;"></div>
         <table class="" id="organizations" style="display:block;width:100%">
             @foreach($selected_charities as $index => $charity)
                 @include('volunteering.partials.add-organization', ['index' => $index, 'charity' => $charity] )
             @endforeach
-                <h3 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center">You have not chosen any charities</h3>
+                <h3 style="width:100%;text-align:center" id="noselectedresults" class="align-content-center pt-2">You have not chosen any charities</h3>
                 <span class="charity_errors errors"></span>
         </table>
 </div>
