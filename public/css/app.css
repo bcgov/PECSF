@@ -47896,7 +47896,7 @@ input[name=keyword] {
 }
 
 #step-charities-area .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 #step-regional-pools-area::before .p-1 {
@@ -47910,6 +47910,7 @@ input[name=keyword] {
 #charities td {
   padding: 10px;
   border-bottom: #ccc 1px solid;
+  padding-left: 1.5rem !important;
 }
 
 .custom.pagination {
@@ -47934,8 +47935,13 @@ input[name=keyword] {
   margin-bottom: 25px !important;
 }
 
+#organizations tr {
+  display: block;
+}
+
 #organizations td {
   border-top: #ccc 1px solid;
+  display: block;
 }
 
 .form-row.form-header {

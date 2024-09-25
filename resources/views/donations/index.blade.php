@@ -90,12 +90,13 @@
                     OR
                 </p>
             @endif
-            <x-button style="link" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</x-button>
+            <a class="btn btn-outline-primary btn-md" data-toggle="modal" data-target="#learn-more-modal">Learn more about donating to PECSF.</a>
         </div>
         @endif
         @if ($pledges_by_yearcd->count() > 0)
-            <div class="justify-content-center">
-                <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a>
+            <div class="text-center">
+                {{-- <a href="{{route('donations.list')}}?download_pdf=true"><button style="background:#fff;margin-left:auto;margin-right:auto;display:block;width:40%;border:#12406b 1px solid;padding:8px;text-align:center;">Export Summary</button></a> --}}
+                <a class="btn btn-outline-primary btn-md px-5" href="{{route('donations.list')}}?download_pdf=true">Export Summary</a>
             </div>
         @endif
     </div>

@@ -310,7 +310,7 @@
                         $("#pool"+data[0].fund_supported_pool.region_id).trigger('click');
 
                     }
-                    $("#edit-event-modal-body").find(".col-md-2").removeClass("col-md-2").addClass("col-md-4");
+                    // $("#edit-event-modal-body").find(".col-md-2").removeClass("col-md-2").addClass("col-md-4");
 
                     let attachment_number = 1;
                     $(".upload-area").hide();
