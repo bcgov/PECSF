@@ -18,6 +18,7 @@ use App\Models\PledgeCharity;
 use App\Models\BankDepositForm;
 use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -88,6 +89,13 @@ class MaintainEventPledgeController extends Controller
                             })
                             ->when( $request->campaign_year_id, function($query) use($request) {
                                 $query->where('bank_deposit_forms.campaign_year_id', $request->campaign_year_id);
+                            })
+                            ->when( $request->business_unit, function($query) use($request) {
+                                $query->whereIn('bank_deposit_forms.business_unit', function ($query)  use($request) {
+                                    $query->select('id')
+                                          ->from('business_units')
+                                          ->where('business_units.code', 'like', '%'. $request->business_unit .'%');
+                                  });
                             })
                             ->when( $request->event_type, function($query) use($request) {
                                 $query->where('bank_deposit_forms.event_type', $request->event_type);
