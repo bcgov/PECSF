@@ -60,7 +60,12 @@
         <div class="custom-amount-one-time mt-3" style="{{ (!in_array($one_time_amount, [6, 12, 20, 50])) ? '' : 'display:none '}}">
             <label>
                 Custom amount
-                <input type="text" name="one_time_amount_custom" class="form-control"  value="{{ $one_time_amount_custom }}">
+                <div class="input-group input-group-sm mb-3 pt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                    </div>
+                    <input type="text" name="one_time_amount_custom" class="form-control"  value="{{ $one_time_amount_custom }}">
+                </div>                
             </label>
         </div>
     </div>
