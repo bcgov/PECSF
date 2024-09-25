@@ -1,7 +1,7 @@
 <tr class="organization" id="organization{{$index}}">
     <td>
         <div class="form-row mx-3">
-            <div class="form-group col-md-8 charity">
+            <div class="form-group col-md-10 charity pt-2">
                 <label for="event_type">Organization Name:</label>
                <!--<input class="form-control" type="text" id="organization_name" name="organization_name[]"/>-->
                 <div>
@@ -19,16 +19,16 @@
 
             </div>
 
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-2">
                 <label class="d-block" for="">&nbsp</label>
-                <div class="float-right">
-                    <button class="btn btn-danger remove">
+                <div class="float-right pt-2">
+                    <button class="btn btn-danger remove pt-2">
                         {{--    <i class="fa fa-trash"></i> --}}
                         Remove</button>
                 </div>
             </div>
 
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-10">
                 <label for="sub_type">Specific Community Or Initiative (Optional): </label>
                 <input class="form-control specific_community_or_initiative" type="text" id="specific_community_or_initiative" name="additional[]" value="{{ ($charity != 'YYY') ? $charity->additional : '' }}" />
                 <span class="specific_community_or_initiative_errors  errors">

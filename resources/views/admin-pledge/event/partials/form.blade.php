@@ -196,9 +196,9 @@
                     <div class="form-group  org_hook col-md-6">
                         <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en"
                             target="_blank"><img class="float-right"
-                                style="width:26px;height:26px;position:relative;top:-4px;"
+                                style="width:28px;height:auto;position:relative;top:-2px;"
                                 src="{{ asset('img/icons/external_link.png') }}"></img>
-                            <h5 class="blue float-right">View CRA Charity List</h5>
+                            <span class="blue float-right" style="text-decoration: underline;padding-right:4px;">View CRA Charity List</span>
                         </a>
                     </div>
                     <div class="form-group col-md-12">
