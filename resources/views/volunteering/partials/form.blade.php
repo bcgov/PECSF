@@ -302,11 +302,11 @@
                             @enderror
                         </span>
                     </div>
-                    <div class="p-2">
-                        <span class="p-2">
+                    <div>
+                        <p class="pl-4">
                             By choosing this option your donation will support the current Fund Supported Pool of regional
                             programs. Click on the tiles to learn about the programs in each regional pool.
-                        </span>
+                        </p>
                     </div>
 
 
@@ -352,7 +352,7 @@
                         </div>
                     @endfor --}}      
 
-                    <div class="pt-2 px-3 row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-6"  id="step-regional-pools-area">
+                    <div class="pt-2 px-4 row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-6"  id="step-regional-pools-area">
                         @foreach( $pools as $pool )
                         <div class="col mb-2">
                 
@@ -392,13 +392,13 @@
                     <div class="form-group  org_hook col-md-6">
                         <a href="https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?request_locale=en"
                             target="_blank"><img class="float-right"
-                                style="width:26px;height:26px;position:relative;top:-4px;"
+                                style="width:28px;height:auto;position:relative;top:-2px;"
                                 src="{{ asset('img/icons/external_link.png') }}"></img>
-                            <h5 class="blue float-right">View CRA Charity List</h5>
+                            <span class="blue float-right" style="text-decoration: underline;padding-right:4px">View CRA Charity List </span>
                         </a>
                     </div>
                     <div class="form-group col-md-12">
-                        <p class="pl-2">By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered
+                        <p class="pl-4">By choosing this option you can support up to 10 Canada Revenue Agency (CRA) registered
                             charitable organizations.
                             Our system uses the official name of the charity registered with the CRA. You can use the View
                             CRA Charity List link to confirm if the organization you would like to support is registered.
