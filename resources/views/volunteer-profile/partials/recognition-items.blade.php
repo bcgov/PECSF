@@ -82,6 +82,14 @@
 
 @push('css')
 
+<style>
+    input[name='opt_out_recongnition'] {
+        cursor: pointer;
+        transform: scale(1.5);
+        margin-left: 4px;
+    }
+</style>
+
 @endpush
 
 
