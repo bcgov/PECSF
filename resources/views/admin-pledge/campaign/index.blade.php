@@ -124,6 +124,13 @@
             </div> 
 
             <div class="form-group col-md-2">
+                <label for="business_unit">
+                    Business Unit
+                </label>
+                <input name="business_unit" id="business_unit"  class="form-control" />
+            </div>
+
+            <div class="form-group col-md-2">
                 <label for="cancelled">
                     Status
                 </label>
@@ -307,6 +314,7 @@
                     data.pecsf_id = $('#pecsf_id').val();
                     data.name = $('#name').val();
                     data.city = $('#city').val();
+                    data.business_unit = $('#business_unit').val();
                     data.campaign_year_id = $('#campaign_year_id').val();
                     data.one_time_amt_from = $('#one_time_amt_from').val();
                     data.one_time_amt_to = $('#one_time_amt_to').val();
