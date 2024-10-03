@@ -21,10 +21,22 @@ class DuplicateBCPCampaignPledgesSeeder extends Seeder
     public function run()
     {
 
+
         $campaign_year = CampaignYear::where('calendar_year', 2024)->first();
         $from_org = Organization::where('code', 'GOV')->first();
         $to_org = Organization::where('code', 'BCP')->first();
 
+        if (!($to_org)) {
+            $to_org = Organization::create(
+                [   
+                    'code' => 'BCP',
+                    'name' => 'BC Pension Corp',
+                    'status' => 'A',
+                    'effdt' => '2024-01-01',
+                    'bu_code' => 'BC088',
+                ]
+            );
+        }
 
         $pledges = Pledge::where('campaign_year_id', $campaign_year->id)
                          ->where('organization_id', $from_org->id)
@@ -32,17 +44,16 @@ class DuplicateBCPCampaignPledgesSeeder extends Seeder
                          ->whereNull('cancelled_at')
                          ->whereNull('deleted_at')
                          ->where('pay_period_amount', '>', 0)
-                        //  ->with('organization')
                          ->orderBy('id')
 // ->whereIn('id', [763] )
                          ->get();
 
+        $create_count = 0;
+        $skip_count = 0;
         
         foreach ($pledges as $idx => $pledge) {
 
             echo $idx . ' - ' . json_encode( $pledge, false) . PHP_EOL;
-            // echo $pledge->id . ' - '. $pledge->organization->code . ' - ' . $pledge->emplid . 
-            //             ' - '. $pledge->one_time_amount . ' - ' . $pledge->pay_period_amount  . PHP_EOL ;
 
             $rec = Pledge::where('campaign_year_id', $campaign_year->id)
                             ->where('organization_id', $to_org->id)
@@ -52,9 +63,11 @@ class DuplicateBCPCampaignPledgesSeeder extends Seeder
                             ->first();
 
             if ($rec) {
+                $skip_count++;
                 echo PHP_EOL;
                 echo '   FAILED - The pledge for new Organization BCP has been already created.' . PHP_EOL;
                 echo PHP_EOL;
+                
                 continue;
             }
 
@@ -117,6 +130,7 @@ class DuplicateBCPCampaignPledgesSeeder extends Seeder
 
             }
 
+            $create_count++;
             echo PHP_EOL;
             echo '   SUCCESS - The new pledge for new Organization BCP was created.' . ' - id ' . $new_pledge->id . PHP_EOL;
             echo '   ' . json_encode( $new_pledge, false) . PHP_EOL;
@@ -130,7 +144,10 @@ class DuplicateBCPCampaignPledgesSeeder extends Seeder
         }
 
         echo PHP_EOL;
-        echo $pledges->count();
+        echo 'Total rows: ' .  $pledges->count();
+        echo PHP_EOL;
+        echo 'Total created : ' .  $create_count . PHP_EOL;
+        echo 'Total skipped : ' .  $skip_count . PHP_EOL;
     }
 
 
