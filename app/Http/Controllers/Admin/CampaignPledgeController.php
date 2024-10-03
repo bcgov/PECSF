@@ -96,6 +96,9 @@ class CampaignPledgeController extends Controller
                             ->when( $request->campaign_year_id, function($query) use($request) {
                                 $query->where('campaign_year_id', $request->campaign_year_id);
                             })
+                            ->when($request->business_unit, function($query) use($request) {
+                                return $query->where('pledges.business_unit', 'like', '%'. $request->business_unit .'%');
+                            })
                             ->when( $request->cancelled == 'C', function($query) use($request) {
                                 $query->whereNotNull('pledges.cancelled');
                             })
