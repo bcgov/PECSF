@@ -20,7 +20,7 @@ RUN chgrp -R 0 /app && \
 #
 # Build Server Deployment Image
 #
-FROM php:8.1-apache-bullseye
+FROM php:8.3-apache-bullseye
 
 WORKDIR /
 
