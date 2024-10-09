@@ -152,7 +152,7 @@ class BankDepositFormController extends Controller
             'address_1'    =>  'required_unless:event_type,Fundraiser,Gaming',
             'city'         =>  'required_unless:event_type,Fundraiser,Gaming',
             'province'     =>  'required_unless:event_type,Fundraiser,Gaming',
-            'postal_code'  =>  'required_unless:event_type,Fundraiser,Gaming',
+            'postal_code'  =>  ['required_unless:event_type,Fundraiser,Gaming', Rule::when( $request->postal_code, ['regex:/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} \d{1}[A-Z]{1}\d{1}$/']) ],
 
             'charity_selection' => ['required', Rule::in(['fsp', 'dc']) ],
             'regional_pool_id'       => ['required_if:charity_selection,fsp', Rule::when( $request->charity_selection == 'fsp', ['exists:f_s_pools,id']) ],
@@ -587,7 +587,7 @@ class BankDepositFormController extends Controller
             'address_1'    =>  'required_unless:event_type,Fundraiser,Gaming',
             'city'         =>  'required_unless:event_type,Fundraiser,Gaming',
             'province'     =>  'required_unless:event_type,Fundraiser,Gaming',
-            'postal_code'  =>  'required_unless:event_type,Fundraiser,Gaming',
+            'postal_code'  =>  ['required_unless:event_type,Fundraiser,Gaming', Rule::when( $request->postal_code, ['regex:/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} \d{1}[A-Z]{1}\d{1}$/']) ],
 
             'charity_selection' => ['required', Rule::in(['fsp', 'dc']) ],
             'regional_pool_id'       => ['required_if:charity_selection,fsp', Rule::when( $request->charity_selection == 'fsp', ['exists:f_s_pools,id']) ],
