@@ -5,29 +5,31 @@ namespace App\Exports;
 // use App\Models\EmployeeJob;
 use App\Models\BusinessUnit;
 use App\Models\ProcessHistory;
-use App\Models\EligibleEmployeeDetail;
-
 use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use App\Models\EligibleEmployeeDetail;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Events\BeforeExport;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\RowDimension;
 
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Worksheet\RowDimension;
 
 
 ini_set('memory_limit', '-1');          // To avoid "PHP Fatal error:  Allowed memory size of xxxxx bytes exhausted"
@@ -541,12 +543,22 @@ class OrgPartipationTrackersExport implements FromQuery, WithHeadings, WithColum
                 // Clean Up files over 14 days
                 if ($this->history_id) {
                     $retention_days = env('REPORT_RETENTION_DAYS') ?: 14;
-                    $prcs = ProcessHistory::where('id', $this->history_id)->first();
 
-                    $file_names = ProcessHistory::where('process_name', $prcs->process_name)
-                                    ->whereBetween('updated_at', [ today()->subdays( $retention_days + 90), today()->subdays( $retention_days + 1), ])
-                                    ->pluck('filename')
-                                    ->toArray();
+
+                    $path = storage_path('app/public');
+                    $files = File::files($path);
+
+                    $file_names = [];
+
+                    foreach($files as $file) {
+                        $file->last_modified = date('Y-m-d H:i:s', $file->getMTime()) ;   
+
+                        if ($file->last_modified > today()->subdays($retention_days) )
+                            continue;
+
+                        array_push($file_names, $file->getFilename());
+
+                    }
 
                     Storage::disk('public')->delete( $file_names );
                 }
