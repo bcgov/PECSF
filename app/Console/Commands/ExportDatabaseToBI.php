@@ -136,11 +136,18 @@ class ExportDatabaseToBI extends Command
             $this->LogMessage("The schedule Job id          : " . $task->id);
             $this->LogMessage("The command name             : " . $job_name);
             
+            // exclude hidden fields
+            $select_columns = DB::connection()->getSchemaBuilder()->getColumnListing($table_name);
+            if ($hidden_fields) {
+                $select_columns = array_diff($select_columns, $hidden_fields);
+            }
+
             // Main Process for each table 
             $sql = DB::table($table_name)
                 ->when( $last_job && $delta_field, function($q) use($last_start_time, $delta_field, $hidden_fields ) {
                     return $q->where($delta_field, '>=', $last_start_time);
                 })
+                ->select($select_columns)
                 ->orderBy('id');
                 
             // Chucking
