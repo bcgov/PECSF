@@ -165,7 +165,7 @@ class Kernel extends ConsoleKernel
                                 //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
                                 // })
                                 ->weekdays()
-                                ->at('8:20')
+                                ->at('8:30')
                                 ->environments(['dev', 'TEST'])
                                 ->sendOutputTo(storage_path('logs/ImportCities.log'));                         
 
@@ -175,7 +175,7 @@ class Kernel extends ConsoleKernel
                                 //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
                                 // })
                                 ->weekdays()
-                                ->at('8:25')
+                                ->at('8:45')
                                 ->environments(['dev', 'TEST'])
                                 ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
 
@@ -201,13 +201,13 @@ class Kernel extends ConsoleKernel
                 // Non-Production -- Demography data and user profiles                        
                 $schedule->command('command:ImportEmployeeJob')
                         ->weekdays()
-                        ->at('8:30')
+                        ->at('9:00')
                         ->environments(['dev', 'TEST'])
                         ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
 
                 $schedule->command('command:SyncUserProfile')
                         ->weekdays()
-                        ->at('8:45')
+                        ->at('9:15')
                         ->environments(['dev', 'TEST'])
                         ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));                        
 
