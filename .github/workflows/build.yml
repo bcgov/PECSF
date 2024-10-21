@@ -171,7 +171,7 @@ jobs:
 
   call-deploy-workflow:
     name: 🚀 Deploy
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-pecsf.yml
     secrets: inherit
     needs: [checkEnv, db, php, cron, pecsf, web, call-cleanup-workflow]
     if: |
