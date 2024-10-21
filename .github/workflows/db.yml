@@ -18,7 +18,7 @@ jobs:
       # Proxy settings for local development / testing
       #https_proxy: http://198.161.14.25:8080
       # no_proxy: ${{ env.OPENSHIFT_SERVER }}
-    if: (github.ref_name == 'dev' || github.ref_name == 'test' || github.ref_name == 'prod')
+    if: (github.ref_name == 'dev' || github.ref_name == 'test' || github.ref_name == 'prod' || github.ref_name == 'e66ac2-test')
     steps:
       - name: 📤 Checkout Target Branch
         uses: actions/checkout@v4
