@@ -15,7 +15,7 @@ env:
   CLEAN_BUILDS: "NO"
   BUILD_ID: ${{ github.event.number }}
   # BRANCH: ${{ env.BRANCH }}
-  BRANCH: dev
+  BRANCH: test
   INSPECT_JOB_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
   BUILD_ICON_URL: https://cdn-icons-png.flaticon.com/128/5110/5110294.png
