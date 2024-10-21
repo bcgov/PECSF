@@ -84,7 +84,7 @@ jobs:
       - name: 📤 Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: dev
+          ref: e66ac2-test
           sparse-checkout: |
             config/mariadb
             example.env
