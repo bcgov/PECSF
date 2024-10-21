@@ -1,0 +1,314 @@
+name: 🚀 Deploy to OpenShift
+
+concurrency:
+  group: deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP: pecsf
+  USER: ${{ github.actor }}
+
+  # Skip builds for faster deployments / testing ("YES" or build)
+  SKIP_BUILDS: "NO"
+  SKIP_DEPLOY: "NO"
+  # Clean builds before deployments (delete all resources, other than backups) ("YES" or allow collisions)
+  CLEAN_BUILDS: "NO"
+  BUILD_ID: ${{ github.event.number }}
+  # BRANCH: ${{ env.BRANCH }}
+  BRANCH: dev
+  INSPECT_JOB_URL: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  BUILD_ICON_URL: https://cdn-icons-png.flaticon.com/128/5110/5110294.png
+  SUCCESS_ICON_URL: https://cdn-icons-png.flaticon.com/128/1356/1356479.png
+  FAIL_ICON_URL: https://www.flaticon.com/free-icon/rocket_6818114
+
+on:
+#   schedule:
+#     - cron: "0 3 * * 6"
+  push:
+    branches:
+      - e66ac2-test
+      #- dev
+      # - test
+      # - prod
+  pull_request:
+    branches:
+      - e66ac2-test
+      #- dev
+      #- test
+      #- prod
+
+  workflow_call:
+    secrets:
+      DB_NAME:
+        required: true
+      DB_USER:
+        required: true
+      DB_PASSWORD:
+        required: true
+      ARTIFACTORY_URL:
+        required: true
+
+jobs:
+  #Print variables for logging and debugging purposes
+  checkEnv:
+    name: 📋 Environment Check
+    runs-on: ubuntu-latest
+    outputs: # Define the output parameter
+      APP: ${{ env.APP }}
+      BRANCH: ${{ env.BRANCH }}
+      PECSF__ENVIRONMENT: ${{ env.PECSF_ENVIRONMENT }}
+      DEPLOY_NAMESPACE: ${{ env.OPENSHIFT_DEPLOY_PROJECT }}-${{ env.BRANCH }}
+      IMAGE_REPO: ${{ env.IMAGE_REPO }}
+      BUILD_NAMESPACE: ${{ env.OPENSHIFT_DEPLOY_PROJECT }}-${{ env.BRANCH }}
+      DB_DEPLOYMENT_NAME: ${{ env.DB_DEPLOYMENT_NAME }}
+      WEB_DEPLOYMENT_NAME: ${{ env.WEB_DEPLOYMENT_NAME }}
+      WEB_IMAGE: ${{ env.WEB_IMAGE }}
+      DB_HOST: ${{ env.DB_HOST }}
+      DB_PORT: ${{ env.DB_PORT }}
+      DB_NAME: ${{ env.DB_NAME }}
+      DB_IMAGE: ${{ env.DB_IMAGE }}
+      PHP_DEPLOYMENT_NAME: ${{ env.PHP_DEPLOYMENT_NAME }}
+      CRON_DEPLOYMENT_NAME: ${{ env.CRON_DEPLOYMENT_NAME }}
+      CRON_IMAGE: ${{ env.CRON_IMAGE}}
+      REDIS_IMAGE: ${{ env.REDIS_IMAGE }}
+      REDIS_DEPLOYMENT_NAME: ${{ env.REDIS_DEPLOYMENT_NAME }}
+      DB_BACKUP_DEPLOYMENT_NAME: ${{ env.DB_BACKUP_DEPLOYMENT_NAME }}
+      DB_BACKUP_DEPLOYMENT_FULL_NAME: ${{ env.DB_BACKUP_DEPLOYMENT_FULL_NAME }}
+      BACKUP_IMAGE: ${{ env.BACKUP_IMAGE }}
+      BACKUP_HELM_CHART: ${{ env.BACKUP_HELM_CHART }}
+      CLEAN_BUILDS: ${{ env.CLEAN_BUILDS }}
+      SKIP_BUILDS: ${{ env.SKIP_BUILDS }}
+      SKIP_DEPLOY: ${{ env.SKIP_DEPLOY }}
+    steps:
+      - name: 📤 Checkout Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          sparse-checkout: |
+            config/mariadb
+            example.env
+            example.versions.env
+
+      - name: Setup Env Vars
+        id: dotenv
+        uses: falti/dotenv-action@v1
+        with:
+          path: example.env
+          export-variables: true
+          keys-case: upper
+
+      - name: Setup Env Version Vars
+        id: dotenv_versions
+        uses: falti/dotenv-action@v1
+        with:
+          path: example.versions.env
+          export-variables: true
+          keys-case: upper
+
+      - name: Print Env Vars
+        run: |
+          echo Deploying ${{ env.PROJECT }} > ${{ env.APP }} on ${{ env.OPENSHIFT_DEPLOY_PROJECT }}-${{ env.BRANCH }}
+          echo "-----------------------"
+          echo URL: https://${{ env.APP }}-${{ env.DEPLOY_NAMESPACE }}-${{ env.BRANCH }}.apps.silver.devops.gov.bc.ca
+
+  # Build Images and deploy to JFrog
+  db:
+    name: 🔨 DB
+    needs: [checkEnv]
+    uses: ./.github/workflows/db.yml
+    secrets: inherit
+    if: needs.checkEnv.outputs.SKIP_BUILDS == 'NO'
+    with:
+      DB_IMAGE: ${{ needs.checkEnv.outputs.DB_IMAGE }}
+
+  # php:
+  #   name: 🔨 PHP
+  #   needs: [checkEnv]
+  #   if: needs.checkEnv.outputs.SKIP_BUILDS == 'NO'
+  #   uses: ./.github/workflows/php.yml
+  #   secrets: inherit
+
+  # cron:
+  #   name: 🔨 Cron
+  #   needs: [checkEnv]
+  #   if: needs.checkEnv.outputs.SKIP_BUILDS == 'NO'
+  #   uses: ./.github/workflows/cron.yml
+  #   secrets: inherit
+
+  # web:
+  #   name: 🔨 Web
+  #   needs: [checkEnv]
+  #   if: needs.checkEnv.outputs.SKIP_BUILDS == 'NO'
+  #   uses: ./.github/workflows/web.yml
+  #   secrets: inherit
+
+  # pecsf:
+  #   name: 🔨 pecsf
+  #   needs: [checkEnv]
+  #   if: needs.checkEnv.outputs.SKIP_BUILDS == 'NO'
+  #   uses: ./.github/workflows/pecsf.yml
+  #   secrets: inherit
+
+  # call-cleanup-workflow:
+  #   name: 🧹️ Clean-up
+  #   uses: ./.github/workflows/cleanup.yml
+  #   secrets: inherit
+  #   needs: [checkEnv, db, php, cron, pecsf, web]
+  #   # if: success()
+  #   if: needs.checkEnv.outputs.CLEAN_BUILDS == 'YES'
+  #   with:
+  #     APP: ${{ needs.checkEnv.outputs.APP }}
+  #     APP_HOST_URL: ${{ needs.checkEnv.outputs.APP }}-${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}.apps.silver.devops.gov.bc.ca
+  #     BRANCH: ${{ needs.checkEnv.outputs.BRANCH }}
+  #     BUILD_NAMESPACE: ${{ needs.checkEnv.outputs.BUILD_NAMESPACE }}
+  #     DEPLOY_NAMESPACE: ${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}
+  #     DB_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.DB_DEPLOYMENT_NAME }}
+  #     WEB_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.WEB_DEPLOYMENT_NAME }}
+  #     PHP_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.PHP_DEPLOYMENT_NAME }}
+  #     CRON_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.CRON_DEPLOYMENT_NAME }}
+  #     REDIS_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.REDIS_DEPLOYMENT_NAME }}
+
+  call-deploy-workflow:
+    name: 🚀 Deploy
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    needs: [checkEnv, db, php, cron, pecsf, web, call-cleanup-workflow]
+    if: |
+      (always() && needs.checkEnv.outputs.SKIP_DEPLOY == 'NO') &&
+      needs.checkEnv.result == 'success' &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+    with:
+      PECSF_ENVIRONMENT: ${{ needs.checkEnv.outputs.PECSF_ENVIRONMENT }}
+      APP: ${{ needs.checkEnv.outputs.APP }}
+      WEB_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.WEB_DEPLOYMENT_NAME }}
+      WEB_IMAGE: ${{ needs.checkEnv.outputs.WEB_IMAGE }}
+      PHP_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.PHP_DEPLOYMENT_NAME }}
+      DB_IMAGE: ${{ needs.checkEnv.outputs.DB_IMAGE }}
+      DB_HOST: ${{ needs.checkEnv.outputs.DB_HOST }}
+      DB_PORT: ${{ needs.checkEnv.outputs.DB_PORT }}
+      DB_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.DB_DEPLOYMENT_NAME }}
+      DB_BACKUP_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.DB_BACKUP_DEPLOYMENT_NAME }}
+      DB_BACKUP_DEPLOYMENT_FULL_NAME: ${{ needs.checkEnv.outputs.DB_BACKUP_DEPLOYMENT_FULL_NAME }}
+      BACKUP_IMAGE: ${{ needs.checkEnv.outputs.BACKUP_IMAGE }}
+      BACKUP_HELM_CHART: ${{ needs.checkEnv.outputs.BACKUP_HELM_CHART }}
+      CRON_IMAGE: ${{ needs.checkEnv.outputs.CRON_IMAGE }}
+      CRON_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.CRON_DEPLOYMENT_NAME }}
+      REDIS_IMAGE: ${{ needs.checkEnv.outputs.REDIS_IMAGE }}
+      REDIS_DEPLOYMENT_NAME: ${{ needs.checkEnv.outputs.REDIS_DEPLOYMENT_NAME }}
+      APP_HOST_URL: ${{ needs.checkEnv.outputs.APP }}-${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}.apps.silver.devops.gov.bc.ca
+      BUILD_NAMESPACE: ${{ needs.checkEnv.outputs.BUILD_NAMESPACE }}
+      DEPLOY_NAMESPACE: ${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}
+      IMAGE_REPO: ${{ needs.checkEnv.outputs.IMAGE_REPO }}
+
+  lighthouse-check:
+    name: 🚦 Audit
+    runs-on: ubuntu-latest
+    needs: [checkEnv, call-deploy-workflow]
+    outputs:
+      LHRESULT: ${{ steps.lighthouse.outputs.LHRESULT }}
+    if: |
+      always() &&
+      (
+        needs.call-deploy-workflow.result == 'success' ||
+        needs.checkEnv.outputs.SKIP_DEPLOY == 'YES'
+      ) &&
+      !contains(needs.*.result, 'failure')
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p tmp/artifacts
+      - name: Install Puppeteer and Lighthouse
+        run: npm install puppeteer lighthouse
+      - name: Install dependencies
+        run: sudo apt-get install -y gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget libgbm-dev
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          install-dependencies: false
+      - name: Lighthouse
+        id: lighthouse
+        run: |
+          sleep 120 # Wait for the deployment to be ready
+          `echo "LHRESULT=$(node config/lighthouse/lighthouse-auth.js)" >> $GITHUB_OUTPUT`
+        env:
+          APP_HOST_URL: ${{ needs.checkEnv.outputs.APP }}-${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}.apps.silver.devops.gov.bc.ca
+          USERNAME: ${{ secrets.PECSF_TESTER_USERNAME }}
+          PASSWORD: ${{ secrets.PECSF_TESTER_PASSWORD }}
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-artifacts
+          path: |
+            /home/runner/work/pecsf/pecsf/*.png
+            /home/runner/work/pecsf/pecsf/*.md
+
+  notify:
+    name: 📫 Notify
+    needs:
+      [
+        checkEnv,
+        web,
+        pecsf,
+        cron,
+        php,
+        db,
+        call-cleanup-workflow,
+        call-deploy-workflow,
+        lighthouse-check
+      ]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifacts
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: lighthouse-artifacts
+          path: artifacts
+      - name: Set Emoji for Notification Status Icon
+        id: notification-emoji
+        run: |
+          if [[ "${{ needs.call-deploy-workflow.result }}" == "success" ]]; then
+            `echo "EMOJI=:rocket:" >> $GITHUB_OUTPUT`
+          else
+            `echo "EMOJI=:boom:" >> $GITHUB_OUTPUT`
+          fi
+      - name: 📫 Send Notification
+        uses: muinmomin/webhook-action@v1.0.0
+        env:
+          APP_HOST_URL: ${{ needs.checkEnv.outputs.APP }}-${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}.apps.silver.devops.gov.bc.ca
+        with:
+          url: ${{ secrets.ROCKETCHAT_WEBHOOK_URL }}
+          data: >
+            {
+              "emoji": "${{ steps.notification-emoji.outputs.EMOJI }}",
+              "text": "Deployment to: ${{ needs.checkEnv.outputs.DEPLOY_NAMESPACE }}, status: ${{ needs.call-deploy-workflow.result }}",
+              "attachments": [{
+                "title": "View Job on GitHub",
+                "title_link": "${{ env.INSPECT_JOB_URL }}",
+                "fields": [{
+                  "title": "Verify PECSF",
+                  "value": "Verify that the site still works and updates have been completed (Admin access required) [PECSF Admin](https://${{ env.APP_HOST_URL }}/admin/index.php)"
+                },{
+                  "title": "Build DB: ${{ needs.db.result }}"
+                },{
+                  "title": "Build PHP: ${{ needs.php.result }}"
+                },{
+                  "title": "Build Cron: ${{ needs.cron.result }}"
+                },{
+                  "title": "Build Web: ${{ needs.web.result }}"
+                },{
+                  "title": "Build PECSF: ${{ needs.pecsf.result }}"
+                },{
+                  "title": "Cleanup Resources: ${{ needs.call-cleanup-workflow.result }}"
+                },{
+                  "title": "Deploy to OpenShift: ${{ needs.call-deploy-workflow.result }}"
+                },{
+                  "title": "Lighthouse Test Results:",
+                  "value": "${{ needs.lighthouse-check.outputs.LHRESULT }}"
+                }]
+              }]
+            }

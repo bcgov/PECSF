@@ -1,0 +1,235 @@
+# ConfigMap holding information about configuration files for primary/secondary and dockerinit
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+data:
+
+  primary.cnf: |
+    [mariadb]
+    skip-ssl
+    skip-name-resolve
+    # disable-ssl-verify-server-cert
+    log-bin=db-0-bin
+    max_allowed_packet=1073741824
+    innodb_buffer_pool_size=800M
+    net_read_timeout=3600
+    net_write_timeout=3600
+    innodb_ft_result_cache_limit=1000000000
+    # GTID settings
+    gtid_domain_id=1                # Unique domain ID for GTID
+    # enforce_gtid_consistency=1      # Ensure transactions are GTID-consistent
+    gtid_strict_mode=1              # Prevents issues with non-deterministic statements
+    binlog_format=ROW               # Required for GTID replication
+
+  replica.cnf: |
+    [mariadb]
+    skip-ssl
+    # disable-ssl-verify-server-cert
+    slave_parallel_mode=optimistic
+    slave_parallel_threads=2  # Adjust this value based on your system's capabilities
+    relay-log=moodle-db-relay-bin
+    max_allowed_packet=1073741824
+    innodb_buffer_pool_size=800M
+    net_read_timeout=3600
+    net_write_timeout=3600
+    slave_skip_errors=1062,1396
+    innodb_ft_result_cache_limit = 1000000000
+    # GTID settings
+    gtid_domain_id=1                # Must match the primary's domain ID
+    # enforce_gtid_consistency=1      # Ensure transactions are GTID-consistent
+    gtid_strict_mode=1              # Prevents issues with non-deterministic statements
+
+  primary.sql: |
+    CREATE USER 'repluser'@'%' IDENTIFIED BY 'replsecret';
+    GRANT REPLICATION REPLICA ON *.* TO 'repluser'@'%';
+    GRANT REPLICA MONITOR ON *.* TO 'repluser'@'%';
+    GRANT SLAVE MONITOR ON *.* TO 'repluser'@'%';
+    CREATE DATABASE IF NOT EXISTS moodle;
+    FLUSH PRIVILEGES;
+
+  secondary.sql: |
+    # We have to know name of sts (`db`) and
+    # service `db` in advance as an FQDN.
+    # No need to use master_port
+    CHANGE MASTER TO
+      MASTER_HOST='db-0.db',
+      MASTER_USER='repluser',
+      MASTER_PASSWORD='replsecret',
+      MASTER_CONNECT_RETRY=10;
+      # MASTER_USE_GTID=current_pos,
+      # MASTER_SSL=1,
+      # MASTER_SSL_CA='ca.pem',
+      # MASTER_SSL_CERT='client-cert.pem',
+      # MASTER_SSL_KEY='client-key.pem';
+      # MASTER_LOG_FILE='moodle-db-bin.000004',
+      # MASTER_LOG_POS=547,
+      MASTER_AUTO_POSITION=1;
+      MASTER_CONNECT_RETRY=60;
+    FLUSH PRIVILEGES;
+
+# Headless service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  ports:
+  - port: 3306
+    name: db-port
+  clusterIP: None
+  selector:
+    app: db
+
+# Statefulset
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  serviceName: "db"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      initContainers:
+      - name: init-db
+        image: ${IMAGE_REPO}${DB_IMAGE}
+        imagePullPolicy: Always
+        command:
+        - bash
+        - "-c"
+        - |
+          echo 'Starting init-db';
+          ls /mnt/config-map
+          HOSTNAME=`hostname`
+          [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+          # Copy appropriate conf.d files from db-config-map to
+          # db-config volume (emptyDir) depending on pod number
+          ordinal=$(echo `hostname` | sed 's/[^0-9]*//g')
+          # Copy appropriate conf.d files from db-config-map to
+          # db-config volume (emptyDir) depending on pod number
+          if [[ $(echo `hostname` | sed 's/[^0-9]*//g') -eq 0 ]]; then
+            # This file holds SQL for connecting to primary
+            cp /mnt/config-map/primary.cnf /etc/mysql/my.cnf
+            # Create the users needed for replication on primary on a volume
+            # initdb (emptyDir)
+            cp /mnt/config-map/primary.sql /docker-entrypoint-initdb.d
+          else
+            # This file holds SQL for connecting to secondary
+            cp /mnt/config-map/replica.cnf /etc/mysql/my.cnf
+            # On replicas use secondary configuration on initdb volume
+            cp /mnt/config-map/secondary.sql /docker-entrypoint-initdb.d
+          fi
+          # Add an offset to avoid reserved server-id=0 value.
+          echo server-id=$((3000 + $(echo `hostname` | sed 's/[^0-9]*//g'))) >> etc/mysql/my.cnf
+          ls /etc/mysql/
+          cat /etc/mysql/my.cnf
+        volumeMounts:
+        - name: db-config-map
+          mountPath: /mnt/config-map
+        - name: db-config
+          mountPath: /etc/mysql/
+        - name: initdb
+          mountPath: /docker-entrypoint-initdb.d
+      restartPolicy: Always
+      containers:
+      - name: db
+        image: ${IMAGE_REPO}${DB_IMAGE}
+        ports:
+        - containerPort: 3306
+          name: db-port
+        resources:
+          limits:
+            cpu: 800m
+            memory: 1024Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
+        livenessProbe:
+          exec:
+            command:
+            - healthcheck.sh
+            - '--replication_io'
+            - '--replication_sql'
+            - '--replication_seconds_behind_master=10'
+            - '--replication'
+          timeoutSeconds: 100
+          periodSeconds: 1000
+          successThreshold: 1
+          failureThreshold: 300
+        env:
+        # Using Secrets
+        - name: MARIADB_ALLOW_EMPTY_ROOT_PASSWORD
+          value: "yes"
+        - name: MARIADB_AUTO_UPGRADE
+          value: "yes"
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: moodle-secrets
+              key: database-user
+        - name: MARIADB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: moodle-secrets
+              key: database-name
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: moodle-secrets
+              key: database-password
+        - name: MYSQL_INITDB_SKIP_TZINFO
+          value: "1"
+        # Create mysql user for healthcheck.sh
+        - name: MARIADB_MYSQL_LOCALHOST_USER
+          value: "1"
+        - name: MARIADB_HEALTHCHECK_GRANTS
+          value: "REPLICA MONITOR"
+        # Give mysql user grants
+        - name: MARIADB_MYSQL_LOCALHOST_GRANTS
+          value: "REPLICA MONITOR"
+        # Mount volume from persistent volume claim
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/mysql/
+        - name: db-config-map
+          mountPath: /mnt/config-map
+        - name: db-config
+          mountPath: /etc/mysql/
+        - name: initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: db-config-map
+        configMap:
+          name: db-config
+          #defaultMode: 0544
+      - name: db-config
+        emptyDir: {}
+      - name: initdb
+        emptyDir: {}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+# Delete the
+# pvc's  for i in 0 1 2; do kubectl delete pvc datadir-db-$i; done
+# https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/
+# https://github.com/Yolean/kubernetes-mysql-cluster/blob/master/50mariadb.yml

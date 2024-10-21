@@ -1,0 +1,64 @@
+name: PHP
+
+concurrency:
+  group: php-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  APP: moodle
+  USER: ${{ github.actor }}
+
+on:
+  workflow_call:
+    inputs:
+      SKIP_BUILDS:
+        type: string
+        description: 'Skip builds if set to YES'
+        required: false
+        default: 'NO'
+jobs:
+  build-images:
+    name: '🐸 Build to JFrog'
+    runs-on: ubuntu-latest
+    if: (github.ref_name == 'dev' || github.ref_name == 'test' || github.ref_name == 'prod')
+    steps:
+      # Checkout the PR branch
+      - name: 📤 Checkout Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      # Login to Artifactory
+      - name: 🔑 Login to Artifactory
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ARTIFACTORY_URL }}
+          username: ${{ secrets.ARTIFACTORY_USER }}
+          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+      - name: Setup Env Vars
+        id: dotenv
+        uses: falti/dotenv-action@v1
+        with:
+          path: example.env
+          export-variables: true
+          keys-case: upper
+
+      - name: Setup Versions Env Vars
+        id: dotenv_versions
+        uses: falti/dotenv-action@v1
+        with:
+          path: example.versions.env
+          export-variables: true
+          keys-case: upper
+
+      # Pull latest PHP base image and push to Artifactory
+      - name: 🛠️ Pull PHP base image and push to Artifactory
+        run: |
+          docker pull ${{ env.PHP_IMAGE }}
+          docker tag ${{ env.PHP_IMAGE }} ${{ secrets.ARTIFACTORY_URL }}/${{ env.PHP_IMAGE }}
+          docker push ${{ secrets.ARTIFACTORY_URL }}/${{ env.PHP_IMAGE }}
+
+      # Build PHP Image and push to Artifactory
+      - name: 🛠️ Build PHP Image and push to Artifactory
+        run: docker buildx build --cache-from type=gha --cache-to type=gha,mode=max --build-arg DOCKER_FROM_IMAGE=${{ secrets.ARTIFACTORY_URL }}/${{ env.PHP_IMAGE }} --tag ${{ secrets.ARTIFACTORY_URL }}/${{ env.PHP_DEPLOYMENT_NAME }}:${{ env.OPENSHIFT_DEPLOY_PROJECT }}-${{ github.ref_name }} --output=type=image,push=true --push -f ${{ env.PHP_DOCKER_FILE_PATH }} .

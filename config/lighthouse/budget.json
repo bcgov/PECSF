@@ -1,0 +1,49 @@
+[
+  {
+    "path": "/*",
+    "resourceSizes": [
+      {
+        "resourceType": "document",
+        "budget": 30000
+      },
+      {
+        "resourceType": "total",
+        "budget": 4000
+      }
+    ],
+    "resourceCounts": [
+      {
+        "resourceType": "font",
+        "budget": 5
+      },
+      {
+        "resourceType": "total",
+        "budget": 100
+      }
+    ],
+    "timings": [
+      {
+        "metric": "first-contentful-paint",
+        "budget": 5000
+      },
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 6000
+      },
+      {
+        "metric": "interactive",
+        "budget": 8000
+      },
+      {
+        "metric": "total-blocking-time",
+        "budget": 1500
+      }
+    ],
+    "accessibility": [
+      {
+        "metric": "accessibility",
+        "budget": 1500
+      }
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "config": {
+    "settings": {
+      "onlyCategories": ["performance"]
+    }
+  },
+  "options": {
+    "disableStorageReset": false
+  }
+}
