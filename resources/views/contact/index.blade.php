@@ -87,7 +87,7 @@
         content: '-';
     }
 
-    button.btn-nav-accordion:focus {
+    button.btn-nav-accordion {
         border: none !important;
     }
 
