@@ -35,7 +35,33 @@ $(function () {
         }
     });
 
-    
+    $("[name='event_type']").change(function(){
+        org_code = $("select[name='organization_code']").val();
+        event_type = $("[name='event_type']").val();        
+        pecsf_id = $("[name='pecsf_id']").val();
+
+        let prefix;
+        switch (org_code) {
+            case "RET":
+                prefix = "R";
+                break;
+            default:
+                if (event_type.startsWith('C')) { // ["Cash One-Time Donation", "Cheque One-Time Donation"]
+                    prefix = "S";
+            } else {
+                prefix = event_type.charAt(0);
+            }
+        }
+
+        if (pecsf_id && (prefix != pecsf_id.charAt(0))) {
+            Swal.fire({
+                    icon: 'info',
+                    html:
+                        '<strong>Please note that the PECSF ID will be reassigned once you click the submit button.</strong>',
+            });
+        }
+            
+    }); 
 
     $("[name='event_type'],[name='organization_code']").change(function(){
         $("#employeename").hide();
