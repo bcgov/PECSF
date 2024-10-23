@@ -42,44 +42,50 @@ class Kernel extends ConsoleKernel
 
         if (env('TASK_SCHEDULING_OUTBOUND_PSFT_ENABLED')) 
         { 
-                // Note: The export processes are only execute in TEST and Production (1000 per hour limiation on ODS) 
+
                 $schedule->command('command:ExportPledgesToPSFT')
-                        ->dailyAt('00:50')->environments(['TEST', 'prod'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('00:50')->environments(['prod'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+
+                $schedule->command('command:ExportPledgesToPSFT')
+                        ->dailyAt('08:00')->environments(['TEST'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+
+
+                // Note: The export processes are only execute in TEST and Production (1000 per hour limiation on ODS)                 
                 $schedule->command('command:ExportPledgesToPSFT')
                          ->when(function () {
                              return Pledge::hasDataToSend();
                          })
-                        ->dailyAt('01:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('01:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('02:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('02:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('03:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('03:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('04:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('04:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('05:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('05:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('06:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                        
+                        ->dailyAt('06:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                        
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                               return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('7:50')->environments(['TEST', 'prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                                                
+                        ->dailyAt('7:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                                                
         }
 
         if (env('TASK_SCHEDULING_OUTBOUND_BI_ENABLED')) 
@@ -87,8 +93,14 @@ class Kernel extends ConsoleKernel
                 $schedule->command('command:ExportDatabaseToBI')
                         ->weekdays()
                         ->at('1:15')
-                        ->environments(['TEST', 'prod'])
+                        ->environments(['prod'])
                         ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
+
+                $schedule->command('command:ExportDatabaseToBI')
+                        ->weekdays()
+                        ->at('8:05')
+                        ->environments(['TEST'])
+                        ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));                        
 
         }
 
@@ -98,14 +110,23 @@ class Kernel extends ConsoleKernel
         if (env('TASK_SCHEDULING_INBOUND_ENABLED')) 
         { 
 
-                // Foundation table
+                // Production -- Foundation table
                 $schedule->command('command:ImportPayCalendar')
                         ->weekly()
                         ->mondays()
                         ->at('2:00')
+                        ->environments(['prod'])
                         //  ->everyFifteenMinutes()
                         ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'));
                         
+                // Non-Production -- Foundation table                        
+                $schedule->command('command:ImportPayCalendar')
+                        ->weekly()
+                        ->mondays()
+                        ->at('8:15')
+                        ->environments(['dev', 'TEST'])
+                        //  ->everyFifteenMinutes()
+                        ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'));
 
                 // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
                 // $schedule->command('command:ImportNonGovPledgeHistory')
@@ -118,38 +139,77 @@ class Kernel extends ConsoleKernel
 
                 if (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1)) {
 
-                   $schedule->command('command:ImportCities')
-                        // ->skip(function () {
-                        //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
-                        // })
-                        ->weekdays()
-                        ->at('2:30')
-                        ->sendOutputTo(storage_path('logs/ImportCities.log')); 
+                        // Production - Cities
+                        $schedule->command('command:ImportCities')
+                                // ->skip(function () {
+                                //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                                // })
+                                ->weekdays()
+                                ->at('2:30')
+                                ->environments(['prod'])
+                                ->sendOutputTo(storage_path('logs/ImportCities.log')); 
 
-                   $schedule->command('command:ImportDepartments')
-                        // ->skip(function () {
-                        //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
-                        // })
-                        ->weekdays()
-                        ->at('2:45')
-                        ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
-                        
+                        // Production - Department
+                        $schedule->command('command:ImportDepartments')
+                                // ->skip(function () {
+                                //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                                // })
+                                ->weekdays()
+                                ->at('2:45')
+                                ->environments(['prod'])
+                                ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+
+                        // Non-Production - Cities 
+                        $schedule->command('command:ImportCities')
+                                // ->skip(function () {
+                                //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                                // })
+                                ->weekdays()
+                                ->at('8:30')
+                                ->environments(['dev', 'TEST'])
+                                ->sendOutputTo(storage_path('logs/ImportCities.log'));                         
+
+                        // Non-Production - Departments
+                        $schedule->command('command:ImportDepartments')
+                                // ->skip(function () {
+                                //         return (!(CampaignYear::isAnnualCampaignOpenNow())) and (today()->dayOfWeek != 1);
+                                // })
+                                ->weekdays()
+                                ->at('8:45')
+                                ->environments(['dev', 'TEST'])
+                                ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+
                 }
 
                 // For testing purpose: to generate 2022 pledges based on the BI pledge history
                 // $schedule->command('command:GeneratePledgeFromHistory')
                 //         ->dailyAt('3:00');                    
                 
-                // Demography data and user profiles
+                // Production -- Demography data and user profiles
                 $schedule->command('command:ImportEmployeeJob')
                         ->weekdays()
                         ->at('4:00')
+                        ->environments(['prod'])
                         ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
 
                 $schedule->command('command:SyncUserProfile')
                         ->weekdays()
                         ->at('4:15')
+                        ->environments(['prod'])
                         ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
+
+                // Non-Production -- Demography data and user profiles                        
+                $schedule->command('command:ImportEmployeeJob')
+                        ->weekdays()
+                        ->at('9:00')
+                        ->environments(['dev', 'TEST'])
+                        ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
+
+                $schedule->command('command:SyncUserProfile')
+                        ->weekdays()
+                        ->at('9:15')
+                        ->environments(['dev', 'TEST'])
+                        ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));                        
 
         }
 
