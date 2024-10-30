@@ -194,7 +194,7 @@ class Kernel extends ConsoleKernel
 
                 $schedule->command('command:SyncUserProfile')
                         ->weekdays()
-                        ->at('4:15')
+                        ->at('4:30')
                         ->environments(['prod'])
                         ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
 
@@ -215,11 +215,11 @@ class Kernel extends ConsoleKernel
 
         // Snapshot of eligible employees 
         $schedule->command('command:UpdateEligibleEmployeeSnapshot')
-                ->dailyAt('4:30')
+                ->dailyAt('4:45')
                 ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
 
         $schedule->command('command:UpdateDailyCampaign')
-                ->dailyAt('4:45')
+                ->dailyAt('5:00')
                 ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
         
         $schedule->command('command:SystemCleanUp')
