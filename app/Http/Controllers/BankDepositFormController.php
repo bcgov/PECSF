@@ -1015,6 +1015,7 @@ class BankDepositFormController extends Controller
         $record = EmployeeJob::where("emplid","=",$request->id)
                                 ->with('bus_unit', 'city_by_office_city')
                                 ->select('business_unit_id', 'business_unit', 'dept_name','office_city', 'region_id', 'first_name', 'last_name')
+                                ->where('empl_status', 'A')
                                 ->first();
 
         $record->business_unit_id = $record ? $record->challenge_business_unit->id : null;
