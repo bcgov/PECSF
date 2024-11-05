@@ -654,7 +654,7 @@ class BankDepositFormController extends Controller
                 }
                 else{
                     $a = [];
-                    for($i=(count(request("donation_percent")) -1);$i >= (count(request("donation_percent")) - $request->org_count);$i--){
+                    for($i=(count(request("organization_name")) -1);$i >= (count(request("organization_name")) - $request->org_count);$i--){
                         if(empty(request("organization_name")[$i]))
                         {
                             $validator->errors()->add('organization_name.'.$i+1,'The Organization name is required.');
