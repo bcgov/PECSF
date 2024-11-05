@@ -523,7 +523,7 @@ class AnnualCampaignController extends Controller
             if ($campaign_year->isOpen()) {
                 $user = User::where('id', Auth::id())->first();
                 $pledge =  Pledge::where('emplid', $user->emplid)->orderBy('id', 'desc')->first();
-                $pledge_id = $pledge->id;
+                $pledge_id = $pledge ? $pledge->id : null;
             }
         }
 
