@@ -6,6 +6,7 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use App\Imports\DonationsImport;
 use App\Imports\DonationsImportLA;
+use App\Imports\DonationsImportBCP;
 use App\Imports\DonationsImportBCS;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
@@ -53,6 +54,9 @@ class DonationsImportJob implements ShouldQueue, ShouldBeUnique
                     break;
                 case 'BCS':     // BC Securities Commission
                     Excel::import(new DonationsImportBCS( $this->history_id, $this->org_code), $this->uploadFilePath );
+                    break;
+                case 'BCP':     // BC Pension Corporation
+                    Excel::import(new DonationsImportBCP( $this->history_id, $this->org_code), $this->uploadFilePath );
                     break;
                 case 'LA':      // Legislative Assembly of BC
                     Excel::import(new DonationsImportLA( $this->history_id, $this->org_code), $this->uploadFilePath );
