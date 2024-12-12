@@ -253,11 +253,14 @@ class ChallengePageTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get('/challenge/download?sort=region');
 
-        $filename = 'Daily_Campaign_Update_Region_' . today()->format('Y-m-d') . '.xlsx';
-
         $setting = Setting::first();
 
         if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+
+            if (today() > $setting->campaign_end_date && today() < $setting->campaign_final_date) {
+                $filename = 'Daily_Campaign_Update_Region_' . $setting->campaign_end_date->format('Y-m-d') . '.xlsx';
+            }
+
             $response->assertStatus(200);
 
             $response->assertStatus(200);
@@ -289,6 +292,10 @@ class ChallengePageTest extends TestCase
         $setting = Setting::first();
 
         if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
+
+            if (today() > $setting->campaign_end_date && today() < $setting->campaign_final_date) {
+                $filename = 'Daily_Campaign_Update_By_Org_' . $setting->campaign_end_date->format('Y-m-d') . '.xlsx';
+            }
 
             $response->assertStatus(200);
             $response->assertDownload( $filename ); 
@@ -348,6 +355,8 @@ class ChallengePageTest extends TestCase
         // run command 
         $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
 
+        $setting = Setting::first();
+
         // check online page 
         $this->actingAs($this->user);
         $response = $this->json('get', '/http://localhost:8000/challenge?year=' . $expected_rows[0]['campaign_year'], [], ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
@@ -360,11 +369,18 @@ class ChallengePageTest extends TestCase
             // No data proceed by 
         } else {
 
-            $response->assertSeeText(number_format(round( $sum, 0)) );
+            if (today() > $setting->campaign_end_date && today() < $setting->campaign_final_date) {
 
-            // check database
-            foreach($expected_rows as $row) {
-                $this->assertDatabaseHas('daily_campaigns', $row );
+                // no data before campaign end date
+                
+            } else {
+
+                $response->assertSeeText(number_format(round( $sum, 0)) );
+
+                // check database
+                foreach($expected_rows as $row) {
+                    $this->assertDatabaseHas('daily_campaigns', $row );
+                }
             }
         }
         
@@ -378,6 +394,8 @@ class ChallengePageTest extends TestCase
         // run command 
         $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
 
+        $setting = Setting::first();
+
         // check online page 
         $this->actingAs($this->user);
         $response = $this->json('get', '/http://localhost:8000/challenge?year=' . $expected_rows[0]['campaign_year'], [], ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
@@ -389,12 +407,21 @@ class ChallengePageTest extends TestCase
         if (today()->month >= 3 && today()->month <= 8) {
             // No data proceed by 
         } else {
-            $response->assertSeeText( number_format(round( $sum, 0)) );
 
-            // check database
-            foreach($expected_rows as $row) {
-                $this->assertDatabaseHas('daily_campaigns', $row );
+            if (today() > $setting->campaign_end_date && today() < $setting->campaign_final_date) {
+
+                // no data before campaign end date
+                
+            } else {
+
+                $response->assertSeeText( number_format(round( $sum, 0)) );
+
+                // check database
+                foreach($expected_rows as $row) {
+                    $this->assertDatabaseHas('daily_campaigns', $row );
+                }
             }
+
         }
 
     }
@@ -408,6 +435,8 @@ class ChallengePageTest extends TestCase
         // run command 
         $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
 
+        $setting = Setting::first();
+
         // check online page 
         $this->actingAs($this->user);
         $response = $this->json('get', '/http://localhost:8000/challenge?year=' . $expected_rows[0]['campaign_year'], [], ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
@@ -418,11 +447,20 @@ class ChallengePageTest extends TestCase
         if (today()->month >= 3 && today()->month <= 8) {
             // No data proceed by 
         } else {
-            $response->assertSeeText( number_format(round( $sum, 0)) );
 
-            // check database
-            foreach($expected_rows as $row) {
-                $this->assertDatabaseHas('daily_campaigns', $row );
+
+            if (today() > $setting->campaign_end_date && today() < $setting->campaign_final_date) {
+
+                // no data before campaign end date
+                
+            } else {
+
+                $response->assertSeeText( number_format(round( $sum, 0)) );
+
+                // check database
+                foreach($expected_rows as $row) {
+                    $this->assertDatabaseHas('daily_campaigns', $row );
+                }
             }
         }
 
@@ -436,6 +474,8 @@ class ChallengePageTest extends TestCase
         // run command 
         $this->artisan('command:UpdateDailyCampaign')->assertExitCode(0);
 
+        $setting = Setting::first();
+
         // check online page 
         $this->actingAs($this->user);
         $response = $this->json('get', '/http://localhost:8000/challenge?year=' . $expected_rows[0]['campaign_year'], [], ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
@@ -447,12 +487,21 @@ class ChallengePageTest extends TestCase
         if (today()->month >= 3 && today()->month <= 8) {
             // No data proceed by 
         } else {
-            $response->assertSeeText( number_format(round( $sum, 0)) );
 
-            // check database
-            foreach($expected_rows as $row) {
-                $this->assertDatabaseHas('daily_campaigns', $row );
+            if (today() > $setting->campaign_end_date && today() < $setting->campaign_final_date) {
+
+                // no data before campaign end date
+                
+            } else {
+
+                $response->assertSeeText( number_format(round( $sum, 0)) );
+
+                // check database
+                foreach($expected_rows as $row) {
+                    $this->assertDatabaseHas('daily_campaigns', $row );
+                }
             }
+            
         }
 
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\System;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -95,7 +96,7 @@ class LogViewerController extends Controller
     {
 
         $user = User::where('id', Auth::id() )->first();
-        if ($user->source_type != 'HCM') {
+        if ($user->source_type != 'HCM' && (!(App::environment('local'))) ) {
             abort(403);
         }
 
