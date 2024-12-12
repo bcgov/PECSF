@@ -127,7 +127,7 @@ class ExportDatabaseToBI extends Command
                         ->orderBy('end_time', 'desc')->first();
 
 
-            $last_start_time = $last_job ? $last_job->created_at : '2000-01-01' ; 
+            $last_start_time = $last_job ? $last_job->start_time : '2000-01-01' ; 
 
             $this->LogMessage("Table '{$table_name}' Detail to BI (Datawarehouse) start on " . now() );
             $this->Logmessage("");
