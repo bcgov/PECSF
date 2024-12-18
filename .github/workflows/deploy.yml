@@ -12,7 +12,7 @@ jobs:
   #Print variables for logging and debugging purposes
   checkEnv:
     name: Check Env variables
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Print Env Vars
         run: |
@@ -26,7 +26,7 @@ jobs:
 
   build:
     name: Build APP
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # if: ${{ github.event.pull_request.merged == true}}
     if: github.ref_name == 'dev' || github.ref_name  == 'test' || github.ref_name  == 'prod'
     env:
@@ -70,7 +70,7 @@ jobs:
   # Deploy App images in Dev
   deployDev:
     name: Deploy APP to Dev environment
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.ref_name == 'dev'
     env:
      BUILD_ID: ${{ github.event.number }}
@@ -146,7 +146,7 @@ jobs:
   # Deploy App images in Test
   deployTest:
     name: Deploy APP to Test environment
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.ref_name == 'test'
     env:
      BUILD_ID: ${{ github.event.number }}
@@ -221,7 +221,7 @@ jobs:
  # Deploy App images in Prod
   deployProd:
     name: Deploy APP to Prod environment
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.ref_name == 'prod'
     env:
      BUILD_ID: ${{ github.event.number }}
