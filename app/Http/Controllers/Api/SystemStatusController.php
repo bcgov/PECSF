@@ -13,6 +13,7 @@ use App\Models\ScheduleJobAudit;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Console\Scheduling\Schedule;
 
@@ -106,11 +107,16 @@ class SystemStatusController extends Controller
                 continue;
             }
             $last_job_name = $job_name;
-
+    
             // SPECIAL -- only run on Monday and weekdays if annual campaign period is open
             if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
+
                 $cy = CampaignYear::where('calendar_year', today()->year + 1)->first();
-                $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(3) : null;
+                if (App::environment('prod')) {
+                    $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(3) : null;
+                } else {
+                    $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(9) : null;
+                }
 
                 if ( (now() > $last_change_date ) && (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1))) {
                     // it should be processed 
