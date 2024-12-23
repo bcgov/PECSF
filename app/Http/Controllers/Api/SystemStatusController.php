@@ -115,7 +115,7 @@ class SystemStatusController extends Controller
                 if (App::environment('prod')) {
                     $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(3) : null;
                 } else {
-                    $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(9) : null;
+                    $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(8) : null;
                 }
 
                 if ( (now() > $last_change_date ) && (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1))) {
@@ -140,10 +140,16 @@ class SystemStatusController extends Controller
                 // Use the previous calculate date
             } else {
                 if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
-                    if ($job_name == 'command:ImportCities') {
-                        $hr = 2; $min = 30;
+                    if (App::environment('prod')) {
+                        $t_hr = 2; 
                     } else {
-                        $hr = 2; $min = 45;
+                        $t_hr = 8;
+                    }
+
+                    if ($job_name == 'command:ImportCities') {
+                        $hr = $t_hr; $min = 30;
+                    } else {
+                        $hr = $t_hr; $min = 45;
                     }
 
                     if (now() <= (today()->hour($hr)->minute($min)) ) {
