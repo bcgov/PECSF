@@ -140,10 +140,16 @@ class SystemStatusController extends Controller
                 // Use the previous calculate date
             } else {
                 if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
-                    if ($job_name == 'command:ImportCities') {
-                        $hr = 2; $min = 30;
+                    if (App::environment('prod')) {
+                        $t_hr = 2; 
                     } else {
-                        $hr = 2; $min = 45;
+                        $t_hr = 9;
+                    }
+
+                    if ($job_name == 'command:ImportCities') {
+                        $hr = $t_hr; $min = 30;
+                    } else {
+                        $hr = $t_hr; $min = 45;
                     }
 
                     if (now() <= (today()->hour($hr)->minute($min)) ) {
