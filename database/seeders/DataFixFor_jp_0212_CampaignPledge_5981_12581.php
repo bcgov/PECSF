@@ -42,9 +42,9 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
             12581           080964 --> 081027      2025      
 
         */
-        DB::update("update pledges set pecsf_id = '136016', 
+        DB::update("update pledges set pecsf_id = '135016', 
                            updated_at = now() 
-                     where id = 5981 and pecsf_id = '135016' and deleted_at is null;");
+                     where id = 5981 and pecsf_id = '136016' and deleted_at is null;");
 
         DB::update("update donations set pecsf_id = '135016', 
                      updated_at = now() 
