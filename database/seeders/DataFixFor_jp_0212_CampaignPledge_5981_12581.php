@@ -13,11 +13,10 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
      */
     public function run(): void
     {
-        // Reassign charity on Evenet Pledge 173 
         
         echo 'Before change:' . PHP_EOL;
         $data = DB::table('pledges')
-                    ->whereRaw("id in (5981, 12581) and deleted_at is null;")
+                    ->whereRaw("id in (12625, 12581) and deleted_at is null;")
                     ->get();
         echo json_encode($data, JSON_PRETTY_PRINT);
 
@@ -29,9 +28,9 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
         echo json_encode($data, JSON_PRETTY_PRINT);
 
         echo PHP_EOL;
-        echo 'Before change: (Donation -- 135016)' . PHP_EOL;
+        echo 'Before change: (Donation -- 136016)' . PHP_EOL;
         $data = DB::table('donations')
-                    ->whereRaw("org_code = 'LA' and pecsf_id = '135016' ")
+                    ->whereRaw("org_code = 'LA' and pecsf_id = '136016' ")
                     ->get();
         echo json_encode($data, JSON_PRETTY_PRINT);
 
@@ -39,7 +38,7 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
         /*
             Tran ID         PECSF ID               YEAR    
 
-             5981           135016 --> 136016      2024        
+            12625           136016 --> 135016      2025        
             12581           080964 --> 081027      2025      
 
         */
@@ -47,9 +46,9 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
                            updated_at = now() 
                      where id = 5981 and pecsf_id = '135016' and deleted_at is null;");
 
-        DB::update("update donations set pecsf_id = '136016', 
+        DB::update("update donations set pecsf_id = '135016', 
                      updated_at = now() 
-                     where org_code = 'LA' and pecsf_id = '135016';");
+                     where org_code = 'LA' and pecsf_id = '136016';");
 
         /* ======================= */
         DB::update("update pledges set pecsf_id = '081027', 
@@ -64,7 +63,7 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
         echo PHP_EOL;
         echo 'After change:' . PHP_EOL;
         $data = DB::table('pledges')
-                    ->whereRaw("id in (5981, 12581) and deleted_at is null;")
+                    ->whereRaw("id in (12625, 12581) and deleted_at is null;")
                     ->get();
         echo json_encode($data, JSON_PRETTY_PRINT);
 
@@ -78,7 +77,7 @@ class DataFixFor_jp_0212_CampaignPledge_5981_12581 extends Seeder
         echo PHP_EOL;
         echo 'After change: (Donation -- 135016)' . PHP_EOL;
         $data = DB::table('donations')
-                    ->whereRaw("org_code = 'LA' and pecsf_id = '136016' ")
+                    ->whereRaw("org_code = 'LA' and pecsf_id = '135016' ")
                     ->get();
         echo json_encode($data, JSON_PRETTY_PRINT);
 
