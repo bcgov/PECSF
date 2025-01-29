@@ -13,6 +13,7 @@ use App\Models\ScheduleJobAudit;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Console\Scheduling\Schedule;
 
@@ -106,11 +107,16 @@ class SystemStatusController extends Controller
                 continue;
             }
             $last_job_name = $job_name;
-
+    
             // SPECIAL -- only run on Monday and weekdays if annual campaign period is open
             if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
+
                 $cy = CampaignYear::where('calendar_year', today()->year + 1)->first();
-                $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(3) : null;
+                if (App::environment('prod')) {
+                    $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(3) : null;
+                } else {
+                    $last_change_date = $cy ? $cy->updated_at->startOfDay()->copy()->addDay(1)->addHours(8) : null;
+                }
 
                 if ( (now() > $last_change_date ) && (CampaignYear::isAnnualCampaignOpenNow() || (today()->dayOfWeek == 1))) {
                     // it should be processed 
@@ -134,10 +140,16 @@ class SystemStatusController extends Controller
                 // Use the previous calculate date
             } else {
                 if ($job_name == 'command:ImportCities' || $job_name == 'command:ImportDepartments') {
-                    if ($job_name == 'command:ImportCities') {
-                        $hr = 2; $min = 30;
+                    if (App::environment('prod')) {
+                        $t_hr = 2; 
                     } else {
-                        $hr = 2; $min = 45;
+                        $t_hr = 8;
+                    }
+
+                    if ($job_name == 'command:ImportCities') {
+                        $hr = $t_hr; $min = 30;
+                    } else {
+                        $hr = $t_hr; $min = 45;
                     }
 
                     if (now() <= (today()->hour($hr)->minute($min)) ) {
