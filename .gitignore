@@ -12,6 +12,8 @@
 /vendor
 .env
 .env.backup
+.env.demo
+.env.dusk.local
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
