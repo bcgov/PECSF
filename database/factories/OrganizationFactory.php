@@ -14,9 +14,12 @@ class OrganizationFactory extends Factory
      */
     public function definition()
     {
+       
+        $code = $this->faker->regexify('/^[A-Z]{3}$/');
+
         return [
             //
-            'code' => $this->faker->randomElement(['LA', 'BCA', 'GOV', 'RET']),
+            'code' => $code,    // $this->faker->randomElement(['LA', 'BCA', 'GOV', 'RET']),
             'name' => $this->faker->words(2, true),
             'status' => $this->faker->randomElement(['A', 'I']),
             'effdt' => $this->faker->date(),
