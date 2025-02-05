@@ -12,7 +12,6 @@ beforeEach(function () {
   
     Setting::truncate();
     CampaignYear::truncate();
-    User::truncate();
 
     // Create a fresh test user
     $this->setting = Setting::create([
