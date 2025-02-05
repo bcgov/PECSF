@@ -45,10 +45,10 @@ class MaintainVolunteerProfileRequest extends FormRequest
                                 Rule::when($this->organization_id != $gov->id, 'required|digits:6'),
                                 ],
             'pecsf_first_name' => [
-                                    Rule::when($this->organization_id != $gov->id, 'required|regex:/^[\pL\s\-]+$/u'),
+                                    Rule::when($this->organization_id != $gov->id, 'required|regex:/^[A-Za-z .,]+$/'),
                                     ],
             'pecsf_last_name'  => [
-                                    Rule::when($this->organization_id != $gov->id, 'required|regex:/^[\pL\s\-]+$/u'),
+                                    Rule::when($this->organization_id != $gov->id, 'required|regex:/^[A-Za-z .,]+$/'),
                                   ],
             'pecsf_city'   => [
                                     Rule::when($this->organization_id != $gov->id, 'required'),
@@ -142,6 +142,8 @@ class MaintainVolunteerProfileRequest extends FormRequest
         return [
 
             'emplid.required' => 'The employee field is required',
+            'pecsf_first_name.regex' => "The First Name must only contain letters, periods, spaces.",
+            'pecsf_last_name.regex' => "The Last Name must only contain letters, periods, spaces.",
 
             'business_unit_code.required' => 'The business unit field is required',
             'business_unit_code.exists' => 'The selected business unit is invalid',
