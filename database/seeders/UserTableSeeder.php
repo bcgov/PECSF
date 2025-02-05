@@ -296,6 +296,8 @@ class UserTableSeeder extends Seeder
       ]
     ];
 
+      User::truncate();
+
         $organization = Organization::where('code','GOV')->first();
 
         $password = env('SYNC_USER_PROFILE_SECRET') ? Hash::make( env('SYNC_USER_PROFILE_SECRET')) : '$2y$10$Qoiy/oe4.1bV/uqEi0uTteP.sYudg34zeC2mN7YLTs8ris0F5WskW';
