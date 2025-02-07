@@ -339,7 +339,7 @@
                             @if ( \App\Models\CampaignYear::isVolunteerRegistrationOpenNow() )
                                 <x-button :href="route('volunteering.profile.create')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
                             @else
-                                <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">I'm ready to volunteer!</x-button>
+                                <x-button :href="route('volunteering.index')" role="button" class="ready-btn d-none">Close</x-button>
                             @endif
                         </div>
                     </div>
