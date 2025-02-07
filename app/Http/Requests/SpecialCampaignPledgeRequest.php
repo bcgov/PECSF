@@ -32,8 +32,8 @@ class SpecialCampaignPledgeRequest extends FormRequest
                 'organization_id'  => ['required'],
                 'user_id'       => [$this->organization_id == $gov->id ? 'required' : 'nullable',  'exists:users,id' ],
                 'pecsf_id'      => ['digits:6',  $this->organization_id != $gov->id ? 'required' : 'nullable'],
-                'pecsf_first_name'  => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[\pL\s\-]+$/u'],
-                'pecsf_last_name'   => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[\pL\s\-]+$/u'],
+                'pecsf_first_name'  => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[A-Za-z .,]+$/'],
+                'pecsf_last_name'   => [$this->organization_id != $gov->id ? 'required' : 'nullable', 'regex:/^[A-Za-z .,]+$/'],
                 'pecsf_city'   => [$this->organization_id != $gov->id ? 'required' : 'nullable'],
 
                 'special_campaign_id'  => [ 'required', Rule::exists("special_campaigns", "id")->whereNull("deleted_at") ],
@@ -53,6 +53,9 @@ class SpecialCampaignPledgeRequest extends FormRequest
         return [
 
             'user_id.required'       => 'The Employee field is required',
+            'pecsf_first_name.regex' => "The First Name must only contain letters, periods, spaces.",
+            'pecsf_last_name.regex' => "The Last Name must only contain letters, periods, spaces.",
+            
             'special_campaign_id.required' => 'The special campaign is required. ',
             'special_campaign_id.exists' => 'The selected special campaign is invalid. ',
             'one_time_amount.required' => 'The amount is required.',
