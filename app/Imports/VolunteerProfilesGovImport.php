@@ -193,7 +193,7 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
             // '5.numeric' => 'The 5 field must be a number',
 
             '0.in'     => 'The organization on upload file is not Government (GOV).',
-            '3.in'     => 'The campaign year in the file doesn\'t match the selected year.',
+            '3.in'     => 'The campaign year doesn\'t match the selected year.',
             '3.exists' => 'No campaign year set up.',
             '6.in'     => 'Invalid primary role.',
 

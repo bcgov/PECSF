@@ -209,7 +209,7 @@ echo PHP_EOL . (implode(',', $data) );
         $this->campaign_year;
 
         return [
-            '0' => 'required|exists:organizations,code',          // Organization Code
+            '0' => 'required|exists:organizations,code|not_in:GOV',  // Organization Code
             '1' => 'required',          // Last Name
             '2' => 'required',          // First Name
             '3' => 'required|in:' . $this->campaign_year . '|exists:campaign_years,calendar_year',
@@ -238,7 +238,8 @@ echo PHP_EOL . (implode(',', $data) );
         return [
   
             '0.exists' => 'Invalid Org Code.',
-            '3.in'     => 'The campaign year in the file doesn\'t match the selected year.',
+            '0.not_in' => 'The organization cannot be Government (GOV).',
+            '3.in'     => 'The campaign year doesn\'t match the selected year.',
             '3.exists' => 'No campaign year set up.',
             '6.in'     => 'Invalid primary role.',
             '7.required' => 'Missing PECSF ID.',
