@@ -38,7 +38,7 @@
             <form id="upload-form" action="{{ route("admin-volunteering.upload-profile.store") }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
-                <h6 class="text-primary font-weight-bold pb-2">Upload Volunteer Profile Files</h6>
+                <h4 class="text-primary font-weight-bold pb-2">Upload Volunteer Profile</h4>
 
                 <div class="form-group col-md-12">
                     <fieldset class="form-group row">
