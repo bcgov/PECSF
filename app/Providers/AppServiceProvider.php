@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
     {
       Paginator::useBootstrap();
 		Schema::defaultStringLength(191);
-		if (config('app.env') !== 'local') {
+		if (config('app.env') !== 'local' && config('app.env') !== 'demo') {
             $this->app['request']->server->set('HTTPS','on');
             URL::forceScheme('https');
 		}
