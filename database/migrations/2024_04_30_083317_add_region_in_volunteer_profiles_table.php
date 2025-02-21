@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::table('volunteer_profiles', function (Blueprint $table) {
             //
-            $table->dropColumn('pecsf_city');
+           
 
             $table->string('employee_city_name')->nullable()->after('last_name');
             $table->string('employee_bu_code')->nullable()->after('pecsf_city');
             $table->string('employee_region_code')->nullable()->after('employee_bu_code');
+
+            $table->dropColumn('pecsf_city');
                         
         });
     }

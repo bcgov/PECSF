@@ -57,7 +57,7 @@
             <div>Email: <a style="text-decoration:underline;" href="mailto:77000@gov.bc.ca" target="_blank" >77000@gov.bc.ca</a></div>
 
             {{-- @if (!str_contains(Request::url(), 'pecsf-test.apps.silver.devops.gov.bc.ca'))   --}}
-            @if ((Request::is('admin/login')) || (in_array(env('APP_ENV'), ['dev', 'local', 'TEST'])))
+            @if ((Request::is('admin/login')) || (in_array(env('APP_ENV'), ['dev', 'local', 'TEST', 'demo'])))
                 <div class="py-4 small"><a class="sysadmin-login" href="">Log in as a System Administrator</a></div>
             @endif
             {{-- @endif --}}
