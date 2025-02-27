@@ -9,6 +9,7 @@ use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Validation\Rule;
 use App\Models\VolunteerProfile;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -64,8 +65,11 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
         }
 
         // Find an employee Job information 
-        $job = EmployeeJob::where('last_name', $row[1])
-                    ->where('first_name', $row[2])
+        $job = EmployeeJob::where(DB::raw('LOWER(name)'), 'like', '%' . strtolower( trim($row[1]) . ',' . trim($row[2]) ) . '%')
+                    ->orWhere(function ($query) use($row) {
+                        $query->where(DB::raw('LOWER(last_name)'), 'like', '%' . strtolower( trim($row[1]) ) . '%')
+                              ->where(DB::raw('LOWER(first_name)'), 'like', '%' . strtolower( trim($row[2]) ) . '%');
+                    })
                     ->first();
 
         // Find the historical profile record
@@ -135,9 +139,16 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
         //                 ->where('frequency', $frequency )
         //                 ->first();
 
-        $job = EmployeeJob::where('last_name', $data[1])
-                                    ->where('first_name', $data[2])
-                                    ->first();
+        $job = EmployeeJob::where(DB::raw('LOWER(name)'), 'like', '%' . strtolower( trim($data[1]) . ',' . trim($data[2]) ) . '%')
+                    ->orWhere(function ($query) use ($data) {
+                        $query->where(DB::raw('LOWER(last_name)'), 'like', '%' . strtolower( trim($data[1]) ) . '%')
+                            ->where(DB::raw('LOWER(first_name)'), 'like', '%' . strtolower( trim($data[2]) ) . '%');
+                    })
+                    ->first();
+
+        // $job = EmployeeJob::where('last_name', $data[1])
+        //                             ->where('first_name', $data[2])
+        //                             ->first();
 
         $profile = null;                                
         if ($job) {
