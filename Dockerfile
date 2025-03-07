@@ -20,7 +20,7 @@ RUN chgrp -R 0 /app && \
 #
 # Build Server Deployment Image
 #
-FROM php:8.1-apache
+FROM php:8.3-apache
 
 WORKDIR /
 
@@ -80,7 +80,7 @@ RUN apt-get install -y \
     && docker-php-ext-install zip
 
 RUN apt-get install -y apt-transport-https lsb-release ca-certificates 
-RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
 
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
