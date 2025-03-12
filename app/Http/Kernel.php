@@ -38,8 +38,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Binafy\LaravelUserMonitoring\Middlewares\VisitMonitoringMiddleware::class,
-            // \App\Http\Middleware\VisitMonitoringMiddleware::class,
+            // \Binafy\LaravelUserMonitoring\Middlewares\VisitMonitoringMiddleware::class,
+            \App\Http\Middleware\VisitMonitoringMiddleware::class,
         ],
 
         'api' => [
