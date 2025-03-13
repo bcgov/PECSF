@@ -11,6 +11,8 @@ use App\Models\CampaignYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\HistoricalChallengePage;
+use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 class HomeController extends Controller
 {
@@ -44,4 +46,31 @@ class HomeController extends Controller
         return view('home', compact('campaignYear','announcement'));
 
     }
+
+    public function updateVisitMonitoringLog(Request $request) {
+
+        if ($request->has('pagename')) {
+
+            $detector = new Detector();
+
+            // Store visit
+            DB::table(config('user-monitoring.visit_monitoring.table'))->insert([
+                'user_id' => UserUtils::getUserId(),
+                'browser_name' => $detector->getBrowser(),
+                'platform' => $detector->getDevice(),
+                'device' => $detector->getDevice(),
+                'ip' => $request->ip(),
+                'user_guard' => UserUtils::getCurrentGuardName(),
+                'page' => $request->pagename,             
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            return abort(404);
+        }
+
+        return response()->noContent();
+
+    }
+
 }
