@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 class VisitMonitoringMiddleware
 {
@@ -33,11 +34,12 @@ class VisitMonitoringMiddleware
 
                 // Store visit
                 DB::table(config('user-monitoring.visit_monitoring.table'))->insert([
-                    'user_id' => auth($guard)->id(),
+                    'user_id' => UserUtils::getUserId(),
                     'browser_name' => $detector->getBrowser(),
                     'platform' => $detector->getDevice(),
                     'device' => $detector->getDevice(),
                     'ip' => $request->ip(),
+                    'user_guard' => UserUtils::getCurrentGuardName(),
                     'page' => $this->mappingPage($request->path()),             // $request->url(),
                     'created_at' => now(),
                     'updated_at' => now(),
