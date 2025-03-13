@@ -52,7 +52,7 @@ class VolunteerProfile extends Model implements Auditable
 
     public const ROLE_LIST = [
         "CR" => "Canvasser",
-        "CM" => "Committee Member ",
+        "CM" => "Committee Member",
         "EC" => "Event Coordinator",
         "ES" => "Executive Sponsor",
         "LC" => "Lead Coordinator",
