@@ -10,16 +10,15 @@
         "barryvdh/laravel-debugbar": "^3.0",
         "barryvdh/laravel-dompdf": "^2.0",
         "barryvdh/laravel-snappy": "^1.0.0",
+        "binafy/laravel-user-monitoring": "^1.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "halaxa/json-machine": "^1.1",
         "jenssegers/agent": "^2.6",
         "jeroennoten/laravel-adminlte": "^3.9",
         "laravel/framework": "^11.0",
-        
+        "laravel/passport": "^12.0",
         "laravel/sanctum": "^4.0",
-        "laravel/passport": "^12.0", 
-        
         "laravel/socialite": "^5.2",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^4.0",

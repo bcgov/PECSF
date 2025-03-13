@@ -135,9 +135,11 @@ class EmployeeJob extends Model
         $years_of_service = null;
 
         if ($this->hire_dt) {
-            $years_of_service = today()->diffInYears($this->hire_dt);
-        }
+            // $years_of_service = today()->diffInYears($this->hire_dt);
+            $diff = today()->diff($this->hire_dt);
+            $years_of_service =  $diff->y + round(($diff->m / 12),1);
 
+        } 
         return $years_of_service;
 
     }

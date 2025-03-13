@@ -56,6 +56,7 @@ use App\Http\Controllers\Admin\SpecialCampaignPledgeController;
 use App\Http\Controllers\Admin\CharityListMaintenanceController;
 use App\Http\Controllers\Admin\EligibleEmployeeReportController;
 use App\Http\Controllers\Admin\VolunteerProfileReportController;
+use App\Http\Controllers\Admin\VolunteerProfileUploadController;
 use App\Http\Controllers\Admin\ChallengePageDataReportController;
 use App\Http\Controllers\Admin\MaintainVolunteerProfileController;
 use App\Http\Controllers\Admin\GamingAndFundrasingReportController;
@@ -315,6 +316,9 @@ Route::middleware(['auth'])->prefix('admin-volunteering')->name('admin-volunteer
     // Pledge Administration -- Volunteer Profile 
     Route::get('/profile-users', [MaintainVolunteerProfileController::class,'getUsers'])->name('profile.users');
     Route::resource('/profile', MaintainVolunteerProfileController::class);
+
+    // Profile - Upload
+    Route::resource('/upload-profile', VolunteerProfileUploadController::class)->only(['index','store','show']);
 });
 
 
