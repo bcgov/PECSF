@@ -356,25 +356,25 @@
         },
         {
             "name": "binafy/laravel-user-monitoring",
-            "version": "v1.1.5",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/binafy/laravel-user-monitoring.git",
-                "reference": "772a6351df2ee3c39265b2e452312d6ad69b1c52"
+                "reference": "ae427bcf3926850dd6c89e01d0ea6bdfffa28edf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/binafy/laravel-user-monitoring/zipball/772a6351df2ee3c39265b2e452312d6ad69b1c52",
-                "reference": "772a6351df2ee3c39265b2e452312d6ad69b1c52",
+                "url": "https://api.github.com/repos/binafy/laravel-user-monitoring/zipball/ae427bcf3926850dd6c89e01d0ea6bdfffa28edf",
+                "reference": "ae427bcf3926850dd6c89e01d0ea6bdfffa28edf",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^9.0|^10.0|^11.0",
+                "laravel/framework": "^9.0|^10.0|^11.0|^12.0",
                 "php": "^8.0"
             },
             "require-dev": {
-                "orchestra/testbench": "^7.0|^8.0|^9.0",
-                "pestphp/pest-plugin-laravel": "^1.4.0|^2.0.0"
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+                "pestphp/pest-plugin-laravel": "^1.4.0|^2.0.0|^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -395,7 +395,7 @@
             ],
             "authors": [
                 {
-                    "name": "milwad-dev",
+                    "name": "Milwad Khosravi",
                     "email": "milwad.dev@gmail.com",
                     "homepage": "https://github.com/milwad-dev",
                     "role": "author"
@@ -426,9 +426,9 @@
             ],
             "support": {
                 "issues": "https://github.com/binafy/laravel-user-monitoring/issues",
-                "source": "https://github.com/binafy/laravel-user-monitoring/tree/v1.1.5"
+                "source": "https://github.com/binafy/laravel-user-monitoring/tree/v1.2.1"
             },
-            "time": "2024-12-16T13:27:01+00:00"
+            "time": "2025-03-08T06:53:14+00:00"
         },
         {
             "name": "brick/math",
