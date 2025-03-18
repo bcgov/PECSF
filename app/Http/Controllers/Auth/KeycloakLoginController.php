@@ -50,7 +50,8 @@ class KeycloakLoginController extends Controller
     
                     Log::error("User tried to login during system maintenance in progress : {$idir} - {$guid} - {$email} - {$name}");
 
-                    $back = urlencode(url('/login'));
+                    // $back = urlencode(url('/login'));
+                    $back = url('/login');
                     $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back; // Redirect to Keycloak
                     return redirect($back_url);
                 }
@@ -142,7 +143,8 @@ class KeycloakLoginController extends Controller
         if (empty(session('accessToken'))) {
             $back_url = ('/login');
         } else {
-            $back = urlencode(url('/login'));
+            // $back = urlencode(url('/login'));
+            $back = url('/login');
             $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back; // Redirect to Keycloak
         }
 
