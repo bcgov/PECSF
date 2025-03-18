@@ -51,7 +51,7 @@ class KeycloakLoginController extends Controller
                     Log::error("User tried to login during system maintenance in progress : {$idir} - {$guid} - {$email} - {$name}");
 
                     $back = urlencode(url('/login'));
-                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_uri='.$back; // Redirect to Keycloak
+                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back; // Redirect to Keycloak
                     return redirect($back_url);
                 }
 
@@ -109,6 +109,8 @@ class KeycloakLoginController extends Controller
 
         } catch (Exception $e) {
 
+            Log::error("Keycloak signon Exception : " . $e->getMessage() );
+
             return redirect('/login')
                 //  ->with('error', 'Error requesting access token')
                 //  ->with('errorDetail', $e->getMessage());
@@ -141,7 +143,7 @@ class KeycloakLoginController extends Controller
             $back_url = ('/login');
         } else {
             $back = urlencode(url('/login'));
-            $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_uri='.$back; // Redirect to Keycloak
+            $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back; // Redirect to Keycloak
         }
 
         // clean up token information 
