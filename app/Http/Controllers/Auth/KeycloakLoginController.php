@@ -9,7 +9,6 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Config;
 use Laravel\Socialite\Facades\Socialite;
 
 class KeycloakLoginController extends Controller
@@ -56,7 +55,7 @@ class KeycloakLoginController extends Controller
                     // return redirect($back_url);
 
                     // The URL the user is redirected to after logout.
-                    $redirectUri = Config::get('app.url');
+                    $redirectUri = url('/login');
 
                     // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
                     // client_id or an id_token_hint parameter or both of them.
@@ -156,7 +155,7 @@ class KeycloakLoginController extends Controller
             // $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_url='.$back; // Redirect to Keycloak
             
             // The URL the user is redirected to after logout.
-            $redirectUri = Config::get('app.url');
+            $redirectUri = url('/login');
 
             // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
             // client_id or an id_token_hint parameter or both of them.
