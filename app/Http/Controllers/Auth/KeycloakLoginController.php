@@ -60,7 +60,7 @@ class KeycloakLoginController extends Controller
                     // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
                     // client_id or an id_token_hint parameter or both of them.
                     // NOTE: You will need to set valid post logout redirect URI in Keycloak.
-                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_url='.$back.'&client_id='.env('KEYCLOAK_CLIENT_ID'); // Redirect to Keycloak
+                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back.'&client_id='.env('KEYCLOAK_CLIENT_ID'); // Redirect to Keycloak
             
                     return redirect($back_url);
                     
@@ -159,7 +159,7 @@ class KeycloakLoginController extends Controller
             // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
             // client_id or an id_token_hint parameter or both of them.
             // NOTE: You will need to set valid post logout redirect URI in Keycloak.
-            $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_url='.$back.'&client_id='.env('KEYCLOAK_CLIENT_ID'); // Redirect to Keycloak
+            $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back.'&client_id='.env('KEYCLOAK_CLIENT_ID'); // Redirect to Keycloak
             
         }
 
