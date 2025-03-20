@@ -23,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
             // 'SocialiteProviders\\Azure\\AzureExtendSocialite@handle',
             \SocialiteProviders\Keycloak\KeycloakExtendSocialite::class.'@handle',
         ],
+        \Illuminate\Auth\Events\Failed::class => [
+            \App\Listeners\LogFailedLogin::class,
+        ],
     ];
 
     /**
