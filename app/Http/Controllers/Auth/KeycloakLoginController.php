@@ -50,9 +50,20 @@ class KeycloakLoginController extends Controller
     
                     Log::error("User tried to login during system maintenance in progress : {$idir} - {$guid} - {$email} - {$name}");
 
-                    $back = urlencode(url('/login'));
-                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_uri='.$back; // Redirect to Keycloak
+                    // $back = urlencode(url('/login'));
+                    // $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_url='.$back; // Redirect to Keycloak
+
+
+                    // The URL the user is redirected to after logout.
+                    $back = url('/login');
+
+                    // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
+                    // client_id or an id_token_hint parameter or both of them.
+                    // NOTE: You will need to set valid post logout redirect URI in Keycloak.
+                    $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back.'&client_id='.env('KEYCLOAK_CLIENT_ID'); // Redirect to Keycloak
+            
                     return redirect($back_url);
+                    
                 }
 
                 // cache the token information in session
@@ -109,6 +120,8 @@ class KeycloakLoginController extends Controller
 
         } catch (Exception $e) {
 
+            Log::error("Keycloak signon Exception : " . $e->getMessage() );
+
             return redirect('/login')
                 //  ->with('error', 'Error requesting access token')
                 //  ->with('errorDetail', $e->getMessage());
@@ -140,8 +153,14 @@ class KeycloakLoginController extends Controller
         if (empty(session('accessToken'))) {
             $back_url = ('/login');
         } else {
-            $back = urlencode(url('/login'));
-            $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?redirect_uri='.$back; // Redirect to Keycloak
+            // The URL the user is redirected to after logout.
+            $back = url('/login');
+
+            // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
+            // client_id or an id_token_hint parameter or both of them.
+            // NOTE: You will need to set valid post logout redirect URI in Keycloak.
+            $back_url = env('KEYCLOAK_BASE_URL').'/realms/'.env('KEYCLOAK_REALM').'/protocol/openid-connect/logout?post_logout_redirect_uri='.$back.'&client_id='.env('KEYCLOAK_CLIENT_ID'); // Redirect to Keycloak
+            
         }
 
         // clean up token information 
