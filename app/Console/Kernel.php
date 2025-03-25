@@ -193,7 +193,7 @@ class Kernel extends ConsoleKernel
                         // Non-Production -- Demography data and user profiles                        
                         $schedule->command('command:ImportEmployeeJob')
                                 ->weekdays()
-                                ->at('4:00')
+                                ->at('4:05')
                                 ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
 
                         $schedule->command('command:SyncUserProfile')
