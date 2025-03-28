@@ -231,6 +231,18 @@ $(function () {
 
         }
     });
+
+    $('#learn-more-modal').on('shown.bs.modal', function (e) {
+        $.ajax({
+            url: "{{ route('visit-monitoring-log') }}",
+            type: "GET",
+            data: { pagename : 'donation/' + this.id },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
 });
 
 </script>

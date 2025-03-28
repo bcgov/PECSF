@@ -26,6 +26,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BankDepositFormAttachments;
 use App\Models\BankDepositFormOrganizations;
+use App\Models\TransactionTimesMonitoring;
+use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 class BankDepositFormController extends Controller
 {
@@ -43,6 +46,9 @@ class BankDepositFormController extends Controller
 
     public function index(Request $request)
     {
+
+        session(['bank_deposit_form_transaction_start' => now()]);
+
         $pools = FSPool::select("f_s_pools.*")->where('start_date', '=', function ($query) {
             $query->selectRaw('max(start_date)')
                 ->from('f_s_pools as A')
@@ -549,6 +555,31 @@ class BankDepositFormController extends Controller
 
         }
         else{
+
+            // When the transaction is completed, write to transaction Tines Monitoring
+            $start_time = session('bank_deposit_form_transaction_start') ? session('bank_deposit_form_transaction_start') : now();
+            $end_time = now();
+            $duration = $start_time->diffInSeconds($end_time);
+            
+            $detector = new Detector;
+
+            TransactionTimesMonitoring::create([
+                'user_id' => UserUtils::getUserId(),
+                'action_type' => 'create',
+                'table_name' => 'bank_deposit_forms',
+                'tran_id' => $form->id,
+                'browser_name' => $detector->getBrowser(),
+                'platform' => $detector->getDevice(),
+                'device' => $detector->getDevice(),
+                'ip' => request()->ip(),
+                'user_guard' => UserUtils::getCurrentGuardName(),
+                'page' => request()->path(),
+
+                'start_time' => $start_time,
+                'end_time' => $end_time,
+                'duration' => $start_time->diffInSeconds($end_time),
+            ]);
+
             echo  json_encode(array(route('bank_deposit_form')));
         }
 
