@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\System;
 
 use Carbon\Carbon;
+use App\Models\Pledge;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use App\Models\BankDepositForm;
+use App\Models\DonateNowPledge;
 use App\Models\visitsMonitoring;
+use App\Models\VolunteerProfile;
 use App\Http\Controllers\Controller;
+use App\Models\SpecialCampaignPledge;
 use Illuminate\Support\Facades\Validator;
 use App\Models\TransactionTimesMonitoring;
 
@@ -117,7 +122,14 @@ class UserActivityController extends Controller
                 $y_axis_data = $visits->sortBy('page')->pluck('page')->unique()->values();      
 
                 $sql2 = clone $base_sql;
-                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")->first();
+                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
+                                        ->when( $request->year, function ($q) use($request) {
+                                            return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
+                                        })
+                                        ->when( $request->filter, function ($q) use($request) {
+                                            $q->where('page', 'like', '%'.$request->filter.'%');
+                                        })
+                                        ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;
                 // $begin = $visits->min('begin_date'); 
@@ -151,7 +163,14 @@ class UserActivityController extends Controller
                 // $end = $visits->max('week_number');
 
                 $sql2 = clone $base_sql;
-                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")->first();
+                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
+                                        ->when( $request->year, function ($q) use($request) {
+                                            return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
+                                        })
+                                        ->when( $request->filter, function ($q) use($request) {
+                                            $q->where('page', 'like', '%'.$request->filter.'%');
+                                        })
+                                        ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;                
                 // $begin = $visits->min('begin_date'); 
@@ -394,7 +413,14 @@ class UserActivityController extends Controller
                 $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();      
 
                 $sql2 = clone $base_sql;
-                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")->first();
+                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
+                                            ->when( $request->year, function ($q) use($request) {
+                                                return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
+                                            })
+                                            ->when( $filter, function ($q) use($filter) {
+                                                $q->where('table_name', $filter);
+                                            })
+                                            ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;
                 // $begin = $visits->min('begin_date'); 
@@ -432,7 +458,14 @@ class UserActivityController extends Controller
                 // $end = $visits->max('week_number');
 
                 $sql2 = clone $base_sql;
-                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")->first();
+                $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
+                                        ->when( $request->year, function ($q) use($request) {
+                                            return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
+                                        })
+                                        ->when( $filter, function ($q) use($filter) {
+                                            $q->where('table_name', $filter);
+                                        })
+                                        ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;                
                 // $begin = $visits->min('begin_date'); 
@@ -482,7 +515,7 @@ class UserActivityController extends Controller
         }
 
         // For key matrix
-        $action_type = $request->has('action_type') ? $request->action_type  : ($y_axis_data ? $y_axis_data[0] : 'create') ;
+        $action_type = $request->has('action_type') ? $request->action_type  : ((count($y_axis_data) > 0) ?  $y_axis_data[0] : 'create');
 
         $visit_min = round($visits->where('action_type', $action_type)->min('min_duration'),2);
         $visit_avg = $visits->where('action_type', $action_type)->count() > 0 ? 
@@ -658,7 +691,7 @@ class UserActivityController extends Controller
         $validator->validate();
 
         // Statistic Calculation Process
-        $time_range = $request->has('time_range') ? $request->time_range : 'day';
+        $time_range = $request->has('time_range') ? $request->time_range : 'year';
         $table_name = $request->has('table_name') ? $request->table_name : 'pledges';
         $filter = $request->has('filter') ? $request->filter : null;
 
@@ -681,9 +714,28 @@ class UserActivityController extends Controller
         $table_names = ['pledges', 'donate_now_pledges','special_campaign_pledges', 'bank_deposit_forms', 'volunteer_profiles'];
 
         // Base SQL
-        $base_sql = TransactionTimesMonitoring::where(function ($query) use($table_names) {
-            $query->whereIn('table_name', $table_names);
-        });
+        // $base_sql = TransactionTimesMonitoring::where(function ($query) use($table_names) {
+        //     $query->whereIn('table_name', $table_names);
+        // });
+        $base_sql = Pledge::whereNull('deleted_at')->whereNull('cancelled');
+
+        switch ($table_name) {
+            case 'pledges':
+                $base_sql = Pledge::whereNull('deleted_at')->whereNull('cancelled');
+                break;
+            case 'donate_now_pledges':
+                $base_sql = DonateNowPledge::whereNull('deleted_at')->whereNull('cancelled');
+                break;
+            case 'special_campaign_pledges':
+                $base_sql = SpecialCampaignPledge::whereNull('deleted_at')->whereNull('cancelled');
+                break;
+            case 'bank_deposit_forms':
+                $base_sql = BankDepositForm::whereNull('deleted_at')->where('approved',1);
+                break;
+            case 'volunteer_profiles';
+                $base_sql = VolunteerProfile::whereNotNull('id');
+                break;
+        }
 
         switch ($time_range) {
             case 'year':   // By Annual 
@@ -692,27 +744,27 @@ class UserActivityController extends Controller
                 $visits = $sql->selectRaw('year(created_at) as category,
                                             min(DATE(created_at)) as begin_date,
                                             max(DATE(created_at)) as end_date,
-                                            action_type, count(*) as count')
-                                ->when( $table_name, function ($q) use($table_name) {
-                                    $q->where('table_name', $table_name);
-                                })
-                                ->when( $filter, function ($q) use($filter) {
-                                    $q->where('action_type', $filter);
-                                })
-                                ->groupBy('category', 'action_type')
+                                      		sum(case when created_by_id not in (select id from users where is_admin = 1) then 1 else 0 end) user_count, 
+		                                    sum(case when created_by_id in (select id from users where is_admin = 1) then 1 else 0 end) admin_count,
+                                            count(*) as count')
+                                // ->when( $filter, function ($q) use($filter) {
+                                //     $q->where('action_type', $filter);
+                                // })
+                                ->groupBy('category')
                                 ->orderBy('category', 'asc')
                                 ->get();
 
-                $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();      
+                // $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();      
+                $y_axis_data = ['user', 'admin'];
 
                 $sql2 = clone $base_sql;
                 $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
-                                    ->when( $table_name, function ($q) use($table_name) {
-                                        $q->where('table_name', $table_name);
-                                    })
-                                    ->when( $filter, function ($q) use($filter) {
-                                        $q->where('action_type', $filter);
-                                    })
+                                    // ->when( $table_name, function ($q) use($table_name) {
+                                    //     $q->where('table_name', $table_name);
+                                    // })
+                                    // ->when( $filter, function ($q) use($filter) {
+                                    //     $q->where('action_type', $filter);
+                                    // })
                                     ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;
@@ -729,30 +781,36 @@ class UserActivityController extends Controller
                 $visits = $sql->selectRaw('CONCAT(year(created_at),\'-\',month(DATE(created_at))) as category,
                                 min(DATE(created_at)) as begin_date,
                                 max(DATE(created_at)) as end_date,
-                                action_type, count(*) as count')
+                                sum(case when created_by_id not in (select id from users where is_admin = 1) then 1 else 0 end) user_count, 
+		                        sum(case when created_by_id in (select id from users where is_admin = 1) then 1 else 0 end) admin_count,
+                                count(*) as count')
                             ->when( $request->year, function ($q) use($request) {
                                     return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
                                 })
-                            ->when( $table_name, function ($q) use($table_name) {
-                                $q->where('table_name', $table_name);
-                            })
-                            ->when( $filter, function ($q) use($filter) {
-                                    $q->where('action_type', $filter);
-                                })
-                            ->groupBy('category', 'action_type')
+                            // ->when( $table_name, function ($q) use($table_name) {
+                            //     $q->where('table_name', $table_name);
+                            // })
+                            // ->when( $filter, function ($q) use($filter) {
+                            //         $q->where('action_type', $filter);
+                            //     })
+                            ->groupBy('category')
                             ->orderBy('category', 'asc')
                             ->get();
 
-                $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();      
+                // $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();      
+                $y_axis_data = ['user', 'admin'];
 
                 $sql2 = clone $base_sql;
                 $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
-                                            ->when( $table_name, function ($q) use($table_name) {
-                                                $q->where('table_name', $table_name);
+                                            ->when( $request->year, function ($q) use($request) {
+                                                return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
                                             })
-                                            ->when( $filter, function ($q) use($filter) {
-                                                $q->where('action_type', $filter);
-                                            })
+                                            // ->when( $table_name, function ($q) use($table_name) {
+                                            //     $q->where('table_name', $table_name);
+                                            // })
+                                            // ->when( $filter, function ($q) use($filter) {
+                                            //     $q->where('action_type', $filter);
+                                            // })
                                             ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;
@@ -770,33 +828,39 @@ class UserActivityController extends Controller
                 $visits = $sql->selectRaw('CONCAT(year(created_at),\'-\',week(DATE(created_at))) as category,
                                     min(DATE(created_at)) as begin_date,
                                     max(DATE(created_at)) as end_date,
-                                    action_type, count(*) as count')
+                                    sum(case when created_by_id not in (select id from users where is_admin = 1) then 1 else 0 end) user_count, 
+		                            sum(case when created_by_id in (select id from users where is_admin = 1) then 1 else 0 end) admin_count,
+                                    count(*) as count')
                                 ->when( $request->year, function ($q) use($request) {
                                     return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
                                 })
-                                ->when( $table_name, function ($q) use($table_name) {
-                                    $q->where('table_name', $table_name);
-                                })
-                                ->when( $filter, function ($q) use($filter) {
-                                    $q->where('taction_type', $filter);
-                                })
-                                ->groupBy('category', 'action_type')
+                                // ->when( $table_name, function ($q) use($table_name) {
+                                //     $q->where('table_name', $table_name);
+                                // })
+                                // ->when( $filter, function ($q) use($filter) {
+                                //     $q->where('taction_type', $filter);
+                                // })
+                                ->groupBy('category')
                                 ->orderBy('category', 'asc')
                                 ->get();
 
-                $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();                          
+                // $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();                          
+                $y_axis_data = ['user', 'admin'];
 
                 // $begin = $visits->min('week_number'); 
                 // $end = $visits->max('week_number');
 
                 $sql2 = clone $base_sql;
                 $min_max_dates = $sql2->selectRaw("min(DATE(created_at)) as begin_date,  max(date(created_at)) as end_date")
-                                            ->when( $table_name, function ($q) use($table_name) {
-                                                $q->where('table_name', $table_name);
+                                            ->when( $request->year, function ($q) use($request) {
+                                                return $q->whereBetween('created_at', [ $request->year . '-01-01', $request->year +1 . '-01-01'] );
                                             })
-                                            ->when( $filter, function ($q) use($filter) {
-                                                $q->where('action_type', $filter);
-                                            })
+                                            // ->when( $table_name, function ($q) use($table_name) {
+                                            //     $q->where('table_name', $table_name);
+                                            // })
+                                            // ->when( $filter, function ($q) use($filter) {
+                                            //     $q->where('action_type', $filter);
+                                            // })
                                             ->first();
                 $begin = $min_max_dates->begin_date; 
                 $end = $min_max_dates->end_date;                
@@ -817,19 +881,20 @@ class UserActivityController extends Controller
                 $end_date   = $request->day_end ? Carbon::create($request->day_end) : $end_date;
 
                 $sql = clone $base_sql;
-                $visits = $sql->selectRaw('DATE(created_at) as category, action_type, COUNT(*) as count')
+                $visits = $sql->selectRaw('DATE(created_at) as category, 
+                                        sum(case when created_by_id not in (select id from users where is_admin = 1) then 1 else 0 end) user_count, 
+                                        sum(case when created_by_id in (select id from users where is_admin = 1) then 1 else 0 end) admin_count,
+                                        COUNT(*) as count')
                                     ->whereRaw("created_at between '" . $start_date . "' and ADDDATE('" . $end_date . "', INTERVAL 1 DAY)")
-                                    ->when( $table_name, function ($q) use($table_name) {
-                                        $q->where('table_name', $table_name);
-                                    })
-                                    ->when( $filter, function ($q) use($filter) {
-                                        $q->where('action_type', $filter);
-                                    })
-                                    ->groupBy('category', 'action_type')
+                                    // ->when( $filter, function ($q) use($filter) {
+                                    //     $q->where('action_type', $filter);
+                                    // })
+                                    ->groupBy('category')
                                     ->orderBy('category', 'asc')
                                     ->get();
 
-                $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();                      
+                // $y_axis_data = $visits->sortBy('action_type')->pluck('action_type')->unique()->values();                      
+                $y_axis_data = ['user', 'admin'];
 
                 $interval = '1 day';
                 $period   = new CarbonPeriod($start_date, $interval, $end_date);
@@ -843,9 +908,22 @@ class UserActivityController extends Controller
 
         }
 
-        $visit_total_count = $visits->sum('count');
-        $visit_average = round($visit_total_count / count($categories),2);
-        $visit_no_of_category = count($categories);   // count($y_axis_data);
+        switch ($request->filter) {
+            case 'user':
+                $visit_total_count = $visits->sum('user_count');
+                $visit_average = round($visit_total_count / count($categories),2);
+                $visit_no_of_category = count($categories);   // count($y_axis_data);
+                break;
+            case 'admin':
+                $visit_total_count = $visits->sum('admin_count');
+                $visit_average = round($visit_total_count / count($categories),2);
+                $visit_no_of_category = count($categories);   // count($y_axis_data);
+                break;
+            default:
+                $visit_total_count = $visits->sum('count');
+                $visit_average = round($visit_total_count / count($categories),2);
+                $visit_no_of_category = count($categories);   // count($y_axis_data);
+        }
 
         // Update Key Metrics Only
         if ($request->has('key_metrics_only') && $request->key_metrics_only) {
@@ -868,14 +946,17 @@ class UserActivityController extends Controller
             $dataPoints = [];
             foreach ($categories as $category ) {
                 // Find the matching record for this date and page
-                $visit = $visits->firstWhere(fn ($v) => $v->category == $category  && $v->action_type == $action_type);
-                $dataPoints[] = $visit ? $visit->count : 0;
+                $visit = $visits->firstWhere(fn ($v) => $v->category == $category);
+                if ($action_type == 'user') 
+                    $dataPoints[] = $visit ? $visit->user_count : 0;
+                else 
+                    $dataPoints[] = $visit ? $visit->admin_count : 0;
             }
 
             // $parsedUrl = parse_url($page); 
 
             $series_data[] = [
-                'name' => $action_type ? $action_type : 'create',
+                'name' => $action_type ? $action_type : 'user',
                 'type' => 'bar',  // 'line',
                 // 'barWidth' => 'null',
                 'stack' => 'Total',
@@ -925,9 +1006,10 @@ class UserActivityController extends Controller
 
         // default and options
         $cloned_sql = clone $base_sql;
-        $category_options = $cloned_sql->selectRaw('distinct action_type')
-                                ->orderBy('action_type')
-                                ->pluck('action_type');
+        // $category_options = $cloned_sql->selectRaw('distinct action_type')
+        //                         ->orderBy('action_type')
+        //                         ->pluck('action_type');
+        $category_options = ['admin', 'user'];
 
         $cloned_sql = clone $base_sql;
         $years = $cloned_sql->selectRaw("distinct YEAR(created_at) as year")

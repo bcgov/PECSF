@@ -5,7 +5,7 @@
     @include('system-security.partials.tabs')
 
     <div class="d-flex mt-3">
-        <h4>Page Visits Overview</h4>
+        <h4>Transaction Count Overview</h4>
         <div class="flex-fill"></div>
     </div>
 
@@ -125,7 +125,7 @@
             title: [
                 {
                     left: 'center',
-                    text: 'Visits Per Period',
+                    text: 'Transaction Count Per Period',
                 },
             ],
             tooltip: { trigger: 'axis' },
@@ -161,7 +161,7 @@
         myChart.setOption(option);
 
         // Update the picker based on selection
-        $('#time-range, #table-name').on('change', function() {
+        $('#time-range').on('change', function() {
 
             $('#year-picker').addClass('d-none');
             $('#day-range-picker').addClass('d-none');
@@ -176,6 +176,10 @@
 
             update_chart();
 
+        });
+
+        $('#table-name').on('change', function() {
+            update_chart();
         });
 
         let typingTimer; // Timer identifier
