@@ -141,9 +141,9 @@
                 // data: ['Create', 'Update', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                 selected: {
                     // selected'series 1'
-                    'create': {{ $y_axis_data[0] == 'create' ? 'true' : 'false '}},
+                    'create': {{ $y_axis_data ? ($y_axis_data[0] == 'create' ? 'true' : 'false') : 'false' }},
                     // unselected'series 2'
-                    'update': {{ $y_axis_data[0] == 'update' ? 'true' : 'false '}},
+                    'update': {{ $y_axis_data ? ($y_axis_data[0] == 'update' ? 'true' : 'false') : 'false' }},
                 },
             },
             dataZoom: @json($data_zoom),

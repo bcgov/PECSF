@@ -8,7 +8,7 @@ use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\BankDepositForm;
 use App\Models\DonateNowPledge;
-use App\Models\visitsMonitoring;
+use App\Models\VisitsMonitoring;
 use App\Models\VolunteerProfile;
 use App\Http\Controllers\Controller;
 use App\Models\SpecialCampaignPledge;
@@ -24,7 +24,8 @@ class UserActivityController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:setting');
+        //  $this->middleware('permission:setting');
+        $this->middleware('permission:security_setting');       // temporaily disabled
     }
 
     /**
