@@ -15,7 +15,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\DonateNowRequest;
 use Illuminate\Support\Facades\Session;
-
+use App\Models\TransactionTimesMonitoring;
+use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 
 class DonateNowController extends Controller
@@ -48,6 +50,8 @@ class DonateNowController extends Controller
      */
     public function create()
     {
+
+        session(['donate_now_pledge_transaction_start' => now()]);
 
         // Make sure the Annual camplaign is not started
         if (\App\Models\CampaignYear::isAnnualCampaignOpenNow() ) {
@@ -180,6 +184,32 @@ class DonateNowController extends Controller
         ]);
 
         $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
+
+
+        // When the transaction is completed, write to transaction Tines Monitoring
+        $start_time = session('donate_now_pledge_transaction_start') ? session('donate_now_pledge_transaction_start') : now();
+        $end_time = now();
+        $duration = $start_time->diffInSeconds($end_time);
+        
+        $detector = new Detector;
+
+        TransactionTimesMonitoring::create([
+            'user_id' => UserUtils::getUserId(),
+            'action_type' => 'create',
+            'table_name' => 'donate_now_pledges',
+            'tran_id' => $pledge->id,
+            'browser_name' => $detector->getBrowser(),
+            'platform' => $detector->getDevice(),
+            'device' => $detector->getDevice(),
+            'ip' => request()->ip(),
+            'user_guard' => UserUtils::getCurrentGuardName(),
+            'page' => request()->path(),
+
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'duration' => $start_time->diffInSeconds($end_time),
+        ]);
+
 
         Session::flash('pledge_id', $pledge->id );
         return redirect()->route('donate-now.thank-you')

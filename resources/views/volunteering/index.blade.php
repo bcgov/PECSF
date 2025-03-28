@@ -176,5 +176,20 @@
 @push('js')
 <script>
 
+$(function () {
+
+    $('#learn-more-modal, #training-guide-modal, #communication-guide-modal').on('shown.bs.modal', function (e) {
+        $.ajax({
+            url: "{{ route('visit-monitoring-log') }}",
+            type: "GET",
+            data: { pagename : 'volunteering/' + this.id },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+});
+
 </script>
 @endpush

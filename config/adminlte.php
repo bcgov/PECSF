@@ -333,7 +333,7 @@ return [
         [
             'text' => 'Statistics',
             'url' => '/challenge',
-            'icon' => 'nav-icon fa fa-chart-bar', // 'challenge',
+            'icon' => 'nav-icon fa fa-chart-pie', // 'challenge',
             'active' => ['challenge/*']
         ],
         [
@@ -392,6 +392,11 @@ return [
                     'text' => 'Users',
                     'icon' => 'nav-icon far fa-user',
                     'url'  => '/system/users',
+                ],
+                [
+                    'text' => 'Activity Analytics',
+                    'icon' => 'nav-icon far fa-chart-bar',
+                    'url'  => '/system/page-visits-overview',
                 ],
                 [
                     'text' => 'Auditing',
