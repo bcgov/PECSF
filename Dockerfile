@@ -103,8 +103,10 @@ COPY --chown=www-data:www-data server_files/mods-enabled/expires.load /etc/apach
 COPY --chown=www-data:www-data server_files/mods-enabled/headers.load /etc/apache2/mods-enabled/headers.load
 COPY --chown=www-data:www-data server_files/mods-enabled/rewrite.load /etc/apache2/mods-enabled/rewrite.load
 COPY --chown=www-data:www-data server_files/start.sh /usr/local/bin/start
+COPY --chown=www-data:www-data server_files/laravel-schedule.sh /usr/local/bin/laravel-schedule.sh
 
 RUN chmod +x /usr/local/bin/start
+RUN chmod +x /usr/local/bin/laravel-schedule.sh
 RUN chmod +x /var/www/html/entrypoint.sh
 
 # Create cache and session storage structure
