@@ -44,48 +44,65 @@ class Kernel extends ConsoleKernel
         { 
 
                 $schedule->command('command:ExportPledgesToPSFT')
-                        ->dailyAt('00:50')->environments(['prod'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->name('ExportPledgesToPSFT:1')
+                        ->dailyAt('00:50')->environments(['prod'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();
 
                 // Note: The export processes are only execute in TEST and Production (1000 per hour limiation on ODS)                 
                 $schedule->command('command:ExportPledgesToPSFT')
                          ->when(function () {
                              return Pledge::hasDataToSend();
                          })
-                        ->dailyAt('01:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                         ->name('ExportPledgesToPSFT:2')
+                        ->dailyAt('01:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('02:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->name('ExportPledgesToPSFT:3')
+                        ->dailyAt('02:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('03:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->name('ExportPledgesToPSFT:4')
+                        ->dailyAt('03:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('04:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->name('ExportPledgesToPSFT:5')
+                        ->dailyAt('04:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('05:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->name('ExportPledgesToPSFT:6')
+                        ->dailyAt('05:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                                 return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('06:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                        
+                        ->name('ExportPledgesToPSFT:7')
+                        ->dailyAt('06:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer();                        
                 $schedule->command('command:ExportPledgesToPSFT')
                         ->when(function () {
                               return Pledge::hasDataToSend();
                         })
-                        ->dailyAt('7:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));                                                
+                        ->name('ExportPledgesToPSFT:8')
+                        ->dailyAt('7:50')->environments(['prod'])->appendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer(); 
 
                 // Non-Production (TEST region)
                 $schedule->command('command:ExportPledgesToPSFT')
-                        ->dailyAt('08:00')->environments(['TEST'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'));
+                        ->dailyAt('08:00')->environments(['TEST'])->sendOutputTo(storage_path('logs/ExportPledgesToPSFT.log'))
+                        ->onOneServer(); 
 
 
         }
@@ -97,14 +114,16 @@ class Kernel extends ConsoleKernel
                         ->weekdays()
                         ->at('1:15')
                         ->environments(['prod'])
-                        ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));
+                        ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'))
+                        ->onOneServer();
 
                 // Non-Production - TEST region
                 $schedule->command('command:ExportDatabaseToBI')
                         ->weekdays()
                         ->at('8:05')
                         ->environments(['TEST'])
-                        ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'));                        
+                        ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'))
+                        ->onOneServer();                        
 
         }
 
@@ -121,7 +140,8 @@ class Kernel extends ConsoleKernel
                                 ->mondays()
                                 ->at('2:00')
                                 //  ->everyFifteenMinutes()
-                                ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'));
+                                ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'))
+                                ->onOneServer(); 
                 } else {        
                         // Non-Production -- Foundation table                        
                         $schedule->command('command:ImportPayCalendar')
@@ -129,7 +149,8 @@ class Kernel extends ConsoleKernel
                                 ->mondays()
                                 ->at('8:15')
                                 //  ->everyFifteenMinutes()
-                                ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'));
+                                ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'))
+                                ->onOneServer(); 
                 }
 
                 // Pledge History Data (refresh the current year +2 when Jan-Mar OR +1 when Apr - Dec
@@ -151,7 +172,8 @@ class Kernel extends ConsoleKernel
                                         // })
                                         ->weekdays()
                                         ->at('2:30')
-                                        ->sendOutputTo(storage_path('logs/ImportCities.log')); 
+                                        ->sendOutputTo(storage_path('logs/ImportCities.log'))
+                                        ->onOneServer();  
 
                                 // Production - Department
                                 $schedule->command('command:ImportDepartments')
@@ -160,7 +182,8 @@ class Kernel extends ConsoleKernel
                                         // })
                                         ->weekdays()
                                         ->at('2:45')
-                                        ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+                                        ->sendOutputTo(storage_path('logs/ImportDepartments.log'))
+                                        ->onOneServer(); 
                         } else {
 
                                 // Non-Production - Cities 
@@ -170,7 +193,8 @@ class Kernel extends ConsoleKernel
                                         // })
                                         ->weekdays()
                                         ->at('8:30')
-                                        ->sendOutputTo(storage_path('logs/ImportCities.log'));                         
+                                        ->sendOutputTo(storage_path('logs/ImportCities.log'))
+                                        ->onOneServer(); 
 
                                 // Non-Production - Departments
                                 $schedule->command('command:ImportDepartments')
@@ -179,7 +203,8 @@ class Kernel extends ConsoleKernel
                                         // })
                                         ->weekdays()
                                         ->at('8:45')
-                                        ->sendOutputTo(storage_path('logs/ImportDepartments.log'));
+                                        ->sendOutputTo(storage_path('logs/ImportDepartments.log'))
+                                        ->onOneServer();
                         }
                 }
 
@@ -194,23 +219,27 @@ class Kernel extends ConsoleKernel
                         $schedule->command('command:ImportEmployeeJob')
                                 ->weekdays()
                                 ->at('4:05')
-                                ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
+                                ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'))
+                                ->onOneServer(); 
 
                         $schedule->command('command:SyncUserProfile')
                                 ->weekdays()
                                 ->at('4:30')
-                                ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));
+                                ->sendOutputTo(storage_path('logs/SyncUserProfile.log'))
+                                ->onOneServer(); 
                 } else {
                         // Non-Production -- Demography data and user profiles                        
                         $schedule->command('command:ImportEmployeeJob')
                                 ->weekdays()
                                 ->at('9:00')
-                                ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'));
+                                ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'))
+                                ->onOneServer(); 
 
                         $schedule->command('command:SyncUserProfile')
                                 ->weekdays()
                                 ->at('9:15')
-                                ->sendOutputTo(storage_path('logs/SyncUserProfile.log'));                        
+                                ->sendOutputTo(storage_path('logs/SyncUserProfile.log'))
+                                ->onOneServer();   
                 }
 
         }
@@ -218,15 +247,18 @@ class Kernel extends ConsoleKernel
         // Snapshot of eligible employees 
         $schedule->command('command:UpdateEligibleEmployeeSnapshot')
                 ->dailyAt('4:45')
-                ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'));
+                ->appendOutputTo(storage_path('logs/UpdateEligibleEmployeeSnapshot.log'))
+                ->onOneServer(); 
 
         $schedule->command('command:UpdateDailyCampaign')
                 ->dailyAt('5:00')
-                ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'));
+                ->appendOutputTo(storage_path('logs/UpdateDailyCampaign.log'))
+                ->onOneServer(); 
         
         $schedule->command('command:SystemCleanUp')
                 ->dailyAt('5:30')
-                ->appendOutputTo(storage_path('logs/SystemCleanUp.log'));
+                ->appendOutputTo(storage_path('logs/SystemCleanUp.log'))
+                ->onOneServer();
 
         // Monitoring Process Queue every 5 mins 
         // $schedule->command('command:queueStatus')
@@ -237,7 +269,8 @@ class Kernel extends ConsoleKernel
         // Daily Testing 
         $schedule->command('notify:daily')
                 ->dailyAt('08:30')
-                ->appendOutputTo(storage_path('logs/daily.log'));
+                ->appendOutputTo(storage_path('logs/daily.log'))
+                ->onOneServer(); 
 
     }
 
