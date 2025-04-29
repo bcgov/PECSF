@@ -273,16 +273,12 @@ class Kernel extends ConsoleKernel
                 ->onOneServer(); 
 
                 
-        // $schedule->call(function () {
-        //         $text = 'Running a task ' . PHP_EOL;
-        //         echo  $text ;
-        // })->name('TEST schedule task')
-        $schedule->exec("echo Schedule Task Test, run every 5 mins - " . now() . PHP_EOL )
-          ->name('TEST schedule task')
-          ->appendOutputTo(storage_path('logs/test.log'))
+        // This is for testing purpose on lower resgions
+        $schedule->exec("echo Schedule Task Test only run on one server, run every 2 mins - " . now() . PHP_EOL )
+          ->name('Test onOneServer task')
+          ->environments(['local', 'dev','TEST'])
           ->everyTwoMinutes()
-          ->onOneServer(); 
-          
+          ->onOneServer();        
 
     }
 
