@@ -272,6 +272,18 @@ class Kernel extends ConsoleKernel
                 ->appendOutputTo(storage_path('logs/daily.log'))
                 ->onOneServer(); 
 
+                
+        // $schedule->call(function () {
+        //         $text = 'Running a task ' . PHP_EOL;
+        //         echo  $text ;
+        // })->name('TEST schedule task')
+        $schedule->exec("echo Schedule Task Test, run every 5 mins - " . now() . PHP_EOL )
+          ->name('TEST schedule task')
+          ->appendOutputTo(storage_path('logs/test.log'))
+          ->everyTwoMinutes()
+          ->onOneServer(); 
+          
+
     }
 
     /**
