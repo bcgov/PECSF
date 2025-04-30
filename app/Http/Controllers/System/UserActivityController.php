@@ -24,8 +24,8 @@ class UserActivityController extends Controller
      */
     function __construct()
     {
-        //  $this->middleware('permission:setting');
-        $this->middleware('permission:security_setting');       // temporaily disabled
+        $this->middleware('permission:setting');
+        // $this->middleware('permission:security_setting');       // temporaily disabled
     }
 
     /**
