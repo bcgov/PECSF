@@ -274,10 +274,10 @@ class Kernel extends ConsoleKernel
 
                 
         // This is for testing purpose on lower resgions
-        $schedule->exec("echo Schedule Task Test only run on one server, run every 2 mins - " . now() . PHP_EOL )
+        $schedule->exec("echo Schedule Task to verify un on one server every 15 mins - " . now() . PHP_EOL )
           ->name('Test onOneServer task')
           ->environments(['local', 'dev','TEST'])
-          ->everyTwoMinutes()
+          ->everyFifteenMinutes()
           ->onOneServer();        
 
     }
