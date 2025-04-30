@@ -98,7 +98,7 @@ objects:
               lifecycle:
                 postStart:
                   exec:
-                    command: ["/bin/sh", "-c", "php /var/www/html/artisan queue:work --tries=3 --timeout=0 --memory=512 >> /var/www/html/storage/logs/queue-work.log & "]
+                    command: ["/bin/sh", "-c", "php /var/www/html/artisan queue:work --tries=3 --timeout=0 --memory=512 >> /var/www/html/storage/logs/queue-work.log & /usr/local/bin/laravel-schedule.sh >> /var/www/html/storage/logs/laravel-schedule.log 2>&1 & "]
               imagePullPolicy: Always
               ports:
                 - containerPort: 8000
