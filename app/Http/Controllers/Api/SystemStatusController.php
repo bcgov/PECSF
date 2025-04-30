@@ -81,6 +81,11 @@ class SystemStatusController extends Controller
 
             $job_name = explode(" ", $event->command)[2];
 
+            // SKIP -- task for testing purpose
+            if (str_contains($event->description, 'Test')) {
+                continue;
+            }
+            
             // SKIP -- serveral jobs which the history doesn't logged in audit table
             if ($job_name == 'command:queueStatus' || $job_name == 'notify:daily') {
                 continue;
