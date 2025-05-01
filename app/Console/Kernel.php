@@ -120,7 +120,7 @@ class Kernel extends ConsoleKernel
                 // Non-Production - TEST region
                 $schedule->command('command:ExportDatabaseToBI')
                         ->weekdays()
-                        ->at('8:05')
+                        ->at('8:00')
                         ->environments(['TEST'])
                         ->sendOutputTo(storage_path('logs/ExportDatabaseToBI.log'))
                         ->onOneServer();                        
@@ -218,7 +218,7 @@ class Kernel extends ConsoleKernel
                         // Non-Production -- Demography data and user profiles                        
                         $schedule->command('command:ImportEmployeeJob')
                                 ->weekdays()
-                                ->at('4:05')
+                                ->at('4:00')
                                 ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'))
                                 ->onOneServer(); 
 
