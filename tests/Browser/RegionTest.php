@@ -3,20 +3,17 @@
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Pledge;
+use App\Models\FSPool;
+use App\Models\Region;
 use App\Models\Setting;
 use Tests\DuskTestCase;
+
 use Laravel\Dusk\Browser;
 use Faker\Factory as Faker;
 
 use Illuminate\Support\Str;
-use App\Models\BusinessUnit;
-
 use App\Models\CampaignYear;
-use App\Models\BankDepositForm;
-use App\Models\DonateNowPledge;
 use Spatie\Permission\Models\Role;
-use App\Models\SpecialCampaignPledge;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 
@@ -61,11 +58,8 @@ beforeEach(function () {
     // Truncate the database and create a fresh user before each test
     Setting::truncate();
     CampaignYear::truncate();
-    BusinessUnit::truncate();
-    Pledge::truncate();
-    DonateNowPledge::truncate();
-    SpecialCampaignPledge::truncate();
-    BankDepositForm::truncate();
+    Region::truncate();
+    FSPool::truncate();
       
     $this->admin = User::whereHas("roles", function ($q) {$q->where("name", "admin");})->first();
     $this->user  = User::doesntHave('roles')->orderBy('id')->first();
@@ -159,38 +153,38 @@ it('allows a logged in user to log out successfully', function () {
 
 
 
-it('redirects anonymous user to the login page when attempting to access the business unit', function () {
+it('redirects anonymous user to the login page when attempting to access the region', function () {
     $this->browse(function (Browser $browser) {
 
-        $browser->visit('/settings/business-units') 
+        $browser->visit('/settings/regions') 
             ->waitForLocation('/login')
             ->assertPathIs('/login') // Assert it redirects to login
             ->assertSee('Login'); // Assert login prompt is visible
 
-        $browser->visit('/settings/business-units/create') 
+        $browser->visit('/settings/regions/create') 
             ->waitForLocation('/login')
             ->assertPathIs('/login') // Assert it redirects to login
             ->assertSee('Login'); // Assert login prompt is visible
 
-        $response = $this->post('/settings/business-units', []);
+        $response = $this->post('/settings/regions', []);
         $response->assertStatus(302);
         $response->assertRedirect('login');
 
-        $browser->visit('/settings/business-units/1') 
+        $browser->visit('/settings/regions/1') 
             ->waitForLocation('/login')
             ->assertPathIs('/login') // Assert it redirects to login
             ->assertSee('Login'); // Assert login prompt is visible
         
-        $browser->visit('/settings/business-units/1/edit') 
+        $browser->visit('/settings/regions/1/edit') 
             ->waitForLocation('/login')
             ->assertPathIs('/login') // Assert it redirects to login
             ->assertSee('Login'); // Assert login prompt is visible
         
-        $response = $this->put('/settings/business-units/1', []);
+        $response = $this->put('/settings/regions/1', []);
         $response->assertStatus(302);
         $response->assertRedirect('login');
 
-        $response = $this->delete('/settings/business-units/1');
+        $response = $this->delete('/settings/regions/1');
         $response->assertStatus(302);
         $response->assertRedirect('login');
             
@@ -198,80 +192,74 @@ it('redirects anonymous user to the login page when attempting to access the bus
 });
 
 
-it('denies unauthorized users from accessing protected business unit maintenance routes', function () {
+it('denies unauthorized users from accessing protected region maintenance routes', function () {
     $this->browse(function (Browser $browser) {
 
         $browser->loginAs($this->user)
-            ->visit('/settings/business-units') 
+            ->visit('/settings/regions') 
             ->assertSee('USER DOES NOT HAVE THE RIGHT PERMISSIONS.')
             ->assertSee('403'); 
 
         $browser->loginAs($this->user)
-            ->visit('/settings/business-units/create') 
+            ->visit('/settings/regions/create') 
             ->assertSee('USER DOES NOT HAVE THE RIGHT PERMISSIONS.')
             ->assertSee('403'); 
 
         $browser->loginAs($this->user)
-            ->visit('/settings/business-units/1') 
+            ->visit('/settings/regions/1') 
             ->assertSee('USER DOES NOT HAVE THE RIGHT PERMISSIONS.')
             ->assertSee('403'); 
         
         $browser->loginAs($this->user)
-            ->visit('/settings/business-units/1/edit') 
+            ->visit('/settings/regions/1/edit') 
             ->assertSee('USER DOES NOT HAVE THE RIGHT PERMISSIONS.')
             ->assertSee('403'); 
             
     });
 });
 
-it('shows validation error when required fields are missing when creating a business unit', function () {
+it('shows validation error when required fields are missing when creating a region', function () {
 
         $faker = Faker::create();
 
         $this->browse(function (Browser $browser) {
             $browser->loginAs($this->admin)
-                ->visit('/settings/business-units')
-                ->press('[data-target="#bu-create-modal"]')
-                ->waitForText('Add a new business unit')
-                ->assertSee('Add a new business unit')
+                ->visit('/settings/regions')
+                ->press('[data-target="#region-create-modal"]')
+                ->waitForText('Add a new region')
+                ->assertSee('Add a new region')
                 ->press('#create-confirm-btn')
                 ->acceptDialog()
             
-                ->waitFor('#bu-create-model-form span.text-danger')
+                ->waitFor('#region-create-model-form span.text-danger')
                 ->assertSee('The code field is required.')
                 ->assertSee('The name field is required.') 
-                ->assertSee('The acronym field is required.')
-                ->assertSee('The effective date field must be in the past if the status is Active')
-                ->assertSee('The linked bu code field is required.')
+                ->assertSee('The effective date field is required')
+
                 ->logout('admin')
                ;
         });
 
         $this->browse(function (Browser $browser) use($faker) {
             $browser->loginAs($this->admin)
-                ->visit('/settings/business-units')
-                ->press('[data-target="#bu-create-modal"]')
-                ->waitForText('Add a new business unit')
-                ->assertSee('Add a new business unit')
+                ->visit('/settings/regions')
+                ->press('[data-target="#region-create-modal"]')
+                ->waitForText('Add a new region')
+                ->assertSee('Add a new region')
                 // ->pause(1000)
-                ->value('#bu-create-model-form [name="code"]', 'BC' . $faker->regexify('[0-9]{9}') )
-                ->value('#bu-create-model-form [name="name"]', Str::random(80) )
-                ->value('#bu-create-model-form [name="acronym"]',  $faker->regexify('[a-z]{5}') )
-                ->value('#bu-create-model-form [name="effdt"]', Carbon::tomorrow()->format('m-d-Y') )
-                ->value('#bu-create-model-form [name="linked_bu_code"]', 'BC' . $faker->regexify('[0-9]{3}') )
+                ->value('#region-create-model-form [name="code"]', 'BCC4' )
+                ->value('#region-create-model-form [name="name"]', Str::random(40) )
+                ->value('#region-create-model-form [name="effdt"]', Carbon::tomorrow()->format('Y-m-d') )
+                ->value('#region-create-model-form [name="notes"]', $faker->sentence() )
+          
                 ->press('#create-confirm-btn')
                 ->acceptDialog()
             
-                ->waitFor('#bu-create-model-form span.text-danger')
-                ->assertSee('The code must not be greater than 5 characters.')
-                ->assertSee('The name must not be greater than 60 characters.') 
-                ->assertSee('The acronym field must be uppercase.')
-                ->assertSee('The acronym must not be greater than 4 characters.')
-                ->assertSee('The effective date field must be in the past if the status is Active')
-                ->assertSee('The associated business unit is invalid.')
-             
-                // ->assertSee('The effective date field must be in the past if the status is Active')
-                // ->assertSee('The linked bu code field is required.')
+                ->waitFor('#region-create-model-form span.text-danger')
+                ->assertSee('The code must be a number.')
+                ->assertSee('The code format is invalid, 3 characters long and all digits.')
+                ->assertSee('The name must not be greater than 30 characters.') 
+
                 ->logout('admin')
                ;
         });
@@ -279,31 +267,27 @@ it('shows validation error when required fields are missing when creating a busi
 });
 
 
-it('shows validation error for fields when editing a business unit', function () {
+it('shows validation error for fields when editing a region', function () {
 
     $faker = Faker::create();
 
-    $businessUnit = BusinessUnit::factory()->create([]);
+    $item = Region::factory()->create([]);
 
-    $this->browse(function (Browser $browser) use ($businessUnit, $faker) {
+    $this->browse(function (Browser $browser) use ($item, $faker) {
         $browser->loginAs($this->admin)
-            ->visit('/settings/business-units')
-            ->waitForText(  $businessUnit->code )
-            ->click('a.edit-bu[data-id="'. $businessUnit->id .'"]')
+            ->visit('/settings/regions')
+            ->waitForText(  $item->code )
+            ->click('a.edit-region[data-id="'. $item->id .'"]')
 
-            ->waitForText( 'Edit an existing business unit' )
-            ->assertSee('Edit an existing business unit')
+            ->waitForText( 'Edit an existing region' )
+            ->assertSee('Edit an existing region')
             // ->pause(1000)
-            ->type('#bu-edit-model-form [name="name"]', '  ' )
-            ->type('#bu-edit-model-form [name="linked_bu_code"]', 'BC' . rand(100, 999) )
+            ->value('#region-edit-model-form [name="name"]', Str::random(40) )
             ->press('#save-confirm-btn')
             ->acceptDialog()
-            ->waitFor('#bu-edit-model-form span.text-danger')
+            ->waitFor('#region-edit-model-form span.text-danger')
    
-            // ->waitFor('The code field is required.')
-            ->assertSee('The name field is required.') 
-            // ->assertSee('The acronym field is required.')
-            ->assertSee('The associated business unit is invalid.')
+            ->assertSee('The name must not be greater than 30 characters.') 
 
             ->logout('admin')
            ;
@@ -315,14 +299,14 @@ it('shows validation error for fields when editing a business unit', function ()
 
 
 
-it('administrator can paginate through business units', function () {
+it('administrator can paginate through regions', function () {
 
-    BusinessUnit::factory(25)->create();
-    $sorted = BusinessUnit::orderBy('code')->get();
+    Region::factory(25)->create();
+    $sorted = Region::orderBy('code')->get();
 
     $this->browse(function (Browser $browser) use($sorted) {
         $browser->loginAs($this->admin)
-            ->visit('/settings/business-units') // API endpoint
+            ->visit('/settings/regions') // API endpoint
             // ->screenshot('debug-pagation-page') 
 
             ->waitForText(  'Showing 1 to 10' )
@@ -342,68 +326,54 @@ it('administrator can paginate through business units', function () {
 
 
   
-it('administrator successfully creates a business unit', function () {
+it('administrator successfully creates a region', function () {
 
     $yesterday = Carbon::yesterday(); 
 
-    $item = BusinessUnit::factory()->make([
+    $item = Region::factory()->make([
         'effdt' => $yesterday->format('Y-m-d'),
     ]);
 
     $this->browse(function (Browser $browser) use($yesterday, $item) {
-        // $browser->visit('/login')
-
-        //     ->assertSee('Login')
-        //     ->click('a.sysadmin-login')
-        //     ->type('email', $this->user->email)
-        //     ->type('password', env('SYNC_ADMIN_PROFILE_SECRET') ) // Use the known password
-        //     ->press('#admin-login button[type="submit"]')
-        //     ->waitForLocation('/')
-        //     ->assertPathIs('/')
-        //     ->waitForText('Statistics')
-        //     ->assertSee('Statistics');
     
         $browser->loginAs($this->admin)
-            ->visit('/settings/business-units')
+            ->visit('/settings/regions')
             ->waitForText('Showing 0 to ')
-            ->press('[data-target="#bu-create-modal"]')
-            ->waitForText('Add a new business unit')
-            ->assertSee('Add a new business unit')
-            ->pause(5000)
-            ->type('#bu-create-model-form [name="code"]', $item->code)
-            ->type('#bu-create-model-form [name="name"]', $item->name)
-            ->type('#bu-create-model-form [name="effdt"]', $yesterday->format('m-d-Y'))
-            ->select('#bu-create-model-form [name="status"]', $item->status)
-            ->type('#bu-create-model-form [name="acronym"]', $item->acronym)
-            ->type('#bu-create-model-form [name="linked_bu_code"]', $item->linked_bu_code)
-            ->type('#bu-create-model-form [name="notes"]', $item->notes)
+            ->press('[data-target="#region-create-modal"]')
+            ->waitForText('Add a new region')
+            ->assertSee('Add a new region')
+            ->value('#region-create-model-form [name="code"]', $item->code)
+            ->value('#region-create-model-form [name="name"]', $item->name)
+            ->value('#region-create-model-form [name="effdt"]', $yesterday->format('Y-m-d'))
+            ->value('#region-create-model-form [name="status"]', $item->status)
+            ->value('#region-create-model-form [name="notes"]', $item->notes)
             ->press('#create-confirm-btn')
             ->acceptDialog()
-            ->waitForText('Business Unit ' . $item->code . ' has been successfully created.')
-            ->assertSee('Business Unit ' . $item->code . ' has been successfully created.')
+            ->waitForText( $item->code . ' has been successfully created.')
+            ->assertSee(  $item->code . ' has been successfully created.')
             ->logout('admin');
             ;
 
         // Verify the same data in the database
-        $this->assertDatabaseHas('business_units', Arr::except( $item->attributesToArray(), ['created_by_id', 'updated_by_id']) );
+        $this->assertDatabaseHas('regions', Arr::except( $item->attributesToArray(), ['created_by_id', 'updated_by_id', 'hasFSPool']) );
             
     });
 });
 
 
-it('administrator can read and view the business unit', function () {
+it('administrator can read and view the region', function () {
 
-    $item = BusinessUnit::factory()->create([]);
+    $item = Region::factory()->create([]);
 
     $this->browse(function (Browser $browser) use ($item) {
         $browser->loginAs($this->admin)
-            ->visit('/settings/business-units')
+            ->visit('/settings/regions')
             ->waitForText('Showing 1 to 1 ')
             // ->waitForText(  $businessUnit->code )
-            ->click('a.show-bu[data-id="'. $item->id .'"]')
+            ->click('a.show-region[data-id="'. $item->id .'"]')
             
-            ->waitForText( 'Existing business unit details' )
-            ->assertSee('Existing business unit details')
+            ->waitForText( 'Existing region details' )
+            ->assertSee('Existing region details')
             ->assertSee( $item->code )
             ->assertSee( $item->name )
             ->assertSee( $item->notes )
@@ -415,62 +385,62 @@ it('administrator can read and view the business unit', function () {
 });
 
 
-it('administrator successfully updates a business unit', function () {
+it('administrator successfully updates a region', function () {
 
     $faker = Faker::create();
 
-    $item = BusinessUnit::factory()->create([]);
+    $item = Region::factory()->create([]);
 
     $item->name = $faker->words(3, true);
 
     $this->browse(function (Browser $browser) use ($item) {
         $browser->loginAs($this->admin)
-            ->visit('/settings/business-units')
+            ->visit('/settings/regions')
             ->waitForText('Showing 1 to 1 ')
             // ->waitForText(  $item->code )
-            ->click('a.edit-bu[data-id="'. $item->id .'"]')
+            ->click('a.edit-region[data-id="'. $item->id .'"]')
             
-            ->waitForText( 'Edit an existing business unit' )
-            ->assertSee('Edit an existing business unit')
-            ->type('#bu-edit-modal [name="name"]', $item->name)
+            ->waitForText( 'Edit an existing region' )
+            ->assertSee('Edit an existing region')
+            ->type('#region-edit-modal [name="name"]', $item->name)
             ->press('#save-confirm-btn')
             ->acceptDialog()
-            ->waitForLocation('/settings/business-units')
-            ->waitForText('Business Unit ' . $item->code . ' has been successfully updated.')
-            ->assertSee('Business Unit ' . $item->code . ' has been successfully updated.')
+            ->waitForLocation('/settings/regions')
+            ->waitForText( $item->code . ' has been successfully updated.')
+            ->assertSee( $item->code . ' has been successfully updated.')
             ->logout('admin');
             ;
 
         // Verify the same data in the database
-        $this->assertDatabaseHas('business_units', Arr::except( $item->attributesToArray(), 
-                    ['updated_by_id', 'created_at', 'updated_at']) );
+        $this->assertDatabaseHas('regions', Arr::except( $item->attributesToArray(), 
+                    ['updated_by_id', 'created_at', 'updated_at', 'hasFSPool']) );
           
     });
 });
     
-it('administrator successfully deletes a business unit', function () {
+it('administrator successfully deletes a region', function () {
 
-    $item = BusinessUnit::factory()->create([]);
+    $item = Region::factory()->create([]);
 
     $this->browse(function (Browser $browser) use ($item) {
         $browser->loginAs($this->admin)
-            ->visit('/settings/business-units')
+            ->visit('/settings/regions')
             ->waitForText('Showing 1 to 1 ')
             // ->waitForText(  $item->code )
-            ->click('a.delete-bu[data-id="'. $item->id .'"]')
+            ->click('a.delete-region[data-id="'. $item->id .'"]')
             // ->pause(10000)
-            ->waitForText( 'Are you sure you want to delete business unit code "' . $item->code  . '" ?' )
+            ->waitForText( 'Are you sure you want to delete region code "' . $item->code  . '" ?' )
             ->press('button.swal2-confirm')
             // ->press('button.swal2-cancel')
-            ->waitForLocation('/settings/business-units')
-            ->waitForText('Business Unit ' . $item->code . ' has been successfully deleted.')
+            ->waitForLocation('/settings/regions')
+            ->waitForText($item->code . ' has been successfully deleted.')
             ->waitForText('No data available in table')
             ->assertDontSee( $item->name )
             ->logout('admin');
             ;
 
-        $this->assertSoftDeleted('business_units',  Arr::except( $item->attributesToArray(), 
-                    ['created_by_id', 'updated_by_id', 'created_at', 'updated_at']) );
+        $this->assertSoftDeleted('regions',  Arr::except( $item->attributesToArray(), 
+                    ['created_by_id', 'updated_by_id', 'created_at', 'updated_at', 'hasFSPool']) );
         
     });
 });
