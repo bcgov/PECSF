@@ -37,7 +37,7 @@
         <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.transaction-counts-overview') ? 'active' : ''}}"
           href="{{ route('system.transaction-counts-overview') }}">Transaction Counts Overview</a>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.transaction-timings') ? 'active' : ''}}"
-            href="{{ route('system.transaction-timings') }}">Transaction Timimgs</a>
+            href="{{ route('system.transaction-timings') }}">Transaction Timings</a>
       </div>
     </li>
 
