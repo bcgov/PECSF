@@ -66,19 +66,19 @@
         <div class="row text-center px-5">
             <div class="col-md-4">
                 <div class="bg-primary text-white p-3 rounded">
-                    <h2 class="h5">Minimum Time in Second</h2>
+                    <h2 class="h5">Minimum Time in Seconds</h2>
                     <p class="h3" id="visit_min">{{ $visit_min }}</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="bg-success text-white p-3 rounded">
-                    <h2 class="h5">Average Time in Second</h2>
+                    <h2 class="h5">Average Time in Seconds</h2>
                     <p class="h3" id="visit_avg">{{ $visit_avg }}</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="bg-warning text-white p-3 rounded">
-                    <h2 class="h5">Maximum Time in Second</h2>
+                    <h2 class="h5">Maximum Time in Seconds</h2>
                     <p class="h3" id="visit_max">{{ $visit_max }}</p>
                 </div>
             </div>
