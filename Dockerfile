@@ -22,6 +22,8 @@ RUN chgrp -R 0 /app && \
 #
 FROM php:8.3-apache
 
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
 WORKDIR /
 
 # Local proxy config (remove for server deployment)
