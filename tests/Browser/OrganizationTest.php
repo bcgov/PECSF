@@ -3,18 +3,22 @@
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Pledge;
 use App\Models\Setting;
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Faker\Factory as Faker;
+
+
 use Illuminate\Support\Str;
-
-
 use App\Models\BusinessUnit;
-use App\Models\CampaignYear;
 
+use App\Models\CampaignYear;
 use App\Models\Organization;
+use App\Models\BankDepositForm;
+use App\Models\DonateNowPledge;
 use Spatie\Permission\Models\Role;
+use App\Models\SpecialCampaignPledge;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 
@@ -61,6 +65,10 @@ beforeEach(function () {
     CampaignYear::truncate();
     BusinessUnit::truncate();
     Organization::truncate();
+    Pledge::truncate();
+    DonateNowPledge::truncate();
+    SpecialCampaignPledge::truncate();
+    BankDepositForm::truncate();
       
     $this->admin = User::whereHas("roles", function ($q) {$q->where("name", "admin");})->first();
     $this->user  = User::doesntHave('roles')->orderBy('id')->first();
@@ -89,7 +97,7 @@ afterEach(function () {
 
 
 
-it('redirects anonymous user to the login page', function () {
+it('redirects anonymous user to the login page when attempting to access the organization', function () {
     $this->browse(function (Browser $browser) {
 
         $browser->visit('/settings/organizations') 
@@ -128,7 +136,7 @@ it('redirects anonymous user to the login page', function () {
 });
 
 
-it('denies access to protected organizations maintenance routes for unauthorized user', function () {
+it('denies unauthorized users from accessing protected organization maintenance routes', function () {
     $this->browse(function (Browser $browser) {
 
         $browser->loginAs($this->user)
@@ -154,7 +162,7 @@ it('denies access to protected organizations maintenance routes for unauthorized
     });
 });
 
-it('validateion error on create', function () {
+it('shows validation error when required fields are missing when creating an organization', function () {
 
         $faker = Faker::create();
 
@@ -184,10 +192,10 @@ it('validateion error on create', function () {
                 ->assertSee('Add a new organization')
                 ->pause(1000)
 
-                ->type('#organization-create-model-form [name="code"]', Str::random(8)  )
-                ->type('#organization-create-model-form [name="name"]', Str::random(80) )
+                ->value('#organization-create-model-form [name="code"]', Str::random(8)  )
+                ->value('#organization-create-model-form [name="name"]', Str::random(80) )
                 ->select('#organization-create-model-form [name="status"]', 'A' )
-                ->type('#organization-create-model-form [name="effdt"]', Carbon::tomorrow()->format('m-d-Y') )
+                ->value('#organization-create-model-form [name="effdt"]', Carbon::tomorrow()->format('m-d-Y') )
                 ->select('#organization-create-model-form [name="bu_code"]', '' )
                 ->press('#create-confirm-btn')
                 ->acceptDialog()
@@ -207,7 +215,7 @@ it('validateion error on create', function () {
 });
 
 
-it('Government Org validation error on edit', function () {
+it('shows validation error for fields when editing a government organiztaion', function () {
 
     $faker = Faker::create();
 
@@ -242,7 +250,7 @@ it('Government Org validation error on edit', function () {
     });
 });
 
-it('Non-GOV organization validation error on edit', function () {
+it('shows validation error for fields when editing a non-government organization', function () {
 
     $faker = Faker::create();
 
@@ -286,7 +294,7 @@ it('Non-GOV organization validation error on edit', function () {
 
 
 
-it('pagination on organizations table via ajax call', function () {
+it('administrator can paginate through oragnizations', function () {
 
     $faker = Faker::create();
 
@@ -322,7 +330,7 @@ it('pagination on organizations table via ajax call', function () {
 
 
   
-it('administrator creates a new organization', function () {
+it('administrator successfully creates an organization', function () {
 
     $yesterday = Carbon::yesterday(); 
 
@@ -373,7 +381,7 @@ it('administrator creates a new organization', function () {
 });
 
 
-it('show a organization', function () {
+it('administrator can read and view the organization', function () {
 
     $yesterday = Carbon::yesterday(); 
 
@@ -402,7 +410,7 @@ it('show a organization', function () {
 });
 
 
-it('update an organization', function () {
+it('administrator successfully updates an organization', function () {
 
     $faker = Faker::create();
 
@@ -441,7 +449,7 @@ it('update an organization', function () {
     });
 });
     
-it('deletes a organization', function () {
+it('administrator successfully deletes an organization', function () {
 
     $item = Organization::factory()->create([]);
 
