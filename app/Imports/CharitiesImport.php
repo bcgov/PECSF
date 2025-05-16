@@ -131,6 +131,27 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     // No Action
                 }
 
+                if ($charity && 
+                    trim(strtolower($charity->address)) == trim(strtolower($charity->alt_address1)) &&
+                    trim(strtolower($charity->city)) == trim(strtolower($charity->alt_city)) &&
+                    trim(strtolower($charity->province)) == trim(strtolower($charity->alt_province)) &&
+                    trim(strtolower($charity->country)) == trim(strtolower($charity->alt_country)) &&
+                    trim(strtolower($charity->postal_code)) == trim(strtolower(str_replace(' ', '', $charity->alt_postal_code)))) {
+
+                    $charity->use_alt_address = null;
+                    $charity->alt_address1 = null;
+                    $charity->alt_address2 = null;
+                    $charity->alt_city = null;
+                    $charity->alt_province = null;
+                    $charity->alt_country = null;
+                    $charity->alt_postal_code = null;
+                    $charity->save();
+
+                    $changes = $charity->getChanges();
+                    unset($changes["updated_at"]);
+                    $this->logMessage('[RESET ALT ADDRESS] on RN# ' . $charity->registration_number . ' - ' . json_encode($changes) );
+                }
+
                 $charityStaging = CharityStaging::create([
                     'history_id' => $this->history_id,
                     'registration_number' => $row[0],
