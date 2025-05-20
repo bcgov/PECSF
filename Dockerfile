@@ -22,8 +22,6 @@ RUN chgrp -R 0 /app && \
 #
 FROM php:8.3-apache
 
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
-
 WORKDIR /
 
 # Local proxy config (remove for server deployment)
@@ -82,7 +80,8 @@ RUN apt-get install -y \
     && docker-php-ext-install zip
 
 RUN apt-get install -y apt-transport-https lsb-release ca-certificates 
-RUN wget -4 -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+# RUN wget -4 -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+COPY --chown=www-data:www-data server_files/apt.gpg /etc/apt/trusted.gpg.d/php.gpg
 
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
