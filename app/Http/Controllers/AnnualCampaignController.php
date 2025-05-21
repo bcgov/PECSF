@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\City;
 use App\Models\User;
 use App\Models\FSPool;
 use App\Models\Pledge;
 use App\Models\Charity;
-use App\Models\City;
 use App\Models\CampaignYear;
 use App\Models\Organization;
 use Illuminate\Http\Request;
@@ -19,7 +19,9 @@ use App\Models\PledgeHistorySummary;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\AnnualCampaignRequest;
-
+use App\Models\TransactionTimesMonitoring;
+use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 class AnnualCampaignController extends Controller
 {
@@ -52,6 +54,9 @@ class AnnualCampaignController extends Controller
      */
     public function create( Pledge $duplicate_pledge = null )
     {
+
+        session(['pledge_transaction_start' => now()]);
+
         // redirect with session data when using duplicating function
         $duplicate_pledge = session()->has('new_pledge') ? session()->get('new_pledge') : $duplicate_pledge;
 
@@ -459,6 +464,29 @@ class AnnualCampaignController extends Controller
         DB::commit();
 
         $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
+
+        // When the transaction is completed, write to transaction Tines Monitoring
+        $start_time = session('pledge_transaction_start') ? session('pledge_transaction_start') : now();
+        $end_time = now();
+        $duration = $start_time->diffInSeconds($end_time);
+        
+        $detector = new Detector;
+
+        TransactionTimesMonitoring::create([
+            'user_id' => UserUtils::getUserId(),
+            'action_type' => $old_pledge ? 'update' : 'create',
+            'table_name' => 'pledges',
+            'tran_id' => $pledge->id,
+            'browser_name' => $detector->getBrowser(),
+            'platform' => $detector->getDevice(),
+            'device' => $detector->getDevice(),
+            'ip' => request()->ip(),
+            'user_guard' => UserUtils::getCurrentGuardName(),
+            'page' => request()->path(),
+             'start_time' => $start_time,
+            'end_time' => $end_time,
+            'duration' => $start_time->diffInSeconds($end_time),
+        ]);
 
         Session::flash('pledge_id', $pledge->id );
         return redirect()->route('annual-campaign.thank-you')

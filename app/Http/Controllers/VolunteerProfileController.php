@@ -12,6 +12,9 @@ use App\Models\VolunteerProfile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\VolunteerProfileRequest;
+use App\Models\TransactionTimesMonitoring;
+use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 class VolunteerProfileController extends Controller
 {
@@ -45,6 +48,8 @@ class VolunteerProfileController extends Controller
      */
     public function create()
     {
+        session(['volunteer_profile_start' => now()]);
+
         //
         if (!CampaignYear::isVolunteerRegistrationOpenNow()) {
             abort(403);
@@ -165,6 +170,30 @@ class VolunteerProfileController extends Controller
 
         $message_text = 'Your volunteer profile have been created successfully';
 
+        // When the transaction is completed, write to transaction Tines Monitoring
+        $start_time = session('volunteer_profile_start') ? session('volunteer_profile_start') : now();
+        $end_time = now();
+        $duration = $start_time->diffInSeconds($end_time);
+        
+        $detector = new Detector;
+
+        TransactionTimesMonitoring::create([
+            'user_id' => UserUtils::getUserId(),
+            'action_type' => 'create',
+            'table_name' => 'volunteer_profiles',
+            'tran_id' => $profile->id,
+            'browser_name' => $detector->getBrowser(),
+            'platform' => $detector->getDevice(),
+            'device' => $detector->getDevice(),
+            'ip' => request()->ip(),
+            'user_guard' => UserUtils::getCurrentGuardName(),
+            'page' => request()->path(),
+
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'duration' => $start_time->diffInSeconds($end_time),
+        ]);
+
         Session::flash('profile_id', $profile->id );
         return redirect()->route('volunteering.profile.thank-you')->with('success', $message_text);
 
@@ -194,6 +223,7 @@ class VolunteerProfileController extends Controller
      */
     public function edit(string $id)
     {
+        session(['volunteer_profile_start' => now()]);
 
         //
         if (!CampaignYear::isVolunteerRegistrationOpenNow()) {
@@ -265,6 +295,30 @@ class VolunteerProfileController extends Controller
         $profile->save();
 
         $message_text = 'Your volunteer profile have been updated successfully';
+
+        // When the transaction is completed, write to transaction Tines Monitoring
+        $start_time = session('volunteer_profile_start') ? session('volunteer_profile_start') : now();
+        $end_time = now();
+        $duration = $start_time->diffInSeconds($end_time);
+        
+        $detector = new Detector;
+
+        TransactionTimesMonitoring::create([
+            'user_id' => UserUtils::getUserId(),
+            'action_type' => 'update',
+            'table_name' => 'volunteer_profiles',
+            'tran_id' => $profile->id,
+            'browser_name' => $detector->getBrowser(),
+            'platform' => $detector->getDevice(),
+            'device' => $detector->getDevice(),
+            'ip' => request()->ip(),
+            'user_guard' => UserUtils::getCurrentGuardName(),
+            'page' => request()->path(),
+
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'duration' => $start_time->diffInSeconds($end_time),
+        ]);
 
         Session::flash('profile_id', $profile->id );
         return redirect()->route('volunteering.profile.thank-you')->with('success', $message_text);

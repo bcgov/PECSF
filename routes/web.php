@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\SupplyReportController;
 use App\Http\Controllers\Auth\KeycloakLoginController;
 use App\Http\Controllers\Admin\AdministratorController;
 use App\Http\Controllers\System\AnnouncementController;
+use App\Http\Controllers\System\UserActivityController;
 use App\Http\Controllers\Admin\CampaignPledgeController;
 use App\Http\Controllers\Admin\DonationUploadController;
 use App\Http\Controllers\System\SystemSettingController;
@@ -102,6 +103,7 @@ Route::get('admin/login', [LoginController::class, 'showLoginForm'])->name('admi
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/visit-monitoring-log', [HomeController::class, 'updateVisitMonitoringLog'])->name('visit-monitoring-log');
 
     Route::get('donations', [DonationController::class, 'index'])->name('donations.list');
     Route::get('donations/pledge-detail', [DonationController::class, 'pledgeDetail'])->name('donations.pledge-detail');
@@ -423,6 +425,11 @@ Route::middleware(['auth'])->prefix('system')->name('system.')->group(function()
     // Announcement 
     Route::resource('/announcement', AnnouncementController::class)->only(['index','store']);
     Route::post('image-upload',[AnnouncementController::class, 'storeImage'])->name('announcement.image.upload');
+
+    // User Activity & Behavior Analytics
+    Route::get('/page-visits-overview', [UserActivityController::class, 'page_visits_overview'])->name('page-visits-overview');
+    Route::get('/transaction-counts-overview', [UserActivityController::class, 'transaction_counts_overview'])->name('transaction-counts-overview');
+    Route::get('/transaction-timings', [UserActivityController::class, 'transaction_timings'])->name('transaction-timings');
 
 });
 
