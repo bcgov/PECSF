@@ -44,6 +44,8 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Closed Date</th>
+                    <th>Volunteer Start Date</th>
+                    <th>Volunteer End Date</th>
                     <th>Action </th>
 				</tr>
 			</thead>
@@ -134,7 +136,8 @@
                 {data: 'start_date', name: 'start_date'},
                 {data: 'end_date', name: 'end_date'},
                 {data: 'close_date', name: 'close_date'},
-
+                {data: 'volunteer_start_date'},
+                {data: 'volunteer_end_date'},
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: "dt-nowrap"}
             ],
             columnDefs: [

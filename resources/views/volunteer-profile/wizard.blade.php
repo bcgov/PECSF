@@ -8,8 +8,10 @@
 <div class="container mt-1">
     <div class="row">
         <div class="col-8 col-sm-8">
-            @if ($is_renew) 
-                <h1>Renew your Volunteer</h1>
+            @if (isset($profile) && $profile->id)
+                <h1>Edit your Volunteer registration</h1>
+            @elseif ($is_renew) 
+                <h1>Renew your Volunteer registration</h1>
             @else
                 <h1>Register as a Volunteer</h1>
             @endif
@@ -97,7 +99,7 @@
                         <button type="button" class="action next btn btn-lg btn-primary ml-1"
                             >Next</button>
                         <button type="submit" class="action submit btn btn-lg btn-primary ml-1"
-                            style="display: none">{{ (isset($profile) && $profile->id) ? 'Update' : 'Register' }}</button>
+                            style="display: none">{{ (isset($profile) && $profile->id) ? 'Update' : ($is_renew ? 'Renew registration' : 'Register') }}</button>
                     </div>
 
                 </form>
