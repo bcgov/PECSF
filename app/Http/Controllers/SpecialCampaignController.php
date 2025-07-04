@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SpecialCampaignPledge;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\SpecialCampaignRequest;
+use App\Models\TransactionTimesMonitoring;
+use Binafy\LaravelUserMonitoring\Utills\Detector;
+use Binafy\LaravelUserMonitoring\Utills\UserUtils;
 
 class SpecialCampaignController extends Controller
 {
@@ -37,6 +40,8 @@ class SpecialCampaignController extends Controller
      */
     public function create()
     {
+
+        session(['special_campaign_pledge_transaction_start' => now()]);
 
         //
         // $pool_option = 'P';
@@ -146,6 +151,31 @@ class SpecialCampaignController extends Controller
 
         $message_text = 'Pledge with Transaction ID ' . $pledge->id . ' have been created successfully';
 
+
+        // When the transaction is completed, write to transaction Tines Monitoring
+        $start_time = session('special_campaign_pledge_transaction_start') ? session('special_campaign_pledge_transaction_start') : now();
+        $end_time = now();
+        $duration = $start_time->diffInSeconds($end_time);
+        
+        $detector = new Detector;
+
+        TransactionTimesMonitoring::create([
+            'user_id' => UserUtils::getUserId(),
+            'action_type' => 'create',
+            'table_name' => 'special_campaign_pledges',
+            'tran_id' => $pledge->id,
+            'browser_name' => $detector->getBrowser(),
+            'platform' => $detector->getDevice(),
+            'device' => $detector->getDevice(),
+            'ip' => request()->ip(),
+            'user_guard' => UserUtils::getCurrentGuardName(),
+            'page' => request()->path(),
+
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'duration' => $start_time->diffInSeconds($end_time),
+        ]);
+
         Session::flash('pledge_id', $pledge->id );
         return redirect()->route('special-campaign.thank-you')
                 ->with('success', $message_text);
@@ -170,6 +200,9 @@ class SpecialCampaignController extends Controller
      */
     public function edit($id)
     {
+
+        session(['special_campaign_pledge_transaction_start' => now()]);
+        
         //
         //
         $pledge = SpecialCampaignPledge::where('id', $id)->first();
@@ -247,6 +280,31 @@ class SpecialCampaignController extends Controller
         $pledge->one_time_amount = $one_time_amount ?? 0;
         $pledge->updated_by_id = $user->id;
         $pledge->save();
+
+        // When the transaction is completed, write to transaction Tines Monitoring
+        $start_time = session('special_campaign_pledge_transaction_start');
+        $end_time = now();
+        $duration = $start_time->diffInSeconds($end_time);
+
+        $detector = new Detector;
+
+        TransactionTimesMonitoring::create([
+            'user_id' => UserUtils::getUserId(),
+            'action_type' => 'update',
+            'table_name' => 'special_campaign_pledges',
+            'tran_id' => $pledge->id,
+            'browser_name' => $detector->getBrowser(),
+            'platform' => $detector->getDevice(),
+            'device' => $detector->getDevice(),
+            'ip' => request()->ip(),
+            'page' => request()->path(),
+
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'duration' => $start_time->diffInSeconds($end_time),
+        ]);
+
+
 
        Session::flash('pledge_id', $pledge->id );
        return redirect()->route('special-campaign.thank-you')
