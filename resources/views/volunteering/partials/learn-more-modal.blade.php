@@ -372,7 +372,7 @@
     $(function () {
 
         var learn_total = 8;
-        $('#learnGuideCarousel').on('slide.bs.carousel', function (e) {
+        $('#learn-more-modal').on('slide.bs.carousel', function (e) {
 
             movie_id = $('#movie_player').attr('movie-id');
             $('#movie_player').attr('src', movie_id);
