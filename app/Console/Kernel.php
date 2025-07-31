@@ -138,7 +138,7 @@ class Kernel extends ConsoleKernel
                         $schedule->command('command:ImportPayCalendar')
                                 ->weekly()
                                 ->mondays()
-                                ->at('2:00')
+                                ->at('2:15')
                                 //  ->everyFifteenMinutes()
                                 ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'))
                                 ->onOneServer(); 
