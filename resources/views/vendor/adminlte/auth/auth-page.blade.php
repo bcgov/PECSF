@@ -21,7 +21,7 @@
         {{-- Logo --}}
         <div class="{{ $auth_type ?? 'login' }}-logo text-center">
                 {{-- <img src="{{ asset(config('adminlte.logo_img_xl')) }}" height="100px"> --}}
-                <img class="mb-3 logo-image-header mx-auto d-block" src="{{ asset('img/brand/PECSF_Logo_Horiz_RGB.png') }}" alt="Provincial Employees Community Services Fund Logo" height="120px" >
+                <img class="mx-0 mx-auto d-block p-1" src="{{ asset('img/brand/PECSF_Logo_Horiz_RGB_60yrs.png') }}" alt="Provincial Employees Community Services Fund Logo" height="120px" >
                 {!! config('adminlte.logo', '<b>Admin</b>LTE') !!}
         </div>
 
