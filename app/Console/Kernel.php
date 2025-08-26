@@ -138,7 +138,7 @@ class Kernel extends ConsoleKernel
                         $schedule->command('command:ImportPayCalendar')
                                 ->weekly()
                                 ->mondays()
-                                ->at('2:00')
+                                ->at('2:15')
                                 //  ->everyFifteenMinutes()
                                 ->sendOutputTo(storage_path('logs/ImportPayCalendar.log'))
                                 ->onOneServer(); 
@@ -218,13 +218,13 @@ class Kernel extends ConsoleKernel
                         // Non-Production -- Demography data and user profiles                        
                         $schedule->command('command:ImportEmployeeJob')
                                 ->weekdays()
-                                ->at('4:00')
+                                ->at('3:30')
                                 ->sendOutputTo(storage_path('logs/ImportEmployeeJob.log'))
                                 ->onOneServer(); 
 
                         $schedule->command('command:SyncUserProfile')
                                 ->weekdays()
-                                ->at('4:30')
+                                ->at('4:00')
                                 ->sendOutputTo(storage_path('logs/SyncUserProfile.log'))
                                 ->onOneServer(); 
                 } else {
