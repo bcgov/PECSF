@@ -253,6 +253,8 @@ class ChallengePageTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get('/challenge/download?sort=region');
 
+        $filename = 'Daily_Campaign_Update_Region_' . today()->format('Y-m-d') . '.xlsx';
+
         $setting = Setting::first();
 
         if (today() > $setting->campaign_start_date && today() <= $setting->campaign_final_date) {
