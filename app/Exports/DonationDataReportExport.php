@@ -112,9 +112,9 @@ class DonationDataReportExport implements FromQuery, WithHeadings, WithMapping, 
             $row->process_history_id,
             $row->process_history->status,
             $row->process_history->end_at,
-            $row->process_history ? $row->process_history->created_by->name : '',
+            $row->process_history->created_by ? $row->process_history->created_by->name : '',
             $row->created_at,
-            $row->process_history ? $row->process_history->updated_by->name : '',
+            $row->process_history->updated_by ? $row->process_history->updated_by->name : '',
             $row->updated_at
         ];
     }
