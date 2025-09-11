@@ -163,7 +163,7 @@ class DonationsImportBCP implements  ToModel, SkipsEmptyRows, WithValidation, Wi
             '1.max' => 'The 1 field must be 6 characters.',
             '2.numeric' => 'The 2 field must be a number',
             '3.date' =>  'The 3 field is not a valid date',
-            '4.in'  =>   'The 4 field is invalid frequency (either Biweekly or One-Time Deduction)',
+            '4.in'  =>   'The 4 field is invalid frequency (either "Bi-Weekly" or "One-Time")',
             '5.numeric' => 'The 5 field must be a number',
 
             'pledge.exists' => 'No pledge was setup for this pecsf_id.',
