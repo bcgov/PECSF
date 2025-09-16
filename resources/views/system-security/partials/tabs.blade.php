@@ -24,6 +24,24 @@
     </li>
 
     <li class="nav-item dropdown">
+      @php $active =  ( str_contains(Route::current()->getName(), 'system.page-visits-overview') ||
+                        str_contains(Route::current()->getName(), 'system.transaction-counts-overview')  ||
+                        str_contains(Route::current()->getName(), 'system.transaction-timings')
+                      ) ? 'active' : ''
+      @endphp
+      <a class="nav-link dropdown-toggle {{ $active }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          Activity Analytics</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.page-visits-overview') ? 'active' : ''}}"
+            href="{{ route('system.page-visits-overview') }}">Page Visits Overview</a>
+        <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.transaction-counts-overview') ? 'active' : ''}}"
+          href="{{ route('system.transaction-counts-overview') }}">Transaction Counts Overview</a>
+          <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'system.transaction-timings') ? 'active' : ''}}"
+            href="{{ route('system.transaction-timings') }}">Transaction Timings</a>
+      </div>
+    </li>
+
+    <li class="nav-item dropdown">
       @php $active =  ( str_contains(Route::current()->getName(), 'system.auditing') ||
                         str_contains(Route::current()->getName(), 'system.export-audits')
                       ) ? 'active' : ''
