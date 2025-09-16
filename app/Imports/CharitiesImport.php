@@ -136,7 +136,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     trim(strtolower($charity->city)) == trim(strtolower($charity->alt_city)) &&
                     trim(strtolower($charity->province)) == trim(strtolower($charity->alt_province)) &&
                     trim(strtolower($charity->country)) == trim(strtolower($charity->alt_country)) &&
-                    trim(strtolower($charity->postal_code)) == trim(strtolower(str_replace(' ', '', $charity->alt_postal_code)))) {
+                    trim(strtolower(str_replace(' ', '', $charity->postal_code))) == trim(strtolower(str_replace(' ', '', $charity->alt_postal_code)))) {
 
                     $charity->use_alt_address = null;
                     $charity->alt_address1 = null;
