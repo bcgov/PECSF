@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\CharityStaging;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -131,12 +132,23 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     // No Action
                 }
 
+
+                // --- How you'd use it ---
+                $craAddress = $charity->address . ' ' .  $charity->city . ' ' . $charity->province . ' ' . 
+                              str_replace(' ', '', $charity->postal_code);
+                $altAddress = $charity->alt_address1 . ' ' . $charity->alt_address2 . ' ' . $charity->alt_city . ' ' . 
+                              $charity->alt_province . ' ' . str_replace(' ', '', $charity->alt_postal_code);
+                $altCountry = $charity->alt_country;
+
+                $normalizedCra = $this->normalizeAddress($craAddress, $charity->country ); // "250 997 SEYMOUR ST"
+                $normalizedAlt = $this->normalizeAddress($altAddress, $altCountry); // "250 997 SEYMOUR ST"
+
+                Log::info($normalizedCra); 
+                Log::info($normalizedAlt);
+
                 if ($charity && 
-                    trim(strtolower($charity->address)) == trim(strtolower($charity->alt_address1)) &&
-                    trim(strtolower($charity->city)) == trim(strtolower($charity->alt_city)) &&
-                    trim(strtolower($charity->province)) == trim(strtolower($charity->alt_province)) &&
-                    trim(strtolower($charity->country)) == trim(strtolower($charity->alt_country)) &&
-                    trim(strtolower(str_replace(' ', '', $charity->postal_code))) == trim(strtolower(str_replace(' ', '', $charity->alt_postal_code)))) {
+                     $normalizedCra == $normalizedAlt
+                    ) {
 
                     $charity->use_alt_address = null;
                     $charity->alt_address1 = null;
@@ -150,6 +162,9 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                     $changes = $charity->getChanges();
                     unset($changes["updated_at"]);
                     $this->logMessage('[RESET ALT ADDRESS] on RN# ' . $charity->registration_number . ' - ' . json_encode($changes) );
+                    $this->logMessage('       Original CRA Address       - ' . $craAddress . ' ' . $charity->country );
+                    $this->logMessage('       Original Alternate Address - ' . $altAddress . ' ' . $altCountry);
+                    $this->logMessage('');
                 }
 
                 $charityStaging = CharityStaging::create([
@@ -230,6 +245,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                                            ->where('history_id', $history_id)
                                            ->whereColumn('charities.registration_number', 'charity_stagings.registration_number');
                                 })
+                                // ->where('id', 9999999999999999)
                                 ->where('charity_status', '!=', 'No-CRA-match');
 
                 $this->logMessage('');
@@ -298,6 +314,85 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
             },
         ];
+    }
+
+    protected function normalizeAddress($address, $country)
+    {
+        // 1. Initial Cleanup
+        $address = strtoupper($address); // Convert to uppercase
+        $address = preg_replace('/[.,#]/', '', $address); // Remove punctuation
+        $address = preg_replace('/\s+/', ' ', $address); // Collapse extra spaces
+        $address = trim($address);
+
+        $country = strtoupper($country); // Convert to uppercase
+        $country = trim($country);
+
+        // 2. Standardize Keywords
+        $replacements = [
+            // Street Types
+            'STREET' => 'ST',
+            'AVENUE' => 'AVE',
+            'ROAD' => 'RD',
+            'BOULEVARD' => 'BLVD',
+            'DRIVE' => 'DR',
+            'COURT' => 'CT',
+            'LANE' => 'LN',
+            
+            // Road 
+            'MOUNTAIN' => 'MTN',
+            'CRESCENT' => 'CRES',
+            'TERRACE' => 'TER',
+            'PLACE' => 'PL',
+            'SQUARE' => 'SQ',
+            'TRAIL' => 'TRL',
+            'HIGHWAY' => 'HWY',
+            'PARKWAY' => 'PKWY',
+            'WAY' => 'WY',
+            
+            // Directions
+            'NORTH' => 'N',
+            'SOUTH' => 'S',
+            'EAST' => 'E',
+            'WEST' => 'W',
+            'NORTHEAST' => 'NE',
+            'NORTHWEST' => 'NW',
+            'SOUTHEAST' => 'SE',
+            'SOUTHWEST' => 'SW',
+            
+            // Unit Designators
+            'APARTMENT' => 'APT',
+            'SUITE' => 'STE',
+            'UNIT' => '', // Often just removing the word is enough
+            
+            // PO Box
+            'POBOX' => 'PO BOX',
+            'P O BOX' => 'PO BOX',
+
+            // remove APT/STE/UNIT numbers for normalization
+            'APT' => ' ',
+            'STE' => ' ',
+            'UNIT' => ' ',
+ 
+        ];
+
+        $countries = [
+            // Country
+            'CAN' => 'CA',
+            'CANADA'  => 'CA',
+         ];
+
+        // Use str_replace for simple substitutions.
+        // We add spaces around the keys to avoid replacing parts of words,
+        // like replacing 'ST' inside 'FIRST'.
+        $address = ' ' . $address . ' ';
+        foreach ($replacements as $find => $replace) {
+            $address = str_replace(' ' . $find . ' ', ' ' . $replace . ' ', $address);
+        }
+        foreach ($countries as $find => $replace) {
+            $country = str_replace($find, $replace, $country);
+        }
+
+        return trim($address) . ' ' . trim($country); // Final trim
     }
 
     protected function logMessage($text)
