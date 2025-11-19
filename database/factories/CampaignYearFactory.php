@@ -22,6 +22,8 @@ class CampaignYearFactory extends Factory
             'number_of_periods' => $this->faker->randomNumber(2),
             'as_of_date' => $this->faker->date(),
             'close_date' => $this->faker->date(),
+            'volunteer_start_date' => $this->faker->date(),
+            'volunteer_end_date' => $this->faker->date(),
             'created_by_id' => 1,
             'modified_by_id' => 1,
         ];

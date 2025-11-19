@@ -17,7 +17,9 @@ class SpecialCampaignFactory extends Factory
     public function definition()
     {
 
-        $charity = Charity::factory()->create();
+        $charity = Charity::factory()->create([
+            'charity_status' =>  'Registered',
+        ]);
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         return [
