@@ -319,6 +319,22 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
     protected function normalizeAddress($address, $country)
     {
         // 1. Initial Cleanup
+        
+        // --- NEW LOGIC START ---
+        // This looks for a hyphen surrounded by any amount of whitespace (before or after)
+        // and replaces the whole thing with a single SPACE.
+        // Example: "123-B", "123 - B", "123- B" all become "123 B"
+        $address = preg_replace('/\s*-\s*/', ' ', $address);
+        // --- NEW LOGIC END ---
+        
+        // [UPDATED] Change 2: Handle Apostrophes/Quotes
+        // Remove apostrophes (standard ', smart ’, backtick `) entirely.
+        // Example: "Peggy’s Cove" becomes "PEGGYS COVE" to match "Peggys Cove"
+        // The /u modifier is required to handle the unicode smart quotes correctly.
+        $address = preg_replace("/['’‘`]/u", '', $address);
+
+
+
         $address = strtoupper($address); // Convert to uppercase
         $address = preg_replace('/[.,#]/', '', $address); // Remove punctuation
         $address = preg_replace('/\s+/', ' ', $address); // Collapse extra spaces
