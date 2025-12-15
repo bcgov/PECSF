@@ -103,8 +103,14 @@ class CampaignPledgeRequest extends FormRequest
                                               });
                                     }),
                             ],
-                            'pecsf_first_name'  => ['required', 'regex:/^[A-Za-z .,]+$/'],
-                            'pecsf_last_name'   => [ 'required', 'regex:/^[A-Za-z .,]+$/'],
+                            'pecsf_first_name' => [
+                                'required',
+                                'regex:/^[\p{L} .,\-\']+$/u'
+                            ],
+                            'pecsf_last_name' => [
+                                'required',
+                                'regex:/^[\p{L} .,\-\']+$/u'
+                            ],
                             'pecsf_city'   => ['required' ],
                         ]
                     );
