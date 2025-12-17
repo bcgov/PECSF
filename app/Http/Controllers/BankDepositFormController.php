@@ -140,12 +140,31 @@ class BankDepositFormController extends Controller
             'event_type'         => 'required',
             //'sub_type'         => 'required',
             //'sub_type' => ['sometimes', 'boolean', 'default:false'], // Make it not required and set default to false
-            'bc_gov_id'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']),
-                              Rule::when( $request->organization_code == 'GOV' 
-                                            && (!($request->business_unit == ($bu_election_bc ? $bu_election_bc->id : null) && $request->bc_gov_id == '000000')),
-                                    ['exists:users,emplid']),
-                              Rule::when( $request->organization_code == 'GOV' && substr($request->event_type,0,1) == 'C', "numeric|digits:6"),
-                            ], 
+            'bc_gov_id' => [
+                    // Required only for GOV orgs, except for specific event types,
+                    // and NOT required when bc_gov_id is '000000'
+                    Rule::when(
+                        $request->organization_code === 'GOV'
+                        && $request->bc_gov_id !== '000000',
+                        ['required_unless:event_type,Fundraiser,Gaming']
+                    ),
+
+                    // Must exist in users table for GOV orgs,
+                    // but skipped when bc_gov_id is '000000'
+                    Rule::when(
+                        $request->organization_code === 'GOV'
+                        && $request->bc_gov_id !== '000000',
+                        ['exists:users,emplid']
+                    ),
+
+                    // Must be a 6-digit number for event types starting with 'C',
+                    // but '000000' is always allowed
+                    Rule::when(
+                        substr($request->event_type, 0, 1) === 'C'
+                        && $request->bc_gov_id !== '000000',
+                        ['numeric', 'digits:6']
+                    ),
+            ],
             'employee_name'  => [ Rule::when( $request->organization_code == 'GOV', ['required_unless:event_type,Fundraiser,Gaming']) ],                             
             'deposit_date'         => 'required|before:tomorrow',
             'deposit_amount'         => 'required|numeric|between:0.01,999999.99|regex:/^\d+(\.\d{1,2})?$/',
