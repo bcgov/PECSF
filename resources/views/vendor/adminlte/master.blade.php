@@ -76,41 +76,45 @@
 <body class="@yield('classes_body')" @yield('body_data')>
     @if( session()->has('has-active-special-campaign') and !str_contains( Route::current()->getName(), 'special-campaign.' ) )
 
-        {{-- <div class="top-message-bar pt-2 pb-1 text-center bg-warning d-flex justify-content-center align-items-center XXsticky-top"> --}}
-        <div class="top-message-bar p-2  XXsticky-top" style="background-color: #FFE066;">
-            <div class="row  justify-content-center ">
-                <div class="col-sm-12 col-md-8 col-lg-10">
-                    <div class="float-right">
-                        {{-- <span class="h6">One of three columns</span> --}}
-                        <div class="special-campaign-container">
-                            <div class="row pr-1">
-                                <div class="v-slider-frame">
-                                    <ul class="v-slides" style="display:none;">
-                                        @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
-                                            <li class="v-slide">{{  $text }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+        <div class="top-message-bar p-2 XXsticky-top text-center" style="background-color: #1a5a96; color: #ffffff;">
+            <div class="row justify-content-center align-items-center">                
+                <div class="col-sm-12 col-md-8 col-lg-10 text-center">
+                    <div class="special-campaign-container">
+                        <div class="row justify-content-center">
+                            <div class="v-slider-frame">
+                                <ul class="v-slides" style="display:none;">
+                                    @foreach ( \App\Models\SpecialCampaign::activeBannerText() as $text )
+                                        <li class="v-slide text-white">{{ $text }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-4 col-lg-2">
-                    <div class="float-left">
-                        <span class="h6 mx-2">|</span>
-                        <span class="h6 text-primary font-weight-bold special-campaign">
-                            <u><a href="{{ route('special-campaign.index') }}" class="mx-2" style="color: #C1201A;">Make a Donation</a></u>
-                        </span>
-                    </div>
-                    <div class="form-inline float-right align-middle pr-2">
-                        <button type="submit" class="close">
-                            <span aria-hidden="true" class="h6 font-weight-bold">X</span>
+
+                <div class="col-sm-12 col-md-4 col-lg-2 text-center">
+                    <span class="h6 mx-2 text-white">|</span>
+                    <span class="h6 font-weight-bold special-campaign">
+                        <u>
+                            <a href="{{ route('special-campaign.index') }}" 
+                            class="mx-2 text-white" 
+                            style="color: #ffffff;">
+                                Make a Donation
+                            </a>
+                        </u>
+                    </span>
+                    <!-----
+                    <div class="form-inline d-inline-block align-middle ml-2">
+                        <button type="submit" class="close text-white">
+                            <span aria-hidden="true" class="h6 font-weight-bold text-white">X</span>
                         </button>
                     </div>
+                    ---->
                 </div>
+
             </div>
         </div>
-    @endif
+    @endif    
 
     {{-- Body Content --}}
     @yield('body')

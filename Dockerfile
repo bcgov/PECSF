@@ -71,7 +71,7 @@ RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
 	\
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 
-RUN echo "deb https://packages.sury.org/php/ bullseye main" | tee /etc/apt/sources.list.d/php.list
+# RUN echo "deb https://packages.sury.org/php/ bullseye main" | tee /etc/apt/sources.list.d/php.list
 RUN docker-php-ext-install pdo pdo_mysql opcache
 
 RUN apt-get install -y \
@@ -79,7 +79,7 @@ RUN apt-get install -y \
         zip \
     && docker-php-ext-install zip
 
-RUN apt-get install -y apt-transport-https lsb-release ca-certificates 
+# RUN apt-get install -y apt-transport-https lsb-release ca-certificates 
 # RUN wget -4 -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
 COPY --chown=www-data:www-data server_files/apt.gpg /etc/apt/trusted.gpg.d/php.gpg
 
