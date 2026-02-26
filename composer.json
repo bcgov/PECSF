@@ -17,7 +17,8 @@
         "jenssegers/agent": "^2.6",
         "jeroennoten/laravel-adminlte": "^3.9",
         "laravel/framework": "^11.0",
-        "laravel/passport": "^12.0",
+        "laravel/passport": "^13.0",
+        "firebase/php-jwt": "^7.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.2",
         "laravel/tinker": "^2.5",
@@ -79,11 +80,9 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
-        "audit": {
-            "block-insecure": false
-        },
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "stable",
