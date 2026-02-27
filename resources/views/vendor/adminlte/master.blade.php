@@ -103,12 +103,13 @@
                             </a>
                         </u>
                     </span>
-
+                    <!-----
                     <div class="form-inline d-inline-block align-middle ml-2">
                         <button type="submit" class="close text-white">
                             <span aria-hidden="true" class="h6 font-weight-bold text-white">X</span>
                         </button>
                     </div>
+                    ---->
                 </div>
 
             </div>
