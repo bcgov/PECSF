@@ -218,7 +218,7 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
     
     public function startRow(): int
     {
-        return 7;
+        return 6;
     }
 
     public function registerEvents(): array
@@ -236,7 +236,7 @@ class DonationsImportLA implements  ToModel, SkipsEmptyRows, WithValidation, Wit
 
                 if (filled($totalRows)) {
 
-                    $this->row_count = array_values($totalRows)[0] - 1;  // Note: first 2 rows is heading
+                    $this->row_count = array_values($totalRows)[0] - 5;  // Note: first 5 rows is heading
 
                       \App\Models\ProcessHistory::UpdateOrCreate([
                             'id' => $this->history_id,
