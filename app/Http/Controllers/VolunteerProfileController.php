@@ -83,7 +83,7 @@ class VolunteerProfileController extends Controller
             $profile = $registered_in_past->replicate();
             $profile->id = null;
             $profile->campaign_year = today()->year;
-            $profile->no_of_years = 1;
+            $profile->no_of_years = $registered_in_past->no_of_years + 1;
         }
 
         return view('volunteer-profile.wizard', compact('profile','user', 'cities', 'business_units', 'role_list', 'province_list', 'is_renew'));
@@ -149,11 +149,11 @@ class VolunteerProfileController extends Controller
                 'emplid' => $user->emplid,
 
                 'employee_city_name'   => $user->primary_job ? $user->primary_job->office_city : null,
-                'employee_bu_code'     =>  $user->primary_job ? $user->primary_job->business_unit : null,
-                'employee_region_code' => $user->primary_job ? $user->primary_job->city_by_office_city->region->code : null,
+                'employee_bu_code'     => $user->primary_job ? $user->primary_job->business_unit : null,
+                'employee_region_code' => $user->primary_job ? $user->primary_job->tgb_reg_district : null,
     
                 'business_unit_code' => $request->business_unit_code,
-                'no_of_years' => $is_renew ? 1 : $request->no_of_years,
+                'no_of_years' => $is_renew ? $registered_in_past->no_of_years + 1 : $request->no_of_years,
                 'preferred_role' => $request->preferred_role,
 
                 'address_type' => $request->address_type,
@@ -278,12 +278,12 @@ class VolunteerProfileController extends Controller
         // Updating 
         $profile->employee_city_name   = $user->primary_job ? $user->primary_job->office_city : null;
         $profile->employee_bu_code     = $user->primary_job ? $user->primary_job->business_unit : null;
-        $profile->employee_region_code = $user->primary_job ? $user->primary_job->city_by_office_city->region->code : null;
+        $profile->employee_region_code = $user->primary_job ? $user->primary_job->tgb_reg_district : null;
 
 
         $profile->address_type = $request->address_type;
         $profile->business_unit_code = $request->business_unit_code;
-        $profile->no_of_years = $profile->is_renew_profile ? 1 : $request->no_of_years;
+        $profile->no_of_years = $profile->is_renew_profile ? $profile->no_of_years : $request->no_of_years;
         $profile->preferred_role = $request->preferred_role;
         $profile->address = ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $request->address;
         $profile->city = ($request->address_type =="G" || $request->opt_out_recongnition == 'Y') ? null : $city->city;
