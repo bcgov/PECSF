@@ -218,7 +218,7 @@ class MaintainVolunteerProfileController extends Controller
             'last_name' => (!($organization->code == 'GOV')) ? $request->pecsf_last_name : null,
             'employee_city_name' => ($organization->code == 'GOV') ?  ($user->primary_job ? $user->primary_job->office_city : null) : $request->pecsf_city,
             'employee_bu_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->business_unit : null) : $organization->bu_code,
-            'employee_region_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->city_by_office_city->region->code : null) : $pecsf_city->TGB_REG_DISTRICT,
+            'employee_region_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->tgb_reg_district : null) : $pecsf_city->TGB_REG_DISTRICT,
 
             'business_unit_code' => $request->business_unit_code,
             'no_of_years' => $request->no_of_years,
@@ -329,7 +329,7 @@ class MaintainVolunteerProfileController extends Controller
         }
 
         $profile->business_unit_code = $request->business_unit_code;
-        $profile->no_of_years = $profile->isRenewProfile ? 1 : $request->no_of_years;
+        $profile->no_of_years = $profile->isRenewProfile ? $profile->no_of_years : $request->no_of_years;
         $profile->preferred_role = $request->preferred_role;
 
         $profile->address_type = $request->address_type;

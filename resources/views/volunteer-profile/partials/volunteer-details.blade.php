@@ -18,10 +18,10 @@
             </select>
         </div>
 
-        @if ($is_renew) 
+        @if ($is_renew)
             <div class="form-group col-12" style="display:none;">
-                <input type="text" class="form-control w-75" name="no_of_years" id="no_of_years" value="1" readonly>
-             </div>
+                <input type="text" class="form-control w-75" name="no_of_years" id="no_of_years" value="{{ $profile ? $profile->no_of_years : 1 }}" readonly>
+            </div>
         @else
             <div class="form-group col-12">
                 <label for="no_of_years">How many years have you been volunteering with PECSF?</label>
