@@ -170,7 +170,9 @@
                     <div class="col-md-5 mb-3">
                         <label for="user_region">Region</label>
                         <input type="text" class="form-control border-0" id="user_region"
-                                value="{{ (isset($profile) && $profile->primary_job) ? $profile->primary_job->city_by_office_city->region->name . ' (' . $profile->primary_job->city_by_office_city->region->code . ')'  : '' }}"
+                                value="{{ $is_new_profile
+                                    ? ((isset($profile) && $profile->primary_job) ? $profile->primary_job->city_by_office_city->region->name . ' (' . $profile->primary_job->city_by_office_city->region->code . ')' : '')
+                                    : ($profile->employee_region ? $profile->employee_region->name . ' (' . $profile->employee_region->code . ')' : '') }}"
                              disabled>
                     </div>
                     <div class="col-md-5 mb-3">
@@ -204,7 +206,9 @@
                     <div class="col-md-4 mb-3">
                         <label for="user_bu">Business Unit</label>
                         <input type="text" class="form-control border-0" id="user_bu"
-                            value="{{ (isset($profile) && $profile->primary_job) ? $profile->primary_job->bus_unit->name . ' (' . $profile->primary_job->bus_unit->code . ')' : '' }}"
+                            value="{{ $is_new_profile
+                                ? ((isset($profile) && $profile->primary_job) ? $profile->primary_job->bus_unit->name . ' (' . $profile->primary_job->bus_unit->code . ')' : '')
+                                : ($profile->employee_business_unit ? $profile->employee_business_unit->name . ' (' . $profile->employee_business_unit->code . ')' : '') }}"
                             disabled>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -216,7 +220,9 @@
                     <div class="col-md-4 mb-3">
                         <label for="user_office_city">Office City</label>
                         <input type="text" class="form-control border-0" id="user_office_city" name="user_office_city"
-                            value="{{ (isset($profile) && $profile->primary_job) ? $profile->primary_job->office_city : '' }}"
+                            value="{{ $is_new_profile
+                                ? ((isset($profile) && $profile->primary_job) ? $profile->primary_job->office_city : '')
+                                : ($profile->employee_city_name ?? '') }}"
                             readonly>
                     </div>
                 </div>
@@ -254,7 +260,7 @@
                             <label for="no_of_years">How many years have you been volunteering with PECSF</label>
                             <div class="text-info">Note: this is a renew volunteer profile, no change required</div>
                             <select type="text" class="form-control w-25" name="no_of_years" id="no_of_years" role="listbox" disabled>
-                                <option role="listitem" value="1" selected>1</option>
+                                <option role="listitem" value="{{ $calculated_no_of_years }}" selected>{{ $calculated_no_of_years }}</option>
                             </select>
                         </div>
                     @else
