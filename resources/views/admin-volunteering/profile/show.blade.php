@@ -65,8 +65,8 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="employee_region">Region</label>
-                        <input id="employee_region" type="text" class="form-control" 
-                            value="{{ $profile->primary_job->city_by_office_city->region->name . ' (' . $profile->primary_job->city_by_office_city->region->code . ')'  }}" disabled>
+                        <input id="employee_region" type="text" class="form-control"
+                            value="{{ $profile->employee_region ? $profile->employee_region->name . ' (' . $profile->employee_region->code . ')' : '' }}" disabled>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="employee_dept">Department</label>
@@ -91,7 +91,7 @@
                 <div class="form-row">
                     <div class="col-md-4 mb-3">
                         <label for="user_bu">Business Unit</label>
-                        <input type="text" class="form-control" value="{{ $profile->primary_job->bus_unit->name }}" disabled>
+                        <input type="text" class="form-control" value="{{ $profile->employee_business_unit->name ?? '' }}" disabled>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="user_org">Organization</label>
@@ -99,7 +99,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="user_office_city">Office City</label>
-                        <input type="text" class="form-control" value="{{ $profile->primary_job->office_city ?? ''  }}" disabled>
+                        <input type="text" class="form-control" value="{{ $profile->employee_city_name ?? '' }}" disabled>
                     </div>
                 </div>
             @else

@@ -56,7 +56,10 @@ class MaintainVolunteerProfileRequest extends FormRequest
             'business_unit_code'  => ['required', 
                     Rule::exists("business_units", "code")->where('status', 'A')->whereNull("deleted_at"),
                 ],
-            'no_of_years' => "required|integer|between:1,50",
+            // On updates, no_of_years is disabled (not submitted) for renewal profiles
+            // and is auto-calculated by the controller — use 'sometimes' so the
+            // required check is skipped when the field is absent.
+            'no_of_years' => $this->isMethod('put') ? "sometimes|integer|between:1,50" : "required|integer|between:1,50",
             'preferred_role' => ["required", Rule::in( $role_keys )],
 
             'address_type' => ['required', Rule::in(['G', 'S'])],
@@ -109,21 +112,21 @@ class MaintainVolunteerProfileRequest extends FormRequest
                     }
                 }
 
-                // If renew record, only 1 is allowed
+                // If renew record, no_of_years must be previous year's count + 1
                 $profile = VolunteerProfile::where('campaign_year', '<', $this->campaign_year)
                                         ->where('organization_code', $org->code)
                                         ->when($org->code == 'GOV', function($q) {
                                             return $q->where('emplid', $this->emplid);
-                                        }) 
+                                        })
                                         ->when($org->code != 'GOV', function($q) {
                                             return $q->where('pecsf_id', $this->pecsf_id);
                                         })
                                         ->orderBy('campaign_year', 'desc')
                                         ->first();
 
-                if ($profile && $this->no_of_years <> 1) {
-                    $validator->errors()->add('no_of_years',  
-                        "The registration from the ". $profile->campaign_year . " campaign year has been located. Renewal entries must be for a duration of one year."
+                if ($profile && $this->no_of_years && $this->no_of_years <> ($profile->no_of_years + 1)) {
+                    $validator->errors()->add('no_of_years',
+                        "The registration from the ". $profile->campaign_year . " campaign year has been located. The number of years volunteering must be " . ($profile->no_of_years + 1) . "."
                         );
                 }
 
