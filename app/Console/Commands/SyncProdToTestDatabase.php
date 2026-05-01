@@ -112,7 +112,8 @@ class SyncProdToTestDatabase extends Command
 
     ];
 
-    // Tables excluded entirely from the data dump (transient / security-sensitive)
+    // Tables excluded entirely from the data dump (transient / security-sensitive).
+    // Only applied when $syncTables is empty (i.e. full sync).
     protected array $excludedTables = [
         'personal_access_tokens',
         'oauth_access_tokens',
@@ -124,6 +125,15 @@ class SyncProdToTestDatabase extends Command
         'jobs',
         'job_batches',
         'failed_jobs',
+    ];
+
+    // Selective sync: list only the tables you want copied from prod.
+    // Leave empty to sync ALL tables (minus $excludedTables above).
+    // Masking rules in $maskingRules still apply to any listed table.
+    protected array $syncTables = [
+        // 'users',
+        // 'employee_jobs',
+        // 'charities',
     ];
 
     public function handle(): int
@@ -209,9 +219,13 @@ class SyncProdToTestDatabase extends Command
 
     protected function buildDumpSchema(): DumpSchema
     {
-        $schema = DumpSchema::define('prod_sync')
-            ->exclude($this->excludedTables)
-            ->allTables();
+        $schema = DumpSchema::define('prod_sync');
+
+        if (!empty($this->syncTables)) {
+            $schema->include($this->syncTables);
+        } else {
+            $schema->exclude($this->excludedTables)->allTables();
+        }
 
         foreach ($this->maskingRules as $tableName => $rules) {
             $schema->table($tableName, function (TableDefinition $table) use ($rules) {
@@ -343,10 +357,15 @@ class SyncProdToTestDatabase extends Command
         }
 
         $this->line('');
-        $this->line('  Excluded tables (no data transferred):');
-        $this->line('    ' . implode(', ', $this->excludedTables));
-        $this->line('');
-        $this->line('  All other tables: copied verbatim.');
+        if (!empty($this->syncTables)) {
+            $this->line('  Selective sync — only these tables will be transferred:');
+            $this->line('    ' . implode(', ', $this->syncTables));
+        } else {
+            $this->line('  Excluded tables (no data transferred):');
+            $this->line('    ' . implode(', ', $this->excludedTables));
+            $this->line('');
+            $this->line('  All other tables: copied verbatim.');
+        }
     }
 
     protected function humanFileSize(int $bytes): string
