@@ -10,6 +10,7 @@
         "barryvdh/laravel-debugbar": "^3.0",
         "barryvdh/laravel-dompdf": "^2.0",
         "barryvdh/laravel-snappy": "^1.0.0",
+        "beyondcode/laravel-masked-db-dump": "^5.0",
         "binafy/laravel-user-monitoring": "^1.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
