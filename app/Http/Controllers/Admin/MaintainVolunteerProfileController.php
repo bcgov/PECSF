@@ -209,19 +209,34 @@ class MaintainVolunteerProfileController extends Controller
         $pecsf_city = City::where('city', $request->pecsf_city)->first();
         $city = City::where('id', $request->city)->first();
 
+        // Count how many previous campaign years this person already has.
+        // A renewal record should always reflect the true accumulated total,
+        // regardless of what the admin typed in the form.
+        $previousYearsCount = VolunteerProfile::where('organization_code', $organization->code)
+            ->where('campaign_year', '<', $request->campaign_year)
+            ->when($organization->code === 'GOV',
+                fn ($q) => $q->where('emplid', $request->emplid),
+                fn ($q) => $q->where('pecsf_id', $request->pecsf_id)
+            )
+            ->count();
+
+        $no_of_years = $previousYearsCount > 0
+            ? $previousYearsCount + 1   // renewal: prior years + this year
+            : $request->no_of_years;    // first-time: use the admin-entered value
+
         $profile = VolunteerProfile::Create([
             'campaign_year' => $request->campaign_year,
             'organization_code' => $organization->code,
             'emplid' => ($organization->code == 'GOV') ? $request->emplid : null,
             'pecsf_id' => (!($organization->code == 'GOV')) ? $request->pecsf_id : null,
-            'first_name' => (!($organization->code == 'GOV')) ? $request->pecsf_first_name : null, 
+            'first_name' => (!($organization->code == 'GOV')) ? $request->pecsf_first_name : null,
             'last_name' => (!($organization->code == 'GOV')) ? $request->pecsf_last_name : null,
             'employee_city_name' => ($organization->code == 'GOV') ?  ($user->primary_job ? $user->primary_job->office_city : null) : $request->pecsf_city,
             'employee_bu_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->business_unit : null) : $organization->bu_code,
             'employee_region_code' => ($organization->code == 'GOV') ? ($user->primary_job ? $user->primary_job->tgb_reg_district : null) : $pecsf_city->TGB_REG_DISTRICT,
 
             'business_unit_code' => $request->business_unit_code,
-            'no_of_years' => $request->no_of_years,
+            'no_of_years' => $no_of_years,
             'preferred_role' => $request->preferred_role,
 
             'address_type' =>  $request->address_type,
@@ -329,7 +344,19 @@ class MaintainVolunteerProfileController extends Controller
         }
 
         $profile->business_unit_code = $request->business_unit_code;
-        $profile->no_of_years = $profile->isRenewProfile ? $profile->no_of_years : $request->no_of_years;
+        // For renewals, recalculate from the DB so edits never corrupt the count.
+        if ($profile->isRenewProfile) {
+            $previousYearsCount = VolunteerProfile::where('organization_code', $profile->organization_code)
+                ->where('campaign_year', '<', $profile->campaign_year)
+                ->when($profile->organization_code === 'GOV',
+                    fn ($q) => $q->where('emplid', $profile->emplid),
+                    fn ($q) => $q->where('pecsf_id', $profile->pecsf_id)
+                )
+                ->count();
+            $profile->no_of_years = $previousYearsCount + 1;
+        } else {
+            $profile->no_of_years = $request->no_of_years;
+        }
         $profile->preferred_role = $request->preferred_role;
 
         $profile->address_type = $request->address_type;
