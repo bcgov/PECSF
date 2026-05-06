@@ -150,7 +150,7 @@ class VolunteerProfileController extends Controller
 
                 'employee_city_name'   => $user->primary_job ? $user->primary_job->office_city : null,
                 'employee_bu_code'     => $user->primary_job ? $user->primary_job->business_unit : null,
-                'employee_region_code' => $user->primary_job ? $user->primary_job->tgb_reg_district : null,
+                'employee_region_code' => $user->primary_job ? $user->primary_job->city_by_office_city->region->code : null,
     
                 'business_unit_code' => $request->business_unit_code,
                 'no_of_years' => $is_renew ? $registered_in_past->no_of_years + 1 : $request->no_of_years,
@@ -278,7 +278,7 @@ class VolunteerProfileController extends Controller
         // Updating 
         $profile->employee_city_name   = $user->primary_job ? $user->primary_job->office_city : null;
         $profile->employee_bu_code     = $user->primary_job ? $user->primary_job->business_unit : null;
-        $profile->employee_region_code = $user->primary_job ? $user->primary_job->tgb_reg_district : null;
+        $profile->employee_region_code = $user->primary_job ? $user->primary_job->city_by_office_city->region->code : null;
 
 
         $profile->address_type = $request->address_type;
