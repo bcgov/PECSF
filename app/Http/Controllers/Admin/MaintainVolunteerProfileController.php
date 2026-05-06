@@ -308,8 +308,22 @@ class MaintainVolunteerProfileController extends Controller
 
         $is_renew = $profile->isRenewProfile;
 
+        // Always calculate the correct no_of_years from the DB so the edit form
+        // shows the right value even if the stored value is stale.
+        $previousYearsCount = VolunteerProfile::where('organization_code', $profile->organization_code)
+            ->where('campaign_year', '<', $profile->campaign_year)
+            ->when($profile->organization_code === 'GOV',
+                fn ($q) => $q->where('emplid', $profile->emplid),
+                fn ($q) => $q->where('pecsf_id', $profile->pecsf_id)
+            )
+            ->count();
+        $calculated_no_of_years = $previousYearsCount > 0
+            ? $previousYearsCount + 1
+            : $profile->no_of_years;
+
         return view('admin-volunteering.profile.create-edit', compact('profile', 'organizations', 'campaignYears',
-                                'business_units', 'cities', 'role_list', 'province_list', 'is_new_profile', 'is_renew'
+                                'business_units', 'cities', 'role_list', 'province_list', 'is_new_profile', 'is_renew',
+                                'calculated_no_of_years'
                     ));
             
     

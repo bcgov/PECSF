@@ -260,7 +260,7 @@
                             <label for="no_of_years">How many years have you been volunteering with PECSF</label>
                             <div class="text-info">Note: this is a renew volunteer profile, no change required</div>
                             <select type="text" class="form-control w-25" name="no_of_years" id="no_of_years" role="listbox" disabled>
-                                <option role="listitem" value="{{ $profile->no_of_years }}" selected>{{ $profile->no_of_years }}</option>
+                                <option role="listitem" value="{{ $calculated_no_of_years }}" selected>{{ $calculated_no_of_years }}</option>
                             </select>
                         </div>
                     @else
