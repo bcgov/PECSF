@@ -20,24 +20,22 @@ class SyncProdToTestDatabase extends Command
     protected $description = 'Sync production database to test database using a masked dump (PII is anonymized)';
 
     // -------------------------------------------------------------------------
-    // Database configurations — values are read from environment variables
-    // injected by OpenShift secrets (see openshift/app/pecsf-dc.yml).
+    // Database configurations — values are read from environment variables.
     //
-    // Required env vars:
-    //   DB_PROD_HOST, DB_PROD_PORT, DB_PROD_DATABASE,
-    //   DB_PROD_USERNAME, DB_PROD_PASSWORD
-    //   DB_TEST_HOST, DB_TEST_PORT, DB_TEST_DATABASE,
-    //   DB_TEST_USERNAME, DB_TEST_PASSWORD
+    // Prod DB — add to test ConfigMap (config-env-pecsf):
+    //   DB_PROD_HOST, DB_PROD_PORT, DB_PROD_DATABASE, DB_PROD_USERNAME, DB_PROD_PASSWORD
+    //
+    // Test DB — reuses existing DB_* vars already in the test ConfigMap.
     // -------------------------------------------------------------------------
     protected function prodConfig(): array
     {
         return [
             'driver'    => 'mysql',
-            'host'      => env('DB_PROD_HOST',     'prod-db-host.example.com'),
-            'port'      => env('DB_PROD_PORT',     '3306'),
-            'database'  => env('DB_PROD_DATABASE', 'pecsf_prod'),
-            'username'  => env('DB_PROD_USERNAME', 'prod_readonly_user'),
-            'password'  => env('DB_PROD_PASSWORD', ''),
+            'host'      => env('DB_PROD_HOST'),
+            'port'      => env('DB_PROD_PORT', '3306'),
+            'database'  => env('DB_PROD_DATABASE'),
+            'username'  => env('DB_PROD_USERNAME'),
+            'password'  => env('DB_PROD_PASSWORD'),
             'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix'    => '',
@@ -50,11 +48,11 @@ class SyncProdToTestDatabase extends Command
     {
         return [
             'driver'    => 'mysql',
-            'host'      => env('DB_TEST_HOST',     'test-db-host.example.com'),
-            'port'      => env('DB_TEST_PORT',     '3306'),
-            'database'  => env('DB_TEST_DATABASE', 'pecsf_test'),
-            'username'  => env('DB_TEST_USERNAME', 'test_db_user'),
-            'password'  => env('DB_TEST_PASSWORD', ''),
+            'host'      => env('DB_HOST'),
+            'port'      => env('DB_PORT', '3306'),
+            'database'  => env('DB_DATABASE'),
+            'username'  => env('DB_USERNAME'),
+            'password'  => env('DB_PASSWORD'),
             'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix'    => '',
@@ -86,11 +84,6 @@ class SyncProdToTestDatabase extends Command
     // -------------------------------------------------------------------------
     protected array $maskingRules = [
 
-        'users' => [
-            'mask'    => ['email'],
-            'replace' => ['name' => 'Test User'],
-        ],
-
         'employee_jobs' => [
             'mask'    => ['email'],
             'replace' => [
@@ -115,6 +108,7 @@ class SyncProdToTestDatabase extends Command
     // Tables excluded entirely from the data dump (transient / security-sensitive).
     // Only applied when $syncTables is empty (i.e. full sync).
     protected array $excludedTables = [
+        'users',
         'personal_access_tokens',
         'oauth_access_tokens',
         'oauth_auth_codes',
