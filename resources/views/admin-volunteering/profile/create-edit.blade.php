@@ -52,9 +52,10 @@
                             @if ($is_new_profile)
                                 <select class="form-control" style="width:100%;" name="campaign_year" id="campaign_year">
                                     @foreach ($campaignYears as $value)
-                                        <option value="{{ $value }}" 
-                                            {{ $value == today()->year ? 'selected' : '' }}>
-                                            {{ $value }}</option>
+                                        <option value="{{ $value }}"
+                                            {{ $value == today()->year ? 'selected' : '' }}
+                                            {{ $value < today()->year ? 'disabled' : '' }}>
+                                            {{ $value }}{{ $value < today()->year ? ' (unavailable)' : '' }}</option>
                                     @endforeach
                                 </select>
                             @else 
@@ -637,8 +638,9 @@ $(function () {
             $('#business_unit_code').val(data.business_unit_code);
 
             if (data.profile_count > 0) {
-                $('#no_of_years').val(1);
-                // $('#no_of_years').prop('disabled',true);
+                // Set the correct cumulative value so backend validation passes.
+                // profile_count = number of prior-year records, so this year = count + 1.
+                $('#no_of_years').val(data.profile_count + 1);
                 $('#no_of_years_area').hide();
             } else {
                 // $('#no_of_years').val('');
