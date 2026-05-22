@@ -53,9 +53,8 @@
                                 <select class="form-control" style="width:100%;" name="campaign_year" id="campaign_year">
                                     @foreach ($campaignYears as $value)
                                         <option value="{{ $value }}"
-                                            {{ $value == today()->year ? 'selected' : '' }}
-                                            {{ $value < today()->year ? 'disabled' : '' }}>
-                                            {{ $value }}{{ $value < today()->year ? ' (unavailable)' : '' }}</option>
+                                            {{ $value == today()->year ? 'selected' : '' }}>
+                                            {{ $value }}</option>
                                     @endforeach
                                 </select>
                             @else 
