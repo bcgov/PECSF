@@ -110,12 +110,14 @@ RUN chmod +x /usr/local/bin/laravel-schedule.sh
 RUN chmod +x /var/www/html/entrypoint.sh
 
 # Create cache and session storage structure
+# chgrp 0 + chmod g=u is the OpenShift pattern: the pod runs as a random UID
+# in group 0 (root group), so group-write access lets it write regardless of UID.
 RUN mkdir -p /var/www/html/storage/app \
              /var/www/html/storage/framework \
              /var/www/html/storage/logs \
-             /var/www/html/bootstrap/cache
-RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+             /var/www/html/bootstrap/cache && \
+    chown -R www-data:root /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 RUN chmod -R 755 /var/log/apache2
 RUN chown -R www-data:www-data /var/log/apache2
