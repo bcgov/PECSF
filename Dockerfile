@@ -10,8 +10,7 @@ ENV COMPOSER_PROCESS_TIMEOUT=2000
 WORKDIR /app
 COPY . /app
 
-RUN composer update --ignore-platform-reqs
-RUN composer require kalnoy/nestedset doctrine/dbal awobaz/compoships --ignore-platform-reqs
+RUN composer install --no-dev --no-scripts --ignore-platform-reqs
 
 RUN chgrp -R 0 /app && \
     chmod -R g=u /app
