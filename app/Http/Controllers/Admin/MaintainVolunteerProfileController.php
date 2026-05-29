@@ -91,7 +91,31 @@ class MaintainVolunteerProfileController extends Controller
                             ->when( $request->preferred_role, function($query) use($request) {
                                 $query->where('volunteer_profiles.preferred_role', $request->preferred_role );
                             })
-                            ->select('volunteer_profiles.*');
+                            ->select('volunteer_profiles.*')
+                            ->addSelect(DB::raw('(
+                                (
+                                    SELECT vp_first.no_of_years
+                                    FROM volunteer_profiles AS vp_first
+                                    WHERE vp_first.organization_code = volunteer_profiles.organization_code
+                                      AND (
+                                        (volunteer_profiles.organization_code = \'GOV\' AND vp_first.emplid = volunteer_profiles.emplid)
+                                        OR (volunteer_profiles.organization_code != \'GOV\' AND vp_first.pecsf_id = volunteer_profiles.pecsf_id)
+                                      )
+                                    ORDER BY vp_first.campaign_year ASC
+                                    LIMIT 1
+                                )
+                                +
+                                (
+                                    SELECT COUNT(*)
+                                    FROM volunteer_profiles AS vp_prior
+                                    WHERE vp_prior.organization_code = volunteer_profiles.organization_code
+                                      AND vp_prior.campaign_year < volunteer_profiles.campaign_year
+                                      AND (
+                                        (volunteer_profiles.organization_code = \'GOV\' AND vp_prior.emplid = volunteer_profiles.emplid)
+                                        OR (volunteer_profiles.organization_code != \'GOV\' AND vp_prior.pecsf_id = volunteer_profiles.pecsf_id)
+                                      )
+                                )
+                            ) AS computed_no_of_years'));
 
             $gov = Organization::where('code', 'GOV')->first();
 
