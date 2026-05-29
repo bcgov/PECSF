@@ -91,18 +91,31 @@ class MaintainVolunteerProfileController extends Controller
                             ->when( $request->preferred_role, function($query) use($request) {
                                 $query->where('volunteer_profiles.preferred_role', $request->preferred_role );
                             })
-                            ->select('volunteer_profiles.*');
+                            ->select('volunteer_profiles.*')
+                            ->addSelect(DB::raw('(
+                                SELECT COUNT(*) + 1
+                                FROM volunteer_profiles AS vp2
+                                WHERE vp2.organization_code = volunteer_profiles.organization_code
+                                  AND vp2.campaign_year < volunteer_profiles.campaign_year
+                                  AND (
+                                    (volunteer_profiles.organization_code = \'GOV\' AND vp2.emplid = volunteer_profiles.emplid)
+                                    OR (volunteer_profiles.organization_code != \'GOV\' AND vp2.pecsf_id = volunteer_profiles.pecsf_id)
+                                  )
+                            ) AS computed_no_of_years'));
 
             $gov = Organization::where('code', 'GOV')->first();
 
             return Datatables::of($profiles)
+                ->editColumn('no_of_years', function ($profile) {
+                    return $profile->computed_no_of_years;
+                })
                 // ->addColumn('description', function($profile) {
-                //     // $text =  $profile->type == 'P' ? $profile->fund_supported_pool->region->name : 
+                //     // $text =  $profile->type == 'P' ? $profile->fund_supported_pool->region->name :
                 //     //                    $profile->distinct_charities()->count() . ' charities'  ;
                 //     // //   $title = implode(', ',  $profile->distinct_charities()->pluck('charity.charity_name')->toArray());
-                //     $title =  $profile->type == 'P' ? $profile->fund_supported_pool->region->name : 
+                //     $title =  $profile->type == 'P' ? $profile->fund_supported_pool->region->name :
                 //                     $profile->charity->charity_name  ;
-                //     $text =  $profile->type == 'P' ? $profile->fund_supported_pool->region->name : 
+                //     $text =  $profile->type == 'P' ? $profile->fund_supported_pool->region->name :
                 //                     ((strlen($profile->charity->charity_name) > 50) ? substr($profile->charity->charity_name, 0, 50) . '...' :
                 //                     $profile->charity->charity_name);
                                                                           
