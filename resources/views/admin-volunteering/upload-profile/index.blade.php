@@ -31,7 +31,7 @@
             </div>
         @endif --}}
 
-    <h6>Select the relevant organization, upload PECSF Donation files for non BC Gov entities below, then click "Submit" to send reports to PECSF administration.</h6>
+    <h6>Upload a unified Volunteer Profile file containing both Government (GOV) and Non-Government (LDB, LA, etc) employees. The system will automatically process each employee according to their organization type. Then click "Submit" to send reports to PECSF administration.</h6>
     <div class="card">
         <div class="card-body">
 
@@ -49,36 +49,13 @@
                             <select id="campaign_year" class="form-control" name="campaign_year">
                                 <option value="all">All</option>
                                 @foreach ($year_list as $year)
-                                    <option value="{{ $year }}" {{ 
+                                    <option value="{{ $year }}" {{
                                         isset($filter['campaign_year']) ? ($filter['campaign_year'] == $year ? 'selected' : '') :
                                         ($year == today()->year - 1  ? 'selected' : '') }}>
-                                        {{ $year }} 
+                                        {{ $year }}
                                     </option>
                                 @endforeach
                             </select>
-                        </div>
-                    </fieldset>
-                </div> 
-
-                <div class="form-group col-md-12">
-                    <fieldset class="form-group row">
-                        <label class="col-md-2" for="campaign_year">
-                            Type of Organization
-                        </label>
-                        {{-- <legend class="col-form-label col-sm-2 float-sm-left pt-0"></legend> --}}
-                        <div class="col-sm-10">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="org_type" id="gridRadios1" value="1" checked>
-                                <label class="form-check-label" for="gridRadios1">
-                                    Government 
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="org_type" id="gridRadios2" value="2">
-                                <label class="form-check-label" for="gridRadios2">
-                                    Non-Government (e.g. LDB, LA etc)
-                                </label>
-                            </div>
                         </div>
                     </fieldset>
                 </div>
@@ -164,29 +141,27 @@
 <div class="modal fade" id="process-show-modal" tabindex="-1" role="dialog" aria-labelledby="processModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-xl" role="document">
 	  <div class="modal-content">
-		<div class="modal-header bg-primary">
-		  <h5 class="modal-title" id="processModalLabel">Existing details</h5>
+		<div class="modal-header" id="modal-header-bg">
+		  <h5 class="modal-title" id="processModalLabel">Process Details</h5>
 		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		  </button>
 		</div>
 		<div class="modal-body">
 
-
                 <p class="px-2"><b>Status : </b>
-                <span id="modal-status"></span>
+                <span id="modal-status" class="badge"></span>
                 </p>
 
-
             <div class="form-group px-2">
-                <label for="message">Log Message</label>
-                <pre id="modal-message" class="border" style="white-space:pre-line;"></pre>
+                <label for="message"><b id="message-label">Log Message</b></label>
+                <pre id="modal-message" class="border" style="white-space:pre-line; max-height: 500px; overflow-y: auto;"></pre>
             </div>
 
         </div>
 
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
 
     </div>
@@ -321,9 +296,28 @@
                 success: function(data)
                 {
                     $('#processModalLabel').html('Process : ' + data.id + ' (' + data.process_name + ')' );
-                    //  started at ' + data.start_time);
                     $('#modal-status').html(data.status);
                     $('#modal-message').html(data.message);
+
+                    // Color code the header and status badge based on status
+                    var headerBg = 'bg-primary';
+                    var statusBadge = 'badge-info';
+
+                    if (data.status === 'Error') {
+                        headerBg = 'bg-danger';
+                        statusBadge = 'badge-danger';
+                        $('#message-label').html('<b style="color: #dc3545;">Validation Errors - Detailed Error Messages Below:</b>');
+                    } else if (data.status === 'Warning') {
+                        headerBg = 'bg-warning';
+                        statusBadge = 'badge-warning';
+                    } else if (data.status === 'Completed') {
+                        headerBg = 'bg-success';
+                        statusBadge = 'badge-success';
+                    }
+
+                    $('#modal-header-bg').removeClass('bg-primary bg-danger bg-warning bg-success').addClass(headerBg);
+                    $('#modal-status').removeClass('badge-info badge-danger badge-warning badge-success').addClass(statusBadge);
+
                     $('#process-show-modal').modal('show');
                 },
                 error: function(response) {

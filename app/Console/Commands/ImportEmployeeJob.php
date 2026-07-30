@@ -236,6 +236,10 @@ class ImportEmployeeJob extends Command
                                 'last_name' => $row->last_name,
                                 'name' => $row->name,
                                 'email' => $row->email,
+                                'preferred_name' => $row->preferred_name,
+                                'aad_firstname' => $row->aad_firstname,
+                                'aad_lastname' => $row->aad_lastname,
+                                'aad_fullname' => $row->aad_fullname,
                                 'guid' => trim($row->GUID),
                                 'idir' => trim($row->IDIR),
 

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @deprecated Use VolunteerProfilesUnifiedImport instead.
+ * This class has been replaced by a unified importer that handles both Government and Non-Government employees.
+ * Kept for reference only - DO NOT USE in production.
+ */
+
 namespace App\Imports;
 
 

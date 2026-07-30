@@ -8,7 +8,7 @@ use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\CompletedJobs;
 use App\Models\ProcessHistory;
-use App\Imports\VolunteerProfilesImport;
+use App\Imports\VolunteerProfilesUnifiedImport;
 use App\Jobs\VolunteerProfilesImportJob;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
@@ -72,12 +72,14 @@ class VolunteerProfileUploadController extends Controller
                 // })
                 ->addColumn('message_text', function ($process) {
                     $more_link = ' ... <br><a class="more-link text-danger" data-id="'. $process->id .'" >click here for more detail</a>';
-                    $maxline = 3;
                     $lines = preg_split('#\r?\n#', $process->message);
+
+                    // For Error status, show more lines (10 instead of 3) to display validation errors
+                    $maxline = ($process->status === 'Error') ? 10 : 3;
+
                     if ( count($lines) > $maxline) {
-                        // return nl2br( substr($audit->message, 0, $maxline)) . $more_link;
-                        return nl2br( implode( PHP_EOL , array_slice( $lines, 0, 3) ) . $more_link );
-                    } else {   
+                        return nl2br( implode( PHP_EOL , array_slice( $lines, 0, $maxline) ) ) . '<br>' . $more_link;
+                    } else {
                         return nl2br( $process->message);
                     }
                 })
@@ -114,44 +116,33 @@ class VolunteerProfileUploadController extends Controller
 
          $validator = Validator::make(request()->all(), [
              'campaign_year'          => 'required',
-             'org_type'               => 'required|in:1,2',
              'donation_file'          => 'required|max:102400|mimes:xls,xlsx',
          ],[
-             'donation_file.required' => 'Please upload an xls xlsx Excel File', 
+             'donation_file.required' => 'Please upload an xls xlsx Excel File',
              'donation_file.mimes' => 'The donation file must be a file of type: xls, xlsx, your uploaded file is called ' . $org_filename,
              'donation_file.max' => 'Sorry! Maximum allowed size for an image is 10MB, your uploaded file is called ' . $org_filename,
          ]);
- 
+
         //run validation which will redirect on failure
         $validated = $validator->validate();
 
-        //  if ($validator->fails()) {
-        //      return redirect()->route('reporting.donation-upload.index')
-        //          ->withErrors($validator)
-        //          ->withInput();
-        //  }
-
-        // $organization = Organization::where('id', $request->organization_id )->first();
         $campaign_year = $request->campaign_year;
-        $org_type = $request->org_type;
 
         $upload_file = $request->file('donation_file') ?? null;
-        //  $filesize = $upload_file->getSize();
         $original_filename = $upload_file->getClientOriginalName();
-        $filename=now()->format('YmdHisu').'_'. str_replace(' ', '_', $original_filename );
-        $filePath = $upload_file->storeAs(  $this->donation_file_folder , $filename);
+        $filename = now()->format('YmdHisu') . '_' . str_replace(' ', '_', $original_filename);
+        $filePath = $upload_file->storeAs($this->donation_file_folder, $filename);
 
         $parameters = [
             'Campaign Year' => $campaign_year,
-            'Organization Type' => $org_type,
-            'File Name' => $original_filename, 
+            'File Name' => $original_filename,
         ];
 
         // Submit a Job
         $history = \App\Models\ProcessHistory::create([
             'batch_id' => 0,
             'process_name' => 'VolunteerProfilesImportJob',
-            'parameters' => json_encode( $parameters ),
+            'parameters' => json_encode($parameters),
             'status'  => 'Queued',
             'submitted_at' => now(),
             'original_filename' => $original_filename,
@@ -160,28 +151,18 @@ class VolunteerProfileUploadController extends Controller
             'done_count' => 0,
             'created_by_id' => Auth::Id(),
             'updated_by_id' => Auth::Id(),
-
         ]);
 
         $batch = Bus::batch([
-            new VolunteerProfilesImportJob( $filePath, $history->id, $campaign_year, $org_type),
+            new VolunteerProfilesImportJob($filePath, $history->id, $campaign_year),
         ])->dispatch();
-
-        // $this->batchId = $batch->id;
 
         $history->batch_id = $batch->id;
         $history->save();
 
-        //  ProcessCharityList::dispatch(public_path( $this->donation_file_folder)."/".$filename,$filename,$filesize);
         return response()->json([
-                'success' => 'File ' . $original_filename . ' for campaign year ' . $campaign_year . ' and Organization Type ' . $org_type . 
-                    ' was successfully uploaded and added to the process queue.'
+                'success' => 'File ' . $original_filename . ' for campaign year ' . $campaign_year . ' was successfully uploaded and added to the process queue.'
             ]);
-
-        //  return redirect()->route('reporting.donation-upload.index')
-        //     ->withInput()
-        //     ->with('success','File ' . $original_filename . ' for organization ' . $organization->code . ' was successfully uploaded and added to the process queue.');
- 
      }
 
     /**

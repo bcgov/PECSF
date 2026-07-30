@@ -14,9 +14,9 @@ class VolunteerProfile extends Model implements Auditable
     
     protected $fillable = [
 
-        'campaign_year', 'organization_code', 'emplid', 'pecsf_id', 'first_name', 'last_name', 
-        'employee_city_name', 'employee_bu_code', 'employee_region_code',
-        'business_unit_code', 'no_of_years', 'preferred_role', 'address_type', 
+        'campaign_year', 'organization_code', 'emplid', 'pecsf_id', 'first_name', 'last_name',
+        'aad_fullname', 'employee_city_name', 'employee_bu_code', 'employee_region_code',
+        'business_unit_code', 'no_of_years', 'preferred_role', 'address_type',
         'address', 'city', 'province', 'postal_code', 'opt_out_recongnition',
         'created_by_id', 'updated_by_id',
     ];
@@ -73,9 +73,15 @@ class VolunteerProfile extends Model implements Auditable
 
     public function getFullnameAttribute()
     {
+        // PRIMARY: Try to use aad_fullname if available
+        if (!empty($this->aad_fullname)) {
+            return $this->aad_fullname;
+        }
+
+        // FALLBACK: Use existing name logic
         $fullname = $this->first_name . ', ' . $this->last_name;
-        if ($this->organization_code == 'GOV') { 
-            $job = $this->emplid ? $this->primary_job()->first() : null; 
+        if ($this->organization_code == 'GOV') {
+            $job = $this->emplid ? $this->primary_job()->first() : null;
             $fullname = $job ? $job->name : '';
         }
         return $fullname;
