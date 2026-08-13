@@ -51,23 +51,46 @@ class ChallengeSettingsController extends Controller
 
         ]);
 
+        $validator->after(function ($validator) use ($request) {
+            $setting = Setting::first();
+            $current_year = today()->year;
+            $september_first = Carbon::createFromDate($current_year, 9, 1);
+            $january_fifteenth = Carbon::createFromDate($current_year + 1, 1, 15);
+
+            if (Carbon::parse($request->challenge_start_date)->format('Y-m-d') !== $september_first->format('Y-m-d')) {
+                $validator->errors()->add('challenge_start_date', 'Challenge Start Date is locked to September 1st and cannot be changed.');
+            }
+
+            if (Carbon::parse($request->campaign_start_date)->format('Y-m-d') !== $september_first->format('Y-m-d')) {
+                $validator->errors()->add('campaign_start_date', 'Campaign Start Date is locked to September 1st and cannot be changed.');
+            }
+
+            if (Carbon::parse($request->challenge_final_date)->format('Y-m-d') !== $january_fifteenth->format('Y-m-d')) {
+                $validator->errors()->add('challenge_final_date', 'Challenge Final Date is locked to January 15th and cannot be changed.');
+            }
+
+            if (Carbon::parse($request->campaign_final_date)->format('Y-m-d') !== $january_fifteenth->format('Y-m-d')) {
+                $validator->errors()->add('campaign_final_date', 'Campaign Final Date is locked to January 15th and cannot be changed.');
+            }
+        });
+
         //run validation which will redirect on failure
         $validator->validate();
 
         $setting = Setting::first();
 
-        $challenge_end_date = Carbon::create( $request->challenge_end_date );               
+        $challenge_end_date = Carbon::create( $request->challenge_end_date );
 
         $campaign_year = Setting::challenge_page_campaign_year($challenge_end_date);
         $last_process_date = DailyCampaign::where('campaign_year', $campaign_year)
                                 ->where('daily_type',  0)
                                 ->max('as_of_date');
 
-        // Update the daily campaign summary if the challenge_end_date was changed when backdate 
+        // Update the daily campaign summary if the challenge_end_date was changed when backdate
         if ($last_process_date && $setting->challenge_end_date->format('Y-m-d') != $challenge_end_date->format('Y-m-d')) {
 
             // $campaign_year = Setting::challenge_page_campaign_year($challenge_end_date);
-            // 
+            //
             // $last_process_date = DailyCampaign::where('campaign_year', $campaign_year)
             //                             ->where('daily_type',  0)
             //                             ->max('as_of_date');
@@ -103,22 +126,23 @@ class ChallengeSettingsController extends Controller
         $setting->ee_snapshot_date_1 = $request->ee_snapshot_date_1;
         $setting->ee_snapshot_date_2 = $request->ee_snapshot_date_2;
         $setting->save();
-        
+
         return response()->noContent();
-    
+
     }
 
     public function finalizeChallengeData(Request $request){
-        
-       
+
         $validator = Validator::make(request()->all(), [],[]);
 
         $validator->after(function ($validator) use($request) {
 
             $setting = Setting::first();
             $as_of_date = Carbon::parse($request->challenge_final_date);
-            $campaign_year = Setting::challenge_page_campaign_year( $as_of_date );   
-    
+            $campaign_year = Setting::challenge_page_campaign_year( $as_of_date );
+            $current_year = today()->year;
+            $january_fifteenth = Carbon::createFromDate($current_year + 1, 1, 15);
+
             if (!($setting->challenge_start_date->format('Y-m-d') == $request->challenge_start_date &&
                     $setting->challenge_end_date->format('Y-m-d')   == $request->challenge_end_date &&
                     $setting->challenge_final_date->format('Y-m-d') == $request->challenge_final_date &&
@@ -127,8 +151,12 @@ class ChallengeSettingsController extends Controller
                     $setting->campaign_final_date->format('Y-m-d') ==  $request->campaign_final_date)) {
 
                 $validator->errors()->add('challenge_final_date', 'You must save the latest setting first.');
-            } 
-           
+            }
+
+            if (Carbon::parse($request->challenge_final_date)->format('Y-m-d') !== $january_fifteenth->format('Y-m-d')) {
+                $validator->errors()->add('challenge_final_date', 'Challenge Final Date is locked to January 15th and cannot be changed.');
+            }
+
             if ( $request->challenge_final_date > today() ) {
                 $validator->errors()->add('challenge_final_date', 'The final date is later than today.');
             }
@@ -137,11 +165,11 @@ class ChallengeSettingsController extends Controller
                                     ->where('as_of_date', $request->challenge_final_date)
                                     ->first();
             if (!($challenge)) {
-                $validator->errors()->add('challenge_final_date', 'No Challenge Data for date ' . $request->challenge_final_date . 
+                $validator->errors()->add('challenge_final_date', 'No Challenge Data for date ' . $request->challenge_final_date .
                         ' yet.');
             }
 
-            if ($setting->challenge_processed_final_date && 
+            if ($setting->challenge_processed_final_date &&
                 $setting->challenge_processed_final_date->format('Y-m-d')  == $request->challenge_final_date) {
                     $validator->errors()->add('challenge_final_date', 'The current finalized data is already for date ' .
                                     $request->challenge_final_date);
@@ -152,11 +180,11 @@ class ChallengeSettingsController extends Controller
         //run validation which will redirect on failure
         $validator->validate();
 
-        // Finalize -- Proceed to Copy to the historial data 
+        // Finalize -- Proceed to Copy to the historial data
         $setting = Setting::first();
-        
+
         $as_of_date = $setting->challenge_final_date;
-        $campaign_year = Setting::challenge_page_campaign_year( $as_of_date );   
+        $campaign_year = Setting::challenge_page_campaign_year( $as_of_date );
 
         DailyCampaign::finalize_challenge_page_data($campaign_year, $as_of_date);
 
@@ -164,7 +192,7 @@ class ChallengeSettingsController extends Controller
         $setting->save();
 
         return response()->noContent();
-    
+
     }
 
 }

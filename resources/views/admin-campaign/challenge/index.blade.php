@@ -51,21 +51,24 @@
                 <div class="col-md-12"><h4 class="text-primary">Statistics Page Updates</h4></div>
             </div>
             <p class="font-italic  text-danger"><u>Note:</u> Click the "Finalize Statistics Page" button if you need to set a previous date for the finalization. For future final dates, the scheduled job will process as planned.</p>
+            <p class="font-italic text-info"><u>Reporting Window:</u> The Statistics Page reporting period is locked to run from <strong>September 1st to January 15th</strong> each year. This ensures consistent year-over-year comparisons and reliable final reporting dates. Start and Final dates cannot be changed.</p>
             <div class="form-row">
                 <div class="form-group col-md-3">
-                    <label for="challenge_start_date">Start Date</label>
-                    <input type="date" class="form-control input-control" name="challenge_start_date" 
-                                value="{{ $setting->challenge_start_date->toDateString() }}" />
+                    <label for="challenge_start_date">Start Date <span class="badge badge-warning">Locked</span></label>
+                    <input type="date" class="form-control input-control" name="challenge_start_date"
+                                value="{{ $setting->challenge_start_date->toDateString() }}" disabled />
+                    <small class="form-text text-muted">September 1st (Fixed)</small>
                 </div>
                 <div class="form-group col-md-3">
                     <label for="challenge_end_date">End Date</label>
-                    <input type="date" class="form-control input-control" name="challenge_end_date" 
+                    <input type="date" class="form-control input-control" name="challenge_end_date"
                                 value="{{ $setting->challenge_end_date->toDateString() }}" />
                 </div>
                 <div class="form-group col-md-3">
-                    <label for="challenge_final_date">Final Date</label>
-                    <input type="date" class="form-control input-control" name="challenge_final_date" 
-                                value="{{ $setting->challenge_final_date->toDateString() }}" />
+                    <label for="challenge_final_date">Final Date <span class="badge badge-warning">Locked</span></label>
+                    <input type="date" class="form-control input-control" name="challenge_final_date"
+                                value="{{ $setting->challenge_final_date->toDateString() }}" disabled />
+                    <small class="form-text text-muted">January 15th (Fixed)</small>
                 </div>
 
                 <div class="form-group col-md-3">
@@ -82,19 +85,21 @@
             </div>
             <div class="form-row pt-2">
                 <div class="form-group col-md-3">
-                    <label for="campaign_start_date">Start Date</label>
-                    <input type="date" class="form-control input-control" name="campaign_start_date" 
-                                value="{{ $setting->campaign_start_date->toDateString() }}" />
+                    <label for="campaign_start_date">Start Date <span class="badge badge-warning">Locked</span></label>
+                    <input type="date" class="form-control input-control" name="campaign_start_date"
+                                value="{{ $setting->campaign_start_date->toDateString() }}" disabled />
+                    <small class="form-text text-muted">September 1st (Fixed)</small>
                 </div>
                 <div class="form-group col-md-3">
                     <label for="campaign_end_date">End Date</label>
-                    <input type="date" class="form-control input-control" name="campaign_end_date" 
+                    <input type="date" class="form-control input-control" name="campaign_end_date"
                                 value="{{ $setting->campaign_end_date->toDateString() }}" />
                 </div>
                 <div class="form-group col-md-3">
-                    <label for="campaign_final_date">Final Date</label>
-                    <input type="date" class="form-control input-control" name="campaign_final_date" 
-                                value="{{ $setting->campaign_final_date->toDateString() }}" />
+                    <label for="campaign_final_date">Final Date <span class="badge badge-warning">Locked</span></label>
+                    <input type="date" class="form-control input-control" name="campaign_final_date"
+                                value="{{ $setting->campaign_final_date->toDateString() }}" disabled />
+                    <small class="form-text text-muted">January 15th (Fixed)</small>
                 </div>
 
             </div>
@@ -153,10 +158,9 @@
             $.ajax({
                 method: "POST",
                 url:  '/settings/challenge',
-                data: form.serialize(), // serializes the form's elements.
+                data: form.serialize(),
                 success: function(data)
                 {
-                    // Toast('Success', 'The setting was successfully updated.', 'bg-success' );
                     toastr["success"]( 'The setting has been successfully updated.', '',
                                 {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                 },
