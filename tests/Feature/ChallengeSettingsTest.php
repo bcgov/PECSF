@@ -42,12 +42,12 @@ class ChallengeSettingsTest extends TestCase
             'as_of_date' => today()->subDays(2)->format('Y-m-d'),
             'challenge_start_date' => today()->year . '-09-01',
             'challenge_end_date' => today()->year . '-11-15',
-            'challenge_final_date' => today()->subDays(2)->format('Y-m-d') ,
+            'challenge_final_date' => today()->year + 1 . '-01-15' ,
             'challenge_processed_final_date' => null,
-            
+
             'campaign_start_date' => today()->year . '-09-01',
             'campaign_end_date' => today()->year . '-11-15',
-            'campaign_final_date' => today()->year + 1 . '-02-01',
+            'campaign_final_date' => today()->year + 1 . '-01-15',
             'campaign_processed_final_date' => null,
         ]);
 
@@ -210,20 +210,18 @@ class ChallengeSettingsTest extends TestCase
         // $cy = Setting::factory(1)->create();
         // $form_data = $this->get_new_record_form_data();
         $form_data = [
-            'challenge_start_date' => today()->year . '-09-05',
-            // 'challenge_end_date' => today()->year . '-12-31',
+            'challenge_start_date' => today()->year . '-09-01',
             'challenge_end_date' => today()->year . '-11-15',
-            'challenge_final_date' => today()->year + 1 . '-02-14',
-            
-            'campaign_start_date' => today()->year . '-09-05',
-            // 'campaign_end_date' => today()->year . '-12-31',
+            'challenge_final_date' => today()->year + 1 . '-01-15',
+
+            'campaign_start_date' => today()->year . '-09-01',
             'campaign_end_date' => today()->year . '-11-15',
-            'campaign_final_date' => today()->year + 1 . '-02-14',
+            'campaign_final_date' => today()->year + 1 . '-01-15',
 
             'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
             'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
         ];
-        
+
         $this->actingAs($this->admin);
         $response = $this->post('/settings/challenge',  $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
 
@@ -357,16 +355,14 @@ class ChallengeSettingsTest extends TestCase
     }
     public function test_validation_end_date_must_be_later_than_start_date()
     {
-        // $form_data = $this->get_new_record_form_data();
-        // $row = Setting::create( $form_data );
-        //
-        $form_data['challenge_start_date'] = today()->year . '-09-05';
+        $form_data = [];
+        $form_data['challenge_start_date'] = today()->year . '-09-01';
         $form_data['challenge_end_date'] = today()->year . '-08-05';
-        $form_data['challenge_final_date'] = today()->year . '-12-31';
+        $form_data['challenge_final_date'] = today()->year + 1 . '-01-15';
 
-        $form_data['campaign_start_date'] = today()->year . '-09-05';
+        $form_data['campaign_start_date'] = today()->year . '-09-01';
         $form_data['campaign_end_date'] = today()->year . '-08-05';
-        $form_data['campaign_final_date'] = today()->year . '-12-31';
+        $form_data['campaign_final_date'] = today()->year + 1 . '-01-15';
 
         $this->actingAs($this->admin);
         $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
@@ -400,6 +396,182 @@ class ChallengeSettingsTest extends TestCase
 
     }
 
-    
+    /** Locked Date Tests */
+    public function test_challenge_start_date_cannot_be_changed_from_september_first()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-05',
+            'challenge_end_date' => today()->year . '-11-15',
+            'challenge_final_date' => today()->year . '-12-30',
+            'campaign_start_date' => today()->year . '-09-01',
+            'campaign_end_date' => today()->year . '-11-15',
+            'campaign_final_date' => today()->year . '-12-30',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['challenge_start_date']);
+        $response->assertJsonValidationErrorMessage('challenge_start_date', 'Challenge Start Date is locked to September 1st and cannot be changed.');
+    }
+
+    public function test_campaign_start_date_cannot_be_changed_from_september_first()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-01',
+            'challenge_end_date' => today()->year . '-11-15',
+            'challenge_final_date' => today()->year . '-12-30',
+            'campaign_start_date' => today()->year . '-09-05',
+            'campaign_end_date' => today()->year . '-11-15',
+            'campaign_final_date' => today()->year . '-12-30',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['campaign_start_date']);
+        $response->assertJsonValidationErrorMessage('campaign_start_date', 'Campaign Start Date is locked to September 1st and cannot be changed.');
+    }
+
+    public function test_challenge_final_date_cannot_be_changed_from_january_fifteenth()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-01',
+            'challenge_end_date' => today()->year . '-11-15',
+            'challenge_final_date' => today()->year + 1 . '-01-10',
+            'campaign_start_date' => today()->year . '-09-01',
+            'campaign_end_date' => today()->year . '-11-15',
+            'campaign_final_date' => today()->year + 1 . '-01-15',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['challenge_final_date']);
+        $response->assertJsonValidationErrorMessage('challenge_final_date', 'Challenge Final Date is locked to January 15th and cannot be changed.');
+    }
+
+    public function test_campaign_final_date_cannot_be_changed_from_january_fifteenth()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-01',
+            'challenge_end_date' => today()->year . '-11-15',
+            'challenge_final_date' => today()->year + 1 . '-01-15',
+            'campaign_start_date' => today()->year . '-09-01',
+            'campaign_end_date' => today()->year . '-11-15',
+            'campaign_final_date' => today()->year + 1 . '-01-10',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['campaign_final_date']);
+        $response->assertJsonValidationErrorMessage('campaign_final_date', 'Campaign Final Date is locked to January 15th and cannot be changed.');
+    }
+
+    public function test_all_locked_dates_cannot_be_changed_simultaneously()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-05',
+            'challenge_end_date' => today()->year . '-11-15',
+            'challenge_final_date' => today()->year + 1 . '-01-10',
+            'campaign_start_date' => today()->year . '-09-05',
+            'campaign_end_date' => today()->year . '-11-15',
+            'campaign_final_date' => today()->year + 1 . '-01-10',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'challenge_start_date',
+            'challenge_final_date',
+            'campaign_start_date',
+            'campaign_final_date',
+        ]);
+    }
+
+    public function test_locked_dates_can_be_saved_with_correct_values()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-01',
+            'challenge_end_date' => today()->year . '-11-15',
+            'challenge_final_date' => today()->year + 1 . '-01-15',
+            'campaign_start_date' => today()->year . '-09-01',
+            'campaign_end_date' => today()->year . '-11-15',
+            'campaign_final_date' => today()->year + 1 . '-01-15',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-01',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-15',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(204);
+        $this->assertDatabaseHas('settings', [
+            'challenge_start_date' => today()->year . '-09-01',
+            'challenge_final_date' => today()->year + 1 . '-01-15',
+            'campaign_start_date' => today()->year . '-09-01',
+            'campaign_final_date' => today()->year + 1 . '-01-15',
+        ]);
+    }
+
+    public function test_end_dates_and_snapshots_can_be_changed_but_start_and_final_dates_cannot()
+    {
+        $form_data = [
+            'challenge_start_date' => today()->year . '-09-01',
+            'challenge_end_date' => today()->year . '-11-20',
+            'challenge_final_date' => today()->year + 1 . '-01-15',
+            'campaign_start_date' => today()->year . '-09-01',
+            'campaign_end_date' => today()->year . '-11-20',
+            'campaign_final_date' => today()->year + 1 . '-01-15',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-10',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-20',
+        ];
+
+        $this->actingAs($this->admin);
+        $response = $this->postJson('/settings/challenge', $form_data, ['HTTP_X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(204);
+        $this->assertDatabaseHas('settings', [
+            'challenge_end_date' => today()->year . '-11-20',
+            'campaign_end_date' => today()->year . '-11-20',
+            'ee_snapshot_date_1' => today()->year + 1 . '-09-10',
+            'ee_snapshot_date_2' => today()->year + 1 . '-10-20',
+        ]);
+    }
+
+    public function test_model_locked_date_validation_catches_all_invalid_dates()
+    {
+        $invalid_data = [
+            'challenge_start_date' => today()->year . '-09-05',
+            'campaign_start_date' => today()->year . '-09-10',
+            'challenge_final_date' => today()->year + 1 . '-01-10',
+            'campaign_final_date' => today()->year + 1 . '-01-05',
+        ];
+
+        $errors = \App\Models\Setting::validateLockedDates($invalid_data);
+
+        $this->assertCount(4, $errors);
+        $this->assertArrayHasKey('challenge_start_date', $errors);
+        $this->assertArrayHasKey('campaign_start_date', $errors);
+        $this->assertArrayHasKey('challenge_final_date', $errors);
+        $this->assertArrayHasKey('campaign_final_date', $errors);
+    }
 
 }

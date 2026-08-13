@@ -96,4 +96,29 @@ class Setting extends Model implements Auditable
 
         return false;
     }
+
+    public static function validateLockedDates($data) {
+        $errors = [];
+        $current_year = today()->year;
+        $september_first = \Carbon\Carbon::createFromDate($current_year, 9, 1);
+        $january_fifteenth = \Carbon\Carbon::createFromDate($current_year + 1, 1, 15);
+
+        if (isset($data['challenge_start_date']) && \Carbon\Carbon::parse($data['challenge_start_date'])->format('Y-m-d') !== $september_first->format('Y-m-d')) {
+            $errors['challenge_start_date'] = 'Challenge Start Date is locked to September 1st and cannot be changed.';
+        }
+
+        if (isset($data['campaign_start_date']) && \Carbon\Carbon::parse($data['campaign_start_date'])->format('Y-m-d') !== $september_first->format('Y-m-d')) {
+            $errors['campaign_start_date'] = 'Campaign Start Date is locked to September 1st and cannot be changed.';
+        }
+
+        if (isset($data['challenge_final_date']) && \Carbon\Carbon::parse($data['challenge_final_date'])->format('Y-m-d') !== $january_fifteenth->format('Y-m-d')) {
+            $errors['challenge_final_date'] = 'Challenge Final Date is locked to January 15th and cannot be changed.';
+        }
+
+        if (isset($data['campaign_final_date']) && \Carbon\Carbon::parse($data['campaign_final_date'])->format('Y-m-d') !== $january_fifteenth->format('Y-m-d')) {
+            $errors['campaign_final_date'] = 'Campaign Final Date is locked to January 15th and cannot be changed.';
+        }
+
+        return $errors;
+    }
 }
