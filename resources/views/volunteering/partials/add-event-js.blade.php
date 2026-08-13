@@ -90,6 +90,13 @@ $(function () {
             // }
         } else if($(this).val()=="Gaming") {
 
+            @if (!(str_contains(Route::current()->getName(), 'admin-pledge.maintain-event')))
+                Swal.fire({
+                    html: "<strong>IMPORTANT: No gaming for campaign 2025. Please contact PECSF HQ at pecsf.gov.bc.ca if you have questions about gaming.</strong>",
+                    icon: "warning"
+                });
+            @endif
+
             $("#sub_type").html('<option value="50/50 Draw">50/50 Draw</option><option value="none">None</option>');
             $(".address_hook").hide();
             $("#sub_type").select2( {minimumResultsForSearch: -1} );
