@@ -78,6 +78,7 @@
                         <option value="Cash One-Time Donation">Cash one-time donation</option>
                         <option value="Cheque One-Time Donation">Cheque one-time donation</option>
                         <option value="Fundraiser">Fundraiser</option>
+                        <option value="Gaming">Gaming</option>
                     </select>
                     <span class="event_type_errors errors">
                         @error('form_submitter')
