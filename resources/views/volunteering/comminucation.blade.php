@@ -59,7 +59,7 @@
         <h2>Contact</h2>
 
         <div>
-            <strong>If you have any questions or are interested in volunteering for the {{ today()->year }} Campaign, please email Kristina Allsopp at <a href="mailto:PECSF@gov.bc.ca" target="_blank">PECSF@gov.bc.ca.</a></strong>
+            <strong>If you have any questions or are interested in volunteering for the {{ today()->year }} Campaign, please email <a href="mailto:PECSF@gov.bc.ca" target="_blank">PECSF@gov.bc.ca.</a></strong>
         </div>
     </div>
 

@@ -31,7 +31,7 @@
 @if ($pledge->type == 'P')
 <div class="row">
     <div class="col-4 text-right">
-     <p class="font-weight-bold">Fund Supported Pool</p>
+     <p class="font-weight-bold">Regional Charity Programs</p>
       </div>
       <div class="col-6">
         <p>{{ $pledge->fund_supported_pool->region->name }}</p>

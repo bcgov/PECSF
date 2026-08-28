@@ -211,7 +211,7 @@
                                 <input data-toggle="collapse" data-target="#method-selection-1" type="radio"
                                 name="pool_option" id="pool-option-1" value="P" class="custom-control-input"
                                     {{ $pool_option == "P" ? 'checked' : '' }}/>
-                                <label class="custom-control-label" for="pool-option-1">Select a regional Fund Supported Pool</label>
+                                <label class="custom-control-label" for="pool-option-1">Select a Regional Charity Programs pool</label>
                             </div>
                         </div>
 
@@ -220,7 +220,7 @@
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label for="pool_id">Fund Supported Pool</label>
+                                        <label for="pool_id">Regional Charity Programs</label>
                                         <select class="form-control" name="pool_id" id="pool_id">
                                             <option value="" selected>Choose a pool</option>
                                             @foreach ($fspools as $fspool)

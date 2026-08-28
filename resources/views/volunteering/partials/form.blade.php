@@ -294,8 +294,8 @@
                 <div class="form-row p-3">
                     <div class="form-group col-md-12 method_selection" tabindex="0">
                         <input type="radio" checked id="charity_selection_1" name="charity_selection" tabindex="-1"
-                            value="fsp" role="radiogroup" aria-label="Fund supported pool"/>
-                        <label class="blue pl-2" for="charity_selection_1">Fund supported pool</label>
+                            value="fsp" role="radiogroup" aria-label="Regional Charity Programs"/>
+                        <label class="blue pl-2" for="charity_selection_1">Regional Charity Programs</label>
                         <span class="charity_selection_errors errors">
                             @error('charity_selection')
                                 <span class="invalid-feedback">{{ $message }}</span>
@@ -304,8 +304,7 @@
                     </div>
                     <div>
                         <p class="pl-4">
-                            By choosing this option your donation will support the current Fund Supported Pool of regional
-                            programs. Click on the tiles to learn about the programs in each regional pool.
+                            By choosing this option your donation will support the current Regional Charity Programs pool. Click on the tiles to learn about the programs in each regional pool.
                         </p>
                     </div>
 
@@ -510,8 +509,7 @@
             processing and reporting your charitable contributions to the Community Fund and for program evaluation and
             improvement under sections 26 (c) and (e) of the Freedom of Information and Protection of Privacy Act.
 
-            Questions about the collection of your personal information can be directed to the Campaign Manager,
-            Provincial Employees Community Services Fund at 250 356-1736 or <a
+            Questions about the collection of your personal information can be directed to the Lead, PECSF, at 250-516-7894, <a
                 href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>. </p>
     </div>
 

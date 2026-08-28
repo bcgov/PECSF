@@ -1,7 +1,7 @@
 
 <h3 class="mt-1">
     @if(str_contains(Route::current()->getName(), 'donate-now'))
-        <h3>2. Choose your regional fund supported pool</h3>
+        <h3>2. Choose your Regional Charity Programs pool</h3>
     @else
         <h3>2. Select your regional charity pool</h3>
     @endif
@@ -12,7 +12,7 @@
     <div class="card p-0 pl-2 bg-primary">
         <div class="card-body bg-light">
           By choosing this option your donation will support the designated programs of the regional
-          Fund Supported Pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
+          Regional Charity Programs pool. Click <i class="fas fa-info-circle fa-lg"></i> to learn about the programs in each regional pool.
           {{-- <a href="#" style="text-decoration: underline;">Learn More</a> --}}
         </div>
     </div>

@@ -98,7 +98,7 @@ class DonateNowRequest extends FormRequest
             // 'campaign_year_id.unique' => 'The campaign year has already been taken',
             // 'user_id.required'       => 'The Employee field is required',
 
-            'pool_id.required_if' => 'A Fund Supported Pool selection is required. Please choose a Fund Supported Pool.',
+            'pool_id.required_if' => 'A Regional Charity Programs selection is required. Please choose a Regional Charity Programs pool.',
             // 'charity_id.required_if' => 'A charity selection is required. Please choose a charity.',
             'charities.required' => 'At least one charity must be specified.',
             'charities.min' => 'At least one charity must be specified.',
