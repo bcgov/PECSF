@@ -11,7 +11,7 @@ class ContactFaqController extends Controller
             'Donations' => [
                 [
                     'question' => 'When will my charity receive my donation?',
-                    'answer' => 'Contributions are disbursed twice a year to the various charities chosen by donors. In August, for deductions/donations from January to June, and in March, for deductions/donations from July to December.'
+                    'answer' => 'Contributions are disbursed once a year in March to the various charities chosen by donors.'
                 ],
                 [
                     'question' => 'How much of my donation will my charity receive?',
@@ -22,8 +22,12 @@ class ContactFaqController extends Controller
                     'answer' => 'Payroll deductions automatically show on your T4 issued from payroll.  If you have donated via cash/cheque, your charitable donation receipt will be mailed to you the following spring.'
                 ],
                 [
-                    'question' => 'What is the fund supported pool program? ',
-                    'answer' => 'This refers to a community-based, charitable organization, chapter or program that has applied for, and been approved to receive a portion of funding, from a regional pool. These organizations are selected by your local PECSF regional committee and must report annually on the status of their approved program to continue to receive funding during each 3-year funding cycle. '
+                    'question' => 'What is the Regional Charity Programs pool?',
+                    'answer' => 'This refers to a community-based, charitable organization, chapter or program that has applied for, and been approved to receive a portion of funding, from a Regional Charity Programs pool. These organizations are selected by your local PECSF regional committee and must report annually on the status of their approved program to continue to receive funding during each 3-year funding cycle. '
+                ],
+                [
+                    'question' => 'Can I stop or change my payroll deductions?',
+                    'answer' => 'PECSF is flexible with your changing life situations. Payroll deductions do not start until January, and the bi-weekly payroll deduction plan spreads the contribution throughout the year, so you don\'t have to contribute one amount all at once. There is no minimum donation amount. At any point in the year, you can contact PECSF@gov.bc.ca to make changes to your donation, including donation amount, charity choices or to stop your deductions.'
                 ]
             ],
             'Volunteering' => [
@@ -43,11 +47,11 @@ class ContactFaqController extends Controller
             'Canlendar' => [
                 [
                     'question' => 'How do charities get supported through PECSF?',
-                    'answer' => 'By employees choosing them! Any charity, registered and in good standing CRA (Canada Revenue Agency), is eligible for funding through PECSF. Additionally, PECSF offers charities the opportunity to apply for specific local program funding every three years through the Fund Supported Pool initiative. '
+                    'answer' => 'By employees choosing them! Any charity, registered and in good standing CRA (Canada Revenue Agency), is eligible for funding through PECSF. Additionally, PECSF offers charities the opportunity to apply for specific local program funding every three years through the Regional Charity Programs initiative. '
                 ],
                 [
-                    'question' => 'Who are the PECSF Headquarters (team)? ',
-                    'answer' => 'The PECSF program is coordinated by a team within the BC Public Service Agency. This team is responsible for volunteer recruitment, training, recognition, and all PECSF program operational support provincially.'
+                    'question' => 'Who is the Corporate PECSF team?',
+                    'answer' => 'The Corporate PECSF team is a team within the BC Public Service Agency. This team is responsible for volunteer recruitment, training, recognition, and all PECSF program operational support provincially.'
                 ],
                 [
                     'question' => 'Who are the PECSF Board of Directors?',

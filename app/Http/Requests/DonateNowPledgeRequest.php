@@ -58,7 +58,7 @@ class DonateNowPledgeRequest extends FormRequest
             'pecsf_first_name.regex' => "The First Name must only contain letters, periods, spaces, hyphens.",
             'pecsf_last_name.regex' => "The Last Name must only contain letters, periods, spaces, hyphens.",
 
-            'pool_id.required_if' => 'A Fund Supported Pool selection is required. Please choose a Fund Supported Pool.',
+            'pool_id.required_if' => 'A Regional Charity Programs selection is required. Please choose a Regional Charity Programs pool.',
             'charity_id.required_if' => 'A charity selection is required. Please choose a charity.',
 
             'one_time_amount.required' => 'The amount is required.',

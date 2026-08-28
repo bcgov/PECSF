@@ -329,7 +329,7 @@ class FundSupportedPoolController extends Controller
 
         $region = Region::where('id', $request->region_id)->first();
 
-        session()->flash('success', 'The Fund Supported Pool ' . $request->region  .
+        session()->flash('success', 'The Regional Charity Programs Pool ' . $request->region  .
                 ' for start date ' . $request->start_date .
                 ' has been successfully created');
 
@@ -611,7 +611,7 @@ class FundSupportedPoolController extends Controller
         //$region = Region::where('id', $request->region_id)->first();
 
         return redirect()->route('settings.fund-supported-pools.index')
-            ->with('success','The Fund Supported Pool ' . $request->region  .
+            ->with('success','The Regional Charity Programs Pool ' . $request->region  .
                 ' for start date ' . $request->start_date .
                 ' has been successfully updated.');
 
@@ -634,7 +634,7 @@ class FundSupportedPoolController extends Controller
             if ($pool->hasPledge() && $pool->start_date < today()) {
                 return response()->json([
                     'title'  => "Invalid delete!",
-                    'message' => 'The Fund Supported Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);
+                    'message' => 'The Regional Charity Programs Pool "' . $pool->region->name . '" cannot be deleted, it is being referenced on pledge(s).'], 403);
             }
 
             // $validator = Validator::make(request()->all(), [

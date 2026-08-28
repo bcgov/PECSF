@@ -17,10 +17,6 @@
                             <h3 class="text-primary my-3 pb-3">
                                 Welcome to PECSF Training!
                             </h3>
-                            <div class="my-1">
-                                <iframe id="training_guide_movie_player" movie-id="https://www.youtube-nocookie.com/embed/vF5suO7c06o?cc_load_policy=1&rel=0&autoplay=0"
-                                    width="800" height="500" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
                         </div>
 
                         {{-- page 2 --}}
@@ -228,9 +224,9 @@
                                 <div class="col-8 offset-md-3">
                                     <ul class="text-left">
                                         <li><i class="far fa-check-circle text-primary"></i>Read the questions and answers in our <a target="_blank" href="/contact">FAQ section</a></li>
-                                        <li><i class="far fa-check-circle text-primary"></i>Visit the PECSF website - <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank"> 
+                                        <li><i class="far fa-check-circle text-primary"></i>Visit the PECSF website - <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/volunteer" target="_blank">
                                                     Become a Volunteer section</a></li>
-                                        <li><i class="far fa-check-circle text-primary"></i>Contact <a href="mailto:kristina.allsopp@gov.bc.ca">Kristina Allsopp</a>, PECSF Volunteer Experience and Training Analyst</li>
+                                        <li><i class="far fa-check-circle text-primary"></i>Contact <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a></li>
                                     </ul>
                                 </div>
                             </div>

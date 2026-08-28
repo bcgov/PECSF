@@ -31,7 +31,7 @@
                 <hr>
             @endif
             @if($fsp_name)
-                <h5>{{$fsp_name}} Fund Supported Pool</h5>
+                <h5>{{$fsp_name}} Regional Charity Programs</h5>
                 @endif
             <table class="table table-sm">
                 <tr>

@@ -4,7 +4,7 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <h4 class="mx-1 mt-3">Fund Supported Pool</h4>
+    <h4 class="mx-1 mt-3">Regional Charity Programs Pool</h4>
 
     <div class="mx-1 pt-2">
         <button class="btn btn-outline-primary" onclick="window.location.href='{{ route('settings.fund-supported-pools.index') }}'">

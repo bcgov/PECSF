@@ -85,7 +85,7 @@ class CharitiesExportJob implements ShouldQueue, ShouldBeUnique
                     'ongoing_program',
                     'url',
 
-                    'Fund Support Pool',
+                    'Regional Charity Programs',
                     'FSP Region',
                     'FSP Region Descr',
                     'FSP Allocation (%)',

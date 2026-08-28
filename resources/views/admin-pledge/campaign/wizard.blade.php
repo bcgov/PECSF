@@ -108,7 +108,7 @@
                 <div class="pl-2 font-weight-bold">Step 3 - Select preferred method for choosing charities</div>
 
                 <ul class="ml-2 pt-1">
-                    <li>Choose a regional Fund Supported Pool or the CRA charity list option </li>
+                    <li>Choose a Regional Charity Programs pool or the CRA charity list option </li>
                 </ul>
 
 

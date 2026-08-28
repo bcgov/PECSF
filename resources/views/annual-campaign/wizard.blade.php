@@ -80,8 +80,8 @@
                         <div class="card p-0 pl-2 bg-primary">
                             <div class="card-body bg-light">
                                 If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
-                                If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted. 
-                                Visit the PECSF webpages to learn more about the <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity">Fund Supported Pool</a> option.
+                                If you select the Regional Charity Programs option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted.
+                                Visit the PECSF webpages to learn more about the <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity">Regional Charity Programs</a> option.
 
                             </div>
                         </div>
