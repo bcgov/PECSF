@@ -145,13 +145,13 @@
     @if(!request()->is('login') && !request()->is('register') && !request()->is('password/*') && !request()->is('admin/login'))
     <div class="d-flex align-items-center justify-content-between" style="background:#fff; padding:20px 50px 30px">
         <div>
-            {{-- <img src="{{asset('img/brand/3_60yrs.png')}}" alt="" class="p-2 pl-3" style="height:80px;"> --}}
+            <img src="{{asset('img/PECSF_Brand_Mark_RGB_Blue.png')}}" alt="PECSF" class="p-2 pl-3" style="height:90px;">
         </div>
         <div>
             <strong class="text-primary  font-weight-bold float-right pt-4 px-4 h5">Charity Registration no.: 889407466 RR0001</strong>
         </div>
         <div class="d-flex align-items-end">
-            {{-- <img src="{{asset('img/brand/1_60yrs.png')}}" alt="" class="pt-2 px-2" style="height:120px;"> --}}
+            <img src="{{asset('img/BCID_BCPS_V_RGB_pos1.png')}}" alt="BC Public Service" class="pt-2 px-2" style="height:100px;">
             {{-- <img src="{{asset('img/brand/2.png')}}" alt="" class="" style="height:140px;"> --}}
         </div>
     </div>
