@@ -24,9 +24,9 @@
 
     @isset($fund_support_pool_list)
         <div class="form-group col-md-4 org_hook" style="padding-left: 1.9rem;">
-            <label for="pool_filter">Search by Fund Supported Pool</label>
+            <label for="pool_filter">Search by Regional Charity Programs</label>
             <select class="form-control" style="width:100%;" type="text" name="pool_filter" id="pool_filter">
-                <option value="">Choose a Fund Supported Pool</option>
+                <option value="">Choose a Regional Charity Programs Pool</option>
                 @foreach($fund_support_pool_list as $pool)
                     <option value="{{ $pool->region_id }}">{{ $pool->region->name }}</option>
                 @endforeach

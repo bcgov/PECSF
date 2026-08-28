@@ -140,8 +140,8 @@
                 <div class="form-row p-3">
                     <div class="form-group col-md-12 method_selection" tabindex="0">
                         <input type="radio" {{ $pledge->charity_selection == 'fsp' ? 'checked' : '' }} id="charity_selection_1" name="charity_selection" tabindex="-1"
-                            value="fsp" role="radiogroup" aria-label="Fund supported pool"/>
-                        <label class="blue pl-2" for="charity_selection_1">Fund supported pool</label>
+                            value="fsp" role="radiogroup" aria-label="Regional Charity Programs"/>
+                        <label class="blue pl-2" for="charity_selection_1">Regional Charity Programs</label>
                         <span class="charity_selection_errors errors">
                             @error('charity_selection')
                                 <span class="invalid-feedback">{{ $message }}</span>
@@ -150,8 +150,7 @@
                     </div>
                     <div class="p-2">
                         <span class="p-2">
-                            By choosing this option your donation will support the current Fund Supported Pool of regional
-                            programs. Click on the tiles to learn about the programs in each regional pool.
+                            By choosing this option your donation will support the current Regional Charity Programs pool. Click on the tiles to learn about the programs in each regional pool.
                         </span>
                     </div>
 

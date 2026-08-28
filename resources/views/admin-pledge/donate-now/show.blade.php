@@ -148,7 +148,7 @@
                 <div class=" mt-2">
                     <div class="row">
                         <div class="col-4 font-weight-bold">Type</div>
-                        <div class="col-8">{{ $pledge->type == 'P' ? 'Fund Supported Pool' : 'Non-Pool' }}</div>
+                        <div class="col-8">{{ $pledge->type == 'P' ? 'Regional Charity Programs' : 'Non-Pool' }}</div>
                     </div>
                 </div>
 

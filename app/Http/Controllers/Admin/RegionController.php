@@ -143,7 +143,7 @@ class RegionController extends Controller
             if ($region->hasFSPool) {
                 return response()->json([
                     'title'  => "Invalid delete!",
-                    'message' => 'The Region "' . $region->code . ' - ' . $region->name . '" cannot be deleted, it is being referenced on the Fund Supported Pool(s).'], 403);
+                    'message' => 'The Region "' . $region->code . ' - ' . $region->name . '" cannot be deleted, it is being referenced on the Regional Charity Programs Pool(s).'], 403);
             }
 
             $region->updated_by_id = Auth::Id();

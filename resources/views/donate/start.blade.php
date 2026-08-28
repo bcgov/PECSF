@@ -8,9 +8,9 @@
         <div class="card-body bg-light">
             If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA).
 
-            If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted. 
+            If you select the Regional Charity Programs option, charities and distribution amounts are pre-determined and cannot be adjusted, removed, or substituted.
 
-            Visit the PECSF webpages to learn more about the <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity" style="text-decoration: underline;">Fund Supported Pool</a> option.
+            Visit the PECSF webpages to learn more about the <a target="_blank" href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity" style="text-decoration: underline;">Regional Charity Programs</a> option.
 
         </div>
     </div>
@@ -33,7 +33,7 @@
                         {{ $pool_option == "C" ? 'checked' : '' }}>
                     <label style="font-size:16px;line-height:25.6px;" class="form-check-label" for="pool1">
                         <strong>Select up to 10 charities from the CRA List</strong><br>
-                        <span style="color:black;">Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Fund Supported Pools.</span>
+                        <span style="color:black;">Explore charities by keyword, category, province, or view charities, and their associated programs, which are part of the Regional Charity Programs.</span>
                     </label>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     <input class="form-check-input" type="radio" name="pool_option" id="pool2" value="P"
                         {{ $pool_option == "P" ? 'checked' : '' }}>
                     <label style="font-size:16px;line-height:25.6px;" class="form-check-label h5" for="pool2">
-                        <strong>Select a regional Fund Supported Pool</strong><br>
+                        <strong>Select a Regional Charity Programs pool</strong><br>
                         <span style="color:black;">Charities and distribution amounts are pre-determined.</span>
                     </label>
                 </div>

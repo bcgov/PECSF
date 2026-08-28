@@ -118,7 +118,7 @@
         <p class="mt-4"><b>Your charitable donations will be disbursed as follows:</b></p>
 
         @if ( $pool_option == 'P')
-            <p class="mt-4"><b>Fund Supported Pool: </b>{{  $pool->region->name  }}</p>
+            <p class="mt-4"><b>Regional Charity Programs: </b>{{  $pool->region->name  }}</p>
         @endif
         
         <table class="table">

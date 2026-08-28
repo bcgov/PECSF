@@ -44,7 +44,7 @@
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.special-campaigns') ? 'active' : ''}}"
                 href="{{ route('settings.special-campaigns.index') }}">Special Campaigns</a>
           <a class="dropdown-item {{ str_contains( Route::current()->getName(), 'settings.fund-supported-pools') ? 'active' : ''}}"
-                href="{{ route('settings.fund-supported-pools.index') }}">Fund Supported Pools</a>
+                href="{{ route('settings.fund-supported-pools.index') }}">Regional Charity Programs</a>
         </div>
     </li>
 

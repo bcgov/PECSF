@@ -140,7 +140,7 @@
                 <p class="mt-4"><b>Your charitable donations will be disbursed as follows:</b></p>
 
                 @if ( $pledge->regional_pool_id )
-                    <p class="mt-4"><b>Fund Supported Pool: </b>{{ $pledge->fund_supported_pool->region->name  }}</p>
+                    <p class="mt-4"><b>Regional Charity Programs: </b>{{ $pledge->fund_supported_pool->region->name  }}</p>
                 @endif
 
                 <table class="table">

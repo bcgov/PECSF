@@ -271,14 +271,9 @@
                                         </div>
                                         <div class="col-10">
                                             <h5 class="pt-2 font-weight-bold">In Person and Virtual Engagement</h5>
-                                            <p>The PECSF program has a long history of in-person and virtual engagement.  
-                                                Join us for the PECSF Campaign Kick-off and Recognition events which will be posted on the  
-                                                    <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect home page</a>.   
-                                            </p>
-                                            <p>Each year the PECSF HQ team visits regional offices to recognize and celebrate the effort of champions 
-                                                who promote the PECSF program. Complete the 
-                                                <a target="_blank" href="https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3Ai9wfjgvSFOiS5TXhN1jFFUOUJNMUZRVlFDRlNQWTVPQTdZVVoxSFhNQyQlQCN0PWcu">
-                                                    PECSF Road Trip Sign Up form</a> today!  
+                                            <p>The PECSF program has a long history of in-person and virtual engagement.
+                                                Join us for the PECSF Campaign Kick-off and Recognition events which will be posted on the
+                                                    <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect home page</a>.
                                             </p>
                                         </div>
                                     </div>
@@ -306,8 +301,8 @@
                                         </div>
                                         <div class="col-10">
                                             <h5 class="pt-3 font-weight-bold">Contact Us</h5>
-                                            <p>If you have any questions or are interested in volunteering to help with the Annual PECSF Fall Campaign, 
-                                                email Kristina Allsopp at <a href="mailto:pecsf@gov.bc.ca?subject=Volunteering Questions">pecsf@gov.bc.ca</a>.  
+                                            <p>If you have any questions or are interested in volunteering to help with the Annual PECSF Fall Campaign,
+                                                email us at <a href="mailto:pecsf@gov.bc.ca?subject=Volunteering Questions">pecsf@gov.bc.ca</a>.
                                             </p>
                                         </div>
                                     </div>

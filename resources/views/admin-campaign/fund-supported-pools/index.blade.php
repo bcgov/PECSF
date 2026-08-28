@@ -4,7 +4,7 @@
 
 @include('admin-campaign.partials.tabs')
 
-    <h4 class="mx-1 mt-3">Fund Supported Pools</h4>
+    <h4 class="mx-1 mt-3">Regional Charity Programs</h4>
 
     <div class="d-flex mt-3">
         <div class="flex-fill">
@@ -15,7 +15,7 @@
 
         <div class="d-flex">
             <div class="mr-2">
-                <x-button class="btn-primary" :href="route('settings.fund-supported-pools.create')">Add New Fund Supported Pool</x-button>
+                <x-button class="btn-primary" :href="route('settings.fund-supported-pools.create')">Add New Regional Charity Programs Pool</x-button>
             </div>
         </div>
     </div>
@@ -325,7 +325,7 @@
             delete_start_date = $(this).attr('data-start-date');
 
             Swal.fire( {
-                title: 'Are you sure you want to delete Fund Supported Pool "' + delete_region + '" with start date "' + delete_start_date + '" ?',
+                title: 'Are you sure you want to delete Regional Charity Programs Pool "' + delete_region + '" with start date "' + delete_start_date + '" ?',
                 text: 'This action cannot be undone.',
                 // icon: 'question',
                 //showDenyButton: true,
@@ -351,7 +351,7 @@
                             oTable.ajax.reload(null, false);	// reload datatables
                             // Toast('Success',  'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
                             //                 '" was successfully deleted.', 'bg-success' );
-                            toastr["success"]( 'The Fund Supported Pool "' + delete_region + '" with Start date "' + delete_start_date +
+                            toastr["success"]( 'The Regional Charity Programs Pool "' + delete_region + '" with Start date "' + delete_start_date +
                                             '" has been successfully deleted.', '',
                                             {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });
                         },
@@ -439,7 +439,7 @@
                     // Display a message
                     // Toast('Success', 'The Fund Supported Pool "' + duplicate_region + '" with Start date "' + start_date +
                     //       '" was successfully created.', 'bg-success m-3');
-                    toastr["success"]( 'The Fund Supported Pool "' + duplicate_region + '" with Start date "' + start_date +
+                    toastr["success"]( 'The Regional Charity Programs Pool "' + duplicate_region + '" with Start date "' + start_date +
                                             '" has been successfully created.', '',
                                             {"closeButton": true, "newestOnTop": true, "timeOut": "5000" });                          
 

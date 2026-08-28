@@ -220,7 +220,7 @@
                                                 {{-- <img src="{{asset('img/volunteering-intro/step-3-3.jpg')}}" style="width:100px" class="m-3"> --}}
                                             </div>
                                             <div class="col-9 justify-content-center d-flex align-items-center">  
-                                                <span><b>Committee Member</b> - Fund Supported Pool Regional Committee members raise the awareness of local charities and PECSF annual campaign. 
+                                                <span><b>Committee Member</b> – Regional Charity Programs Committee members raise the awareness of local charities and PECSF annual campaign.
                                                     Members select and allocate funds to charitable organizations on a three-year cycle. Contact PECSF at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a> 
                                                     to express your interest in starting a committee in your region or volunteer on an existing committee (if available).</span>
                                             </div>

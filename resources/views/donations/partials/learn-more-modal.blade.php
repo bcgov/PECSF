@@ -47,12 +47,12 @@
                                     Step 1 - Select your preferred method for choosing charities
                                 </h4>
                                 <p>
-                                    If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA). You can also choose individual Fund Supported Pool entries.
+                                    If you select the CRA charity list option, you can support up to 10 different charities of your choice through your donation, if they are registered and in good standing with the Canada Revenue Agency (CRA). You can also choose individual Regional Charity Programs entries.
                                 </p>
                                 <p>
-                                    If you select the regional Fund Supported Pool option, charities and distribution amounts are pre-determined
+                                    If you select the Regional Charity Programs option, charities and distribution amounts are pre-determined
                                     and cannot be adjusted, removed, or substituted. Visit the PECSF webpages to learn more about the
-                                    <a href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity" target="_blank">Fund Supported Pool</a> option.
+                                    <a href="https://www2.gov.bc.ca/gov/content/careers-myhr/about-the-bc-public-service/corporate-social-responsibility/pecsf/charity" target="_blank">Regional Charity Programs</a> option.
                                 </p>
                             </div>
                             <div class="col-12 col-md-5 offset-md-1">
@@ -94,7 +94,7 @@ deduction plan.
                 Step 2 - Select your charities - FSP option
             </h4>
             <p>
-                Search for Individual Fund Supported Pool entries using the Search by Fund Supported Pool drop-down. Select the region and choose your charities.
+                Search for Individual Regional Charity Programs entries using the Search by Regional Charity Programs drop-down. Select the region and choose your charities.
             </p>
         </div>
         <div class="col-12 col-md-5 offset-md-1">
