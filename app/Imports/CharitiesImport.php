@@ -15,11 +15,32 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
-class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, WithCustomCsvSettings, WithEvents
+class CharitiesImport implements ToCollection, WithStartRow, WithHeadingRow, WithChunkReading, WithCustomCsvSettings, WithEvents
 {
+    // Expected column headers from the CRA "List of charities" export, mapped to the
+    // slugified key Maatwebsite\Excel produces from row 1. Column order in the CRA file
+    // has changed before (e.g. commit 629f2b3b) - matching by header name instead of
+    // position survives future reordering, but a renamed header still needs this updated.
+    const EXPECTED_HEADERS = [
+        'bnregistration_number',
+        'organization_name',
+        'status',
+        'effective_date_of_status',
+        'type_of_qualified_donee',
+        'sanction',
+        'designation',
+        'charity_type',
+        'category',
+        'address',
+        'city',
+        'province_territory_outside_of_canada',
+        'country',
+        'postal_codezip_code',
+    ];
 
     protected $history_id;
     protected $history;
@@ -63,11 +84,15 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
         $index = [];
 
+        if ($this->done_count === 0 && $rows->isNotEmpty()) {
+            $this->validateHeaders($rows->first());
+        }
+
         foreach ($rows as $row) {
 
             $this->done_count += 1;
 
-            if(empty($row[4]))
+            if(empty($row['effective_date_of_status']))
             {
                 $this->skipped_count += 1;
                 $this->logMessage('[SKIPPED - missing eff date] ' . json_encode($row) );
@@ -76,7 +101,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
             try{
 
-                $old_charity = Charity::where('registration_number', $row[0])
+                $old_charity = Charity::where('registration_number', $row['bnregistration_number'])
                                     ->first();
 
                 if ($old_charity && $old_charity->charity_status == 'Pending-Dissolution') {
@@ -88,21 +113,21 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
                 }
 
                 $charity = Charity::UpdateOrCreate([
-                    'registration_number' => $row[0],
+                    'registration_number' => $row['bnregistration_number'],
                 ], [
-                    'charity_name' => $row[1],
-                    'charity_status' => $row[2],
-                    'type_of_qualified_donee' => $row[3],
-                    'effective_date_of_status' => $row[4],
-                    'sanction' => $row[5],
-                    'designation_code' => $row[6],
-                    'charity_type' => $row[7],
-                    'category_code' => $row[8],
-                    'address' => $row[9],
-                    'city' => $row[10],
-                    'province' => $row[11],
-                    'country' => $row[12],
-                    'postal_code' => $row[13],
+                    'charity_name' => $row['organization_name'],
+                    'charity_status' => $row['status'],
+                    'type_of_qualified_donee' => $row['type_of_qualified_donee'],
+                    'effective_date_of_status' => $row['effective_date_of_status'],
+                    'sanction' => $row['sanction'],
+                    'designation_code' => $row['designation'],
+                    'charity_type' => $row['charity_type'],
+                    'category_code' => $row['category'],
+                    'address' => $row['address'],
+                    'city' => $row['city'],
+                    'province' => $row['province_territory_outside_of_canada'],
+                    'country' => $row['country'],
+                    'postal_code' => $row['postal_codezip_code'],
                 ]);
 
                 if ($charity->wasRecentlyCreated) {
@@ -169,9 +194,9 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
 
                 $charityStaging = CharityStaging::create([
                     'history_id' => $this->history_id,
-                    'registration_number' => $row[0],
-                    'charity_name' => $row[1],
-                    'charity_status' => $row[2],
+                    'registration_number' => $row['bnregistration_number'],
+                    'charity_name' => $row['organization_name'],
+                    'charity_status' => $row['status'],
 
                 ]);
 
@@ -199,6 +224,24 @@ class CharitiesImport implements ToCollection, WithStartRow, WithChunkReading, W
     public function chunkSize(): int
     {
         return 1000;
+    }
+
+    protected function validateHeaders($row)
+    {
+        $missing = array_diff(self::EXPECTED_HEADERS, array_keys($row->toArray()));
+
+        if (!empty($missing)) {
+            $message = 'The uploaded CRA file does not match the expected format. Missing column(s): '
+                . implode(', ', $missing) . '. Columns found in file: '
+                . implode(', ', array_keys($row->toArray()));
+
+            $this->history->status = 'Error';
+            $this->history->message .= $message . PHP_EOL;
+            $this->history->end_at = now();
+            $this->history->save();
+
+            throw new Exception($message);
+        }
     }
 
     public function validateDate($date, $format = 'Y-m-d')
