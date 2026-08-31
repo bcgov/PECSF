@@ -91,7 +91,7 @@ deduction plan.
     <div class="row">
         <div class="col-12 col-md-4 offset-md-1">
             <h4 class="text-primary">
-                Step 2 - Select your charities - FSP option
+                Step 2 - Select your charities - RCP option
             </h4>
             <p>
                 Search for Individual Regional Charity Programs entries using the Search by Regional Charity Programs drop-down. Select the region and choose your charities.
