@@ -165,13 +165,13 @@
                                             information within the context of participation incentive draws. 
                                         </li>
                                         <li><i class="far fa-check-circle text-primary"></i>
-                                            You work closely with PECSF HQ to ensure successful outcomes including receiving campaign statistics for 
+                                            You work closely with PECSF team to ensure successful outcomes including receiving campaign statistics for 
                                             the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
                                          </li>
                                     </ul>
 
                                     {{-- <p class="px-2 pt-2">
-                                        You work closely with PECSF HQ to ensure successful outcomes including receiving ministry/organization specific campaign statistics 
+                                        You work closely with PECSF team to ensure successful outcomes including receiving ministry/organization specific campaign statistics 
                                         for the purposes of participation incentive draws upon completion of privacy enhancement training and sign off procedure. 
                                     </p> --}}
 

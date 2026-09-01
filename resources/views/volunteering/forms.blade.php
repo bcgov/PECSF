@@ -59,7 +59,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                If you have any questions, please contact <a href="mailto:pecsf@gov.bc.ca" target="_blank">PECSF@gov.bc.ca.</a>
+                                If you have any questions, please contact <a href="mailto:PECSF@gov.bc.ca" target="_blank">PECSF@gov.bc.ca.</a>
                             </div>
                         </div>
                         <div class="row">

@@ -47,7 +47,7 @@
                                             <h5 class="pt-2 font-weight-bold">eNewsletter</h5>
                                             <p>Our eNewsletter provides volunteers with a monthly dose of inspiration and updates from PECSF headquarters.
                                                 Whether you are a seasoned volunteer or new to the team, this eNewsletter is your gateway to staying connected, 
-                                                informed and motivated!  Sign up today by emailing <a href="mailto:pecsf@gov.bc.ca?subject=Sign up for PECSF eNews">pecsf@gov.bc.ca!</a>  
+                                                informed and motivated!  Sign up today by emailing <a href="mailto:PECSF@gov.bc.ca?subject=Sign up for PECSF eNews">PECSF@gov.bc.ca!</a>  
                                            </p>
                                         </div>
                                     </div>
@@ -63,7 +63,7 @@
                                             <p>Read our heartwarming charity and volunteers blogs, where passion meets purpose and acts of kindness inspire change.
                                                 Dedicated volunteers and charities share their stories, insights and experiences with the PECSF program that ignites a spirit 
                                                 of generosity and community engagement.  We would love to hear from you, email 
-                                                <a href="mailto:pecsf@gov.bc.ca?subject=PECSF Blog Ideas">pecsf@gov.bc.ca</a> today with your blog ideas.    
+                                                <a href="mailto:PECSF@gov.bc.ca?subject=PECSF Blog Ideas">PECSF@gov.bc.ca</a> today with your blog ideas.    
                                             </p>
                                         </div>
                                     </div>
@@ -108,7 +108,7 @@
                                         Check out the virtual campaign toolkit and event guidelines on the PECSF website. 
                                         Harness the power of technology in this hybrid working environment and make the virtual experience inspirational, 
                                         informative, and engaging for your coworkers. For more ideas, reach out to 
-                                        <a href="mailto:pecsf@gov.bc.ca?subject=PECSF Virtual Events">pecsf@gov.bc.ca</a>. 
+                                        <a href="mailto:PECSF@gov.bc.ca?subject=PECSF Virtual Events">PECSF@gov.bc.ca</a>. 
                                     </p>
 
                                 </div>
@@ -219,7 +219,7 @@
 
                                     <p class="px-3 pt-3">
                                         To be added to the membership for the PECSF Community Connect SharePoint, email 
-                                        <a href="mailto:pecsf@gov.bc.ca">pecsf@gov.bc.ca</a>.   
+                                        <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.   
                                     </p>
         
                                 </div>
@@ -241,7 +241,7 @@
                                         Join us the PECSF Campaign kick-off and Recognition event which will be posted on the 
                                             <a target="_blank" href="https://bcgov.sharepoint.com/teams/056772">PECSF Community Connect home page</a>.   
                                     </p>
-                                    <p>Each year the PECSF HQ team visits regional offices to recognize and celebrate the effort of champions 
+                                    <p>Each year the PECSF team team visits regional offices to recognize and celebrate the effort of champions 
                                         who promote the PECSF program. Complete the 
                                         <a target="_blank" href="https://forms.office.com/Pages/ResponsePage.aspx?id=AFLbbw09ikqwNtNoXjWa3Ai9wfjgvSFOiS5TXhN1jFFUOUJNMUZRVlFDRlNQWTVPQTdZVVoxSFhNQyQlQCN0PWcu">
                                             PECSF Road Trip Sign Up form</a> today!  
@@ -255,7 +255,7 @@
 
                                     <h5 class="pt-3 font-weight-bold">Contact Us</h5>
                                     <p>If you have any questions or are interested in volunteering to help with the Annual PECSF Fall Campaign, 
-                                        email Kristina Allsopp at <a href="mailto:pecsf@gov.bc.ca">pecsf@gov.bc.ca</a>.  
+                                        email Kristina Allsopp at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.  
                                     </p>
                                    
                                 </div>
@@ -288,7 +288,7 @@
                                             <h5 class="pt-3 font-weight-bold">Feedback</h5>
                                             <p>As always, we welcome your feedback, if you have any suggestions or comments, please share them with us in our 
                                                 <a target="_blank" href="https://forms.office.com/pages/responsepage.aspx?id=AFLbbw09ikqwNtNoXjWa3Ai9wfjgvSFOiS5TXhN1jFFUN1gxTjE4VkkzNUpMTFFRV1ZGVTVORTdCNCQlQCN0PWcu">
-                                                    volunteer feedback survey</a> or email us at <a href="mailto:pecsf@gov.bc.ca">PECSF@gov.bc.ca</a>.  
+                                                    volunteer feedback survey</a> or email us at <a href="mailto:PECSF@gov.bc.ca">PECSF@gov.bc.ca</a>.  
                                             </p>
                                         </div>
                                     </div>
@@ -302,7 +302,7 @@
                                         <div class="col-10">
                                             <h5 class="pt-3 font-weight-bold">Contact Us</h5>
                                             <p>If you have any questions or are interested in volunteering to help with the Annual PECSF Fall Campaign,
-                                                email us at <a href="mailto:pecsf@gov.bc.ca?subject=Volunteering Questions">pecsf@gov.bc.ca</a>.
+                                                email us at <a href="mailto:PECSF@gov.bc.ca?subject=Volunteering Questions">PECSF@gov.bc.ca</a>.
                                             </p>
                                         </div>
                                     </div>
