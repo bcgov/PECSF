@@ -301,7 +301,7 @@ var formData = new FormData();
                     title: '<strong>Success!</strong>',
                     icon: 'info',
                     html:
-                        'The form was submitted successfully. Your items will be sent in the mail within 3-5 business days. For assistance, please email pecsf@gov.bc.ca. For information and resources, please visit the PECSF website (gov.bc.ca). ',
+                        'The form was submitted successfully. Your items will be sent in the mail within 3-5 business days. For assistance, please email PECSF@gov.bc.ca. For information and resources, please visit the PECSF website (gov.bc.ca). ',
                     showCloseButton: true,
                     showCancelButton: true,
                     focusConfirm: false,
