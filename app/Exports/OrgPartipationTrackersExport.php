@@ -80,16 +80,16 @@ class OrgPartipationTrackersExport implements FromQuery, WithHeadings, WithColum
                     // [   
                     //     "This tracker is provided to encourage and determine participation by department/branch during the PECSF fall awareness campaign.  
 
-                    // PECSF will recognize departments/branches achieving 2/3 or 100% participation. You can let us know you'd like these certificates by emailing the completed tracker back to PECSF HQ at PECSF@gov.bc.ca."
+                    // PECSF will recognize departments/branches achieving 2/3 or 100% participation. You can let us know you'd like these certificates by emailing the completed tracker back to PECSF team at PECSF@gov.bc.ca."
                     
                     // ],
                     [
-                        "This optional tracking document can be used by you to track participation % by Department/Paylist for the remainder of the PECSF campaign!\n\nAt the end of campaign, you may also submit your completed tracker and PECSF HQ will recognize departments/branches achieving 2/3 or 100% participation.",
+                        "This optional tracking document can be used by you to track participation % by Department/Paylist for the remainder of the PECSF campaign!\n\nAt the end of campaign, you may also submit your completed tracker and PECSF team will recognize departments/branches achieving 2/3 or 100% participation.",
 
 
                     ],
                     [
-                        "Completed trackers can be sent to PECSF HQ at PECSF@gov.bc.ca",
+                        "Completed trackers can be sent to PECSF team at PECSF@gov.bc.ca",
                     ],
                     [
                     ],

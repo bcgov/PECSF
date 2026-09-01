@@ -47,7 +47,7 @@
         </div>
         <div class="col-md-12">
             <label class=" text-md">Different coloured tickets for each price point are required by BC Gaming Policy and Enforcement. If you plan to offer all three price points you will need min . 3 rolls or 1 for each price point. <br><br>
-            Please ensure you have read and understand gaming requirements before hosting any events. If you have any questions contact the PECSF HQ team (<a href="mailto:pecsf@gov.bc.ca">pecsf@gov.gc.ca</a>) in advance of your event</label>
+            Please ensure you have read and understand gaming requirements before hosting any events. If you have any questions contact the PECSF team (<a href="mailto:PECSF@gov.bc.ca">pecsf@gov.gc.ca</a>) in advance of your event</label>
         </div>
     </div>
 <br><br>
