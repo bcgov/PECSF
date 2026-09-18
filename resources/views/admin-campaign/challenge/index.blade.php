@@ -56,7 +56,7 @@
                 <div class="form-group col-md-3">
                     <label for="challenge_start_date">Start Date <span class="badge badge-warning">Locked</span></label>
                     <input type="date" class="form-control input-control" name="challenge_start_date"
-                                value="{{ $setting->challenge_start_date->toDateString() }}" disabled />
+                                value="{{ $setting->challenge_start_date->toDateString() }}" readonly />
                     <small class="form-text text-muted">September 1st (Fixed)</small>
                 </div>
                 <div class="form-group col-md-3">
@@ -67,7 +67,7 @@
                 <div class="form-group col-md-3">
                     <label for="challenge_final_date">Final Date <span class="badge badge-warning">Locked</span></label>
                     <input type="date" class="form-control input-control" name="challenge_final_date"
-                                value="{{ $setting->challenge_final_date->toDateString() }}" disabled />
+                                value="{{ $setting->challenge_final_date->toDateString() }}" readonly />
                     <small class="form-text text-muted">January 15th (Fixed)</small>
                 </div>
 
@@ -87,7 +87,7 @@
                 <div class="form-group col-md-3">
                     <label for="campaign_start_date">Start Date <span class="badge badge-warning">Locked</span></label>
                     <input type="date" class="form-control input-control" name="campaign_start_date"
-                                value="{{ $setting->campaign_start_date->toDateString() }}" disabled />
+                                value="{{ $setting->campaign_start_date->toDateString() }}" readonly />
                     <small class="form-text text-muted">September 1st (Fixed)</small>
                 </div>
                 <div class="form-group col-md-3">
@@ -98,7 +98,7 @@
                 <div class="form-group col-md-3">
                     <label for="campaign_final_date">Final Date <span class="badge badge-warning">Locked</span></label>
                     <input type="date" class="form-control input-control" name="campaign_final_date"
-                                value="{{ $setting->campaign_final_date->toDateString() }}" disabled />
+                                value="{{ $setting->campaign_final_date->toDateString() }}" readonly />
                     <small class="form-text text-muted">January 15th (Fixed)</small>
                 </div>
 
