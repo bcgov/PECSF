@@ -76,6 +76,14 @@ class CharitiesImport implements ToCollection, WithStartRow, WithHeadingRow, Wit
             'input_encoding' => 'ISO-8859-1',
             'use_bom' => true,
             'line_ending' => PHP_EOL,
+            // CRA's file is plain tab-separated text, not RFC4180-quoted CSV - a literal "
+            // in an organization name (e.g. `"SAVE THE BRIDGE CAMPAIGN`) is real data, not a
+            // field enclosure. With the default enclosure of '"', an unmatched quote makes the
+            // reader swallow tabs/newlines until the next stray quote, merging two charity rows
+            // into one corrupted row and silently dropping the other. Pointing enclosure at a
+            // byte that never appears in the data disables that behavior (setEnclosure() falls
+            // back to '"' if given an empty string, so this can't just be turned off).
+            'enclosure' => "\0",
         ];
     }
 
