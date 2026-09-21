@@ -69,13 +69,31 @@ class ProcessCharityList implements ShouldQueue, ShouldBeUnique
 
             \App\Models\ProcessHistory::UpdateOrCreate([
                     'id' => $this->history_id,
-            ],[                    
+            ],[
                    'status' => 'Error',
                    'message' => $text,
                    'end_at'  => now(),
             ]);
 
 
+        } catch (\Throwable $e) {
+            // Catches anything the CharitiesImport row-loop's own catch couldn't persist
+            // (that catch runs inside Maatwebsite's per-chunk DB transaction, so its
+            // save() gets rolled back along with everything else when it rethrows).
+            // Without this, an unexpected error leaves the process stuck at "Processing" forever.
+            $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+
+            $text = PHP_EOL;
+            $text .= 'The import failed with an unexpected error : ' . $e->getMessage() . PHP_EOL;
+            $text .= 'at ' . $e->getFile() . ':' . $e->getLine() . PHP_EOL;
+
+            \App\Models\ProcessHistory::UpdateOrCreate([
+                    'id' => $this->history_id,
+            ],[
+                   'status' => 'Error',
+                   'message' => ($history ? $history->message : '') . $text,
+                   'end_at'  => now(),
+            ]);
         }
 
     }

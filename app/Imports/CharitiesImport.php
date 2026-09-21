@@ -105,9 +105,8 @@ class CharitiesImport implements ToCollection, WithStartRow, WithHeadingRow, Wit
                                     ->first();
 
                 if ($old_charity && $old_charity->charity_status == 'Pending-Dissolution') {
-                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 1000) {
-                        $this->logMessage('[SKIPPED - Pending-Dissolution] ' . json_encode($old_charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])) );
-                    }
+                    // Always logged (unlike created/updated), since skips are rare and won't bloat the log.
+                    $this->logMessage('[SKIPPED - Pending-Dissolution] ' . json_encode($old_charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])) );
                     $this->skipped_count += 1;
                     continue;
                 }
@@ -131,10 +130,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithHeadingRow, Wit
                 ]);
 
                 if ($charity->wasRecentlyCreated) {
-                    // $this->logMessage('[CREATED] ' . json_encode($row) );
-                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 1000) {
-                        $this->logMessage('[CREATED] ' . json_encode( $charity->only(['id','registration_number','charity_name','charity_status', 'effective_date_of_status'])));
-                    }
+                    // Per-row detail intentionally not logged - only the total count matters (see summary at end of import).
                     $this->created_count += 1;
 
                     $charity->created_by_id = $this->created_by_id;
@@ -143,11 +139,7 @@ class CharitiesImport implements ToCollection, WithStartRow, WithHeadingRow, Wit
 
                 } elseif ($charity->wasChanged() ) {
 
-                    $changes = $charity->getChanges();
-                    unset($changes["updated_at"]);
-                    if (($this->created_count + $this->updated_count + $this->skipped_count) <= 1000) {
-                        $this->logMessage('[UPDATED] on RN# ' . $charity->registration_number . ' - ' . json_encode($changes) );
-                    }
+                    // Per-row detail intentionally not logged - only the total count matters (see summary at end of import).
                     $this->updated_count += 1;
 
                     $charity->updated_by_id = $this->created_by_id;
@@ -340,11 +332,6 @@ class CharitiesImport implements ToCollection, WithStartRow, WithHeadingRow, Wit
                 $message .= 'Total Updated (Not-in-CRA) count : ' . $not_in_cra_count . PHP_EOL;
                 $message .= 'Total Skipped count              : ' . $this->skipped_count . PHP_EOL;
 
-                if (($this->created_count + $this->updated_count + $this->skipped_count) > 1000) {
-                    $message .= PHP_EOL;
-                    $message .= 'Note: more than 1,000 changes found, only first 1,000 detail were logged in the log message.' . PHP_EOL;
-                    $message .= PHP_EOL;
-                }
 
 
 
