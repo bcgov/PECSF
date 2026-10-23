@@ -89,7 +89,13 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
-    
+# Override PHP's bundled tz database for BC's permanent UTC-7 change
+RUN apt-get update && apt-get install -y $PHPIZE_DEPS \
+    && pecl install timezonedb-2026.5 \
+    && docker-php-ext-enable timezonedb \
+    && apt-get purge -y --auto-remove $PHPIZE_DEPS \
+    && rm -rf /var/lib/apt/lists/* /tmp/pear
+
 COPY --chown=www-data:www-data --from=composer /app /var/www/html
 
 
