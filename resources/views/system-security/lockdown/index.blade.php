@@ -41,7 +41,7 @@
     <div>
         {{-- We&rsquo;re performing some planned maintenance at the moment.  --}}
         <p>The PECSF is expected to be back at 
-            {{ $setting->system_lockdown_end->format('g:ia T \o\n l, M jS Y') }}. 
+            {{ $setting->system_lockdown_end->format('g:ia \P\T \o\n l, M jS Y') }}.
             We apologize for any inconvenience.
         <p>            
         <div>
