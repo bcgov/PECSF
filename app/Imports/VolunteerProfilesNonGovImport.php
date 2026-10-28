@@ -35,6 +35,7 @@ class VolunteerProfilesNonGovImport implements  ToModel, WithValidation, WithEve
     protected $errors;
 
     protected $imported_rows;
+    protected $skipped_rows;
 
     public function __construct($history_id, $campaign_year)
     {
@@ -48,8 +49,9 @@ class VolunteerProfilesNonGovImport implements  ToModel, WithValidation, WithEve
         $this->errors = [];
 
         $this->imported_rows = '';
+        $this->skipped_rows = [];
 
-        $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+        $history =\App\Models\ProcessHistory::where('id', $this->history_id)->first();
 
         $this->user_id = $history->created_by_id;
 
@@ -61,6 +63,11 @@ class VolunteerProfilesNonGovImport implements  ToModel, WithValidation, WithEve
     {
 
         if (!isset($row[0])) {
+            return null;
+        }
+
+        // The profile is already loaded for this campaign year, skip the row (it is reported in the log, see prepareForValidation)
+        if (!empty($row['profile'])) {
             return null;
         }
 
@@ -194,7 +201,14 @@ class VolunteerProfilesNonGovImport implements  ToModel, WithValidation, WithEve
 
         // special fields for checking unique or existenance 
         $data['profile'] = $profile ? $profile->id : 0;
-        
+
+        // Keep track of the rows that are already loaded (keyed by row number), they are skipped rather than rejected
+        if ($profile) {
+            $this->skipped_rows[$index] = 'Row : ' . $index . ' - ' .
+                implode(', ', array_filter($data, 'is_int', ARRAY_FILTER_USE_KEY)) .
+                ' - existing profile id : ' . $profile->id;
+        }
+
 echo PHP_EOL . (implode(',', $data) );
 
         return $data;
@@ -224,8 +238,6 @@ echo PHP_EOL . (implode(',', $data) );
             '11' => ['required', 'regex:/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/'], // Postal Code
 
             'business_unit_code' => 'exists:business_units,code',
-            'profile' => 'unique:volunteer_profiles,id',
-           
 
         ];
     }
@@ -252,7 +264,6 @@ echo PHP_EOL . (implode(',', $data) );
             '11.regex' => 'Postal code format is invalid (sample valid code: M5V 2L7)',
 
             'business_unit_code.exists' => 'No history records found for this PECSF ID.',
-            'profile.unique' => 'The volunteer profile is already loaded.',
 
         ];
     }
@@ -299,8 +310,14 @@ echo PHP_EOL . (implode(',', $data) );
                 $messages .= $this->imported_rows;
                 $messages .= PHP_EOL;
 
+                $this->skip_count = count($this->skipped_rows);
+
                 if ($this->skip_count > 0) {
                     $status = 'Warning';
+                    $messages .= 'The volunteer profile is already loaded for the following row(s) : '. PHP_EOL;
+                    $messages .= PHP_EOL;
+                    $messages .= implode(PHP_EOL, $this->skipped_rows) . PHP_EOL;
+                    $messages .= PHP_EOL;
                     $messages .= 'Warning: ' . $this->skip_count . ' out of ' . $this->row_count . ' row(s) were skipped due to duplication.';
                 }
 

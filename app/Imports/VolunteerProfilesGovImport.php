@@ -35,6 +35,7 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
     protected $errors;
 
     protected $imported_rows;
+    protected $skipped_rows;
 
     public function __construct($history_id, $campaign_year)
     {
@@ -48,8 +49,9 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
         $this->errors = [];
 
         $this->imported_rows = '';
+        $this->skipped_rows = [];
 
-        $history = \App\Models\ProcessHistory::where('id', $this->history_id)->first();
+        $history =\App\Models\ProcessHistory::where('id', $this->history_id)->first();
 
         $this->user_id = $history->created_by_id;
 
@@ -64,7 +66,12 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
             return null;
         }
 
-        // Find an employee Job information 
+        // The profile is already loaded for this campaign year, skip the row (it is reported in the log, see prepareForValidation)
+        if (!empty($row['profile'])) {
+            return null;
+        }
+
+        // Find an employee Job information
         $job = EmployeeJob::where(DB::raw('LOWER(name)'), 'like', '%' . strtolower( trim($row[1]) . ',' . trim($row[2]) ) . '%')
                     ->orWhere(function ($query) use($row) {
                         $query->where(DB::raw('LOWER(last_name)'), 'like', '%' . strtolower( trim($row[1]) ) . '%')
@@ -162,6 +169,13 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
         $data['emplid']  = $job ? $job->emplid : 0;
         $data['profile'] = $profile ? $profile->id : 0;
 
+        // Keep track of the rows that are already loaded (keyed by row number), they are skipped rather than rejected
+        if ($profile) {
+            $this->skipped_rows[$index] = 'Row : ' . $index . ' - ' .
+                implode(', ', array_filter($data, 'is_int', ARRAY_FILTER_USE_KEY)) .
+                ' - existing profile id : ' . $profile->id;
+        }
+
         return $data;
     }
 
@@ -182,8 +196,6 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
             '6' => 'required|in:' . $role_values,     
 
             'emplid' => 'exists:employee_jobs,emplid',
-            'profile' => 'unique:volunteer_profiles,id',
-           
 
         ];
     }
@@ -209,7 +221,6 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
             '6.in'     => 'Invalid primary role.',
 
             'emplid.exists' => 'Emplid not found for the given name.',
-            'profile.unique' => 'The volunteer profile is already loaded.',
 
         ];
     }
@@ -256,8 +267,14 @@ class VolunteerProfilesGovImport implements  ToModel, WithValidation, WithEvents
                 $messages .= $this->imported_rows;
                 $messages .= PHP_EOL;
 
+                $this->skip_count = count($this->skipped_rows);
+
                 if ($this->skip_count > 0) {
                     $status = 'Warning';
+                    $messages .= 'The volunteer profile is already loaded for the following row(s) : '. PHP_EOL;
+                    $messages .= PHP_EOL;
+                    $messages .= implode(PHP_EOL, $this->skipped_rows) . PHP_EOL;
+                    $messages .= PHP_EOL;
                     $messages .= 'Warning: ' . $this->skip_count . ' out of ' . $this->row_count . ' row(s) were skipped due to duplication.';
                 }
 
