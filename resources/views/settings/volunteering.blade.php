@@ -127,23 +127,11 @@
                 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
             }
         });
-        var now = new Date('{{substr($settings->volunteer_end_date,0,strpos($settings->volunteer_end_date," "))}}');
+        // Use the date string as-is; new Date('YYYY-MM-DD') parses as UTC and shifts the day in BC.
+        $('[name=volunteer_end_date]').val('{{ substr($settings->volunteer_end_date, 0, 10) }}');
 
-        var day = ("0" + now.getDate()).slice(-2);
-        var month = ("0" + (now.getMonth() + 1)).slice(-2);
-
-        var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-
-        $('[name=volunteer_end_date]').val(today);
-
-        var now = new Date('{{substr($settings->volunteer_start_date,0,strpos($settings->volunteer_start_date," "))}}');
-
-        var day = ("0" + now.getDate()).slice(-2);
-        var month = ("0" + (now.getMonth() + 1)).slice(-2);
-
-        var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-
-        $('[name=volunteer_start_date]').val(today);
+        // Use the date string as-is; new Date('YYYY-MM-DD') parses as UTC and shifts the day in BC.
+        $('[name=volunteer_start_date]').val('{{ substr($settings->volunteer_start_date, 0, 10) }}');
 
         $("input,textarea").change(function(){
 

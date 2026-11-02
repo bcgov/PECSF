@@ -378,7 +378,7 @@ class ImportEmployeeJob extends Command
         }
 
         // Purge the old audit data for more than 30 days old
-        EmployeeJobAudit::whereRaw("audit_stamp < DATE_SUB(CURDATE(), INTERVAL 30 DAY)")->delete();
+        EmployeeJobAudit::where('audit_stamp', '<', today()->subDays(30))->delete();
         
     }
 

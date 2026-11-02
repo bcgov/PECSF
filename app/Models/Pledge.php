@@ -66,7 +66,7 @@ class Pledge extends Model implements Auditable
                                     ->from('campaign_years')
                                     ->whereColumn('campaign_years.id', 'pledges.campaign_year_id')
                                     ->where('campaign_years.status', 'I')
-                                    ->whereRaw("CURDATE() > ADDDATE(end_date, INTERVAL 1 DAY)");
+                                    ->whereRaw("? > ADDDATE(end_date, INTERVAL 1 DAY)", [today()->format('Y-m-d')]);
                             })                            
                             ->whereNull('pledges.ods_export_status')
                             ->whereNull('pledges.cancelled')
