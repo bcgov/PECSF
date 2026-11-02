@@ -58,6 +58,11 @@ return [
             'prefix_indexes' => true,
             'strict' => false,
             'engine' => 'InnoDB',
+            // Pin the MySQL session to the application timezone so that CURDATE(), NOW() and
+            // timestamp columns agree with Laravel's now(). Defaults to the current UTC offset
+            // of the app timezone (works without the MySQL timezone tables); set DB_TIMEZONE
+            // to override, e.g. 'America/Vancouver' if the server has the tz tables loaded.
+            'timezone' => env('DB_TIMEZONE', date_create('now', timezone_open(config('app.timezone')))->format('P')),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
