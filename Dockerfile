@@ -20,7 +20,14 @@ RUN chgrp -R 0 /app && \
 #
 # Build Server Deployment Image
 #
+# Floats to the latest 8.3.x patch release. It only updates when the image is rebuilt with
+# a fresh base layer (docker build --pull), so the check below fails the build if the base is stale.
+# Minimum PHP is 8.3.37 (phpAfterShell CVE-2026-126714). See docs/security/php-cve-tracking.md.
 FROM php:8.3-apache
+
+ARG MIN_PHP_VERSION=8.3.37
+RUN php -r 'exit(version_compare(PHP_VERSION, getenv("MIN_PHP_VERSION"), ">=") ? 0 : 1);' \
+    || { echo "PHP $(php -r 'echo PHP_VERSION;') is older than required ${MIN_PHP_VERSION}. Rebuild with --pull --no-cache." >&2; exit 1; }
 
 WORKDIR /
 
